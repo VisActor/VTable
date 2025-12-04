@@ -1,6 +1,6 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
-import { arrayEqual } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterOptions, FilterStyles } from './types';
+import { arrayEqual, isValid } from '@visactor/vutils';
+import type { ValueFilterOptionDom, FilterState, FilterOptions, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles } from './styles';
@@ -79,16 +79,19 @@ export class ValueFilter {
     const toUnformatted = new Map();
 
     records.forEach(record => {
-      const originalValue = record[fieldId];
-      const formattedValue = formatFn(record);
-      if (formattedValue !== undefined && formattedValue !== null) {
-        countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
+      // 空行不做处理
+      if (isValid(record)) {
+        const originalValue = record[fieldId];
+        const formattedValue = formatFn(record);
+        if (formattedValue !== undefined && formattedValue !== null) {
+          countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
 
-        const unformattedSet = toUnformatted.get(formattedValue);
-        if (unformattedSet !== undefined && unformattedSet !== null) {
-          unformattedSet.add(originalValue);
-        } else {
-          toUnformatted.set(formattedValue, new Set([originalValue]));
+          const unformattedSet = toUnformatted.get(formattedValue);
+          if (unformattedSet !== undefined && unformattedSet !== null) {
+            unformattedSet.add(originalValue);
+          } else {
+            toUnformatted.set(formattedValue, new Set([originalValue]));
+          }
         }
       }
     });
