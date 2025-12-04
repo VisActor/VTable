@@ -697,6 +697,14 @@ Only affects in PivotTable/PivotChard Adjust the effective range of row height, 
 - `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
 - `all`: All row heights are adjusted
 
+##${prefix} canResizeColumn(Function)
+
+Whether to adjust the column width, support configuring functions, the function returns a boolean value, return true to adjust the column width, return false to not adjust the column width.
+
+```
+canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
+```
+
 #${prefix} dragOrder(Object)
 
 #${prefix} dragOrder(Object)

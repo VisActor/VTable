@@ -141,6 +141,7 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
 
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
 
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
 
@@ -633,6 +634,7 @@ export interface BaseTableConstructorOptions {
      * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
      */
     columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+    canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
     rowResizeMode?: 'all' | 'none' | 'header' | 'body';
     /** 是否禁用双击列边框自动调整列宽 **/
     disableDblclickAutoResizeColWidth?: boolean;

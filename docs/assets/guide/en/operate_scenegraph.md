@@ -17,10 +17,11 @@ tableInstance.scenegraph.getCell(colIndex, rowIndex);
 ```
 
 
-## Get the node of the corresponding cell in the scenegraph
+## Update the content of the corresponding cell in the scenegraph
+By this interface, the cell node will be refreshed and repainted. It is applicable to the scenario where the customLayout needs to be executed to recalculate the cell content.
 
 ```ts
-tableInstance.scenegraph.updateCellContent();
+tableInstance.scenegraph.updateCellContent(colIndex, rowIndex);
 ```
 
 ## Get the cell node of the corresponding node

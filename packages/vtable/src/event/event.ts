@@ -494,7 +494,15 @@ export class EventManager {
       eventArgsSet.abstractPos.y,
       eventArgs?.targetCell
     );
-    if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+    let useerCustomCanResizeColumn: boolean = true;
+    if (
+      this.table.internalProps.canResizeColumn &&
+      !this.table.internalProps.canResizeColumn(resizeCol.col, resizeCol.row, this.table)
+    ) {
+      useerCustomCanResizeColumn = false;
+    }
+
+    if (useerCustomCanResizeColumn && this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
       if (update) {
         this.table.stateManager.startResizeCol(
           resizeCol.col,
