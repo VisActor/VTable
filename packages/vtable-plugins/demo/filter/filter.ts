@@ -260,7 +260,8 @@ export function createTable() {
     ],
     checkboxItemFormat: (formatValue, rawValue) => {
       return formatValue;
-    }
+    },
+    syncCheckboxCheckedState: false
   });
   (window as any).filterPlugin = filterPlugin;
 
@@ -287,29 +288,29 @@ export function createTable() {
     bgColor: 'red'
   });
 
-  // setTimeout(() => {
-  //   filterPlugin.updatePluginOptions({
-  //     styles: {
-  //       searchInput: {
-  //         placeholder: 'xxx',
-  //         color: 'blue'
-  //       },
-  //       optionItem: {
-  //         display: 'flex',
-  //         justifyContent: 'space-between',
-  //         alignItems: 'center',
-  //         padding: '8px 5px',
-  //         color: 'blue'
-  //       }
-  //     }
-  //   });
-  //   console.log('update');
-  //   tableInstance.updateOption({
-  //     ...option,
-  //     plugins: [filterPlugin],
-  //     records: generateDemoData(50, '第二次')
-  //   });
-  // }, 8000);
+  setTimeout(() => {
+    filterPlugin.updatePluginOptions({
+      styles: {
+        searchInput: {
+          placeholder: 'xxx',
+          color: 'blue'
+        },
+        optionItem: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 5px',
+          color: 'blue'
+        }
+      }
+    });
+    console.log('update');
+    tableInstance.updateOption({
+      ...option,
+      plugins: [filterPlugin],
+      records: [...generateDemoData(50, '第二次'), null, undefined]
+    });
+  }, 8000);
 
   // setTimeout(() => {
   //   console.log('update');

@@ -100,27 +100,53 @@ export class ValueFilter {
     this.toUnformattedCache.set(fieldId, toUnformatted);
   }
 
-  update() {
-    // 表格更新时, 可能会插入新数据, 此时需要更新筛选结果和候选值:
+  updateBeforeFilter() {
+    // 处于值筛选状态, 表格更新时:
+    // 可能会插入新数据, 此时需要更新筛选结果和候选值:
     // 1. 更新筛选结果
     // - 出现了之前没有出现过的选项
     // - 筛选器出于被筛选状态（有值）
     // - 则将该选项添加到筛选器中
     // 2. 更新候选值
-    const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
+    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
     const filteredFields = this.filterStateManager.getActiveFilterFields();
     currentRecords.forEach(record => {
       filteredFields.forEach(candidateField => {
         const formatFn = this.getFormatFnCache(candidateField);
-        const originalValue = record[candidateField];
-        const formattedValue = formatFn(record);
-        const lastToUnformatted = this.toUnformattedCache.get(candidateField) || new Map();
-        if (
-          !lastToUnformatted.has(formattedValue) &&
-          this.filterStateManager.getFilterState(candidateField)?.values?.length > 0
-        ) {
-          this.filterStateManager.getFilterState(candidateField).values.push(originalValue);
-          this.selectedKeys.get(candidateField).add(originalValue);
+
+        // 空行不做处理
+        if (isValid(record)) {
+          const originalValue = record[candidateField];
+          const formattedValue = formatFn(record);
+          const lastToUnformatted = this.toUnformattedCache.get(candidateField) || new Map();
+          if (
+            !lastToUnformatted.has(formattedValue) &&
+            this.filterStateManager.getFilterState(candidateField)?.values?.length > 0
+          ) {
+            this.filterStateManager.getFilterState(candidateField).values.push(originalValue);
+            this.selectedKeys.get(candidateField).add(originalValue);
+          }
+        }
+      });
+    });
+  }
+
+  updateAfterFilter() {
+    // 处于条件筛选状态, 表格更新时:
+    // 值筛选面板需要同步筛选结果
+    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
+    const filteredFields = this.filterStateManager.getActiveFilterFields();
+    currentRecords.forEach(record => {
+      filteredFields.forEach(candidateField => {
+        // 空行不做处理
+        if (isValid(record)) {
+          const originalValue = record[candidateField];
+          if (this.filterStateManager.getFilterState(candidateField)?.type === 'byCondition') {
+            if (!this.selectedKeys.get(candidateField)) {
+              this.selectedKeys.set(candidateField, new Set());
+            }
+            this.selectedKeys.get(candidateField).add(originalValue);
+          }
         }
       });
     });
@@ -151,15 +177,18 @@ export class ValueFilter {
     }
 
     records.forEach(record => {
-      const originalValue = record[candidateField];
-      const formattedValue = formatFn(record);
-      countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
-      if (formattedValue !== undefined && formattedValue !== null) {
-        const unformattedSet = toUnformatted.get(formattedValue);
-        if (unformattedSet !== undefined && unformattedSet !== null) {
-          unformattedSet.add(originalValue);
-        } else {
-          toUnformatted.set(formattedValue, new Set([originalValue]));
+      // 空行不做处理
+      if (isValid(record)) {
+        const originalValue = record[candidateField];
+        const formattedValue = formatFn(record);
+        countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
+        if (formattedValue !== undefined && formattedValue !== null) {
+          const unformattedSet = toUnformatted.get(formattedValue);
+          if (unformattedSet !== undefined && unformattedSet !== null) {
+            unformattedSet.add(originalValue);
+          } else {
+            toUnformatted.set(formattedValue, new Set([originalValue]));
+          }
         }
       }
     });
@@ -215,12 +244,18 @@ export class ValueFilter {
 
     const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
     currentRecords.forEach(record => {
-      selectedValues.add(record[fieldId]);
+      // 空行不做处理
+      if (isValid(record)) {
+        selectedValues.add(record[fieldId]);
+      }
     });
 
     const originalRecords = this.table.internalProps.records; // 原始数据
     originalRecords.forEach(record => {
-      originalValues.add(record[fieldId]);
+      // 空行不做处理
+      if (isValid(record)) {
+        originalValues.add(record[fieldId]);
+      }
     });
 
     const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
