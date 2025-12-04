@@ -54,7 +54,7 @@ export function generateChartInstanceListByColumnDirection(
         if (!isScatter && typeof chartDimensionLinkage === 'object') {
           isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
           if (i === rowEnd && isShowTooltip) {
-            const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow;
+            const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow ?? 0;
             const { rowEnd: rowEnd1 } = table.getBodyVisibleRowRange(0, -heightLimitToShowTooltipForEdgeRow);
             if (rowEnd1 === rowEnd) {
               isShowTooltip = true;
@@ -67,7 +67,7 @@ export function generateChartInstanceListByColumnDirection(
               }
             }
           } else if (i === rowStart && isShowTooltip) {
-            const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow;
+            const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow ?? 0;
             const { rowStart: rowStart1 } = table.getBodyVisibleRowRange(heightLimitToShowTooltipForEdgeRow, 0);
             if (rowStart1 === rowStart) {
               isShowTooltip = true;
@@ -229,6 +229,7 @@ export function generateChartInstanceListByRowDirection(
           const absolutePositionLeft = Math.max(bodyBoundryLeft, table.getCellRelativeRect(i, row).left);
           if (hideTooltip) {
             if (table.stateManager.hover.cellPos.col !== i || table.stateManager.hover.cellPos.row !== row) {
+              console.log('hideTooltip', row, i);
               chartInstanceListRowByRowDirection[row][i].hideTooltip();
             }
             chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
@@ -265,6 +266,7 @@ export function clearChartInstanceListByRowDirection(row: number, excludedCol: n
           releaseRowChartInstance: false
         });
         chartInstanceListRowByRowDirection[row][i] = null;
+        console.log('clearChartInstanceListByRowDirection', row, i);
       }
     }
   }
