@@ -240,7 +240,7 @@ export class ValueFilter {
 
     this.selectedKeys.set(fieldId, new Set(selections));
 
-    if (selections.length > 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) {
+    if (selections.length >= 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
