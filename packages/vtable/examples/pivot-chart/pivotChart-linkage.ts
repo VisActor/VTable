@@ -9,8 +9,8 @@ export function createTable() {
     animation: true,
     chartDimensionLinkage: {
       showTooltip: true,
-      heightLimitToShowTooltipForLastRow: 60,
-      widthLimitToShowTooltipForLastColumn: 90,
+      heightLimitToShowTooltipForEdgeRow: 60,
+      widthLimitToShowTooltipForEdgeColumn: 90,
       labelHoverOnAxis: {
         left: {
           visible: true

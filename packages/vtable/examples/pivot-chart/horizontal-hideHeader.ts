@@ -9224,8 +9224,8 @@ export function createTable() {
     indicatorsAsCol: true,
     chartDimensionLinkage: {
       showTooltip: true,
-      heightLimitToShowTooltipForLastRow: 80,
-      widthLimitToShowTooltipForLastColumn: 80,
+      heightLimitToShowTooltipForEdgeRow: 80,
+      widthLimitToShowTooltipForEdgeColumn: 80,
       labelHoverOnAxis: {
         left: {
           visible: true,

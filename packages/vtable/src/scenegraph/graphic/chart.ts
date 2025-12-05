@@ -193,7 +193,18 @@ export class Chart extends Rect {
               context.fill();
             }
           }
-        }
+        },
+        componentShowContent:
+          (table.options as PivotChartConstructorOptions).chartDimensionLinkage &&
+          this.attribute.spec.type !== 'scatter'
+            ? {
+                tooltip: {
+                  dimension: false,
+                  mark: true
+                },
+                crosshair: false
+              }
+            : undefined
       })
     );
     const chartStage = this.activeChartInstance.getStage();
@@ -236,6 +247,7 @@ export class Chart extends Rect {
             // console.log('receive scatter dimensionHover', params.action);
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, false, true);
             generateChartInstanceListByRowDirection(row, undefined, yValue, canvasXY, table, false, true);
+            //#region 显示横纵向crosshair的labelHoverOnAxis 代码块
             const axisConfigLeft = getAxisConfigInPivotChart(
               table.rowHeaderLevelCount - 1,
               row,
@@ -258,7 +270,10 @@ export class Chart extends Rect {
                 .getCell(col, table.rowCount - table.bottomFrozenRowCount)
                 .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
             }
+            //#endregion 显示横纵向crosshair的labelHoverOnAxis 代码块
           } else {
+            //hover到mark和dimension的tooltip显示逻辑有区别，hover到mark的时候只显示背景及本身的tooltip，不显示其他联动区域图表的tooltip，而hover到dimension的时候需要显示其他联动区域图表的tooltip
+            //#region 为了解决鼠标快速移动于mark和dimension之间造成tooltip闪动问题，纯粹的防抖效果不好的问题，需要增加一个延迟显示tooltip的机制（写了一堆看不懂的逻辑）
             let justShowMarkTooltip = true;
             const preMark = this.activeChartInstanceHoverOnMark;
             const prev_justShowMarkTooltip = this.justShowMarkTooltip;
@@ -291,6 +306,7 @@ export class Chart extends Rect {
               clearTimeout(this.delayRunDimensionHoverTimer); //及时清除之前的定时器
               this.delayRunDimensionHoverTimer = undefined;
             }
+            //#endregion
 
             if (
               params.action === 'enter' ||
@@ -350,14 +366,11 @@ export class Chart extends Rect {
                   }
                 }, 100);
               }
-
+              //#region 显示横纵向crosshair的labelHoverOnAxis 代码块
               if (indicatorsAsCol) {
                 const series = dimensionInfo.data[0].series;
                 const width =
-                  this.attribute.spec.type === 'histogram' ||
-                  this.attribute.spec.type === 'boxPlot' ||
-                  series.type === 'line' ||
-                  series.type === 'area'
+                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
                     ? 0
                     : series.getYAxisHelper().getBandwidth(0);
                 let y = series.valueToPositionY(dimensionValue);
@@ -389,10 +402,7 @@ export class Chart extends Rect {
               } else {
                 const series = dimensionInfo.data[0].series;
                 const width =
-                  this.attribute.spec.type === 'histogram' ||
-                  this.attribute.spec.type === 'boxPlot' ||
-                  series.type === 'line' ||
-                  series.type === 'area'
+                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
                     ? 0
                     : series.getXAxisHelper().getBandwidth(0);
                 let x = series.valueToPositionX(dimensionValue);
@@ -418,6 +428,7 @@ export class Chart extends Rect {
                     .firstChild.showLabelHoverOnAxis(x + width / 2, hoverOnLabelValue);
                 }
               }
+              //#endregion 显示横纵向crosshair的labelHoverOnAxis 代码块
             }
           }
         }
