@@ -53,12 +53,34 @@ export class ValueFilter {
     return formatFn;
   }
 
+  private getRecords(table: ListTable | PivotTable, original: boolean): any[] {
+    if (original === true) {
+      return table.internalProps.records;
+    }
+
+    const records = [];
+    const stack = [...table.internalProps.dataSource.records];
+    while (stack.length > 0) {
+      const item = stack.pop();
+
+      if (item.vtableMerge && Array.isArray(item.children)) {
+        for (let i = item.children.length - 1; i >= 0; i--) {
+          stack.push(item.children[i]);
+        }
+      } else {
+        records.push(item);
+      }
+    }
+
+    return records.reverse();
+  }
+
   /**
    * 为未应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForUnfilteredColumn(fieldId: string | number): void {
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    const records = this.getRecords(this.table, false); // 未筛选：使用当前表格数据
     const formatFn = this.getFormatFnCache(fieldId);
     const toUnformatted = new Map();
 
@@ -90,9 +112,13 @@ export class ValueFilter {
     const formatFn = this.getFormatFnCache(candidateField);
 
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
+    const recordsList = this.getRecords(this.table, true); // 已筛选：使用原始表格数据
     const records = recordsList.filter(record =>
       filteredFields.every(field => {
+        const filterType = this.filterStateManager.getFilterState(field)?.type;
+        if (filterType !== 'byValue' && filterType !== null && filterType !== undefined) {
+          this.syncSingleStateFromTableData(field);
+        }
         const set = this.selectedKeys.get(field);
         return set.has(record[field]);
       })
@@ -151,13 +177,9 @@ export class ValueFilter {
 
   /**
    * 根据当前表格中的数据，更新 filter 的被选状态
+   * 适用情况：表格数据发生变化，或者需要自动检测当前表格的数据情况
    */
-  private initFilterStateFromTableData(fieldId: string | number): void {
-    const isHasFilteredState = this.filterStateManager.getActiveFilterFields();
-    if (isHasFilteredState) {
-      return;
-    }
-
+  syncSingleStateFromTableData(fieldId: string | number): void {
     const selectedValues = new Set<any>();
     const originalValues = new Set<any>();
 
@@ -176,10 +198,9 @@ export class ValueFilter {
       this.selectedKeys.set(fieldId, selectedValues);
 
       this.filterStateManager.dispatch({
-        type: FilterActionType.ADD_FILTER,
+        type: FilterActionType.UPDATE_FILTER,
         payload: {
           field: fieldId,
-          type: 'byValue',
           values: Array.from(selectedValues),
           enable: true
         }
@@ -387,8 +408,11 @@ export class ValueFilter {
       this.collectCandidateKeysForFilteredColumn(this.selectedField);
     }
 
-    // 2. 初始化筛选状态（必须在 renderFilterOptions 之前执行）
-    this.initFilterStateFromTableData(this.selectedField);
+    // 2. 初始筛选状态
+    const filterType = this.filterStateManager.getFilterState(this.selectedField)?.type;
+    if (filterType !== null && filterType !== undefined && filterType !== 'byValue') {
+      this.syncSingleStateFromTableData(this.selectedField);
+    }
 
     // 3. 清空搜索框
     if (this.filterByValueSearchInput) {
