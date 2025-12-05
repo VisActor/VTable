@@ -91,13 +91,15 @@ export function generateChartInstanceListByColumnDirection(
         //   _21Group?.id
         // );
         if (isScatter) {
-          chartInstanceListColumnByColumnDirection[col][i].showCrosshair?.((axis: any) => {
-            // console.log('showCrosshair', axis.layoutOrient, dimensionValueOrXValue);
-            if (axis.layoutOrient === 'left') {
-              return positionValueOrYValue;
-            }
-            return dimensionValueOrXValue;
-          });
+          if (table.stateManager.hover.cellPos.col !== col || table.stateManager.hover.cellPos.row !== i) {
+            chartInstanceListColumnByColumnDirection[col][i].showCrosshair?.((axis: any) => {
+              // console.log('showCrosshair', axis.layoutOrient, dimensionValueOrXValue);
+              if (axis.layoutOrient === 'left') {
+                return positionValueOrYValue;
+              }
+              return dimensionValueOrXValue;
+            });
+          }
         } else {
           const bodyBoundryTop = table.frozenRowCount
             ? table.getCellRelativeRect(col, table.frozenRowCount - 1).bottom
@@ -216,12 +218,14 @@ export function generateChartInstanceListByRowDirection(
         }
         // console.log('setDimensionIndex row', i, row, chartInstanceListRowByRowDirection[row][i].id);
         if (isScatter) {
-          chartInstanceListRowByRowDirection[row][i].showCrosshair?.((axis: any) => {
-            if (axis.layoutOrient === 'left') {
-              return positionValueOrYValue;
-            }
-            return dimensionValueOrXValue;
-          });
+          if (table.stateManager.hover.cellPos.col !== i || table.stateManager.hover.cellPos.row !== row) {
+            chartInstanceListRowByRowDirection[row][i].showCrosshair?.((axis: any) => {
+              if (axis.layoutOrient === 'left') {
+                return positionValueOrYValue;
+              }
+              return dimensionValueOrXValue;
+            });
+          }
         } else {
           const bodyBoundryLeft = table.frozenColCount
             ? table.getCellRelativeRect(table.frozenColCount - 1, row).right
