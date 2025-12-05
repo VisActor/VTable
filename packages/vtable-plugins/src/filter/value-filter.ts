@@ -53,12 +53,34 @@ export class ValueFilter {
     return formatFn;
   }
 
+  private getRecords(table: ListTable | PivotTable, original: boolean): any[] {
+    if (original === true) {
+      return table.internalProps.records;
+    }
+
+    const records = [];
+    const stack = [...table.internalProps.dataSource.records];
+    while (stack.length > 0) {
+      const item = stack.pop();
+
+      if (item.vtableMerge && Array.isArray(item.children)) {
+        for (let i = item.children.length - 1; i >= 0; i--) {
+          stack.push(item.children[i]);
+        }
+      } else {
+        records.push(item);
+      }
+    }
+
+    return records.reverse();
+  }
+
   /**
    * 为未应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForUnfilteredColumn(fieldId: string | number): void {
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    const records = this.getRecords(this.table, false); // 未筛选：使用当前表格数据
     const formatFn = this.getFormatFnCache(fieldId);
     const toUnformatted = new Map();
 
@@ -90,7 +112,7 @@ export class ValueFilter {
     const formatFn = this.getFormatFnCache(candidateField);
 
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
+    const recordsList = this.getRecords(this.table, true); // 已筛选：使用原始表格数据
     const records = recordsList.filter(record =>
       filteredFields.every(field => {
         const filterType = this.filterStateManager.getFilterState(field)?.type;
