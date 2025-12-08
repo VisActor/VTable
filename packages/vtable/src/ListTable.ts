@@ -1317,6 +1317,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
+    this.internalProps.emptyTip?.resetVisible();
     this.resize();
   }
   /** 获取过滤后的数据 */

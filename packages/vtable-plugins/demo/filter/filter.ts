@@ -270,7 +270,10 @@ export function createTable() {
     records: [...records, null, undefined],
     columns,
     padding: 10,
-    plugins: [filterPlugin]
+    plugins: [filterPlugin],
+    emptyTip: {
+      text: 'no data'
+    }
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
