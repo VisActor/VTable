@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.7",
+      "tag": "@visactor/vtable_v1.22.7",
+      "date": "Mon, 08 Dec 2025 09:36:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: optimize linkage pivotChart tooltip\n\n"
+          },
+          {
+            "comment": "fix: pivotChart axis should change zero when has range\n\n"
+          },
+          {
+            "comment": "feat: resize support set canResizeColumn function #4764\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.6",
       "tag": "@visactor/vtable_v1.22.6",
       "date": "Mon, 01 Dec 2025 11:33:45 GMT",
