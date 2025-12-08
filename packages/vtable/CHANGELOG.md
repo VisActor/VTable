@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 01 Dec 2025 11:33:45 GMT and should not be manually modified.
+This log was last generated on Mon, 08 Dec 2025 09:36:02 GMT and should not be manually modified.
+
+## 1.22.7
+Mon, 08 Dec 2025 09:36:02 GMT
+
+### Updates
+
+- refactor: optimize linkage pivotChart tooltip
+
+
+- fix: pivotChart axis should change zero when has range
+
+
+- feat: resize support set canResizeColumn function #4764
+
+
 
 ## 1.22.6
 Mon, 01 Dec 2025 11:33:45 GMT
