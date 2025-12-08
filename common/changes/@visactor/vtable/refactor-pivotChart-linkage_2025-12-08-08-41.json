@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: pivotChart axis should change zero when has range\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
