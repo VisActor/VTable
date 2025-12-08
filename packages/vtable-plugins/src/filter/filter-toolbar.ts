@@ -248,7 +248,9 @@ export class FilterToolbar {
     const cell = this.table.getCellRelativeRect(effectiveCol, effectiveRow);
 
     const filterMenuWidth = this.filterMenuWidth;
-    const filterMenuHeight = 380; // 最高高度预估值
+    // 最高高度预估值
+    // TODO: 需要获取精确高度
+    const filterMenuHeight = 380;
 
     if (cell.right < this.filterMenuWidth) {
       // 无法把筛选菜单完整地显示在左侧，那么显示在右侧

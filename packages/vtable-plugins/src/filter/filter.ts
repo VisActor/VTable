@@ -136,6 +136,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   updatePluginOptions(pluginOptions: FilterOptions) {
+    // TODO: 目前额外只处理了styles，其他的后续再处理
     this.pluginOptions = merge(this.pluginOptions, pluginOptions);
     // 更新筛选器UI样式
     this.filterToolbar.updateStyles(this.pluginOptions.styles);
@@ -143,14 +144,14 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
   update() {
     // 更新筛选状态
-    // 如果处于按值筛选状态, 则需要更新候选值
-    this.filterToolbar.valueFilter?.updateBeforeFilter();
+    // 如果处于按值筛选状态, 则需要更新筛选条件 和 候选值
+    this.filterToolbar.valueFilter?.syncRulesAndCandidateKeys();
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }
     // 更新筛选状态
     // 如果处于按条件筛选, 则需要执行筛选后, 更新值面板中checkbox的状态
-    this.filterToolbar.valueFilter?.updateAfterFilter();
+    this.filterToolbar.valueFilter?.syncSelectedKeys();
   }
 
   /**

@@ -66,11 +66,11 @@ export class ValueFilter {
    * 为未应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForUnfilteredColumn(fieldId: string | number): void {
-    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
     let records = [];
     // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
-    if (!syncCheckboxCheckedState) {
+    if (!syncFilterItemsState) {
       records = this.table.internalProps.records;
     } else {
       records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
@@ -100,7 +100,7 @@ export class ValueFilter {
     this.toUnformattedCache.set(fieldId, toUnformatted);
   }
 
-  updateBeforeFilter() {
+  syncRulesAndCandidateKeys() {
     // 处于值筛选状态, 表格更新时:
     // 可能会插入新数据, 此时需要更新筛选结果和候选值:
     // 1. 更新筛选结果
@@ -131,7 +131,7 @@ export class ValueFilter {
     });
   }
 
-  updateAfterFilter() {
+  syncSelectedKeys() {
     // 处于条件筛选状态, 表格更新时:
     // 值筛选面板需要同步筛选结果
     const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
@@ -156,7 +156,7 @@ export class ValueFilter {
    * 为已应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForFilteredColumn(candidateField: string | number): void {
-    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
     const filteredFields = this.filterStateManager.getActiveFilterFields().filter(field => field !== candidateField);
     const toUnformatted = new Map();
     const formatFn = this.getFormatFnCache(candidateField);
@@ -164,7 +164,7 @@ export class ValueFilter {
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
     let records = [];
     // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
-    if (!syncCheckboxCheckedState) {
+    if (!syncFilterItemsState) {
       records = this.table.internalProps.records;
     } else {
       const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据

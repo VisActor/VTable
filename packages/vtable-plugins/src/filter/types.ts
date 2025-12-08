@@ -22,7 +22,7 @@ export interface FilterOptions {
   /** 多个筛选器之间是否联动
    * @default true
    */
-  syncCheckboxCheckedState?: boolean;
+  syncFilterItemsState?: boolean;
 }
 
 export interface FilterOperatorCategoryOption {

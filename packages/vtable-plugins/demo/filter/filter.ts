@@ -261,7 +261,7 @@ export function createTable() {
     checkboxItemFormat: (formatValue, rawValue) => {
       return formatValue;
     },
-    syncCheckboxCheckedState: false
+    syncFilterItemsState: false
   });
   (window as any).filterPlugin = filterPlugin;
 
