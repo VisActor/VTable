@@ -491,6 +491,11 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       return axis.orient === orient;
     });
     if (axisOption) {
+      if (axisOption.zero) {
+        if (isNumber(axisOption.range?.min)) {
+          axisOption.zero = false;
+        }
+      }
       const { seriesIndex, seriesId } = axisOption;
       let seriesIndice;
       let seriesSpec: any;
@@ -526,6 +531,12 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
     ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
       return axisOption.orient === orient;
     }) ?? {};
+  //处理zero和range矛盾问题
+  if (axisOption.zero) {
+    if (isNumber(axisOption.range?.min)) {
+      axisOption.zero = false;
+    }
+  }
   if (axisOption && !axisOption.labelHoverOnAxis) {
     axisOption.labelHoverOnAxis = (
       layout._table.options as PivotChartConstructorOptions
