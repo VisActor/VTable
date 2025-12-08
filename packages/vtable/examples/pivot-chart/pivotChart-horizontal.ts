@@ -20,7 +20,7 @@ export function createTable() {
   const rows: (VTable.TYPES.IRowDimension | string)[] = [
     {
       dimensionKey: '230417171050031',
-      title: '国家',
+      title: '国家f',
       // width:200,
       headerStyle: {
         color: 'red',
@@ -9221,8 +9221,8 @@ export function createTable() {
   const option: VTable.PivotChartConstructorOptions = {
     chartDimensionLinkage: {
       showTooltip: true,
-      heightLimitToShowTooltipForLastRow: 60,
-      widthLimitToShowTooltipForLastColumn: 90
+      heightLimitToShowTooltipForEdgeRow: 60,
+      widthLimitToShowTooltipForEdgeColumn: 20
     },
     columnWidthConfigForRowHeader: [
       {
@@ -9234,7 +9234,7 @@ export function createTable() {
             indicatorKey: undefined
           }
         ],
-        width: 300
+        width: 100
       }
     ],
     columnWidthConfig: [
@@ -9261,11 +9261,11 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     // widthMode:'autoWidth',
-    heightMode: 'adaptive',
+    // heightMode: 'adaptive',
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
-    defaultColWidth: 80,
-    defaultHeaderColWidth: [80],
+    defaultColWidth: 180,
+    defaultHeaderColWidth: [80, 'auto', 'auto'],
 
     corner: {
       titleOnDimension: 'row',
@@ -9358,7 +9358,7 @@ export function createTable() {
   });
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  // bindDebugTool(tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 }

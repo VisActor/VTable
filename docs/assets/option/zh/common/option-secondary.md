@@ -695,6 +695,14 @@ animationAppear?: boolean | {
 - `indicatorGroup`: 调整同父级维度下所有指标行的宽度
 - `all`： 所有行高都被调整
 
+##${prefix} canResizeColumn(Function)
+
+是否可调整列宽，支持配置函数，函数返回值为 boolean，返回 true 则可调整列宽，返回 false 则不可调整列宽。
+
+```
+canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
+```
+
 #${prefix} dragOrder(Object)
 
 拖拽移动位置的配置。
