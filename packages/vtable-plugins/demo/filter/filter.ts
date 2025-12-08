@@ -291,30 +291,32 @@ export function createTable() {
     bgColor: 'red'
   });
 
-  setTimeout(() => {
-    filterPlugin.updatePluginOptions({
-      styles: {
-        searchInput: {
-          placeholder: 'xxx',
-          color: 'blue'
-        },
-        optionItem: {
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '8px 5px',
-          color: 'blue'
-        }
-      }
-    });
-    console.log('update');
-    tableInstance.updateOption({
-      ...option,
-      plugins: [filterPlugin],
-      records: [...generateDemoData(50, '第二次'), null, undefined]
-    });
-  }, 8000);
+  // 数据更新
+  // setTimeout(() => {
+  //   filterPlugin.updatePluginOptions({
+  //     styles: {
+  //       searchInput: {
+  //         placeholder: 'xxx',
+  //         color: 'blue'
+  //       },
+  //       optionItem: {
+  //         display: 'flex',
+  //         justifyContent: 'space-between',
+  //         alignItems: 'center',
+  //         padding: '8px 5px',
+  //         color: 'blue'
+  //       }
+  //     }
+  //   });
+  //   console.log('update');
+  //   tableInstance.updateOption({
+  //     ...option,
+  //     plugins: [filterPlugin],
+  //     records: [...generateDemoData(50, '第二次'), null, undefined]
+  //   });
+  // }, 8000);
 
+  // 插件更新
   // setTimeout(() => {
   //   console.log('update');
   //   tableInstance.updateOption({
@@ -322,6 +324,11 @@ export function createTable() {
   //     plugins: [filterPlugin]
   //   });
   // }, 8000);
+
+  // 实例释放
+  setTimeout(() => {
+    tableInstance.release();
+  }, 3000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']

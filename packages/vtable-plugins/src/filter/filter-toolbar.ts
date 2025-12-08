@@ -317,4 +317,9 @@ export class FilterToolbar {
       row: currentRow
     });
   }
+
+  destroy() {
+    this.valueFilter.destroy();
+    this.filterMenu.remove();
+  }
 }
