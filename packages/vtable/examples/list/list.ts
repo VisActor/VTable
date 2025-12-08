@@ -272,6 +272,14 @@ export function createTable() {
     //   headerSelectMode: 'cell',
     //   highlightMode: 'cross'
     // },
+    resize: {
+      canResizeColumn: (col, row, table) => {
+        if (col === table.colCount - 1) {
+          return false;
+        }
+        return true;
+      }
+    },
     theme: {
       frameStyle: {
         cornerRadius: [10, 0, 0, 10],

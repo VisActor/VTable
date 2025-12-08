@@ -427,6 +427,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.canResizeColumn = resize?.canResizeColumn;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragOrder?.dragHeaderMode ?? dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
@@ -2758,6 +2759,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
+    internalProps.canResizeColumn = resize?.canResizeColumn;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
     internalProps.dragHeaderMode = dragOrder?.dragHeaderMode ?? dragHeaderMode ?? 'none';
     internalProps.renderChartAsync = renderChartAsync;
