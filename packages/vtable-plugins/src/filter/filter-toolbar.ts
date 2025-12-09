@@ -164,7 +164,8 @@ export class FilterToolbar {
   }
 
   updateStyles(styles: FilterStyles) {
-    applyStyles(this.filterMenu, styles.filterMenu);
+    const realDisplay = (this.filterMenu.style.display ?? styles.filterMenu.display) || 'none';
+    applyStyles(this.filterMenu, { ...styles.filterMenu, display: realDisplay });
     applyStyles(this.filterTabsContainer, styles.tabsContainer);
     applyStyles(this.filterTabByValue, styles.tabStyle(true));
     applyStyles(this.footerContainer, styles.footerContainer);
