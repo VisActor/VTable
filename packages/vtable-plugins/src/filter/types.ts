@@ -23,6 +23,8 @@ export interface FilterOptions {
    * @default true
    */
   syncFilterItemsState?: boolean;
+  /** 筛选记录结束回调 */
+  onFilterRecordsEnd?: (records: any[]) => any[];
 }
 
 export interface FilterOperatorCategoryOption {

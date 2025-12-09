@@ -457,7 +457,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     //   return 0;
     // }
     let childTotalLength = 0;
-    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : nodeData.children?.length ?? 0;
+    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : (nodeData.children?.length ?? 0);
     for (let j = 0; j < nodeLength; j++) {
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
@@ -1225,10 +1225,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
 
-  updateFilterRules(filterRules?: FilterRules): void {
+  updateFilterRules(filterRules?: FilterRules, onFilterRecordsEnd?: (records: any[]) => any[]): void {
     this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
+    if (onFilterRecordsEnd) {
+      this._source = onFilterRecordsEnd(this._source as any[]);
+    }
     this._sourceLength = this._source?.length || 0;
     // 初始化currentIndexedData 正常未排序。设置其状态
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);

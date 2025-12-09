@@ -261,7 +261,11 @@ export function createTable() {
     checkboxItemFormat: (formatValue, rawValue) => {
       return formatValue;
     },
-    syncFilterItemsState: false
+    syncFilterItemsState: false,
+    onFilterRecordsEnd: records => {
+      console.log('onFilterRecordsEnd');
+      return records;
+    }
   });
   (window as any).filterPlugin = filterPlugin;
 
@@ -292,29 +296,36 @@ export function createTable() {
   });
 
   // 数据更新
-  // setTimeout(() => {
-  //   filterPlugin.updatePluginOptions({
-  //     styles: {
-  //       searchInput: {
-  //         placeholder: 'xxx',
-  //         color: 'blue'
-  //       },
-  //       optionItem: {
-  //         display: 'flex',
-  //         justifyContent: 'space-between',
-  //         alignItems: 'center',
-  //         padding: '8px 5px',
-  //         color: 'blue'
-  //       }
-  //     }
-  //   });
-  //   console.log('update');
-  //   tableInstance.updateOption({
-  //     ...option,
-  //     plugins: [filterPlugin],
-  //     records: [...generateDemoData(50, '第二次'), null, undefined]
-  //   });
-  // }, 8000);
+  setTimeout(() => {
+    filterPlugin.updatePluginOptions({
+      styles: {
+        searchInput: {
+          placeholder: 'xxx',
+          color: 'blue'
+        },
+        optionItem: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 5px',
+          color: 'blue'
+        },
+        filterMenu: {
+          color: 'red'
+        }
+      },
+      onFilterRecordsEnd: records => {
+        console.log('onFilterRecordsEnd-2');
+        return records;
+      }
+    });
+    console.log('update');
+    tableInstance.updateOption({
+      ...option,
+      plugins: [filterPlugin],
+      records: [...generateDemoData(50, '第二次'), null, undefined]
+    });
+  }, 8000);
 
   // 插件更新
   // setTimeout(() => {
@@ -326,9 +337,9 @@ export function createTable() {
   // }, 8000);
 
   // 实例释放
-  setTimeout(() => {
-    tableInstance.release();
-  }, 3000);
+  // setTimeout(() => {
+  //   tableInstance.release();
+  // }, 3000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']

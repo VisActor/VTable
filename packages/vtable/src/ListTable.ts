@@ -1305,6 +1305,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     filterRules: FilterRules,
     options: {
       clearRowHeightCache?: boolean;
+      onFilterRecordsEnd?: (records: any[]) => any[];
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
@@ -1312,7 +1313,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);
     } else {
-      this.dataSource.updateFilterRules(filterRules);
+      this.dataSource.updateFilterRules(filterRules, options?.onFilterRecordsEnd);
     }
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
