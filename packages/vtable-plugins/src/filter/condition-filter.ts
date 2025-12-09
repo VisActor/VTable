@@ -106,8 +106,9 @@ export class ConditionFilter {
    */
   private loadCurrentFilterState(): void {
     const filter = this.filterStateManager.getFilterState(this.selectedField);
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
 
-    if (filter && filter.type === 'byCondition') {
+    if (filter && (filter.type === 'byCondition' || !syncFilterItemsState)) {
       // 设置操作符
       if (filter.operator && this.operatorSelect) {
         this.operatorSelect.value = filter.operator;

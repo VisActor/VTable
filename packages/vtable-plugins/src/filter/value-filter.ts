@@ -235,21 +235,13 @@ export class ValueFilter {
    */
   private initFilterStateFromTableData(fieldId: string | number): void {
     const isHasFilteredState = this.filterStateManager.getActiveFilterFields();
-    if (isHasFilteredState) {
+    const isValueFilter = this.filterStateManager.getFilterState(fieldId)?.type === 'byValue';
+    if (isHasFilteredState && isValueFilter) {
       return;
     }
 
-    const selectedValues = new Set<any>();
+    let selectedValues = new Set<any>();
     const originalValues = new Set<any>();
-
-    const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
-    currentRecords.forEach(record => {
-      // 空行不做处理
-      if (isValid(record)) {
-        selectedValues.add(record[fieldId]);
-      }
-    });
-
     const originalRecords = this.table.internalProps.records; // 原始数据
     originalRecords.forEach(record => {
       // 空行不做处理
@@ -258,10 +250,22 @@ export class ValueFilter {
       }
     });
 
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
+    if (syncFilterItemsState) {
+      const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
+      currentRecords.forEach(record => {
+        // 空行不做处理
+        if (isValid(record)) {
+          selectedValues.add(record[fieldId]);
+        }
+      });
+    } else {
+      const selectedFromRules = this.filterStateManager.getFilterState(fieldId)?.values || originalValues; // 如果按值筛选没有状态, 则默认选中所有值
+      selectedValues = new Set(selectedFromRules);
+    }
+    this.selectedKeys.set(fieldId, selectedValues);
     const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
     if (hasFiltered) {
-      this.selectedKeys.set(fieldId, selectedValues);
-
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {

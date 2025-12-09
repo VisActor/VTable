@@ -69,7 +69,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   initFilterPlugin(eventArgs: any) {
-    this.filterEngine = new FilterEngine();
+    this.filterEngine = new FilterEngine(this.pluginOptions);
     this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
     this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
     this.columns = eventArgs.options.columns;
@@ -145,13 +145,13 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   update() {
     // 更新筛选状态
     // 如果处于按值筛选状态, 则需要更新筛选条件 和 候选值
-    this.filterToolbar.valueFilter?.syncRulesAndCandidateKeys();
+    // this.filterToolbar.valueFilter?.syncRulesAndCandidateKeys();
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }
     // 更新筛选状态
     // 如果处于按条件筛选, 则需要执行筛选后, 更新值面板中checkbox的状态
-    this.filterToolbar.valueFilter?.syncSelectedKeys();
+    // this.filterToolbar.valueFilter?.syncSelectedKeys();
   }
 
   /**
