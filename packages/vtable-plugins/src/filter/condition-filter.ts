@@ -108,21 +108,22 @@ export class ConditionFilter {
     const filter = this.filterStateManager.getFilterState(this.selectedField);
     const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
 
-    if (filter && (filter.type === 'byCondition' || !syncFilterItemsState)) {
+    // 不联动的场景下, 用户的配置始终会被展示出来
+    if ((filter && filter.type === 'byCondition') || !syncFilterItemsState) {
       // 设置操作符
-      if (filter.operator && this.operatorSelect) {
-        this.operatorSelect.value = filter.operator;
+      if (this.operatorSelect) {
+        this.operatorSelect.value = filter?.operator ?? operators[0].value;
       }
 
       // 设置条件值
-      if (filter.condition !== undefined && this.valueInput) {
-        if (Array.isArray(filter.condition)) {
+      if (this.valueInput) {
+        if (Array.isArray(filter?.condition)) {
           this.valueInput.value = String(filter.condition[0]);
           if (this.valueInputMax) {
             this.valueInputMax.value = String(filter.condition[1]);
           }
         } else {
-          this.valueInput.value = String(filter.condition);
+          this.valueInput.value = String(filter?.condition ?? '');
           if (this.valueInputMax) {
             this.valueInputMax.value = '';
           }
@@ -256,7 +257,7 @@ export class ConditionFilter {
     }
 
     // TODO：处理单元格颜色和字体颜色的筛选
-
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
     this.filterStateManager.dispatch({
       type: FilterActionType.APPLY_FILTERS,
       payload: {
@@ -264,7 +265,8 @@ export class ConditionFilter {
         type: 'byCondition',
         operator,
         condition: conditionValue,
-        enable: true
+        enable: true,
+        shouldKeepUnrelatedState: !syncFilterItemsState
       }
     });
 

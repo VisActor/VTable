@@ -143,15 +143,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   update() {
-    // 更新筛选状态
-    // 如果处于按值筛选状态, 则需要更新筛选条件 和 候选值
-    // this.filterToolbar.valueFilter?.syncRulesAndCandidateKeys();
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }
-    // 更新筛选状态
-    // 如果处于按条件筛选, 则需要执行筛选后, 更新值面板中checkbox的状态
-    // this.filterToolbar.valueFilter?.syncSelectedKeys();
   }
 
   /**

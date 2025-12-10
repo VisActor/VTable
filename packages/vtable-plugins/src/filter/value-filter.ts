@@ -100,58 +100,6 @@ export class ValueFilter {
     this.toUnformattedCache.set(fieldId, toUnformatted);
   }
 
-  syncRulesAndCandidateKeys() {
-    // 处于值筛选状态, 表格更新时:
-    // 可能会插入新数据, 此时需要更新筛选结果和候选值:
-    // 1. 更新筛选结果
-    // - 出现了之前没有出现过的选项
-    // - 筛选器出于被筛选状态（有值）
-    // - 则将该选项添加到筛选器中
-    // 2. 更新候选值
-    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
-    const filteredFields = this.filterStateManager.getActiveFilterFields();
-    currentRecords.forEach(record => {
-      filteredFields.forEach(candidateField => {
-        const formatFn = this.getFormatFnCache(candidateField);
-
-        // 空行不做处理
-        if (isValid(record)) {
-          const originalValue = record[candidateField];
-          const formattedValue = formatFn(record);
-          const lastToUnformatted = this.toUnformattedCache.get(candidateField) || new Map();
-          if (
-            !lastToUnformatted.has(formattedValue) &&
-            this.filterStateManager.getFilterState(candidateField)?.values?.length > 0
-          ) {
-            this.filterStateManager.getFilterState(candidateField).values.push(originalValue);
-            this.selectedKeys.get(candidateField).add(originalValue);
-          }
-        }
-      });
-    });
-  }
-
-  syncSelectedKeys() {
-    // 处于条件筛选状态, 表格更新时:
-    // 值筛选面板需要同步筛选结果
-    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
-    const filteredFields = this.filterStateManager.getActiveFilterFields();
-    currentRecords.forEach(record => {
-      filteredFields.forEach(candidateField => {
-        // 空行不做处理
-        if (isValid(record)) {
-          const originalValue = record[candidateField];
-          if (this.filterStateManager.getFilterState(candidateField)?.type === 'byCondition') {
-            if (!this.selectedKeys.get(candidateField)) {
-              this.selectedKeys.set(candidateField, new Set());
-            }
-            this.selectedKeys.get(candidateField).add(originalValue);
-          }
-        }
-      });
-    });
-  }
-
   /**
    * 为已应用筛选的列，收集候选值集合
    */
@@ -240,7 +188,7 @@ export class ValueFilter {
       return;
     }
 
-    let selectedValues = new Set<any>();
+    const selectedValues = new Set<any>();
     const originalValues = new Set<any>();
     const originalRecords = this.table.internalProps.records; // 原始数据
     originalRecords.forEach(record => {
@@ -259,22 +207,39 @@ export class ValueFilter {
           selectedValues.add(record[fieldId]);
         }
       });
+      const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
+      if (hasFiltered) {
+        this.selectedKeys.set(fieldId, selectedValues);
+        this.filterStateManager.dispatch({
+          type: FilterActionType.ADD_FILTER,
+          payload: {
+            field: fieldId,
+            type: 'byValue',
+            values: Array.from(selectedValues),
+            enable: true
+          }
+        });
+      }
     } else {
-      const selectedFromRules = this.filterStateManager.getFilterState(fieldId)?.values || originalValues; // 如果按值筛选没有状态, 则默认选中所有值
-      selectedValues = new Set(selectedFromRules);
-    }
-    this.selectedKeys.set(fieldId, selectedValues);
-    const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
-    if (hasFiltered) {
-      this.filterStateManager.dispatch({
-        type: FilterActionType.ADD_FILTER,
-        payload: {
-          field: fieldId,
-          type: 'byValue',
-          values: Array.from(selectedValues),
-          enable: true
+      const selectedRules = this.filterStateManager.getFilterState(fieldId)?.values; // 如果按值筛选没有状态, 则默认选中所有值
+      if (selectedRules) {
+        const hasFiltered = !arrayEqual(Array.from(originalValues), selectedRules);
+        if (hasFiltered) {
+          this.selectedKeys.set(fieldId, new Set(selectedRules));
+          this.filterStateManager.dispatch({
+            type: FilterActionType.ADD_FILTER,
+            payload: {
+              field: fieldId,
+              type: 'byValue',
+              values: selectedRules,
+              enable: true,
+              shouldKeepUnrelatedState: true
+            }
+          });
         }
-      });
+      } else {
+        this.selectedKeys.set(fieldId, originalValues);
+      }
     }
   }
 
@@ -296,21 +261,28 @@ export class ValueFilter {
 
     this.selectedKeys.set(fieldId, new Set(selections));
 
-    if (selections.length >= 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) {
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
+
+    if (
+      (selections.length >= 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) ||
+      !syncFilterItemsState
+    ) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
           field: fieldId,
           type: 'byValue',
           values: selections,
-          enable: true
+          enable: true,
+          shouldKeepUnrelatedState: !syncFilterItemsState
         }
       });
     } else {
       this.filterStateManager.dispatch({
         type: FilterActionType.REMOVE_FILTER,
         payload: {
-          field: fieldId
+          field: fieldId,
+          type: 'byValue'
         }
       });
     }
