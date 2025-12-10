@@ -1187,6 +1187,9 @@ export class StateManager {
     }
   }
   setScrollTop(top: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
+    if (!this.table) {
+      return;
+    }
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     // _disableColumnAndRowSizeRound环境中，可能出现
