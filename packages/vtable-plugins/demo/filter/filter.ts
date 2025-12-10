@@ -345,7 +345,7 @@ export function createTable() {
       plugins: [filterPlugin],
       records: [...generateDemoData(50, '第二次'), null, undefined]
     });
-  }, 8000);
+  }, 2000);
 
   // 插件更新
   // setTimeout(() => {
