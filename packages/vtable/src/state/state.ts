@@ -1267,6 +1267,9 @@ export class StateManager {
     }
   }
   setScrollLeft(left: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
