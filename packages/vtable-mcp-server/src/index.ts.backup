@@ -1,0 +1,171 @@
+import WebSocket, { WebSocketServer } from 'ws';
+import express from 'express';
+import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
+import { MCP_CONFIG, getHealthCheckUrl, getWebSocketUrl } from '../../vtable-mcp/cjs/config.js';
+
+const app = express();
+const PORT = parseInt(process.env.PORT || MCP_CONFIG.DEFAULT_SERVER_PORT.toString(), 10);
+
+app.use(cors());
+app.use(express.json());
+
+const sessions = new Map<string, WebSocket>();
+const wss = new WebSocketServer({ noServer: true });
+
+wss.on('connection', (ws: WebSocket, request: any) => {
+  let sessionId: string;
+
+  try {
+    const url = new URL(request.url || '/', `http://${request.headers.host}`);
+    sessionId = url.searchParams.get('session_id') || MCP_CONFIG.DEFAULT_SESSION_ID;
+
+    console.log(`[MCP Server] Client connected: session_id=${sessionId}`);
+    sessions.set(sessionId, ws);
+
+    ws.send(JSON.stringify({ type: 'connected', sessionId, timestamp: new Date().toISOString() }));
+  } catch (error) {
+    console.error('[MCP Server] Connection setup error:', error);
+    ws.close(1002, 'Protocol error: Invalid connection request');
+    return;
+  }
+
+  ws.on('message', (data: Buffer) => {
+    try {
+      const message = JSON.parse(data.toString());
+      console.log(`[MCP Server] Message from ${sessionId}:`, message.type);
+
+      // Handle different message types
+      switch (message.type) {
+        case 'ping':
+          ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
+          break;
+        case 'tools_list':
+          // Handle tools list from client
+          console.log(`[MCP Server] Received tools list from ${sessionId}`);
+          break;
+        default:
+          console.log(`[MCP Server] Unknown message type from ${sessionId}:`, message.type);
+      }
+    } catch (error) {
+      console.error(`[MCP Server] Message error from ${sessionId}:`, error);
+      ws.send(JSON.stringify({
+        type: 'error',
+        error: 'Invalid message format',
+        timestamp: new Date().toISOString()
+      }));
+    }
+  });
+
+  ws.on('error', (error) => {
+    console.error(`[MCP Server] WebSocket error for session ${sessionId}:`, error);
+  });
+
+  ws.on('close', (code, reason) => {
+    console.log(`[MCP Server] Client disconnected: ${sessionId}, code: ${code}, reason: ${reason}`);
+    sessions.delete(sessionId);
+  });
+
+  // Send periodic ping to keep connection alive
+  const pingInterval = setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.ping();
+    } else {
+      clearInterval(pingInterval);
+    }
+  }, 30000); // Ping every 30 seconds
+
+  ws.on('pong', () => {
+    console.log(`[MCP Server] Received pong from ${sessionId}`);
+  });
+});
+
+app.post(MCP_CONFIG.TOOL_CALL_ENDPOINT, async (req, res) => {
+  try {
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({
+        error: 'Invalid request body',
+        code: MCP_CONFIG.ERROR_CODES.INVALID_PARAMS
+      });
+    }
+
+    const { sessionId = MCP_CONFIG.DEFAULT_SESSION_ID, toolName, params, callId = uuidv4() } = req.body;
+
+    // Validate required fields
+    if (!toolName || typeof toolName !== 'string') {
+      return res.status(400).json({
+        error: 'Missing or invalid toolName',
+        code: MCP_CONFIG.ERROR_CODES.INVALID_PARAMS
+      });
+    }
+
+    const wsClient = sessions.get(sessionId);
+
+    if (!wsClient || wsClient.readyState !== WebSocket.OPEN) {
+      return res.status(404).json({
+        error: 'Session not found or disconnected',
+        sessionId,
+        code: MCP_CONFIG.ERROR_CODES.SERVER_ERROR
+      });
+    }
+
+    // Send tool call to WebSocket client
+    wsClient.send(JSON.stringify({ type: 'tool_call', toolName, params, callId }));
+
+    console.log(`[MCP Server] Tool call sent: ${toolName} to session ${sessionId}`);
+
+    res.json({
+      success: true,
+      message: `Tool call "${toolName}" sent`,
+      callId,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('[MCP Server] Tool call error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: MCP_CONFIG.ERROR_CODES.INTERNAL_ERROR,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+app.get(MCP_CONFIG.HEALTH_ENDPOINT, (req, res) => {
+  try {
+    res.json({
+      status: 'ok',
+      sessions: Array.from(sessions.keys()),
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage()
+    });
+  } catch (error) {
+    console.error('[MCP Server] Health check error:', error);
+    res.status(500).json({
+      status: 'error',
+      error: 'Health check failed',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+const server = app.listen(PORT, () => {
+  console.log(`[MCP Server] Running on port ${PORT}`);
+  console.log(`[MCP Server] WebSocket: ${getWebSocketUrl(PORT)}`);
+  console.log(`[MCP Server] HTTP: http://localhost:${PORT}${MCP_CONFIG.TOOL_CALL_ENDPOINT}`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+  const url = new URL(request.url || '/', `http://${request.headers.host}`);
+  if (url.pathname === MCP_CONFIG.WEBSOCKET_PATH) {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
+console.log('[MCP Server] Starting...');
