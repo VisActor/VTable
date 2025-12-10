@@ -1187,7 +1187,7 @@ export class StateManager {
     }
   }
   setScrollTop(top: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
-    if (!this.table) {
+    if (!this.table || !this.table.scenegraph) {
       return;
     }
     // 矫正top值范围

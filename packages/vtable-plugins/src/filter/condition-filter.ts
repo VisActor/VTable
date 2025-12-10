@@ -18,6 +18,7 @@ export class ConditionFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
   private pluginOptions: FilterOptions;
+  private filterToolBarHide: () => void;
 
   private styles: Record<any, any>;
 
@@ -39,13 +40,19 @@ export class ConditionFilter {
   private categories: FilterOperatorCategoryOption[] = [];
   protected operators: OperatorOption[] = [];
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
+  constructor(
+    table: ListTable | PivotTable,
+    filterStateManager: FilterStateManager,
+    pluginOptions: FilterOptions,
+    filterToolBarHide: () => void
+  ) {
     this.table = table;
     this.filterStateManager = filterStateManager;
     this.pluginOptions = pluginOptions;
     this.styles = pluginOptions.styles || {};
     this.categories = pluginOptions.conditionCategories;
     this.operators = operators;
+    this.filterToolBarHide = filterToolBarHide;
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -269,8 +276,6 @@ export class ConditionFilter {
         shouldKeepUnrelatedState: !syncFilterItemsState
       }
     });
-
-    this.hide();
   }
 
   /**
@@ -395,6 +400,7 @@ export class ConditionFilter {
     this.valueInput.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         this.applyFilter();
+        this.filterToolBarHide();
       }
     });
 
@@ -402,6 +408,7 @@ export class ConditionFilter {
     this.valueInputMax.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         this.applyFilter();
+        this.filterToolBarHide();
       }
     });
 

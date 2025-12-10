@@ -284,7 +284,7 @@ export function createTable() {
     syncFilterItemsState: false,
     onFilterRecordsEnd: records => {
       console.log('onFilterRecordsEnd');
-      return records;
+      return [...records, null, undefined];
     }
   });
   (window as any).filterPlugin = filterPlugin;

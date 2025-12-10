@@ -35,7 +35,7 @@ export class FilterToolbar {
     this.table = table;
     this.filterStateManager = filterStateManager;
     this.valueFilter = new ValueFilter(this.table, this.filterStateManager, pluginOptions);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions, this.hide);
     this.pluginOptions = pluginOptions;
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
@@ -80,7 +80,7 @@ export class FilterToolbar {
     } else if (this.activeTab === 'byCondition') {
       this.conditionFilter.applyFilter(field);
     }
-    this.hide(this.currentCol, this.currentRow);
+    this.hide();
   }
 
   private clearFilter(field: string | number): void {
@@ -90,7 +90,7 @@ export class FilterToolbar {
     if (this.conditionFilter) {
       this.conditionFilter.clearFilter(field);
     }
-    this.hide(this.currentCol, this.currentRow);
+    this.hide();
   }
 
   /**
@@ -195,7 +195,7 @@ export class FilterToolbar {
       this.onTabSwitch('byCondition');
     });
 
-    this.cancelFilterButton.addEventListener('click', () => this.hide(this.currentCol, this.currentRow));
+    this.cancelFilterButton.addEventListener('click', () => this.hide());
 
     this.clearFilterOptionLink.addEventListener('click', e => {
       e.preventDefault();
@@ -209,7 +209,7 @@ export class FilterToolbar {
     // 点击空白处整个筛选菜单可消失
     document.addEventListener('click', () => {
       if (this.isVisible) {
-        this.hide(this.currentCol, this.currentRow);
+        this.hide();
       }
     });
 
@@ -310,14 +310,14 @@ export class FilterToolbar {
     }, 0);
   }
 
-  hide(currentCol: number | null, currentRow: number | null): void {
+  hide = (currentCol?: number, currentRow?: number): void => {
     this.filterMenu.style.display = 'none';
     this.isVisible = false;
     this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
-      col: currentCol,
-      row: currentRow
+      col: currentCol ?? this.currentCol,
+      row: currentRow ?? this.currentRow
     });
-  }
+  };
 
   destroy() {
     this.valueFilter.destroy();
