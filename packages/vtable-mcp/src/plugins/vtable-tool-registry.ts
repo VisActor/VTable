@@ -66,7 +66,7 @@ export class VTableToolRegistry {
   }
 
   /**
-   * 初始化方法
+   * 初始化方法，由MCPClient调用
    * 
    * 在这个方法中注册所有 VTable 表格操作工具。
    * 
