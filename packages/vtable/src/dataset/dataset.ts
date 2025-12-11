@@ -1145,6 +1145,8 @@ export class Dataset {
     indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ): IAggregator {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
+    const rowDimensionKey = this.rows[rowKey.length - 1];
+    const colDimensionKey = this.columns[colKey.length - 1];
     // let agg;
     let flatRowKey;
     let flatColKey;
@@ -1165,7 +1167,8 @@ export class Dataset {
         } else if (
           this.totals?.row?.subTotalsDimensions &&
           this.totals?.row?.subTotalsDimensions?.length >= 1 &&
-          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel &&
+          this.totals.row.subTotalsDimensions.find(dimension => dimension === rowDimensionKey)
         ) {
           rowKey.push(this.rowSubTotalLabel);
         }
@@ -1190,7 +1193,8 @@ export class Dataset {
         } else if (
           this.totals?.column?.subTotalsDimensions &&
           this.totals?.column?.subTotalsDimensions?.length >= 1 &&
-          colKey[colKey.length - 1] !== this.colSubTotalLabel
+          colKey[colKey.length - 1] !== this.colSubTotalLabel &&
+          this.totals.column.subTotalsDimensions.find(dimension => dimension === colDimensionKey)
         ) {
           colKey.push(this.colSubTotalLabel);
         }
