@@ -137,7 +137,7 @@ export class FormulaReferenceAdjustor {
    * @param colOffset 列位移（目标列 - 源列）
    * @param rowOffset 行位移（目标行 - 源行）
    */
-  static adjustFormulaReferences(formula: string | number, colOffset: number, rowOffset: number): string | number {
+  static adjustFormulaReferences(formula: string, colOffset: number, rowOffset: number): string {
     const offset = {
       colOffset: colOffset,
       rowOffset: rowOffset
