@@ -899,7 +899,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     sourceStartRow: number,
     targetStartCol: number,
     targetStartRow: number
-  ): (string | number)[][] {
+  ): string[][] {
     if (!formulas || formulas.length === 0) {
       return formulas;
     }
