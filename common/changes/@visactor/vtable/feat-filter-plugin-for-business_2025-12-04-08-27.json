@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: empty line bug",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

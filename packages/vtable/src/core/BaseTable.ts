@@ -503,16 +503,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? typeof limitMinWidth === 'number'
           ? limitMinWidth
           : limitMinWidth
-          ? 10
-          : 0
+            ? 10
+            : 0
         : 10;
     internalProps.limitMinHeight =
       limitMinHeight !== null && limitMinHeight !== undefined
         ? typeof limitMinHeight === 'number'
           ? limitMinHeight
           : limitMinHeight
-          ? 10
-          : 0
+            ? 10
+            : 0
         : 10;
     // 生成scenegraph
     // this._vDataSet = new DataSet();
@@ -1488,12 +1488,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //   : this.defaultColWidth;
     if (this.isRowHeader(col, 0) || this.isCornerHeader(col, 0)) {
       return Array.isArray(this.defaultHeaderColWidth)
-        ? this.defaultHeaderColWidth[col] ?? this.defaultColWidth
+        ? (this.defaultHeaderColWidth[col] ?? this.defaultColWidth)
         : this.defaultHeaderColWidth;
     } else if (this.isRightFrozenColumn(col, this.columnHeaderLevelCount)) {
       if (this.isPivotTable()) {
         return Array.isArray(this.defaultHeaderColWidth)
-          ? this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth
+          ? (this.defaultHeaderColWidth[this.rowHeaderLevelCount - this.rightFrozenColCount] ?? this.defaultColWidth)
           : this.defaultHeaderColWidth;
       }
       return this.defaultColWidth;
@@ -1504,15 +1504,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getDefaultRowHeight(row: number) {
     if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row) || this.isSeriesNumberInHeader(0, row)) {
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+        ? (this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight)
         : this.defaultHeaderRowHeight;
     }
     if (this.isBottomFrozenRow(row)) {
       //底部冻结行默认取用了表头的行高  但针对非表头数据冻结的情况这里可能不妥
       return Array.isArray(this.defaultHeaderRowHeight)
-        ? this.defaultHeaderRowHeight[
+        ? (this.defaultHeaderRowHeight[
             this.columnHeaderLevelCount > 0 ? this.columnHeaderLevelCount - this.bottomFrozenRowCount : 0
-          ] ?? this.internalProps.defaultRowHeight
+          ] ?? this.internalProps.defaultRowHeight)
         : this.defaultHeaderRowHeight;
     }
     return this.internalProps.defaultRowHeight;
@@ -1884,7 +1884,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getAllRowsHeight(): number {
-    if (this.internalProps.rowCount <= 0) {
+    if (!this.internalProps?.rowCount || this.internalProps.rowCount <= 0) {
       return 0;
     }
     const h = this.getRowsHeight(0, this.internalProps.rowCount - 1);
@@ -1895,7 +1895,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getAllColsWidth(): number {
-    if (this.internalProps.colCount <= 0) {
+    if (!this.internalProps?.colCount || this.internalProps.colCount <= 0) {
       return 0;
     }
     const w = this.getColsWidth(0, this.internalProps.colCount - 1);
@@ -2808,16 +2808,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         ? typeof limitMinWidth === 'number'
           ? limitMinWidth
           : limitMinWidth
-          ? 10
-          : 0
+            ? 10
+            : 0
         : 10;
     internalProps.limitMinHeight =
       limitMinHeight !== null && limitMinHeight !== undefined
         ? typeof limitMinHeight === 'number'
           ? limitMinHeight
           : limitMinHeight
-          ? 10
-          : 0
+            ? 10
+            : 0
         : 10;
     // 生成scenegraph
     // this._vDataSet = new DataSet();

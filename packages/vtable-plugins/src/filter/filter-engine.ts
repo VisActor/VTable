@@ -1,5 +1,5 @@
 import type { ListTable, PivotTable, TYPES } from '@visactor/vtable';
-import type { FilterState, FilterOperator, FilterConfig } from './types';
+import type { FilterState, FilterConfig, FilterOptions } from './types';
 
 /**
  * 筛选引擎，用于进行实际的筛选操作
@@ -7,6 +7,12 @@ import type { FilterState, FilterOperator, FilterConfig } from './types';
 export class FilterEngine {
   filterFuncRule: (TYPES.FilterFuncRule & { fieldId?: string })[] = [];
   filterValueRule: TYPES.FilterValueRule[] = [];
+
+  private pluginOptions: FilterOptions;
+
+  constructor(filterPluginOptions: FilterOptions) {
+    this.pluginOptions = filterPluginOptions;
+  }
 
   applyFilter(state: FilterState, table: ListTable | PivotTable) {
     const { filters } = state;
@@ -34,7 +40,8 @@ export class FilterEngine {
     });
 
     table.updateFilterRules([...this.filterFuncRule, ...this.filterValueRule], {
-      clearRowHeightCache: false
+      clearRowHeightCache: false,
+      onFilterRecordsEnd: this.pluginOptions?.onFilterRecordsEnd
     });
   }
 
