@@ -42,8 +42,6 @@ export interface FilterOptions {
    * @default true
    */
   syncFilterItemsState?: boolean;
-  /** Filter records end callback */
-  onFilterRecordsEnd?: (records: any[]) => any[];
 }
 ```
 
@@ -61,7 +59,6 @@ export interface FilterOptions {
 | `conditionCategories`  | FilterOperatorCategoryOption[]           | -                          | Custom filter categories            |
 | `checkboxItemFormat`   | (rawValue: any, formatValue: any) => any | -                          | Custom filter option display format |
 | `syncFilterItemsState` | boolean                                  | true                       | Whether multiple filters are linked |
-| `onFilterRecordsEnd`   | (records: any[]) => any[]                | -                          | Filter records end callback         |
 
 ### Filter Operators
 

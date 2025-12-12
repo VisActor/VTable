@@ -42,8 +42,6 @@ export interface FilterOptions {
    * @default true
    */
   syncFilterItemsState?: boolean;
-  /** 筛选记录结束回调 */
-  onFilterRecordsEnd?: (records: any[]) => any[];
 }
 ```
 
@@ -61,7 +59,6 @@ export interface FilterOptions {
 | `conditionCategories`  | FilterOperatorCategoryOption[]           | -                          | 自定义筛选分类         |
 | `checkboxItemFormat`   | (rawValue: any, formatValue: any) => any | -                          | 自定义筛选选项展示格式 |
 | `syncFilterItemsState` | boolean                                  | true                       | 多个筛选器之间是否联动 |
-| `onFilterRecordsEnd`   | (records: any[]) => any[]                | -                          | 筛选记录结束回调       |
 
 ### 筛选操作符
 
