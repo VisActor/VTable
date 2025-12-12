@@ -151,6 +151,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     this.element.classList.add('vtable-excel-cursor');
     // 获取事件总线
     this.eventBus = (this.tableInstance as any).eventBus;
+    // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
+    (this.tableInstance as any).__vtableSheet = this.vtableSheet;
   }
 
   /**

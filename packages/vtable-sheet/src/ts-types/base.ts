@@ -51,6 +51,10 @@ export interface IToolbarItem {
 export enum MainMenuItemKey {
   /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
+  /** 需要插件支持，请在plugins中配置 ExcelImportPlugin，自动导入 Excel 文件的所有 sheets（替换现有 sheets） */
+  IMPORT_MULTIPLE_SHEETS = 'import-multiple-sheets',
+  /** 需要插件支持，请在plugins中配置 ExcelImportPlugin，自动导入 Excel 文件的所有 sheets（追加到现有 sheets） */
+  IMPORT_MULTIPLE_SHEETS_APPEND = 'import-multiple-sheets-append',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
   EXPORT_CURRENT_SHEET_CSV = 'export-current-sheet-csv',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
