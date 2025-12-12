@@ -471,8 +471,8 @@ export class StateManager {
     const cornerHeaderSelectMode = this.table.options.select?.cornerHeaderSelectMode
       ? this.table.options.select?.cornerHeaderSelectMode
       : this.table.options.select?.headerSelectMode === 'body'
-        ? this.table.options.select?.headerSelectMode
-        : 'all';
+      ? this.table.options.select?.headerSelectMode
+      : 'all';
 
     // if (enableRowHighlight && enableColumnHighlight) {
     //   this.select.highlightScope = HighlightScope.cross;
@@ -537,7 +537,7 @@ export class StateManager {
       function flatten(cols: any, parentStartIndex = 0) {
         cols.forEach((col: any) => {
           const startIndex = col.startInTotal
-            ? (col.startInTotal + state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0)
+            ? col.startInTotal + state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0
             : parentStartIndex;
           if (col.columns) {
             flatten(col.columns, startIndex);
@@ -1649,8 +1649,8 @@ export class StateManager {
         this.sort[index]?.order === 'asc'
           ? 'sort_downward'
           : this.sort[index]?.order === 'desc'
-            ? 'sort_upward'
-            : 'sort_normal';
+          ? 'sort_upward'
+          : 'sort_normal';
       this.setSortState(sortState.slice(0, index + 1));
       // 获取sort对应的行列位置
       const cellAddress = this.table.internalProps.layoutMap.getHeaderCellAddressByField(

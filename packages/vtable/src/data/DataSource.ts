@@ -457,7 +457,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     //   return 0;
     // }
     let childTotalLength = 0;
-    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : (nodeData.children?.length ?? 0);
+    const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : nodeData.children?.length ?? 0;
     for (let j = 0; j < nodeLength; j++) {
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;

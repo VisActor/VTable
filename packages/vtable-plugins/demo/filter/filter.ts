@@ -172,7 +172,7 @@ export function createTable() {
         backgroundColor: '#0E1119',
         border: '0px solid #272A30',
         boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-        zIndex: '100',
+        zIndex: '99999',
         borderRadius: '4px',
         color: '#FFF',
         fontFamily: 'SourceHanSansCN-Normal',
