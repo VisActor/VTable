@@ -1145,6 +1145,20 @@ export class Dataset {
     indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ): IAggregator {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
+    //#region 获取行和列的维度key,考虑到tree模式被折叠的情况 rowKey colKey会小于rows和columns的长度
+    let rowDimensionKey;
+    if (indicatorPosition?.position === 'row') {
+      rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
+    } else {
+      rowDimensionKey = this.rows[rowKey.length - 1];
+    }
+    let colDimensionKey;
+    if (indicatorPosition?.position === 'col') {
+      colDimensionKey = colKey.length >= 2 ? this.columns[colKey.length - 2] : undefined;
+    } else {
+      colDimensionKey = this.columns[colKey.length - 1];
+    }
+    //#endregion
     // let agg;
     let flatRowKey;
     let flatColKey;
@@ -1165,7 +1179,8 @@ export class Dataset {
         } else if (
           this.totals?.row?.subTotalsDimensions &&
           this.totals?.row?.subTotalsDimensions?.length >= 1 &&
-          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel &&
+          this.totals.row.subTotalsDimensions.find(dimension => dimension === rowDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到rowKey中
         ) {
           rowKey.push(this.rowSubTotalLabel);
         }
@@ -1190,7 +1205,8 @@ export class Dataset {
         } else if (
           this.totals?.column?.subTotalsDimensions &&
           this.totals?.column?.subTotalsDimensions?.length >= 1 &&
-          colKey[colKey.length - 1] !== this.colSubTotalLabel
+          colKey[colKey.length - 1] !== this.colSubTotalLabel &&
+          this.totals.column.subTotalsDimensions.find(dimension => dimension === colDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到colKey中
         ) {
           colKey.push(this.colSubTotalLabel);
         }
