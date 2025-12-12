@@ -255,3 +255,69 @@ VTable 所支持的数据类型共有 7 种，分别为：
     keepAspectRatio:true,
   }
 ```
+## 扩展：自定义列类型（TypeScript）
+
+在实际业务中，除了 VTable 内置的 `cellType`（text/link/image/video/progressbar/sparkline/chart 等），我们常常还需要在列定义里附加一些 **业务侧专用配置**，例如：
+
+- 权限/可见性控制：`permissionKey`
+- 埋点信息：`trackId` / `trackParams`
+- 统一渲染策略开关：`highlightOnNegative` / `useTagStyle`
+- 上层封装组件的 DSL 字段：`renderAs` / `variant`
+
+这些字段通常不会被 VTable 内部直接消费，而是由业务侧封装层（如统一的 `cellRender`、hook、列工厂函数等）读取并实现对应行为。
+
+为此，VTable 提供了一个 **类型扩展入口**，允许开发者通过 TypeScript 的 module augmentation（模块扩展）为 `ColumnDefine` 增加自定义列类型定义，从而获得完整的类型提示与校验能力。
+
+### 1）定义自定义列类型
+
+```ts
+import type { HeaderDefine } from '@visactor/vtable';
+
+// 自定义列 body 配置（示例：自定义按钮列）
+export interface IColoredButtonColumnBody {
+  cellType: 'button';
+  field: string;
+
+  /** 业务侧扩展字段：当值为负数时高亮 */
+  highlightOnNegative?: boolean;
+
+  text?: string;
+  style?: any;
+}
+
+// 完整列定义（Header + Body）
+export type ColoredButtonColumnDefine = IColoredButtonColumnBody & HeaderDefine;
+```
+
+### 2）通过模块扩展注册类型
+
+```ts
+declare module '@visactor/vtable/es/ts-types' {
+  interface CustomColumnBodyDefineMap {
+    coloredButton: IColoredButtonColumnBody;
+  }
+
+  interface CustomColumnDefineMap {
+    coloredButtonColumn: ColoredButtonColumnDefine;
+  }
+}
+```
+
+### 3）在 columns 中使用
+
+```ts
+import type { ColumnsDefine } from '@visactor/vtable';
+
+const columns: ColumnsDefine = [
+  {
+    field: 'value',
+    title: '自定义按钮列',
+    cellType: 'button',
+    text: 'check',
+    highlightOnNegative: true // ✅ 来自 CustomColumnDefineMap 的扩展字段
+  }
+];
+```
+
+> 注意：以上示例展示的是 **类型系统层面的扩展能力**。
+> `highlightOnNegative` 这类字段是否产生实际效果，需要由业务侧封装的渲染逻辑（例如自定义 `cellRender`、hook 或列工厂）去读取并执行。VTable 本身不会自动解析该字段。
