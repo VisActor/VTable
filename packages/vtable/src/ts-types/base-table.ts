@@ -141,6 +141,7 @@ export interface IBaseTableProtected {
   // disableRowHeaderColumnResize?: boolean;
 
   columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+  canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
 
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
 
@@ -633,6 +634,7 @@ export interface BaseTableConstructorOptions {
      * 调整列宽 可操作范围。'all' | 'none' | 'header' | 'body'; 整列间隔线|禁止调整|只能在表头处间隔线|只能在body间隔线
      */
     columnResizeMode?: 'all' | 'none' | 'header' | 'body';
+    canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
     rowResizeMode?: 'all' | 'none' | 'header' | 'body';
     /** 是否禁用双击列边框自动调整列宽 **/
     disableDblclickAutoResizeColWidth?: boolean;
@@ -992,9 +994,9 @@ export interface BaseTableAPI {
   /** 获取表格body部分的显示单元格范围 */
   getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
   /** 获取表格body部分的显示列号范围 */
-  getBodyVisibleColRange: (deltaX?: number) => { colStart: number; colEnd: number };
+  getBodyVisibleColRange: (start_deltaX?: number, end_deltaX?: number) => { colStart: number; colEnd: number };
   /** 获取表格body部分的显示行号范围 */
-  getBodyVisibleRowRange: (deltaY?: number) => { rowStart: number; rowEnd: number };
+  getBodyVisibleRowRange: (start_deltaY?: number, end_deltaY?: number) => { rowStart: number; rowEnd: number };
 
   _hasCustomRenderOrLayout: () => boolean;
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */

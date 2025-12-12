@@ -1,3 +1,25 @@
+# v1.22.7
+
+2025-12-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 调整列宽resize支持设置canResizeColumn函数 [#4764](https://github.com/VisActor/VTable/issues/4764)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 透视图轴配置zero和range矛盾问题修复
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化透视图tooltip联动效果
+- **@visactor/vtable-plugins**: 当表格记录变化时过滤插件自动更新筛选项
+
+
+
+[更多详情请查看 v1.22.7](https://github.com/VisActor/VTable/releases/tag/v1.22.7)
+
 # v1.22.6
 
 2025-12-02

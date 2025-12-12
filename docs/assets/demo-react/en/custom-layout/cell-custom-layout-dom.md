@@ -60,7 +60,7 @@ const UserProfileComponent = props => {
           boundsPadding: [0, 0, 0, 10],
           react: {
             pointerEvents: true,
-            container: table.bodyDomContainer, // table.headerDomContainer
+            container: undefined, // `table.bodyDomContainer` or `table.headerDomContainer`
             anchorType: 'bottom-right',
             element: <CardInfo record={record} hover={hover} row={row} />
           }

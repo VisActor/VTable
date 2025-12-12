@@ -1326,8 +1326,8 @@ export function createTable() {
     },
     chartDimensionLinkage: {
       showTooltip: true,
-      heightLimitToShowTooltipForLastRow: 60,
-      widthLimitToShowTooltipForLastColumn: 90
+      heightLimitToShowTooltipForEdgeRow: 60,
+      widthLimitToShowTooltipForEdgeColumn: 90
     }
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);

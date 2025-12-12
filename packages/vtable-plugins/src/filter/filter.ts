@@ -27,7 +27,11 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     TABLE_EVENT_TYPE.BEFORE_INIT,
     TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
     TABLE_EVENT_TYPE.ICON_CLICK,
-    TABLE_EVENT_TYPE.SCROLL
+    TABLE_EVENT_TYPE.SCROLL,
+    TABLE_EVENT_TYPE.CHANGE_CELL_VALUE,
+    TABLE_EVENT_TYPE.UPDATE_RECORD,
+    TABLE_EVENT_TYPE.ADD_RECORD,
+    TABLE_EVENT_TYPE.DELETE_RECORD
   ];
 
   pluginOptions: FilterOptions;
@@ -132,6 +136,15 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       if (eventArgs.scrollDirection === 'horizontal') {
         this.filterToolbar.adjustMenuPosition();
       }
+    } else if (runtime === TABLE_EVENT_TYPE.CHANGE_CELL_VALUE) {
+      const changedField = this.table.getHeaderField(eventArgs.col, eventArgs.row);
+      this.syncFilterWithTableData(changedField as string | number);
+    } else if (runtime === TABLE_EVENT_TYPE.UPDATE_RECORD) {
+      this.syncFilterWithTableData();
+    } else if (runtime === TABLE_EVENT_TYPE.ADD_RECORD) {
+      this.syncFilterWithTableData();
+    } else if (runtime === TABLE_EVENT_TYPE.DELETE_RECORD) {
+      this.syncFilterWithTableData();
     }
   }
 
@@ -142,9 +155,25 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.filterToolbar.updateStyles(this.pluginOptions.styles);
   }
 
+  // 当用户的配置项更新时调用
   update() {
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
+    }
+  }
+
+  syncFilterWithTableData(field?: string | number) {
+    const filterType = this.filterStateManager.getFilterState(field)?.type;
+    if (filterType === 'byValue') {
+      if (field !== null && field !== undefined) {
+        this.filterToolbar.valueFilter.syncSingleStateFromTableData(field);
+        return;
+      }
+
+      const columns = this.table.dataSource.columns;
+      columns.forEach(({ field }) => {
+        this.filterToolbar.valueFilter.syncSingleStateFromTableData(field as string | number);
+      });
     }
   }
 
