@@ -336,7 +336,7 @@ export function createTable() {
       },
       onFilterRecordsEnd: records => {
         console.log('onFilterRecordsEnd-2');
-        return records;
+        records.push(null, undefined);
       }
     });
     console.log('update');

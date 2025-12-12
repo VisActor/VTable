@@ -1231,7 +1231,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     // 如果配置了筛选回调, 则用户可自定义处理筛选后的数据
     if (onFilterRecordsEnd) {
-      this._source = onFilterRecordsEnd(this._source as any[]);
+      onFilterRecordsEnd(this._source as any[]);
     }
     this._sourceLength = this._source?.length || 0;
     // 初始化currentIndexedData 正常未排序。设置其状态

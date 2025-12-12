@@ -24,7 +24,7 @@ export interface FilterOptions {
    */
   syncFilterItemsState?: boolean;
   /** 筛选记录结束回调 */
-  onFilterRecordsEnd?: (records: any[]) => any[];
+  onFilterRecordsEnd?: (records: any[]) => void;
 }
 
 export interface FilterOperatorCategoryOption {
