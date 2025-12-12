@@ -3,7 +3,7 @@
  * 专门处理跨sheet tab的公式引用和计算
  */
 
-import type { FormulaCell, FormulaResult } from '../ts-types/formula';
+import type { FormulaCell } from '../ts-types/formula';
 import type { FormulaEngine } from './formula-engine';
 
 export interface CrossSheetReference {
@@ -91,10 +91,22 @@ export class CrossSheetFormulaManager {
    */
   private extractTargetSheets(formula: string): string[] {
     const sheets = new Set<string>();
-    const sheetPattern = /([A-Za-z0-9_\s一-龥]+)!/g;
-    let match;
+    // 支持：
+    // - Sheet1!A1
+    // - Sheet1！A1
+    // - 'My Sheet'!A1
+    // - 'My Sheet'！A1
+    const quotedSheetPattern = /'([^']+)'[!！]/g;
+    const unquotedSheetPattern = /([A-Za-z0-9_\s一-龥]+)[!！]/g;
 
-    while ((match = sheetPattern.exec(formula)) !== null) {
+    let match: RegExpExecArray | null;
+    while ((match = quotedSheetPattern.exec(formula)) !== null) {
+      const sheetName = match[1];
+      if (sheetName && this.isValidSheet(sheetName)) {
+        sheets.add(sheetName);
+      }
+    }
+    while ((match = unquotedSheetPattern.exec(formula)) !== null) {
       const sheetName = match[1];
       if (sheetName && this.isValidSheet(sheetName)) {
         sheets.add(sheetName);
@@ -112,7 +124,17 @@ export class CrossSheetFormulaManager {
 
     // 匹配带sheet前缀的单元格引用，如 Sheet1!A1 或 Sheet1!A1:B2 - 支持中英文sheet名称
     const escapedSheetName = targetSheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const cellPattern = new RegExp(`${escapedSheetName}!([A-Z]+[0-9]+)(?::([A-Z]+[0-9]+))?`, 'g');
+    const sepPattern = '[!！]';
+    // 支持：
+    // - Sheet1!A1
+    // - Sheet1!A1:B2
+    // - Sheet1!A1:Sheet1!B2
+    // - 'My Sheet'!A1:'My Sheet'!B2
+    const cellPattern = new RegExp(
+      `'?${escapedSheetName}'?${sepPattern}([A-Z]+[0-9]+)` +
+        `(?:\\s*:\\s*(?:'?${escapedSheetName}'?${sepPattern})?([A-Z]+[0-9]+))?`,
+      'g'
+    );
     let match;
 
     while ((match = cellPattern.exec(formula)) !== null) {

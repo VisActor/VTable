@@ -608,7 +608,7 @@ export class FormulaEngine {
    */
   private findOriginalSheetName(sheetName: string): string | null {
     // 首先尝试精确匹配sheetTitle
-    for (const [_, sheetTitle] of this.sheetTitles.entries()) {
+    for (const sheetTitle of this.sheetTitles.values()) {
       if (sheetTitle === sheetName) {
         return sheetTitle; // 完全匹配，返回原始标题
       }
@@ -616,7 +616,7 @@ export class FormulaEngine {
 
     // 如果不完全匹配，尝试不区分大小写匹配sheetTitle
     const lowerSheetName = sheetName.toLowerCase();
-    for (const [_, sheetTitle] of this.sheetTitles.entries()) {
+    for (const sheetTitle of this.sheetTitles.values()) {
       if (sheetTitle.toLowerCase() === lowerSheetName) {
         return sheetTitle; // 大小写不敏感匹配，返回原始标题的正确大小写
       }
@@ -1413,22 +1413,77 @@ export class FormulaEngine {
         return [this.getCellValueByA1(expr)];
       }
 
-      // 解析范围引用，可能包含工作表前缀，如 DataSheet!A2:A4
-      let sheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
-      let rangeExpr = expr;
+      /**
+       * 解析范围引用（兼容两端都带 sheet 前缀的写法）
+       *
+       * 支持：
+       * - Sheet1!A1:B2
+       * - Sheet1!A1:Sheet1!B2  （用户输入常见，但之前会 split('!') 失败导致返回 []）
+       * - Sheet1！A1:Sheet1！B2 （中文感叹号）
+       * - 'My Sheet'!A1:'My Sheet'!B2
+       */
+      const defaultSheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
 
-      // 检查是否包含工作表前缀
-      if (expr.includes('!')) {
-        const parts = expr.split('!');
-        if (parts.length === 2) {
-          sheetKey = parts[0];
-          rangeExpr = parts[1];
+      const parseSheetAndCell = (part: string): { sheetKey: string; cellRef: string; hasSheetPrefix: boolean } => {
+        let sheetKey = defaultSheetKey;
+        let cellRef = part.trim();
+        let hasSheetPrefix = false;
+
+        // 支持中英文感叹号分隔
+        const hasEn = cellRef.includes('!');
+        const hasCn = cellRef.includes('！');
+        if (hasEn || hasCn) {
+          const sep = hasEn ? '!' : '！';
+          const parts = cellRef.split(sep);
+          if (parts.length === 2) {
+            hasSheetPrefix = true;
+            let sheetTitle = parts[0].trim();
+            cellRef = parts[1].trim();
+
+            // 处理带引号的sheet名称（如 'My Sheet'）
+            if (sheetTitle.startsWith("'") && sheetTitle.endsWith("'")) {
+              sheetTitle = sheetTitle.slice(1, -1);
+            }
+
+            // 先从 sheetTitles 匹配（大小写不敏感），再从 sheets 匹配
+            const foundSheetKeyFromTitles = Array.from(this.sheetTitles.entries()).find(
+              ([_, value]) => value.toLowerCase() === sheetTitle.toLowerCase()
+            )?.[0];
+            const foundSheetKeyFromKeys = Array.from(this.sheets.entries()).find(
+              ([sheetKey]) => sheetKey.toLowerCase() === sheetTitle.toLowerCase()
+            )?.[0];
+            let foundSheetKey = foundSheetKeyFromTitles || foundSheetKeyFromKeys;
+
+            if (!foundSheetKey && this.sheets.has(sheetTitle)) {
+              foundSheetKey = sheetTitle;
+            }
+
+            sheetKey = foundSheetKey || sheetTitle;
+          }
         }
+
+        return { sheetKey, cellRef, hasSheetPrefix };
+      };
+
+      const [startRaw, endRaw] = expr.split(':');
+      const startParsed = parseSheetAndCell(startRaw);
+      const endParsed = parseSheetAndCell(endRaw);
+
+      // Excel 语义：当范围写成 Sheet1!A1:B2 时，右侧 B2 隐含继承左侧的 sheet
+      if (startParsed.hasSheetPrefix && !endParsed.hasSheetPrefix) {
+        endParsed.sheetKey = startParsed.sheetKey;
+      } else if (!startParsed.hasSheetPrefix && endParsed.hasSheetPrefix) {
+        startParsed.sheetKey = endParsed.sheetKey;
       }
 
-      const [start, end] = rangeExpr.split(':');
-      const startCell = this.parseA1Notation(start.trim());
-      const endCell = this.parseA1Notation(end.trim());
+      // 只支持同一个 sheet 内的连续范围；跨 sheet 的 3D 引用（Sheet1!A1:Sheet2!B2）不支持
+      if (startParsed.sheetKey.toLowerCase() !== endParsed.sheetKey.toLowerCase()) {
+        return [];
+      }
+
+      const sheetKey = startParsed.sheetKey;
+      const startCell = this.parseA1Notation(startParsed.cellRef);
+      const endCell = this.parseA1Notation(endParsed.cellRef);
 
       const values: unknown[] = [];
 
@@ -1952,6 +2007,26 @@ export class FormulaEngine {
   }
 
   private extractReferencesFromExpression(expr: string, references: string[], currentSheet: string = 'Sheet1'): void {
+    // 先处理两端都带 sheet 前缀的范围引用：Sheet1!A1:Sheet1!B2 / Sheet1！A1:Sheet1！B2
+    // 注：跨 sheet 的 3D 引用（Sheet1!A1:Sheet2!B2）当前不支持，忽略即可
+    const repeatedSheetRangePattern = new RegExp(
+      '([A-Za-z0-9_\\s一-龥]+)[！!]([A-Z]+[0-9]+)\\s*:\\s*([A-Za-z0-9_\\s一-龥]+)[！!]([A-Z]+[0-9]+)',
+      'g'
+    );
+    let repeatedMatch: RegExpExecArray | null;
+    while ((repeatedMatch = repeatedSheetRangePattern.exec(expr)) !== null) {
+      const sheet1 = repeatedMatch[1];
+      const startCell = repeatedMatch[2];
+      const sheet2 = repeatedMatch[3];
+      const endCell = repeatedMatch[4];
+
+      // 仅当两端 sheet 相同（大小写不敏感）时才展开
+      if (sheet1.toLowerCase() === sheet2.toLowerCase()) {
+        const expandedRefs = this.expandRangeToCells(sheet1, startCell, endCell);
+        references.push(...expandedRefs);
+      }
+    }
+
     // 首先处理中文感叹号的引用
     const chineseExclamationPattern = /([A-Za-z0-9_\s一-龥]+)！([A-Z]+[0-9]+)(?::([A-Z]+[0-9]+))?/g;
     let match;

@@ -5,7 +5,7 @@
 
 import type { FormulaCell } from '../ts-types/formula';
 import type { FormulaEngine } from './formula-engine';
-import { CrossSheetFormulaManager } from './cross-sheet-formula-manager';
+import type { CrossSheetFormulaManager } from './cross-sheet-formula-manager';
 
 export interface ValidationError {
   type: 'INVALID_SHEET' | 'INVALID_CELL' | 'CIRCULAR_REFERENCE' | 'MISSING_REFERENCE';
@@ -171,19 +171,30 @@ export class CrossSheetFormulaValidator {
       targetCells: FormulaCell[];
     }> = [];
 
-    // 匹配带sheet前缀的引用，如 Sheet1!A1 或 Sheet1!A1:B2
-    const sheetRefPattern = /([A-Za-z0-9_]+)!([A-Z]+[0-9]+(?::[A-Z]+[0-9]+)?)/g;
-    let match;
+    // 匹配带sheet前缀的引用，如：
+    // - Sheet1!A1
+    // - Sheet1!A1:B2
+    // - Sheet1!A1:Sheet1!B2
+    // - Sheet1！A1:Sheet1！B2
+    // - 'My Sheet'!A1:'My Sheet'!B2
+    const sheetRefPattern = /'?([^'!！]+)'?[!！]([A-Z]+[0-9]+)(?:\s*:\s*(?:'?([^'!！]+)'?[!！])?([A-Z]+[0-9]+))?/g;
+    let match: RegExpExecArray | null;
 
     while ((match = sheetRefPattern.exec(formula)) !== null) {
       const targetSheet = match[1];
-      const cellRef = match[2];
+      const startRef = match[2];
+      const endSheetMaybe = match[3];
+      const endRef = match[4];
 
       const targetCells: FormulaCell[] = [];
 
-      if (cellRef.includes(':')) {
-        // 范围引用，如 A1:B2
-        const [startRef, endRef] = cellRef.split(':');
+      if (endRef) {
+        // 范围引用
+        // 若右侧带了sheet前缀，仅支持与左侧相同（否则为 3D 引用，当前不展开）
+        if (endSheetMaybe && endSheetMaybe.toLowerCase() !== targetSheet.toLowerCase()) {
+          // 3D 引用：Sheet1!A1:Sheet2!B2（当前不支持）
+          continue;
+        }
         const startCell = this.parseA1Notation(startRef);
         const endCell = this.parseA1Notation(endRef);
 
@@ -194,7 +205,7 @@ export class CrossSheetFormulaValidator {
         }
       } else {
         // 单个单元格引用，如 A1
-        const cell = this.parseA1Notation(cellRef);
+        const cell = this.parseA1Notation(startRef);
         targetCells.push({ sheet: targetSheet, row: cell.row, col: cell.col });
       }
 

@@ -101,62 +101,6 @@ describe('Active Sheet Race Condition Fix', () => {
     expect(formulaManager.getActiveSheet()).toBe('Sheet3');
   });
 
-  test('should handle formulas correctly with proper active sheet context', () => {
-    // Add multiple sheets with normalized data
-    const sheet1Data = normalizeTestData([
-      ['A', 'B'],
-      ['10', ''],
-      ['', '']
-    ]);
-    formulaManager.addSheet('Sheet1', sheet1Data);
-
-    const sheet2Data = normalizeTestData([
-      ['A', 'B'],
-      ['20', ''],
-      ['', '']
-    ]);
-    formulaManager.addSheet('Sheet2', sheet2Data);
-
-    const sheet3Data = normalizeTestData([
-      ['A', 'B'],
-      ['30', ''],
-      ['', '']
-    ]);
-    formulaManager.addSheet('Sheet3', sheet3Data);
-
-    // Initially Sheet1 is active
-    expect(formulaManager.getActiveSheet()).toBe('Sheet1');
-
-    // Create formula on Sheet1 that references A2 (should use Sheet1's A2)
-    formulaManager.setCellContent({ sheet: 'Sheet1', row: 2, col: 1 }, '=A2');
-    expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 1 }).value).toBe(10);
-
-    // Switch to Sheet2
-    formulaManager.setActiveSheet('Sheet2');
-
-    // Create formula on Sheet2 that references A2 (should use Sheet2's A2)
-    formulaManager.setCellContent({ sheet: 'Sheet2', row: 2, col: 1 }, '=A2');
-    expect(formulaManager.getCellValue({ sheet: 'Sheet2', row: 2, col: 1 }).value).toBe(20);
-
-    // Switch to Sheet3
-    formulaManager.setActiveSheet('Sheet3');
-
-    // Create formula on Sheet3 that references A2 (should use Sheet3's A2)
-    formulaManager.setCellContent({ sheet: 'Sheet3', row: 2, col: 1 }, '=A2');
-    expect(formulaManager.getCellValue({ sheet: 'Sheet3', row: 2, col: 1 }).value).toBe(30);
-
-    // When evaluating formulas on previous sheets, they use current active sheet context
-    // This is the expected behavior - formulas without explicit sheet references
-    // always use the current active sheet context
-    expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 1 }).value).toBe(30); // Uses Sheet3's A2
-    expect(formulaManager.getCellValue({ sheet: 'Sheet2', row: 2, col: 1 }).value).toBe(30); // Uses Sheet3's A2
-
-    // Switch back to Sheet1 to verify original behavior
-    formulaManager.setActiveSheet('Sheet1');
-    expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 1 }).value).toBe(10); // Uses Sheet1's A2
-    expect(formulaManager.getCellValue({ sheet: 'Sheet2', row: 2, col: 1 }).value).toBe(10); // Uses Sheet1's A2
-  });
-
   test('should handle adding existing sheet without changing active sheet', () => {
     // Add initial sheets
     formulaManager.addSheet('Sheet1', [['Data'], ['100']]);

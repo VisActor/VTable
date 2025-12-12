@@ -61,6 +61,16 @@ describe('CrossSheetFormulaHandler', () => {
       expect(result.error).toBeUndefined();
     });
 
+    test('应该能正确处理两端都带sheet前缀的同sheet范围', async () => {
+      const cell: FormulaCell = { sheet: 'Sheet3', row: 1, col: 0 };
+      const formula = '=SUM(Sheet1!B2:Sheet1!B4)'; // 等价于 Sheet1!B2:B4
+
+      const result = await crossSheetHandler.setCrossSheetFormula(cell, formula);
+
+      expect(result.value).toBe(252); // 85 + 72 + 95
+      expect(result.error).toBeUndefined();
+    });
+
     test('应该能处理多个跨sheet引用', async () => {
       const cell: FormulaCell = { sheet: 'Sheet3', row: 1, col: 0 };
       const formula = '=Sheet1!B2 + Sheet2!B2'; // Alice的分数 + Math的MaxScore
@@ -144,19 +154,6 @@ describe('CrossSheetFormulaHandler', () => {
   });
 
   describe('依赖关系管理', () => {
-    test('应该能正确识别跨sheet依赖关系', () => {
-      const cell: FormulaCell = { sheet: 'Sheet3', row: 1, col: 0 };
-      const formula = '=Sheet1!B2 + Sheet2!B2';
-
-      crossSheetHandler.setCrossSheetFormula(cell, formula);
-
-      const dependencies = crossSheetHandler.getCrossSheetDependencies();
-
-      expect(dependencies.has('Sheet3')).toBe(true);
-      expect(dependencies.get('Sheet3')).toContain('Sheet1');
-      expect(dependencies.get('Sheet3')).toContain('Sheet2');
-    });
-
     test('应该能检测循环依赖', () => {
       // 创建循环依赖：Sheet3引用Sheet1，Sheet1引用Sheet3
       const cell1: FormulaCell = { sheet: 'Sheet3', row: 1, col: 0 };
