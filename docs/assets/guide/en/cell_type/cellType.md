@@ -253,3 +253,72 @@ The following shows an example of `cellType: ()=>{}`: (Please refer to [Example]
     keepAspectRatio:true,
   }
 ```
+
+## Extension: Custom Column Types (TypeScript)
+
+In real-world applications, in addition to VTable’s built-in `cellType` values (such as `text`, `link`, `image`, `video`, `progressbar`, `sparkline`, and `chart`), it is often necessary to attach **business-specific configurations** to column definitions, for example:
+
+- Permission or visibility control: `permissionKey`
+- Tracking and analytics metadata: `trackId` / `trackParams`
+- Unified rendering strategy flags: `highlightOnNegative` / `useTagStyle`
+- DSL fields used by higher-level wrapper components: `renderAs` / `variant`
+
+These fields are usually **not consumed directly by VTable itself**. Instead, they are read and handled by business-layer abstractions, such as a unified `cellRender`, custom hooks, or column factory utilities.
+
+To support this use case, VTable provides a **type-level extension mechanism** that allows developers to extend `ColumnDefine` via TypeScript _module augmentation_. This enables defining custom column types with full type inference, validation, and IDE autocomplete support.
+
+### 1) Define a custom column type
+
+```ts
+import type { HeaderDefine } from '@visactor/vtable';
+
+// Custom column body definition (example: a customized button column)
+export interface IColoredButtonColumnBody {
+  cellType: 'button';
+  field: string;
+
+  /** Business-specific extension field: highlight when the value is negative */
+  highlightOnNegative?: boolean;
+
+  text?: string;
+  style?: any;
+}
+
+// Full column definition (Header + Body)
+export type ColoredButtonColumnDefine = IColoredButtonColumnBody & HeaderDefine;
+```
+
+### 2) Register the type via module augmentation
+
+```ts
+declare module '@visactor/vtable/es/ts-types' {
+  interface CustomColumnBodyDefineMap {
+    coloredButton: IColoredButtonColumnBody;
+  }
+
+  interface CustomColumnDefineMap {
+    coloredButtonColumn: ColoredButtonColumnDefine;
+  }
+}
+```
+
+### 3) Use the custom column type in `columns`
+
+```ts
+import type { ColumnsDefine } from '@visactor/vtable';
+
+const columns: ColumnsDefine = [
+  {
+    field: 'value',
+    title: 'Custom Button Column',
+    cellType: 'button',
+    text: 'check',
+    highlightOnNegative: true // ✅ extended field from CustomColumnDefineMap
+  }
+];
+```
+
+> **Note:**
+> The example above demonstrates a **type-level extension** only.
+> Whether fields such as `highlightOnNegative` produce actual visual or behavioral effects depends on business-side rendering logic (e.g., custom `cellRender`, hooks, or column factories).
+> VTable itself does not interpret or handle these fields automatically.
