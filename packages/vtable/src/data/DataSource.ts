@@ -1229,6 +1229,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.lastFilterRules = this.dataConfig.filterRules;
     this.dataConfig.filterRules = filterRules;
     this._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
+    // 如果配置了筛选回调, 则用户可自定义处理筛选后的数据
     if (onFilterRecordsEnd) {
       this._source = onFilterRecordsEnd(this._source as any[]);
     }
