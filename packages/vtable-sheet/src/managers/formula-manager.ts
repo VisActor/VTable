@@ -518,6 +518,9 @@ export class FormulaManager implements IFormulaManager {
       // 检查是否为跨sheet公式
       if (typeof value === 'string' && value.startsWith('=') && this.hasCrossSheetReference(value)) {
         // 使用跨sheet公式处理器处理
+        // 注意：setCrossSheetFormula 是异步的，但这里没有等待
+        // 由于 setCrossSheetFormula 内部会同步调用 formulaEngine.setCellContent，
+        // 所以公式会被立即存储，不需要等待 Promise
         this.crossSheetHandler.setCrossSheetFormula(cell, value);
       } else {
         // 使用FormulaEngine设置单元格内容

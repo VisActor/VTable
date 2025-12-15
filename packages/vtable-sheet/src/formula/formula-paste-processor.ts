@@ -31,7 +31,7 @@ export class FormulaPasteProcessor {
   /**
    * 处理单个公式的粘贴调整
    */
-  static adjustFormulaForPaste(formula: string | number, context: FormulaPasteContext): string | number {
+  static adjustFormulaForPaste(formula: string, context: FormulaPasteContext): string {
     if (!FormulaReferenceAdjustor.isFormula(formula)) {
       return formula;
     }
@@ -40,7 +40,7 @@ export class FormulaPasteProcessor {
     const colOffset = context.targetCell.col - context.sourceCell.col;
     const rowOffset = context.targetCell.row - context.sourceCell.row;
 
-    // 调整公式引用
+    // 调整公式引用（确保 formula 是字符串类型）
     return FormulaReferenceAdjustor.adjustFormulaReferences(formula, colOffset, rowOffset);
   }
 

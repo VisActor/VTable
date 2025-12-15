@@ -340,9 +340,24 @@ export class FormulaEngine {
       const result = this.parseExpression(expression);
       return result;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Calculation failed';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      console.error(`[FormulaEngine] calculateFormula error for formula "${formula}":`, errorMessage);
+      if (errorStack) {
+        // 打印完整的堆栈跟踪
+        console.error('[FormulaEngine] Full stack trace:');
+        console.error(errorStack);
+      }
+      // 检查是否是 'has' 相关的错误
+      if (errorMessage.includes("Cannot read property 'has'")) {
+        console.error('[FormulaEngine] DEBUG: This is a "has" property error. Checking context...');
+        console.error(`[FormulaEngine] this.sheets:`, this.sheets);
+        console.error(`[FormulaEngine] this.dependencies:`, this.dependencies);
+        console.error(`[FormulaEngine] this.dependents:`, this.dependents);
+      }
       return {
         value: null,
-        error: error instanceof Error ? error.message : 'Calculation failed'
+        error: errorMessage
       };
     }
   }
@@ -607,6 +622,41 @@ export class FormulaEngine {
    * 优先查找sheetTitle，然后才是sheetKey
    */
   private findOriginalSheetName(sheetName: string): string | null {
+    // 添加防护检查
+    if (!this.sheetTitles) {
+      const error = new Error('[FormulaEngine] ERROR: this.sheetTitles is not initialized!');
+      console.error(error.message);
+      console.error('Stack:', error.stack);
+      return null;
+    }
+    if (!this.sheets) {
+      const error = new Error('[FormulaEngine] ERROR: this.sheets is not initialized!');
+      console.error(error.message);
+      console.error('Stack:', error.stack);
+      return null;
+    }
+
+    // 尝试调用 has 方法，如果失败则捕获错误
+    try {
+      // 如果sheetTitle中找不到，尝试匹配sheetKey
+      if (this.sheets.has(sheetName)) {
+        return sheetName;
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      console.error(
+        `[FormulaEngine] ERROR in findOriginalSheetName when calling this.sheets.has("${sheetName}"):`,
+        errorMsg
+      );
+      if (errorStack) {
+        console.error('Stack:', errorStack);
+      }
+      console.error(`[FormulaEngine] this.sheets type:`, typeof this.sheets);
+      console.error(`[FormulaEngine] this.sheets value:`, this.sheets);
+      throw error; // 重新抛出错误以便上层捕获
+    }
+
     // 首先尝试精确匹配sheetTitle
     for (const sheetTitle of this.sheetTitles.values()) {
       if (sheetTitle === sheetName) {
@@ -1382,7 +1432,7 @@ export class FormulaEngine {
           }
 
           // 如果还是没有找到，尝试使用sheetTitle作为sheetKey（假设已经注册）
-          if (!foundSheetKey && this.sheets.has(sheetTitle)) {
+          if (!foundSheetKey && this.sheets && this.sheets.has(sheetTitle)) {
             foundSheetKey = sheetTitle;
           }
 
@@ -1424,6 +1474,12 @@ export class FormulaEngine {
        */
       const defaultSheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
 
+      // 调试：检查 reverseSheets 是否已初始化
+      if (!this.reverseSheets) {
+        console.error('[FormulaEngine] ERROR: reverseSheets is not initialized!');
+        return [];
+      }
+
       const parseSheetAndCell = (part: string): { sheetKey: string; cellRef: string; hasSheetPrefix: boolean } => {
         let sheetKey = defaultSheetKey;
         let cellRef = part.trim();
@@ -1454,7 +1510,7 @@ export class FormulaEngine {
             )?.[0];
             let foundSheetKey = foundSheetKeyFromTitles || foundSheetKeyFromKeys;
 
-            if (!foundSheetKey && this.sheets.has(sheetTitle)) {
+            if (!foundSheetKey && this.sheets && this.sheets.has(sheetTitle)) {
               foundSheetKey = sheetTitle;
             }
 
@@ -1490,12 +1546,30 @@ export class FormulaEngine {
       for (let row = startCell.row; row <= endCell.row; row++) {
         for (let col = startCell.col; col <= endCell.col; col++) {
           const cell: FormulaCell = { sheet: sheetKey, row, col };
-          values.push(this.getCellValue(cell).value);
+          try {
+            const cellValue = this.getCellValue(cell);
+            values.push(cellValue.value);
+          } catch (error) {
+            console.error(
+              `[FormulaEngine] Error getting cell value for ${sheetKey}!${this.getA1Notation(row, col)}:`,
+              error
+            );
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            const errorStack = error instanceof Error ? error.stack : undefined;
+            console.error('[FormulaEngine] Stack trace:', errorStack);
+            values.push(null);
+          }
         }
       }
 
       return values;
-    } catch {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      console.error(`[FormulaEngine] getRangeValuesFromExpr error for expr "${expr}":`, errorMessage);
+      if (errorStack) {
+        console.error('[FormulaEngine] Stack trace:', errorStack);
+      }
       return [];
     }
   }
@@ -1503,6 +1577,11 @@ export class FormulaEngine {
   // 公共方法
   getCellValue(cell: FormulaCell): FormulaResult {
     try {
+      // 添加防护检查
+      if (!this.sheets) {
+        return { value: null, error: 'FormulaEngine not properly initialized: sheets Map is undefined' };
+      }
+
       const sheetId = this.sheets.get(cell.sheet);
       if (sheetId === undefined) {
         return { value: '', error: undefined };
@@ -1761,7 +1840,8 @@ export class FormulaEngine {
 
         const deps = tempDependencies.get(cellKey) || new Set();
         for (const dep of deps) {
-          if (tempDependencies.has(dep)) {
+          // 添加防护检查，确保 tempDependencies 已初始化
+          if (tempDependencies && tempDependencies.has(dep)) {
             // 只访问也是公式的依赖
             visit(dep);
           }
@@ -1962,6 +2042,16 @@ export class FormulaEngine {
 
   // 依赖关系管理
   private updateDependencies(cellKey: string, formula: string): void {
+    // 添加防护检查
+    if (!this.dependencies) {
+      console.error('[FormulaEngine] ERROR: this.dependencies is not initialized!');
+      return;
+    }
+    if (!this.dependents) {
+      console.error('[FormulaEngine] ERROR: this.dependents is not initialized!');
+      return;
+    }
+
     // 清除旧的依赖关系
     const oldDeps = this.dependencies.get(cellKey) || new Set();
     for (const dep of oldDeps) {
