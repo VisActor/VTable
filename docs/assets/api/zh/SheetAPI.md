@@ -75,7 +75,7 @@ VTableSheet组件支持的方法如下：
 导出当前sheet到文件
 
 ```
-  exportSheetToFile: (fileType: 'csv' | 'xlsx') => void
+  exportSheetToFile: (fileType: 'csv' | 'xlsx', allSheets: boolean = true) => void
 ```
 
 ### importFileToSheet(Function)

@@ -170,3 +170,9 @@ const tableExportPlugin = new VTablePlugins.TableExportPlugin({
 
 ## 用法示例
 可参考[表格导出](../../demo/export/table-export)
+
+## vtable-sheet中使用
+
+在VTableSheet中使用时，可以参考[VTableSheet导出](../sheet/import_export)。
+
+因为电子表格需要支持导出多个sheet，所以这个插件扩展导出所有sheet的接口能力，具体增加了exportMultipleVTablesToExcel方法。

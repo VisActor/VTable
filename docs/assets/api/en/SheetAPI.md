@@ -75,7 +75,7 @@ Save all data as a configuration
 Export the current sheet to a file
 
 ```
-  exportSheetToFile: (fileType: 'csv' | 'xlsx') => void
+  exportSheetToFile: (fileType: 'csv' | 'xlsx', allSheets: boolean = true) => void
 ```
 
 ### importFileToSheet(Function)

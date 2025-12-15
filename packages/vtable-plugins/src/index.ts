@@ -19,4 +19,5 @@ export * from './table-series-number';
 export * from './context-menu';
 export * from './filter';
 export * from './table-export';
+export * from './table-export/index';
 export * from './auto-fill';

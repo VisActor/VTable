@@ -732,7 +732,7 @@ export default class VTableSheet {
   }
 
   /** 导出当前sheet到文件 */
-  exportSheetToFile(fileType: 'csv' | 'xlsx'): void {
+  exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
@@ -744,10 +744,14 @@ export default class VTableSheet {
         console.warn('Please configure TableExportPlugin in VTablePluginModules');
       }
     } else {
-      if ((sheet.tableInstance as any)?.exportToExcel) {
-        (sheet.tableInstance as any).exportToExcel();
+      if (allSheets) {
+        this.exportAllSheetsToExcel();
       } else {
-        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        if ((sheet.tableInstance as any)?.exportToExcel) {
+          (sheet.tableInstance as any).exportToExcel();
+        } else {
+          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        }
       }
     }
   }
