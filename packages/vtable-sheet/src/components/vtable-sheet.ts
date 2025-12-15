@@ -14,6 +14,8 @@ import { formulaEditor } from '../formula/formula-editor';
 import { CellHighlightManager } from '../formula/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
+import { exportMultipleVTablesToExcel, downloadExcel } from '@visactor/vtable-plugins';
+import type { ExportVTableToExcelOptions } from '@visactor/vtable-plugins';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
 
@@ -690,7 +692,7 @@ export default class VTableSheet {
         const columnWidthConfig = Array.from(instance.tableInstance.internalProps._widthResizedColMap).map(key => {
           return {
             key: key,
-            width: instance.tableInstance.getColWidth(key)
+            width: instance.tableInstance.getColWidth(key as number)
           };
         });
         //#endregion
@@ -748,6 +750,23 @@ export default class VTableSheet {
         console.warn('Please configure TableExportPlugin in VTablePluginModules');
       }
     }
+  }
+  /** 导出所有sheet到一个Excel文件 */
+  async exportAllSheetsToExcel(fileName?: string, options?: ExportVTableToExcelOptions): Promise<void> {
+    const allDefines = this.sheetManager.getAllSheets();
+    const activeKey = this.sheetManager.getActiveSheet()?.sheetKey;
+    allDefines.forEach(def => {
+      if (!this.workSheetInstances.has(def.sheetKey)) {
+        const instance = this.createWorkSheetInstance(def);
+        this.workSheetInstances.set(def.sheetKey, instance);
+      }
+    });
+    const tables = allDefines.map(def => {
+      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
+    });
+    const buffer = (await exportMultipleVTablesToExcel(tables, options)) as ArrayBuffer;
+    await downloadExcel(buffer, fileName || 'vtable-sheet-export');
   }
   /** 导入文件到当前sheet */
   async importFileToSheet(): Promise<ImportResult | void> {
