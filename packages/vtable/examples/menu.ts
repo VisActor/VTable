@@ -563,6 +563,10 @@ export const menus = [
       {
         path: 'type',
         name: 'button'
+      },
+      {
+        path: 'type',
+        name: 'custom'
       }
     ]
   },
