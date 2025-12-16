@@ -464,6 +464,7 @@ export default class VTableSheet {
           data: sheetData.data as any,
           rowCount: Math.max(sheetData.rowCount, 100), // 至少 100 行
           columnCount: Math.max(sheetData.columnCount, 10), // 至少 10 列
+          cellMerge: sheetData.cellMerge,
           active: false
         };
 
