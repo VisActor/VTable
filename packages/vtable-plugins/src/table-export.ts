@@ -1,7 +1,13 @@
 import type { pluginsDefinition, ListTable } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { ExportVTableToCsvOptions, ExportVTableToExcelOptions } from './table-export/index';
-import { exportVTableToCsv, exportVTableToExcel, downloadCsv, downloadExcel } from './table-export/index';
+import {
+  exportVTableToCsv,
+  exportVTableToExcel,
+  downloadCsv,
+  downloadExcel,
+  exportMultipleVTablesToExcel
+} from './table-export/index';
 
 // // 扩展ListTable接口以包含导出方法
 // declare module '@visactor/vtable' {
@@ -65,6 +71,20 @@ export class TableExportPlugin implements pluginsDefinition.IVTablePlugin {
         }
         return exportVTableToExcel(this.table, options, this.pluginOptions.exportOnIdle);
       };
+      if ((this.table as any).__vtableSheet) {
+        // 给VTableSheet实例添加导出所有sheet到Excel的方法
+        if (!((this.table as any).__vtableSheet as any)._exportMutipleTablesToExcel) {
+          ((this.table as any).__vtableSheet as any)._exportMutipleTablesToExcel = async (
+            tables: Array<{ table: any; name?: string }>
+          ) => {
+            const buffer = (await exportMultipleVTablesToExcel(
+              tables,
+              this.pluginOptions.exportExcelOptions
+            )) as ArrayBuffer;
+            await downloadExcel(buffer, this.pluginOptions.exportExcelOptions.fileName || 'vtable-sheet-export');
+          };
+        }
+      }
     }
   }
 

@@ -14,8 +14,6 @@ import { formulaEditor } from '../formula/formula-editor';
 import { CellHighlightManager } from '../formula/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
-import { exportMultipleVTablesToExcel, downloadExcel } from '@visactor/vtable-plugins';
-import type { ExportVTableToExcelOptions } from '@visactor/vtable-plugins';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
 
@@ -755,22 +753,23 @@ export default class VTableSheet {
       }
     }
   }
-  /** 导出所有sheet到一个Excel文件 */
-  async exportAllSheetsToExcel(fileName?: string, options?: ExportVTableToExcelOptions): Promise<void> {
+  exportAllSheetsToExcel(): void {
+    this.initAllSheetInstances();
     const allDefines = this.sheetManager.getAllSheets();
-    const activeKey = this.sheetManager.getActiveSheet()?.sheetKey;
+    const tables = allDefines.map(def => {
+      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
+    });
+    (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法
+  }
+  initAllSheetInstances(): void {
+    const allDefines = this.sheetManager.getAllSheets();
     allDefines.forEach(def => {
       if (!this.workSheetInstances.has(def.sheetKey)) {
         const instance = this.createWorkSheetInstance(def);
         this.workSheetInstances.set(def.sheetKey, instance);
       }
     });
-    const tables = allDefines.map(def => {
-      const inst = this.workSheetInstances.get(def.sheetKey)!;
-      return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
-    });
-    const buffer = (await exportMultipleVTablesToExcel(tables, options)) as ArrayBuffer;
-    await downloadExcel(buffer, fileName || 'vtable-sheet-export');
   }
   /** 导入文件到当前sheet */
   async importFileToSheet(): Promise<ImportResult | void> {
