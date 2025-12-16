@@ -83,7 +83,8 @@ Export the current sheet to a file
 Import a file to the current sheet
 
 ```
-  importFileToSheet: () => void
+  /** clearExisting Whether to clear existing sheets (default true means replace mode). Set false to append mode */
+  importFileToSheet: (options: { clearExisting?: boolean } = { clearExisting: true }) => void
 ```
 
 ### exportData(Function)

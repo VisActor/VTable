@@ -68,3 +68,5 @@ mainMenu: {
 ```
 
 It also supports calling the import function through APIs, which can be referred to [API](../../api/SheetAPI#Methods.importFileToSheet).
+
+Import supports excel files and csv files, and supports multi-sheet import for excel files.

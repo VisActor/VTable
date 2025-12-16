@@ -68,3 +68,5 @@ mainMenu: {
 ```
 
 也支持通过API调用导入功能，具体可以参考[API](../../api/SheetAPI#Methods.importFileToSheet)。
+
+导入支持excel文件及csv文件，针对excel文件支持多sheet导入。

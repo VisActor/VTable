@@ -83,7 +83,8 @@ VTableSheet组件支持的方法如下：
 导入文件到当前sheet
 
 ```
-  importFileToSheet: () => void
+  /** clearExisting 是否清除现有的 sheet（默认 true 表示替换模式）.设置false表示追加模式 */
+  importFileToSheet: (options: { clearExisting?: boolean } = { clearExisting: true }) => void
 ```
 
 ### exportData(Function)
