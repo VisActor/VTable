@@ -159,54 +159,8 @@ export class MenuManager {
 
     switch (menuKey) {
       case MainMenuItemKey.IMPORT:
-        if ((tableInstance as any)?.importFile) {
-          (tableInstance as any).importFile();
-        } else {
-          console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
-        }
-        break;
-
-      case MainMenuItemKey.IMPORT_MULTIPLE_SHEETS:
-        // 获取 ExcelImportPlugin 插件实例
-        const excelImportPlugin = tableInstance.pluginManager?.getPlugin('excel-import-plugin');
-        if (excelImportPlugin && typeof (excelImportPlugin as any).importFile === 'function') {
-          // 直接传递 VTableSheet 实例给插件（如果插件支持）
-          if (typeof (excelImportPlugin as any).importFileForVTableSheet === 'function') {
-            (excelImportPlugin as any)
-              .importFileForVTableSheet(this.sheet, { clearExisting: true })
-              .catch((error: Error) => {
-                console.error('导入多个 sheets 失败:', error);
-              });
-          } else {
-            // 回退到原来的方法
-            (excelImportPlugin as any).importFile({ clearExisting: true }).catch((error: Error) => {
-              console.error('导入多个 sheets 失败:', error);
-            });
-          }
-        } else {
-          console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
-        }
-        break;
-
-      case MainMenuItemKey.IMPORT_MULTIPLE_SHEETS_APPEND:
-        // 获取 ExcelImportPlugin 插件实例
-        const excelImportPluginAppend = tableInstance.pluginManager?.getPlugin('excel-import-plugin');
-        if (excelImportPluginAppend && typeof (excelImportPluginAppend as any).importFile === 'function') {
-          // 直接传递 VTableSheet 实例给插件（如果插件支持）
-          if (typeof (excelImportPluginAppend as any).importFileForVTableSheet === 'function') {
-            (excelImportPluginAppend as any)
-              .importFileForVTableSheet(this.sheet, { clearExisting: false })
-              .catch((error: Error) => {
-                console.error('导入多个 sheets 失败:', error);
-              });
-          } else {
-            // 回退到原来的方法
-            (excelImportPluginAppend as any).importFile({ clearExisting: false }).catch((error: Error) => {
-              console.error('导入多个 sheets 失败:', error);
-            });
-          }
-        } else {
-          console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
+        if (this.sheet.importFileToSheet) {
+          this.sheet.importFileToSheet();
         }
         break;
 

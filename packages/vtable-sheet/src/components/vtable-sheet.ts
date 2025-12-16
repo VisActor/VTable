@@ -6,6 +6,7 @@ import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent, ImportResult } from '../ts-types';
+import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import { WorkSheetEventType } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
@@ -904,14 +905,30 @@ export default class VTableSheet {
       }
     });
   }
-  /** 导入文件到当前sheet */
-  async importFileToSheet(): Promise<ImportResult | void> {
+  /**
+   * 导入文件（支持 Excel 多 sheet 和 CSV）
+   * @param options 导入选项，包括 clearExisting（是否清除现有 sheets，默认 true 表示替换模式）
+   * @returns Promise<MultiSheetImportResult | void>
+   */
+  async importFileToSheet(
+    options: { clearExisting?: boolean } = { clearExisting: true }
+  ): Promise<MultiSheetImportResult | void> {
+    // 使用绑定到 VTableSheet 实例的导入方法（插件内部会处理文件选择）
+    if ((this as any)?._importFile) {
+      return await (this as any)._importFile({
+        clearExisting: options?.clearExisting !== false
+      });
+    }
+
+    // 回退到 tableInstance 的 importFile 方法
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
     }
     if ((sheet.tableInstance as any)?.importFile) {
-      return await (sheet.tableInstance as any).importFile();
+      return await (sheet.tableInstance as any).importFile({
+        clearExisting: options?.clearExisting !== false
+      });
     }
     console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
   }

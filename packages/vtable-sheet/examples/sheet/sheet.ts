@@ -773,21 +773,6 @@ export function createTable() {
           description: '导入数据替换到当前sheet'
         },
         {
-          name: '导入多个 Sheets',
-          items: [
-            {
-              name: '替换现有 Sheets',
-              menuKey: TYPES.MainMenuItemKey.IMPORT_MULTIPLE_SHEETS,
-              description: '从 Excel 文件导入所有 sheets，替换现有 sheets'
-            },
-            {
-              name: '追加到现有 Sheets',
-              menuKey: TYPES.MainMenuItemKey.IMPORT_MULTIPLE_SHEETS_APPEND,
-              description: '从 Excel 文件导入所有 sheets，追加到现有 sheets'
-            }
-          ]
-        },
-        {
           name: '导出',
           items: [
             {
