@@ -58,7 +58,9 @@ export enum MainMenuItemKey {
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
   EXPORT_CURRENT_SHEET_CSV = 'export-current-sheet-csv',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
-  EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx'
+  EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx',
+  /** 需要插件支持，请在plugins中配置 TableExportPlugin */
+  EXPORT_ALL_SHEETS_XLSX = 'export-all-sheets-xlsx'
 }
 export interface MainMenuItem {
   /** 菜单项名称 */

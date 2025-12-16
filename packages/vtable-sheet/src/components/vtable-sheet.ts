@@ -823,7 +823,7 @@ export default class VTableSheet {
         const columnWidthConfig = Array.from(instance.tableInstance.internalProps._widthResizedColMap).map(key => {
           return {
             key: key,
-            width: instance.tableInstance.getColWidth(key)
+            width: instance.tableInstance.getColWidth(key as number)
           };
         });
         //#endregion
@@ -863,7 +863,7 @@ export default class VTableSheet {
   }
 
   /** 导出当前sheet到文件 */
-  exportSheetToFile(fileType: 'csv' | 'xlsx'): void {
+  exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
@@ -875,12 +875,34 @@ export default class VTableSheet {
         console.warn('Please configure TableExportPlugin in VTablePluginModules');
       }
     } else {
-      if ((sheet.tableInstance as any)?.exportToExcel) {
-        (sheet.tableInstance as any).exportToExcel();
+      if (allSheets) {
+        this.exportAllSheetsToExcel();
       } else {
-        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        if ((sheet.tableInstance as any)?.exportToExcel) {
+          (sheet.tableInstance as any).exportToExcel();
+        } else {
+          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        }
       }
     }
+  }
+  exportAllSheetsToExcel(): void {
+    this.initAllSheetInstances();
+    const allDefines = this.sheetManager.getAllSheets();
+    const tables = allDefines.map(def => {
+      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
+    });
+    (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法
+  }
+  initAllSheetInstances(): void {
+    const allDefines = this.sheetManager.getAllSheets();
+    allDefines.forEach(def => {
+      if (!this.workSheetInstances.has(def.sheetKey)) {
+        const instance = this.createWorkSheetInstance(def);
+        this.workSheetInstances.set(def.sheetKey, instance);
+      }
+    });
   }
   /** 导入文件到当前sheet */
   async importFileToSheet(): Promise<ImportResult | void> {

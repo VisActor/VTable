@@ -489,6 +489,10 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
 
   syncRowHeightToComponent() {
     // console.log('syncRowHeightToComponent adjust', adjustStartRowIndex, adjustEndRowIndex);
+    const rowRange = this.table.getBodyVisibleRowRange();
+    if (!rowRange) {
+      return;
+    }
     const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
     const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
     const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
@@ -513,6 +517,10 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
     }
   }
   syncColWidthToComponent() {
+    const colRange = this.table.getBodyVisibleColRange();
+    if (!colRange) {
+      return;
+    }
     const { colStart, colEnd } = this.table.getBodyVisibleColRange();
     const adjustStartColIndex = colStart;
     const adjustEndColIndex = Math.min(colEnd, this.table.scenegraph.proxy.colEnd);

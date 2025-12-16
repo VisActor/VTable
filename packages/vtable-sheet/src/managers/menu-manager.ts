@@ -224,6 +224,10 @@ export class MenuManager {
           console.warn('Please configure TableExportPlugin in VTablePluginModules');
         }
         break;
+      case MainMenuItemKey.EXPORT_ALL_SHEETS_XLSX:
+        // 多 sheet 导出走 vtable-plugins 的导出工具，不依赖向 tableInstance 注入 exportToExcel
+        this.sheet.exportAllSheetsToExcel?.();
+        break;
       default:
         break;
     }

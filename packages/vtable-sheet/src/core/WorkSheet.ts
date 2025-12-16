@@ -1004,7 +1004,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
           // 如果是公式，设置公式；否则设置普通值
           if (FormulaPasteProcessor.needsFormulaAdjustment(value)) {
-            this.setCellFormula(targetRow, targetCol, value);
+            this.setCellFormula(targetRow, targetCol, value as string);
           } else {
             this.setCellValue(targetRow, targetCol, value);
           }
