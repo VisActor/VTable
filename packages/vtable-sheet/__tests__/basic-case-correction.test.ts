@@ -86,7 +86,7 @@ describe('Basic Sheet Title Case Correction', () => {
     console.log('Underscore test - Input: =test_sheet!A1');
     console.log('Underscore test - Corrected:', correctedFormula);
 
-    expect(correctedFormula).toBe('=test_sheet!A1');
+    expect(correctedFormula).toBe('=Test_Sheet!A1');
 
     const result = engine.getCellValue(cell);
     expect(result.value).toBe('Test Data');
