@@ -1,4 +1,4 @@
-import { ListTable, PivotTable } from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual } from '@visactor/vutils';
 import type { FilterConfig, ValueFilterOptionDom, FilterState } from './types';
 import { FilterActionType } from './types';

@@ -430,7 +430,7 @@ export default class VTableSheet {
    * 创建sheet实例
    * @param sheetDefine sheet的定义
    */
-  private createWorkSheetInstance(sheetDefine: ISheetDefine): WorkSheet {
+  createWorkSheetInstance(sheetDefine: ISheetDefine): WorkSheet {
     formulaEditor.setSheet(this);
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
@@ -471,7 +471,7 @@ export default class VTableSheet {
     // 在公式管理器中添加这个sheet
     try {
       const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
-      this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData);
+      this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData, sheetDefine.sheetTitle);
       // 加载保存的公式数据（如果有）
       if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
         this.loadFormulas(sheetDefine.sheetKey, sheetDefine.formulas);
@@ -624,6 +624,20 @@ export default class VTableSheet {
   }
 
   /**
+   * 根据名称获取Sheet实例
+   */
+  getSheetByName(sheetName: string): WorkSheet | null {
+    // 遍历所有sheet实例，找到匹配的sheet
+    for (const [sheetKey, workSheet] of this.workSheetInstances) {
+      const sheetDefine = this.sheetManager.getSheet(sheetKey);
+      if (sheetDefine && sheetDefine.sheetTitle === sheetName) {
+        return workSheet;
+      }
+    }
+    return null;
+  }
+
+  /**
    * 保存所有数据为配置
    */
   saveToConfig(): IVTableSheetOptions {
@@ -690,7 +704,7 @@ export default class VTableSheet {
         const columnWidthConfig = Array.from(instance.tableInstance.internalProps._widthResizedColMap).map(key => {
           return {
             key: key,
-            width: instance.tableInstance.getColWidth(key)
+            width: instance.tableInstance.getColWidth(key as number)
           };
         });
         //#endregion

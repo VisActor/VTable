@@ -1,17 +1,42 @@
 import { FormulaManager } from '../src/managers/formula-manager';
 import type VTableSheet from '../src/components/vtable-sheet';
-
 // Mock VTableSheet for testing
+// 使用闭包共享 sheets Map，确保 addSheet 和 getSheetManager 都能访问
+const mockSheets = new Map<string, { sheetTitle: string; sheetKey: string; showHeader: boolean; columns: any[] }>();
+
 const mockVTableSheet = {
+  workSheetInstances: new Map(), // 添加缺失的 workSheetInstances 属性
   getSheetManager: () => ({
-    getSheet: (sheetKey: string) => ({
-      sheetTitle: 'Test Sheet',
-      sheetKey: sheetKey,
-      showHeader: true,
-      columns: [] as any[]
-    })
+    getSheet: (sheetKey: string) => {
+      if (!mockSheets.has(sheetKey)) {
+        mockSheets.set(sheetKey, {
+          sheetTitle: sheetKey,
+          sheetKey: sheetKey,
+          showHeader: true,
+          columns: [] as any[]
+        });
+      }
+      return mockSheets.get(sheetKey);
+    },
+    getAllSheets: () => {
+      // 返回所有 sheets 的数组
+      return Array.from(mockSheets.values()).map(sheet => ({
+        sheetKey: sheet.sheetKey,
+        sheetTitle: sheet.sheetTitle
+      }));
+    },
+    getSheetCount: () => mockSheets.size
   }),
-  getActiveSheet: (): any => null
+  getActiveSheet: (): any => null,
+  createWorkSheetInstance: (sheetDefine: any): any => {
+    // 返回一个简单的 mock 实例
+    return {
+      getElement: () => ({ style: { display: '' } }),
+      getData: (): any[] => [],
+      getColumns: (): any[] => [],
+      release: (): void => {}
+    };
+  }
 } as unknown as VTableSheet;
 
 // 测试用的基本标准化函数
@@ -50,6 +75,8 @@ describe('Tab Switching Formula References', () => {
   let formulaManager: FormulaManager;
 
   beforeEach(() => {
+    // 清空 mock sheets Map
+    mockSheets.clear();
     formulaManager = new FormulaManager(mockVTableSheet);
   });
 
@@ -71,7 +98,12 @@ describe('Tab Switching Formula References', () => {
     ]);
 
     formulaManager.addSheet('Sheet1', sheet1Data);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet1');
+
     formulaManager.addSheet('Sheet2', sheet2Data);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet2');
 
     // Set formula on Sheet1 that references B2 (should use Sheet1's A2)
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=A2');
@@ -105,7 +137,12 @@ describe('Tab Switching Formula References', () => {
     ]);
 
     formulaManager.addSheet('DataSheet', dataSheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('DataSheet');
+
     formulaManager.addSheet('SummarySheet', summarySheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('SummarySheet');
 
     // Set active sheet to SummarySheet
     formulaManager.setActiveSheet('SummarySheet');
@@ -141,7 +178,12 @@ describe('Tab Switching Formula References', () => {
     ]);
 
     formulaManager.addSheet('Sheet1', sheet1Data);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet1');
+
     formulaManager.addSheet('Sheet2', sheet2Data);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet2');
 
     // Set active sheet to Sheet1
     formulaManager.setActiveSheet('Sheet1');
@@ -165,8 +207,16 @@ describe('Tab Switching Formula References', () => {
     const sheetCData = normalizeTestData([['Data'], ['3000']]);
 
     formulaManager.addSheet('SheetA', sheetAData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('SheetA');
+
     formulaManager.addSheet('SheetB', sheetBData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('SheetB');
+
     formulaManager.addSheet('SheetC', sheetCData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('SheetC');
 
     // Initially SheetA should be active (first sheet)
     formulaManager.setCellContent({ sheet: 'SheetA', row: 1, col: 1 }, '=A2');
