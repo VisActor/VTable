@@ -2,6 +2,84 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.8",
+      "tag": "@visactor/vtable_v1.22.8",
+      "date": "Wed, 17 Dec 2025 09:28:21 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when pivot table set grid-tree subTotal value not show #4815\n\n"
+          },
+          {
+            "comment": "docs: supplement chartDimensionLinkage demo\n\n"
+          },
+          {
+            "comment": "feat: vtable-sheet support cross sheet calculate formula\n\n"
+          },
+          {
+            "comment": "feat: support import multiply sheets from excel file\n\n"
+          },
+          {
+            "comment": "fix: scroll bug when update option"
+          },
+          {
+            "comment": "feat: add update styles api for filter plugin.close#4790"
+          },
+          {
+            "comment": "feat: support custom styles. close#4720"
+          },
+          {
+            "comment": "feat: support custom conditionCategories. close#4781"
+          },
+          {
+            "comment": "fix: filter swtich enable erroe. fix#4783"
+          },
+          {
+            "comment": "feat: emit event when filter menu hide or show. close#4784"
+          },
+          {
+            "comment": "fix: apply filter after update table data. fix#4785"
+          },
+          {
+            "comment": "feat: add option to format display value. close#4786"
+          },
+          {
+            "comment": "fix: update filter state and keys when update data. fix#4787"
+          },
+          {
+            "comment": "feat: menu limit to body range. close#4791"
+          },
+          {
+            "comment": "fix: select none not effect. fix#4792"
+          },
+          {
+            "comment": "feat: add config to disable sync multiple filter state. close#4793"
+          },
+          {
+            "comment": "fix: empty line bug"
+          },
+          {
+            "comment": "fix: update checkbox state after update data. fix#4795"
+          },
+          {
+            "comment": "add config to control filter result"
+          },
+          {
+            "comment": "feat: excel export multiply sheets\n\n"
+          },
+          {
+            "comment": "fix: delete key down should not complete edit cell\n\n"
+          },
+          {
+            "comment": "fix: pivotChart linkage getAxis node occor error\n\n"
+          },
+          {
+            "comment": "fix: panel hide when press enter. fix#4813"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.7",
       "tag": "@visactor/vtable_v1.22.7",
       "date": "Mon, 08 Dec 2025 09:36:02 GMT",
