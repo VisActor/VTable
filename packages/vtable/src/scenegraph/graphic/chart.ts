@@ -473,10 +473,10 @@ export class Chart extends Rect {
       const { col, row } = this.parent;
       // 隐藏左侧纵向crosshair的labelHoverOnAxis
       table.internalProps.layoutMap.isAxisCell(table.rowHeaderLevelCount - 1, row) &&
-        table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild.hideLabelHoverOnAxis?.();
+        table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild?.hideLabelHoverOnAxis?.();
       // 隐藏底部横向crosshair的labelHoverOnAxis
       table.internalProps.layoutMap.isAxisCell(col, table.rowCount - table.bottomFrozenRowCount) &&
-        table.scenegraph.getCell(col, table.rowCount - table.bottomFrozenRowCount).firstChild.hideLabelHoverOnAxis?.();
+        table.scenegraph.getCell(col, table.rowCount - table.bottomFrozenRowCount).firstChild?.hideLabelHoverOnAxis?.();
     } else {
       const { col, row } = this.parent;
       if (releaseColumnChartInstance) {
@@ -484,12 +484,12 @@ export class Chart extends Rect {
         table.internalProps.layoutMap.isAxisCell(col, table.rowCount - table.bottomFrozenRowCount) &&
           table.scenegraph
             .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-            .firstChild.hideLabelHoverOnAxis?.();
+            .firstChild?.hideLabelHoverOnAxis?.();
       }
       if (releaseRowChartInstance) {
         // 隐藏左侧纵向crosshair的labelHoverOnAxis
         table.internalProps.layoutMap.isAxisCell(table.rowHeaderLevelCount - 1, row) &&
-          table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild.hideLabelHoverOnAxis?.();
+          table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild?.hideLabelHoverOnAxis?.();
       }
     }
     if (releaseColumnChartInstance) {
