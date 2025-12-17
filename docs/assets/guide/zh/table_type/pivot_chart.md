@@ -151,6 +151,7 @@
 - legends 配置图例样式；
   ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 - axes 配置轴全局的样式，指标配置中 chartSpec 中如已配置 axes 则优先使用 chartSpec 中的配置。
+- chartDimensionLinkage 多个图表基于相同维度值进行交互联动的功能. 透视图的高级能力，开启会有可能会影响一定性能，具体配置可参考[透视图高级能力](../../option/PivotChart#chartDimensionLinkage)。
 
 # 图表库注册
 
