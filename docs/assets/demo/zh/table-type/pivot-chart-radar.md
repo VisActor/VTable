@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: Pivot Chart
 title: 透视组合图
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-radar.png
 link: table_type/pivot_chart

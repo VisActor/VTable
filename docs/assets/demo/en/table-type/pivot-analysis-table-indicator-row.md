@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: Pivot Table
 title: Pivot analysis table (indicators are displayed in rows)
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-indicator-row.png
 link: data_analysis/pivot_table_dataAnalysis

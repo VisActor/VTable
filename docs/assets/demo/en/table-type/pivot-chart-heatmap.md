@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: Pivot Chart
 title: Pivot Chart (Heatmap)
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-heatmap.png
 link: table_type/pivot_chart

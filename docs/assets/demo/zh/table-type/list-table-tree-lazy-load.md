@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: 基本表格树形展示(懒加载子节点数据)
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree-lazy-load.gif
 link: table_type/List_table/tree_list
