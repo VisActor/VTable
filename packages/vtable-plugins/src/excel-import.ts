@@ -2,15 +2,10 @@ import type { ListTable, pluginsDefinition, ColumnsDefine } from '@visactor/vtab
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import ExcelJS from 'exceljs';
 import { importExcelMultipleSheets, importCsvFile } from './excel-import/excel';
-import {
-  importExcelFileForVTableSheet,
-  importFileForVTableSheet,
-  applyImportToVTableSheet
-} from './excel-import/vtable-sheet';
+import { applyImportToVTableSheet } from './excel-import/vtable-sheet';
 import type { ExcelImportOptions, ImportResult, MultiSheetImportResult } from './excel-import/types';
 
 export type { ExcelImportOptions, ImportResult, MultiSheetImportResult, SheetData } from './excel-import/types';
-export { importExcelMultipleSheets } from './excel-import/excel';
 
 /**
  * Excel 导入插件
