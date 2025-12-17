@@ -155,6 +155,8 @@ export class FocusHighlightPlugin implements pluginsDefinition.IVTablePlugin {
     });
   }
   update() {
-    this.setFocusHighlightRange(this.range, true);
+    if (this.table) {
+      this.setFocusHighlightRange(this.range, true);
+    }
   }
 }

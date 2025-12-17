@@ -1187,6 +1187,9 @@ export class StateManager {
     }
   }
   setScrollTop(top: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
     // 矫正top值范围
     const totalHeight = this.table.getAllRowsHeight();
     // _disableColumnAndRowSizeRound环境中，可能出现
@@ -1194,10 +1197,10 @@ export class StateManager {
     // （由于小数在取数时被省略）
     // 这里加入tolerance，避免出现无用滚动
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
-    top = Math.max(0, Math.min(top, totalHeight - this.table.scenegraph.height - sizeTolerance));
+    top = Math.max(0, Math.min(top, totalHeight - (this.table.scenegraph?.height ?? 0) - sizeTolerance));
     top = Math.ceil(top);
     const oldVerticalBarPos = this.scroll.verticalBarPos;
-    const yRatio = top / (totalHeight - this.table.scenegraph.height);
+    const yRatio = top / (totalHeight - (this.table.scenegraph?.height ?? 0));
 
     if (
       (oldVerticalBarPos !== top || this.table.options?.customConfig?.scrollEventAlwaysTrigger === true) &&
@@ -1224,7 +1227,7 @@ export class StateManager {
 
       if (canScroll.some(value => value === false)) {
         // reset scrollbar pos
-        const yRatio = this.scroll.verticalBarPos / (totalHeight - this.table.scenegraph.height);
+        const yRatio = this.scroll.verticalBarPos / (totalHeight - (this.table.scenegraph?.height ?? 0));
         this.table.scenegraph.component.updateVerticalScrollBarPos(yRatio);
         return;
       }
@@ -1264,6 +1267,9 @@ export class StateManager {
     }
   }
   setScrollLeft(left: number, event?: FederatedWheelEvent, triggerEvent: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();

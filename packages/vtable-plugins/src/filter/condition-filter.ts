@@ -1,8 +1,15 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, filterStyles, createElement } from './styles';
-import type { FilterOperator, OperatorOption } from './types';
+import type {
+  FilterOperator,
+  FilterOperatorCategoryOption,
+  FilterOptions,
+  FilterStyles,
+  OperatorOption
+} from './types';
 import { FilterActionType, FilterOperatorCategory } from './types';
+import { operators } from './constant';
 
 /**
  * 按条件筛选组件
@@ -10,66 +17,42 @@ import { FilterActionType, FilterOperatorCategory } from './types';
 export class ConditionFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private pluginOptions: FilterOptions;
+  private filterToolBarHide: () => void;
+
+  private styles: Record<any, any>;
+
   private filterByConditionPanel: HTMLElement;
+  private conditionContainer: HTMLElement;
+  private categoryLabel: HTMLElement;
   private selectedField: string | number;
   private operatorSelect: HTMLSelectElement;
   private valueInput: HTMLInputElement;
+  private andLabel: HTMLElement;
   private valueInputMax: HTMLInputElement;
   private categorySelect: HTMLSelectElement;
+  private operatorLabel: HTMLElement;
+  private rangeInputContainer: HTMLElement;
+  private valueLabel: HTMLElement;
+
   private currentCategory: FilterOperatorCategory = FilterOperatorCategory.ALL;
 
-  // 按分类组织的操作符选项
-  private operators: OperatorOption[] = [
-    // 通用操作符 (全部分类中显示)
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.ALL },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.ALL },
+  private categories: FilterOperatorCategoryOption[] = [];
+  protected operators: OperatorOption[] = [];
 
-    // 数值操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'greaterThan', label: '大于', category: FilterOperatorCategory.NUMBER },
-    { value: 'lessThan', label: '小于', category: FilterOperatorCategory.NUMBER },
-    { value: 'greaterThanOrEqual', label: '大于等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'lessThanOrEqual', label: '小于等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'between', label: '介于', category: FilterOperatorCategory.NUMBER },
-    { value: 'notBetween', label: '不介于', category: FilterOperatorCategory.NUMBER },
-
-    // 文本操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.TEXT },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.TEXT },
-    { value: 'contains', label: '包含', category: FilterOperatorCategory.TEXT },
-    { value: 'notContains', label: '不包含', category: FilterOperatorCategory.TEXT },
-    { value: 'startsWith', label: '开头是', category: FilterOperatorCategory.TEXT },
-    { value: 'notStartsWith', label: '开头不是', category: FilterOperatorCategory.TEXT },
-    { value: 'endsWith', label: '结尾是', category: FilterOperatorCategory.TEXT },
-    { value: 'notEndsWith', label: '结尾不是', category: FilterOperatorCategory.TEXT },
-
-    // 颜色操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.COLOR },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.COLOR },
-
-    // 复选框操作符
-    { value: 'isChecked', label: '已选中', category: FilterOperatorCategory.CHECKBOX },
-    { value: 'isUnchecked', label: '未选中', category: FilterOperatorCategory.CHECKBOX },
-
-    // 单选框操作符
-    { value: 'isChecked', label: '已选中', category: FilterOperatorCategory.RADIO },
-    { value: 'isUnchecked', label: '未选中', category: FilterOperatorCategory.RADIO }
-  ];
-
-  // 分类下拉选项
-  private categories = [
-    { value: FilterOperatorCategory.ALL, label: '全部' },
-    { value: FilterOperatorCategory.TEXT, label: '文本' },
-    { value: FilterOperatorCategory.NUMBER, label: '数值' },
-    { value: FilterOperatorCategory.COLOR, label: '颜色' },
-    { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
-    { value: FilterOperatorCategory.RADIO, label: '单选框' }
-  ];
-
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(
+    table: ListTable | PivotTable,
+    filterStateManager: FilterStateManager,
+    pluginOptions: FilterOptions,
+    filterToolBarHide: () => void
+  ) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.pluginOptions = pluginOptions;
+    this.styles = pluginOptions.styles || {};
+    this.categories = pluginOptions.conditionCategories;
+    this.operators = operators;
+    this.filterToolBarHide = filterToolBarHide;
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -89,13 +72,15 @@ export class ConditionFilter {
     let filteredOperators: OperatorOption[];
 
     if (this.currentCategory === FilterOperatorCategory.ALL) {
-      // 当选择"全部"时，收集所有不重复的操作符
+      // 当选择"全部"时，收集所有配置的分类中, 不重复的操作符
       const uniqueOperators = new Map<string, OperatorOption>();
-      this.operators.forEach(op => {
-        if (!uniqueOperators.has(op.value)) {
-          uniqueOperators.set(op.value, op);
-        }
-      });
+      this.operators
+        .filter(op => this.categories.map(cat => cat.value).includes(op.category))
+        .forEach(op => {
+          if (!uniqueOperators.has(op.value)) {
+            uniqueOperators.set(op.value, op);
+          }
+        });
       filteredOperators = Array.from(uniqueOperators.values());
     } else {
       // 其他类别正常筛选
@@ -128,22 +113,24 @@ export class ConditionFilter {
    */
   private loadCurrentFilterState(): void {
     const filter = this.filterStateManager.getFilterState(this.selectedField);
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
 
-    if (filter && filter.type === 'byCondition') {
+    // 不联动的场景下, 用户的配置始终会被展示出来
+    if ((filter && filter.type === 'byCondition') || !syncFilterItemsState) {
       // 设置操作符
-      if (filter.operator && this.operatorSelect) {
-        this.operatorSelect.value = filter.operator;
+      if (this.operatorSelect) {
+        this.operatorSelect.value = filter?.operator ?? operators[0].value;
       }
 
       // 设置条件值
-      if (filter.condition !== undefined && this.valueInput) {
-        if (Array.isArray(filter.condition)) {
+      if (this.valueInput) {
+        if (Array.isArray(filter?.condition)) {
           this.valueInput.value = String(filter.condition[0]);
           if (this.valueInputMax) {
             this.valueInputMax.value = String(filter.condition[1]);
           }
         } else {
-          this.valueInput.value = String(filter.condition);
+          this.valueInput.value = String(filter?.condition ?? '');
           if (this.valueInputMax) {
             this.valueInputMax.value = '';
           }
@@ -277,7 +264,7 @@ export class ConditionFilter {
     }
 
     // TODO：处理单元格颜色和字体颜色的筛选
-
+    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
     this.filterStateManager.dispatch({
       type: FilterActionType.APPLY_FILTERS,
       payload: {
@@ -285,11 +272,10 @@ export class ConditionFilter {
         type: 'byCondition',
         operator,
         condition: conditionValue,
-        enable: true
+        enable: true,
+        shouldKeepUnrelatedState: !syncFilterItemsState
       }
     });
-
-    this.hide();
   }
 
   /**
@@ -310,17 +296,18 @@ export class ConditionFilter {
    * 渲染条件筛选面板
    */
   render(container: HTMLElement): void {
+    const filterStyles = this.styles;
     // 按条件筛选面板
     this.filterByConditionPanel = document.createElement('div');
     applyStyles(this.filterByConditionPanel, filterStyles.filterPanel);
 
     // 条件选择区域
-    const conditionContainer = document.createElement('div');
-    applyStyles(conditionContainer, filterStyles.conditionContainer);
+    this.conditionContainer = document.createElement('div');
+    applyStyles(this.conditionContainer, this.styles.conditionContainer);
 
     // 分类选择下拉框
-    const categoryLabel = createElement('label', {}, ['筛选类型：']);
-    applyStyles(categoryLabel, filterStyles.formLabel);
+    this.categoryLabel = createElement('label', {}, ['筛选类型：']);
+    applyStyles(this.categoryLabel, this.styles.formLabel);
 
     this.categorySelect = createElement('select') as HTMLSelectElement;
     applyStyles(this.categorySelect, filterStyles.operatorSelect);
@@ -334,19 +321,19 @@ export class ConditionFilter {
     });
 
     // 操作符选择下拉框
-    const operatorLabel = createElement('label', {}, ['筛选条件：']);
-    applyStyles(operatorLabel, filterStyles.formLabel);
+    this.operatorLabel = createElement('label', {}, ['筛选条件：']);
+    applyStyles(this.operatorLabel, this.styles.formLabel);
 
     this.operatorSelect = createElement('select') as HTMLSelectElement;
     applyStyles(this.operatorSelect, filterStyles.operatorSelect);
 
     // 条件值输入框
-    const valueLabel = createElement('label', {}, ['筛选值：']);
-    applyStyles(valueLabel, filterStyles.formLabel);
+    this.valueLabel = createElement('label', {}, ['筛选值：']);
+    applyStyles(this.valueLabel, this.styles.formLabel);
 
     // 一个容器来包装两个输入框和"和"字
-    const rangeInputContainer = createElement('div');
-    applyStyles(rangeInputContainer, filterStyles.rangeInputContainer);
+    this.rangeInputContainer = createElement('div');
+    applyStyles(this.rangeInputContainer, this.styles.rangeInputContainer);
 
     this.valueInput = createElement('input', {
       type: 'text',
@@ -355,9 +342,9 @@ export class ConditionFilter {
     applyStyles(this.valueInput, filterStyles.searchInput);
 
     // "和"字标签
-    const andLabel = createElement('span', {}, ['和']);
-    applyStyles(andLabel, filterStyles.addLabel);
-    andLabel.style.display = 'none'; // 默认隐藏
+    this.andLabel = createElement('span', {}, ['和']);
+    applyStyles(this.andLabel, this.styles.addLabel);
+    this.andLabel.style.display = 'none'; // 默认隐藏
 
     // 范围筛选的最大值输入框
     this.valueInputMax = createElement('input', {
@@ -368,19 +355,19 @@ export class ConditionFilter {
     this.valueInputMax.style.display = 'none'; // 默认隐藏
 
     // 将输入框和"和"字添加到容器中
-    rangeInputContainer.appendChild(this.valueInput);
-    rangeInputContainer.appendChild(andLabel);
-    rangeInputContainer.appendChild(this.valueInputMax);
+    this.rangeInputContainer.appendChild(this.valueInput);
+    this.rangeInputContainer.appendChild(this.andLabel);
+    this.rangeInputContainer.appendChild(this.valueInputMax);
 
     // 将元素添加到容器中
-    conditionContainer.appendChild(categoryLabel);
-    conditionContainer.appendChild(this.categorySelect);
-    conditionContainer.appendChild(operatorLabel);
-    conditionContainer.appendChild(this.operatorSelect);
-    conditionContainer.appendChild(valueLabel);
-    conditionContainer.appendChild(rangeInputContainer);
+    this.conditionContainer.appendChild(this.categoryLabel);
+    this.conditionContainer.appendChild(this.categorySelect);
+    this.conditionContainer.appendChild(this.operatorLabel);
+    this.conditionContainer.appendChild(this.operatorSelect);
+    this.conditionContainer.appendChild(this.valueLabel);
+    this.conditionContainer.appendChild(this.rangeInputContainer);
 
-    this.filterByConditionPanel.appendChild(conditionContainer);
+    this.filterByConditionPanel.appendChild(this.conditionContainer);
     container.appendChild(this.filterByConditionPanel);
 
     // 默认隐藏
@@ -391,6 +378,20 @@ export class ConditionFilter {
     this.bindEvents();
   }
 
+  updateStyles(styles: FilterStyles) {
+    applyStyles(this.filterByConditionPanel, styles.filterPanel);
+    applyStyles(this.conditionContainer, styles.conditionContainer);
+    applyStyles(this.categoryLabel, styles.formLabel);
+    applyStyles(this.categorySelect, styles.operatorSelect);
+    applyStyles(this.operatorLabel, styles.formLabel);
+    applyStyles(this.operatorSelect, styles.operatorSelect);
+    applyStyles(this.valueLabel, styles.formLabel);
+    applyStyles(this.rangeInputContainer, styles.rangeInputContainer);
+    applyStyles(this.valueInput, styles.searchInput);
+    applyStyles(this.andLabel, styles.addLabel);
+    applyStyles(this.valueInputMax, styles.searchInput);
+  }
+
   /**
    * 绑定事件
    */
@@ -399,6 +400,7 @@ export class ConditionFilter {
     this.valueInput.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         this.applyFilter();
+        this.filterToolBarHide();
       }
     });
 
@@ -406,6 +408,7 @@ export class ConditionFilter {
     this.valueInputMax.addEventListener('keypress', event => {
       if (event.key === 'Enter') {
         this.applyFilter();
+        this.filterToolBarHide();
       }
     });
 

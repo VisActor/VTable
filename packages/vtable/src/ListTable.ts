@@ -636,6 +636,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   ) {
     const internalProps = this.internalProps;
+
+    this.pluginManager.removeOrAddPlugins(options.plugins);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -1158,6 +1160,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.clearCellStyleCache();
     this.internalProps.layoutMap.clearCellRangeMap();
     this.internalProps.useOneRowHeightFillAll = false;
+    // ts-ignore
     // this.scenegraph.updateHierarchyIcon(col, row);// 添加了updateCells:[{ col, row }] 就不需要单独更新图标了（只更新图标针对有自定义元素的情况 会有更新不到问题）'
     // const updateCells = [{ col, row }];
     // // 如果需要移出的节点超过了当前加载部分最后一行  则转变成更新对应的行
@@ -1302,6 +1305,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     filterRules: FilterRules,
     options: {
       clearRowHeightCache?: boolean;
+      onFilterRecordsEnd?: (records: any[]) => any[];
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
@@ -1309,11 +1313,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);
     } else {
-      this.dataSource.updateFilterRules(filterRules);
+      this.dataSource.updateFilterRules(filterRules, options?.onFilterRecordsEnd);
     }
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
+    this.internalProps.emptyTip?.resetVisible();
     this.resize();
   }
   /** 获取过滤后的数据 */
@@ -1356,7 +1361,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return state && state[field];
       });
     }
-    return new Array(...this.stateManager.checkedState.values());
+    return [...this.stateManager.checkedState.values()];
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
@@ -1845,7 +1850,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       });
     }
   }
-  /** 合并单元格 对外接口 。会自动刷新渲染节点
+  /** 获取某个单元格checkbox的状态 */
+
+  /**
+   * 合并单元格 对外接口 。会自动刷新渲染节点
    * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
    */
   mergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {

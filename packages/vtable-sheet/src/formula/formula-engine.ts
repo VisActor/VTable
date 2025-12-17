@@ -3252,5 +3252,8 @@ export class FormulaEngine {
 }
 
 class FormulaError {
-  constructor(public message: string, public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE') {}
+  constructor(
+    public message: string,
+    public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE'
+  ) {}
 }
