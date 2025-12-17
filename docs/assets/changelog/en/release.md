@@ -1,3 +1,40 @@
+# v1.22.8
+
+2025-12-17
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-sheet**: vtable-sheet support cross sheet calculate formula
+- **@visactor/vtable-sheet**: support import multiply sheets from excel file
+- **@visactor/vtable**: excel export multiply sheets
+- **@visactor/vtable-plugins**: add update styles api for filter plugin. close[#4790](https://github.com/VisActor/VTable/issues/4790)
+- **@visactor/vtable-plugins**:  filter plugin support custom styles. close[#4720](https://github.com/VisActor/VTable/issues/4720)
+- **@visactor/vtable-plugins**: emit event when filter menu hide or show. close[#4784](https://github.com/VisActor/VTable/issues/4784)
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when pivot table set grid-tree subTotal value not show [#4815](https://github.com/VisActor/VTable/issues/4815)
+- **@visactor/vtable**: scroll bug when update option
+- **@visactor/vtable**: filter swtich enable erroe. fix[#4783](https://github.com/VisActor/VTable/issues/4783)
+- **@visactor/vtable**: apply filter after update table data. fix[#4785](https://github.com/VisActor/VTable/issues/4785)
+- **@visactor/vtable**: update filter state and keys when update data. fix[#4787](https://github.com/VisActor/VTable/issues/4787)
+- **@visactor/vtable**: select none not effect. fix[#4792](https://github.com/VisActor/VTable/issues/4792)
+- **@visactor/vtable**: empty line bug
+- **@visactor/vtable**: update checkbox state after update data. fix[#4795](https://github.com/VisActor/VTable/issues/4795)
+- **@visactor/vtable**: delete key down should not complete edit cell
+- **@visactor/vtable**: pivotChart linkage getAxis node occor error
+- **@visactor/vtable**: panel hide when press enter. fix[#4813](https://github.com/VisActor/VTable/issues/4813)
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: supplement chartDimensionLinkage demo
+
+
+
+[more detail about v1.22.8](https://github.com/VisActor/VTable/releases/tag/v1.22.8)
+
 # v1.22.7
 
 2025-12-08
