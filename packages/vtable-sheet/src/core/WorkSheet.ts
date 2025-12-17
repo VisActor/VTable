@@ -167,7 +167,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     } else {
       for (let i = 0; i < this.options.columns.length; i++) {
         this.options.columns[i].field = i;
-        this.options.columns[i].key = i;
+        this.options.columns[i].key = i as any;
       }
     }
     if (!this.options.data) {
@@ -178,7 +178,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         for (let i = 0; i < data[0].length; i++) {
           this.options.columns[i] = {
             field: i,
-            key: i,
+            key: i as any,
             title: data[0][i],
             filter: !!this.options.filter
           };
@@ -901,7 +901,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     sourceStartRow: number,
     targetStartCol: number,
     targetStartRow: number
-  ): (string | number)[][] {
+  ): string[][] {
     if (!formulas || formulas.length === 0) {
       return formulas;
     }

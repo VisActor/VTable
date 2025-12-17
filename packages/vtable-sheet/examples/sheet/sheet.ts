@@ -151,7 +151,7 @@ export function createTable() {
       },
       {
         sheetKey: 'sheet5',
-        sheetTitle: 'Sheet 5',
+        sheetTitle: 'Sheet5',
         columnCount: 20,
         rowCount: 100,
         firstRowAsHeader: true,

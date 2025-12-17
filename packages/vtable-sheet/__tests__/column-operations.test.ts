@@ -3,31 +3,43 @@ import { FormulaManager } from '../src/managers/formula-manager';
 import type VTableSheet from '../src/components/vtable-sheet';
 
 // Mock VTableSheet for testing
-const mockVTableSheet = {
-  getSheetManager: () => ({
-    getSheet: (sheetKey: string) => ({
-      sheetTitle: 'Test Sheet',
-      sheetKey: sheetKey,
-      showHeader: true,
-      columnCount: 10,
-      rowCount: 10,
-      columns: [] as any[]
-    })
-  }),
-  getActiveSheet: (): any => ({
-    tableInstance: {
-      changeCellValue: () => {
-        /* Mock implementation */
-      }
-    }
-  }),
-  getSheet: (sheetKey: string) => ({
-    columnCount: 10,
-    rowCount: 10
-  }),
-  formulaManager: null // 这会在创建FormulaManager时自动设置
-} as unknown as VTableSheet;
+// 使用闭包共享 sheets Map，确保 addSheet 和 getSheetManager 都能访问
+const mockSheets = new Map<string, { sheetTitle: string; sheetKey: string; showHeader: boolean; columns: any[] }>();
 
+const mockVTableSheet = {
+  workSheetInstances: new Map(), // 添加缺失的 workSheetInstances 属性
+  getSheetManager: () => ({
+    getSheet: (sheetKey: string) => {
+      if (!mockSheets.has(sheetKey)) {
+        mockSheets.set(sheetKey, {
+          sheetTitle: sheetKey,
+          sheetKey: sheetKey,
+          showHeader: true,
+          columns: [] as any[]
+        });
+      }
+      return mockSheets.get(sheetKey);
+    },
+    getAllSheets: () => {
+      // 返回所有 sheets 的数组
+      return Array.from(mockSheets.values()).map(sheet => ({
+        sheetKey: sheet.sheetKey,
+        sheetTitle: sheet.sheetTitle
+      }));
+    },
+    getSheetCount: () => mockSheets.size
+  }),
+  getActiveSheet: (): any => null,
+  createWorkSheetInstance: (sheetDefine: any): any => {
+    // 返回一个简单的 mock 实例
+    return {
+      getElement: () => ({ style: { display: '' } }),
+      getData: (): any[] => [],
+      getColumns: (): any[] => [],
+      release: (): void => {}
+    };
+  }
+} as unknown as VTableSheet;
 // 测试用的基本标准化函数
 function normalizeTestData(data: unknown[][]): unknown[][] {
   if (!Array.isArray(data) || data.length === 0) {
