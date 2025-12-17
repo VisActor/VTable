@@ -171,3 +171,9 @@ By default, the exported file name is `export`; if you need to customize the fil
 
 ## Usage Example
 Please refer to [table export](../../demo/export/table-export)
+
+## vtable-sheet usage
+
+In VTableSheet, you can refer to [VTableSheet export](../sheet/import_export).
+
+Because the electronic spreadsheet needs to support exporting multiple sheets, so this plugin extends the interface ability to export all sheets, and specifically adds the exportMultipleVTablesToExcel method.

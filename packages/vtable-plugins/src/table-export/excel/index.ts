@@ -58,22 +58,53 @@ export async function exportVTableToExcel(
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
+  await renderTableToWorksheet(tableInstance, worksheet, workbook, options, optimization);
+  const buffer = await workbook.xlsx.writeBuffer();
+  return buffer;
+}
+
+export async function exportMultipleVTablesToExcel(
+  tables: Array<{ table: IVTable; name?: string }>,
+  options?: ExportVTableToExcelOptions,
+  optimization = false
+) {
+  const workbook = new ExcelJS.Workbook();
+  const usedWorksheetNames = new Set<string>();
+  for (let i = 0; i < tables.length; i++) {
+    const { table, name } = tables[i];
+    const safeName = getUniqueWorksheetName(name || `sheet${i + 1}`, usedWorksheetNames);
+    usedWorksheetNames.add(safeName);
+    const worksheet = workbook.addWorksheet(safeName);
+    await renderTableToWorksheet(table, worksheet, workbook, options, optimization);
+  }
+  const buffer = await workbook.xlsx.writeBuffer();
+  return buffer;
+}
+
+async function renderTableToWorksheet(
+  tableInstance: IVTable,
+  worksheet: ExcelJS.Worksheet,
+  workbook: ExcelJS.Workbook,
+  options?: ExportVTableToExcelOptions,
+  optimization = false
+): Promise<void> {
   const exportAllData = !!options?.exportAllData;
   const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
-  const minRow = 0;
-  const maxRow = handleRowCount();
-  const minCol = 0;
-  const maxCol = tableInstance.colCount - 1;
-  worksheet.properties.defaultRowHeight = 40;
-  const columns: { width: number }[] = [];
-  const mergeCells: CellRange[] = [];
-  const mergeCellSet = new Set();
+  try {
+    const minRow = 0;
+    const maxRow = handleRowCount();
+    const minCol = 0;
+    const maxCol = tableInstance.colCount - 1;
 
-  const SLICE_SIZE = 100;
-  let currentRow = minRow;
+    worksheet.properties.defaultRowHeight = 40;
+    const columns: { width: number }[] = [];
+    const mergeCells: CellRange[] = [];
+    const mergeCellSet = new Set<string>();
 
-  function processSlice(deadline?: IdleDeadline) {
-    return new Promise<void>(async resolve => {
+    const SLICE_SIZE = 100;
+    let currentRow = minRow;
+
+    const processSlice = async (deadline?: IdleDeadline): Promise<void> => {
       while (currentRow <= maxRow && (!optimization || deadline?.timeRemaining() > 0)) {
         const endRow = Math.min(currentRow + SLICE_SIZE - 1, maxRow);
         for (let col = minCol; col <= maxCol; col++) {
@@ -85,7 +116,6 @@ export async function exportVTableToExcel(
             if (col === minCol) {
               const rowHeight = tableInstance.getRowHeight(row);
               const worksheetRow = worksheet.getRow(row + 1);
-              // worksheetRow.height = rowHeight * 0.75;
               worksheetRow.height = rowHeight;
             }
 
@@ -104,69 +134,89 @@ export async function exportVTableToExcel(
         currentRow = endRow + 1;
       }
 
-      if (currentRow > maxRow) {
-        resolve();
-      } else {
-        let nextDeadline: IdleDeadline | undefined;
-        if (optimization) {
-          nextDeadline = await requestIdleCallbackPromise();
-        }
+      if (currentRow <= maxRow) {
+        const nextDeadline = optimization ? await requestIdleCallbackPromise() : undefined;
         await processSlice(nextDeadline);
-        resolve();
       }
-    });
-  }
+    };
 
-  await new Promise<void>(async resolve => {
-    let deadline: IdleDeadline | undefined;
     if (optimization) {
-      deadline = await requestIdleCallbackPromise();
+      const deadline = await requestIdleCallbackPromise();
+      await processSlice(deadline);
+    } else {
+      await processSlice();
     }
-    await processSlice(deadline);
-    resolve();
-  });
 
-  worksheet.columns = columns;
-  mergeCells.forEach(mergeCell => {
-    worksheet.mergeCells(
-      mergeCell.start.row + 1,
-      mergeCell.start.col + 1,
-      mergeCell.end.row + 1,
-      mergeCell.end.col + 1
-    );
-  });
-
-  // frozen
-  const frozenView: ExcelJS.WorksheetViewFrozen[] = [];
-  // top frozen
-  if (tableInstance.frozenRowCount > 0) {
-    frozenView.push({
-      state: 'frozen',
-      ySplit: tableInstance.frozenRowCount,
-      // activeCell: 'A1',
-      topLeftCell: encodeCellAddress(0, tableInstance.frozenRowCount)
+    worksheet.columns = columns;
+    mergeCells.forEach(mergeCell => {
+      worksheet.mergeCells(
+        mergeCell.start.row + 1,
+        mergeCell.start.col + 1,
+        mergeCell.end.row + 1,
+        mergeCell.end.col + 1
+      );
     });
-  }
-  // left frozen
-  if (tableInstance.frozenColCount > 0) {
-    frozenView.push({
-      state: 'frozen',
-      xSplit: tableInstance.frozenColCount,
-      // activeCell: 'A1',
-      topLeftCell: encodeCellAddress(tableInstance.frozenColCount, 0)
-    });
-  }
-  // not support bottom&right frozen
-  worksheet.views = frozenView;
 
-  if (options?.excelJSWorksheetCallback) {
-    options.excelJSWorksheetCallback(worksheet);
-  }
+    const frozenView: ExcelJS.WorksheetViewFrozen[] = [];
+    if (tableInstance.frozenRowCount > 0) {
+      frozenView.push({
+        state: 'frozen',
+        ySplit: tableInstance.frozenRowCount,
+        topLeftCell: encodeCellAddress(0, tableInstance.frozenRowCount)
+      });
+    }
+    if (tableInstance.frozenColCount > 0) {
+      frozenView.push({
+        state: 'frozen',
+        xSplit: tableInstance.frozenColCount,
+        topLeftCell: encodeCellAddress(tableInstance.frozenColCount, 0)
+      });
+    }
+    worksheet.views = frozenView;
 
-  const buffer = await workbook.xlsx.writeBuffer();
-  // 恢复透视表的pagination配置
-  reset();
-  return buffer;
+    if (options?.excelJSWorksheetCallback) {
+      options.excelJSWorksheetCallback(worksheet);
+    }
+  } finally {
+    // 恢复透视表的pagination配置
+    reset();
+  }
+}
+
+function getUniqueWorksheetName(rawName: string, used: Set<string>) {
+  // Excel sheet name constraints:
+  // - max 31 chars
+  // - cannot contain: : \ / ? * [ ]
+  // - cannot be empty
+  // ExcelJS will throw on invalid/duplicate names, so we guard here.
+  const cleanedBase = sanitizeWorksheetName(rawName) || 'sheet';
+  if (!used.has(cleanedBase)) {
+    return cleanedBase;
+  }
+  for (let n = 2; n < 10000; n++) {
+    const suffix = `-${n}`;
+    const baseMax = 31 - suffix.length;
+    const base = cleanedBase.length > baseMax ? cleanedBase.slice(0, baseMax) : cleanedBase;
+    const candidate = `${base}${suffix}`;
+    if (!used.has(candidate)) {
+      return candidate;
+    }
+  }
+  // Fallback: extremely unlikely; still ensure non-empty + <=31
+  return `${cleanedBase.slice(0, 31 - 6)}-${Date.now().toString().slice(-5)}`;
+}
+
+function sanitizeWorksheetName(name: string) {
+  const trimmed = (name ?? '').toString().trim();
+  // Replace invalid characters with space, then collapse spaces.
+  const noInvalidChars = trimmed
+    .replace(/[:\\\/\?\*\[\]]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  // Excel doesn't allow empty names
+  const nonEmpty = noInvalidChars || 'sheet';
+  // Excel max length is 31
+  return nonEmpty.length > 31 ? nonEmpty.slice(0, 31) : nonEmpty;
 }
 
 async function addCell(
