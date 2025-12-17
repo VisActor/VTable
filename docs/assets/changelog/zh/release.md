@@ -5,31 +5,30 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-sheet**: vtable-sheet support cross sheet calculate formula
-- **@visactor/vtable-sheet**: support import multiply sheets from excel file
-- **@visactor/vtable**: excel export multiply sheets
-- **@visactor/vtable-plugins**: add update styles api for filter plugin. close[#4790](https://github.com/VisActor/VTable/issues/4790)
-- **@visactor/vtable-plugins**:  filter plugin support custom styles. close[#4720](https://github.com/VisActor/VTable/issues/4720)
-- **@visactor/vtable-plugins**: emit event when filter menu hide or show. close[#4784](https://github.com/VisActor/VTable/issues/4784)
+- **@visactor/vtable-sheet**: vtable-sheet 支持跨表格计算公式
+- **@visactor/vtable-sheet**: vtable-sheet 支持从 excel 文件中导入多个表格
+- **@visactor/vtable**: vtable 支持导出多个sheet到excel文件
+- **@visactor/vtable-plugins**: 过滤插件支持更新样式 api. close[#4790](https://github.com/VisActor/VTable/issues/4790)
+- **@visactor/vtable-plugins**: 过滤插件支持自定义样式. close[#4720](https://github.com/VisActor/VTable/issues/4720)
+- **@visactor/vtable-plugins**: 过滤菜单隐藏或显示时触发事件. close[#4784](https://github.com/VisActor/VTable/issues/4784)
 
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when pivot table set grid-tree subTotal value not show [#4815](https://github.com/VisActor/VTable/issues/4815)
-- **@visactor/vtable**: scroll bug when update option
-- **@visactor/vtable**: filter swtich enable erroe. fix[#4783](https://github.com/VisActor/VTable/issues/4783)
-- **@visactor/vtable**: apply filter after update table data. fix[#4785](https://github.com/VisActor/VTable/issues/4785)
-- **@visactor/vtable**: update filter state and keys when update data. fix[#4787](https://github.com/VisActor/VTable/issues/4787)
-- **@visactor/vtable**: select none not effect. fix[#4792](https://github.com/VisActor/VTable/issues/4792)
-- **@visactor/vtable**: empty line bug
-- **@visactor/vtable**: update checkbox state after update data. fix[#4795](https://github.com/VisActor/VTable/issues/4795)
-- **@visactor/vtable**: delete key down should not complete edit cell
-- **@visactor/vtable**: pivotChart linkage getAxis node occor error
-- **@visactor/vtable**: panel hide when press enter. fix[#4813](https://github.com/VisActor/VTable/issues/4813)
+- **@visactor/vtable**: 透视表设置 grid-tree 小计值不显示 [#4815](https://github.com/VisActor/VTable/issues/4815)
+- **@visactor/vtable**: 更新选项时滚动条错误
+- **@visactor/vtable**: 过滤开关启用错误. fix[#4783](https://github.com/VisActor/VTable/issues/4783)
+- **@visactor/vtable**: 更新表格数据后应用过滤. fix[#4785](https://github.com/VisActor/VTable/issues/4785)
+- **@visactor/vtable**: 更新表格数据后更新过滤状态和键. fix[#4787](https://github.com/VisActor/VTable/issues/4787)
+- **@visactor/vtable**: 选择 none 不生效. fix[#4792](https://github.com/VisActor/VTable/issues/4792)
+- **@visactor/vtable**: 更新表格数据后更新复选框状态. fix[#4795](https://github.com/VisActor/VTable/issues/4795)
+- **@visactor/vtable**: 删除键下不应完成编辑单元格
+- **@visactor/vtable**: 透视图联动 getAxis 节点错误
+- **@visactor/vtable**: 按下回车键时面板隐藏. fix[#4813](https://github.com/VisActor/VTable/issues/4813)
 
 **📖 文档更新**
 
-- **@visactor/vtable**: supplement chartDimensionLinkage demo
+- **@visactor/vtable**: 补充 chartDimensionLinkage 示例
 
 
 
