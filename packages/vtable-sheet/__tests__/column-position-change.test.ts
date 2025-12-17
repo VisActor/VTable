@@ -8,31 +8,53 @@ global.console = {
   warn: jest.fn(),
   error: jest.fn()
 };
-
 // Mock VTableSheet for testing
+// 使用闭包共享 sheets Map，确保 addSheet 和 getSheetManager 都能访问
+const mockSheets = new Map<string, { sheetTitle: string; sheetKey: string; showHeader: boolean; columns: any[] }>();
+
 const mockVTableSheet = {
+  workSheetInstances: new Map(), // 添加缺失的 workSheetInstances 属性
   getSheetManager: () => ({
-    getSheet: (sheetKey: string) => ({
-      sheetTitle: 'Test Sheet',
-      sheetKey: sheetKey,
-      showHeader: true,
-      columnCount: 10,
-      rowCount: 10,
-      columns: [] as any[]
-    })
+    getSheet: (sheetKey: string) => {
+      if (!mockSheets.has(sheetKey)) {
+        mockSheets.set(sheetKey, {
+          sheetTitle: sheetKey,
+          sheetKey: sheetKey,
+          showHeader: true,
+          columns: [] as any[],
+          columnCount: 10, // 添加 columnCount 属性
+          rowCount: 10 // 添加 rowCount 属性
+        });
+      }
+      return mockSheets.get(sheetKey);
+    },
+    getAllSheets: () => {
+      // 返回所有 sheets 的数组
+      return Array.from(mockSheets.values()).map(sheet => ({
+        sheetKey: sheet.sheetKey,
+        sheetTitle: sheet.sheetTitle
+      }));
+    },
+    getSheetCount: () => mockSheets.size
   }),
+  // 添加 getSheet 方法作为快捷方式（changeColumnHeaderPosition 需要）
+  getSheet: (sheetKey: string) => {
+    return mockVTableSheet.getSheetManager().getSheet(sheetKey);
+  },
   getActiveSheet: (): any => ({
     tableInstance: {
-      changeCellValue: () => {
-        /* Mock implementation */
-      }
+      changeCellValue: jest.fn() // Mock changeCellValue 方法
     }
   }),
-  getSheet: (sheetKey: string) => ({
-    columnCount: 10,
-    rowCount: 10
-  }),
-  formulaManager: null // 这会在创建FormulaManager时自动设置
+  createWorkSheetInstance: (sheetDefine: any): any => {
+    // 返回一个简单的 mock 实例
+    return {
+      getElement: () => ({ style: { display: '' } }),
+      getData: (): any[] => [],
+      getColumns: (): any[] => [],
+      release: (): void => {}
+    };
+  }
 } as unknown as VTableSheet;
 
 // 测试用的基本标准化函数
@@ -71,6 +93,8 @@ describe('Column Position Change Formula References', () => {
   let formulaManager: FormulaManager;
 
   beforeEach(() => {
+    // 清空 mock sheets Map
+    mockSheets.clear();
     formulaManager = new FormulaManager(mockVTableSheet);
     // 设置mock对象的formulaManager属性，以便在测试中使用
     mockVTableSheet.formulaManager = formulaManager;
@@ -91,6 +115,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // 在D3(第3列，第2行)中创建公式 SUM(F2,F3)
     formulaManager.setCellContent({ sheet: sheetKey, row: 2, col: 3 }, '=SUM(F2,F3)');
@@ -118,6 +144,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // 在D3(第3列，第2行)中创建公式 SUM(F2,F3)
     formulaManager.setCellContent({ sheet: sheetKey, row: 2, col: 3 }, '=SUM(F2,F3)');
@@ -141,6 +169,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // 在D3中创建复杂公式
     formulaManager.setCellContent({ sheet: sheetKey, row: 2, col: 3 }, '=A2+B2+SUM(E2:G2)');
@@ -173,6 +203,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // 在C列创建多个公式
     formulaManager.setCellContent({ sheet: sheetKey, row: 1, col: 2 }, '=A2+B2'); // C2
@@ -219,6 +251,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Set the formula explicitly after adding the sheet
     formulaManager.setCellContent({ sheet: sheetKey, row: 5, col: 4 }, '=SUM(B3:B5)');
@@ -268,6 +302,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Set a complex formula with multiple ranges
     formulaManager.setCellContent({ sheet: sheetKey, row: 5, col: 5 }, '=SUM(A1:B3,C4:D5)');
@@ -298,6 +334,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Test different types of absolute references
     formulaManager.setCellContent({ sheet: sheetKey, row: 1, col: 3 }, '=C2+$B$3'); // D2=C2+$B$3
@@ -330,6 +368,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Set a nested function formula
     formulaManager.setCellContent({ sheet: sheetKey, row: 3, col: 3 }, '=IF(SUM(A1:A3)>10,AVERAGE(B1:B3),0)');
@@ -360,7 +400,12 @@ describe('Column Position Change Formula References', () => {
     ]);
 
     formulaManager.addSheet('Sheet1', sheetData1);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet1');
+
     formulaManager.addSheet('Sheet2', sheetData2);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('Sheet2');
 
     // Set cross-sheet formula
     formulaManager.setCellContent({ sheet: 'Sheet2', row: 2, col: 2 }, '=Z3+Sheet1!B2');
@@ -387,6 +432,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Set formula in column E
     formulaManager.setCellContent({ sheet: sheetKey, row: 3, col: 4 }, '=SUM(A2:C2)');
@@ -413,6 +460,8 @@ describe('Column Position Change Formula References', () => {
 
     const sheetKey = 'Sheet1';
     formulaManager.addSheet(sheetKey, sheetData);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet(sheetKey);
 
     // Set formula referencing multiple columns
     formulaManager.setCellContent({ sheet: sheetKey, row: 3, col: 2 }, '=A2+B2+D2');

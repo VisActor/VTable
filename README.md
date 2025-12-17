@@ -192,7 +192,15 @@ $ rush update
 
 # ⭐️ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=visactor/vtable&type=Date)](https://star-history.com/#visactor/vtable&Date)
+## Star History
+
+<a href="https://gitdata.xuanhun520.com/#visactor/vtable&Date">
+<picture >
+
+  <img style="width: 800px; height: 533px;" alt="Star History Chart" src="https://gitdata.xuanhun520.com/api/starimg?repos=visactor/vtable&type=Date&theme=dark" />
+</picture>
+</a>
+
 
 # 🤝 Contribution
 

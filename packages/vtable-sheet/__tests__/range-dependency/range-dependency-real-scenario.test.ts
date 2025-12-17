@@ -2,22 +2,50 @@ import { FormulaManager } from '../../src/managers/formula-manager';
 import type VTableSheet from '../../src/components/vtable-sheet';
 
 // Mock VTableSheet for testing
+// 使用闭包共享 sheets Map，确保 addSheet 和 getSheetManager 都能访问
+const mockSheets = new Map<string, { sheetTitle: string; sheetKey: string; showHeader: boolean; columns: any[] }>();
+
 const mockVTableSheet = {
+  workSheetInstances: new Map(), // 添加缺失的 workSheetInstances 属性
   getSheetManager: () => ({
-    getSheet: (sheetKey: string) => ({
-      sheetTitle: 'Test Sheet',
-      sheetKey: sheetKey,
-      showHeader: true,
-      columns: [] as any[]
-    })
+    getSheet: (sheetKey: string) => {
+      if (!mockSheets.has(sheetKey)) {
+        mockSheets.set(sheetKey, {
+          sheetTitle: sheetKey,
+          sheetKey: sheetKey,
+          showHeader: true,
+          columns: [] as any[]
+        });
+      }
+      return mockSheets.get(sheetKey);
+    },
+    getAllSheets: () => {
+      // 返回所有 sheets 的数组
+      return Array.from(mockSheets.values()).map(sheet => ({
+        sheetKey: sheet.sheetKey,
+        sheetTitle: sheet.sheetTitle
+      }));
+    },
+    getSheetCount: () => mockSheets.size
   }),
-  getActiveSheet: (): any => null
+  getActiveSheet: (): any => null,
+  createWorkSheetInstance: (sheetDefine: any): any => {
+    // 返回一个简单的 mock 实例
+    return {
+      getElement: () => ({ style: { display: '' } }),
+      getData: (): any[] => [],
+      getColumns: (): any[] => [],
+      release: (): void => {}
+    };
+  }
 } as unknown as VTableSheet;
 
 describe('Range Dependency Issue - Real Scenario Test', () => {
   let formulaManager: FormulaManager;
 
   beforeEach(() => {
+    // 清空 mock sheets Map
+    mockSheets.clear();
     formulaManager = new FormulaManager(mockVTableSheet);
   });
 
@@ -37,13 +65,49 @@ describe('Range Dependency Issue - Real Scenario Test', () => {
     // Set the formula
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 1, col: 4 }, '=SUM(D2:D3)');
 
-    console.log('=== Initial Setup ===');
-    console.log('D2 value:', formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 3 }).value);
-    console.log('D3 value:', formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 3 }).value);
-    console.log('E2 formula result:', formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 4 }).value);
+    console.error('=== Initial Setup ===');
+    let d2Value;
+    let d3Value;
+    let e2Value;
+    let e2Formula;
+    try {
+      d2Value = formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 3 });
+      d3Value = formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 3 });
+      e2Formula = formulaManager.getCellFormula({ sheet: 'Sheet1', row: 1, col: 4 });
+      e2Value = formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 4 });
+    } catch (error) {
+      console.error('ERROR getting cell values:', error);
+      throw error;
+    }
+
+    // 直接打印到 stderr，绕过 Jest 捕获
+    process.stderr.write(`D2 value: ${d2Value.value}, error: ${d2Value.error || 'undefined'}\n`);
+    process.stderr.write(`D3 value: ${d3Value.value}, error: ${d3Value.error || 'undefined'}\n`);
+    process.stderr.write(`E2 formula: ${e2Formula || 'undefined'}\n`);
+    process.stderr.write(`E2 formula result: ${e2Value.value}, error: ${e2Value.error || 'undefined'}\n`);
+
+    // Debug: Print all values before assertion
+    console.error('\n=== DEBUG INFO BEFORE ASSERTION ===');
+    console.error('D2 full result:', JSON.stringify(d2Value, null, 2));
+    console.error('D3 full result:', JSON.stringify(d3Value, null, 2));
+    console.error('E2 full result:', JSON.stringify(e2Value, null, 2));
+    console.error('E2 formula string:', e2Formula);
 
     // Verify initial calculation
-    expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 4 }).value).toBe(30); // 10 + 20
+    // 如果 value 是 null，先打印完整的错误信息
+    if (e2Value.value === null) {
+      const errorMsg = `E2 value is null. Error: ${e2Value.error || 'no error message'}. Formula: ${
+        e2Formula || 'no formula'
+      }`;
+      console.error(errorMsg);
+      console.error('Full e2Value object:', JSON.stringify(e2Value, null, 2));
+      // 如果 error 存在，在断言失败消息中显示
+      if (e2Value.error) {
+        throw new Error(`Formula calculation failed: ${e2Value.error}. Formula: ${e2Formula}`);
+      }
+    }
+
+    expect(e2Value.value).toBe(30); // 10 + 20
 
     console.log('\n=== Testing D2 Dependencies ===');
 

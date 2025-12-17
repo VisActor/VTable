@@ -31,7 +31,7 @@ export class FormulaPasteProcessor {
   /**
    * 处理单个公式的粘贴调整
    */
-  static adjustFormulaForPaste(formula: string | number, context: FormulaPasteContext): string | number {
+  static adjustFormulaForPaste(formula: string, context: FormulaPasteContext): string {
     if (!FormulaReferenceAdjustor.isFormula(formula)) {
       return formula;
     }
@@ -40,14 +40,14 @@ export class FormulaPasteProcessor {
     const colOffset = context.targetCell.col - context.sourceCell.col;
     const rowOffset = context.targetCell.row - context.sourceCell.row;
 
-    // 调整公式引用
+    // 调整公式引用（确保 formula 是字符串类型）
     return FormulaReferenceAdjustor.adjustFormulaReferences(formula, colOffset, rowOffset);
   }
 
   /**
    * 批量处理公式粘贴
    */
-  static adjustFormulasForPaste(formulas: (string | number)[][], context: FormulaPasteContext): (string | number)[][] {
+  static adjustFormulasForPaste(formulas: string[][], context: FormulaPasteContext): string[][] {
     // 计算整个范围的相对位移
     const colOffset = context.targetRange.startCol - context.sourceRange.startCol;
     const rowOffset = context.targetRange.startRow - context.sourceRange.startRow;
@@ -58,15 +58,11 @@ export class FormulaPasteProcessor {
   /**
    * 使用指定偏移批量处理公式粘贴
    */
-  static adjustFormulasForPasteWithOffset(
-    formulas: (string | number)[][],
-    colOffset: number,
-    rowOffset: number
-  ): (string | number)[][] {
-    const result: (string | number)[][] = [];
+  static adjustFormulasForPasteWithOffset(formulas: string[][], colOffset: number, rowOffset: number): string[][] {
+    const result: string[][] = [];
 
     for (let row = 0; row < formulas.length; row++) {
-      const newRow: (string | number)[] = [];
+      const newRow: string[] = [];
       for (let col = 0; col < formulas[row].length; col++) {
         const formula = formulas[row][col];
 

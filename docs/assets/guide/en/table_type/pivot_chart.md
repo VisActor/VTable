@@ -152,6 +152,7 @@ Corresponding to the schematic structure of the perspective combination diagram 
 - legends configuration legend style;
   ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
 - axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
+- chartDimensionLinkage The feature of interactive functions based on the same dimension value for multiple charts. It is an advanced capability of the perspective chart. Enabling it may affect performance. For specific configuration, please refer to [Advanced Capabilities of Perspective Chart](../../option/PivotChart#chartDimensionLinkage).
 
 # Chart Module Register
 

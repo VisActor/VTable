@@ -1,31 +1,23 @@
-import ExcelJS from 'exceljs';
-import type { ListTable, ColumnsDefine, ColumnDefine } from '@visactor/vtable';
+import type { ListTable, pluginsDefinition, ColumnsDefine } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { pluginsDefinition } from '@visactor/vtable';
-// 数据导入结果类型
-export interface ImportResult {
-  columns: ColumnsDefine;
-  records: Record<string, unknown>[];
-}
+import ExcelJS from 'exceljs';
+import { importExcelMultipleSheets, importCsvFile } from './excel-import/excel';
+import { applyImportToVTableSheet } from './excel-import/vtable-sheet';
+import type { ExcelImportOptions, ImportResult, MultiSheetImportResult } from './excel-import/types';
 
-export interface ExcelImportOptions {
-  id?: string;
-  headerRowCount?: number; // 指定头的层数，不指定会使用detectHeaderRowCount来自动判断，但是只有excel才有
-  exportData?: boolean; // 是否导出JavaScript对象字面量格式文件
-  autoTable?: boolean; // 是否自动替换表格数据
-  autoColumns?: boolean; // 是否自动生成列配置
-  delimiter?: string; // CSV分隔符，默认逗号
-  batchSize?: number; // 批处理大小，默认1000行
-  enableBatchProcessing?: boolean; // 是否启用分批处理，默认true
-  asyncDelay?: number; // 异步处理延迟时间(ms)，默认5ms
-}
+export type { ExcelImportOptions, ImportResult, MultiSheetImportResult, SheetData } from './excel-import/types';
 
+/**
+ * Excel 导入插件
+ * 提供 Excel 文件导入功能，支持单 sheet 和多 sheet 导入
+ */
 export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
   id: string = `excel-import-plugin`;
   name = 'ExcelImportPlugin';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];
   private options: ExcelImportOptions;
-  private _tableInstance: ListTable | null = null;
+  private table: ListTable | null = null;
+
   constructor(options?: ExcelImportOptions) {
     this.options = {
       autoTable: true,
@@ -35,6 +27,8 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
       batchSize: 1000,
       enableBatchProcessing: true,
       asyncDelay: 5,
+      importAllSheets: false, // 默认不导入所有 sheets
+      clearExisting: true, // 默认替换模式
       ...options
     };
     if (options?.id) {
@@ -42,28 +36,200 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
     }
   }
 
-  run(...args: [unknown, unknown, ListTable]) {
-    const tableInstance = args[2];
-    this._tableInstance = tableInstance;
-    (this._tableInstance as any).importFile = () => {
-      this.import('file');
-    };
-  }
-
-  release() {
-    this._tableInstance = null;
-  }
   /**
-   * 调用导入文件接口
-   * @returns Promise<ImportResult>
+   * 插件初始化方法
+   * @param args 插件参数
    */
-  async importFile(): Promise<ImportResult> {
-    return this.import('file');
+  run(...args: any[]) {
+    const runTime = args[1];
+    if (runTime === TABLE_EVENT_TYPE.INITIALIZED) {
+      this.table = args[2];
+
+      // 为表格实例添加 importFile 方法
+      (this.table as any).importFile = () => {
+        this.import('file');
+      };
+
+      // 如果是 VTableSheet，给 VTableSheet 实例添加导入方法
+      if ((this.table as any).__vtableSheet) {
+        const vtableSheet = (this.table as any).__vtableSheet;
+        if (!(vtableSheet as any)._importFile) {
+          // 绑定文件选择并导入的方法
+          (vtableSheet as any)._importFile = async (options?: Partial<ExcelImportOptions>) => {
+            const mergedOptions = { ...this.options, ...options };
+            return this._importFileFromDialogForVTableSheet(vtableSheet, mergedOptions);
+          };
+        }
+      }
+    }
   }
 
   /**
+   * 导入文件（自动检测类型）
+   * @param options 导入选项
+   * @returns Promise<ImportResult | MultiSheetImportResult>
+   */
+  private async _importFile(options?: Partial<ExcelImportOptions>): Promise<ImportResult | MultiSheetImportResult> {
+    if (!this.table) {
+      throw new Error('表格实例不存在或已销毁，无法导入数据！');
+    }
+
+    const mergedOptions = { ...this.options, ...options };
+    const isVTableSheet = this._detectVTableSheet(this.table);
+
+    if (isVTableSheet) {
+      // VTableSheet 使用多 sheet 导入
+      return this._importMultipleSheetsFromFileDialog({
+        ...mergedOptions,
+        importAllSheets: true
+      });
+    }
+    // ListTable 使用单 sheet 导入（保留原有逻辑）
+    // TODO: 可以进一步重构，将单 sheet 导入逻辑也拆分出去
+    throw new Error('ListTable 单 sheet 导入功能需要进一步重构');
+  }
+
+  /**
+   * 打开文件选择对话框并获取文件（公共方法）
+   * @param accept 接受的文件类型
+   * @returns Promise<File>
+   */
+  private _selectFile(accept: string = '.xlsx,.xls,.csv,.txt,.json,.html,.htm'): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = accept;
+      input.style.display = 'none';
+      document.body.appendChild(input);
+
+      input.addEventListener('change', () => {
+        try {
+          const file = (input as HTMLInputElement).files?.[0];
+          if (!file) {
+            document.body.removeChild(input);
+            reject(new Error('未选择文件'));
+            return;
+          }
+
+          // 清理
+          input.value = '';
+          document.body.removeChild(input);
+
+          resolve(file);
+        } catch (error) {
+          document.body.removeChild(input);
+          reject(error);
+        }
+      });
+
+      input.click();
+    });
+  }
+
+  /**
+   * 从文件对话框导入文件到 VTableSheet（支持 Excel 和 CSV）
+   * @param vtableSheetInstance VTableSheet 实例
+   * @param options 导入选项
+   * @returns Promise<MultiSheetImportResult>
+   */
+  private async _importFileFromDialogForVTableSheet(
+    vtableSheetInstance: any,
+    options: ExcelImportOptions
+  ): Promise<MultiSheetImportResult> {
+    try {
+      const file = await this._selectFile('.xlsx,.xls,.csv,.txt');
+      const fileExtension = this._getFileExtension(file.name).toLowerCase();
+      let result: MultiSheetImportResult;
+
+      if (fileExtension === 'csv' || fileExtension === 'txt') {
+        result = await importCsvFile(file, options);
+      } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+        result = await importExcelMultipleSheets(file, options);
+      } else {
+        throw new Error('不支持的文件类型，仅支持 Excel (.xlsx, .xls) 和 CSV (.csv, .txt)');
+      }
+
+      // 自动应用导入结果到 VTableSheet
+      if (options.autoTable !== false && result.sheets.length > 0) {
+        applyImportToVTableSheet(vtableSheetInstance, result, options);
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 从文件对话框导入（多个sheet）- 用于 VTableSheet
+   */
+  private async _importMultipleSheetsFromFileDialog(options: ExcelImportOptions): Promise<MultiSheetImportResult> {
+    try {
+      const file = await this._selectFile('.xlsx,.xls,.csv,.txt');
+      const fileExtension = this._getFileExtension(file.name).toLowerCase();
+      let result: MultiSheetImportResult;
+
+      if (fileExtension === 'csv' || fileExtension === 'txt') {
+        result = await importCsvFile(file, options);
+      } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+        result = await importExcelMultipleSheets(file, options);
+      } else {
+        throw new Error('不支持的文件类型，仅支持 Excel (.xlsx, .xls) 和 CSV (.csv, .txt)');
+      }
+
+      // 如果是 VTableSheet 且 autoTable 为 true，自动应用导入结果
+      if (options.autoTable !== false && this.table && this._detectVTableSheet(this.table)) {
+        const vtableSheet = (this.table as any).__vtableSheet;
+        if (vtableSheet) {
+          applyImportToVTableSheet(vtableSheet, result, options);
+        }
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 检测是否为 VTable-sheet 实例
+   */
+  private _detectVTableSheet(instance: ListTable): boolean {
+    // 通过检查实例的特征来判断是否为 VTable-sheet
+    const inst = instance as unknown as Record<string, unknown>;
+    return !!(
+      inst &&
+      typeof inst.updateOption === 'function' &&
+      inst.options &&
+      typeof inst.options === 'object' &&
+      inst.options !== null &&
+      Array.isArray((inst.options as Record<string, unknown>).sheets)
+    );
+  }
+
+  /**
+   * 获取文件扩展名
+   */
+  private _getFileExtension(filename: string): string {
+    const parts = filename.split('.');
+    return parts.length > 1 ? parts[parts.length - 1] : '';
+  }
+
+  /**
+   * 插件销毁方法
+   * 清理挂载到表格实例的方法
+   */
+  release() {
+    if (this.table) {
+      delete (this.table as any).importFile;
+      this.table = null;
+    }
+  }
+
+  /**
+   * 统一的导入方法（用于 ListTable）
    * @param type 导入类型: "file" | "csv" | "json" | "html"
-   * @param source 数据源: 文件选择器 | 字符串数据
+   * @param source 数据源: 文件选择器 | 字符串数据 | 对象数据
    * @param options 导入选项
    * @returns Promise<ImportResult>
    */
@@ -71,9 +237,23 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
     type: 'file' | 'csv' | 'json' | 'html',
     source?: string | object,
     options?: Partial<ExcelImportOptions>
-  ): Promise<ImportResult> {
-    const mergedOptions = { ...this.options, ...options };
+  ): Promise<ImportResult | MultiSheetImportResult> {
+    if (!this.table) {
+      throw new Error('表格实例不存在或已销毁，无法导入数据！');
+    }
 
+    const mergedOptions = { ...this.options, ...options };
+    const isVTableSheet = this._detectVTableSheet(this.table);
+
+    // VTableSheet 使用多 sheet 导入逻辑
+    if (isVTableSheet && type === 'file') {
+      return this._importMultipleSheetsFromFileDialog({
+        ...mergedOptions,
+        importAllSheets: true
+      });
+    }
+
+    // ListTable 使用单 sheet 导入逻辑
     if (type === 'file') {
       return this._importFromFileDialog(mergedOptions);
     }
@@ -90,56 +270,29 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   /**
-   * 从文件对话框导入
+   * 从文件对话框导入（用于 ListTable）
    */
   private async _importFromFileDialog(options: ExcelImportOptions): Promise<ImportResult> {
-    return new Promise((resolve, reject) => {
-      if (!this._tableInstance) {
-        reject(new Error('表格实例不存在或已销毁，无法导入数据！'));
-        return;
+    if (!this.table) {
+      throw new Error('表格实例不存在或已销毁，无法导入数据！');
+    }
+
+    const file = await this._selectFile();
+    const result = await this._parseFile(file, options);
+
+    // 根据配置决定是否自动更新表格
+    if (options.autoTable && this.table) {
+      if (options.autoColumns) {
+        this.table.updateOption(
+          Object.assign({}, this.table.options, {
+            columns: result.columns
+          })
+        );
       }
+      this.table.setRecords(result.records);
+    }
 
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.style.display = 'none';
-      document.body.appendChild(input);
-
-      input.addEventListener('change', async e => {
-        try {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (!file) {
-            document.body.removeChild(input);
-            reject(new Error('未选择文件'));
-            return;
-          }
-
-          const result = await this._parseFile(file, options);
-
-          // 根据配置决定是否自动更新表格
-          if (options.autoTable && this._tableInstance) {
-            if (options.autoColumns) {
-              this._tableInstance.updateOption(
-                Object.assign({}, this._tableInstance.options, {
-                  columns: result.columns
-                })
-              );
-            }
-            this._tableInstance.setRecords(result.records);
-          }
-
-          // 清理
-          input.value = '';
-          document.body.removeChild(input);
-
-          resolve(result);
-        } catch (error) {
-          document.body.removeChild(input);
-          reject(error);
-        }
-      });
-
-      input.click();
-    });
+    return result;
   }
 
   /**
@@ -167,14 +320,14 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     // 自动更新表格
-    if (options.autoTable && this._tableInstance) {
+    if (options.autoTable && this.table) {
       if (options.autoColumns) {
-        this._tableInstance.updateOption({
+        this.table.updateOption({
           columns: result.columns,
           plugins: [this]
         });
       }
-      this._tableInstance.setRecords(result.records);
+      this.table.setRecords(result.records);
     }
 
     return result;
@@ -197,14 +350,14 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     // 自动更新表格
-    if (options.autoTable && this._tableInstance) {
+    if (options.autoTable && this.table) {
       if (options.autoColumns) {
-        this._tableInstance.updateOption({
+        this.table.updateOption({
           columns: result.columns,
           plugins: [this]
         });
       }
-      this._tableInstance.setRecords(result.records);
+      this.table.setRecords(result.records);
     }
 
     return result;
@@ -232,13 +385,6 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
     }
   }
 
-  /**
-   * 获取文件扩展名
-   */
-  private _getFileExtension(filename: string): string {
-    const parts = filename.split('.');
-    return parts.length > 1 ? parts[parts.length - 1] : '';
-  }
   /**
    * 解析Excel文件
    */
@@ -418,23 +564,46 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   /**
-   * 解析CSV字符串
+   * 解析CSV字符串（使用与 excel.ts 相同的解析逻辑）
    */
   private async _parseCSVString(text: string, options: ExcelImportOptions): Promise<ImportResult> {
-    const lines = text.split('\n').filter(line => line.trim());
+    const delimiter = options.delimiter || ',';
+    const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
 
     if (lines.length === 0) {
       throw new Error('CSV文件为空');
     }
 
-    // 解析CSV行（支持自定义分隔符）
-    const delimiter = options.delimiter || ',';
-    const parseCSVLine = (line: string): string[] => {
-      return line.split(delimiter).map(cell => cell.trim().replace(/^"|"$/g, ''));
+    // 使用与 excel.ts 相同的 CSV 行解析逻辑
+    const parseCSVLine = (line: string): unknown[] => {
+      const result: unknown[] = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === delimiter && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
     };
 
     const headerRowCount = 1;
-    const headerRows = lines.slice(0, headerRowCount).map(parseCSVLine);
+    const headerRows = lines.slice(0, headerRowCount).map(line => parseCSVLine(line).map(cell => String(cell || '')));
     const dataRows = lines.slice(headerRowCount);
 
     const columns = this._buildColumnsFromHeaders(headerRows);
@@ -445,12 +614,13 @@ export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
         const parsedRow = parseCSVLine(line);
         const record: Record<string, unknown> = {};
         parsedRow.forEach((cell, i) => {
-          record[`col${i}`] = cell || '';
+          record[`col${i}`] = cell ?? '';
         });
         return record;
       });
       records.push(...batchRecords);
     });
+
     if (options.exportData) {
       this._exportToJS(columns, records);
     }
@@ -654,7 +824,7 @@ ${recordsStr}
   /**
    * 导出数据为JavaScript对象字面量格式
    */
-  private _exportToJS(columns: ColumnDefine[], records: Record<string, unknown>[]): void {
+  private _exportToJS(columns: ColumnsDefine, records: Record<string, unknown>[]): void {
     const jsContent = ExcelImportPlugin._generateJavaScriptExport(columns, records);
     const blob = new Blob([jsContent], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);

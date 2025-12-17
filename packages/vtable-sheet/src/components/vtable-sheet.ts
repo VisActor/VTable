@@ -6,6 +6,7 @@ import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent, ImportResult } from '../ts-types';
+import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import { WorkSheetEventType } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
@@ -393,6 +394,34 @@ export default class VTableSheet {
   }
 
   /**
+   * 选择 Excel 文件
+   * @returns Promise<File | null>
+   */
+  private _selectExcelFile(): Promise<File | null> {
+    return new Promise(resolve => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.xlsx,.xls';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+
+      input.addEventListener('change', e => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        document.body.removeChild(input);
+        resolve(file || null);
+      });
+
+      // 如果用户取消选择
+      input.addEventListener('cancel', () => {
+        document.body.removeChild(input);
+        resolve(null);
+      });
+
+      input.click();
+    });
+  }
+
+  /**
    * 删除sheet
    * @param sheetKey 工作表key
    */
@@ -430,7 +459,7 @@ export default class VTableSheet {
    * 创建sheet实例
    * @param sheetDefine sheet的定义
    */
-  private createWorkSheetInstance(sheetDefine: ISheetDefine): WorkSheet {
+  createWorkSheetInstance(sheetDefine: ISheetDefine): WorkSheet {
     formulaEditor.setSheet(this);
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
@@ -471,7 +500,7 @@ export default class VTableSheet {
     // 在公式管理器中添加这个sheet
     try {
       const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
-      this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData);
+      this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData, sheetDefine.sheetTitle);
       // 加载保存的公式数据（如果有）
       if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
         this.loadFormulas(sheetDefine.sheetKey, sheetDefine.formulas);
@@ -624,6 +653,20 @@ export default class VTableSheet {
   }
 
   /**
+   * 根据名称获取Sheet实例
+   */
+  getSheetByName(sheetName: string): WorkSheet | null {
+    // 遍历所有sheet实例，找到匹配的sheet
+    for (const [sheetKey, workSheet] of this.workSheetInstances) {
+      const sheetDefine = this.sheetManager.getSheet(sheetKey);
+      if (sheetDefine && sheetDefine.sheetTitle === sheetName) {
+        return workSheet;
+      }
+    }
+    return null;
+  }
+
+  /**
    * 保存所有数据为配置
    */
   saveToConfig(): IVTableSheetOptions {
@@ -690,7 +733,7 @@ export default class VTableSheet {
         const columnWidthConfig = Array.from(instance.tableInstance.internalProps._widthResizedColMap).map(key => {
           return {
             key: key,
-            width: instance.tableInstance.getColWidth(key)
+            width: instance.tableInstance.getColWidth(key as number)
           };
         });
         //#endregion
@@ -730,7 +773,7 @@ export default class VTableSheet {
   }
 
   /** 导出当前sheet到文件 */
-  exportSheetToFile(fileType: 'csv' | 'xlsx'): void {
+  exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
@@ -742,21 +785,59 @@ export default class VTableSheet {
         console.warn('Please configure TableExportPlugin in VTablePluginModules');
       }
     } else {
-      if ((sheet.tableInstance as any)?.exportToExcel) {
-        (sheet.tableInstance as any).exportToExcel();
+      if (allSheets) {
+        this.exportAllSheetsToExcel();
       } else {
-        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        if ((sheet.tableInstance as any)?.exportToExcel) {
+          (sheet.tableInstance as any).exportToExcel();
+        } else {
+          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        }
       }
     }
   }
-  /** 导入文件到当前sheet */
-  async importFileToSheet(): Promise<ImportResult | void> {
+  exportAllSheetsToExcel(): void {
+    this.initAllSheetInstances();
+    const allDefines = this.sheetManager.getAllSheets();
+    const tables = allDefines.map(def => {
+      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
+    });
+    (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法
+  }
+  initAllSheetInstances(): void {
+    const allDefines = this.sheetManager.getAllSheets();
+    allDefines.forEach(def => {
+      if (!this.workSheetInstances.has(def.sheetKey)) {
+        const instance = this.createWorkSheetInstance(def);
+        this.workSheetInstances.set(def.sheetKey, instance);
+      }
+    });
+  }
+  /**
+   * 导入文件（支持 Excel 多 sheet 和 CSV）
+   * @param options 导入选项，包括 clearExisting（是否清除现有 sheets，默认 true 表示替换模式）
+   * @returns Promise<MultiSheetImportResult | void>
+   */
+  async importFileToSheet(
+    options: { clearExisting?: boolean } = { clearExisting: true }
+  ): Promise<MultiSheetImportResult | void> {
+    // 使用绑定到 VTableSheet 实例的导入方法（插件内部会处理文件选择）
+    if ((this as any)?._importFile) {
+      return await (this as any)._importFile({
+        clearExisting: options?.clearExisting !== false
+      });
+    }
+
+    // 回退到 tableInstance 的 importFile 方法
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
     }
     if ((sheet.tableInstance as any)?.importFile) {
-      return await (sheet.tableInstance as any).importFile();
+      return await (sheet.tableInstance as any).importFile({
+        clearExisting: options?.clearExisting !== false
+      });
     }
     console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
   }

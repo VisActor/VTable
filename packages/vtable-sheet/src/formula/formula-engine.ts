@@ -18,6 +18,7 @@ export interface FormulaEngineConfig {
 export class FormulaEngine {
   private sheets: Map<string, number> = new Map();
   private reverseSheets: Map<number, string> = new Map();
+  private sheetTitles: Map<string, string> = new Map(); // 存储sheet标题映射
   private sheetData: Map<number, unknown[][]> = new Map();
   private formulaCells: Map<string, string> = new Map();
   private dependencies: Map<string, Set<string>> = new Map();
@@ -62,6 +63,15 @@ export class FormulaEngine {
     this.sheetData.set(sheetId, sheetData);
 
     return sheetId;
+  }
+
+  /**
+   * 设置工作表标题（用于用户可见的sheet名称）
+   */
+  setSheetTitle(sheetKey: string, sheetTitle: string): void {
+    if (this.sheets.has(sheetKey)) {
+      this.sheetTitles.set(sheetKey, sheetTitle);
+    }
   }
   updateSheetData(sheetKey: string, data: unknown[][]): void {
     const sheetId = this.sheets.get(sheetKey);
@@ -288,7 +298,16 @@ export class FormulaEngine {
   }
 
   private parseCellKey(cellKey: string): FormulaCell | null {
-    const parts = cellKey.split('!');
+    // 支持中英文感叹号
+    let parts: string[];
+    if (cellKey.includes('!')) {
+      parts = cellKey.split('!');
+    } else if (cellKey.includes('！')) {
+      parts = cellKey.split('！');
+    } else {
+      return null;
+    }
+
     if (parts.length !== 2) {
       return null;
     }
@@ -349,6 +368,51 @@ export class FormulaEngine {
     while (i < expression.length) {
       const char = expression[i];
 
+      // 首先处理带引号的工作表前缀的单元格引用（避免被当作字符串字面量处理）
+      // 查找带引号的工作表前缀的单元格引用（如 'My Sheet'！a1）
+      const quotedSheetCellMatchCN = expression
+        .substring(i)
+        .match(/^'([A-Za-z0-9_\s一-龥]+)'\s*！\s*([A-Za-z]+[0-9]+)/);
+      if (quotedSheetCellMatchCN) {
+        const fullRef = quotedSheetCellMatchCN[0];
+        const sheetNameMatch = fullRef.match(/^'([^']+)'\s*！\s*(.+)$/);
+        if (sheetNameMatch) {
+          const originalSheetName = sheetNameMatch[1];
+          const cellRef = sheetNameMatch[2];
+
+          // 查找原始工作表名称（保持大小写）
+          const correctedSheetName = this.findOriginalSheetName(originalSheetName);
+
+          // 纠正单元格引用，保持引号，使用英文感叹号
+          const letters = cellRef.replace(/[0-9]/g, '');
+          const numbers = cellRef.replace(/[A-Za-z]/g, '');
+          corrected += "'" + (correctedSheetName || originalSheetName) + "'!" + letters.toUpperCase() + numbers;
+          i += fullRef.length;
+          continue;
+        }
+      }
+
+      // 查找带引号的工作表前缀的单元格引用（如 'My Sheet'!a1）
+      const quotedSheetCellMatch = expression.substring(i).match(/^'([A-Za-z0-9_\s一-龥]+)'![A-Za-z]+[0-9]+/);
+      if (quotedSheetCellMatch) {
+        const fullRef = quotedSheetCellMatch[0];
+        const sheetNameMatch = fullRef.match(/^'([^']+)'!(.+)$/);
+        if (sheetNameMatch) {
+          const originalSheetName = sheetNameMatch[1];
+          const cellRef = sheetNameMatch[2];
+
+          // 查找原始工作表名称（保持大小写）
+          const correctedSheetName = this.findOriginalSheetName(originalSheetName);
+
+          // 纠正单元格引用，保持引号
+          const letters = cellRef.replace(/[0-9]/g, '');
+          const numbers = cellRef.replace(/[A-Za-z]/g, '');
+          corrected += "'" + (correctedSheetName || originalSheetName) + "'!" + letters.toUpperCase() + numbers;
+          i += fullRef.length;
+          continue;
+        }
+      }
+
       // 处理字符串字面量
       if ((char === '"' || char === "'") && (i === 0 || expression[i - 1] !== '\\')) {
         if (!inQuotes) {
@@ -383,8 +447,25 @@ export class FormulaEngine {
         continue;
       }
 
+      // 查找带工作表前缀的单元格引用（处理中文感叹号）- 优先处理
+      const sheetCellMatchCN = expression.substring(i).match(/^[A-Za-z0-9_\s一-龥]+！([A-Za-z]+[0-9]+)/);
+      if (sheetCellMatchCN) {
+        const fullRef = sheetCellMatchCN[0];
+        const [sheetName, cellRef] = fullRef.split('！');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetName);
+
+        // 保持工作表名称不变，只纠正单元格引用，使用英文感叹号
+        const letters = cellRef.replace(/[0-9]/g, '');
+        const numbers = cellRef.replace(/[A-Za-z]/g, '');
+        corrected += (originalSheetName || sheetName) + '!' + letters.toUpperCase() + numbers;
+        i += fullRef.length;
+        continue;
+      }
+
       // 查找带工作表前缀的单元格引用（如 Sheet1!a1）
-      const sheetCellMatch = expression.substring(i).match(/^[A-Za-z0-9_]+![A-Za-z]+[0-9]+/);
+      const sheetCellMatch = expression.substring(i).match(/^[A-Za-z0-9_\s一-龥]+![A-Za-z]+[0-9]+/);
       if (sheetCellMatch) {
         const fullRef = sheetCellMatch[0];
         const [sheetName, cellRef] = fullRef.split('!');
@@ -397,6 +478,61 @@ export class FormulaEngine {
         const numbers = cellRef.replace(/[A-Za-z]/g, '');
         corrected += (originalSheetName || sheetName) + '!' + letters.toUpperCase() + numbers;
         i += fullRef.length;
+        continue;
+      }
+
+      // 查找带引号的工作表前缀的范围引用（处理中文感叹号）- 优先处理
+      const quotedSheetRangeMatchCN = expression
+        .substring(i)
+        .match(/^'([A-Za-z0-9_\s一-龥]+)'！[A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (quotedSheetRangeMatchCN) {
+        const fullRangeRef = quotedSheetRangeMatchCN[0];
+        const sheetNameMatch = fullRangeRef.match(/^'([^']+)'！(.+)$/);
+        if (sheetNameMatch) {
+          const originalSheetName = sheetNameMatch[1];
+          const rangePart = sheetNameMatch[2];
+          const [startCell, endCell] = rangePart.split(':');
+
+          // 查找原始工作表名称（保持大小写）
+          const correctedSheetName = this.findOriginalSheetName(originalSheetName);
+
+          // 转换起始和结束单元格
+          const startLetters = startCell.replace(/[0-9]/g, '');
+          const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+          const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+          const endLetters = endCell.replace(/[0-9]/g, '');
+          const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+          const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+          corrected += "'" + (correctedSheetName || originalSheetName) + "'!" + newStartCell + ':' + newEndCell;
+          i += fullRangeRef.length;
+          continue;
+        }
+      }
+
+      // 查找带工作表前缀的范围引用（处理中文感叹号）- 优先处理
+      const sheetRangeMatchCN = expression.substring(i).match(/^[A-Za-z0-9_\s一-龥]+！[A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (sheetRangeMatchCN) {
+        const fullRangeRef = sheetRangeMatchCN[0];
+        const [sheetPart, rangePart] = fullRangeRef.split('！');
+        const [startCell, endCell] = rangePart.split(':');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetPart);
+
+        // 转换起始单元格
+        const startLetters = startCell.replace(/[0-9]/g, '');
+        const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+        const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+        // 转换结束单元格
+        const endLetters = endCell.replace(/[0-9]/g, '');
+        const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+        const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+        corrected += (originalSheetName || sheetPart) + '!' + newStartCell + ':' + newEndCell;
+        i += fullRangeRef.length;
         continue;
       }
 
@@ -468,15 +604,30 @@ export class FormulaEngine {
 
   /**
    * 查找原始工作表名称（保持大小写）
+   * 优先查找sheetTitle，然后才是sheetKey
    */
   private findOriginalSheetName(sheetName: string): string | null {
-    // 首先尝试精确匹配
+    // 首先尝试精确匹配sheetTitle
+    for (const sheetTitle of this.sheetTitles.values()) {
+      if (sheetTitle === sheetName) {
+        return sheetTitle; // 完全匹配，返回原始标题
+      }
+    }
+
+    // 如果不完全匹配，尝试不区分大小写匹配sheetTitle
+    const lowerSheetName = sheetName.toLowerCase();
+    for (const sheetTitle of this.sheetTitles.values()) {
+      if (sheetTitle.toLowerCase() === lowerSheetName) {
+        return sheetTitle; // 大小写不敏感匹配，返回原始标题的正确大小写
+      }
+    }
+
+    // 如果sheetTitle中找不到，尝试匹配sheetKey
     if (this.sheets.has(sheetName)) {
       return sheetName;
     }
 
-    // 如果找不到，尝试不区分大小写的匹配
-    const lowerSheetName = sheetName.toLowerCase();
+    // 如果找不到，尝试不区分大小写的匹配sheetKey
     for (const [existingSheetName] of this.sheets.entries()) {
       if (existingSheetName.toLowerCase() === lowerSheetName) {
         return existingSheetName;
@@ -612,7 +763,7 @@ export class FormulaEngine {
       }
 
       // 处理单元格引用（包括带工作表前缀的引用，如 Sheet1!A1）
-      if (/^([A-Za-z0-9_]+!)?[A-Z]+[0-9]+$/.test(expr)) {
+      if (/^([A-Za-z0-9_\s一-龥]+!)?[A-Z]+[0-9]+$/.test(expr)) {
         return { value: this.getCellValueByA1(expr), error: undefined };
       }
 
@@ -622,7 +773,7 @@ export class FormulaEngine {
       }
 
       // 处理范围引用（包括带工作表前缀的范围，如 Sheet1!A2:A4）
-      if (/^([A-Za-z0-9_]+!)?[A-Z]+[0-9]+:[A-Z]+[0-9]+$/.test(expr)) {
+      if (/^([A-Za-z0-9_\s一-龥]+!)?[A-Z]+[0-9]+:[A-Z]+[0-9]+$/.test(expr)) {
         const values = this.getRangeValuesFromExpr(expr);
         return { value: values, error: undefined };
       }
@@ -1174,8 +1325,8 @@ export class FormulaEngine {
         processedExpr = processedExpr.replace(funcMatch.match, `__FUNC_${functionValues.length - 1}__`);
       }
 
-      // 3. 处理剩余的单元格引用
-      const cellRefs = processedExpr.match(/[A-Z]+[0-9]+/g) || [];
+      // 3. 处理剩余的单元格引用（包括带sheet前缀的引用，支持带引号的sheet名称）
+      const cellRefs = processedExpr.match(/('[^']+'!)?([A-Za-z0-9_\s一-龥]+!)?[A-Z]+[0-9]+/g) || [];
       for (const cellRef of cellRefs) {
         const value = this.getCellValueByA1(cellRef);
         processedExpr = processedExpr.replace(cellRef, String(value));
@@ -1200,18 +1351,57 @@ export class FormulaEngine {
       let sheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
       let cellRef = a1Notation;
 
-      // 检查是否包含工作表前缀
-      if (a1Notation.includes('!')) {
-        const parts = a1Notation.split('!');
+      // 检查是否包含工作表前缀（支持中英文感叹号）
+      if (a1Notation.includes('!') || a1Notation.includes('！')) {
+        // 优先使用英文感叹号分割，如果不存在则使用中文感叹号
+        let parts: string[];
+        if (a1Notation.includes('!')) {
+          parts = a1Notation.split('!');
+        } else {
+          parts = a1Notation.split('！');
+        }
+
         if (parts.length === 2) {
-          sheetKey = parts[0];
-          cellRef = parts[1];
+          let sheetTitle = parts[0];
+
+          // 处理带引号的sheet名称（如 'My Sheet'）
+          if (sheetTitle.startsWith("'") && sheetTitle.endsWith("'")) {
+            sheetTitle = sheetTitle.slice(1, -1);
+          }
+
+          // 首先尝试从已注册的sheet中查找（不区分大小写）
+          let foundSheetKey = Array.from(this.sheetTitles.entries()).find(
+            ([_, value]) => value.toLowerCase() === sheetTitle.toLowerCase()
+          )?.[0];
+
+          // 如果没有找到，尝试从sheets Map中查找（可能sheetKey就是sheetTitle）
+          if (!foundSheetKey) {
+            foundSheetKey = Array.from(this.sheets.entries()).find(
+              ([key, _]) => key.toLowerCase() === sheetTitle.toLowerCase()
+            )?.[0];
+          }
+
+          // 如果还是没有找到，尝试使用sheetTitle作为sheetKey（假设已经注册）
+          if (!foundSheetKey && this.sheets && this.sheets.has(sheetTitle)) {
+            foundSheetKey = sheetTitle;
+          }
+
+          // 如果找到了匹配的sheetKey，使用它
+          if (foundSheetKey) {
+            sheetKey = foundSheetKey;
+            cellRef = parts[1];
+          } else {
+            // 如果找不到，仍然使用原始标题，但会返回空值
+            sheetKey = sheetTitle;
+            cellRef = parts[1];
+          }
         }
       }
 
       const { row, col } = this.parseA1Notation(cellRef);
       const cell: FormulaCell = { sheet: sheetKey, row, col };
-      return this.getCellValue(cell).value;
+      const result = this.getCellValue(cell);
+      return result.value;
     } catch {
       return 0;
     }
@@ -1223,22 +1413,77 @@ export class FormulaEngine {
         return [this.getCellValueByA1(expr)];
       }
 
-      // 解析范围引用，可能包含工作表前缀，如 DataSheet!A2:A4
-      let sheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
-      let rangeExpr = expr;
+      /**
+       * 解析范围引用（兼容两端都带 sheet 前缀的写法）
+       *
+       * 支持：
+       * - Sheet1!A1:B2
+       * - Sheet1!A1:Sheet1!B2  （用户输入常见，但之前会 split('!') 失败导致返回 []）
+       * - Sheet1！A1:Sheet1！B2 （中文感叹号）
+       * - 'My Sheet'!A1:'My Sheet'!B2
+       */
+      const defaultSheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
 
-      // 检查是否包含工作表前缀
-      if (expr.includes('!')) {
-        const parts = expr.split('!');
-        if (parts.length === 2) {
-          sheetKey = parts[0];
-          rangeExpr = parts[1];
+      const parseSheetAndCell = (part: string): { sheetKey: string; cellRef: string; hasSheetPrefix: boolean } => {
+        let sheetKey = defaultSheetKey;
+        let cellRef = part.trim();
+        let hasSheetPrefix = false;
+
+        // 支持中英文感叹号分隔
+        const hasEn = cellRef.includes('!');
+        const hasCn = cellRef.includes('！');
+        if (hasEn || hasCn) {
+          const sep = hasEn ? '!' : '！';
+          const parts = cellRef.split(sep);
+          if (parts.length === 2) {
+            hasSheetPrefix = true;
+            let sheetTitle = parts[0].trim();
+            cellRef = parts[1].trim();
+
+            // 处理带引号的sheet名称（如 'My Sheet'）
+            if (sheetTitle.startsWith("'") && sheetTitle.endsWith("'")) {
+              sheetTitle = sheetTitle.slice(1, -1);
+            }
+
+            // 先从 sheetTitles 匹配（大小写不敏感），再从 sheets 匹配
+            const foundSheetKeyFromTitles = Array.from(this.sheetTitles.entries()).find(
+              ([_, value]) => value.toLowerCase() === sheetTitle.toLowerCase()
+            )?.[0];
+            const foundSheetKeyFromKeys = Array.from(this.sheets.entries()).find(
+              ([sheetKey]) => sheetKey.toLowerCase() === sheetTitle.toLowerCase()
+            )?.[0];
+            let foundSheetKey = foundSheetKeyFromTitles || foundSheetKeyFromKeys;
+
+            if (!foundSheetKey && this.sheets && this.sheets.has(sheetTitle)) {
+              foundSheetKey = sheetTitle;
+            }
+
+            sheetKey = foundSheetKey || sheetTitle;
+          }
         }
+
+        return { sheetKey, cellRef, hasSheetPrefix };
+      };
+
+      const [startRaw, endRaw] = expr.split(':');
+      const startParsed = parseSheetAndCell(startRaw);
+      const endParsed = parseSheetAndCell(endRaw);
+
+      // Excel 语义：当范围写成 Sheet1!A1:B2 时，右侧 B2 隐含继承左侧的 sheet
+      if (startParsed.hasSheetPrefix && !endParsed.hasSheetPrefix) {
+        endParsed.sheetKey = startParsed.sheetKey;
+      } else if (!startParsed.hasSheetPrefix && endParsed.hasSheetPrefix) {
+        startParsed.sheetKey = endParsed.sheetKey;
       }
 
-      const [start, end] = rangeExpr.split(':');
-      const startCell = this.parseA1Notation(start.trim());
-      const endCell = this.parseA1Notation(end.trim());
+      // 只支持同一个 sheet 内的连续范围；跨 sheet 的 3D 引用（Sheet1!A1:Sheet2!B2）不支持
+      if (startParsed.sheetKey.toLowerCase() !== endParsed.sheetKey.toLowerCase()) {
+        return [];
+      }
+
+      const sheetKey = startParsed.sheetKey;
+      const startCell = this.parseA1Notation(startParsed.cellRef);
+      const endCell = this.parseA1Notation(endParsed.cellRef);
 
       const values: unknown[] = [];
 
@@ -1258,6 +1503,11 @@ export class FormulaEngine {
   // 公共方法
   getCellValue(cell: FormulaCell): FormulaResult {
     try {
+      // 添加防护检查
+      if (!this.sheets) {
+        return { value: null, error: 'FormulaEngine not properly initialized: sheets Map is undefined' };
+      }
+
       const sheetId = this.sheets.get(cell.sheet);
       if (sheetId === undefined) {
         return { value: '', error: undefined };
@@ -1451,16 +1701,25 @@ export class FormulaEngine {
     return result;
   }
 
+  /**
+   * 获取工作表标题
+   */
+  getSheetTitle(sheetKey: string): string | undefined {
+    return this.sheetTitles.get(sheetKey);
+  }
+
   // 新增方法：获取所有工作表
-  getAllSheets(): Array<{ key: string; id: number; name: string }> {
-    const result: Array<{ key: string; id: number; name: string }> = [];
+  getAllSheets(): Array<{ key: string; id: number; title: string }> {
+    const result: Array<{ key: string; id: number; title: string }> = [];
 
     for (const entry of Array.from(this.sheets.entries())) {
       const [sheetKey, sheetId] = entry;
+      // 使用存储的标题，如果没有则使用key作为后备
+      const sheetTitle = this.sheetTitles.get(sheetKey) || sheetKey;
       result.push({
         key: sheetKey,
         id: sheetId,
-        name: sheetKey // 使用key作为名称
+        title: sheetTitle // 使用标题作为名称
       });
     }
 
@@ -1507,7 +1766,8 @@ export class FormulaEngine {
 
         const deps = tempDependencies.get(cellKey) || new Set();
         for (const dep of deps) {
-          if (tempDependencies.has(dep)) {
+          // 添加防护检查，确保 tempDependencies 已初始化
+          if (tempDependencies && tempDependencies.has(dep)) {
             // 只访问也是公式的依赖
             visit(dep);
           }
@@ -1708,6 +1968,16 @@ export class FormulaEngine {
 
   // 依赖关系管理
   private updateDependencies(cellKey: string, formula: string): void {
+    // 添加防护检查
+    if (!this.dependencies) {
+      console.error('[FormulaEngine] ERROR: this.dependencies is not initialized!');
+      return;
+    }
+    if (!this.dependents) {
+      console.error('[FormulaEngine] ERROR: this.dependents is not initialized!');
+      return;
+    }
+
     // 清除旧的依赖关系
     const oldDeps = this.dependencies.get(cellKey) || new Set();
     for (const dep of oldDeps) {
@@ -1753,13 +2023,51 @@ export class FormulaEngine {
   }
 
   private extractReferencesFromExpression(expr: string, references: string[], currentSheet: string = 'Sheet1'): void {
+    // 先处理两端都带 sheet 前缀的范围引用：Sheet1!A1:Sheet1!B2 / Sheet1！A1:Sheet1！B2
+    // 注：跨 sheet 的 3D 引用（Sheet1!A1:Sheet2!B2）当前不支持，忽略即可
+    const repeatedSheetRangePattern = new RegExp(
+      '([A-Za-z0-9_\\s一-龥]+)[！!]([A-Z]+[0-9]+)\\s*:\\s*([A-Za-z0-9_\\s一-龥]+)[！!]([A-Z]+[0-9]+)',
+      'g'
+    );
+    let repeatedMatch: RegExpExecArray | null;
+    while ((repeatedMatch = repeatedSheetRangePattern.exec(expr)) !== null) {
+      const sheet1 = repeatedMatch[1];
+      const startCell = repeatedMatch[2];
+      const sheet2 = repeatedMatch[3];
+      const endCell = repeatedMatch[4];
+
+      // 仅当两端 sheet 相同（大小写不敏感）时才展开
+      if (sheet1.toLowerCase() === sheet2.toLowerCase()) {
+        const expandedRefs = this.expandRangeToCells(sheet1, startCell, endCell);
+        references.push(...expandedRefs);
+      }
+    }
+
+    // 首先处理中文感叹号的引用
+    const chineseExclamationPattern = /([A-Za-z0-9_\s一-龥]+)！([A-Z]+[0-9]+)(?::([A-Z]+[0-9]+))?/g;
+    let match;
+
+    while ((match = chineseExclamationPattern.exec(expr)) !== null) {
+      const sheetName = match[1];
+      const startCell = match[2];
+      const endCell = match[3];
+
+      if (endCell) {
+        // 范围引用，如 Sheet1！A1:B2
+        const expandedRefs = this.expandRangeToCells(sheetName, startCell, endCell);
+        references.push(...expandedRefs);
+      } else {
+        // 单个单元格引用，如 Sheet1！A1
+        references.push(`${sheetName}!${startCell}`);
+      }
+    }
+
     // 移除字符串字面量，避免误匹配
     let cleanExpr = expr.replace(/"[^"]*"/g, '');
     cleanExpr = cleanExpr.replace(/'[^']*'/g, '');
 
     // 匹配单元格引用 (A1, B2, Sheet1!A1, 等)
     const cellRefPattern = /(?:([A-Za-z0-9_]+)!)?([A-Z]+[0-9]+)(?::([A-Z]+[0-9]+))?/g;
-    let match;
 
     while ((match = cellRefPattern.exec(cleanExpr)) !== null) {
       const sheetName = match[1] || currentSheet; // 使用当前工作表上下文，而不是默认Sheet1
@@ -2944,5 +3252,8 @@ export class FormulaEngine {
 }
 
 class FormulaError {
-  constructor(public message: string, public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE') {}
+  constructor(
+    public message: string,
+    public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE'
+  ) {}
 }

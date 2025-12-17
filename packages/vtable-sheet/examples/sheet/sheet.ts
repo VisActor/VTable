@@ -151,7 +151,7 @@ export function createTable() {
       },
       {
         sheetKey: 'sheet5',
-        sheetTitle: 'Sheet 5',
+        sheetTitle: 'Sheet5',
         columnCount: 20,
         rowCount: 100,
         firstRowAsHeader: true,
@@ -784,6 +784,11 @@ export function createTable() {
               name: '导出xlsx',
               menuKey: TYPES.MainMenuItemKey.EXPORT_CURRENT_SHEET_XLSX,
               description: '导出当前sheet数据到xlsx'
+            },
+            {
+              name: '导出全部xlsx',
+              menuKey: TYPES.MainMenuItemKey.EXPORT_ALL_SHEETS_XLSX,
+              description: '导出所有sheet到xlsx'
             }
           ],
           description: '导出当前sheet数据'

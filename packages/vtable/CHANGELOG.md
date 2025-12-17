@@ -1,6 +1,49 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 08 Dec 2025 09:36:02 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Dec 2025 09:28:21 GMT and should not be manually modified.
+
+## 1.22.8
+Wed, 17 Dec 2025 09:28:21 GMT
+
+### Updates
+
+- fix: when pivot table set grid-tree subTotal value not show #4815
+
+
+- docs: supplement chartDimensionLinkage demo
+
+
+- feat: vtable-sheet support cross sheet calculate formula
+
+
+- feat: support import multiply sheets from excel file
+
+
+- fix: scroll bug when update option
+- feat: add update styles api for filter plugin.close#4790
+- feat: support custom styles. close#4720
+- feat: support custom conditionCategories. close#4781
+- fix: filter swtich enable erroe. fix#4783
+- feat: emit event when filter menu hide or show. close#4784
+- fix: apply filter after update table data. fix#4785
+- feat: add option to format display value. close#4786
+- fix: update filter state and keys when update data. fix#4787
+- feat: menu limit to body range. close#4791
+- fix: select none not effect. fix#4792
+- feat: add config to disable sync multiple filter state. close#4793
+- fix: empty line bug
+- fix: update checkbox state after update data. fix#4795
+- add config to control filter result
+- feat: excel export multiply sheets
+
+
+- fix: delete key down should not complete edit cell
+
+
+- fix: pivotChart linkage getAxis node occor error
+
+
+- fix: panel hide when press enter. fix#4813
 
 ## 1.22.7
 Mon, 08 Dec 2025 09:36:02 GMT

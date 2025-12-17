@@ -1,3 +1,25 @@
+# v1.22.7
+
+2025-12-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: resize support set canResizeColumn function [#4764](https://github.com/VisActor/VTable/issues/4764)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: pivotChart axis should change zero when has range
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: optimize linkage pivotChart tooltip
+- **@visactor/vtable-plugins**: filter  auto update item when change table records
+
+
+
+[more detail about v1.22.7](https://github.com/VisActor/VTable/releases/tag/v1.22.7)
+
 # v1.22.6
 
 2025-12-02

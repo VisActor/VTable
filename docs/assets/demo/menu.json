@@ -36,8 +36,8 @@
     {
       "path": "table-type",
       "title": {
-        "zh": "表格类型",
-        "en": "table-type"
+        "zh": "基本表格",
+        "en": "list-table"
       },
       "children": [
         {
@@ -115,7 +115,16 @@
             "link": "'../../guide/table_type/List_table/list_table_transpose'",
             "option": ""
           }
-        },
+        }
+      ]
+    },
+    {
+      "path": "table-type",
+      "title": {
+        "zh": "透视表",
+        "en": "pivot-table"
+      },
+      "children": [
         {
           "path": "pivot-analysis-table",
           "title": {
@@ -214,7 +223,16 @@
             "link": "'../../guide/table_type/Pivot_table/pivot_table_tree'",
             "option": ""
           }
-        },
+        }
+      ]
+    },
+    {
+      "path": "table-type",
+      "title": {
+        "zh": "透视图",
+        "en": "pivot-chart"
+      },
+      "children": [
         {
           "path": "pivot-chart",
           "title": {
@@ -255,6 +273,13 @@
           "title": {
             "zh": "透视组合图（词云图）",
             "en": "Pivot Chart Word Cloud"
+          }
+        },
+        {
+          "path": "pivot-chart-linkage",
+          "title": {
+            "zh": "透视组合图（联动）",
+            "en": "Pivot Chart Linkage"
           }
         }
       ]

@@ -2,22 +2,50 @@ import { FormulaManager } from '../../src/managers/formula-manager';
 import type VTableSheet from '../../src/components/vtable-sheet';
 
 // Mock VTableSheet for testing
+// 使用闭包共享 sheets Map，确保 addSheet 和 getSheetManager 都能访问
+const mockSheets = new Map<string, { sheetTitle: string; sheetKey: string; showHeader: boolean; columns: any[] }>();
+
 const mockVTableSheet = {
+  workSheetInstances: new Map(), // 添加缺失的 workSheetInstances 属性
   getSheetManager: () => ({
-    getSheet: (sheetKey: string) => ({
-      sheetTitle: 'Test Sheet',
-      sheetKey: sheetKey,
-      showHeader: true,
-      columns: [] as any[]
-    })
+    getSheet: (sheetKey: string) => {
+      if (!mockSheets.has(sheetKey)) {
+        mockSheets.set(sheetKey, {
+          sheetTitle: sheetKey,
+          sheetKey: sheetKey,
+          showHeader: true,
+          columns: [] as any[]
+        });
+      }
+      return mockSheets.get(sheetKey);
+    },
+    getAllSheets: () => {
+      // 返回所有 sheets 的数组
+      return Array.from(mockSheets.values()).map(sheet => ({
+        sheetKey: sheet.sheetKey,
+        sheetTitle: sheet.sheetTitle
+      }));
+    },
+    getSheetCount: () => mockSheets.size
   }),
-  getActiveSheet: (): any => null
+  getActiveSheet: (): any => null,
+  createWorkSheetInstance: (sheetDefine: any): any => {
+    // 返回一个简单的 mock 实例
+    return {
+      getElement: () => ({ style: { display: '' } }),
+      getData: (): any[] => [],
+      getColumns: (): any[] => [],
+      release: (): void => {}
+    };
+  }
 } as unknown as VTableSheet;
 
 describe('All Range Functions Dependency Tracking', () => {
   let formulaManager: FormulaManager;
 
   beforeEach(() => {
+    // 清空 mock sheets Map
+    mockSheets.clear();
     formulaManager = new FormulaManager(mockVTableSheet);
   });
 
@@ -349,8 +377,12 @@ describe('All Range Functions Dependency Tracking', () => {
 
   test('should handle cross-sheet range references', () => {
     formulaManager.addSheet('DataSheet', [['A'], [''], [''], ['']]);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('DataSheet');
 
     formulaManager.addSheet('SummarySheet', [['B'], ['']]);
+    // 确保 sheet 被添加到 mock 的 sheetManager 中
+    mockVTableSheet.getSheetManager().getSheet('SummarySheet');
 
     // Set numeric values
     formulaManager.setCellContent({ sheet: 'DataSheet', row: 1, col: 0 }, 10);
