@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: update filter state and keys when update data. fix#4787",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

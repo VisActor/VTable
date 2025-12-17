@@ -247,6 +247,14 @@ export interface TableEvents {
    * 删除列事件
    */
   DELETE_COLUMN: 'delete_column';
+  /**
+   * 筛选菜单显示事件
+   */
+  FILTER_MENU_SHOW: 'filter_menu_show';
+  /**
+   * 筛选菜单隐藏事件
+   */
+  FILTER_MENU_HIDE: 'filter_menu_hide';
 }
 /**
  * Table event types
@@ -338,5 +346,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DELETE_RECORD: 'delete_record',
   UPDATE_RECORD: 'update_record',
   ADD_COLUMN: 'add_column',
-  DELETE_COLUMN: 'delete_column'
+  DELETE_COLUMN: 'delete_column',
+
+  FILTER_MENU_SHOW: 'filter_menu_show',
+  FILTER_MENU_HIDE: 'filter_menu_hide'
 } as TableEvents;

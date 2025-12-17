@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: panel hide when press enter. fix#4813",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

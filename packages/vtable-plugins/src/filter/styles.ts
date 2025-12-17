@@ -9,7 +9,7 @@ export const filterStyles = {
     backgroundColor: 'white',
     border: '1px solid #ccc',
     boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-    zIndex: '100'
+    zIndex: '99999'
   },
 
   // 筛选面板

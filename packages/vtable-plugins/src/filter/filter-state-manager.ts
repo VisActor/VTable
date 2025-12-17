@@ -80,10 +80,24 @@ export class FilterStateManager {
     const newFilter = new Map(state.filters);
     switch (type) {
       case FilterActionType.ADD_FILTER:
-        newFilter.set(payload.field, payload);
+        if (payload.shouldKeepUnrelatedState) {
+          newFilter.set(payload.field, { ...newFilter.get(payload.field), ...payload });
+        } else {
+          newFilter.set(payload.field, payload);
+        }
         break;
       case FilterActionType.REMOVE_FILTER:
-        newFilter.delete(payload.field);
+        if (payload.shouldKeepUnrelatedState && payload.type === 'byValue') {
+          delete newFilter.get(payload.field).values;
+          newFilter.set(payload.field, { ...newFilter.get(payload.field), enable: false });
+        } else if (payload.shouldKeepUnrelatedState && payload.type === 'byCondition') {
+          delete newFilter.get(payload.field).condition;
+          delete newFilter.get(payload.field).operator;
+          newFilter.set(payload.field, { ...newFilter.get(payload.field), enable: false });
+        } else {
+          newFilter.delete(payload.field);
+        }
+
         break;
       case FilterActionType.UPDATE_FILTER:
         newFilter.set(payload.field, { ...newFilter.get(payload.field), ...payload });

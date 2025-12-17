@@ -1,9 +1,9 @@
-import type { ListTable, PivotTable } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, type ListTable, type PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles, filterStyles } from './styles';
-import type { FilterMode } from './types';
+import type { FilterMode, FilterOptions, FilterStyles } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -11,6 +11,7 @@ import type { FilterMode } from './types';
 export class FilterToolbar {
   table: ListTable | PivotTable;
   filterStateManager: FilterStateManager;
+  pluginOptions: FilterOptions;
   valueFilter: ValueFilter | null = null;
   conditionFilter: ConditionFilter | null = null;
   activeTab: 'byValue' | 'byCondition' = 'byValue';
@@ -19,20 +20,25 @@ export class FilterToolbar {
   filterModes: FilterMode[] = [];
 
   private filterMenu: HTMLElement;
+  private filterTabsContainer: HTMLElement;
   private filterMenuWidth: number;
   private currentCol?: number | null;
   private currentRow?: number | null;
   private filterTabByValue: HTMLButtonElement;
   private filterTabByCondition: HTMLButtonElement;
+  private footerContainer: HTMLElement;
   private clearFilterOptionLink: HTMLAnchorElement;
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  private activeType: 'byValue' | 'byCondition' = 'byValue';
+
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
-    this.valueFilter = new ValueFilter(this.table, this.filterStateManager);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager);
+    this.valueFilter = new ValueFilter(this.table, this.filterStateManager, pluginOptions);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions, this.hide);
+    this.pluginOptions = pluginOptions;
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 
@@ -103,14 +109,16 @@ export class FilterToolbar {
   }
 
   render(container: HTMLElement): void {
+    const filterStyles = this.pluginOptions.styles || {};
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
+    this.filterMenu.classList.add('vtable-filter-menu');
     applyStyles(this.filterMenu, filterStyles.filterMenu);
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
     // === 筛选 Tab ===
-    const filterTabsContainer = document.createElement('div');
-    applyStyles(filterTabsContainer, filterStyles.tabsContainer);
+    this.filterTabsContainer = document.createElement('div');
+    applyStyles(this.filterTabsContainer, filterStyles.tabsContainer);
 
     this.filterTabByValue = document.createElement('button');
     this.filterTabByValue.innerText = '按值筛选';
@@ -120,11 +128,11 @@ export class FilterToolbar {
     this.filterTabByCondition.innerText = '按条件筛选';
     applyStyles(this.filterTabByCondition, filterStyles.tabStyle(false));
 
-    filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
+    this.filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
 
     // === 页脚（清除、取消、确定 筛选按钮） ===
-    const footerContainer = document.createElement('div');
-    applyStyles(footerContainer, filterStyles.footerContainer);
+    this.footerContainer = document.createElement('div');
+    applyStyles(this.footerContainer, filterStyles.footerContainer);
 
     this.clearFilterOptionLink = document.createElement('a');
     this.clearFilterOptionLink.href = '#';
@@ -141,29 +149,52 @@ export class FilterToolbar {
     applyStyles(this.applyFilterButton, filterStyles.footerButton(true));
 
     footerButtons.append(this.cancelFilterButton, this.applyFilterButton);
-    footerContainer.append(this.clearFilterOptionLink, footerButtons);
+    this.footerContainer.append(this.clearFilterOptionLink, footerButtons);
 
     // --- 筛选器头部 Tab ---
-    this.filterMenu.append(filterTabsContainer);
+    this.filterMenu.append(this.filterTabsContainer);
 
     // --- 筛选器内容 ---
     this.valueFilter.render(this.filterMenu);
     this.conditionFilter.render(this.filterMenu);
 
     // --- 筛选器页脚 ---
-    this.filterMenu.append(footerContainer);
+    this.filterMenu.append(this.footerContainer);
 
     container.appendChild(this.filterMenu); // 将筛选器添加到 DOM 中
     this.attachEventListeners();
   }
 
+  updateStyles(styles: FilterStyles) {
+    const realDisplay = (this.filterMenu.style.display ?? styles.filterMenu.display) || 'none';
+    applyStyles(this.filterMenu, { ...styles.filterMenu, display: realDisplay });
+    applyStyles(this.filterTabsContainer, styles.tabsContainer);
+    applyStyles(this.filterTabByValue, styles.tabStyle(true));
+    applyStyles(this.footerContainer, styles.footerContainer);
+    applyStyles(this.clearFilterOptionLink, styles.clearLink);
+    applyStyles(this.cancelFilterButton, styles.footerButton(false));
+    applyStyles(this.applyFilterButton, styles.footerButton(true));
+    this.valueFilter.updateStyles(styles);
+    this.conditionFilter.updateStyles(styles);
+
+    // 面板处于显示状态, 更新了样式, 则需要手动控制tab显隐
+    // 面板显示按值筛选或按条件筛选
+    if (this.activeType === 'byCondition') {
+      this.onTabSwitch('byCondition');
+    } else {
+      this.onTabSwitch('byValue');
+    }
+  }
+
   attachEventListeners() {
     // 按值筛选/按条件筛选的事件监听
     this.filterTabByValue.addEventListener('click', () => {
+      this.activeType = 'byValue';
       this.onTabSwitch('byValue');
     });
 
     this.filterTabByCondition.addEventListener('click', () => {
+      this.activeType = 'byCondition';
       this.onTabSwitch('byCondition');
     });
 
@@ -220,6 +251,11 @@ export class FilterToolbar {
     const canvasBounds = this.table.canvas.getBoundingClientRect();
     const cell = this.table.getCellRelativeRect(effectiveCol, effectiveRow);
 
+    const filterMenuWidth = this.filterMenuWidth;
+    // 最高高度预估值
+    // TODO: 需要获取精确高度
+    const filterMenuHeight = 380;
+
     if (cell.right < this.filterMenuWidth) {
       // 无法把筛选菜单完整地显示在左侧，那么显示在右侧
       left = cell.left + canvasBounds.left;
@@ -229,6 +265,10 @@ export class FilterToolbar {
       left = cell.right + canvasBounds.left - this.filterMenuWidth;
       top = cell.bottom + canvasBounds.top;
     }
+
+    // 确保筛选菜单不会超出窗口边界
+    left = Math.max(0, Math.min(window.innerWidth - filterMenuWidth, left));
+    top = Math.max(0, Math.min(window.innerHeight - filterMenuHeight, top));
 
     this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
     this.filterMenu.style.left = `${left}px`;
@@ -266,11 +306,24 @@ export class FilterToolbar {
     // 确保在事件冒泡完成后才设置 isVisible 为 true
     setTimeout(() => {
       this.isVisible = true;
+      this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
+        col: col,
+        row: row
+      });
     }, 0);
   }
 
-  hide(): void {
+  hide = (currentCol?: number, currentRow?: number): void => {
     this.filterMenu.style.display = 'none';
     this.isVisible = false;
+    this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
+      col: currentCol ?? this.currentCol,
+      row: currentRow ?? this.currentRow
+    });
+  };
+
+  destroy() {
+    this.valueFilter.destroy();
+    this.filterMenu.remove();
   }
 }
