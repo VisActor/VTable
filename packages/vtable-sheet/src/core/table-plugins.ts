@@ -61,10 +61,11 @@ export function getTablePlugins(
   if (!disabledPluginsUserSetted?.some(module => module.module === TableSeriesNumber)) {
     const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === TableSeriesNumber)
       ?.moduleOptions as TableSeriesNumberOptions;
-    const tableSeriesNumberPlugin = new TableSeriesNumber({
+
+    // 构建插件选项，包含dragOrder（即使类型定义中没有，插件实际支持）
+    const pluginOptions: TableSeriesNumberOptions & { dragOrder?: any } = {
       rowCount: sheetDefine?.rowCount || 100,
       colCount: sheetDefine?.columnCount || 100,
-      dragOrder: sheetDefine?.dragOrder,
       rowSeriesNumberWidth: 30,
       colSeriesNumberHeight: 30,
       rowSeriesNumberCellStyle:
@@ -72,7 +73,14 @@ export function getTablePlugins(
       colSeriesNumberCellStyle:
         sheetDefine?.theme?.colSeriesNumberCellStyle || options?.theme?.colSeriesNumberCellStyle,
       ...userPluginOptions
-    });
+    };
+
+    // 如果sheet定义中有dragOrder，添加到插件选项中
+    if (sheetDefine?.dragOrder) {
+      pluginOptions.dragOrder = sheetDefine.dragOrder;
+    }
+
+    const tableSeriesNumberPlugin = new TableSeriesNumber(pluginOptions);
     plugins.push(tableSeriesNumberPlugin);
     //已经初始化过的插件，从enabledPluginsUserSetted中移除
     enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== TableSeriesNumber);
@@ -178,10 +186,14 @@ function createFilterPlugin(sheetDefine?: ISheetDefine, userPluginOptions?: Filt
   //     filterModes: sheetDefine.filter.filterModes
   //   });
   // }
-  return new FilterPlugin({
+
+  // 构建插件选项，确保符合FilterOptions接口
+  const pluginOptions: FilterOptions = {
     enableFilter: createColumnFilterChecker(sheetDefine),
     ...userPluginOptions
-  });
+  };
+
+  return new FilterPlugin(pluginOptions);
 }
 
 /**

@@ -5,6 +5,8 @@ import { FormulaRangeSelector } from '../formula/formula-range-selector';
 import type { CellRange } from '../ts-types';
 import { CellHighlightManager } from '../formula';
 import type * as VTable from '@visactor/vtable';
+import { CrossSheetFormulaHandler } from '../formula/cross-sheet-formula-handler';
+import type { CrossSheetFormulaOptions } from '../formula/cross-sheet-formula-handler';
 
 /**
  * 标准FormulaEngine配置 (MIT兼容)
@@ -53,6 +55,9 @@ export class FormulaManager implements IFormulaManager {
 
   inputingElement: HTMLInputElement | null = null;
 
+  /** 跨sheet公式处理器 */
+  crossSheetHandler: CrossSheetFormulaHandler;
+
   get formulaWorkingOnCell(): FormulaCell | null {
     return this._formulaWorkingOnCell;
   }
@@ -65,6 +70,7 @@ export class FormulaManager implements IFormulaManager {
     this.cellHighlightManager = new CellHighlightManager(sheet);
     this.formulaRangeSelector = new FormulaRangeSelector(this);
     this.initializeFormulaEngine();
+    this.crossSheetHandler = new CrossSheetFormulaHandler(this.formulaEngine, this.sheet.getSheetManager(), this);
   }
 
   /**
@@ -84,9 +90,10 @@ export class FormulaManager implements IFormulaManager {
    * 添加新工作表 - 正确的多表格支持 (MIT兼容)
    * @param sheetKey 工作表键
    * @param  normalizedData 工作表数据 需要规范处理过 且包含表头的数据 因为要输入给FormulaEngine
+   * @param  sheetTitle 工作表标题（用户可见的名称）
    * @returns 工作表ID
    */
-  addSheet(sheetKey: string, normalizedData?: unknown[][]): number {
+  addSheet(sheetKey: string, normalizedData?: unknown[][], sheetTitle?: string): number {
     this.ensureInitialized();
 
     // 检查是否已存在
@@ -103,6 +110,11 @@ export class FormulaManager implements IFormulaManager {
 
       // 使用FormulaEngine创建工作表
       const sheetId = this.formulaEngine.addSheet(sheetKey, normalizedData);
+
+      // 设置工作表标题（如果提供）
+      if (sheetTitle) {
+        this.formulaEngine.setSheetTitle(sheetKey, sheetTitle);
+      }
 
       this.sheetMapping.set(sheetKey, sheetId);
       this.reverseSheetMapping.set(sheetId, sheetKey);
@@ -229,17 +241,257 @@ export class FormulaManager implements IFormulaManager {
   }
 
   /**
+   * 更新工作表标题（用于sheet重命名时）
+   * @param sheetKey 工作表键
+   * @param newTitle 新标题
+   */
+  updateSheetTitle(sheetKey: string, newTitle: string): void {
+    // 获取旧标题
+    const oldTitle = this.formulaEngine.getSheetTitle(sheetKey);
+
+    // 使用FormulaEngine的setSheetTitle API更新标题映射
+    this.formulaEngine.setSheetTitle(sheetKey, newTitle);
+
+    // 更新所有引用旧标题的公式
+    if (oldTitle && oldTitle !== newTitle) {
+      this.updateCrossSheetFormulasWithNewTitle(oldTitle, newTitle);
+    }
+
+    // 清除相关缓存以确保跨sheet公式能正确识别新的标题
+    if (this.crossSheetHandler) {
+      this.crossSheetHandler.clearCache();
+    }
+  }
+
+  /**
+   * 更新所有引用旧标题的跨sheet公式
+   * @param oldTitle 旧标题
+   * @param newTitle 新标题
+   */
+  private updateCrossSheetFormulasWithNewTitle(oldTitle: string, newTitle: string): void {
+    try {
+      // 获取所有工作表
+      const allSheets = this.sheet.getSheetManager().getAllSheets();
+
+      for (const sheetInfo of allSheets) {
+        const formulas = this.formulaEngine.exportFormulas(sheetInfo.sheetKey);
+
+        for (const [cellRef, formula] of Object.entries(formulas)) {
+          if (this.hasCrossSheetReference(formula)) {
+            // 转义旧标题中的特殊字符，用于正则表达式
+            const escapedOldTitle = oldTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            // 创建各种可能的引用模式
+            const patterns = [
+              // 英文感叹号，无引号: 销售数据!
+              `${escapedOldTitle}!`,
+              // 中文感叹号，无引号: 销售数据！
+              `${escapedOldTitle}！`,
+              // 英文感叹号，有引号: '销售数据'!
+              `'${escapedOldTitle}'!`,
+              // 中文感叹号，有引号: '销售数据'！
+              `'${escapedOldTitle}'！`
+            ];
+
+            let updatedFormula = formula;
+            let hasChanges = false;
+
+            // 逐一替换各种模式
+            for (const pattern of patterns) {
+              if (updatedFormula.includes(pattern)) {
+                // 根据模式类型进行相应的替换
+                if (pattern.includes(`'${escapedOldTitle}'`)) {
+                  // 处理带引号的情况
+                  if (pattern.endsWith('!')) {
+                    updatedFormula = updatedFormula.replace(new RegExp(`'${escapedOldTitle}'!`, 'g'), `'${newTitle}'!`);
+                  } else if (pattern.endsWith('！')) {
+                    updatedFormula = updatedFormula.replace(
+                      new RegExp(`'${escapedOldTitle}'！`, 'g'),
+                      `'${newTitle}'！`
+                    );
+                  }
+                } else {
+                  // 处理无引号的情况
+                  if (pattern.endsWith('!')) {
+                    updatedFormula = updatedFormula.replace(new RegExp(`${escapedOldTitle}!`, 'g'), `${newTitle}!`);
+                  } else if (pattern.endsWith('！')) {
+                    updatedFormula = updatedFormula.replace(new RegExp(`${escapedOldTitle}！`, 'g'), `${newTitle}！`);
+                  }
+                }
+                hasChanges = true;
+              }
+            }
+
+            if (hasChanges && updatedFormula !== formula) {
+              // 解析单元格引用 (A1格式转换为行列坐标)
+              const cell = this.parseA1CellRef(`${sheetInfo.sheetKey}!${cellRef}`);
+              if (cell) {
+                // 更新公式
+                this.formulaEngine.setCellContent(cell, updatedFormula);
+                // console.log(`Updated formula in ${sheetInfo.sheetKey}!${cellRef}: ${formula} -> ${updatedFormula}`);
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to update cross-sheet formulas from ${oldTitle} to ${newTitle}:`, error);
+    }
+  }
+
+  /**
+   * 解析A1格式的单元格引用为行列坐标
+   * @param cellRef A1格式的单元格引用，如 "Sheet1!A1" 或 "A1"
+   * @returns 单元格对象，如果解析失败返回null
+   */
+  private parseA1CellRef(cellRef: string): { sheet: string; row: number; col: number } | null {
+    try {
+      // 支持中英文感叹号
+      let parts: string[];
+      if (cellRef.includes('!')) {
+        parts = cellRef.split('!');
+      } else if (cellRef.includes('！')) {
+        parts = cellRef.split('！');
+      } else {
+        // 没有sheet前缀，使用默认sheet
+        parts = ['Sheet1', cellRef];
+      }
+
+      if (parts.length !== 2) {
+        return null;
+      }
+
+      const [sheet, a1Notation] = parts;
+
+      // 解析A1格式 (如 A1, B2, AA10)
+      const match = a1Notation.match(/^([A-Z]+)([0-9]+)$/);
+      if (!match) {
+        return null;
+      }
+
+      const colLetters = match[1];
+      const rowNumber = parseInt(match[2], 10);
+
+      // 转换列字母为索引 (A=0, B=1, ..., Z=25, AA=26, etc.)
+      let col = 0;
+      for (let i = 0; i < colLetters.length; i++) {
+        col = col * 26 + (colLetters.charCodeAt(i) - 65);
+      }
+
+      return { sheet, row: rowNumber - 1, col };
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * 确保sheet已在formulaEngine中注册
+   * @param sheetKey 工作表键
+   */
+  private ensureSheetRegistered(sheetKey: string): void {
+    if (this.sheet.workSheetInstances.has(sheetKey)) {
+      return;
+    }
+    const sheetDefine = this.sheet.getSheetManager().getSheet(sheetKey);
+    if (!sheetDefine) {
+      return;
+    }
+    const instance = this.sheet.createWorkSheetInstance(sheetDefine);
+    this.sheet.workSheetInstances.set(sheetKey, instance);
+  }
+
+  /**
+   * 确保跨sheet公式中引用的所有sheet都已注册
+   * @param formula 公式字符串
+   */
+  private ensureAllSheetsRegisteredForCrossSheetFormula(formula: string): void {
+    try {
+      // 提取公式中引用的所有sheet名称
+      const sheetPattern = /([A-Za-z0-9_一-龥]+)!/g;
+      let match;
+      const referencedSheets = new Set<string>();
+
+      while ((match = sheetPattern.exec(formula)) !== null) {
+        const sheetName = match[1];
+        if (sheetName) {
+          referencedSheets.add(sheetName);
+        }
+      }
+
+      // 将所有引用的sheet转换为sheetKey并注册
+      for (const sheetTitle of referencedSheets) {
+        // 查找对应的sheetKey
+        const allSheets = this.sheet.getSheetManager().getAllSheets();
+        const sheetInfo = allSheets.find(sheet => sheet.sheetTitle.toLowerCase() === sheetTitle.toLowerCase());
+
+        if (sheetInfo) {
+          // 确保这个sheet已注册到formulaEngine
+          this.ensureSheetRegistered(sheetInfo.sheetKey);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to register sheets for cross-sheet formula:', error);
+    }
+  }
+
+  /**
+   * 标准化数据供公式引擎使用
+   * @param data 原始数据
+   * @returns 标准化后的数据
+   */
+  private normalizeDataForFormulaEngine(data: unknown[][]): unknown[][] {
+    if (!Array.isArray(data) || data.length === 0) {
+      return [['']];
+    }
+
+    const maxCols = Math.max(...data.map(row => (Array.isArray(row) ? row.length : 0)));
+
+    return data.map(row => {
+      if (!Array.isArray(row)) {
+        return Array(maxCols).fill('');
+      }
+
+      const normalizedRow = row.map(cell => {
+        if (typeof cell === 'string') {
+          if (cell.startsWith('=')) {
+            return cell; // 保持公式不变
+          }
+          const num = Number(cell);
+          return !isNaN(num) && cell.trim() !== '' ? num : cell;
+        }
+        return cell ?? '';
+      });
+
+      while (normalizedRow.length < maxCols) {
+        normalizedRow.push('');
+      }
+
+      return normalizedRow;
+    });
+  }
+
+  /**
    * 获取工作表ID
    * @param sheetKey 工作表键
    * @returns 工作表ID
    */
   getSheetId(sheetKey: string): number {
+    // 首先尝试精确匹配
     const sheetId = this.sheetMapping.get(sheetKey);
-    if (sheetId === undefined) {
-      // 自动创建新sheet
-      return this.addSheet(sheetKey);
+    if (sheetId !== undefined) {
+      return sheetId;
     }
-    return sheetId;
+
+    // 如果精确匹配失败，尝试不区分大小写的匹配
+    const lowerSheetKey = sheetKey.toLowerCase();
+    for (const [existingKey, existingId] of this.sheetMapping.entries()) {
+      if (existingKey.toLowerCase() === lowerSheetKey) {
+        return existingId;
+      }
+    }
+
+    // 如果还是找不到，自动创建新sheet
+    return this.addSheet(sheetKey);
   }
 
   /**
@@ -263,8 +515,17 @@ export class FormulaManager implements IFormulaManager {
     }
 
     try {
-      // 使用FormulaEngine设置单元格内容
-      this.formulaEngine.setCellContent(cell, value);
+      // 检查是否为跨sheet公式
+      if (typeof value === 'string' && value.startsWith('=') && this.hasCrossSheetReference(value)) {
+        // 使用跨sheet公式处理器处理
+        // 注意：setCrossSheetFormula 是异步的，但这里没有等待
+        // 由于 setCrossSheetFormula 内部会同步调用 formulaEngine.setCellContent，
+        // 所以公式会被立即存储，不需要等待 Promise
+        this.crossSheetHandler.setCrossSheetFormula(cell, value);
+      } else {
+        // 使用FormulaEngine设置单元格内容
+        this.formulaEngine.setCellContent(cell, value);
+      }
     } catch (error) {
       console.error('Failed to set cell content:', error);
       // 提供更详细的错误信息
@@ -285,6 +546,18 @@ export class FormulaManager implements IFormulaManager {
     this.ensureInitialized();
 
     try {
+      // 检查是否为跨sheet公式
+      const formula = this.formulaEngine.getCellFormula(cell);
+      if (formula && this.hasCrossSheetReference(formula)) {
+        // 对于跨sheet公式，确保所有相关sheet都已注册
+        this.ensureAllSheetsRegisteredForCrossSheetFormula(formula);
+        const result = this.formulaEngine.getCellValue(cell);
+        return result;
+      }
+
+      // 检查sheet是否已在formulaEngine中注册，如果没有则尝试注册
+      this.ensureSheetRegistered(cell.sheet);
+
       // 使用FormulaEngine获取单元格值
       return this.formulaEngine.getCellValue(cell);
     } catch (error) {
@@ -915,6 +1188,11 @@ export class FormulaManager implements IFormulaManager {
    */
   calculateFormula(formula: string): { value: unknown; error?: string } {
     try {
+      // 确保所有引用的sheet都已注册（用于跨sheet公式）
+      if (this.hasCrossSheetReference(formula)) {
+        this.ensureAllSheetsRegisteredForCrossSheetFormula(formula);
+      }
+
       // 使用FormulaEngine计算公式
       return this.formulaEngine.calculateFormula(formula);
     } catch (error) {
@@ -980,6 +1258,7 @@ export class FormulaManager implements IFormulaManager {
   release(): void {
     this.formulaRangeSelector?.release();
     this.cellHighlightManager?.release();
+    this.crossSheetHandler?.destroy();
     try {
       if (this.formulaEngine) {
         this.formulaEngine.release();
@@ -1004,6 +1283,7 @@ export class FormulaManager implements IFormulaManager {
       isInitialized: this.isInitialized,
       sheets: Array.from(this.sheetMapping.entries()),
       functions: this.getAvailableFunctions(),
+      crossSheetHandler: this.crossSheetHandler ? this.crossSheetHandler.getHandlerStatus() : null,
       stats: null // FormulaEngine不提供统计信息
     };
   }
@@ -1037,7 +1317,7 @@ export class FormulaManager implements IFormulaManager {
   /**
    * 获取所有工作表信息 (MIT兼容)
    */
-  getAllSheets(): Array<{ key: string; id: number; name: string }> {
+  getAllSheets(): Array<{ key: string; id: number; title: string }> {
     try {
       // 使用FormulaEngine获取所有工作表
       return this.formulaEngine.getAllSheets();
@@ -1116,5 +1396,47 @@ export class FormulaManager implements IFormulaManager {
       console.error('Failed to copy range:', error);
       throw new Error('Failed to copy cell range');
     }
+  }
+
+  /**
+   * 检查是否为跨sheet引用
+   */
+  private hasCrossSheetReference(formula: string): boolean {
+    return formula.includes('!') || formula.includes('！');
+  }
+
+  /**
+   * 获取跨sheet依赖关系
+   */
+  getCrossSheetDependencies(): Map<string, string[]> {
+    return this.crossSheetHandler.getCrossSheetDependencies();
+  }
+
+  /**
+   * 验证跨sheet公式
+   */
+  validateCrossSheetFormula(cell: FormulaCell) {
+    return this.crossSheetHandler.validateCrossSheetFormula(cell);
+  }
+
+  /**
+   * 验证所有跨sheet公式
+   */
+  validateAllCrossSheetFormulas() {
+    return this.crossSheetHandler.validateAllCrossSheetFormulas();
+  }
+
+  /**
+   * 强制重新计算所有跨sheet公式
+   */
+  async recalculateAllCrossSheetFormulas(): Promise<void> {
+    await this.crossSheetHandler.recalculateAllCrossSheetFormulas();
+  }
+
+  /**
+   * 更新跨sheet公式处理器选项
+   */
+  updateCrossSheetOptions(options: Partial<CrossSheetFormulaOptions>): void {
+    this.crossSheetHandler.updateOptions(options);
   }
 }

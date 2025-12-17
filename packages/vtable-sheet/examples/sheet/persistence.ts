@@ -66,8 +66,22 @@ export function createTable() {
           ['钱七', 27, '市场部', 7500],
           ['孙八', 35, '技术部', 12000],
           ['周九', 29, '人事部', 7200],
-          ['吴十', 31, '市场部', 8500]
+          ['吴十', 31, '市场部', 8500],
+          [null, null, null, '李四'],
+          [null, null, null, 15000],
+          [null, null, null, 16000],
+          [null, null, null, 15500],
+          [null, null, null, 14000],
+          [null, null, null, 19500]
         ],
+        formulas: {
+          D10: '=测试数据!D3',
+          D11: '=SUM(D2:D3)',
+          D12: '=SUM(D3:D4)',
+          D13: '=SUM(D4:D5)',
+          D14: '=SUM(D5:D6)',
+          D15: '=SUM(D6:D7)'
+        },
         active: true
       },
       {

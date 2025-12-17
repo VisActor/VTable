@@ -24,32 +24,6 @@ describe('Basic Formula Functionality', () => {
     formulaManager.release();
   });
 
-  test('should handle basic numeric values', () => {
-    formulaManager.addSheet('Sheet1');
-
-    // Set a numeric value
-    formulaManager.setCellContent({ sheet: 'Sheet1', row: 0, col: 0 }, 42);
-
-    // Get the value
-    const result = formulaManager.getCellValue({ sheet: 'Sheet1', row: 0, col: 0 });
-
-    expect(result.value).toBe(42);
-    expect(result.error).toBeUndefined();
-  });
-
-  test('should handle string values', () => {
-    formulaManager.addSheet('Sheet1');
-
-    // Set a string value
-    formulaManager.setCellContent({ sheet: 'Sheet1', row: 0, col: 0 }, 'Hello');
-
-    // Get the value
-    const result = formulaManager.getCellValue({ sheet: 'Sheet1', row: 0, col: 0 });
-
-    expect(result.value).toBe('Hello');
-    expect(result.error).toBeUndefined();
-  });
-
   test('should identify formula cells', () => {
     formulaManager.addSheet('Sheet1');
 

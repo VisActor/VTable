@@ -32,43 +32,62 @@ export class CellHighlightManager {
   /**
    * 解析公式中的单元格引用（包括范围引用）
    */
-  parseCellReferences(
-    formula: string
-  ): Array<{ address: string; coords: CellCoord[]; color: string; isRange: boolean }> {
-    const references: Array<{ address: string; coords: CellCoord[]; color: string; isRange: boolean }> = [];
+  parseCellReferences(formula: string): Array<{
+    address: string;
+    coords: CellCoord[];
+    color: string;
+    isRange: boolean;
+    sheetName?: string;
+  }> {
+    const references: Array<{
+      address: string;
+      coords: CellCoord[];
+      color: string;
+      isRange: boolean;
+      sheetName?: string;
+    }> = [];
 
-    // 匹配单元格引用的正则表达式（包括范围引用）
-    const cellRefRegex = /(\$?[A-Z]+\$?\d+(?::\$?[A-Z]+\$?\d+)?)/gi;
+    // 更简单的跨sheet引用匹配方法
+    // 匹配模式：Sheet1!A1, 'Sheet Name'!A1, A1, A1:B2, Sheet1!A1:B2
+    const cellRefRegex = /(?:([']?[^!'\s]+[']?)!)?(\$?[A-Z]+\$?\d+(?::\$?[A-Z]+\$?\d+)?)/g;
 
-    const matches = formula.match(cellRefRegex);
-    if (!matches) {
-      return references;
-    }
-
-    const activeSheet = this.sheet.getActiveSheet();
-    if (!activeSheet) {
-      return references;
-    }
-
-    const uniqueRefs = new Set<string>();
+    const uniqueRefs = new Map<string, { sheetName?: string; cellRef: string }>();
     this.colorIndex = 0;
 
-    matches.forEach(match => {
-      const normalizedRef = match.replace(/\$/g, '').toUpperCase();
+    let match;
+    while ((match = cellRefRegex.exec(formula)) !== null) {
+      // 解析跨sheet引用
+      const sheetNamePart = match[1];
+      const cellRef = match[2];
 
-      if (!uniqueRefs.has(normalizedRef)) {
-        uniqueRefs.add(normalizedRef);
+      let sheetName: string | undefined;
+      if (sheetNamePart) {
+        sheetName = sheetNamePart.replace(/'/g, ''); // 移除可能的引号
+      }
+
+      const normalizedCellRef = cellRef.replace(/\$/g, '').toUpperCase();
+      const uniqueKey = sheetName ? `${sheetName}!${normalizedCellRef}` : normalizedCellRef;
+
+      if (!uniqueRefs.has(uniqueKey)) {
+        uniqueRefs.set(uniqueKey, { sheetName, cellRef: normalizedCellRef });
 
         try {
-          const isRange = normalizedRef.includes(':');
+          const isRange = normalizedCellRef.includes(':');
           let coords: CellCoord[] = [];
+
+          // 获取目标sheet
+          const targetSheet = sheetName ? this.sheet.getSheetByName(sheetName) : this.sheet.getActiveSheet();
+          if (!targetSheet) {
+            console.warn(`Sheet not found: ${sheetName || 'active sheet'}`);
+            continue;
+          }
 
           if (isRange) {
             // 解析范围引用，如 A1:A4
-            coords = this.parseRangeReference(normalizedRef, activeSheet);
+            coords = this.parseRangeReference(normalizedCellRef, targetSheet);
           } else {
             // 解析单个单元格引用，如 A1
-            const coord = activeSheet.coordFromAddress(normalizedRef);
+            const coord = targetSheet.coordFromAddress(normalizedCellRef);
             coords = [coord];
           }
 
@@ -77,18 +96,19 @@ export class CellHighlightManager {
             this.colorIndex++;
 
             references.push({
-              address: normalizedRef,
+              address: uniqueKey,
               coords: coords,
               color: color,
-              isRange: isRange
+              isRange: isRange,
+              sheetName: sheetName
             });
           }
         } catch (e) {
           // 忽略无效的单元格引用
-          console.warn(`Invalid cell reference: ${normalizedRef}`, e);
+          console.warn(`Invalid cell reference: ${uniqueKey}`, e);
         }
       }
-    });
+    }
 
     return references;
   }
@@ -123,7 +143,7 @@ export class CellHighlightManager {
   }
 
   /**
-   * 高亮公式中引用的单元格
+   * 高亮公式中引用的单元格（支持跨sheet）
    */
   highlightFormulaCells(formula: string): void {
     // 清除之前的高亮
@@ -135,15 +155,20 @@ export class CellHighlightManager {
       return;
     }
 
-    const activeSheet = this.sheet.getActiveSheet();
-    if (!activeSheet) {
-      return;
-    }
-
-    // 应用高亮
+    // 应用高亮 - 支持跨sheet
     references.forEach(ref => {
+      // 获取目标sheet
+      const targetSheet = ref.sheetName ? this.sheet.getSheetByName(ref.sheetName) : this.sheet.getActiveSheet();
+
+      if (!targetSheet) {
+        console.warn(`Sheet not found for highlighting: ${ref.sheetName || 'active sheet'}`);
+        return;
+      }
+
       ref.coords.forEach(coord => {
-        const key = `${coord.row}-${coord.col}`;
+        // 使用包含sheet名称的唯一key
+        const sheetPrefix = ref.sheetName ? `${ref.sheetName}!` : '';
+        const key = `${sheetPrefix}${coord.row}-${coord.col}`;
 
         // 保存高亮信息
         this.highlightedCells.set(key, {
@@ -152,8 +177,8 @@ export class CellHighlightManager {
           color: ref.color
         });
 
-        // 应用高亮样式
-        this.applyCellHighlight(activeSheet, coord, ref.color);
+        // 应用高亮样式到正确的sheet
+        this.applyCellHighlight(targetSheet, coord, ref.color);
       });
     });
   }
@@ -218,9 +243,6 @@ export class CellHighlightManager {
 
     this.highlightedCells.forEach(info => {
       try {
-        const key = `${info.row}-${info.col}`;
-        const styleId = `highlight-${key}`;
-
         // 移除高亮样式
         table.arrangeCustomCellStyle({ col: info.col, row: info.row }, null, false);
 

@@ -489,6 +489,10 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
 
   syncRowHeightToComponent() {
     // console.log('syncRowHeightToComponent adjust', adjustStartRowIndex, adjustEndRowIndex);
+    const rowRange = this.table.getBodyVisibleRowRange();
+    if (!rowRange) {
+      return;
+    }
     const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
     const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
     const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
