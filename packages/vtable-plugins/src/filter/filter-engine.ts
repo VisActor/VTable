@@ -124,8 +124,14 @@ export class FilterEngine {
       return value === condition ? 0 : -1;
     }
 
+    // 进入字符串比较
     const valueStr = String(value).toLowerCase();
     const conditionStr = String(condition).toLowerCase();
+
+    // 如果两个字符串都能正确转换成数字, 则仍然按数字比较
+    if (!isNaN(Number(valueStr)) && !isNaN(Number(conditionStr))) {
+      return Number(valueStr) === Number(conditionStr) ? 0 : Number(valueStr) > Number(conditionStr) ? 1 : -1;
+    }
     return valueStr === conditionStr ? 0 : valueStr > conditionStr ? 1 : -1;
   }
 

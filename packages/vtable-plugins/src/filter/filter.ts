@@ -13,7 +13,7 @@ import type {
   ColumnDefine,
   ColumnsDefine
 } from '@visactor/vtable';
-import { merge } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 import { filterStyles } from './styles';
 import { categories } from './constant';
 
@@ -45,7 +45,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
   constructor(pluginOptions: FilterOptions) {
     this.id = pluginOptions?.id ?? this.id;
-    this.pluginOptions = pluginOptions;
+    this.pluginOptions = cloneDeep(pluginOptions); // 不污染用户的配置, 以便上层业务做diff的时候使用
     this.pluginOptions.filterIcon = pluginOptions.filterIcon ?? {
       name: 'filter-icon',
       type: 'svg',
