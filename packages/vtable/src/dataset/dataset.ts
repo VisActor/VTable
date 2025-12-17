@@ -1146,13 +1146,13 @@ export class Dataset {
   ): IAggregator {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
     //#region 获取行和列的维度key,考虑到tree模式被折叠的情况 rowKey colKey会小于rows和columns的长度
-    let rowDimensionKey;
+    let rowDimensionKey: string | undefined;
     if (indicatorPosition?.position === 'row') {
       rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
     } else {
       rowDimensionKey = this.rows[rowKey.length - 1];
     }
-    let colDimensionKey;
+    let colDimensionKey: string | undefined;
     if (indicatorPosition?.position === 'col') {
       colDimensionKey = colKey.length >= 2 ? this.columns[colKey.length - 2] : undefined;
     } else {
