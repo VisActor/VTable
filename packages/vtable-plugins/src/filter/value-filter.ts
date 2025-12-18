@@ -139,7 +139,7 @@ export class ValueFilter {
       records = this.table.internalProps.records;
     } else {
       const recordsList = this.getRecords(this.table, true); // 已筛选：使用原始表格数据
-      const records = recordsList.filter(record =>
+      records = recordsList.filter(record =>
         filteredFields.every(field => {
           const filterType = this.filterStateManager.getFilterState(field)?.type;
           if (filterType !== 'byValue' && filterType !== null && filterType !== undefined) {

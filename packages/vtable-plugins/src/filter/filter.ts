@@ -243,7 +243,18 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
     const compactIcons = (list: any[]) => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
-    columns.forEach(column => {
+    const stack = [...columns];
+    const subColumns = [];
+    while (stack.length > 0) {
+      const currentCol = stack.pop();
+      if (currentCol.columns) {
+        currentCol.columns.forEach(col => stack.push(col));
+      } else {
+        subColumns.push(currentCol);
+      }
+    }
+
+    subColumns.forEach(column => {
       const shouldShow = this.shouldEnableFilterForColumn(column.field as string | number, column);
       const isFiltering = !!this.filterStateManager.getFilterState(column.field as string | number)?.enable;
       let icons = toIconList(column.headerIcon);
