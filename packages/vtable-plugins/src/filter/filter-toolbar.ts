@@ -31,8 +31,6 @@ export class FilterToolbar {
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  private activeType: 'byValue' | 'byCondition' = 'byValue';
-
   constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
@@ -176,25 +174,15 @@ export class FilterToolbar {
     applyStyles(this.applyFilterButton, styles.footerButton(true));
     this.valueFilter.updateStyles(styles);
     this.conditionFilter.updateStyles(styles);
-
-    // 面板处于显示状态, 更新了样式, 则需要手动控制tab显隐
-    // 面板显示按值筛选或按条件筛选
-    if (this.activeType === 'byCondition') {
-      this.onTabSwitch('byCondition');
-    } else {
-      this.onTabSwitch('byValue');
-    }
   }
 
   attachEventListeners() {
     // 按值筛选/按条件筛选的事件监听
     this.filterTabByValue.addEventListener('click', () => {
-      this.activeType = 'byValue';
       this.onTabSwitch('byValue');
     });
 
     this.filterTabByCondition.addEventListener('click', () => {
-      this.activeType = 'byCondition';
       this.onTabSwitch('byCondition');
     });
 
