@@ -132,43 +132,6 @@ async function callMCPTool(toolName: string, params: any): Promise<any> {
   return await mcpClient.callTool(toolName, params);
 }
 
-async function setCellValue() {
-  try {
-    const row = parseInt((document.getElementById('rowInput') as HTMLInputElement).value);
-    const col = parseInt((document.getElementById('colInput') as HTMLInputElement).value);
-    const value = (document.getElementById('valueInput') as HTMLInputElement).value;
-
-    log(`正在设置单元格 (${row}, ${col}) = "${value}"`, 'info');
-    await callMCPTool('set_cell_data', { items: [{ row, col, value }] });
-
-    log(`✓ 单元格 (${row}, ${col}) 已设置为 "${value}"`, 'success');
-    const currentValue = tableInstance!.getCellValue(row, col);
-    document.getElementById('selectedCell')!.textContent = `(${row}, ${col}): ${currentValue}`;
-  } catch (error: any) {
-    log(`设置失败: ${error.message || error}`, 'error');
-  }
-}
-
-async function getCellValue() {
-  try {
-    const row = parseInt((document.getElementById('rowInput') as HTMLInputElement).value);
-    const col = parseInt((document.getElementById('colInput') as HTMLInputElement).value);
-
-    log(`正在获取单元格 (${row}, ${col}) 的值`, 'info');
-    const result = await callMCPTool('get_cell_data', { cells: [{ row, col }] });
-
-    if (Array.isArray(result) && result.length > 0) {
-      const value = result[0].value;
-      log(`✓ 单元格 (${row}, ${col}) 的值为: "${value}"`, 'success');
-      document.getElementById('selectedCell')!.textContent = `(${row}, ${col}): ${value}`;
-    } else {
-      log('✗ 获取失败: 返回数据格式错误', 'error');
-    }
-  } catch (error: any) {
-    log(`获取失败: ${error.message || error}`, 'error');
-  }
-}
-
 async function getTableInfo() {
   try {
     log('正在获取表格信息', 'info');
@@ -195,8 +158,7 @@ function resetTableData() {
 
 (window as any).connectToMCP = connectToMCP;
 (window as any).disconnectFromMCP = disconnectFromMCP;
-(window as any).setCellValue = setCellValue;
-(window as any).getCellValue = getCellValue;
+
 (window as any).getTableInfo = getTableInfo;
 (window as any).clearTableData = clearTableData;
 (window as any).resetTableData = resetTableData;
