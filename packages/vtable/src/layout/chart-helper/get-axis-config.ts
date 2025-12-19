@@ -24,14 +24,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
   // 是否是指标
   if (layout.indicatorsAsCol) {
     if (
-      layout.hasTwoIndicatorAxes &&
+      layout.hasTopIndicatorAxis &&
       row === layout.columnHeaderLevelCount - 1 &&
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
     ) {
       const indicatorKey = layout.getIndicatorKey(col, row);
       const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
-      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+      if (!(indicatorInfo as any)?.hasTopIndicatorAxis) {
         return;
       }
       const axisRange = getRange('top', col, row + 1, col, layout.columnHeaderLevelCount - 1, col, row, 1, layout);
@@ -348,7 +348,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       const indicatorKey = layout.getIndicatorKey(col, row);
       const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
-      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+      if (!(indicatorInfo as any)?.hasRightIndicatorAxis) {
         return;
       }
 
@@ -663,7 +663,7 @@ export function isTopOrBottomAxis(col: number, row: number, layout: PivotHeaderL
 
   if (layout.indicatorsAsCol) {
     if (
-      layout.hasTwoIndicatorAxes &&
+      layout.hasTopIndicatorAxis &&
       row === layout.columnHeaderLevelCount - 1 &&
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
@@ -858,7 +858,10 @@ function getRange(
   defaultSeriesIndice: number,
   layout: PivotHeaderLayoutMap
 ) {
-  const indicatorKeys = layout.getIndicatorKeyInChartSpec(colForIndicatorKey, rowForIndicatorKey);
+  const indicatorKeys = layout.getIndicatorKeyInChartSpec(
+    colForIndicatorKey >= 0 ? colForIndicatorKey : col,
+    rowForIndicatorKey >= 0 ? rowForIndicatorKey : row
+  );
   let path;
   if (position === 'top' || position === 'bottom') {
     path = layout.getColKeysPath(col, row);
