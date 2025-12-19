@@ -1769,7 +1769,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //#endregion
       if (
         !this.indicatorsAsCol &&
-        (this.hideIndicatorName || !this.hasLeftIndicatorAxis) &&
+        (this.hideIndicatorName || (!this.hasLeftIndicatorAxis && this._table.isPivotChart())) &&
         this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
       ) {
         count = rowLevelCount - 1;
