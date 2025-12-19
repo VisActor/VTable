@@ -295,7 +295,8 @@ function computeAutoColWidth(
       } else if (
         layout.isLeftBottomCorner(col, row) ||
         layout.isRightTopCorner(col, row) ||
-        layout.isRightBottomCorner(col, row)
+        layout.isRightBottomCorner(col, row) ||
+        layout.isAxisCell(col, row)
       ) {
         // 透视图三角为无效单元格，不参与宽度计算
         continue;
