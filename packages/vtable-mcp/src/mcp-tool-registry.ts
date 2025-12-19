@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { allVTableTools } from './plugins/tools';
 
 /**
  * Unified MCP Tool Definition System
@@ -16,24 +17,13 @@ export interface IMcpToolDefinition {
   /** Human-readable description */
   description: string;
   /** Input schema using Zod */
-  inputSchema: z.ZodObject<any>;
+  inputSchema: z.ZodObject<z.ZodRawShape>;
   /** Tool category for organization */
   category: 'cell' | 'style' | 'table' | 'data';
-  /** Server-side tool name mapping */
-  serverName?: string;
   /** Whether this tool is available for external configuration */
   exportable: boolean;
   /** Tool execution function */
-  execute?: (params: any) => Promise<any> | any;
-}
-
-export interface IMcpToolMapping {
-  /** Client-side tool name */
-  clientName: string;
-  /** Server-side tool name */
-  serverName: string;
-  /** Parameter transformation function */
-  transformParams?: (params: any) => any;
+  execute?: (params: unknown) => Promise<unknown> | unknown;
 }
 
 /**
@@ -41,7 +31,6 @@ export interface IMcpToolMapping {
  */
 export class McpToolRegistry {
   private tools: Map<string, IMcpToolDefinition> = new Map();
-  private mappings: Map<string, IMcpToolMapping> = new Map();
 
   constructor() {
     this.initializeDefaultTools();
@@ -52,21 +41,6 @@ export class McpToolRegistry {
    */
   registerTool(definition: IMcpToolDefinition): void {
     this.tools.set(definition.name, definition);
-
-    // Auto-create mapping if serverName is provided
-    if (definition.serverName) {
-      this.mappings.set(definition.name, {
-        clientName: definition.name,
-        serverName: definition.serverName
-      });
-    }
-  }
-
-  /**
-   * Register a tool name mapping
-   */
-  registerMapping(mapping: IMcpToolMapping): void {
-    this.mappings.set(mapping.clientName, mapping);
   }
 
   /**
@@ -98,44 +72,12 @@ export class McpToolRegistry {
   }
 
   /**
-   * Get server-side tool name for a client tool
-   */
-  getServerToolName(clientName: string): string {
-    const mapping = this.mappings.get(clientName);
-    return mapping?.serverName || clientName;
-  }
-
-  /**
-   * Get client-side tool name for a server tool (reverse lookup)
-   */
-  getClientToolName(serverName: string): string {
-    // Search through mappings to find the client name
-    for (const [clientName, mapping] of this.mappings.entries()) {
-      if (mapping.serverName === serverName) {
-        return clientName;
-      }
-    }
-    return serverName; // Return as-is if no mapping found
-  }
-
-  /**
-   * Transform client parameters to server parameters
-   */
-  transformParameters(clientName: string, clientParams: any): any {
-    const mapping = this.mappings.get(clientName);
-    if (mapping?.transformParams) {
-      return mapping.transformParams(clientParams);
-    }
-    return clientParams;
-  }
-
-  /**
    * Get tool definitions as JSON schema for MCP configuration
    */
   getJsonSchemaTools(): Array<{
     name: string;
     description: string;
-    inputSchema: any;
+    inputSchema: unknown;
   }> {
     return this.getExportableTools().map(tool => ({
       name: tool.name,
@@ -147,150 +89,96 @@ export class McpToolRegistry {
   /**
    * Convert Zod schema to JSON schema
    */
-  zodToJsonSchema(zodSchema: z.ZodObject<any>): any {
-    // Basic conversion - can be enhanced with proper zod-to-json-schema library
-    const shape = zodSchema.shape;
-    const properties: any = {};
-    const required: string[] = [];
-
-    Object.entries(shape).forEach(([key, schema]: [string, any]) => {
-      if (schema instanceof z.ZodNumber) {
-        properties[key] = { type: 'number' };
-      } else if (schema instanceof z.ZodString) {
-        properties[key] = { type: 'string' };
-      } else if (schema instanceof z.ZodBoolean) {
-        properties[key] = { type: 'boolean' };
-      } else if (schema instanceof z.ZodAny) {
-        properties[key] = {}; // 不指定 type，允许任意类型（字符串、数字、布尔值、null 等）
-      } else if (schema instanceof z.ZodObject) {
-        properties[key] = this.zodToJsonSchema(schema);
-      } else {
-        properties[key] = { type: 'object' };
+  zodToJsonSchema(zodSchema: z.ZodTypeAny): unknown {
+    const unwrap = (schema: z.ZodTypeAny): z.ZodTypeAny => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let cur: any = schema;
+      // Optional / Nullable / Default / Effects 都尽量取内部 schema
+      while (cur?._def?.innerType) {
+        cur = cur._def.innerType;
       }
-
-      if (!schema.isOptional()) {
-        required.push(key);
+      while (cur?._def?.schema) {
+        cur = cur._def.schema;
       }
-    });
-
-    return {
-      type: 'object',
-      properties,
-      required: required.length > 0 ? required : undefined
+      while (cur?._def?.type) {
+        cur = cur._def.type;
+      }
+      return cur as z.ZodTypeAny;
     };
+
+    const toSchema = (schema: z.ZodTypeAny): unknown => {
+      const s = unwrap(schema);
+
+      if (s instanceof z.ZodString) return { type: 'string' };
+      if (s instanceof z.ZodNumber) return { type: 'number' };
+      if (s instanceof z.ZodBoolean) return { type: 'boolean' };
+      if (s instanceof z.ZodAny || s instanceof z.ZodUnknown) return {};
+      if (s instanceof z.ZodNull) return { type: 'null' };
+      if (s instanceof z.ZodUndefined) return {};
+
+      if (s instanceof z.ZodLiteral) {
+        return { enum: [s.value] };
+      }
+
+      if (s instanceof z.ZodEnum) {
+        return { type: 'string', enum: s.options };
+      }
+
+      if (s instanceof z.ZodUnion) {
+        return { oneOf: s.options.map((opt: z.ZodTypeAny) => toSchema(opt)) };
+      }
+
+      if (s instanceof z.ZodArray) {
+        return { type: 'array', items: toSchema(s.element) };
+      }
+
+      if (s instanceof z.ZodObject) {
+        // Zod 内部 shape 类型较复杂，这里只用于生成 JSON schema，不做严格类型推断
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const shape: Record<string, z.ZodTypeAny> = (s as any).shape;
+        const properties: Record<string, unknown> = {};
+        const required: string[] = [];
+        Object.entries(shape).forEach(([key, child]) => {
+          properties[key] = toSchema(child);
+          if (typeof child?.isOptional === 'function' && !child.isOptional()) {
+            required.push(key);
+          }
+        });
+        return { type: 'object', properties, required: required.length ? required : undefined };
+      }
+
+      // fallback
+      return { type: 'object' };
+    };
+
+    return toSchema(zodSchema);
   }
 
   /**
    * Initialize default VTable MCP tools
    */
   private initializeDefaultTools(): void {
-    // Cell operations
-    this.registerTool({
-      name: 'set_cell_value',
-      description: 'Set the value of a cell in VTable',
-      inputSchema: z.object({
-        row: z.number(),
-        col: z.number(),
-        value: z.any()
-      }),
-      category: 'cell',
-      serverName: 'set_cell_data',
-      exportable: true
-    });
-
-    this.registerTool({
-      name: 'get_cell_value',
-      description: 'Get the value of a cell from VTable',
-      inputSchema: z.object({
-        row: z.number(),
-        col: z.number()
-      }),
-      category: 'cell',
-      serverName: 'get_cell_data',
-      exportable: true
-    });
-
-    this.registerTool({
-      name: 'set_cell_style',
-      description: 'Set the style of a cell in VTable',
-      inputSchema: z.object({
-        row: z.number(),
-        col: z.number(),
-        style: z.object({})
-      }),
-      category: 'style',
-      serverName: 'set_cell_style',
-      exportable: true
-    });
-
-    this.registerTool({
-      name: 'get_cell_style',
-      description: 'Get the style of a cell from VTable',
-      inputSchema: z.object({
-        row: z.number(),
-        col: z.number()
-      }),
-      category: 'style',
-      serverName: 'get_cell_style',
-      exportable: true
-    });
-
-    // Table operations
-    this.registerTool({
-      name: 'get_table_info',
-      description: 'Get VTable information',
-      inputSchema: z.object({}),
-      category: 'table',
-      exportable: true
-    });
-
-    // Register parameter transformations
-    this.registerCellTransformations();
+    // 无历史负担的最优结构：以浏览器端执行层（plugins/tools）的工具定义为唯一真相来源。
+    // 这样保证：工具名、参数结构（Zod schema）、描述都不重复、不漂移。
+    allVTableTools.forEach(
+      (tool: { name: string; description: string; inputSchema: z.ZodObject<z.ZodRawShape>; category?: string }) => {
+        this.registerTool({
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          category: (tool.category || 'cell') as IMcpToolDefinition['category'],
+          exportable: true
+          // 注意：这里不强制挂 execute。执行由浏览器端 VTableToolRegistry 注册的工具来负责。
+        });
+      }
+    );
   }
 
   /**
    * Register cell operation parameter transformations
    */
   private registerCellTransformations(): void {
-    // set_cell_value -> set_cell_data transformation
-    this.registerMapping({
-      clientName: 'set_cell_value',
-      serverName: 'set_cell_data',
-      transformParams: params => ({
-        sessionId: 'default',
-        items: [{ row: params.row, col: params.col, value: params.value }]
-      })
-    });
-
-    // get_cell_value -> get_cell_data transformation
-    this.registerMapping({
-      clientName: 'get_cell_value',
-      serverName: 'get_cell_data',
-      transformParams: params => ({
-        sessionId: 'default',
-        cells: [{ row: params.row, col: params.col }]
-      })
-    });
-
-    // set_cell_style transformation
-    this.registerMapping({
-      clientName: 'set_cell_style',
-      serverName: 'set_cell_style',
-      transformParams: params => ({
-        sessionId: 'default',
-        items: [{ row: params.row, col: params.col, style: params.style }]
-      })
-    });
-
-    // get_cell_style transformation
-    this.registerMapping({
-      clientName: 'get_cell_style',
-      serverName: 'get_cell_style',
-      transformParams: params => ({
-        sessionId: 'default',
-        cells: [{ row: params.row, col: params.col }]
-      })
-    });
+    // 同名同参：不注册任何 tool name / params 映射
   }
 }
 
@@ -304,13 +192,4 @@ export const mcpToolRegistry = new McpToolRegistry();
  */
 export const MCP_TOOL_DEFINITIONS = mcpToolRegistry.getJsonSchemaTools();
 
-/**
- * Export tool mappings for CLI and server packages
- */
-export const MCP_TOOL_MAPPINGS = {
-  getServerToolName: (clientName: string) => mcpToolRegistry.getServerToolName(clientName),
-  getClientToolName: (serverName: string) => mcpToolRegistry.getClientToolName(serverName),
-  transformParameters: (clientName: string, params: any) => mcpToolRegistry.transformParameters(clientName, params),
-  getAllTools: () => mcpToolRegistry.getAllTools(),
-  getExportableTools: () => mcpToolRegistry.getExportableTools()
-};
+// 同名同参：不再导出任何 mapping/transform API

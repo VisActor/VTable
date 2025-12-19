@@ -54,10 +54,8 @@ export const MCP_CONFIG_TOOLS = getMcpConfigTools();
 /**
  * Export server mappings for advanced configuration
  */
-export const MCP_SERVER_MAPPINGS = {
-  getServerToolName: (clientName: string) => mcpToolRegistry.getServerToolName(clientName),
-  transformParameters: (clientName: string, params: any) => mcpToolRegistry.transformParameters(clientName, params)
-};
+// 同名同参：不再提供任何 mapping/参数转换能力
+export const MCP_SERVER_MAPPINGS = {};
 
 // Default export for convenience
 export default {

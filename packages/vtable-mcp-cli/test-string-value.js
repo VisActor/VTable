@@ -3,7 +3,7 @@
  * 测试字符串值参数的工具调用
  */
 
-const { MCP_TOOL_MAPPINGS, mcpToolRegistry } = require('../vtable-mcp/cjs/index.js');
+const { mcpToolRegistry } = require('../vtable-mcp/cjs/index.js');
 
 // 模拟 Cursor 发送的工具调用请求
 const simulateToolCall = (toolName, args) => {
@@ -12,17 +12,9 @@ const simulateToolCall = (toolName, args) => {
   console.log('参数:', JSON.stringify(args, null, 2));
 
   try {
-    // 步骤1: 将服务器端工具名称转换为客户端工具名称
-    const clientToolName = MCP_TOOL_MAPPINGS.getClientToolName(toolName);
-    console.log('客户端工具名称:', clientToolName);
-
-    // 步骤2: 再次转换为服务器端工具名称（用于验证）
-    const serverTool = MCP_TOOL_MAPPINGS.getServerToolName(clientToolName);
-    console.log('服务器端工具名称:', serverTool);
-
-    // 步骤3: 转换参数
-    const serverParams = MCP_TOOL_MAPPINGS.transformParameters(clientToolName, args);
-    console.log('转换后的参数:', JSON.stringify(serverParams, null, 2));
+    // 同名同参：不做任何映射或参数转换
+    const serverTool = toolName;
+    const serverParams = args;
 
     // 步骤4: 构建完整的请求体
     const requestBody = {
@@ -57,20 +49,20 @@ const simulateToolCall = (toolName, args) => {
 
 // 测试不同的值类型
 console.log('测试 1: 字符串值 "fff"');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: 'fff' });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: 'fff' }] });
 
 console.log('\n测试 2: 数字值 123');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: 123 });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: 123 }] });
 
 console.log('\n测试 3: 字符串值 "test"');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: 'test' });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: 'test' }] });
 
 console.log('\n测试 4: 特殊字符 "hello world"');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: 'hello world' });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: 'hello world' }] });
 
 console.log('\n测试 5: 包含引号的字符串');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: 'test "quote"' });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: 'test "quote"' }] });
 
 console.log('\n测试 6: 空字符串');
-simulateToolCall('set_cell_data', { row: 0, col: 0, value: '' });
+simulateToolCall('set_cell_data', { items: [{ row: 0, col: 0, value: '' }] });
 

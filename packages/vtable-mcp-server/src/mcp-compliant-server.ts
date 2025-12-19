@@ -72,7 +72,7 @@ const sessions = new Map<string, WebSocket>();
  * When VTable instance connects, it sends tool list which we cache.
  * When AI requests tools/list, return the cached list directly.
  */
-const sessionTools = new Map<string, any[]>();
+const sessionTools = new Map<string, Array<{ name: string; description?: string; inputSchema?: unknown }>>();
 
 /**
  * WebSocket server
@@ -87,7 +87,7 @@ const wss = new WebSocketServer({ noServer: true });
  *
  * Triggered when VTable instance in browser connects.
  */
-wss.on('connection', (ws: WebSocket, request: any) => {
+wss.on('connection', (ws: WebSocket, request: { url?: string; headers: { host: string } }) => {
   // Extract session_id from URL parameters
   const url = new URL(request.url || '/', `http://${request.headers.host}`);
   const sessionId = url.searchParams.get('session_id') || 'default';
@@ -185,13 +185,12 @@ app.post('/mcp', async (req, res) => {
       const tools = sessionTools.get(sessionId) || [];
 
       // Use unified tool registry to get tool schemas
-      const toolSchemas: Record<string, any> = {};
+      const toolSchemas: Record<string, unknown> = {};
       const jsonSchemaTools = mcpToolRegistry.getJsonSchemaTools();
 
       jsonSchemaTools.forEach(tool => {
-        // Get server-side tool name
-        const serverToolName = mcpToolRegistry.getServerToolName(tool.name);
-        toolSchemas[serverToolName] = tool.inputSchema;
+        // 同名同参：tool.name 即为 server/browse/cli 的统一名称
+        toolSchemas[tool.name] = tool.inputSchema;
       });
 
       return res.json({

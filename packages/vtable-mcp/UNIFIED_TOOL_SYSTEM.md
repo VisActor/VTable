@@ -60,7 +60,6 @@ mcpToolRegistry.registerTool({
     param2: z.number().optional(),
   }),
   category: 'data',
-  serverName: 'server_side_tool_name',
   exportable: true,
 });
 ```
@@ -68,29 +67,23 @@ mcpToolRegistry.registerTool({
 ### For CLI Package
 
 ```typescript
-// Before: Hardcoded mappings and transformations
-// After: Automatic from unified registry
-import { mcpToolRegistry, MCP_TOOL_MAPPINGS } from '@visactor/vtable-mcp';
+// Single source of truth (no mapping, same name/params everywhere)
+import { mcpToolRegistry } from '@visactor/vtable-mcp';
 
-const tools = mcpToolRegistry.getExportableTools().map(tool => ({
-  name: MCP_TOOL_MAPPINGS.getServerToolName(tool.name),
-  description: tool.description,
-  inputSchema: mcpToolRegistry.getJsonSchemaTools().find(t => t.name === tool.name)?.inputSchema,
-}));
+const tools = mcpToolRegistry.getJsonSchemaTools();
 ```
 
 ### For Server Package
 
 ```typescript
-// Before: Manual tool definitions and parameter mapping
-// After: Unified registry integration
-import { mcpToolRegistry, MCP_TOOL_MAPPINGS } from '@visactor/vtable-mcp';
+// Unified registry integration (no mapping)
+import { mcpToolRegistry } from '@visactor/vtable-mcp';
 
 // Tool definitions from registry
 const tools = mcpToolRegistry.getExportableTools().map(tool => ({...}));
 
-// Automatic parameter transformation
-const serverParams = MCP_TOOL_MAPPINGS.transformParameters(clientName, clientParams);
+// No parameter transformation (same params as browser tools)
+const serverParams = clientParams;
 ```
 
 ### For End Users (mcp.json)
@@ -123,13 +116,13 @@ const serverParams = MCP_TOOL_MAPPINGS.transformParameters(clientName, clientPar
 
 1. **Remove hardcoded tool definitions** from CLI and server packages
 2. **Use `mcpToolRegistry.getExportableTools()`** for tool lists
-3. **Use `MCP_TOOL_MAPPINGS.getServerToolName()`** for name mapping
-4. **Use `MCP_TOOL_MAPPINGS.transformParameters()`** for parameter transformation
+3. **Do not use any name mapping** (same tool name everywhere)
+4. **Do not use parameter transformation** (same params everywhere)
 
 ### Adding New Tools
 
 1. **Add tool definition** to `McpToolRegistry.initializeDefaultTools()`
-2. **Add parameter transformation** if needed
+2. **Keep tool name/params identical** across CLI/server/browser
 3. **Mark as exportable** if it should be available in mcp.json
 4. **Test** in both CLI and server packages
 

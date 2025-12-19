@@ -5,7 +5,7 @@
  * 使用统一MCP工具定义系统
  */
 import * as readline from 'readline';
-import { mcpToolRegistry, MCP_TOOL_MAPPINGS } from '../../vtable-mcp/cjs/index.js';
+import { mcpToolRegistry } from '../../vtable-mcp/cjs/index.js';
 
 const VTABLE_API_URL = 'http://localhost:3000/mcp';
 
@@ -17,8 +17,8 @@ const rl = readline.createInterface({
 });
 
 // 从统一工具注册表获取工具定义
-const tools = mcpToolRegistry.getExportableTools().map((tool: any) => {
-  const jsonSchemaTool = mcpToolRegistry.getJsonSchemaTools().find((t: any) => t.name === tool.name);
+const tools = mcpToolRegistry.getExportableTools().map(tool => {
+  const jsonSchemaTool = mcpToolRegistry.getJsonSchemaTools().find(t => t.name === tool.name);
   return {
     name: tool.name,
     description: tool.description,
@@ -29,8 +29,12 @@ const tools = mcpToolRegistry.getExportableTools().map((tool: any) => {
 // 处理请求
 rl.on('line', async (line: string) => {
   try {
-    const request = JSON.parse(line);
-    const { method, params, id } = request;
+    const request: unknown = JSON.parse(line);
+    if (!request || typeof request !== 'object') {
+      return;
+    }
+    const req = request as { method?: string; params?: unknown; id?: unknown };
+    const { method, params, id } = req;
 
     if (method === 'initialize') {
       // 初始化响应
@@ -57,15 +61,23 @@ rl.on('line', async (line: string) => {
       });
     } else if (method === 'tools/call') {
       // 调用工具
-      const { name: toolName, arguments: toolArgs } = params;
+      if (!params || typeof params !== 'object') {
+        return;
+      }
+      const p = params as { name?: string; arguments?: Record<string, unknown> };
+      const toolName = p.name;
+      const toolArgs = p.arguments;
+      if (!toolName || typeof toolName !== 'string') {
+        return;
+      }
 
       try {
-        // 使用统一工具注册表进行名称映射和参数转换
-        const mcpToolName = MCP_TOOL_MAPPINGS.getServerToolName(toolName);
-        const mcpParams = MCP_TOOL_MAPPINGS.transformParameters(toolName, {
-          ...toolArgs,
-          sessionId: 'default' // 添加默认会话ID
-        });
+        // 同名同参：不做 toolName 或参数结构映射，仅补全 sessionId
+        const mcpToolName = toolName;
+        const mcpParams = {
+          ...(toolArgs || {}),
+          sessionId: 'default'
+        };
 
         // 调用 HTTP MCP Server
         const response = await fetch(VTABLE_API_URL, {
@@ -96,23 +108,25 @@ rl.on('line', async (line: string) => {
           },
           id
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = error as { message?: string };
         respond({
           jsonrpc: '2.0',
           error: {
             code: -32000,
-            message: error.message
+            message: err?.message || 'Unknown error'
           },
           id
         });
       }
     }
-  } catch (error: any) {
-    console.error('[stdio MCP] Error:', error.message);
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('[stdio MCP] Error:', err?.message || 'Unknown error');
   }
 });
 
-function respond(message: any) {
+function respond(message: unknown) {
   console.log(JSON.stringify(message));
 }
 

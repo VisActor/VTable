@@ -47,6 +47,7 @@ const cellPositionSchema = z.object({
 export const cellOperationTools = [
   {
     name: 'set_cell_data',
+    category: 'cell',
 
     description: `设置一个或多个单元格的值
 
@@ -100,6 +101,7 @@ export const cellOperationTools = [
 
   {
     name: 'get_cell_data',
+    category: 'cell',
 
     description: `读取一个或多个单元格的值
 
@@ -149,6 +151,7 @@ export const cellOperationTools = [
 
   {
     name: 'get_table_info',
+    category: 'table',
 
     description: `获取 VTable 表格的基本信息
 

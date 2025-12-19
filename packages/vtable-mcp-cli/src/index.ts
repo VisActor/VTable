@@ -29,8 +29,8 @@
  */
 
 import * as readline from 'readline';
-// Use unified MCP tool definitions (lightweight version, without zod dependencies)
-import { MCP_TOOL_MAPPINGS, mcpToolRegistry } from '../../vtable-mcp/cjs/cli-tool-definitions.js';
+// Use unified MCP tool definitions (single source of truth)
+import { mcpToolRegistry } from '../../vtable-mcp/cjs/index.js';
 import { MCP_CONFIG, getDefaultServerUrl } from '../../vtable-mcp/cjs/config.js';
 
 /**
@@ -78,15 +78,9 @@ const rl = readline.createInterface({
 /**
  * Generate CLI tool list from unified tool registry
  *
- * Uses centralized MCP tool definitions, eliminating duplication and hardcoded mappings
+ * 单一真相来源：直接使用核心 registry 生成的 JSON Schema tools。
  */
-const TOOLS = mcpToolRegistry.getExportableTools().map(tool => ({
-  name: MCP_TOOL_MAPPINGS.getServerToolName(tool.name), // Auto-get server-side name
-  description: tool.description,
-  inputSchema: mcpToolRegistry.getJsonSchemaTools().find((t: any) => t.name === tool.name)?.inputSchema || {
-    type: 'object'
-  }
-}));
+const TOOLS = mcpToolRegistry.getJsonSchemaTools();
 
 /**
  * Validate JSON-RPC request structure
@@ -308,17 +302,9 @@ async function handleToolsCall(req: any): Promise<void> {
  * @throws If connection fails or API returns error
  */
 async function callVTableAPI(toolName: string, args: any): Promise<any> {
-  // Use unified tool registry for transformation
-  // toolName might be server-side name (from TOOLS array), needs to convert to client name first
-  const clientToolName = MCP_TOOL_MAPPINGS.getClientToolName(toolName);
-  const serverTool = MCP_TOOL_MAPPINGS.getServerToolName(clientToolName);
-  const serverParams = MCP_TOOL_MAPPINGS.transformParameters(clientToolName, args);
-
-  // Ensure sessionId uses configured value (transformParameters might already include sessionId)
-  const finalParams = {
-    ...serverParams,
-    sessionId: CONFIG.SESSION_ID
-  };
+  // 统一命名/统一参数：不做任何 toolName 或参数结构的映射转换
+  const serverTool = toolName;
+  const finalParams = { ...args, sessionId: CONFIG.SESSION_ID };
 
   // Build request body
   const requestBody = {
@@ -332,8 +318,7 @@ async function callVTableAPI(toolName: string, args: any): Promise<any> {
   };
 
   // Debug logs (output to stderr, doesn't affect stdio communication)
-  console.error(`[VTable MCP CLI] Calling tool: ${toolName} -> ${serverTool}`);
-  console.error(`[VTable MCP CLI] Client tool name: ${clientToolName}`);
+  console.error(`[VTable MCP CLI] Calling tool: ${toolName}`);
   console.error(`[VTable MCP CLI] Request params:`, JSON.stringify(finalParams, null, 2));
 
   // Call HTTP API with timeout and retry logic

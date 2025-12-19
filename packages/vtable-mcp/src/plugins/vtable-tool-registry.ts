@@ -95,7 +95,6 @@ export class VTableToolRegistry {
         description: tool.description,
         inputSchema: tool.inputSchema,
         category: tool.category || 'cell', // 默认分类为 cell
-        serverName: tool.name, // 默认使用相同名称
         exportable: true,
         execute: tool.execute // 保留 execute 方法
       });

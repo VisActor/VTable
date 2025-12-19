@@ -16,9 +16,19 @@
 
 export { cellOperationTools } from './cell-operations';
 export { styleOperationTools } from './style-operations';
+export { rangeOperationTools } from './range-operations';
+export { selectionOperationTools } from './selection-operations';
+export { viewOperationTools } from './view-operations';
+export { dimensionOperationTools } from './dimension-operations';
+export { exportOperationTools } from './export-operations';
 
 import { cellOperationTools } from './cell-operations';
 import { styleOperationTools } from './style-operations';
+import { rangeOperationTools } from './range-operations';
+import { selectionOperationTools } from './selection-operations';
+import { viewOperationTools } from './view-operations';
+import { dimensionOperationTools } from './dimension-operations';
+import { exportOperationTools } from './export-operations';
 
 /**
  * 所有 VTable MCP 工具的集合
@@ -46,5 +56,10 @@ import { styleOperationTools } from './style-operations';
  */
 export const allVTableTools = [
   ...cellOperationTools, // 3 个工具
-  ...styleOperationTools // 2 个工具
+  ...styleOperationTools, // 3 个工具
+  ...rangeOperationTools, // 3 个工具
+  ...selectionOperationTools, // 4 个工具
+  ...viewOperationTools, // 5 个工具
+  ...dimensionOperationTools, // 6 个工具
+  ...exportOperationTools // 3 个工具
 ];
