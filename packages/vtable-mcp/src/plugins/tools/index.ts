@@ -22,6 +22,7 @@ export { viewOperationTools } from './view-operations';
 export { dimensionOperationTools } from './dimension-operations';
 export { exportOperationTools } from './export-operations';
 export { mergeOperationTools } from './merge-operations';
+export { operateDataTools } from './operate-data';
 
 import { cellOperationTools } from './cell-operations';
 import { styleOperationTools } from './style-operations';
@@ -31,6 +32,7 @@ import { viewOperationTools } from './view-operations';
 import { dimensionOperationTools } from './dimension-operations';
 import { exportOperationTools } from './export-operations';
 import { mergeOperationTools } from './merge-operations';
+import { operateDataTools } from './operate-data';
 
 /**
  * 所有 VTable MCP 工具的集合
@@ -64,5 +66,6 @@ export const allVTableTools = [
   ...viewOperationTools, // 5 个工具
   ...dimensionOperationTools, // 6 个工具
   ...exportOperationTools, // 3 个工具
-  ...mergeOperationTools // 3 个工具（合并单元格）
+  ...mergeOperationTools, // 3 个工具（合并单元格）
+  ...operateDataTools // 4 个工具（ListTable 数据增删改）
 ];

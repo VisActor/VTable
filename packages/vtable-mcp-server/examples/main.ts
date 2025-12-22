@@ -36,7 +36,7 @@ function updateTableInfo() {
 
 function createTableData() {
   const records: any[] = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 1000; i++) {
     records.push({
       id: i + 1,
       name: `产品 ${i + 1}`,

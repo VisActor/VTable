@@ -168,6 +168,39 @@ export class MCPClient {
   }
 
   /**
+   * 修复被序列化的参数
+   * 如果数组被序列化为字符串，尝试解析为数组
+   */
+  private fixSerializedParams(params: any): any {
+    if (!params || typeof params !== 'object') {
+      return params;
+    }
+
+    const fixed: any = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (typeof value === 'string') {
+        // 尝试解析字符串化的数组
+        try {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) {
+            fixed[key] = parsed;
+            continue;
+          }
+        } catch {
+          // 不是有效的 JSON，保持原值
+        }
+      }
+      // 递归处理嵌套对象
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        fixed[key] = this.fixSerializedParams(value);
+      } else {
+        fixed[key] = value;
+      }
+    }
+    return fixed;
+  }
+
+  /**
    * 处理工具调用 【服务器转发到客户端】
    * 查找工具并执行其 execute 方法
    */
@@ -183,8 +216,11 @@ export class MCPClient {
         throw new Error(`未知工具: ${toolName}`);
       }
 
+      // 修复参数：如果数组被序列化为字符串，尝试解析
+      const fixedParams = this.fixSerializedParams(params);
+
       // 验证参数
-      const validatedParams = tool.inputSchema.parse(params);
+      const validatedParams = tool.inputSchema.parse(fixedParams);
 
       // 执行工具
       let result: any;
