@@ -11,6 +11,7 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
 const cellAddrSchema = z.object({
   row: z.number().int().nonnegative(),
@@ -22,10 +23,12 @@ const cellRangeSchema = z.object({
   end: cellAddrSchema
 });
 
-function assertTableInstance(table: any) {
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
   if (!table) {
     throw new Error('VTable instance not found. Make sure VTable is initialized.');
   }
+  return table as Partial<BaseTableAPI>;
 }
 
 export const selectionOperationTools = [
@@ -39,8 +42,7 @@ export const selectionOperationTools = [
     category: 'table',
     inputSchema: z.object({}).describe('无需参数'),
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.getSelectedCellRanges !== 'function') {
         throw new Error('VTable instance does not support getSelectedCellRanges');
       }
@@ -62,8 +64,7 @@ export const selectionOperationTools = [
       ranges: z.array(cellRangeSchema).min(1)
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.selectCells !== 'function') {
         throw new Error('VTable instance does not support selectCells');
       }
@@ -81,8 +82,7 @@ export const selectionOperationTools = [
     category: 'table',
     inputSchema: z.object({}),
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.clearSelected !== 'function') {
         throw new Error('VTable instance does not support clearSelected');
       }
@@ -111,8 +111,7 @@ export const selectionOperationTools = [
       skipBodyMerge: z.boolean().optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.selectCell !== 'function') {
         throw new Error('VTable instance does not support selectCell');
       }

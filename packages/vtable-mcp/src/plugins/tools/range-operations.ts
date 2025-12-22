@@ -7,6 +7,7 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
 const cellAddrSchema = z.object({
   row: z.number().int().nonnegative(),
@@ -18,10 +19,12 @@ const cellRangeSchema = z.object({
   end: cellAddrSchema
 });
 
-function assertTableInstance(table: any) {
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
   if (!table) {
     throw new Error('VTable instance not found. Make sure VTable is initialized.');
   }
+  return table as Partial<BaseTableAPI>;
 }
 
 function normalizeRange(range: { start: { row: number; col: number }; end: { row: number; col: number } }) {
@@ -55,8 +58,7 @@ export const rangeOperationTools = [
       maxCells: z.number().int().positive().optional().describe('最大单元格数量，默认 200')
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
 
       if (typeof table.getCellValue !== 'function') {
         throw new Error('VTable instance does not support getCellValue');
@@ -106,8 +108,7 @@ export const rangeOperationTools = [
       values: z.array(z.array(z.any())).min(1).describe('二维数组，至少 1 行')
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
 
       if (typeof table.changeCellValue !== 'function') {
         throw new Error('VTable instance does not support changeCellValue');
@@ -147,8 +148,7 @@ export const rangeOperationTools = [
       maxCells: z.number().int().positive().optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
 
       if (typeof table.changeCellValue !== 'function') {
         throw new Error('VTable instance does not support changeCellValue');
@@ -164,7 +164,8 @@ export const rangeOperationTools = [
 
       for (let r = rowStart; r <= rowEnd; r++) {
         for (let c = colStart; c <= colEnd; c++) {
-          table.changeCellValue(c, r, undefined);
+          // 对齐 ListTable.changeCellValue(value: string | number | null)
+          table.changeCellValue(c, r, null);
         }
       }
       return 'Success';

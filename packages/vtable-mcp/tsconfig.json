@@ -9,6 +9,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@visactor/vtable": ["../vtable/es/index.d.ts"],
+      "@visactor/vtable/*": ["../vtable/es/*"]
+    },
     "declaration": true,
     "sourceMap": true,
     "declarationMap": true

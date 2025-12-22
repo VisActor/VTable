@@ -13,12 +13,9 @@
 
 // ⭐ 浏览器端直接导入 zod
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
-type VTableStyleApi = {
-  registerCustomCellStyle?: (customStyleId: string, customStyle: Record<string, unknown>) => void;
-  arrangeCustomCellStyle?: (cellPos: unknown, customStyleId: string, forceFastUpdate?: boolean) => void;
-  getCellStyle?: (col: number, row: number) => unknown;
-};
+type VTableStyleApi = Partial<BaseTableAPI>;
 
 function getVTableInstance(): VTableStyleApi {
   const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;

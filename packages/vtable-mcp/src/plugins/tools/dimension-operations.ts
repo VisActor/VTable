@@ -5,11 +5,14 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
-function assertTableInstance(table: any) {
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
   if (!table) {
     throw new Error('VTable instance not found. Make sure VTable is initialized.');
   }
+  return table as Partial<BaseTableAPI>;
 }
 
 export const dimensionOperationTools = [
@@ -28,8 +31,7 @@ export const dimensionOperationTools = [
       height: z.number().positive()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.setRowHeight !== 'function') {
         throw new Error('VTable instance does not support setRowHeight');
       }
@@ -53,8 +55,7 @@ export const dimensionOperationTools = [
       width: z.number().positive()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.setColWidth !== 'function') {
         throw new Error('VTable instance does not support setColWidth');
       }
@@ -74,8 +75,7 @@ export const dimensionOperationTools = [
       row: z.number().int().nonnegative()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.getRowHeight !== 'function') {
         throw new Error('VTable instance does not support getRowHeight');
       }
@@ -94,8 +94,7 @@ export const dimensionOperationTools = [
       col: z.number().int().nonnegative()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.getColWidth !== 'function') {
         throw new Error('VTable instance does not support getColWidth');
       }
@@ -124,8 +123,7 @@ export const dimensionOperationTools = [
         .min(1)
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.setRowHeight !== 'function') {
         throw new Error('VTable instance does not support setRowHeight');
       }
@@ -157,8 +155,7 @@ export const dimensionOperationTools = [
         .min(1)
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.setColWidth !== 'function') {
         throw new Error('VTable instance does not support setColWidth');
       }

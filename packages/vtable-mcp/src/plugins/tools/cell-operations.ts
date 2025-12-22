@@ -14,6 +14,15 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
+
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
+  if (!table) {
+    throw new Error('VTable instance not found. Make sure VTable is initialized.');
+  }
+  return table as Partial<BaseTableAPI>;
+}
 
 /**
  * 单元格数据项 Schema
@@ -87,11 +96,9 @@ export const cellOperationTools = [
     execute: async (params: {
       items: Array<{ row: number; col: number; value: any }> | { row: number; col: number; value: any };
     }) => {
-      // 从全局获取 VTable 实例
-      const table = (globalThis as any).__vtable_instance;
-
-      if (!table) {
-        throw new Error('VTable instance not found. Make sure VTable is initialized.');
+      const table = getVTableInstance();
+      if (typeof table.changeCellValue !== 'function') {
+        throw new Error('VTable instance does not support changeCellValue');
       }
 
       const items = Array.isArray((params as any).items) ? (params as any).items : [(params as any).items];
@@ -143,11 +150,11 @@ export const cellOperationTools = [
      * @returns 单元格数据数组
      */
     execute: async (params: { cells: Array<{ row: number; col: number }> | { row: number; col: number } }) => {
-      const table = (globalThis as any).__vtable_instance;
-
-      if (!table) {
-        throw new Error('VTable instance not found');
+      const table = getVTableInstance();
+      if (typeof table.getCellValue !== 'function') {
+        throw new Error('VTable instance does not support getCellValue');
       }
+      const getCellValue = table.getCellValue as BaseTableAPI['getCellValue'];
 
       const cells = Array.isArray((params as any).cells) ? (params as any).cells : [(params as any).cells];
 
@@ -156,7 +163,7 @@ export const cellOperationTools = [
         row: cell.row,
         col: cell.col,
         // getCellValue(col, row) - 注意参数顺序！
-        value: table.getCellValue(cell.col, cell.row)
+        value: getCellValue(cell.col, cell.row)
       }));
     }
   },
@@ -185,11 +192,7 @@ export const cellOperationTools = [
      * @returns 表格信息对象
      */
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-
-      if (!table) {
-        throw new Error('VTable instance not found');
-      }
+      const table = getVTableInstance();
 
       // 返回表格基本信息
       return {

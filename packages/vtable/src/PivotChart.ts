@@ -829,14 +829,17 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (moveContext) {
       if (moveContext.moveType === 'column') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
-        if (this.options.records?.[0]?.constructor === Array) {
+        if ((this.options.records as any[])?.[0]?.constructor === Array) {
           for (let row = 0; row < (this.internalProps.records as Array<any>).length; row++) {
-            const sourceColumns = (this.internalProps.records[row] as unknown as number[]).splice(
+            const sourceColumns = ((this.internalProps.records as any[])[row] as unknown as number[]).splice(
               moveContext.sourceIndex - this.rowHeaderLevelCount,
               moveContext.sourceSize
             );
             sourceColumns.unshift((moveContext.targetIndex as any) - this.rowHeaderLevelCount, 0 as any);
-            Array.prototype.splice.apply(this.internalProps.records[row] as unknown as number[], sourceColumns);
+            Array.prototype.splice.apply(
+              (this.internalProps.records as any[])[row] as unknown as number[],
+              sourceColumns
+            );
           }
         }
         //colWidthsMap 中存储着每列的宽度 根据移动 sourceCol targetCol 调整其中的位置
@@ -846,7 +849,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.setMinMaxLimitWidth();
       } else if (moveContext.moveType === 'row') {
         // 是扁平数据结构 需要将二维数组this.records进行调整
-        if (this.options.records?.[0]?.constructor === Array) {
+        if ((this.options.records as any[])?.[0]?.constructor === Array) {
           const sourceRows = (this.internalProps.records as unknown as number[]).splice(
             moveContext.sourceIndex - this.columnHeaderLevelCount,
             moveContext.sourceSize
@@ -1329,7 +1332,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   getCellAddressByRecord(record: any) {
     const rowHeaderPaths: IDimensionInfo[] = [];
     const colHeaderPaths: IDimensionInfo[] = [];
-    const recordKeyMapToIndicatorKeys = {};
+    const recordKeyMapToIndicatorKeys: Record<string, string> = {};
     const indicatorRecordKeys: (string | number)[] = [];
     this.dataset.dataConfig.aggregationRules.forEach(aggregationRule => {
       if (typeof aggregationRule.field === 'string') {

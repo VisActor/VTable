@@ -5,11 +5,14 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
-function assertTableInstance(table: any) {
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
   if (!table) {
     throw new Error('VTable instance not found. Make sure VTable is initialized.');
   }
+  return table as Partial<BaseTableAPI>;
 }
 
 export const viewOperationTools = [
@@ -22,8 +25,7 @@ export const viewOperationTools = [
     category: 'table',
     inputSchema: z.object({}),
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
 
       const scrollLeft = typeof table.getScrollLeft === 'function' ? table.getScrollLeft() : table.scrollLeft;
       const scrollTop = typeof table.getScrollTop === 'function' ? table.getScrollTop() : table.scrollTop;
@@ -48,8 +50,7 @@ export const viewOperationTools = [
       scrollTop: z.number().optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
 
       if (typeof table.setScrollLeft !== 'function' || typeof table.setScrollTop !== 'function') {
         throw new Error('VTable instance does not support setScrollLeft/setScrollTop');
@@ -82,8 +83,7 @@ export const viewOperationTools = [
       animation: z.boolean().optional().describe('是否开启动画（true 会使用默认动画配置）')
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.scrollToCell !== 'function') {
         throw new Error('VTable instance does not support scrollToCell');
       }
@@ -105,8 +105,7 @@ export const viewOperationTools = [
       animation: z.boolean().optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.scrollToRow !== 'function') {
         throw new Error('VTable instance does not support scrollToRow');
       }
@@ -127,8 +126,7 @@ export const viewOperationTools = [
       animation: z.boolean().optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.scrollToCol !== 'function') {
         throw new Error('VTable instance does not support scrollToCol');
       }
@@ -146,8 +144,7 @@ export const viewOperationTools = [
     category: 'table',
     inputSchema: z.object({}),
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.getBodyVisibleCellRange !== 'function') {
         throw new Error('VTable instance does not support getBodyVisibleCellRange');
       }

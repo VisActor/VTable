@@ -5,6 +5,7 @@
  */
 
 import { z } from 'zod';
+import type { BaseTableAPI } from '@visactor/vtable';
 
 const cellAddrSchema = z.object({
   row: z.number().int().nonnegative(),
@@ -16,10 +17,12 @@ const cellRangeSchema = z.object({
   end: cellAddrSchema
 });
 
-function assertTableInstance(table: any) {
+function getVTableInstance(): Partial<BaseTableAPI> {
+  const table = (globalThis as unknown as { __vtable_instance?: unknown }).__vtable_instance;
   if (!table) {
     throw new Error('VTable instance not found. Make sure VTable is initialized.');
   }
+  return table as Partial<BaseTableAPI>;
 }
 
 export const exportOperationTools = [
@@ -32,8 +35,7 @@ export const exportOperationTools = [
     category: 'table',
     inputSchema: z.object({}),
     execute: async () => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.exportImg !== 'function') {
         throw new Error('VTable instance does not support exportImg');
       }
@@ -62,8 +64,7 @@ export const exportOperationTools = [
         .optional()
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.exportCellImg !== 'function') {
         throw new Error('VTable instance does not support exportCellImg');
       }
@@ -85,8 +86,7 @@ export const exportOperationTools = [
       range: cellRangeSchema
     }),
     execute: async (params: any) => {
-      const table = (globalThis as any).__vtable_instance;
-      assertTableInstance(table);
+      const table = getVTableInstance();
       if (typeof table.exportCellRangeImg !== 'function') {
         throw new Error('VTable instance does not support exportCellRangeImg');
       }

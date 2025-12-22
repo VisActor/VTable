@@ -807,6 +807,7 @@ importers:
       '@types/node': '*'
       '@typescript-eslint/eslint-plugin': 5.30.0
       '@typescript-eslint/parser': 5.30.0
+      '@visactor/vtable': workspace:*
       eslint: ~8.18.0
       eslint-config-prettier: ^8.8.0
       eslint-plugin-prettier: ^4.2.1
@@ -822,6 +823,7 @@ importers:
       '@types/node': 24.10.1
       '@typescript-eslint/eslint-plugin': 5.30.0_cow5zg7tx6c3eisi5a4ud5kwia
       '@typescript-eslint/parser': 5.30.0_vwud3sodsb5zxmzckoj7rdwdbq
+      '@visactor/vtable': link:../vtable
       eslint: 8.18.0
       eslint-config-prettier: 8.10.2_eslint@8.18.0
       eslint-plugin-prettier: 4.2.5_cv2374owte2ysinp6rqgkhvj7m
@@ -4624,7 +4626,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.27.1_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6
+      vite: 3.2.6_sky74k4bhzbpzd6iszjmckr7qa
     transitivePeerDependencies:
       - supports-color
     dev: true

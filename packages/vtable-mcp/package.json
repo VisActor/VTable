@@ -26,9 +26,13 @@
   "dependencies": {
     "zod": "^3.22.0"
   },
+  "peerDependencies": {
+    "@visactor/vtable": "^1.22.8"
+  },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
+    "@visactor/vtable": "workspace:*",
     "@types/node": "*",
     "@typescript-eslint/eslint-plugin": "5.30.0",
     "@typescript-eslint/parser": "5.30.0",
