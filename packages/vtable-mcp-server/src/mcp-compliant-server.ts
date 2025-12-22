@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * VTable MCP WebSocket Server (MCP Protocol Compatible)
  *

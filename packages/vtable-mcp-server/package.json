@@ -9,6 +9,9 @@
   "license": "MIT",
   "main": "dist/mcp-compliant-server.js",
   "types": "dist/mcp-compliant-server.d.ts",
+  "bin": {
+    "vtable-mcp-server": "./dist/mcp-compliant-server.js"
+  },
   "files": [
     "dist"
   ],
