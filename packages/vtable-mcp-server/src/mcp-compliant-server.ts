@@ -75,6 +75,41 @@ const sessions = new Map<string, WebSocket>();
 const sessionTools = new Map<string, Array<{ name: string; description?: string; inputSchema?: unknown }>>();
 
 /**
+ * Pending tool calls (HTTP -> WS -> HTTP)
+ *
+ * When we forward a `tools/call` request to the browser via WebSocket, we generate a `callId`.
+ * The browser will respond with `{ type: "tool_result", callId, result }`.
+ *
+ * We keep a pending map so the HTTP request can await the browser execution result.
+ */
+type PendingToolCall = {
+  sessionId: string;
+  toolName: string;
+  resolve: (result: any) => void;
+  reject: (err: Error) => void;
+  timeout: NodeJS.Timeout;
+};
+
+const pendingToolCalls = new Map<string, PendingToolCall>();
+
+const TOOL_CALL_TIMEOUT_MS = parseInt(process.env.MCP_TOOL_TIMEOUT_MS || '15000', 10);
+
+function waitForToolResult(callId: string, sessionId: string, toolName: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      pendingToolCalls.delete(callId);
+      reject(
+        new Error(
+          `Tool call timeout after ${TOOL_CALL_TIMEOUT_MS}ms: ${toolName} (session=${sessionId}, callId=${callId})`
+        )
+      );
+    }, TOOL_CALL_TIMEOUT_MS);
+
+    pendingToolCalls.set(callId, { sessionId, toolName, resolve, reject, timeout });
+  });
+}
+
+/**
  * WebSocket server
  *
  * noServer: true means don't automatically create HTTP server,
@@ -114,7 +149,21 @@ wss.on('connection', (ws: WebSocket, request: { url?: string; headers: { host: s
         console.log(`[MCP Server] Cached ${message.tools?.length || 0} tools for ${sessionId}`);
       }
 
-      // Can handle tool_result here for async responses
+      // Resolve pending tool calls
+      if (message.type === 'tool_result' && message.callId) {
+        const pending = pendingToolCalls.get(message.callId);
+        if (pending) {
+          // Best-effort session validation (avoid cross-session mix-ups)
+          if (pending.sessionId !== sessionId) {
+            console.warn(
+              `[MCP Server] tool_result session mismatch: expected=${pending.sessionId}, actual=${sessionId}, callId=${message.callId}`
+            );
+          }
+          clearTimeout(pending.timeout);
+          pendingToolCalls.delete(message.callId);
+          pending.resolve(message.result);
+        }
+      }
     } catch (error) {
       console.error('[MCP Server] Message parse error:', error);
     }
@@ -127,6 +176,17 @@ wss.on('connection', (ws: WebSocket, request: { url?: string; headers: { host: s
     console.log(`[MCP Server] VTable client disconnected: ${sessionId}`);
     sessions.delete(sessionId);
     sessionTools.delete(sessionId);
+
+    // Reject any pending calls for this session
+    for (const [callId, pending] of pendingToolCalls.entries()) {
+      if (pending.sessionId === sessionId) {
+        clearTimeout(pending.timeout);
+        pendingToolCalls.delete(callId);
+        pending.reject(
+          new Error(`Session "${sessionId}" disconnected before tool "${pending.toolName}" returned (callId=${callId})`)
+        );
+      }
+    }
   });
 
   /**
@@ -246,6 +306,10 @@ app.post('/mcp', async (req, res) => {
       // Remove sessionId from parameters, only send parameters needed by tool
       const { sessionId: _, ...actualParams } = toolArgs || {};
       console.log('sessionId', _);
+
+      // Create pending promise BEFORE sending (avoid race if browser responds fast)
+      const resultPromise = waitForToolResult(callId, sessionId, toolName);
+
       // Send to VTable instance via WebSocket
       wsClient.send(
         JSON.stringify({
@@ -256,20 +320,40 @@ app.post('/mcp', async (req, res) => {
         })
       );
 
-      // Simplified implementation: return success immediately
-      // Production should wait for VTable's tool_result response
-      return res.json({
-        jsonrpc: '2.0',
-        result: {
-          content: [
-            {
-              type: 'text',
-              text: `Tool "${toolName}" called successfully`
-            }
-          ]
-        },
-        id
-      });
+      // Await browser execution result
+      try {
+        const toolResult = await resultPromise;
+
+        // Browser-side MCP client sends either:
+        // - { content: [...] }
+        // - { error: { code, message, ... } }
+        if (toolResult?.error) {
+          return res.json({
+            jsonrpc: '2.0',
+            error: {
+              code: toolResult.error.code ?? -32603,
+              message: toolResult.error.message ?? 'Tool execution failed',
+              data: toolResult.error
+            },
+            id
+          });
+        }
+
+        return res.json({
+          jsonrpc: '2.0',
+          result: toolResult,
+          id
+        });
+      } catch (error: any) {
+        return res.json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32002,
+            message: error?.message || 'Tool call timed out'
+          },
+          id
+        });
+      }
     }
 
     // Unknown method

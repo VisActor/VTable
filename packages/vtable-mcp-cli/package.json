@@ -20,6 +20,8 @@
   "scripts": {
     "build": "bundle --clean",
     "validate": "node scripts/validate.js",
+    "test:mcp:stdio": "node scripts/mcp-smoke-stdio.js",
+    "test:mcp:http": "node scripts/mcp-smoke-http.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

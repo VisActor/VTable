@@ -22,7 +22,10 @@
     "validate:simple": "node scripts/simple-validate.js",
     "dev:demo": "vite serve examples --host",
     "build:demo": "vite build examples",
-    "preview:demo": "vite preview --root examples --host"
+    "preview:demo": "vite preview --root examples --host",
+    "test:mcp": "node scripts/mcp-smoke.js full",
+    "test:mcp:ws": "node scripts/mcp-smoke.js ws",
+    "test:mcp:vtable-client": "node scripts/mcp-smoke.js vtable-client"
   },
   "dependencies": {
     "@visactor/vtable-mcp": "workspace:*",

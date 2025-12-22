@@ -105,15 +105,23 @@ export const styleOperationTools = [
 
     inputSchema: z.object({
       items: z
-        .array(
+        .union([
+          z
+            .array(
+              z.object({
+                row: z.number().int().nonnegative(),
+                col: z.number().int().nonnegative(),
+                style: cellStyleSchema
+              })
+            )
+            .min(1),
           z.object({
             row: z.number().int().nonnegative(),
             col: z.number().int().nonnegative(),
             style: cellStyleSchema
           })
-        )
-        .min(1)
-        .describe('样式设置数组')
+        ])
+        .describe('样式设置：支持单个对象或对象数组（推荐数组）')
     }),
 
     /**
@@ -122,15 +130,21 @@ export const styleOperationTools = [
      * @param params - 验证后的参数
      * @returns 成功消息
      */
-    execute: async (params: { items: Array<{ row: number; col: number; style: Record<string, unknown> }> }) => {
+    execute: async (params: {
+      items:
+        | Array<{ row: number; col: number; style: Record<string, unknown> }>
+        | { row: number; col: number; style: Record<string, unknown> };
+    }) => {
       const table = getVTableInstance();
 
       if (typeof table.registerCustomCellStyle !== 'function' || typeof table.arrangeCustomCellStyle !== 'function') {
         throw new Error('VTable instance does not support custom cell style APIs');
       }
 
+      const items = Array.isArray((params as any).items) ? (params as any).items : [(params as any).items];
+
       // 批量设置样式：为每个单元格注册一个稳定的 customStyleId，然后挂载到该单元格
-      for (const item of params.items) {
+      for (const item of items) {
         const customStyleId = `mcp_cell_style_${item.col}_${item.row}`;
         table.registerCustomCellStyle(customStyleId, item.style);
         table.arrangeCustomCellStyle({ col: item.col, row: item.row }, customStyleId, true);

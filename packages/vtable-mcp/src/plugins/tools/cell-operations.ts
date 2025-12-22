@@ -68,8 +68,12 @@ export const cellOperationTools = [
   'Success' 字符串`,
 
     // ⭐ 添加 Zod 验证（运行时类型检查）
+    // 兼容：部分 MCP Host 可能把数组参数当作单对象传入（例如 items/object、cells/object）
+    // 为了更稳健，这里同时接受「单个对象」或「对象数组」两种形态。
     inputSchema: z.object({
-      items: z.array(cellDataItemSchema).min(1).describe('单元格数据数组，至少包含一项')
+      items: z
+        .union([z.array(cellDataItemSchema).min(1), cellDataItemSchema])
+        .describe('单元格数据：支持单个对象或对象数组（推荐数组）')
     }),
 
     /**
@@ -80,7 +84,9 @@ export const cellOperationTools = [
      * @returns 成功消息
      * @throws 如果 VTable 实例不存在
      */
-    execute: async (params: { items: Array<{ row: number; col: number; value: any }> }) => {
+    execute: async (params: {
+      items: Array<{ row: number; col: number; value: any }> | { row: number; col: number; value: any };
+    }) => {
       // 从全局获取 VTable 实例
       const table = (globalThis as any).__vtable_instance;
 
@@ -88,8 +94,10 @@ export const cellOperationTools = [
         throw new Error('VTable instance not found. Make sure VTable is initialized.');
       }
 
+      const items = Array.isArray((params as any).items) ? (params as any).items : [(params as any).items];
+
       // 批量设置单元格值
-      for (const item of params.items) {
+      for (const item of items) {
         // 调用 VTable API
         // changeCellValue(col, row, value) - 注意参数顺序！
         table.changeCellValue(item.col, item.row, item.value);
@@ -122,7 +130,9 @@ export const cellOperationTools = [
 
     // ⭐ 添加 Zod 验证
     inputSchema: z.object({
-      cells: z.array(cellPositionSchema).min(1).describe('单元格位置数组')
+      cells: z
+        .union([z.array(cellPositionSchema).min(1), cellPositionSchema])
+        .describe('单元格位置：支持单个对象或对象数组（推荐数组）')
     }),
 
     /**
@@ -132,15 +142,17 @@ export const cellOperationTools = [
      * @param params.cells - 单元格位置数组
      * @returns 单元格数据数组
      */
-    execute: async (params: { cells: Array<{ row: number; col: number }> }) => {
+    execute: async (params: { cells: Array<{ row: number; col: number }> | { row: number; col: number } }) => {
       const table = (globalThis as any).__vtable_instance;
 
       if (!table) {
         throw new Error('VTable instance not found');
       }
 
+      const cells = Array.isArray((params as any).cells) ? (params as any).cells : [(params as any).cells];
+
       // 批量读取单元格值
-      return params.cells.map(cell => ({
+      return cells.map((cell: { row: number; col: number }) => ({
         row: cell.row,
         col: cell.col,
         // getCellValue(col, row) - 注意参数顺序！
