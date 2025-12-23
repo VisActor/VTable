@@ -14,9 +14,13 @@ export class InputEditor implements IEditor {
   table?: any;
   col?: number;
   row?: number;
-
+  private settedElement: boolean = false;
   constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
+  }
+  setElement(element: HTMLInputElement) {
+    this.element = element;
+    this.settedElement = true;
   }
 
   createElement() {
@@ -110,9 +114,10 @@ export class InputEditor implements IEditor {
 
   onEnd() {
     // do nothing
-    if (this.container?.contains(this.element)) {
+    if (!this.settedElement && this.container?.contains(this.element)) {
       this.container.removeChild(this.element);
     }
+    this.settedElement = false;
     this.element = undefined;
   }
 

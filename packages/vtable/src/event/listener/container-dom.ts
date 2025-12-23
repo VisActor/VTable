@@ -22,7 +22,25 @@ export function bindContainerDomListener(eventManager: EventManager) {
   // }
   // });
 
-  handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
+  handler.on(table.getElement(), 'blur', (e: FocusEvent) => {
+    // 检查焦点是否转移到了表格内部的元素（如 editInputElement）
+    // 如果是，则不处理 blur 事件，避免在编辑时触发不必要的逻辑
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget) {
+      // 检查是否是 editInputElement 的 input
+      const editInputElement = (table as ListTableAPI).editorManager?.editInputElement;
+      if (editInputElement && editInputElement.input === relatedTarget) {
+        return;
+      }
+      // 检查是否是编辑器内部的 input
+      const editingEditor = (table as ListTableAPI).editorManager?.editingEditor;
+      if (editingEditor && typeof editingEditor.getInputElement === 'function') {
+        const editorInput = editingEditor.getInputElement();
+        if (editorInput === relatedTarget) {
+          return;
+        }
+      }
+    }
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
@@ -217,20 +235,22 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }
       }
     } else if (!(e.ctrlKey || e.metaKey)) {
-      const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
-      if (
-        (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
-        !table.editorManager?.editingEditor
-      ) {
-        const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
-        if (e.key.match(allowedKeys)) {
-          table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
-          table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
-        }
-      }
+      // 以下逻辑已废弃，挪到了editor-input-element.ts中处理
+      // const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
+      // if (
+      //   (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
+      //   !table.editorManager?.editingEditor
+      // ) {
+      //   const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
+      //   if (e.key.match(allowedKeys)) {
+      //     table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
+      //     table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+      //   }
+      // }
     }
     handleKeydownListener(e);
   });
+
   /**
    * 处理主动注册的keydown事件
    * @param e

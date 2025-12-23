@@ -136,6 +136,7 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     emptyTip: true,
     container: document.getElementById(CONTAINER_ID),
+    editCellTrigger: 'keydown',
     columns: [
       {
         field: 'progress',
@@ -170,6 +171,12 @@ export function createTable() {
         }
       }
     ],
+    hover: {
+      highlightMode: 'cross'
+    },
+    keyboardOptions: {
+      selectAllOnCtrlA: true
+    },
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     autoFillWidth: true,

@@ -17,6 +17,7 @@ export interface IEditor<V = any, T = any> {
    */
   onEnd: () => void;
   getInputElement?: () => HTMLElement;
+  setElement?: (element: HTMLInputElement) => void;
   /**
    * Called when user click somewhere while editor is in edit mode.
    *

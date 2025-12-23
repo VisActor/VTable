@@ -1,12 +1,15 @@
 import type { IEditor, ValidateEnum } from '@visactor/vtable-editors';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import type { BaseTableAPI } from '../ts-types/base-table';
-import type { ListTableAPI } from '../ts-types';
+import type { ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { getCellEventArgsSet } from '../event/util';
 import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
 import type { IIconGraphicAttribute } from '../scenegraph/graphic/icon';
+import { Rect } from '../tools/Rect';
+import { EditorInputElement } from './editor-input-element';
+import type { BaseTable } from '../core';
 
 export class EditManager {
   table: BaseTableAPI;
@@ -15,17 +18,20 @@ export class EditManager {
   editCell: { col: number; row: number };
   listenersId: number[] = [];
   beginTriggerEditCellMode: 'doubleclick' | 'click' | 'keydown';
+  editInputElement: EditorInputElement | null = null;
   constructor(table: BaseTableAPI) {
     this.table = table;
-    this.bindEvent();
+    const { editCellTrigger = 'doubleclick' } = table.options as ListTableConstructorOptions;
+    if (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) {
+      this.editInputElement = new EditorInputElement(table as BaseTable, table.getElement());
+    }
+    this.bindEvent(editCellTrigger as string);
   }
 
-  bindEvent() {
+  bindEvent(editCellTrigger: string) {
     // const handler = this.table.internalProps.handler;
     const table = this.table as ListTableAPI;
     const doubleClickEventId = table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
-      const { editCellTrigger = 'doubleclick' } = table.options;
-
       if (!editCellTrigger.includes('doubleclick')) {
         return;
       }
@@ -62,6 +68,22 @@ export class EditManager {
         this.beginTriggerEditCellMode = 'click';
         const { col, row } = e;
         this.startEditCell(col, row);
+      } else if (
+        editCellTrigger === 'keydown' ||
+        (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))
+      ) {
+        const { col, row } = e;
+        this.beginTriggerEditCellMode = 'keydown';
+        const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
+        this.editInputElement.setRect(
+          new Rect(rect.left + table.scrollLeft, rect.top + table.scrollTop, rect.width, rect.height),
+          ''
+        );
+        this.editInputElement.hide();
+        this.editInputElement.focus();
+        // debugger;
+        e.event.preventDefault();
+        e.event.stopPropagation();
       }
     });
 
@@ -77,12 +99,13 @@ export class EditManager {
     // });
   }
 
-  startEditCell(col: number, row: number, value?: string | number) {
+  startEditCell(col: number, row: number, value?: string | number, editElement?: HTMLInputElement) {
     if (this.editingEditor) {
       return;
     }
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
+      editElement && editor.setElement(editElement);
       // //自定义内容单元格不允许编辑
       // if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
       //   console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
@@ -251,6 +274,9 @@ export class EditManager {
     this.editingEditor = null;
     this.isValidatingValue = false;
     this.beginTriggerEditCellMode = null;
+    if (this.editInputElement) {
+      this.editInputElement.hide();
+    }
   }
 
   cancelEdit() {
@@ -266,6 +292,9 @@ export class EditManager {
     this.listenersId.forEach(id => {
       this.table.off(id);
     });
+    if (this.editInputElement) {
+      this.editInputElement.release();
+    }
   }
 }
 
