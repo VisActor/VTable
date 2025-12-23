@@ -924,9 +924,17 @@ export class Gantt extends EventTarget {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
       );
+      const rawEnd = taskRecord?.[endDateField];
+      let hasTimeProvided = false;
+      if (typeof rawEnd === 'string') {
+        hasTimeProvided = /T|\d{2}:\d{2}/.test(rawEnd);
+      } else if (rawEnd instanceof Date || typeof rawEnd === 'number') {
+        hasTimeProvided = true;
+      }
+      const shouldForceMillisecond = !hasTimeProvided;
       endDate = createDateAtLastMillisecond(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
-        true
+        shouldForceMillisecond
       );
       // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
     } else {
