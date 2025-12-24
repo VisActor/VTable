@@ -105,7 +105,7 @@ export class ValueFilter {
       // 空行不做处理
       if (isValid(record)) {
         const originalValue = record[fieldId];
-        const formattedValue = formatFn(record);
+        const formattedValue = formatFn(record) ?? '（空白）';
         if (formattedValue !== undefined && formattedValue !== null) {
           countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
 
@@ -155,7 +155,7 @@ export class ValueFilter {
       // 空行不做处理
       if (isValid(record)) {
         const originalValue = record[candidateField];
-        const formattedValue = formatFn(record);
+        const formattedValue = formatFn(record) ?? '（空白）';
         countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
         if (formattedValue !== undefined && formattedValue !== null) {
           const unformattedSet = toUnformatted.get(formattedValue);
