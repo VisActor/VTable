@@ -27,26 +27,40 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // 如果是，则不处理 blur 事件，避免在编辑时触发不必要的逻辑
     const relatedTarget = e.relatedTarget as HTMLElement;
     if (relatedTarget) {
-      // 检查是否是 editInputElement 的 input
-      const editInputElement = (table as ListTableAPI).editorManager?.editInputElement;
-      if (editInputElement && editInputElement.input === relatedTarget) {
+      // 检查是否是编辑器内部的 input
+      const selectedRanges = table.stateManager.select.ranges;
+      const justOneCellSelected =
+        selectedRanges.length === 1 &&
+        selectedRanges[0].start.col === selectedRanges[0].end.col &&
+        selectedRanges[0].start.row === selectedRanges[0].end.row;
+      const editor =
+        justOneCellSelected &&
+        (table as ListTableAPI).getEditor(table.stateManager.select.cellPos.col, table.stateManager.select.cellPos.row);
+      const editorInput = editor?.getInputElement?.();
+      if (editorInput === relatedTarget) {
         return;
       }
-      // 检查是否是编辑器内部的 input
-      const editingEditor = (table as ListTableAPI).editorManager?.editingEditor;
-      if (editingEditor && typeof editingEditor.getInputElement === 'function') {
-        const editorInput = editingEditor.getInputElement();
-        if (editorInput === relatedTarget) {
-          return;
-        }
-      }
     }
+
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
 
   // 监听键盘事件
-  handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
+  handler.on(document.body, 'keydown', (e: KeyboardEvent) => {
+    const selectedRanges = table.stateManager.select.ranges;
+    const justOneCellSelected =
+      selectedRanges.length === 1 &&
+      selectedRanges[0].start.col === selectedRanges[0].end.col &&
+      selectedRanges[0].start.row === selectedRanges[0].end.row;
+    const editor =
+      justOneCellSelected &&
+      (table as ListTableAPI).getEditor(table.stateManager.select.cellPos.col, table.stateManager.select.cellPos.row);
+    const editorInput = editor?.getInputElement?.();
+
+    if (e.target !== table.getElement() && e.target !== editorInput) {
+      return;
+    }
     // 键盘按下事件 内部逻辑处理前
     const beforeKeydownEvent: KeydownEvent = {
       keyCode: e.keyCode ?? e.which,
@@ -235,18 +249,19 @@ export function bindContainerDomListener(eventManager: EventManager) {
         }
       }
     } else if (!(e.ctrlKey || e.metaKey)) {
-      // 以下逻辑已废弃，挪到了editor-input-element.ts中处理
-      // const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
-      // if (
-      //   (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
-      //   !table.editorManager?.editingEditor
-      // ) {
-      //   const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
-      //   if (e.key.match(allowedKeys)) {
-      //     table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
-      //     table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
-      //   }
-      // }
+      const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
+      if (justOneCellSelected) {
+        if (
+          (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
+          !table.editorManager?.editingEditor
+        ) {
+          const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
+          if (e.key.match(allowedKeys)) {
+            table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
+            table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+          }
+        }
+      }
     }
     handleKeydownListener(e);
   });

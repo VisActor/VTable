@@ -7,9 +7,6 @@ import type { SimpleHeaderLayoutMap } from '../layout';
 import { isPromise } from '../tools/helper';
 import { isValid } from '@visactor/vutils';
 import type { IIconGraphicAttribute } from '../scenegraph/graphic/icon';
-import { Rect } from '../tools/Rect';
-import { EditorInputElement } from './editor-input-element';
-import type { BaseTable } from '../core';
 
 export class EditManager {
   table: BaseTableAPI;
@@ -18,13 +15,10 @@ export class EditManager {
   editCell: { col: number; row: number };
   listenersId: number[] = [];
   beginTriggerEditCellMode: 'doubleclick' | 'click' | 'keydown';
-  editInputElement: EditorInputElement | null = null;
+  cacheLastSelectedCellEditor: Record<string, IEditor> = {};
   constructor(table: BaseTableAPI) {
     this.table = table;
     const { editCellTrigger = 'doubleclick' } = table.options as ListTableConstructorOptions;
-    if (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) {
-      this.editInputElement = new EditorInputElement(table as BaseTable, table.getElement());
-    }
     this.bindEvent(editCellTrigger as string);
   }
 
@@ -72,22 +66,72 @@ export class EditManager {
         editCellTrigger === 'keydown' ||
         (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))
       ) {
+        console.log('click-cell', e);
+        // const { col, row } = e;
+        // this.beginTriggerEditCellMode = 'keydown';
+        // const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
+        // const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
+        // // adjust last col&row, same as packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw
+        // if (col === this.table.colCount - 1) {
+        //   referencePosition.rect.width = rect.width - 1;
+        // } else {
+        //   referencePosition.rect.width = rect.width + 1; // 这里的1应该根据单元格的borderWidth来定;
+        // }
+        // if (row === this.table.rowCount - 1) {
+        //   referencePosition.rect.height = rect.height - 1;
+        // } else {
+        //   referencePosition.rect.height = rect.height + 1; // 这里的1应该根据单元格的borderWidth来定;
+        // }
+        // const editor = (this.table as ListTableAPI).getEditor(col, row);
+        // console.log('prepareEdit  click-cell');
+        // //需要准备编辑环境，等待输入。否则中文输入法第一个字符会被当做英文字符
+        // editor.prepareEdit?.({ referencePosition, container: this.table.getElement(), table: this.table, col, row });
+      }
+    });
+    const selectedChangedEventId = table.on(TABLE_EVENT_TYPE.SELECTED_CHANGED, e => {
+      const selectedRanges = table.stateManager.select.ranges;
+      const justOneCellSelected =
+        selectedRanges.length === 1 &&
+        selectedRanges[0].start.col === selectedRanges[0].end.col &&
+        selectedRanges[0].start.row === selectedRanges[0].end.row;
+      if (
+        justOneCellSelected &&
+        (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown')))
+      ) {
         const { col, row } = e;
         this.beginTriggerEditCellMode = 'keydown';
         const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
-        this.editInputElement.setRect(
-          new Rect(rect.left + table.scrollLeft, rect.top + table.scrollTop, rect.width, rect.height),
-          ''
-        );
-        this.editInputElement.hide();
-        this.editInputElement.focus();
-        // debugger;
-        e.event.preventDefault();
-        e.event.stopPropagation();
+        const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
+        // adjust last col&row, same as packages/vtable/src/scenegraph/graphic/contributions/group-contribution-render.ts getCellSizeForDraw
+        if (col === this.table.colCount - 1) {
+          referencePosition.rect.width = rect.width - 1;
+        } else {
+          referencePosition.rect.width = rect.width + 1; // 这里的1应该根据单元格的borderWidth来定;
+        }
+        if (row === this.table.rowCount - 1) {
+          referencePosition.rect.height = rect.height - 1;
+        } else {
+          referencePosition.rect.height = rect.height + 1; // 这里的1应该根据单元格的borderWidth来定;
+        }
+        const editor = (this.table as ListTableAPI).getEditor(col, row);
+
+        setTimeout(() => {
+          // 为什么要加延时：因为这个SELECTED_CHANGED事件是pointerdown过来的，
+          // 如果这里不加延时，会导致鼠标抬起pointerup的时候将table.getElement()元素设置成焦点，从而导致编辑器失去焦点（因为prepareEdit只是将editor的element设置pointerEvents为none）
+          if (this.editingEditor !== editor) {
+            // 判断当前编辑器如果是当前需要准备的编辑器，则不进行准备编辑。这个是为了container-dom文件moveEditCellOnArrowKeys前后逻辑问题，前面有个selectCell会触发这个事件，后面有startEdit了，所以这个prepare就没必要了，触发的话反而有问题
+            editor.prepareEdit?.({
+              referencePosition,
+              container: this.table.getElement(),
+              table: this.table,
+              col,
+              row
+            });
+          }
+        }, 10);
       }
     });
-
-    this.listenersId.push(doubleClickEventId, clickEventId);
+    this.listenersId.push(doubleClickEventId, clickEventId, selectedChangedEventId);
 
     // handler.on(this.table.getElement(), 'wheel', (e: WheelEvent) => {
     //   this.completeEdit();
@@ -196,6 +240,7 @@ export class EditManager {
     if (this.isValidatingValue) {
       return false;
     }
+    this.cacheLastSelectedCellEditor = {};
     const target = e?.target as HTMLElement | undefined;
     const { editingEditor: editor } = this;
 
