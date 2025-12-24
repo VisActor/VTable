@@ -66,7 +66,6 @@ export class EditManager {
         editCellTrigger === 'keydown' ||
         (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))
       ) {
-        console.log('click-cell', e);
         // const { col, row } = e;
         // this.beginTriggerEditCellMode = 'keydown';
         // const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
@@ -114,7 +113,6 @@ export class EditManager {
           referencePosition.rect.height = rect.height + 1; // 这里的1应该根据单元格的borderWidth来定;
         }
         const editor = (this.table as ListTableAPI).getEditor(col, row);
-
         setTimeout(() => {
           // 为什么要加延时：因为这个SELECTED_CHANGED事件是pointerdown过来的，
           // 如果这里不加延时，会导致鼠标抬起pointerup的时候将table.getElement()元素设置成焦点，从而导致编辑器失去焦点（因为prepareEdit只是将editor的element设置pointerEvents为none）
