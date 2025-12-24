@@ -317,9 +317,6 @@ export class EditManager {
     this.editingEditor = null;
     this.isValidatingValue = false;
     this.beginTriggerEditCellMode = null;
-    if (this.editInputElement) {
-      this.editInputElement.hide();
-    }
   }
 
   cancelEdit() {
