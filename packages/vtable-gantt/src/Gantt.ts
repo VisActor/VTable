@@ -924,9 +924,22 @@ export class Gantt extends EventTarget {
       startDate = createDateAtMidnight(
         Math.min(Math.max(this.parsedOptions._minDateTime, rawDateStartDateTime), this.parsedOptions._maxDateTime)
       );
+      // 修复：当原始日期字符串已包含时分秒时，不应强制设置毫秒为999
+      // 这会导致 '00:30:01' 变成 '00:30:01.999'，使1秒任务显示为2秒
+      const rawEnd = taskRecord?.[endDateField];
+      // 判断：是否“提供了时间部分”
+      // 字符串：包含 HH:MM（或 ISO 'T'）即视为提供了时间；
+      // Date/number：视为已提供时间。
+      let hasTimeProvided = false;
+      if (typeof rawEnd === 'string') {
+        hasTimeProvided = /T|\d{2}:\d{2}/.test(rawEnd);
+      } else if (rawEnd instanceof Date || typeof rawEnd === 'number') {
+        hasTimeProvided = true;
+      }
+      const shouldForceMillisecond = !hasTimeProvided;
       endDate = createDateAtLastMillisecond(
         Math.max(Math.min(this.parsedOptions._maxDateTime, rawDateEndDateTime), this.parsedOptions._minDateTime),
-        true
+        shouldForceMillisecond
       );
       // const minTimeSaleIsSecond = this.parsedOptions.reverseSortedTimelineScales[0].unit === 'second';
     } else {
