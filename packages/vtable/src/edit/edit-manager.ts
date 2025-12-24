@@ -335,9 +335,6 @@ export class EditManager {
     this.listenersId.forEach(id => {
       this.table.off(id);
     });
-    if (this.editInputElement) {
-      this.editInputElement.release();
-    }
   }
 }
 
