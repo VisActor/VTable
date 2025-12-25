@@ -34,6 +34,7 @@ export class MenuManager {
   private showTimeout: any = null;
   private submenuShowDelay = 100;
   private submenuHideDelay = 500;
+  private menuInitializationDelay = 200; // 菜单初始化延迟时间（毫秒）
 
   /**
    * 显示菜单
@@ -50,12 +51,26 @@ export class MenuManager {
     this.menuContainer = createElement('div', MENU_CONTAINER_CLASS);
     applyStyles(this.menuContainer, MENU_STYLES.menuContainer);
     document.body.appendChild(this.menuContainer);
+    this.menuContainer.addEventListener('contextmenu', (e: MouseEvent) => {
+      e.preventDefault();
+    });
 
     // 创建菜单项
     this.createMenuItems(menuItems, this.menuContainer);
 
     // 调整菜单位置
     this.positionMenu(this.menuContainer, x, y);
+
+    // 临时禁用指针事件，防止位置调整后立即触发 mouseenter
+    // 这可以避免菜单位置调整到鼠标下方时意外触发二级菜单
+    this.menuContainer.style.pointerEvents = 'none';
+
+    // 延迟启用指针事件
+    setTimeout(() => {
+      if (this.menuContainer) {
+        this.menuContainer.style.pointerEvents = 'auto';
+      }
+    }, this.menuInitializationDelay);
 
     // 添加全局点击事件，用于关闭菜单
     setTimeout(() => {
@@ -389,6 +404,10 @@ export class MenuManager {
     if (this.hideTimeout !== null) {
       clearTimeout(this.hideTimeout);
       this.hideTimeout = null;
+    }
+    if (this.showTimeout !== null) {
+      clearTimeout(this.showTimeout);
+      this.showTimeout = null;
     }
 
     // 移除全局事件监听
