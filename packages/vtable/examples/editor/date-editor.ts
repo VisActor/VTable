@@ -179,8 +179,10 @@ export function createTable() {
     heightMode: 'autoHeight',
     autoWrapText: true,
     editCellTrigger: ['keydown', 'doubleclick'],
+
     keyboardOptions: {
-      moveFocusCellOnEnter: true
+      moveFocusCellOnEnter: true,
+      moveEditCellOnArrowKeys: true
     },
     editor(args) {
       return new InputEditor({});

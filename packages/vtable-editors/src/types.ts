@@ -17,6 +17,7 @@ export interface IEditor<V = any, T = any> {
    */
   onEnd: () => void;
   getInputElement?: () => HTMLElement;
+  setElement?: (element: HTMLInputElement) => void;
   /**
    * Called when user click somewhere while editor is in edit mode.
    *
@@ -47,6 +48,11 @@ export interface IEditor<V = any, T = any> {
    */
   getValue: () => V;
   /**
+   * If the table editing trigger is configured as keydown, you need to call prepareEdit to prepare the editing environment, otherwise the first character of the Chinese input method will be treated as an English character.
+   * @param param0
+   */
+  prepareEdit?: (context: PrepareEditContext<V, T>) => void;
+  /**
    * Called when cell enter edit mode.
    * @deprecated use `onStart` instead.
    */
@@ -68,6 +74,7 @@ export interface IEditor<V = any, T = any> {
    * @deprecated callback is provided as `endEdit` in `EditContext`, use `onStart` instead.
    */
   bindSuccessCallback?: (callback: () => void) => void;
+  adjustPosition?: (rect: RectProps) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,6 +103,13 @@ export interface EditContext<V = any, T = any> {
   row: number;
 }
 
+export interface PrepareEditContext<V = any, T = any> {
+  container: HTMLElement;
+  table: T;
+  col: number;
+  row: number;
+  referencePosition: ReferencePosition;
+}
 export interface RectProps {
   left: number;
   top: number;

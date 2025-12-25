@@ -24,6 +24,10 @@ export const menus = [
     name: 'value-filter'
   },
   {
+    path: 'filter',
+    name: 'group'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },

@@ -105,7 +105,7 @@ export class ValueFilter {
       // 空行不做处理
       if (isValid(record)) {
         const originalValue = record[fieldId];
-        const formattedValue = formatFn(record);
+        const formattedValue = formatFn(record) ?? '（空白）';
         if (formattedValue !== undefined && formattedValue !== null) {
           countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
 
@@ -139,7 +139,7 @@ export class ValueFilter {
       records = this.table.internalProps.records;
     } else {
       const recordsList = this.getRecords(this.table, true); // 已筛选：使用原始表格数据
-      const records = recordsList.filter(record =>
+      records = recordsList.filter(record =>
         filteredFields.every(field => {
           const filterType = this.filterStateManager.getFilterState(field)?.type;
           if (filterType !== 'byValue' && filterType !== null && filterType !== undefined) {
@@ -155,7 +155,7 @@ export class ValueFilter {
       // 空行不做处理
       if (isValid(record)) {
         const originalValue = record[candidateField];
-        const formattedValue = formatFn(record);
+        const formattedValue = formatFn(record) ?? '（空白）';
         countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
         if (formattedValue !== undefined && formattedValue !== null) {
           const unformattedSet = toUnformatted.get(formattedValue);
@@ -175,7 +175,9 @@ export class ValueFilter {
   private toggleSelectAll(fieldId: string | number, selected: boolean): void {
     const options = this.valueFilterOptionList.get(fieldId);
     options.forEach(option => {
-      option.checkbox.checked = selected;
+      if (option.itemContainer.style.display !== 'none') {
+        option.checkbox.checked = selected;
+      }
     });
   }
 

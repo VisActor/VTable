@@ -287,7 +287,7 @@ export class Chart extends Rect {
             }
             this.justShowMarkTooltip = justShowMarkTooltip;
             let delayRunDimensionHover: boolean = false;
-            if (prev_justShowMarkTooltip === true && justShowMarkTooltip === false) {
+            if (prev_justShowMarkTooltip !== false && justShowMarkTooltip === false) {
               this.justShowMarkTooltipTimer = Date.now();
               delayRunDimensionHover = true;
             } else if (prev_justShowMarkTooltip === false && justShowMarkTooltip === false) {
