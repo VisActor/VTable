@@ -33,7 +33,7 @@ export function bindAxisHoverEvent(table: BaseTableAPI) {
 function getAxisPosition(col: number, row: number, layout: PivotHeaderLayoutMap) {
   if (layout.indicatorsAsCol) {
     if (
-      layout.hasTwoIndicatorAxes &&
+      layout.hasTopIndicatorAxis &&
       row === layout.columnHeaderLevelCount - 1 &&
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount

@@ -153,7 +153,11 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   currentPageEndIndex: number;
   // _extensionRowHeaderCellIds
   //#region pivotChart专有
-  hasTwoIndicatorAxes: boolean;
+  /** 指标轴是否存在（按方位区分，用于更精确布局） */
+  hasLeftIndicatorAxis: boolean = false;
+  hasRightIndicatorAxis: boolean = false;
+  hasTopIndicatorAxis: boolean = false;
+  hasBottomIndicatorAxis: boolean = false;
   /** 图表spec中barWidth的收集 */
   _chartItemSpanSize: number;
   _chartPaddingInner: number;
@@ -242,85 +246,100 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
 
-    this.resetRowHeaderLevelCount();
-
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = false;
+      this.hasLeftIndicatorAxis = false;
+      this.hasRightIndicatorAxis = false;
+      this.hasTopIndicatorAxis = false;
+      this.hasBottomIndicatorAxis = false;
+
+      // 根据 chartSpec.axes / pivotChartAxes 推断“指标轴”的分布（按方位），并写回到 indicator define 上供后续轴配置/布局使用
       this.indicatorsDefine.forEach((indicatorObject: any) => {
-        if (
-          indicatorObject.chartSpec &&
-          indicatorObject.chartSpec.series &&
-          indicatorObject.chartSpec.series.length > 1
-        ) {
-          const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
-          if (
-            !axes.length ||
-            axes.every((axis: any) => {
-              if (axis.orient === (this.indicatorsAsCol ? 'top' : 'right') && axis.visible === false) {
-                return false;
-              }
-              return true;
-            })
-          ) {
-            indicatorObject.hasTwoIndicatorAxes = true;
-            this.hasTwoIndicatorAxes = true;
-            return true;
+        // 默认全部置为 false，避免复用旧对象时残留脏数据
+        indicatorObject.hasLeftIndicatorAxis = false;
+        indicatorObject.hasRightIndicatorAxis = false;
+        indicatorObject.hasTopIndicatorAxis = false;
+        indicatorObject.hasBottomIndicatorAxis = false;
+
+        if (!indicatorObject?.chartSpec) {
+          return;
+        }
+
+        const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
+        const visibleOrients = new Set<string>();
+        (axes ?? []).forEach((axis: any) => {
+          if (axis?.orient && axis.visible !== false) {
+            visibleOrients.add(axis.orient);
           }
-        }
-        indicatorObject.hasTwoIndicatorAxes = false;
-        return false;
-      });
-      //上面的series多系列判断逻辑基础上，在判断是否主动配置了两个指标轴（不是series的话应该是两个一模一样的轴）
-      // if (this.hasTwoIndicatorAxes === false) {
-      this.indicatorsDefine.forEach((indicatorObject: any) => {
-        if ((indicatorObject as any).hasTwoIndicatorAxes) {
-          return false;
-        }
-        if (indicatorObject.chartSpec) {
-          const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
-          if (this.indicatorsAsCol) {
-            const topAxis = axes.find((axis: any) => {
-              if (axis.orient === 'top' && axis.visible !== false) {
-                return true;
+        });
+
+        const isMultiSeries = indicatorObject.chartSpec?.series?.length > 1;
+
+        if (this.indicatorsAsCol) {
+          // 指标在列：指标轴位于 top/bottom
+          let hasTop = visibleOrients.has('top');
+          let hasBottom = visibleOrients.has('bottom');
+
+          // 未配置 axes 时，默认存在 bottom 指标轴（与现有 bottomFrozenRowCount 逻辑保持一致）
+          if (!axes.length) {
+            hasBottom = true;
+          }
+
+          // 多系列场景：若未显式隐藏 top 轴，则认为存在 top 副指标轴（并同时认为 bottom 主指标轴存在）
+          if (isMultiSeries) {
+            const topHiddenExplicitly = axes.some((axis: any) => axis?.orient === 'top' && axis.visible === false);
+            if (!axes.length || !topHiddenExplicitly) {
+              hasTop = true;
+              const bottomHiddenExplicitly = axes.some(
+                (axis: any) => axis?.orient === 'bottom' && axis.visible === false
+              );
+              if (!bottomHiddenExplicitly) {
+                hasBottom = true;
               }
-              return false;
-            });
-            const bottomAxis = axes.find((axis: any) => {
-              if (axis.orient === 'bottom' && axis.visible !== false) {
-                return true;
-              }
-              return false;
-            });
-            if (topAxis && bottomAxis) {
-              indicatorObject.hasTwoIndicatorAxes = true;
-              this.hasTwoIndicatorAxes = true;
-              return true;
-            }
-          } else {
-            const leftAxis = axes.find((axis: any) => {
-              if (axis.orient === 'left' && axis.visible !== false) {
-                return true;
-              }
-              return false;
-            });
-            const rightAxis = axes.find((axis: any) => {
-              if (axis.orient === 'right' && axis.visible !== false) {
-                return true;
-              }
-              return false;
-            });
-            if (leftAxis && rightAxis) {
-              indicatorObject.hasTwoIndicatorAxes = true;
-              this.hasTwoIndicatorAxes = true;
-              return true;
             }
           }
+
+          indicatorObject.hasTopIndicatorAxis = hasTop;
+          indicatorObject.hasBottomIndicatorAxis = hasBottom;
+          // 指标在列时 left/right 不是“指标轴”
+          indicatorObject.hasLeftIndicatorAxis = false;
+          indicatorObject.hasRightIndicatorAxis = false;
+        } else {
+          // 指标在行：指标轴位于 left/right
+          let hasLeft = visibleOrients.has('left');
+          let hasRight = visibleOrients.has('right');
+
+          // 未配置 axes 时，默认存在 left 指标轴（与现有 leftAxesCount/布局逻辑保持一致）
+          if (!axes.length) {
+            hasLeft = true;
+          }
+
+          // 多系列场景：若未显式隐藏 right 轴，则认为存在 right 副指标轴（并同时认为 left 主指标轴存在）
+          if (isMultiSeries) {
+            const rightHiddenExplicitly = axes.some((axis: any) => axis?.orient === 'right' && axis.visible === false);
+            if (!axes.length || !rightHiddenExplicitly) {
+              hasRight = true;
+              const leftHiddenExplicitly = axes.some((axis: any) => axis?.orient === 'left' && axis.visible === false);
+              if (!leftHiddenExplicitly) {
+                hasLeft = true;
+              }
+            }
+          }
+
+          indicatorObject.hasLeftIndicatorAxis = hasLeft;
+          indicatorObject.hasRightIndicatorAxis = hasRight;
+          // 指标在行时 top/bottom 不是“指标轴”
+          indicatorObject.hasTopIndicatorAxis = false;
+          indicatorObject.hasBottomIndicatorAxis = false;
         }
-        indicatorObject.hasTwoIndicatorAxes = false;
-        return false;
+
+        // 汇总到 layout 级别（任意指标存在对应方位轴，则 layout 认为存在）
+        this.hasLeftIndicatorAxis ||= !!indicatorObject.hasLeftIndicatorAxis;
+        this.hasRightIndicatorAxis ||= !!indicatorObject.hasRightIndicatorAxis;
+        this.hasTopIndicatorAxis ||= !!indicatorObject.hasTopIndicatorAxis;
+        this.hasBottomIndicatorAxis ||= !!indicatorObject.hasBottomIndicatorAxis;
       });
-      // }
     }
+    this.resetRowHeaderLevelCount();
     this.resetColumnHeaderLevelCount();
 
     // this.indicatorsAsCol = !isValid(this.rowDimensionKeys.find(key => key === this.indicatorDimensionKey));
@@ -1613,7 +1632,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         this.indicatorsAsCol &&
         !this.dataset?.colKeys?.length &&
         this.columnDimensionTree?.tree?.level === 0 &&
-        !this.hasTwoIndicatorAxes
+        !this.hasTopIndicatorAxis
       ) {
         this.columnHeaderLevelCount = 0;
         return;
@@ -1675,7 +1694,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (
         this._table.isPivotChart() &&
         this.indicatorsAsCol &&
-        !this.hasTwoIndicatorAxes &&
+        !this.hasTopIndicatorAxis &&
         checkHasCartesianChart(this.indicatorsDefine)
       ) {
         count -= 1;
@@ -1750,7 +1769,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       //#endregion
       if (
         !this.indicatorsAsCol &&
-        this.hideIndicatorName &&
+        (this.hideIndicatorName || (!this.hasLeftIndicatorAxis && this._table.isPivotChart())) &&
         this.rowDimensionKeys[this.rowDimensionKeys.length - 1] === this.indicatorDimensionKey
       ) {
         count = rowLevelCount - 1;
@@ -1859,7 +1878,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     if (this.indicatorsAsCol) {
       return 0; // 指标在列上，没有图表需要显示右轴
-    } else if (this.hasTwoIndicatorAxes) {
+    } else if (this.hasRightIndicatorAxis) {
       // 查找指标，判断是否有双轴情况，如果有，则右侧冻结列数为1
       return 1;
     }
@@ -3777,7 +3796,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         return true;
       }
       if (
-        this.hasTwoIndicatorAxes &&
+        this.hasTopIndicatorAxis &&
         this.indicatorsAsCol &&
         row === this.columnHeaderLevelCount - 1 &&
         isHasCartesianChartInline(col, row, 'col', this)
@@ -4248,7 +4267,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (axisOption?.visible === false) {
       return 0;
     }
-    if (this.indicatorsAsCol && this.hasTwoIndicatorAxes) {
+    if (this.indicatorsAsCol && this.hasTopIndicatorAxis) {
       return 1; // 顶部副指标
     }
     return 0; // 顶部无轴
