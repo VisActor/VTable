@@ -1,6 +1,7 @@
 import * as VTable from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import { TABLE_EVENT_TYPE } from '../../src';
 const ListTable = VTable.ListTable;
 const CONTAINER_ID = 'vTable';
 const input_editor = new InputEditor({});
@@ -136,6 +137,7 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     emptyTip: true,
     container: document.getElementById(CONTAINER_ID),
+    editCellTrigger: 'keydown',
     columns: [
       {
         field: 'progress',
@@ -170,6 +172,12 @@ export function createTable() {
         }
       }
     ],
+    hover: {
+      highlightMode: 'cross'
+    },
+    keyboardOptions: {
+      selectAllOnCtrlA: true
+    },
     showFrozenIcon: true, //显示VTable内置冻结列图标
     widthMode: 'standard',
     autoFillWidth: true,
@@ -185,10 +193,30 @@ export function createTable() {
     field: 'progress',
     order: 'desc'
   });
-
-  instance.on('change_cell_value', arg => {
-    console.log(arg);
+  // instance.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+  //   console.log('click-cell', e);
+  // });
+  // instance.on(TABLE_EVENT_TYPE.SELECTED_CHANGED, e => {
+  //   console.log('selected_changed', e);
+  // });
+  instance.on(TABLE_EVENT_TYPE.DRAG_SELECT_END, e => {
+    console.log('drag_select_end', e);
   });
+  // instance.on('change_cell_value', arg => {
+  //   console.log('.....change_cell_value');
+  // });
+  // instance.on('mouseleave_cell', arg => {
+  //   console.log('.....mouseleave_cell');
+  // });
+  // instance.on('mouseenter_cell', arg => {
+  //   console.log('.....mouseenter_cell');
+  // });
+  // instance.on('mouseleave_table', arg => {
+  //   console.log('.....mouseleave_table');
+  // });
+  // instance.on('mouseenter_table', arg => {
+  //   console.log('.....mouseenter_table');
+  // });
 
   // bindDebugTool(instance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']

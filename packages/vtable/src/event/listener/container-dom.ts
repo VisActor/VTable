@@ -22,7 +22,26 @@ export function bindContainerDomListener(eventManager: EventManager) {
   // }
   // });
 
-  handler.on(table.getElement(), 'blur', (e: MouseEvent) => {
+  handler.on(table.getElement(), 'blur', (e: FocusEvent) => {
+    // 检查焦点是否转移到了表格内部的元素（如 editInputElement）
+    // 如果是，则不处理 blur 事件，避免在编辑时触发不必要的逻辑
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget) {
+      // 检查是否是编辑器内部的 input
+      const selectedRanges = table.stateManager.select.ranges;
+      const justOneCellSelected =
+        selectedRanges.length === 1 &&
+        selectedRanges[0].start.col === selectedRanges[0].end.col &&
+        selectedRanges[0].start.row === selectedRanges[0].end.row;
+      const editor =
+        justOneCellSelected &&
+        (table as ListTableAPI).getEditor(table.stateManager.select.cellPos.col, table.stateManager.select.cellPos.row);
+      const editorInput = editor?.getInputElement?.();
+      if (editorInput === relatedTarget) {
+        return;
+      }
+    }
+
     eventManager.dealTableHover();
     // eventManager.dealTableSelect();
   });
@@ -117,15 +136,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if (isCellDisableSelect(table, targetCol, targetRow)) {
         return;
       }
+      const isEditingCell = !!(table as ListTableAPI).editorManager?.editingEditor;
+      // 下面这句completeEdit代码和selectCell代码顺序很重要，不能颠倒，否则会导致编辑器失去焦点（selectCell会触发到edit-manager的selected_changed事件，getEditor会创建editor实例并缓存，completeEdit会清空缓存）
+      (table as ListTableAPI).editorManager?.completeEdit();
+      table.getElement().focus();
       const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
       table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
-      if (
-        (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
-        (table as ListTableAPI).editorManager?.editingEditor
-      ) {
+      if ((table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) && isEditingCell) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
-        (table as ListTableAPI).editorManager?.completeEdit();
-        table.getElement().focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
           (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
         }
@@ -206,10 +224,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
           if (isCellDisableSelect(table, targetCol, targetRow)) {
             return;
           }
+          const isEditingCell = !!(table as ListTableAPI).editorManager?.editingEditor;
+          // 下面这句completeEdit代码和selectCell代码顺序很重要，不能颠倒，否则会导致编辑器失去焦点（selectCell会触发到edit-manager的selected_changed事件，getEditor会创建editor实例并缓存，completeEdit会清空缓存）
+          (table as ListTableAPI).editorManager?.completeEdit();
+          table.getElement().focus();
           table.selectCell(targetCol, targetRow);
-          if ((table as ListTableAPI).editorManager?.editingEditor) {
-            (table as ListTableAPI).editorManager?.completeEdit();
-            table.getElement().focus();
+          if (isEditingCell) {
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
               (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
             }
@@ -218,19 +238,27 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     } else if (!(e.ctrlKey || e.metaKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
-      if (
-        (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
-        !table.editorManager?.editingEditor
-      ) {
-        const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
-        if (e.key.match(allowedKeys)) {
-          table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
-          table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+      const selectedRanges = table.stateManager.select.ranges;
+      const justOneCellSelected =
+        selectedRanges.length === 1 &&
+        selectedRanges[0].start.col === selectedRanges[0].end.col &&
+        selectedRanges[0].start.row === selectedRanges[0].end.row;
+      if (justOneCellSelected) {
+        if (
+          (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
+          !table.editorManager?.editingEditor
+        ) {
+          const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
+          if (e.key.match(allowedKeys)) {
+            table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
+            table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+          }
         }
       }
     }
     handleKeydownListener(e);
   });
+
   /**
    * 处理主动注册的keydown事件
    * @param e
