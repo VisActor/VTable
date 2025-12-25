@@ -175,7 +175,9 @@ export class ValueFilter {
   private toggleSelectAll(fieldId: string | number, selected: boolean): void {
     const options = this.valueFilterOptionList.get(fieldId);
     options.forEach(option => {
-      option.checkbox.checked = selected;
+      if (option.itemContainer.style.display !== 'none') {
+        option.checkbox.checked = selected;
+      }
     });
   }
 
