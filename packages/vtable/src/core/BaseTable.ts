@@ -1607,11 +1607,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
       h = this.rowHeightsMap.getSumInRange(startRow, endRow);
     }
-    // if (this.options._disableColumnAndRowSizeRound) {
-    //   // console.log(startRow, endRow, Number(h.toFixed(2)));
-    //   // return Number(h.toFixed(2));
-    //   return h;
-    // }
+    if (this.options.customConfig?._disableColumnAndRowSizeRound) {
+      // console.log(startRow, endRow, Number(h.toFixed(2)));
+      // return Number(h.toFixed(2));
+      return h;
+    }
     return Math.round(h);
   }
   /**
