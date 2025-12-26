@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.19.1"
+    "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

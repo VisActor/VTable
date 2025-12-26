@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "vite ./demo",
-    "build": "npm run fix-memory-limit &&cross-env USE_TYPESCRIPT2=true bundle --clean",
+    "build": "npm run fix-memory-limit && cross-env USE_TYPESCRIPT2=true bundle --clean",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.19.1"
+    "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
