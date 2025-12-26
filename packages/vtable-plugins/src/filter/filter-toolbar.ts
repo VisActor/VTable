@@ -174,6 +174,14 @@ export class FilterToolbar {
     applyStyles(this.applyFilterButton, styles.footerButton(true));
     this.valueFilter.updateStyles(styles);
     this.conditionFilter.updateStyles(styles);
+    // 面板处于显示状态, 更新了样式, 则需要手动控制tab显隐
+    // 面板显示按值筛选或按条件筛选
+    const currentFilter = this.filterStateManager.getFilterState(this.selectedField);
+    if (currentFilter && currentFilter.type === 'byCondition') {
+      this.onTabSwitch('byCondition');
+    } else {
+      this.onTabSwitch('byValue');
+    }
   }
 
   attachEventListeners() {
