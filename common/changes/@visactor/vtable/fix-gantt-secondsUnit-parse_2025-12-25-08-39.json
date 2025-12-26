@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: recognize millisecond for gantt taskbar\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
