@@ -4,9 +4,13 @@ import { PivotTableSimple as PivotTableConstrouctor } from '@visactor/vtable';
 import type { BaseTableProps } from './base-table';
 import { createTable } from './base-table';
 
-export interface PivotTableProps
-  extends Omit<BaseTableProps, 'records' | 'columnWidthConfig' | 'columns' | 'dragOrder' | 'resize'>,
-    Omit<PivotTableConstructorOptions, 'container'> {}
+// 类型覆盖工具：让 PivotTableConstructorOptions 中的属性覆盖 BaseTableProps 中的同名属性
+type Override<T, U> = Omit<T, keyof U> & U;
+
+export type PivotTableProps = Override<
+  Omit<BaseTableProps, 'records' | 'container'>,
+  Omit<PivotTableConstructorOptions, 'container'>
+>;
 
 export const PivotTableSimple = createTable<React.PropsWithChildren<PivotTableProps>>('PivotTable', {
   type: 'pivot-table',

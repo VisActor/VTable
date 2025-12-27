@@ -100,7 +100,6 @@ function getGroupAttribute(props: AvatarProps) {
     height: size,
     clip: true,
     cornerRadius: shape === 'circle' ? size / 2 : panelStyle.cornerRadius ?? 2,
-    cornerType: 'round', // 添加必需的 cornerType 属性
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
