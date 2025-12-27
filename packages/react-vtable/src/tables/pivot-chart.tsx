@@ -9,7 +9,7 @@ interface AnyRecords {
   records: Record<string, unknown>[];
 }
 export interface PivotChartProps
-  extends Omit<BaseTableProps, 'records'>,
+  extends Omit<BaseTableProps, 'records' | 'columnWidthConfig' | 'columns' | 'dragOrder' | 'resize'>,
     Omit<PivotChartConstructorOptions, 'container' | 'records'>,
     AnyRecords {}
 

@@ -5,7 +5,7 @@ import type { BaseTableProps } from './base-table';
 import { createTable } from './base-table';
 
 export interface ListTableProps
-  extends Omit<BaseTableProps, 'records'>,
+  extends Omit<BaseTableProps, 'records' | 'columnWidthConfig' | 'columns' | 'dragOrder' | 'resize'>,
     Omit<ListTableConstructorOptions, 'container'> {}
 
 export const ListTableSimple = createTable<React.PropsWithChildren<ListTableProps>>('ListTable', {

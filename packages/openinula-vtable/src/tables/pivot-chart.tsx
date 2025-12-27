@@ -6,9 +6,9 @@ import { createTable } from './base-table';
 
 export interface PivotChartProps
   extends Omit<BaseTableProps, 'records' | 'type'>,
-    Omit<PivotChartConstructorOptions, 'container'> {}
+    Omit<PivotChartConstructorOptions, 'container' | 'records'> {}
 
-export const PivotChart = createTable<Inula.PropsWithChildren<PivotChartProps>>('PivotChart', 'pivot-chart');
+export const PivotChart = createTable<PivotChartProps & { children?: Inula.InulaNode }>('PivotChart', 'pivot-chart');
 
 export function registerChartModule(name: string, chart: any) {
   VTable.register.chartModule(name, chart);

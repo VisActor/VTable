@@ -122,8 +122,10 @@ export function syncTableWidthFromTable(gantt: Gantt) {
 function _syncTableSize(gantt: Gantt) {
   const oldTaskTableWidth: number = gantt.taskTableWidth;
 
+  const allColsWidth = gantt.taskListTableInstance.getAllColsWidth();
   gantt.taskTableWidth =
-    gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
+    (Array.isArray(allColsWidth) ? allColsWidth.reduce((a, b) => a + b, 0) : allColsWidth) +
+    gantt.parsedOptions.outerFrameStyle.borderLineWidth;
   if (gantt.options?.taskListTable?.maxTableWidth) {
     gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
   }
@@ -134,10 +136,20 @@ function _syncTableSize(gantt: Gantt) {
     return;
   }
   gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
-  gantt.taskListTableInstance.setCanvasSize(
-    gantt.taskTableWidth,
-    gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
-  );
+  const tableHeightValue =
+    typeof gantt.tableNoFrameHeight === 'number'
+      ? gantt.tableNoFrameHeight
+      : Array.isArray(gantt.tableNoFrameHeight)
+      ? gantt.tableNoFrameHeight[0] ?? 0
+      : Number(gantt.tableNoFrameHeight) || 0;
+  const tableHeight: number = Number(tableHeightValue) || 0;
+  const borderWidth =
+    typeof gantt.parsedOptions.outerFrameStyle.borderLineWidth === 'number'
+      ? gantt.parsedOptions.outerFrameStyle.borderLineWidth
+      : Array.isArray(gantt.parsedOptions.outerFrameStyle.borderLineWidth)
+      ? gantt.parsedOptions.outerFrameStyle.borderLineWidth[0] ?? 0
+      : 0;
+  gantt.taskListTableInstance.setCanvasSize(gantt.taskTableWidth, tableHeight + borderWidth * 2);
   gantt._updateSize();
   updateSplitLineAndResizeLine(gantt);
 

@@ -108,7 +108,7 @@ export class MarkLine {
             cornerRadius: contentStyle.cornerRadius || [0, 2, 2, 0]
           });
           textGroup.name = 'mark-line-content';
-          textGroup.data = line;
+          (textGroup as any).data = line;
           markLineGroup.appendChild(textGroup);
           // 创建内容
           const text = new Text({
@@ -124,7 +124,7 @@ export class MarkLine {
               dx: textMaxLineWidth / 4,
               dy: -textContainerHeight / 4
             }
-          });
+          } as any);
           textGroup.appendChild(text);
         }
       });

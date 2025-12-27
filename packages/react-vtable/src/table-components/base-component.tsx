@@ -24,7 +24,7 @@ export const createComponent = <T extends ComponentProps>(
   const ignoreKeys = ['id', 'updateId', 'componentIndex', 'children'];
   const notOptionKeys = supportedEvents ? Object.keys(supportedEvents).concat(ignoreKeys) : ignoreKeys;
 
-  const Comp: React.FC<T> = (props: T) => {
+  const Comp = (props: T): React.ReactElement | null => {
     const context = useContext(RootTableContext);
     // const id = React.useRef<string | number>(isNil(props.id) ? uid(optionName) : props.id);
 
@@ -38,7 +38,7 @@ export const createComponent = <T extends ComponentProps>(
 
       // rebind events after table render
       const hasPrevEventsBinded = supportedEvents
-        ? bindEventsToTable(context.table, props, eventsBinded.current, supportedEvents)
+        ? bindEventsToTable(context.table, props as any, eventsBinded.current as any, supportedEvents)
         : false;
       if (hasPrevEventsBinded) {
         eventsBinded.current = props;
@@ -55,7 +55,7 @@ export const createComponent = <T extends ComponentProps>(
     useEffect(() => {
       return () => {
         if (supportedEvents) {
-          bindEventsToTable(context.table, null, eventsBinded.current, supportedEvents);
+          bindEventsToTable(context.table, null, eventsBinded.current as any, supportedEvents);
         }
         // deleteToContext(context, id.current, optionName, isSingle);
       };
@@ -72,7 +72,8 @@ export const createComponent = <T extends ComponentProps>(
     //     }
     //   });
     // }
-    return parseCustomChildren(props.children, props.componentId);
+    const result = parseCustomChildren(props.children, props.componentId);
+    return result as React.ReactElement | null;
   };
 
   Comp.displayName = componentName;

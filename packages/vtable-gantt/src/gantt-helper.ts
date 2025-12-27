@@ -863,6 +863,7 @@ export function findRecordByTaskKey(
       }
     }
   }
+  return undefined;
 }
 
 export function clearRecordLinkInfos(records: any[], childrenField: string = 'children') {
@@ -1154,6 +1155,7 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
       }
     }
   }
+  return undefined;
 }
 
 export function getNodeClickPos(marklineIconNode: Group, gantt: Gantt) {

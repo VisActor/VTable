@@ -631,6 +631,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return (record.children?.length || 1) * this.parsedOptions.rowHeight;
         }
+        return this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -641,6 +642,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
         }
+        return this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -651,6 +653,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
         }
+        return this.parsedOptions.rowHeight;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -1455,7 +1458,7 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(date, format);
+    return formatDate(date instanceof Date ? date : new Date(date), format);
   }
 
   // 查询当前的 millisecondsPerPixel 值

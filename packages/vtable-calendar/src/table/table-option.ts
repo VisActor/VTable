@@ -136,4 +136,6 @@ function getSundayDate(record: DateRecord) {
     // delete 6 day
     return addDays(lastDay, -5);
   }
+  // 默认返回最后一天
+  return lastDay;
 }

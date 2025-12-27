@@ -5,7 +5,7 @@ import type { BaseTableProps } from './base-table';
 import { createTable } from './base-table';
 
 export interface PivotTableProps
-  extends Omit<BaseTableProps, 'records'>,
+  extends Omit<BaseTableProps, 'records' | 'columnWidthConfig' | 'columns' | 'dragOrder' | 'resize'>,
     Omit<PivotTableConstructorOptions, 'container'> {}
 
 export const PivotTableSimple = createTable<React.PropsWithChildren<PivotTableProps>>('PivotTable', {
