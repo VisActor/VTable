@@ -1075,25 +1075,15 @@ export class StateManager {
     if (Math.abs(deltaX) >= 1) {
       const startWidth = this._gantt.taskTableWidth;
       let width = startWidth + deltaX;
-      const allColsWidth = this._gantt.taskListTableInstance.getAllColsWidth();
-      const colsWidth = Array.isArray(allColsWidth) ? allColsWidth.reduce((a, b) => a + b, 0) : allColsWidth;
       const maxWidth = Math.min(
-        colsWidth + this._gantt.parsedOptions.outerFrameStyle.borderLineWidth,
+        this._gantt.taskListTableInstance.getAllColsWidth() +
+          (this._gantt.parsedOptions.outerFrameStyle.borderLineWidth as number),
         this._gantt.options.taskListTable.maxTableWidth ?? 100000
       );
-      const minTableWidth = this._gantt.options.taskListTable.minTableWidth;
-      const minWidthValue: number = Array.isArray(minTableWidth)
-        ? minTableWidth[0] ?? 0
-        : typeof minTableWidth === 'number'
-        ? minTableWidth
-        : 0;
-      const borderLineWidth =
-        typeof this._gantt.parsedOptions.outerFrameStyle.borderLineWidth === 'number'
-          ? this._gantt.parsedOptions.outerFrameStyle.borderLineWidth
-          : Array.isArray(this._gantt.parsedOptions.outerFrameStyle.borderLineWidth)
-          ? this._gantt.parsedOptions.outerFrameStyle.borderLineWidth[0] ?? 0
-          : 0;
-      const minWidth = Math.max(borderLineWidth, minWidthValue);
+      const minWidth = Math.max(
+        this._gantt.parsedOptions.outerFrameStyle.borderLineWidth as number,
+        this._gantt.options.taskListTable.minTableWidth ?? 0
+      );
       if (deltaX > 0 && width > maxWidth) {
         width = maxWidth;
       }
