@@ -1,6 +1,39 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 17 Dec 2025 09:28:21 GMT and should not be manually modified.
+This log was last generated on Sun, 28 Dec 2025 05:40:27 GMT and should not be manually modified.
+
+## 1.22.9
+Sun, 28 Dec 2025 05:40:27 GMT
+
+### Updates
+
+- fix: toggleSelectAll only in searched item. fix#4838
+- Revert "feat: vtable mcp cli and server"
+
+This reverts commit f0a179f7c7e277ee6179b96096f6fc71b1678e88.
+
+
+- fix: fix the issue with second-level display length
+
+
+- refactor: recognize millisecond for gantt taskbar
+
+
+- fix: pivot chart no left axis case
+
+
+- fix: show dimension tooltip delay logic error
+
+
+- refactor: when no axis compute col width logic
+
+
+- refactor: when set editCellTrigger keydown input chinese first letter problem #4847
+
+
+- fix: editor support keydown chinese #4847
+
+
 
 ## 1.22.8
 Wed, 17 Dec 2025 09:28:21 GMT
