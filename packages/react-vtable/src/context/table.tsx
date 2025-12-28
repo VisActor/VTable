@@ -11,7 +11,7 @@ const TableContext = React.createContext<TableContextType>(null);
 TableContext.displayName = 'TableContext';
 
 export function withTableInstance<T>(Component: typeof React.Component) {
-  const Com = React.forwardRef<any, T>((props: T, ref) => {
+  const Com = React.forwardRef<any, any>((props: any, ref) => {
     return (
       <TableContext.Consumer>
         {(ctx: TableContextType) => <Component ref={ref} table={ctx.table} {...props} />}

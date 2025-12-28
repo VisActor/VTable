@@ -232,7 +232,7 @@ function bindTableGroupListener(event: EventManager) {
       if (gantt.parsedOptions.markLineCreateOptions?.markLineCreatable) {
         if (
           marklineCreateGroupTarget &&
-          !judgeIfHasMarkLine(marklineCreateGroupTarget.data, gantt.parsedOptions.markLine)
+          !judgeIfHasMarkLine((marklineCreateGroupTarget as any).data, gantt.parsedOptions.markLine)
         ) {
           if (scene._gantt.stateManager.marklineIcon.target !== marklineCreateGroupTarget) {
             scene._gantt.stateManager.marklineIcon.target = marklineCreateGroupTarget;
@@ -246,11 +246,12 @@ function bindTableGroupListener(event: EventManager) {
       }
 
       if (taskBarTarget) {
-        if (scene._gantt.stateManager.hoverTaskBar.target !== (taskBarTarget as any as GanttTaskBarNode)) {
-          scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
-          const taskIndex = taskBarTarget.task_index;
-          const sub_task_index = taskBarTarget.sub_task_index;
-          const record = taskBarTarget.record;
+        const taskBarNode = taskBarTarget as any as GanttTaskBarNode;
+        if (scene._gantt.stateManager.hoverTaskBar.target !== taskBarNode) {
+          scene._gantt.stateManager.hoverTaskBar.target = taskBarNode;
+          const taskIndex = taskBarNode.task_index;
+          const sub_task_index = taskBarNode.sub_task_index;
+          const record = taskBarNode.record;
           // const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
           if (record.type !== TaskType.PROJECT) {
             stateManager.showTaskBarHover();
@@ -374,10 +375,13 @@ function bindTableGroupListener(event: EventManager) {
         }
         return false;
       });
-      downBarNode =
-        downBarNode ??
-        downLeftLinkPointNode?.parent?.attribute.attachedToTaskBarNode ??
-        downRightLinkPointNode?.parent?.attribute.attachedToTaskBarNode;
+      if (downLeftLinkPointNode && (downLeftLinkPointNode as any).parent) {
+        downBarNode = downBarNode ?? ((downLeftLinkPointNode as any).parent.attribute as any)?.attachedToTaskBarNode;
+      }
+      if (downRightLinkPointNode && (downRightLinkPointNode as any).parent) {
+        downBarNode = downBarNode ?? ((downRightLinkPointNode as any).parent.attribute as any)?.attachedToTaskBarNode;
+      }
+      // TypeScript: downLeftLinkPointNode and downRightLinkPointNode may be undefined, but we've handled it with optional chaining
       if (scene._gantt.stateManager.isCreatingDependencyLine() && !downBarNode) {
         //如果正在创建依赖链，但是鼠标没有一定到目标taskBar上
         stateManager.hideSecondTaskBarSelectedBorder();
@@ -478,11 +482,12 @@ function bindTableGroupListener(event: EventManager) {
 
       if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
-        stateManager.showTaskBarSelectedBorder(taskBarTarget);
+        const taskBarNode = taskBarTarget as any as GanttTaskBarNode;
+        stateManager.showTaskBarSelectedBorder(taskBarNode);
         if (gantt.hasListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR)) {
           // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-          const taskIndex = taskBarTarget.task_index;
-          const sub_task_index = taskBarTarget.sub_task_index;
+          const taskIndex = taskBarNode.task_index;
+          const sub_task_index = taskBarNode.sub_task_index;
           const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
           gantt.fireListeners(GANTT_EVENT_TYPE.CLICK_TASK_BAR, {
             federatedEvent: e,
@@ -633,8 +638,9 @@ function bindTableGroupListener(event: EventManager) {
     if (isClickBar) {
       if (gantt.hasListeners(GANTT_EVENT_TYPE.CONTEXTMENU_TASK_BAR)) {
         // const taskIndex = getTaskIndexByY(e.offset.y, gantt);
-        const taskIndex = taskBarTarget.task_index;
-        const sub_task_index = taskBarTarget.sub_task_index;
+        const taskBarNode = taskBarTarget as any as GanttTaskBarNode;
+        const taskIndex = taskBarNode.task_index;
+        const sub_task_index = taskBarNode.sub_task_index;
         const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
         gantt.fireListeners(GANTT_EVENT_TYPE.CONTEXTMENU_TASK_BAR, {
           federatedEvent: e,

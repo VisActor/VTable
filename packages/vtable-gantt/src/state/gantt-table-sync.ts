@@ -123,7 +123,8 @@ function _syncTableSize(gantt: Gantt) {
   const oldTaskTableWidth: number = gantt.taskTableWidth;
 
   gantt.taskTableWidth =
-    gantt.taskListTableInstance.getAllColsWidth() + gantt.parsedOptions.outerFrameStyle.borderLineWidth;
+    gantt.taskListTableInstance.getAllColsWidth() + (gantt.parsedOptions.outerFrameStyle.borderLineWidth as number);
+
   if (gantt.options?.taskListTable?.maxTableWidth) {
     gantt.taskTableWidth = Math.min(gantt.options?.taskListTable?.maxTableWidth, gantt.taskTableWidth);
   }
@@ -136,7 +137,7 @@ function _syncTableSize(gantt: Gantt) {
   gantt.element.style.left = gantt.taskTableWidth ? `${gantt.taskTableWidth}px` : '0px';
   gantt.taskListTableInstance.setCanvasSize(
     gantt.taskTableWidth,
-    gantt.tableNoFrameHeight + gantt.parsedOptions.outerFrameStyle.borderLineWidth * 2
+    gantt.tableNoFrameHeight + (gantt.parsedOptions.outerFrameStyle.borderLineWidth as number) * 2
   );
   gantt._updateSize();
   updateSplitLineAndResizeLine(gantt);

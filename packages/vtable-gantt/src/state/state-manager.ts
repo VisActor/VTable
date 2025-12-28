@@ -522,10 +522,10 @@ export class StateManager {
               (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
                 target.record[this._gantt.parsedOptions.startDateField]
             ) {
-              insertAfterNode = (insertAfterNode as Group).nextSibling;
+              insertAfterNode = (insertAfterNode as Group).nextSibling as any;
             }
             if (insertAfterNode !== target) {
-              (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
+              ((insertAfterNode as Group).parent as any).insertAfter(target, insertAfterNode);
             }
           } else if (dateChanged === 'left') {
             let insertBeforeNode = target;
@@ -535,10 +535,10 @@ export class StateManager {
               (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
                 target.record[this._gantt.parsedOptions.startDateField]
             ) {
-              insertBeforeNode = (insertBeforeNode as Group).previousSibling;
+              insertBeforeNode = (insertBeforeNode as Group).previousSibling as any;
             }
             if (insertBeforeNode !== target) {
-              (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
+              ((insertBeforeNode as Group).parent as any).insertBefore(target, insertBeforeNode);
             }
           }
         }
@@ -1076,11 +1076,12 @@ export class StateManager {
       const startWidth = this._gantt.taskTableWidth;
       let width = startWidth + deltaX;
       const maxWidth = Math.min(
-        this._gantt.taskListTableInstance.getAllColsWidth() + this._gantt.parsedOptions.outerFrameStyle.borderLineWidth,
+        this._gantt.taskListTableInstance.getAllColsWidth() +
+          (this._gantt.parsedOptions.outerFrameStyle.borderLineWidth as number),
         this._gantt.options.taskListTable.maxTableWidth ?? 100000
       );
       const minWidth = Math.max(
-        this._gantt.parsedOptions.outerFrameStyle.borderLineWidth,
+        this._gantt.parsedOptions.outerFrameStyle.borderLineWidth as number,
         this._gantt.options.taskListTable.minTableWidth ?? 0
       );
       if (deltaX > 0 && width > maxWidth) {

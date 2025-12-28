@@ -198,7 +198,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
         const width = colWidths[col];
         if (vtable.isPivotTable()) {
           const path = (table as PivotTable).getCellHeaderPaths(col, table.columnHeaderLevelCount);
-          let dimensions;
+          let dimensions: TYPES.IDimensionInfo[];
           if (path.cellLocation === 'rowHeader') {
             dimensions = path.rowHeaderPaths as TYPES.IDimensionInfo[];
           } else {
@@ -371,7 +371,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
     <RootTableContext.Provider value={tableContext.current}>
       {toArray(props.children).map((child: React.ReactNode, index: number) => {
         if (typeof child === 'string') {
-          return;
+          return null;
         }
 
         const childId = getComponentId(child, index);

@@ -1,6 +1,8 @@
 import type { BaseComponentProps } from '../base-component';
 import { createComponent } from '../base-component';
-import type { IRowDimension, IColumnDimension } from '@visactor/vtable';
+import type { TYPES } from '@visactor/vtable';
+type IRowDimension = TYPES.IRowDimension;
+type IColumnDimension = TYPES.IColumnDimension;
 
 export type RowPivotDimensionProps = IRowDimension & BaseComponentProps;
 export type ColumnPivotDimensionProps = IColumnDimension & BaseComponentProps;
