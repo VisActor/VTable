@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@visactor/vtable": ["../vtable/es/index.d.ts"],
       "@visactor/vtable/*": ["../vtable/es/*"]
@@ -18,6 +19,6 @@
     "sourceMap": true,
     "declarationMap": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["node_modules", "es", "cjs"]
 }

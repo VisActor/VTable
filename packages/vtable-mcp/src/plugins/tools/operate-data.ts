@@ -68,7 +68,9 @@ export const operateDataTools = [
 返回：
   'Success' 字符串`,
     inputSchema: z.object({
-      record: z.any(),
+      record: z.any().refine(val => val !== undefined, {
+        message: 'record is required'
+      }),
       recordIndex: recordIndexSchema
     }),
     execute: async (params: { record: any; recordIndex?: number | number[] }) => {

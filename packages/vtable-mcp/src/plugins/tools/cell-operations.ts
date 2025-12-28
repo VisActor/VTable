@@ -154,8 +154,6 @@ export const cellOperationTools = [
       if (typeof table.getCellValue !== 'function') {
         throw new Error('VTable instance does not support getCellValue');
       }
-      const getCellValue = table.getCellValue as BaseTableAPI['getCellValue'];
-
       const cells = Array.isArray((params as any).cells) ? (params as any).cells : [(params as any).cells];
 
       // 批量读取单元格值
@@ -163,7 +161,7 @@ export const cellOperationTools = [
         row: cell.row,
         col: cell.col,
         // getCellValue(col, row) - 注意参数顺序！
-        value: getCellValue(cell.col, cell.row)
+        value: table.getCellValue!(cell.col, cell.row)
       }));
     }
   },
@@ -184,7 +182,7 @@ export const cellOperationTools = [
   - get_table_info({})`,
 
     // ⭐ 添加 Zod 验证
-    inputSchema: z.object({}).describe('无需参数'),
+    inputSchema: z.object({}).passthrough().describe('无需参数'),
 
     /**
      * 执行获取表格信息操作

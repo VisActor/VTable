@@ -28,7 +28,8 @@
     "preview:demo": "vite preview --root examples --host",
     "test:mcp": "node scripts/mcp-smoke.js full",
     "test:mcp:ws": "node scripts/mcp-smoke.js ws",
-    "test:mcp:vtable-client": "node scripts/mcp-smoke.js vtable-client"
+    "test:mcp:vtable-client": "node scripts/mcp-smoke.js vtable-client",
+    "test:e2e": "node scripts/e2e-test.js"
   },
   "dependencies": {
     "@visactor/vtable-mcp": "workspace:*",
@@ -36,7 +37,8 @@
     "express": "^4.18.0",
     "cors": "^2.8.5",
     "uuid": "^9.0.0",
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.7",
+    "canvas": "3.1.0"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",
