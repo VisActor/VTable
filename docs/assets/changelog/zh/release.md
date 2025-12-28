@@ -5,26 +5,18 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: toggleSelectAll only in searched item. fix[#4838](https://github.com/VisActor/VTable/issues/4838)
-- **@visactor/vtable**: fix the issue with second-level display length
-- **@visactor/vtable**: pivot chart no left axis case
-- **@visactor/vtable**: show dimension tooltip delay logic error
-- **@visactor/vtable**: editor support keydown chinese [#4847](https://github.com/VisActor/VTable/issues/4847)
-- **@visactor/vtable**: fix filter plugin with sub header
+- **@visactor/vtable**: toggleSelectAll 应该只选中当前选项. fix[#4838](https://github.com/VisActor/VTable/issues/4838)
+- **@visactor/vtable**: 修复二级显示长度问题
+- **@visactor/vtable**: 修复透视图没有左侧轴的情况
+- **@visactor/vtable**: 修复维度提示延迟逻辑错误
+- **@visactor/vtable**: 修复编辑器中文输入法第一个字符识别问题 [#4847](https://github.com/VisActor/VTable/issues/4847)
+- **@visactor/vtable**: 修复过滤插件与子标题的问题
 
 **🔨 功能重构**
 
-- **@visactor/vtable-gantt**: recognize millisecond for gantt taskbar
-- **@visactor/vtable**: when no axis compute col width logic
-- **@visactor/vtable**: when set editCellTrigger keydown input chinese first letter problem [#4847](https://github.com/VisActor/VTable/issues/4847)
-
-**🔖 其他**
-
-- **@visactor/vtable**: Revert "feat: vtable mcp cli and server"
-
-This reverts commit f0a179f7c7e277ee6179b96096f6fc71b1678e88.
-
-
+- **@visactor/vtable-gantt**: 识别甘特图任务栏毫秒
+- **@visactor/vtable**: 修复没有轴时计算列宽逻辑
+- **@visactor/vtable**: 修复编辑器中文输入法第一个字符识别问题 [#4847](https://github.com/VisActor/VTable/issues/4847)
 
 [更多详情请查看 v1.22.9](https://github.com/VisActor/VTable/releases/tag/v1.22.9)
 

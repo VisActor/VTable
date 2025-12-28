@@ -18,14 +18,6 @@
 - **@visactor/vtable**: when no axis compute col width logic
 - **@visactor/vtable**: when set editCellTrigger keydown input chinese first letter problem [#4847](https://github.com/VisActor/VTable/issues/4847)
 
-**🔖 other**
-
-- **@visactor/vtable**: Revert "feat: vtable mcp cli and server"
-
-This reverts commit f0a179f7c7e277ee6179b96096f6fc71b1678e88.
-
-
-
 [more detail about v1.22.9](https://github.com/VisActor/VTable/releases/tag/v1.22.9)
 
 # v1.22.8
