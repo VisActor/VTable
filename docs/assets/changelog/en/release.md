@@ -1,3 +1,25 @@
+# v1.22.9
+
+2025-12-28
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: toggleSelectAll only in searched item. fix[#4838](https://github.com/VisActor/VTable/issues/4838)
+- **@visactor/vtable**: fix the issue with second-level display length
+- **@visactor/vtable**: pivot chart no left axis case
+- **@visactor/vtable**: show dimension tooltip delay logic error
+- **@visactor/vtable**: editor support keydown chinese [#4847](https://github.com/VisActor/VTable/issues/4847)
+- **@visactor/vtable**: fix filter plugin with sub header
+
+**🔨 Refactor**
+
+- **@visactor/vtable-gantt**: recognize millisecond for gantt taskbar
+- **@visactor/vtable**: when no axis compute col width logic
+- **@visactor/vtable**: when set editCellTrigger keydown input chinese first letter problem [#4847](https://github.com/VisActor/VTable/issues/4847)
+
+[more detail about v1.22.9](https://github.com/VisActor/VTable/releases/tag/v1.22.9)
+
 # v1.22.8
 
 2025-12-17
