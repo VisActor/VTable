@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: List Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
 order: 1-1

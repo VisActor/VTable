@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: 基本表格分组展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group.jpeg
 order: 1-2

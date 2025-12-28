@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: Basic table tree display (lazy loading of child node data)
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree-lazy-load-en.gif
 link: table_type/List_table/tree_list

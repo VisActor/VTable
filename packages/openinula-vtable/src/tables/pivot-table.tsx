@@ -7,4 +7,4 @@ export interface PivotTableProps
   extends Omit<BaseTableProps, 'records' | 'type'>,
     Omit<PivotTableConstructorOptions, 'container'> {}
 
-export const PivotTable = createTable<Inula.PropsWithChildren<PivotTableProps>>('PivotTable', 'pivot-table');
+export const PivotTable = createTable<PivotTableProps & { children?: Inula.InulaNode }>('PivotTable', 'pivot-table');

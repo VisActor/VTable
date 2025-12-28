@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: Basic table grouping checkbox
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group-checkbox.gif
 order: 1-2

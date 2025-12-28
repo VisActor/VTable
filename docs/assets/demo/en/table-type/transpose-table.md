@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: List Table
 title: Transpose Table
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/transpose.png
 order: 1-3

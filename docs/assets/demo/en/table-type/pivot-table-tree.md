@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: Pivot Table
 title: Pivot Table Tree
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
 link: table_type/Pivot_table/pivot_table_tree

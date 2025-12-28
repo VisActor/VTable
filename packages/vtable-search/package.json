@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-search",
-  "version": "1.22.8",
+  "version": "1.22.9",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.19.1"
+    "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

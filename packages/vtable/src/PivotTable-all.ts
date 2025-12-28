@@ -8,6 +8,7 @@ import {
   registerTooltip,
   registerAnimation
 } from './components';
+import { registerCustomCellStylePlugin } from './plugins/custom-cell-style'
 import {
   registerChartCell,
   registerCheckboxCell,
@@ -25,6 +26,7 @@ registerLegend();
 registerMenu();
 registerTitle();
 registerTooltip();
+registerCustomCellStylePlugin();
 registerAnimation();
 registerCheckboxCell();
 registerImageCell();

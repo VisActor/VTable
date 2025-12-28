@@ -1,6 +1,6 @@
 ---
 category: examples
-group: table-type
+group: Pivot Table
 title: Pivot Table Row Header Tree Mode
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.gif
 link: data_analysis/pivot_table_tree

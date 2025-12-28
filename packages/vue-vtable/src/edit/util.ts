@@ -45,12 +45,15 @@ export function getRenderEditorColumnKeyField(column: any) {
  * @param {any} currentContext
  * @return {*}
  */
-export function getRenderEditor(create?: boolean, currentContext?: any) {
-  let renderEditor = register.editor(DYNAMIC_RENDER_EDITOR) as DynamicRenderEditor;
+export function getRenderEditor(create?: boolean, currentContext?: any): DynamicRenderEditor | undefined {
+  const registeredEditor = register.editor(DYNAMIC_RENDER_EDITOR);
+  let renderEditor: DynamicRenderEditor | undefined = registeredEditor
+    ? (registeredEditor as unknown as DynamicRenderEditor)
+    : undefined;
   if (!renderEditor && !!create) {
     // 注册自定义编辑器
     renderEditor = new DynamicRenderEditor(currentContext);
-    register.editor(DYNAMIC_RENDER_EDITOR, renderEditor);
+    register.editor(DYNAMIC_RENDER_EDITOR, renderEditor as any);
   }
   return renderEditor;
 }

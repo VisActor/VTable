@@ -15,7 +15,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
   setSheet(sheet: VTableSheet): void {
     this.sheet = sheet;
   }
-  getInputElement(): HTMLElement {
+  getInputElement(): HTMLInputElement {
     return this.element;
   }
   targetIsOnEditor(target: HTMLElement): boolean {

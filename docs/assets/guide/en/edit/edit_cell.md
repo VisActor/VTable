@@ -188,6 +188,8 @@ In the above example, we created a custom editor named `DateEditor` and implemen
 
 ```ts
 export interface IEditor<V = any> {
+  /** Prepare the edit environment, when the edit trigger is keydown in vtable, the mouse click on the cell will call this method, otherwise the first character of the Chinese input method will be treated as an English character */
+  prepareEdit?: (context: PrepareEditContext<V>) => void;
   /** Called when cell enters edit mode. */
   onStart?: (context: EditContext<V>) => void;
   /** called when cell exits edit mode. */
@@ -330,6 +332,11 @@ The basic table supports editing the display title in the header. You can enable
 **In a pivot table, when a cell in the body corresponds to only one source data record, the field value of the record will be modified accordingly after editing. However, when the cell corresponds to an indicator value that aggregates multiple records, it does not support corresponding modifications to the source data.**
 
 The source data corresponding to a specific cell can be obtained through the interface `getCellOriginRecord`
+
+
+## edit trigger timing is keydown notice
+
+If the first pinyin is recognized as an English character under the Chinese input method, please check if there is a prepareEdit function. When the edit trigger is keydown, the mouse click on the cell will call this method to create an input box in advance, and set the input box to invisible, waiting for user input.
 
 ## Summary
 

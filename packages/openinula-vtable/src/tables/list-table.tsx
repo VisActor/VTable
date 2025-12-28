@@ -7,4 +7,4 @@ export interface ListTableProps
   extends Omit<BaseTableProps, 'records' | 'type'>,
     Omit<ListTableConstructorOptions, 'container'> {}
 
-export const ListTable = createTable<Inula.PropsWithChildren<ListTableProps>>('ListTable', 'list-table');
+export const ListTable = createTable<ListTableProps & { children?: Inula.InulaNode }>('ListTable', 'list-table');

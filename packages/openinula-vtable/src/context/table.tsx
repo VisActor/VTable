@@ -20,7 +20,7 @@ export function withTableInstance<T>(Component: typeof Inula.Component) {
       </TableContext.Consumer>
     );
   });
-  Com.displayName = Component.name;
+  (Com as any).displayName = Component.name;
   return Com;
 }
 

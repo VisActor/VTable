@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "1.22.8",
+  "version": "1.22.9",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~0.19.1",
+    "@visactor/vutils": "~1.0.17",
     "file-saver": "2.0.5",
     "@types/file-saver": "2.0.7",
     "exceljs": "4.4.0"

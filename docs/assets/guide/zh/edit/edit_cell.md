@@ -193,6 +193,8 @@ VTable.register.editor('custom-date', custom_date_editor);
 
 ```ts
 export interface IEditor<V = any> {
+  /** 准备编辑环境,vtable中编辑时机eeditCellTrigger为keydown时,鼠标点击单元格将调用此方法，否则中文输入法第一个字符会被当做英文字符 */
+  prepareEdit?: (context: PrepareEditContext<V>) => void;
   /** * 单元格进入编辑状态时调用 */
   onStart: (context: EditContext<V>) => void;
   /** * 单元格退出编辑状态时调用 */
@@ -331,6 +333,9 @@ interface ListTableAPI {
 **在透视表中，当 body 中某个单元格对应的源数据 records 只有一条的时候当编辑后 会对应修改 record 的字段值。但是当单元格对应聚合了多条 records 数据的指标值时，是不支持对应修改到源数据的。**
 
 具体单元格对应的源数据可以通过接口`getCellOriginRecord`来获取。
+
+## 编辑时机为keydown时注意事项
+ 中文输入法下如果出现第一个拼音被识别成了英文字符，那么请检查是否有prepareEdit 函数。在编辑时机为keydown时，鼠标点击单元格将调用此方法，提前将创建输入框，并将输入框设置为不可见，等待用户输入。
 
 ## 总结
 
