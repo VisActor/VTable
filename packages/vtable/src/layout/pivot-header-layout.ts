@@ -4042,6 +4042,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const state = {
       vtable_selected: {
         filter: (datum: any) => {
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.selectedStateFilter(datum);
+          }
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {
@@ -4067,6 +4070,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       },
       vtable_selected_reverse: {
         filter: (datum: any) => {
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedReverseStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.selectedReverseStateFilter(datum);
+          }
           if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
             const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
               for (const itemKey in item) {

@@ -195,7 +195,7 @@ export class Chart extends Rect {
           }
         },
         componentShowContent:
-          (table.options as PivotChartConstructorOptions).chartDimensionLinkage &&
+          (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip &&
           this.attribute.spec.type !== 'scatter'
             ? {
                 tooltip: {
@@ -234,7 +234,7 @@ export class Chart extends Rect {
         Chart.temp = 1;
       }, 0);
     });
-    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage) {
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip) {
       this.activeChartInstance.on('dimensionHover', (params: any) => {
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;

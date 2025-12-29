@@ -600,6 +600,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
       top?: LineAxisAttributes['labelHoverOnAxis'];
       bottom?: LineAxisAttributes['labelHoverOnAxis'];
     };
+    selectedStateFilter?: (datum: any) => boolean;
+    selectedReverseStateFilter?: (datum: any) => boolean;
   };
 }
 export interface PivotTableAPI extends BaseTableAPI {

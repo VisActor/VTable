@@ -721,7 +721,7 @@ export class Scenegraph {
 
       (cellGroup?.firstChild as any)?.deactivate?.(
         this.table,
-        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip
           ? {
               releaseChartInstance:
                 chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
