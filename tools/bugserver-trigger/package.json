@@ -8,11 +8,11 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-gantt": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-plugins": "workspace:*",
-    "@visactor/vtable-sheet": "workspace:*"
+    "@visactor/vtable": "workspace:1.22.10-alpha.0",
+    "@visactor/vtable-gantt": "workspace:1.22.10-alpha.0",
+    "@visactor/vtable-editors": "workspace:1.22.10-alpha.0",
+    "@visactor/vtable-plugins": "workspace:1.22.10-alpha.0",
+    "@visactor/vtable-sheet": "workspace:1.22.10-alpha.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",
