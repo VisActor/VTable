@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.9",
+      "tag": "@visactor/vtable_v1.22.9",
+      "date": "Sun, 28 Dec 2025 05:40:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: toggleSelectAll only in searched item. fix#4838"
+          },
+          {
+            "comment": "Revert \"feat: vtable mcp cli and server\"\n\nThis reverts commit f0a179f7c7e277ee6179b96096f6fc71b1678e88.\n\n"
+          },
+          {
+            "comment": "fix: fix the issue with second-level display length\n\n"
+          },
+          {
+            "comment": "refactor: recognize millisecond for gantt taskbar\n\n"
+          },
+          {
+            "comment": "fix: pivot chart no left axis case\n\n"
+          },
+          {
+            "comment": "fix: show dimension tooltip delay logic error\n\n"
+          },
+          {
+            "comment": "refactor: when no axis compute col width logic\n\n"
+          },
+          {
+            "comment": "refactor: when set editCellTrigger keydown input chinese first letter problem #4847\n\n"
+          },
+          {
+            "comment": "fix: editor support keydown chinese #4847\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.8",
       "tag": "@visactor/vtable_v1.22.8",
       "date": "Wed, 17 Dec 2025 09:28:21 GMT",
