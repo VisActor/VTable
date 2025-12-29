@@ -21,17 +21,13 @@
 import { mcpToolRegistry } from './mcp-tool-registry';
 
 /**
- * Get MCP tool definitions for configuration
- */
-export function getMcpConfigTools() {
-  return mcpToolRegistry.getJsonSchemaTools();
-}
-
-/**
  * Get complete MCP server configuration
+ *
+ * Returns a complete server configuration object with all available tools.
+ * This is useful for external MCP clients that need a full server description.
  */
 export function getMcpServerConfig() {
-  const tools = getMcpConfigTools();
+  const tools = mcpToolRegistry.getJsonSchemaTools();
 
   return {
     name: 'VTable MCP Server',
@@ -46,20 +42,14 @@ export function getMcpServerConfig() {
 }
 
 /**
- * Export for direct import in mcp.json
- * Usage: import { MCP_CONFIG_TOOLS } from '@visactor/vtable-mcp/mcp-config'
- */
-export const MCP_CONFIG_TOOLS = getMcpConfigTools();
-
-/**
  * Export server mappings for advanced configuration
+ *
+ * Note: 同名同参：不再提供任何 mapping/参数转换能力
  */
-// 同名同参：不再提供任何 mapping/参数转换能力
 export const MCP_SERVER_MAPPINGS = {};
 
 // Default export for convenience
 export default {
-  tools: MCP_CONFIG_TOOLS,
-  mappings: MCP_SERVER_MAPPINGS,
-  getMcpServerConfig
+  getMcpServerConfig,
+  mappings: MCP_SERVER_MAPPINGS
 };

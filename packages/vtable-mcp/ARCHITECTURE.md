@@ -228,8 +228,8 @@
 ### 4) `packages/vtable-mcp/src/mcp-config.ts`
 - **是什么**：给外部（例如 Cursor `mcp.json`）提供“可直接使用”的工具 schema 导出。
 - **做什么**：
-  - `getMcpConfigTools()` / `MCP_CONFIG_TOOLS`：导出所有 exportable tools 的 JSON schema 定义
   - `getMcpServerConfig()`：导出一个包含 tools 的 server 描述对象
+  - 注意：工具定义应直接使用 `mcpToolRegistry.getJsonSchemaTools()` 获取
 - **与 MCP/页面关系**：
   - 它本质是“配置/导出层”，不参与运行时执行。
   - 用于让 host/集成方更方便地拿到工具清单与 schema。

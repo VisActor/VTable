@@ -19,6 +19,6 @@
     "sourceMap": true,
     "declarationMap": true
   },
-  "include": ["src/**/*", "__tests__/**/*"],
-  "exclude": ["node_modules", "es", "cjs"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "es", "cjs", "__tests__"]
 }

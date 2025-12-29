@@ -186,10 +186,3 @@ export class McpToolRegistry {
  * Global MCP Tool Registry instance
  */
 export const mcpToolRegistry = new McpToolRegistry();
-
-/**
- * Export for direct use in mcp.json configuration
- */
-export const MCP_TOOL_DEFINITIONS = mcpToolRegistry.getJsonSchemaTools();
-
-// 同名同参：不再导出任何 mapping/transform API

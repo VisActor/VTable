@@ -12,10 +12,7 @@ module.exports = {
       diagnostics: {
         exclude: ['**']
       },
-      tsconfig: {
-        resolveJsonModule: true,
-        esModuleInterop: true
-      }
+      tsconfig: './tsconfig.test.json'
     },
     __DEV__: true
   },

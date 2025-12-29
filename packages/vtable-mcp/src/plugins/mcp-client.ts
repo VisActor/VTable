@@ -179,20 +179,65 @@ export class MCPClient {
     const fixed: any = {};
     for (const [key, value] of Object.entries(params)) {
       if (typeof value === 'string') {
-        // 尝试解析字符串化的数组
+        // 尝试解析字符串化的数组或对象
         try {
+          // 先尝试直接 JSON.parse
           const parsed = JSON.parse(value);
+          // 如果解析成功，使用解析后的值（可能是数组或对象）
+          // 并且递归处理解析后的值，以防它内部还有字符串化的内容
           if (Array.isArray(parsed)) {
-            fixed[key] = parsed;
+            fixed[key] = parsed.map(item =>
+              typeof item === 'object' && item !== null ? this.fixSerializedParams(item) : item
+            );
+            continue;
+          } else if (typeof parsed === 'object' && parsed !== null) {
+            fixed[key] = this.fixSerializedParams(parsed);
             continue;
           }
         } catch {
-          // 不是有效的 JSON，保持原值
+          // JSON.parse 失败，可能是使用了单引号，尝试修复
+          try {
+            // 尝试将单引号替换为双引号
+            // 使用正则表达式匹配键名和字符串值，将单引号替换为双引号
+            const fixedJson = value.replace(/'/g, '"');
+            const parsed = JSON.parse(fixedJson);
+            if (Array.isArray(parsed)) {
+              fixed[key] = parsed.map(item =>
+                typeof item === 'object' && item !== null ? this.fixSerializedParams(item) : item
+              );
+              continue;
+            } else if (typeof parsed === 'object' && parsed !== null) {
+              fixed[key] = this.fixSerializedParams(parsed);
+              continue;
+            }
+          } catch {
+            // 仍然无法解析，尝试使用 Function 构造函数（更安全 than eval）
+            try {
+              // 使用 Function 构造函数来解析，避免 eval 的安全问题
+              const parsed = new Function('return ' + value)();
+              if (Array.isArray(parsed)) {
+                fixed[key] = parsed.map(item =>
+                  typeof item === 'object' && item !== null ? this.fixSerializedParams(item) : item
+                );
+                continue;
+              } else if (typeof parsed === 'object' && parsed !== null) {
+                fixed[key] = this.fixSerializedParams(parsed);
+                continue;
+              }
+            } catch {
+              // 所有解析方法都失败，保持原值
+            }
+          }
         }
       }
       // 递归处理嵌套对象
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         fixed[key] = this.fixSerializedParams(value);
+      } else if (Array.isArray(value)) {
+        // 递归处理数组中的元素
+        fixed[key] = value.map(item =>
+          typeof item === 'object' && item !== null ? this.fixSerializedParams(item) : item
+        );
       } else {
         fixed[key] = value;
       }
