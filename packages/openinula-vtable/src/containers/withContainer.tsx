@@ -41,6 +41,6 @@ export default function withContainer<Props extends ContainerProps, CompProps>(
       </div>
     );
   });
-  Cls.displayName = name || Comp.name;
+  (Cls as any).displayName = name || Comp.name;
   return Cls;
 }

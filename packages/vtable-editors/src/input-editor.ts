@@ -1,4 +1,4 @@
-import type { CellAddress, EditContext, IEditor, RectProps } from './types';
+import type { CellAddress, EditContext, IEditor, PrepareEditContext, RectProps } from './types';
 import type { ValidateEnum } from './types';
 
 export interface InputEditorConfig {
@@ -14,9 +14,11 @@ export class InputEditor implements IEditor {
   table?: any;
   col?: number;
   row?: number;
-
   constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
+  }
+  getInputElement(): HTMLInputElement {
+    return this.element;
   }
 
   createElement() {
@@ -40,9 +42,15 @@ export class InputEditor implements IEditor {
       input.style.outline = 'none';
     });
 
-    input.addEventListener('blur', () => {
+    input.addEventListener('blur', e => {
       input.style.borderColor = '#d9d9d9';
       // input.style.boxShadow = 'none';
+      if (this.table && this.element.style.opacity === '0') {
+        const selectCell = this.table.stateManager.select.cellPos;
+        if (selectCell.col !== this.col || selectCell.row !== this.row) {
+          this.onEnd();
+        }
+      }
     });
     // #endregion
     this.element = input;
@@ -69,7 +77,31 @@ export class InputEditor implements IEditor {
   getValue() {
     return this.element.value;
   }
-
+  /**
+   * 如果表格编辑时机配置editCellTrigger为keydown，则需要调用prepareEdit来准备编辑环境，否则中文输入法第一个字符会被当做英文字符
+   * @param param0
+   */
+  prepareEdit({ referencePosition, container, table, col, row }: PrepareEditContext<string>) {
+    this.container = container;
+    this.table = table;
+    this.col = col;
+    this.row = row;
+    const selectCell = this.table.stateManager.select.cellPos;
+    if (selectCell.col !== this.col || selectCell.row !== this.row) {
+      return;
+    }
+    if (!this.element) {
+      this.createElement();
+    }
+    this.element.style.opacity = '0';
+    //这个pointerEvents = 'none'很重要，如果没有的话会引起vtable.getElement()元素和这里的element元素的focus和blur的切换，
+    //也会引起mouseleave_table mouseleave_cell和mouseenter的切换
+    this.element.style.pointerEvents = 'none';
+    if (referencePosition?.rect) {
+      this.adjustPosition(referencePosition.rect);
+    }
+    this.element.focus();
+  }
   onStart({ value, referencePosition, container, endEdit, table, col, row }: EditContext<string>) {
     this.container = container;
     this.successCallback = endEdit;
@@ -78,14 +110,16 @@ export class InputEditor implements IEditor {
     this.row = row;
     if (!this.element) {
       this.createElement();
-
-      if (value !== undefined && value !== null) {
-        this.setValue(value);
-      }
       if (referencePosition?.rect) {
         this.adjustPosition(referencePosition.rect);
       }
     }
+    if (value !== undefined && value !== null) {
+      this.setValue(value);
+    }
+    //防止调用过prepareEdit 后，元素的显示和可操作性被影响
+    this.element.style.opacity = '1';
+    this.element.style.pointerEvents = 'auto';
     this.element.focus();
     // do nothing
   }
@@ -112,8 +146,8 @@ export class InputEditor implements IEditor {
     // do nothing
     if (this.container?.contains(this.element)) {
       this.container.removeChild(this.element);
+      this.element = undefined;
     }
-    this.element = undefined;
   }
 
   isEditorElement(target: HTMLElement) {

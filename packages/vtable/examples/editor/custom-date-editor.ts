@@ -309,6 +309,7 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
+    editCellTrigger: ['keydown', 'doubleclick'],
     keyboardOptions: {
       copySelected: true,
       pasteValueToCell: true,

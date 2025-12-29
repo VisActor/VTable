@@ -1150,13 +1150,15 @@ export class Dataset {
     if (indicatorPosition?.position === 'row') {
       rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
     } else {
-      rowDimensionKey = this.rows[rowKey.length - 1];
+      const rowIndex = rowKey.length - 1;
+      rowDimensionKey = rowIndex >= 0 && rowIndex < this.rows.length ? this.rows[rowIndex] : undefined;
     }
     let colDimensionKey: string | undefined;
     if (indicatorPosition?.position === 'col') {
       colDimensionKey = colKey.length >= 2 ? this.columns[colKey.length - 2] : undefined;
     } else {
-      colDimensionKey = this.columns[colKey.length - 1];
+      const colIndex = colKey.length - 1;
+      colDimensionKey = colIndex >= 0 && colIndex < this.columns.length ? this.columns[colIndex] : undefined;
     }
     //#endregion
     // let agg;
@@ -1180,7 +1182,7 @@ export class Dataset {
           this.totals?.row?.subTotalsDimensions &&
           this.totals?.row?.subTotalsDimensions?.length >= 1 &&
           rowKey[rowKey.length - 1] !== this.rowSubTotalLabel &&
-          this.totals.row.subTotalsDimensions.find(dimension => dimension === rowDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到rowKey中
+          this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到rowKey中
         ) {
           rowKey.push(this.rowSubTotalLabel);
         }
@@ -1206,7 +1208,7 @@ export class Dataset {
           this.totals?.column?.subTotalsDimensions &&
           this.totals?.column?.subTotalsDimensions?.length >= 1 &&
           colKey[colKey.length - 1] !== this.colSubTotalLabel &&
-          this.totals.column.subTotalsDimensions.find(dimension => dimension === colDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到colKey中
+          this.totals.column.subTotalsDimensions.find((dimension: string) => dimension === colDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到colKey中
         ) {
           colKey.push(this.colSubTotalLabel);
         }

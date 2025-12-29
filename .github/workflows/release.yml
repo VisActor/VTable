@@ -54,7 +54,21 @@ jobs:
       - name: Build packages
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
-        run: node common/scripts/install-run-rush.js build --only tag:package
+          NO_EMIT_ON_ERROR: "true"
+        run: |
+          # 设置环境变量确保错误信息完整输出
+          export NODE_OPTIONS="--max_old_space_size=4096"
+          export NO_EMIT_ON_ERROR="true"
+          # 运行构建，并将输出保存到文件
+          node common/scripts/install-run-rush.js build --only tag:package 2>&1 | tee build.log || {
+            echo "=== Build failed, showing last 1000 lines of build.log ==="
+            tail -n 1000 build.log
+            echo "=== Full error details ==="
+            # 尝试从日志中提取错误信息
+            grep -A 50 "TypeScript Compilation Errors" build.log || true
+            grep -A 50 "Build Error" build.log || true
+            exit 1
+          }
 
       # - name: Run Bugserver
       #   working-directory: ./packages/vtable

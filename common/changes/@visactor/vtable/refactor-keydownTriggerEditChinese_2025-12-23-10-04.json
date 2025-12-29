@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: when set editCellTrigger keydown input chinese first letter problem #4847\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

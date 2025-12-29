@@ -1532,12 +1532,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
+    const lastSelectedCellEditor = this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`];
+    if (lastSelectedCellEditor) {
+      return lastSelectedCellEditor;
+    }
     const define = this.getBodyColumnDefine(col, row);
-    let editorDefine = this.isHeader(col, row)
+    let editor = this.isHeader(col, row)
       ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
       : (define as ColumnDefine)?.editor ?? this.options.editor;
 
-    if (typeof editorDefine === 'function') {
+    if (typeof editor === 'function') {
       const arg = {
         col,
         row,
@@ -1545,12 +1549,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
         value: this.getCellValue(col, row) || '',
         table: this
       };
-      editorDefine = (editorDefine as Function)(arg);
+      editor = (editor as Function)(arg);
     }
-    if (typeof editorDefine === 'string') {
-      return editors.get(editorDefine);
+    if (typeof editor === 'string') {
+      editor = editors.get(editor);
     }
-    return editorDefine as IEditor;
+    this.editorManager.cacheLastSelectedCellEditor = {};
+    this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
+    return editor as IEditor;
   }
   /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
   isHasEditorDefine(col: number, row: number) {

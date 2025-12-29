@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Revert \"feat: vtable mcp cli and server\"\n\nThis reverts commit f0a179f7c7e277ee6179b96096f6fc71b1678e88.\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

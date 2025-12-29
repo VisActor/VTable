@@ -12,7 +12,7 @@ export default function withContainer<Props extends ContainerProps, CompProps>(
   name = 'TableContainer',
   getProps?: (props: any) => CompProps
 ) {
-  const Cls = React.forwardRef<any, CompProps & Props>((props: CompProps & Props, ref) => {
+  const Cls = React.forwardRef<any, any>((props: any, ref) => {
     const container = useRef();
     const [inited, setInited] = useState(false);
     const { className, style, width, ...options } = props;

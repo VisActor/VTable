@@ -40,7 +40,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.19.1",
+    "@visactor/vutils": "~1.0.17",
     "lodash": "4.17.21",
     "big.js": "6.2.2",
     "exceljs": "4.4.0",

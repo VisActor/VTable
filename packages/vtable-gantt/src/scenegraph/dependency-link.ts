@@ -219,7 +219,7 @@ export class DependencyLink {
       points: linePoints,
       pickStrokeBuffer: 3,
       vtable_link: link
-    });
+    } as any);
     this.linkLinesContainer.appendChild(lineObj);
     (link as any).vtable_gantt_linkLineNode = lineObj;
 
@@ -307,8 +307,8 @@ export class DependencyLink {
   }
 
   deleteLink(link: ITaskLink) {
-    const linkLineNode = link.vtable_gantt_linkLineNode;
-    const lineArrowNode = link.vtable_gantt_linkArrowNode;
+    const linkLineNode = (link as any).vtable_gantt_linkLineNode;
+    const lineArrowNode = (link as any).vtable_gantt_linkArrowNode;
     linkLineNode.delete();
     lineArrowNode.delete();
   }

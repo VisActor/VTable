@@ -2,6 +2,7 @@ import { isValid } from '@visactor/vutils';
 import type { Ref, VNode } from 'vue';
 import { h, isVNode, customRef, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
+import type { RectProps } from '@visactor/vtable/es/ts-types/common';
 
 /** 渲染式编辑器参数 */
 export interface DynamicRenderEditorParams {
@@ -159,14 +160,14 @@ export class DynamicRenderEditor {
       refValue: customRef((track, trigger) => {
         return {
           get: () => {
-            track()
-            return this.getValue()
+            track();
+            return this.getValue();
           },
-          set: (value) => {
-            this.setValue(value)
-            trigger()
+          set: value => {
+            this.setValue(value);
+            trigger();
           }
-        }
+        };
       }),
       record,
       table,
@@ -228,7 +229,7 @@ export class DynamicRenderEditor {
     this.currentValue = value;
   }
 
-  adjustPosition(rect: DOMRect) {
+  adjustPosition(rect: RectProps) {
     if (this.wrapContainer) {
       this.wrapContainer.style.top = `${rect.top}px`;
       this.wrapContainer.style.left = `${rect.left}px`;

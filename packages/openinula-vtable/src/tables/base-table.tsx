@@ -50,7 +50,7 @@ export interface BaseTableProps extends EventsProps {
   onError?: (err: Error) => void;
 }
 
-type Props = Inula.PropsWithChildren<BaseTableProps>;
+type Props = BaseTableProps & { children?: Inula.InulaNode };
 
 const notOptionKeys = [
   ...INULA_PRIVATE_PROPS,
@@ -204,9 +204,12 @@ const BaseTable: Inula.FC<Props> = Inula.forwardRef((props, ref) => {
         !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         eventsBinded.current = props;
-        tableContext.current.table.setRecords(props.records as any[], {
-          restoreHierarchyState: props.option.restoreHierarchyState
-        });
+        tableContext.current.table.setRecords(
+          props.records as any[],
+          {
+            restoreHierarchyState: props.option.restoreHierarchyState
+          } as any
+        );
         handleTableRender();
       }
       return;
@@ -229,7 +232,7 @@ const BaseTable: Inula.FC<Props> = Inula.forwardRef((props, ref) => {
       prevRecords.current = props.records;
       tableContext.current.table.setRecords(props.records, {
         restoreHierarchyState: props.option?.restoreHierarchyState
-      });
+      } as any);
       handleTableRender();
     }
     // tableContext.current = {
@@ -255,7 +258,7 @@ const BaseTable: Inula.FC<Props> = Inula.forwardRef((props, ref) => {
     <RootTableContext.Provider value={tableContext.current}>
       {toArray(props.children).map((child: Inula.InulaNode, index: number) => {
         if (typeof child === 'string') {
-          return;
+          return null;
         }
 
         const childId = getComponentId(child, index);
@@ -295,6 +298,6 @@ export const createTable = <T extends Props>(componentName: string, type?: strin
     }
     return props;
   });
-  Com.displayName = componentName;
+  (Com as any).displayName = componentName;
   return Com;
 };

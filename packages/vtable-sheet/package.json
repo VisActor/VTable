@@ -53,9 +53,9 @@
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-plugins": "workspace:*",
-    "@visactor/vutils": "~0.19.1",
-    "@visactor/vscale": "~0.18.1",
-    "@visactor/vdataset": "~0.18.1",
+    "@visactor/vutils": "~1.0.17",
+    "@visactor/vscale": "~1.0.17",
+    "@visactor/vdataset": "~1.0.17",
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
