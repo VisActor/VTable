@@ -710,12 +710,21 @@ export class Scenegraph {
    * @param row
    * @returns
    */
-  deactivateChart(col: number, row: number) {
+  deactivateChart(col: number, row: number, forceRelease: boolean = false) {
     if (col === -1 || row === -1) {
       return;
     }
     const cellGroup = this.getCell(col, row);
     if ((cellGroup?.firstChild as any)?.deactivate) {
+      if (forceRelease) {
+        (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+          releaseChartInstance: true,
+          releaseColumnChartInstance: true,
+          releaseRowChartInstance: true,
+          releaseAllChartInstance: true
+        });
+        return;
+      }
       const chartNode = cellGroup?.firstChild as Chart;
       const chartType = chartNode.attribute.spec.type;
 
@@ -724,7 +733,9 @@ export class Scenegraph {
         (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip
           ? {
               releaseChartInstance:
-                chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
+                chartType === 'pie'
+                  ? false
+                  : chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
                   ? (col !== this.table.stateManager.hover.cellPos.col &&
                       row !== this.table.stateManager.hover.cellPos.row) ||
                     this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
@@ -741,13 +752,18 @@ export class Scenegraph {
                     this.table.stateManager.hover.cellPos.row >
                       this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
               releaseColumnChartInstance:
-                col !== this.table.stateManager.hover.cellPos.col ||
-                this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
-                this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+                chartType === 'pie'
+                  ? false
+                  : col !== this.table.stateManager.hover.cellPos.col ||
+                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                    this.table.stateManager.hover.cellPos.row >
+                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
               releaseRowChartInstance:
-                row !== this.table.stateManager.hover.cellPos.row ||
-                this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
-                this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+                chartType === 'pie'
+                  ? false
+                  : row !== this.table.stateManager.hover.cellPos.row ||
+                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
             }
           : undefined
       );

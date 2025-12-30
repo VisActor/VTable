@@ -5,10 +5,12 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
 import {
+  clearAllChartInstanceList,
   clearChartInstanceListByColumnDirection,
   clearChartInstanceListByRowDirection,
   generateChartInstanceListByColumnDirection,
-  generateChartInstanceListByRowDirection
+  generateChartInstanceListByRowDirection,
+  generateChartInstanceListByViewRange
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -235,6 +237,19 @@ export class Chart extends Rect {
       }, 0);
     });
     if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip) {
+      if (this.attribute.spec.type === 'pie') {
+        this.activeChartInstance.on('pointerover', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+
+          generateChartInstanceListByViewRange(datum, table, false);
+        });
+        this.activeChartInstance.on('pointerout', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+          generateChartInstanceListByViewRange(datum, table, true);
+        });
+      }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
@@ -242,7 +257,6 @@ export class Chart extends Rect {
         if (viewport) {
           const xValue = dimensionInfo.data[0].series.positionToDataX(viewport.x);
           const yValue = dimensionInfo.data[0].series.positionToDataY(viewport.y);
-
           if (this.attribute.spec.type === 'scatter') {
             // console.log('receive scatter dimensionHover', params.action);
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, false, true);
@@ -446,10 +460,16 @@ export class Chart extends Rect {
     {
       releaseChartInstance = true,
       releaseColumnChartInstance = true,
-      releaseRowChartInstance = true
-    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
+      releaseRowChartInstance = true,
+      releaseAllChartInstance = false
+    }: {
+      releaseChartInstance?: boolean;
+      releaseColumnChartInstance?: boolean;
+      releaseRowChartInstance?: boolean;
+      releaseAllChartInstance?: boolean;
+    } = {}
   ) {
-    // console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
+    // console.trace('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
@@ -492,19 +512,23 @@ export class Chart extends Rect {
           table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild?.hideLabelHoverOnAxis?.();
       }
     }
-    if (releaseColumnChartInstance) {
-      clearChartInstanceListByColumnDirection(
-        this.parent.col,
-        this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
-        table
-      );
-    }
-    if (releaseRowChartInstance) {
-      clearChartInstanceListByRowDirection(
-        this.parent.row,
-        this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
-        table
-      );
+    if (releaseAllChartInstance) {
+      clearAllChartInstanceList(table);
+    } else {
+      if (releaseColumnChartInstance) {
+        clearChartInstanceListByColumnDirection(
+          this.parent.col,
+          this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
+          table
+        );
+      }
+      if (releaseRowChartInstance) {
+        clearChartInstanceListByRowDirection(
+          this.parent.row,
+          this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
+          table
+        );
+      }
     }
   }
   /** 更新图表对应数据 */

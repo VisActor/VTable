@@ -1181,6 +1181,12 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const legend: any = e.path.find(node => (node as any).name === 'legend');
     if (!legend) {
       table.editorManager?.completeEdit();
+      //#region 释放当前激活单元格的图表实例  本身会走到dealhover中的deactivateChart方法，但开发饼图联动时候，因为是整个可视区域的chart都被激活了，所以也需要全部释放。chart.ts文件中的deactivate方法需要区分这个scroll情况导致的全部释放。
+      const { cellPos } = table.stateManager.hover;
+      const prevHoverCellCol = cellPos.col;
+      const prevHoverCellRow = cellPos.row;
+      table.scenegraph.deactivateChart(prevHoverCellCol, prevHoverCellRow, true);
+      //#endregion
       if (table.eventManager._enableTableScroll) {
         handleWhell(e, stateManager);
       }
