@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: rose pivotchart show indicator title problem\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
