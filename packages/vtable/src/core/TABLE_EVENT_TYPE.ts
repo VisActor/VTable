@@ -190,6 +190,8 @@ export interface TableEvents {
 
   /** 编辑单元格 */
   CHANGE_CELL_VALUE: 'change_cell_value';
+  /** 批量编辑单元格 */
+  CHANGE_CELL_VALUES: 'change_cell_values';
 
   /**
    * 鼠标按下填充柄事件
@@ -330,6 +332,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width',
   AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height',
   CHANGE_CELL_VALUE: 'change_cell_value',
+  CHANGE_CELL_VALUES: 'change_cell_values',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
   DBLCLICK_FILL_HANDLE: 'dblclick_fill_handle',
