@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "docs: update changlog of rush\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zhanghao.gino@bytedance.com"
+}
