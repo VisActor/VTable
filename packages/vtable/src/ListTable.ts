@@ -1536,6 +1536,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (lastSelectedCellEditor) {
       return lastSelectedCellEditor;
     }
+    Object.values(this.editorManager.cacheLastSelectedCellEditor).forEach((editor: IEditor) => editor.onEnd?.());
+    this.editorManager.cacheLastSelectedCellEditor = {};
     const define = this.getBodyColumnDefine(col, row);
     let editor = this.isHeader(col, row)
       ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
@@ -1554,7 +1556,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (typeof editor === 'string') {
       editor = editors.get(editor);
     }
-    this.editorManager.cacheLastSelectedCellEditor = {};
     this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
     return editor as IEditor;
   }

@@ -15,6 +15,7 @@ export class EditManager {
   editCell: { col: number; row: number };
   listenersId: number[] = [];
   beginTriggerEditCellMode: 'doubleclick' | 'click' | 'keydown';
+  /** 主要为了editor配置成函数的情况下，点击单元格流程造成接连调用getEditor()可能生成多个editor实例，所以需要缓存 */
   cacheLastSelectedCellEditor: Record<string, IEditor> = {};
   constructor(table: BaseTableAPI) {
     this.table = table;
