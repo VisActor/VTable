@@ -284,7 +284,7 @@ export class EventManager {
         eventArgs.event.shiftKey && shiftMultiSelect,
         (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
-        isSelectMoving ? false : (this.table.options.select?.makeSelectCellVisible ?? true)
+        isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;
@@ -1122,13 +1122,23 @@ export class EventManager {
         return;
       }
 
+      const changeValues: {
+        col: number;
+        row: number;
+        value: string | number | null;
+      }[] = [];
       for (let i = 0; i < selectCells.length; i++) {
         for (let j = 0; j < selectCells[i].length; j++) {
           if (selectCells[i][j]) {
-            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
+            changeValues.push({
+              col: selectCells[i][j].col,
+              row: selectCells[i][j].row,
+              value: undefined
+            });
           }
         }
       }
+      table.changeCellValuesByIds(changeValues);
     } catch (error) {
       console.error('清空单元格内容失败', error);
     }
