@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-sheet",
-  "version": "1.22.8",
+  "version": "1.22.9-alpha.15",
   "description": "Lightweight editable spreadsheet component based on VTable",
   "keywords": [
     "vtable-sheet",
@@ -50,9 +50,9 @@
     "build:es": "bundle --clean -f es --ignorePostTasks"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-plugins": "workspace:*",
+    "@visactor/vtable": "workspace:1.22.9-alpha.15",
+    "@visactor/vtable-editors": "workspace:1.22.9-alpha.15",
+    "@visactor/vtable-plugins": "workspace:1.22.9-alpha.15",
     "@visactor/vutils": "~0.19.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
