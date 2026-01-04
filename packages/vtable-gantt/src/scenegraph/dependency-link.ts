@@ -331,7 +331,7 @@ export function generateLinkLinePoints(
   const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
   const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
   const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
-  const distanceToTaskBar: number = 20;
+  const distanceToTaskBar: number = gantt.parsedOptions.dependencyLinkDistanceToTaskBar ?? 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
   let startDate;
@@ -656,7 +656,7 @@ export function updateLinkLinePoints(
   const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
   const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
   const milestoneTaskbarHeight = gantt.parsedOptions.taskBarMilestoneStyle.width;
-  const distanceToTaskBar: number = 20;
+  const distanceToTaskBar: number = gantt.parsedOptions.dependencyLinkDistanceToTaskBar ?? 20;
   const arrowWidth: number = 10;
   const arrowHeight: number = 5;
   let startDate;

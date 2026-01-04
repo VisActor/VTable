@@ -18,6 +18,7 @@ option: Gantt#taskBar
 - `Gantt#dependency.links` 配置任务条之间前后依赖关系的数据
 - `Gantt#dependency.linkLineStyle` 配置依赖线的样式
 - `Gantt#dependency.linkLineSelectedStyle` 配置依赖线选中时的样式
+- `Gantt#dependency.distanceToTaskBar` 配置依赖线拐点与任务条的距离
 
 ## 代码演示
 

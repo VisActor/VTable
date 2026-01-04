@@ -170,6 +170,8 @@ export interface GanttConstructorOptions {
     linkCreatingPointStyle?: IPointStyle;
     /** 创建关联线的操作线样式 */
     linkCreatingLineStyle?: ILineStyle;
+    /** 依赖关系线拐点与任务条的距离 默认20 */
+    distanceToTaskBar?: number;
   };
   /** 网格线配置 */
   grid?: IGrid;

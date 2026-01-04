@@ -200,6 +200,7 @@ export class Gantt extends EventTarget {
     dependencyLinkLineCreatePointStyle: IPointStyle;
     dependencyLinkLineCreatingPointStyle: IPointStyle;
     dependencyLinkLineCreatingStyle?: ILineStyle;
+    dependencyLinkDistanceToTaskBar?: number;
     underlayBackgroundColor: string;
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
