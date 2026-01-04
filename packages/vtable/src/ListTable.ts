@@ -1536,7 +1536,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (lastSelectedCellEditor) {
       return lastSelectedCellEditor;
     }
-    Object.values(this.editorManager.cacheLastSelectedCellEditor).forEach((editor: IEditor) => editor.onEnd?.());
+    Object.values(this.editorManager.cacheLastSelectedCellEditor).forEach((editor: IEditor) => editor?.onEnd?.());
     this.editorManager.cacheLastSelectedCellEditor = {};
     const define = this.getBodyColumnDefine(col, row);
     let editor = this.isHeader(col, row)
@@ -1556,7 +1556,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (typeof editor === 'string') {
       editor = editors.get(editor);
     }
-    this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
+    if (editor) {
+      this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
+    }
     return editor as IEditor;
   }
   /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
