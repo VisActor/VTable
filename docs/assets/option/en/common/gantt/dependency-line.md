@@ -16,6 +16,8 @@ Specific definition:
   linkCreatingPointStyle?: IPointStyle;
   /** Create an operation line style for the association line */
   linkCreatingLineStyle?: ILineStyle;
+  /** Distance between dependency line corner and task bar. Default 20 */
+  distanceToTaskBar?: number;
 }
 ```
 
@@ -113,3 +115,9 @@ The style of the action line when creating a dependency line
 Not required
 
 {{ use: common-gantt-line-style }}
+
+${prefix} distanceToTaskBar(number)
+
+The distance between the dependency line corner and the task bar, default is 20.
+
+Not required

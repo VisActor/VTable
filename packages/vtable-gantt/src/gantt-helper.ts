@@ -393,6 +393,7 @@ export function initOptions(gantt: Gantt) {
     },
     options?.dependency?.linkCreatingLineStyle
   );
+  gantt.parsedOptions.dependencyLinkDistanceToTaskBar = options?.dependency?.distanceToTaskBar ?? 20;
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
