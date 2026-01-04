@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: distinguish null and empty string values in column dimensions\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "gongshiwei@kkgroup.cn"
+}
