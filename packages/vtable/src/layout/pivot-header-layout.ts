@@ -4060,6 +4060,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
         return !!match;
       }
+      return false;
     };
     const selected_reverse = (datum: any) => {
       if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
@@ -4082,6 +4083,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
         return !match;
       }
+      return false;
     };
     const state = {
       vtable_selected: {
