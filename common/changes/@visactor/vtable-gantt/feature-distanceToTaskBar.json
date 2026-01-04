@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-gantt",
+      "comment": "feat: support distanceToTaskBar config",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "shuguangnet@qq.com"
+}

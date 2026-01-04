@@ -17,6 +17,7 @@ Gantt chart dependency lines are lines used in the Gantt chart to represent the 
 - `Gantt#dependency.links` configures the data of the dependencies between task bars
 - `Gantt#dependency.linkLineStyle` configures the style of the dependency line
 - `Gantt#dependency.linkLineSelectedStyle` configures the style of the dependency line when it is selected
+- `Gantt#dependency.distanceToTaskBar` configures the distance between the dependency line corner and the task bar
 
 ## Code Demo
 
