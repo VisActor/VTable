@@ -14,6 +14,7 @@ import {
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { cancellableThrottle } from '../../tools/util';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -237,7 +238,22 @@ export class Chart extends Rect {
         table.scenegraph.updateChartState(params?.datum, 'click');
       }
     });
+    let brushChangeThrottle: any;
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.listenBrushChange) {
+      // 创建可取消的节流函数，用于 brushChange 事件
+      brushChangeThrottle = cancellableThrottle(
+        table.scenegraph.updateChartState.bind(table.scenegraph),
+        (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.brushChangeDelay ?? 100
+      );
+
+      this.activeChartInstance.on('brushChange', (params: any) => {
+        brushChangeThrottle.throttled(params?.value?.inBrushData, 'brush');
+      });
+    }
     this.activeChartInstance.on('brushEnd', (params: any) => {
+      // 取消 brushChange 中可能还在等待的节流执行
+      brushChangeThrottle?.cancel();
+      // 立即执行 updateChartState，确保 brushEnd 的调用能及时执行
       table.scenegraph.updateChartState(params?.value?.inBrushData, 'brush');
       Chart.temp = 0;
       setTimeout(() => {
