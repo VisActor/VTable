@@ -1759,6 +1759,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (lastSelectedCellEditor) {
       return lastSelectedCellEditor;
     }
+    Object.values(this.editorManager.cacheLastSelectedCellEditor).forEach((editor: IEditor) => editor?.onEnd?.());
+    this.editorManager.cacheLastSelectedCellEditor = {};
     let editor;
     if (this.isCornerHeader(col, row)) {
       const define = this.getHeaderDefine(col, row);
@@ -1783,8 +1785,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (typeof editor === 'string') {
       editor = editors.get(editor);
     }
-    this.editorManager.cacheLastSelectedCellEditor = {};
-    this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
+    if (editor) {
+      this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`] = editor as IEditor;
+    }
     return editor as IEditor;
   }
   /** 检查单元格是否定义过编辑器 不管编辑器是否有效 只要有定义就返回true */
