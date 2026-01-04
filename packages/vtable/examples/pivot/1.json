@@ -1,0 +1,871 @@
+{
+  "customCellStyle": [
+    {
+      "id": "custom-1"
+    }
+  ],
+  "customCellStyleArrangement": [
+    {
+      "customStyleId": "custom-1",
+      "cellPosition": {
+        "range": {
+          "start": {
+            "col": 0,
+            "row": 0
+          },
+          "end": {
+            "col": null,
+            "row": null
+          }
+        }
+      }
+    }
+  ],
+  "select": {
+    "cornerHeaderSelectMode": "cell"
+  },
+  "indicators": [
+    {
+      "indicatorKey": "5qh0x1ztfksg",
+      "title": "Sales Amount",
+      "width": "auto",
+      "style": {},
+      "headerStyle": {
+        "textStick": true,
+        "textStickBaseOnAlign": true
+      }
+    }
+  ],
+  "rowTree": [
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "province",
+      "customData": {
+        "id": "3"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "上海市",
+      "customData": {
+        "id": "4"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "云南省",
+      "customData": {
+        "id": "5"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "内蒙古自治区",
+      "customData": {
+        "id": "6"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "北京市",
+      "customData": {
+        "id": "7"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "吉林省",
+      "customData": {
+        "id": "8"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "四川省",
+      "customData": {
+        "id": "9"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "天津市",
+      "customData": {
+        "id": "10"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "宁夏回族自治区",
+      "customData": {
+        "id": "11"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "安徽省",
+      "customData": {
+        "id": "12"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "山东省",
+      "customData": {
+        "id": "13"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "山西省",
+      "customData": {
+        "id": "14"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "广东省",
+      "customData": {
+        "id": "15"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "广西",
+      "customData": {
+        "id": "16"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "新疆维吾尔自治区",
+      "customData": {
+        "id": "17"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "江苏省",
+      "customData": {
+        "id": "18"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "江西省",
+      "customData": {
+        "id": "19"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "河北省",
+      "customData": {
+        "id": "20"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "河南省",
+      "customData": {
+        "id": "21"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "浙江省",
+      "customData": {
+        "id": "22"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "海南省",
+      "customData": {
+        "id": "23"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "湖北省",
+      "customData": {
+        "id": "24"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "湖南省",
+      "customData": {
+        "id": "25"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "甘肃省",
+      "customData": {
+        "id": "26"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "福建省",
+      "customData": {
+        "id": "27"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "西藏自治区",
+      "customData": {
+        "id": "28"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "贵州省",
+      "customData": {
+        "id": "29"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "辽宁省",
+      "customData": {
+        "id": "30"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "重庆市",
+      "customData": {
+        "id": "31"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "陕西省",
+      "customData": {
+        "id": "32"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "青海省",
+      "customData": {
+        "id": "33"
+      },
+      "children": []
+    },
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "value": "黑龙江省",
+      "customData": {
+        "id": "34"
+      },
+      "children": []
+    }
+  ],
+  "columnTree": [
+    {
+      "dimensionKey": "62ajquud37y8",
+      "value": "tax_included_price",
+      "customData": {
+        "id": "1"
+      },
+      "children": [
+        {
+          "value": "Sales Amount",
+          "indicatorKey": "5qh0x1ztfksg",
+          "children": [],
+          "virtual": true,
+          "customData": {
+            "isMetric": true
+          }
+        }
+      ]
+    },
+    {
+      "dimensionKey": "62ajquud37y8",
+      "value": "",
+      "customData": {
+        "id": "2"
+      },
+      "children": [
+        {
+          "value": "Sales Amount",
+          "indicatorKey": "5qh0x1ztfksg",
+          "children": [],
+          "virtual": true,
+          "customData": {
+            "isMetric": true
+          }
+        }
+      ]
+    }
+  ],
+  "indicatorsAsCol": true,
+  "indicatorTitle": "度量名",
+  "columns": [
+    {
+      "dimensionKey": "62ajquud37y8",
+      "title": "Stock Status",
+      "headerStyle": {
+        "textStick": true,
+        "textStickBaseOnAlign": true
+      }
+    }
+  ],
+  "rows": [
+    {
+      "dimensionKey": "5qh0wrhpawhs",
+      "title": "Province",
+      "minWidth": 120,
+      "headerStyle": {
+        "textStick": "vertical",
+        "textStickBaseOnAlign": true
+      }
+    }
+  ],
+  "corner": {
+    "titleOnDimension": "none"
+  },
+  "dataConfig": {
+    "aggregationRules": [
+      {
+        "indicatorKey": "5qh0x1ztfksg",
+        "aggregationType": "NONE"
+      }
+    ],
+    "totals": {
+      "row": {
+        "showGrandTotals": true,
+        "showSubTotals": true,
+        "grandTotalLabel": "总计",
+        "subTotalLabel": "小计"
+      },
+      "column": {
+        "showGrandTotals": true,
+        "showSubTotals": true,
+        "grandTotalLabel": "总计",
+        "subTotalLabel": "小计"
+      }
+    }
+  },
+  "tooltip": {
+    "isShowOverflowTextTooltip": true
+  },
+  "columnWidthConfig": [],
+  "columnWidthConfigForRowHeader": [],
+  "resize": {
+    "columnResizeMode": "all"
+  },
+  "keyboardOptions": {
+    "copySelected": true
+  },
+  "frozenColCount": 0,
+  "plugins": [
+    {
+      "id": "rotate-table",
+      "name": "Rotate Table",
+      "runTime": [
+        "initialized"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "5qh0wrhpawhs": "province",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "35"
+    },
+    {
+      "5qh0wrhpawhs": "province",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "67"
+    },
+    {
+      "5qh0wrhpawhs": "上海市",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "36"
+    },
+    {
+      "5qh0wrhpawhs": "上海市",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "3647",
+      "CONDITION_FORMAT_ID": "68"
+    },
+    {
+      "5qh0wrhpawhs": "云南省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "37"
+    },
+    {
+      "5qh0wrhpawhs": "云南省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "21270",
+      "CONDITION_FORMAT_ID": "69"
+    },
+    {
+      "5qh0wrhpawhs": "内蒙古自治区",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "38"
+    },
+    {
+      "5qh0wrhpawhs": "内蒙古自治区",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "16844",
+      "CONDITION_FORMAT_ID": "70"
+    },
+    {
+      "5qh0wrhpawhs": "北京市",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "39"
+    },
+    {
+      "5qh0wrhpawhs": "北京市",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "5665",
+      "CONDITION_FORMAT_ID": "71"
+    },
+    {
+      "5qh0wrhpawhs": "吉林省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "40"
+    },
+    {
+      "5qh0wrhpawhs": "吉林省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "8868",
+      "CONDITION_FORMAT_ID": "72"
+    },
+    {
+      "5qh0wrhpawhs": "四川省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "41"
+    },
+    {
+      "5qh0wrhpawhs": "四川省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "51581",
+      "CONDITION_FORMAT_ID": "73"
+    },
+    {
+      "5qh0wrhpawhs": "天津市",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "42"
+    },
+    {
+      "5qh0wrhpawhs": "天津市",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "4262",
+      "CONDITION_FORMAT_ID": "74"
+    },
+    {
+      "5qh0wrhpawhs": "宁夏回族自治区",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "43"
+    },
+    {
+      "5qh0wrhpawhs": "宁夏回族自治区",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "6860",
+      "CONDITION_FORMAT_ID": "75"
+    },
+    {
+      "5qh0wrhpawhs": "安徽省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "44"
+    },
+    {
+      "5qh0wrhpawhs": "安徽省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "47168",
+      "CONDITION_FORMAT_ID": "76"
+    },
+    {
+      "5qh0wrhpawhs": "山东省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "45"
+    },
+    {
+      "5qh0wrhpawhs": "山东省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "41037",
+      "CONDITION_FORMAT_ID": "77"
+    },
+    {
+      "5qh0wrhpawhs": "山西省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "46"
+    },
+    {
+      "5qh0wrhpawhs": "山西省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "23849",
+      "CONDITION_FORMAT_ID": "78"
+    },
+    {
+      "5qh0wrhpawhs": "广东省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "47"
+    },
+    {
+      "5qh0wrhpawhs": "广东省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "33429",
+      "CONDITION_FORMAT_ID": "79"
+    },
+    {
+      "5qh0wrhpawhs": "广西",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "48"
+    },
+    {
+      "5qh0wrhpawhs": "广西",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "32981",
+      "CONDITION_FORMAT_ID": "80"
+    },
+    {
+      "5qh0wrhpawhs": "新疆维吾尔自治区",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "49"
+    },
+    {
+      "5qh0wrhpawhs": "新疆维吾尔自治区",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "27886",
+      "CONDITION_FORMAT_ID": "81"
+    },
+    {
+      "5qh0wrhpawhs": "江苏省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "50"
+    },
+    {
+      "5qh0wrhpawhs": "江苏省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "19184",
+      "CONDITION_FORMAT_ID": "82"
+    },
+    {
+      "5qh0wrhpawhs": "江西省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "51"
+    },
+    {
+      "5qh0wrhpawhs": "江西省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "25018",
+      "CONDITION_FORMAT_ID": "83"
+    },
+    {
+      "5qh0wrhpawhs": "河北省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "52"
+    },
+    {
+      "5qh0wrhpawhs": "河北省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "49622",
+      "CONDITION_FORMAT_ID": "84"
+    },
+    {
+      "5qh0wrhpawhs": "河南省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "53"
+    },
+    {
+      "5qh0wrhpawhs": "河南省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "50253",
+      "CONDITION_FORMAT_ID": "85"
+    },
+    {
+      "5qh0wrhpawhs": "浙江省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "54"
+    },
+    {
+      "5qh0wrhpawhs": "浙江省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "13814",
+      "CONDITION_FORMAT_ID": "86"
+    },
+    {
+      "5qh0wrhpawhs": "海南省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "55"
+    },
+    {
+      "5qh0wrhpawhs": "海南省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "10044",
+      "CONDITION_FORMAT_ID": "87"
+    },
+    {
+      "5qh0wrhpawhs": "湖北省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "56"
+    },
+    {
+      "5qh0wrhpawhs": "湖北省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "16840",
+      "CONDITION_FORMAT_ID": "88"
+    },
+    {
+      "5qh0wrhpawhs": "湖南省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "57"
+    },
+    {
+      "5qh0wrhpawhs": "湖南省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "29526",
+      "CONDITION_FORMAT_ID": "89"
+    },
+    {
+      "5qh0wrhpawhs": "甘肃省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "58"
+    },
+    {
+      "5qh0wrhpawhs": "甘肃省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "21218",
+      "CONDITION_FORMAT_ID": "90"
+    },
+    {
+      "5qh0wrhpawhs": "福建省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "59"
+    },
+    {
+      "5qh0wrhpawhs": "福建省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "22204",
+      "CONDITION_FORMAT_ID": "91"
+    },
+    {
+      "5qh0wrhpawhs": "西藏自治区",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "60"
+    },
+    {
+      "5qh0wrhpawhs": "西藏自治区",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "13900",
+      "CONDITION_FORMAT_ID": "92"
+    },
+    {
+      "5qh0wrhpawhs": "贵州省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "61"
+    },
+    {
+      "5qh0wrhpawhs": "贵州省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "19069",
+      "CONDITION_FORMAT_ID": "93"
+    },
+    {
+      "5qh0wrhpawhs": "辽宁省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "62"
+    },
+    {
+      "5qh0wrhpawhs": "辽宁省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "12968",
+      "CONDITION_FORMAT_ID": "94"
+    },
+    {
+      "5qh0wrhpawhs": "重庆市",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "63"
+    },
+    {
+      "5qh0wrhpawhs": "重庆市",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "5237",
+      "CONDITION_FORMAT_ID": "95"
+    },
+    {
+      "5qh0wrhpawhs": "陕西省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "64"
+    },
+    {
+      "5qh0wrhpawhs": "陕西省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "22024",
+      "CONDITION_FORMAT_ID": "96"
+    },
+    {
+      "5qh0wrhpawhs": "青海省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "65"
+    },
+    {
+      "5qh0wrhpawhs": "青海省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "12223",
+      "CONDITION_FORMAT_ID": "97"
+    },
+    {
+      "5qh0wrhpawhs": "黑龙江省",
+      "62ajquud37y8": "tax_included_price",
+      "5qh0x1ztfksg": null,
+      "CONDITION_FORMAT_ID": "66"
+    },
+    {
+      "5qh0wrhpawhs": "黑龙江省",
+      "62ajquud37y8": null,
+      "5qh0x1ztfksg": "13412",
+      "CONDITION_FORMAT_ID": "98"
+    }
+  ],
+  "theme": {
+    "defaultStyle": {
+      "fontSize": 12,
+      "borderColor": "#e6e6e6",
+      "borderLineWidth": 1,
+      "bgColor": "#fff",
+      "color": "#000",
+      "fontFamily": "Arial",
+      "underline": false,
+      "lineThrough": false
+    },
+    "bodyStyle": {
+      "borderColor": "#f2f7fa",
+      "borderLineWidth": 1,
+      "textAlign": "center",
+      "autoWrapText": false,
+      "hover": {
+        "cellBgColor": "#f5f5f5"
+      }
+    },
+    "frameStyle": {
+      "borderColor": "#f2f7fa",
+      "borderLineWidth": 1
+    },
+    "rowHeaderStyle": {
+      "borderColor": "#f2f7fa",
+      "borderLineWidth": 1,
+      "textAlign": "center",
+      "hover": {
+        "cellBgColor": "#eee"
+      },
+      "autoWrapText": false
+    },
+    "headerStyle": {
+      "borderColor": "#f2f7fa",
+      "borderLineWidth": 1,
+      "textAlign": "center",
+      "fontFamily": "sans-serif",
+      "fontSize": 12,
+      "fontWeight": "bolder",
+      "color": "#FFFFFF",
+      "bgColor": "#617AEB",
+      "underline": false,
+      "lineThrough": false,
+      "hover": {
+        "cellBgColor": "#eee"
+      },
+      "autoWrapText": false
+    },
+    "cornerHeaderStyle": {
+      "borderColor": "#f2f7fa",
+      "borderLineWidth": 1,
+      "textAlign": "center",
+      "fontFamily": "sans-serif",
+      "fontSize": 12,
+      "fontWeight": "bolder",
+      "color": "#FFFFFF",
+      "bgColor": "#617AEB",
+      "underline": false,
+      "lineThrough": false,
+      "hover": {
+        "cellBgColor": "#617AEB"
+      }
+    },
+    "tooltipStyle": {
+      "fontSize": 12,
+      "color": "#000",
+      "padding": [
+        10,
+        10
+      ],
+      "bgColor": "#fff"
+    }
+  },
+  "heightMode": "standard",
+  "defaultHeaderRowHeight": 35,
+  "defaultRowHeight": 35,
+  "autoFillWidth": true,
+  "widthMode": "standard",
+  "defaultColWidth": 137.66666666666666,
+  "defaultHeaderColWidth": 137.66666666666666
+}
