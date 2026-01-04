@@ -9,6 +9,7 @@ export function createTable() {
     // defaultColWidth: 100,
     sheets: [
       {
+        keyboardOptions: { selectAllOnCtrlA: true },
         rowCount: 200,
         columnCount: 10,
         sheetKey: 'sheet1',

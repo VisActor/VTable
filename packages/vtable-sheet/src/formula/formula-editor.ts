@@ -240,9 +240,10 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     }
     //解绑所有事件
     // 解绑事件（在需要解绑的地方）
-    this.eventHandlers.forEach(({ type, handler }) => {
-      this.element.removeEventListener(type, handler);
-    });
+    this.element &&
+      this.eventHandlers.forEach(({ type, handler }) => {
+        this.element.removeEventListener(type, handler);
+      });
     super.onEnd();
   }
 
