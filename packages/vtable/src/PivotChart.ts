@@ -99,8 +99,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   pivotSortState: PivotSortState[];
 
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
-
+  //记录被点击选中图元
   _selectedDataItemsInChart: any[] = [];
+  _selectedDataMode: 'click' | 'brush' = 'click';
+  //记录轴坐标被选中维度
   _selectedDimensionInChart: { key: string; value: string }[] = [];
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 

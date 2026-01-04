@@ -365,9 +365,10 @@ export function updateChartData(scenegraph: Scenegraph) {
   updateTableAxes(scenegraph.bottomFrozenGroup, scenegraph.table);
 }
 /** 组织图表数据状态_selectedDataItemsInChart 更新选中的图表图元状态 */
-export function updateChartState(scenegraph: Scenegraph, datum: any) {
+export function updateChartState(scenegraph: Scenegraph, datum: any, selectedDataMode: 'click' | 'brush') {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
+    (table as PivotChart)._selectedDataMode = selectedDataMode;
     const preSelectItemsCount = (table as PivotChart)._selectedDataItemsInChart.length;
     if (
       (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) &&

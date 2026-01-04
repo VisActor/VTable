@@ -602,6 +602,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     };
     selectedStateFilter?: (datum: any) => boolean;
     selectedReverseStateFilter?: (datum: any) => boolean;
+    inBrushStateFilter?: (datum: any) => boolean;
+    outOfBrushStateFilter?: (datum: any) => boolean;
   };
 }
 export interface PivotTableAPI extends BaseTableAPI {

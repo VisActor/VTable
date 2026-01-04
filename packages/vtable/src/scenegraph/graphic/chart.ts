@@ -46,6 +46,7 @@ export class Chart extends Rect {
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
   activeChartInstance: any;
+  activeChartInstanceLastViewBox: { x1: number; y1: number; x2: number; y2: number } = null;
   activeChartInstanceHoverOnMark: any = null;
   justShowMarkTooltip: boolean = undefined;
   justShowMarkTooltipTimer: number = Date.now();
@@ -167,6 +168,13 @@ export class Chart extends Rect {
           ctx.setTransformForCurrent(true); // 替代原有的chart viewBox
           ctx.beginPath();
           ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          // console.log(
+          //   'beforeRender clip',
+          //   clipBound.x1,
+          //   clipBound.y1,
+          //   clipBound.x2 - clipBound.x1,
+          //   clipBound.y2 - clipBound.y1
+          // );
           ctx.clip();
           ctx.clearMatrix();
 
@@ -224,13 +232,13 @@ export class Chart extends Rect {
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       if (this.attribute.spec.select?.enable === false) {
-        table.scenegraph.updateChartState(null);
+        table.scenegraph.updateChartState(null, undefined);
       } else if (Chart.temp) {
-        table.scenegraph.updateChartState(params?.datum);
+        table.scenegraph.updateChartState(params?.datum, 'click');
       }
     });
     this.activeChartInstance.on('brushEnd', (params: any) => {
-      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      table.scenegraph.updateChartState(params?.value?.inBrushData, 'brush');
       Chart.temp = 0;
       setTimeout(() => {
         Chart.temp = 1;
@@ -548,12 +556,19 @@ export class Chart extends Rect {
 
     const { x1, y1, x2, y2 } = cellGroup.globalAABBBounds;
 
-    return {
+    const viewBox = {
       x1: Math.ceil(x1 + padding[3] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       x2: Math.ceil(x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       y1: Math.ceil(y1 + padding[0] + table.scrollTop + (table.options.viewBox?.y1 ?? 0)),
       y2: Math.ceil(y1 + cellGroup.attribute.height - padding[2] + table.scrollTop + (table.options.viewBox?.y1 ?? 0))
     };
+
+    if (this.activeChartInstance) {
+      this.activeChartInstanceLastViewBox = viewBox;
+    } else {
+      this.activeChartInstanceLastViewBox = null;
+    }
+    return viewBox;
   }
 }
 

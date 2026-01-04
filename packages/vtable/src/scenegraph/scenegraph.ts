@@ -862,8 +862,8 @@ export class Scenegraph {
     updateChartSizeForResizeRowHeight(this, row);
   }
   /** 更新图表的高亮状态 */
-  updateChartState(datum: any) {
-    this.table.isPivotChart() && updateChartState(this, datum);
+  updateChartState(datum: any, selectedDataMode: 'click' | 'brush') {
+    this.table.isPivotChart() && updateChartState(this, datum, selectedDataMode);
   }
 
   updateCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {
