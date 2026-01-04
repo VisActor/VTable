@@ -5,13 +5,16 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
 import {
+  clearAllChartInstanceList,
   clearChartInstanceListByColumnDirection,
   clearChartInstanceListByRowDirection,
   generateChartInstanceListByColumnDirection,
-  generateChartInstanceListByRowDirection
+  generateChartInstanceListByRowDirection,
+  generateChartInstanceListByViewRange
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { cancellableThrottle } from '../../tools/util';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -44,6 +47,7 @@ export class Chart extends Rect {
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
   activeChartInstance: any;
+  activeChartInstanceLastViewBox: { x1: number; y1: number; x2: number; y2: number } = null;
   activeChartInstanceHoverOnMark: any = null;
   justShowMarkTooltip: boolean = undefined;
   justShowMarkTooltipTimer: number = Date.now();
@@ -165,6 +169,13 @@ export class Chart extends Rect {
           ctx.setTransformForCurrent(true); // 替代原有的chart viewBox
           ctx.beginPath();
           ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          // console.log(
+          //   'beforeRender clip',
+          //   clipBound.x1,
+          //   clipBound.y1,
+          //   clipBound.x2 - clipBound.x1,
+          //   clipBound.y2 - clipBound.y1
+          // );
           ctx.clip();
           ctx.clearMatrix();
 
@@ -195,7 +206,7 @@ export class Chart extends Rect {
           }
         },
         componentShowContent:
-          (table.options as PivotChartConstructorOptions).chartDimensionLinkage &&
+          (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip &&
           this.attribute.spec.type !== 'scatter'
             ? {
                 tooltip: {
@@ -222,19 +233,47 @@ export class Chart extends Rect {
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       if (this.attribute.spec.select?.enable === false) {
-        table.scenegraph.updateChartState(null);
+        table.scenegraph.updateChartState(null, undefined);
       } else if (Chart.temp) {
-        table.scenegraph.updateChartState(params?.datum);
+        table.scenegraph.updateChartState(params?.datum, 'click');
       }
     });
+    let brushChangeThrottle: any;
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.listenBrushChange) {
+      // 创建可取消的节流函数，用于 brushChange 事件
+      brushChangeThrottle = cancellableThrottle(
+        table.scenegraph.updateChartState.bind(table.scenegraph),
+        (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.brushChangeDelay ?? 100
+      );
+
+      this.activeChartInstance.on('brushChange', (params: any) => {
+        brushChangeThrottle.throttled(params?.value?.inBrushData, 'brush');
+      });
+    }
     this.activeChartInstance.on('brushEnd', (params: any) => {
-      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      // 取消 brushChange 中可能还在等待的节流执行
+      brushChangeThrottle?.cancel();
+      // 立即执行 updateChartState，确保 brushEnd 的调用能及时执行
+      table.scenegraph.updateChartState(params?.value?.inBrushData, 'brush');
       Chart.temp = 0;
       setTimeout(() => {
         Chart.temp = 1;
       }, 0);
     });
-    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage) {
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip) {
+      if (this.attribute.spec.type === 'pie') {
+        this.activeChartInstance.on('pointerover', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+
+          generateChartInstanceListByViewRange(datum, table, false);
+        });
+        this.activeChartInstance.on('pointerout', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+          generateChartInstanceListByViewRange(datum, table, true);
+        });
+      }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
@@ -242,7 +281,6 @@ export class Chart extends Rect {
         if (viewport) {
           const xValue = dimensionInfo.data[0].series.positionToDataX(viewport.x);
           const yValue = dimensionInfo.data[0].series.positionToDataY(viewport.y);
-
           if (this.attribute.spec.type === 'scatter') {
             // console.log('receive scatter dimensionHover', params.action);
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, false, true);
@@ -446,10 +484,16 @@ export class Chart extends Rect {
     {
       releaseChartInstance = true,
       releaseColumnChartInstance = true,
-      releaseRowChartInstance = true
-    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
+      releaseRowChartInstance = true,
+      releaseAllChartInstance = false
+    }: {
+      releaseChartInstance?: boolean;
+      releaseColumnChartInstance?: boolean;
+      releaseRowChartInstance?: boolean;
+      releaseAllChartInstance?: boolean;
+    } = {}
   ) {
-    // console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
+    // console.trace('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
@@ -492,19 +536,23 @@ export class Chart extends Rect {
           table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild?.hideLabelHoverOnAxis?.();
       }
     }
-    if (releaseColumnChartInstance) {
-      clearChartInstanceListByColumnDirection(
-        this.parent.col,
-        this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
-        table
-      );
-    }
-    if (releaseRowChartInstance) {
-      clearChartInstanceListByRowDirection(
-        this.parent.row,
-        this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
-        table
-      );
+    if (releaseAllChartInstance) {
+      clearAllChartInstanceList(table);
+    } else {
+      if (releaseColumnChartInstance) {
+        clearChartInstanceListByColumnDirection(
+          this.parent.col,
+          this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
+          table
+        );
+      }
+      if (releaseRowChartInstance) {
+        clearChartInstanceListByRowDirection(
+          this.parent.row,
+          this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
+          table
+        );
+      }
     }
   }
   /** 更新图表对应数据 */
@@ -524,12 +572,19 @@ export class Chart extends Rect {
 
     const { x1, y1, x2, y2 } = cellGroup.globalAABBBounds;
 
-    return {
+    const viewBox = {
       x1: Math.ceil(x1 + padding[3] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       x2: Math.ceil(x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       y1: Math.ceil(y1 + padding[0] + table.scrollTop + (table.options.viewBox?.y1 ?? 0)),
       y2: Math.ceil(y1 + cellGroup.attribute.height - padding[2] + table.scrollTop + (table.options.viewBox?.y1 ?? 0))
     };
+
+    if (this.activeChartInstance) {
+      this.activeChartInstanceLastViewBox = viewBox;
+    } else {
+      this.activeChartInstanceLastViewBox = null;
+    }
+    return viewBox;
   }
 }
 

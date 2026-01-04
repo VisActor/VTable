@@ -252,6 +252,58 @@ export function throttle2(func: Function, delay: number) {
   };
 }
 
+/**
+ * 可取消的节流函数，返回包含执行函数和取消函数的对象
+ * @param { Function } func 执行函数
+ * @param { Integer } delay 多长时间内不能第二次执行
+ * @returns { Object } 返回包含 throttled 执行函数和 cancel 取消函数的对象
+ */
+export function cancellableThrottle(func: Function, delay: number) {
+  let timer: any = null;
+  let lastArgs: any[] | null = null;
+  let context: any = null;
+
+  const throttled = function (this: any, ...args: any[]) {
+    lastArgs = args;
+    context = this;
+    if (!timer) {
+      timer = setTimeout(() => {
+        if (lastArgs) {
+          func.apply(context, lastArgs);
+        }
+        timer = null;
+        lastArgs = null;
+        context = null;
+      }, delay);
+    }
+  };
+
+  const cancel = () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+      lastArgs = null;
+      context = null;
+    }
+  };
+
+  const flush = () => {
+    if (timer && lastArgs) {
+      clearTimeout(timer);
+      func.apply(context, lastArgs);
+      timer = null;
+      lastArgs = null;
+      context = null;
+    }
+  };
+
+  return {
+    throttled,
+    cancel,
+    flush
+  };
+}
+
 function pad(num: string, totalChars: number) {
   const pad = '0';
   num = `${num}`;

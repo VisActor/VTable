@@ -401,6 +401,14 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-brushState'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-brushState1'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-markLine'
       },
       {
