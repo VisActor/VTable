@@ -1,0 +1,55 @@
+{
+  "name": "@visactor/vtable-mcp",
+  "version": "0.1.0",
+  "description": "MCP (Model Context Protocol) core plugin for VTable",
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "cjs",
+    "es"
+  ],
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./es/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.cjs.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  },
+  "peerDependencies": {
+    "@visactor/vtable": "^1.22.8"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "@visactor/vtable": "workspace:*",
+    "@types/node": "*",
+    "@typescript-eslint/eslint-plugin": "5.30.0",
+    "@typescript-eslint/parser": "5.30.0",
+    "eslint": "~8.18.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "6.0.0",
+    "prettier": "^2.8.8",
+    "typescript": "4.9.5",
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.0",
+    "ts-jest": "^26.0.0",
+    "jest-electron": "^0.1.12",
+    "jest-transform-stub": "^2.0.0"
+  },
+  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
+}

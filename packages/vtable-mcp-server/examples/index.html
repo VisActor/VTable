@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>VTable MCP Demo</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>VTable MCP 测试页面</h1>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>MCP服务器:</label>
+          <input type="text" id="mcpServer" value="http://localhost:3000" placeholder="MCP服务器地址" />
+        </div>
+        <div class="control-group">
+          <label>会话ID:</label>
+          <input type="text" id="sessionId" value="default" placeholder="会话ID" />
+        </div>
+        <button onclick="connectToMCP()">连接MCP服务器</button>
+        <button onclick="disconnectFromMCP()">断开连接</button>
+      </div>
+
+      <div id="status" class="status disconnected">未连接到MCP服务器</div>
+
+
+
+      <div class="controls">
+        <button onclick="getTableInfo()">获取表格信息</button>
+        <button onclick="clearTableData()">清空表格</button>
+        <button onclick="resetTableData()">重置数据</button>
+      </div>
+
+      <div id="tableContainer"></div>
+
+      <div class="info-panel">
+        <div class="info-card">
+          <h3>表格信息</h3>
+          <div id="tableInfo">
+            <p>行数: <span id="rowCount">-</span></p>
+            <p>列数: <span id="colCount">-</span></p>
+            <p>选中单元格: <span id="selectedCell">-</span></p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>操作日志</h3>
+          <div id="logOutput" class="log-output">等待操作...</div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="./main.ts" type="module"></script>
+</html>
+
+

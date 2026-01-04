@@ -1,0 +1,65 @@
+{
+  "name": "@visactor/vtable-mcp-server",
+  "version": "0.1.0",
+  "description": "WebSocket MCP Server for VTable",
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
+  "main": "dist/mcp-compliant-server.js",
+  "types": "dist/mcp-compliant-server.d.ts",
+  "bin": {
+    "vtable-mcp-server": "./dist/mcp-compliant-server.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "ts-node src/mcp-compliant-server.ts",
+    "dev:server": "ts-node src/mcp-compliant-server.ts",
+    "build": "tsc",
+    "start": "node dist/mcp-compliant-server.js",
+    "start:server": "node dist/mcp-compliant-server.js",
+    "validate": "node scripts/validate.js",
+    "validate:simple": "node scripts/simple-validate.js",
+    "dev:demo": "vite serve examples --host",
+    "build:demo": "vite build examples",
+    "preview:demo": "vite preview --root examples --host",
+    "test:mcp": "node scripts/mcp-smoke.js full",
+    "test:mcp:ws": "node scripts/mcp-smoke.js ws",
+    "test:mcp:vtable-client": "node scripts/mcp-smoke.js vtable-client",
+    "test:e2e": "node scripts/e2e-test.js"
+  },
+  "dependencies": {
+    "@visactor/vtable-mcp": "workspace:*",
+    "ws": "^8.14.0",
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0",
+    "node-fetch": "2.6.7",
+    "canvas": "3.1.0"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-plugins": "workspace:*",
+    "@types/ws": "^8.5.0",
+    "@types/express": "^4.17.0",
+    "@types/cors": "^2.8.0",
+    "@types/uuid": "^9.0.0",
+    "@types/node": "*",
+    "@typescript-eslint/eslint-plugin": "5.30.0",
+    "@typescript-eslint/parser": "5.30.0",
+    "eslint": "~8.18.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "6.0.0",
+    "prettier": "^2.8.8",
+    "ts-node": "10.9.0",
+    "typescript": "4.9.5",
+    "vite": "3.2.6"
+  },
+  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
+}

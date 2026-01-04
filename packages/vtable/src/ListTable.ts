@@ -1865,7 +1865,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 合并单元格 对外接口 。会自动刷新渲染节点
    * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
    */
-  mergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {
+  mergeCells(startCol: number, startRow: number, endCol: number, endRow: number, text?: string) {
     // 先检查一遍这个区域是否有合并情况 有的话 不能再次合并
     for (let i = startCol; i <= endCol; i++) {
       for (let j = startRow; j <= endRow; j++) {
@@ -1881,7 +1881,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.options.customMergeCell = [];
     }
     this.options.customMergeCell.push({
-      text: this.getCellValue(startCol, startRow),
+      text: text ?? this.getCellValue(startCol, startRow),
       range: {
         start: {
           col: startCol,

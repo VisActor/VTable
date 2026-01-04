@@ -694,6 +694,16 @@ export interface BaseTableAPI {
   scrollLeft: number;
   /** 表格滚动值top */
   scrollTop: number;
+
+  /**
+   * 滚动值读写（BaseTable 上存在对应方法）
+   * - getScrollLeft/getScrollTop: 读取 scrollLeft/scrollTop
+   * - setScrollLeft/setScrollTop: 设置 scrollLeft/scrollTop（内部会取整）
+   */
+  getScrollLeft?: () => number;
+  getScrollTop?: () => number;
+  setScrollLeft?: (num: number) => void;
+  setScrollTop?: (num: number) => void;
   /** 用户设置的options 不要修改这个这个 */
   options: BaseTableConstructorOptions;
   /** 设置的全局下拉菜单列表项配置 */
@@ -883,6 +893,16 @@ export interface BaseTableAPI {
   _getHeaderLayoutMap: (col: number, row: number) => HeaderData | SeriesNumberColumnData;
   getContext: () => CanvasRenderingContext2D;
   getCellRange: (col: number, row: number) => CellRange;
+
+  /**
+   * 合并/取消合并单元格（ListTable 特有能力）
+   *
+   * 注意：
+   * - 并非所有表格类型都支持（如 PivotTable 可能不支持），因此这里定义为 optional。
+   * - 具体实现见 ListTable.mergeCells / ListTable.unmergeCells
+   */
+  mergeCells?: (startCol: number, startRow: number, endCol: number, endRow: number, text?: string) => void;
+  unmergeCells?: (startCol: number, startRow: number, endCol: number, endRow: number) => void;
   _resetFrozenColCount: () => void;
   isCellRangeEqual: (col: number, row: number, targetCol: number, targetRow: number) => boolean;
   _getLayoutCellId: (col: number, row: number) => LayoutObjectId;
@@ -902,6 +922,17 @@ export interface BaseTableAPI {
   getHeaderDescription: (col: number, row: number) => string | undefined;
   /** 获取单元格展示值 */
   getCellValue: (col: number, row: number, skipCustomMerge?: boolean) => string | null;
+  /**
+   * 更改单元格数据（ListTable 特有能力）
+   * 注意：并非所有表格类型都支持，因此这里定义为 optional。
+   */
+  changeCellValue?: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean
+  ) => any;
   /** 获取单元格展示数据的format前的值 */
   getCellOriginValue: (col: number, row: number) => any;
   /** 获取单元格展示数据源最原始值 */
@@ -1011,7 +1042,11 @@ export interface BaseTableAPI {
   scrollToRow: (row: number, animationOption?: ITableAnimationOption | boolean) => void;
   scrollToCol: (col: number, animationOption?: ITableAnimationOption | boolean) => void;
   registerCustomCellStyle: (customStyleId: string, customStyle: ColumnStyleOption | undefined | null) => void;
-  arrangeCustomCellStyle: (cellPos: { col?: number; row?: number; range?: CellRange }, customStyleId: string) => void;
+  arrangeCustomCellStyle: (
+    cellPos: { col?: number; row?: number; range?: CellRange },
+    customStyleId: string,
+    forceFastUpdate?: boolean
+  ) => void;
   /** 是否有列是自动计算列宽 */
   checkHasColumnAutoWidth: () => boolean;
   _moveHeaderPosition: (

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "vtable": {
+      "command": "node",
+      "args": ["./packages/vtable-mcp-cli/bin/vtable-mcp.js"],
+      "env": {
+        "VTABLE_API_URL": "http://localhost:3000/mcp",
+        "VTABLE_SESSION_ID": "default"
+      },
+      "description": "VTable MCP Server - Control VTable spreadsheet component via MCP"
+    }
+  }
+}

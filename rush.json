@@ -156,6 +156,33 @@
       "versionPolicyName": "vtableMain"
     },
     {
+      "packageName": "@visactor/vtable-mcp",
+      "projectFolder": "packages/vtable-mcp",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
+      "packageName": "@visactor/vtable-mcp-cli",
+      "projectFolder": "packages/vtable-mcp-cli",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
+      "packageName": "@visactor/vtable-mcp-server",
+      "projectFolder": "packages/vtable-mcp-server",
+      "tags": [
+        "package"
+      ],
+      "shouldPublish": true,
+      "versionPolicyName": "vtableMain"
+    },
+    {
       "packageName": "@internal/bugserver-trigger",
       "projectFolder": "tools/bugserver-trigger",
       "tags": [
