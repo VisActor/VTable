@@ -361,6 +361,17 @@ export interface ListTableAPI extends BaseTableAPI {
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell?: boolean) => void;
   /**
+   * 批量更新多个单元格的数据(根据col, row坐标, 支持离散数据)
+   * @param changeValues
+   */
+  changeCellValuesByIds: (
+    changeValues: {
+      col: number;
+      row: number;
+      value: string | number | null;
+    }[]
+  ) => void;
+  /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
    * @param row 粘贴数据的起始行号

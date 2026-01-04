@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "support cell values change event and improve delete/update records handling",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "",
+  "commit": "f14b40ee1"
+}

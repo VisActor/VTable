@@ -95,13 +95,15 @@ export function listTableChangeCellValue(
     }
     const changedValue = table.getCellOriginValue(col, row);
     if (oldValue !== changedValue && triggerEvent) {
-      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      const changeValue = {
         col,
         row,
         rawValue: beforeChangeValue,
         currentValue: oldValue,
         changedValue
-      });
+      };
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
     }
     table.scenegraph.updateNextFrame();
   }
@@ -151,6 +153,15 @@ export async function listTableChangeCellValues(
       oldRowValues.push(oldValue);
     }
   }
+
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+
   //#endregion
   for (let i = 0; i < values.length; i++) {
     if (startRow + i > table.rowCount - 1) {
@@ -204,13 +215,15 @@ export async function listTableChangeCellValues(
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
         if (oldValue !== changedValue && triggerEvent) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          const changeValue = {
             col: startCol + j,
             row: startRow + i,
             rawValue: beforeChangeValue,
             currentValue: oldValue,
             changedValue
-          });
+          };
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
         }
       } else {
         changedCellResults[i][j] = false;
@@ -218,6 +231,8 @@ export async function listTableChangeCellValues(
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
   }
+
+  triggerEvent && table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
 
   // const cell_value = table.getCellValue(col, row);
   const startRange = table.getCellRange(startCol, startRow);
@@ -312,6 +327,40 @@ export async function listTableChangeCellValues(
 
   table.scenegraph.updateNextFrame();
   return changedCellResults;
+}
+
+export async function listTableChangeCellValuesByIds(
+  changeValues: {
+    col: number;
+    row: number;
+    value: string | number | null;
+  }[],
+  triggerEvent: boolean,
+  table: ListTable
+) {
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+  for (let i = 0; i < changeValues.length; i++) {
+    const { col, row, value } = changeValues[i];
+    const oldValue = table.getCellOriginValue(col, row);
+    listTableChangeCellValue(col, row, value, false, triggerEvent, table);
+    if (oldValue !== value && triggerEvent) {
+      resultChangeValues.push({
+        col,
+        row,
+        rawValue: oldValue, // Assuming origin value as raw value for simplicity in this discrete update, or fetch raw if needed
+        currentValue: oldValue,
+        changedValue: value as string | number
+      });
+    }
+  }
+
+  triggerEvent && table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
 }
 
 type CellUpdateType = 'normal' | 'sort' | 'group';
