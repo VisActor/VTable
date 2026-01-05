@@ -7,8 +7,6 @@ import { detectFunctionParameterPosition } from './formula-helper';
 export class FormulaInputEditor extends VTable_editors.InputEditor {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
   private sheet: VTableSheet | null = null;
-  // 定义存储事件处理函数的数组
-  private eventHandlers: Array<{ type: string; handler: EventListener }> = [];
   /**
    * 设置 Sheet 实例
    */
@@ -240,9 +238,10 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     }
     //解绑所有事件
     // 解绑事件（在需要解绑的地方）
-    this.eventHandlers.forEach(({ type, handler }) => {
-      this.element.removeEventListener(type, handler);
-    });
+    this.element &&
+      this.eventHandlers.forEach(({ type, handler }) => {
+        this.element.removeEventListener(type, handler);
+      });
     super.onEnd();
   }
 

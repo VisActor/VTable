@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.10",
+      "tag": "@visactor/vtable_v1.22.10",
+      "date": "Mon, 05 Jan 2026 03:31:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: prepareEdit logic occor some bug\n\n"
+          },
+          {
+            "comment": "fix: rose pivotchart show indicator title problem\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.9",
       "tag": "@visactor/vtable_v1.22.9",
       "date": "Sun, 28 Dec 2025 05:40:27 GMT",
