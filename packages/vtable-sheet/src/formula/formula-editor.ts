@@ -7,8 +7,6 @@ import { detectFunctionParameterPosition } from './formula-helper';
 export class FormulaInputEditor extends VTable_editors.InputEditor {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
   private sheet: VTableSheet | null = null;
-  // 定义存储事件处理函数的数组
-  private eventHandlers: Array<{ type: string; handler: EventListener }> = [];
   /**
    * 设置 Sheet 实例
    */
