@@ -1,3 +1,25 @@
+# v1.22.9
+
+2025-12-28
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: toggleSelectAll 应该只选中当前选项. fix[#4838](https://github.com/VisActor/VTable/issues/4838)
+- **@visactor/vtable**: 修复二级显示长度问题
+- **@visactor/vtable**: 修复透视图没有左侧轴的情况
+- **@visactor/vtable**: 修复维度提示延迟逻辑错误
+- **@visactor/vtable**: 修复编辑器中文输入法第一个字符识别问题 [#4847](https://github.com/VisActor/VTable/issues/4847)
+- **@visactor/vtable**: 修复过滤插件与子标题的问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable-gantt**: 识别甘特图任务栏毫秒
+- **@visactor/vtable**: 修复没有轴时计算列宽逻辑
+- **@visactor/vtable**: 修复编辑器中文输入法第一个字符识别问题 [#4847](https://github.com/VisActor/VTable/issues/4847)
+
+[更多详情请查看 v1.22.9](https://github.com/VisActor/VTable/releases/tag/v1.22.9)
+
 # v1.22.8
 
 2025-12-17

@@ -2,6 +2,7 @@ import type { ListTable, BaseTableAPI, TYPES, pluginsDefinition } from '@visacto
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
+import type { IEditor } from '@visactor/vtable-editors';
 export enum ExcelEditCellKeyboardResponse {
   ENTER = 'enter',
   TAB = 'tab',
@@ -123,7 +124,14 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
         ) {
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
-          if (selectCells?.length > 0 && document.activeElement === this.table.getElement()) {
+          if (
+            selectCells?.length > 0 &&
+            (document.activeElement === this.table.getElement() ||
+              Object.values(this.table.editorManager.cacheLastSelectedCellEditor || {}).some(
+                // 处理情况：没有开始编辑但编辑器及编辑输入框已经存在的情况下（editCellTrigger为keydown）判断当前激活的是cacheLastSelectedCellEditor中的input也应该响应删除单元格
+                (editor: IEditor) => editor.getInputElement?.() === document.activeElement
+              ))
+          ) {
             // 如果选中的是范围，则删除范围内的所有单元格
             deleteSelectRange(selectCells, this.table, this.pluginOptions?.deleteWorkOnEditableCell ?? true);
             // 阻止事件传播和默认行为
