@@ -49,6 +49,7 @@ import {
   listTableAddRecords,
   listTableChangeCellValue,
   listTableChangeCellValues,
+  listTableChangeCellValuesByIds,
   listTableDeleteRecords,
   listTableUpdateRecords,
   sortRecords
@@ -1594,9 +1595,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValue(
+      col,
+      row,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
   }
   /**
    * 批量更新多个单元格的数据
@@ -1611,9 +1621,31 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
+  }
+
+  changeCellValuesByIds(
+    changeValues: {
+      col: number;
+      row: number;
+      value: string | number | null;
+    }[],
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    // @ts-ignore
+    return listTableChangeCellValuesByIds(changeValues, triggerEvent, this, silentChangeCellValuesEvent);
   }
   /**
    * 添加数据 单条数据
@@ -1666,6 +1698,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
   deleteRecords(recordIndexs: number[] | number[][]) {
+    const deletedRecords: any[] = [];
+    // 收集被删除的记录
+    if (recordIndexs?.length > 0) {
+      recordIndexs.forEach(index => {
+        let record = null;
+        if (typeof index === 'number') {
+          record = this.dataSource.get(index);
+        } else {
+          // 目前无法正确处理嵌套情况
+          record = [];
+        }
+
+        deletedRecords.push(record);
+      });
+    }
+
     listTableDeleteRecords(recordIndexs, this);
     adjustHeightResizedRowMapWithDeleteRecordIndex(this as ListTable, recordIndexs as number[]);
     this.internalProps.emptyTip?.resetVisible();
@@ -1676,6 +1724,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 触发删除数据记录事件 - 假设操作成功
     this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
       recordIndexs,
+      records: deletedRecords,
       rowIndexs,
       deletedCount: Array.isArray(recordIndexs[0])
         ? (recordIndexs as number[][]).length
