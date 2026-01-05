@@ -27,14 +27,15 @@ export function listTableChangeCellValue(
   silentChangeCellValuesEvent?: boolean
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
-    const recordIndex = table.getRecordShowIndexByCell(col, row);
+    const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+    const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     const beforeChangeValue = table.getCellRawValue(col, row);
     const oldValue = table.getCellOriginValue(col, row);
     if (table.isHeader(col, row)) {
       table.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
     } else {
-      table.dataSource.changeFieldValue(value, recordIndex, field, col, row, table);
+      table.dataSource.changeFieldValue(value, recordShowIndex, field, col, row, table);
     }
     const range = table.getCellRange(col, row);
     //改变单元格的值后 聚合值做重新计算
@@ -99,6 +100,8 @@ export function listTableChangeCellValue(
       const changeValue = {
         col,
         row,
+        recordIndex,
+        field,
         rawValue: beforeChangeValue,
         currentValue: oldValue,
         changedValue
@@ -161,6 +164,8 @@ export async function listTableChangeCellValues(
   const resultChangeValues: {
     col: number;
     row: number;
+    recordIndex?: number | number[];
+    field?: any;
     rawValue: string | number;
     currentValue: string | number;
     changedValue: string | number;
@@ -206,7 +211,8 @@ export async function listTableChangeCellValues(
       if (isCanChange) {
         changedCellResults[i][j] = true;
         const value = rowValues[j];
-        const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordShowIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
         // const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
         // const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
@@ -215,13 +221,15 @@ export async function listTableChangeCellValues(
         if (table.isHeader(startCol + j, startRow + i)) {
           table.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
         } else {
-          table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
+          table.dataSource.changeFieldValue(value, recordShowIndex, field, startCol + j, startRow + i, table);
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
         if (oldValue !== changedValue && triggerEvent) {
           const changeValue = {
             col: startCol + j,
             row: startRow + i,
+            recordIndex,
+            field,
             rawValue: beforeChangeValue,
             currentValue: oldValue,
             changedValue
@@ -347,18 +355,25 @@ export async function listTableChangeCellValuesByIds(
   const resultChangeValues: {
     col: number;
     row: number;
+    recordIndex?: number | number[];
+    field?: any;
     rawValue: string | number;
     currentValue: string | number;
     changedValue: string | number;
   }[] = [];
   for (let i = 0; i < changeValues.length; i++) {
     const { col, row, value } = changeValues[i];
+    const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+    const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+    const { field } = table.internalProps.layoutMap.getBody(col, row);
     const oldValue = table.getCellOriginValue(col, row);
     listTableChangeCellValue(col, row, value, false, triggerEvent, table, true);
     if (oldValue !== value && triggerEvent) {
       resultChangeValues.push({
         col,
         row,
+        recordIndex,
+        field,
         rawValue: oldValue, // Assuming origin value as raw value for simplicity in this discrete update, or fetch raw if needed
         currentValue: oldValue,
         changedValue: value as string | number
