@@ -22,8 +22,9 @@ export function listTableChangeCellValue(
   row: number,
   value: string | number | null,
   workOnEditableCell: boolean,
-  triggerEvent: boolean | 'change_cell_values',
-  table: ListTable
+  triggerEvent: boolean,
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
     const recordIndex = table.getRecordShowIndexByCell(col, row);
@@ -103,8 +104,7 @@ export function listTableChangeCellValue(
         changedValue
       };
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
-      // 如果 triggerEvent 为 'change_cell_values'，则不触发 CHANGE_CELL_VALUES 事件
-      if (triggerEvent !== 'change_cell_values') {
+      if (!silentChangeCellValuesEvent) {
         table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
       }
     }
@@ -124,8 +124,9 @@ export async function listTableChangeCellValues(
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
-  triggerEvent: boolean | 'change_cell_values',
-  table: ListTable
+  triggerEvent: boolean,
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -234,8 +235,9 @@ export async function listTableChangeCellValues(
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
   }
-
-  triggerEvent && table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  if (!silentChangeCellValuesEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  }
 
   // const cell_value = table.getCellValue(col, row);
   const startRange = table.getCellRange(startCol, startRow);
@@ -338,8 +340,9 @@ export async function listTableChangeCellValuesByIds(
     row: number;
     value: string | number | null;
   }[],
-  triggerEvent: boolean | 'change_cell_values',
-  table: ListTable
+  triggerEvent: boolean,
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ) {
   const resultChangeValues: {
     col: number;
@@ -351,7 +354,7 @@ export async function listTableChangeCellValuesByIds(
   for (let i = 0; i < changeValues.length; i++) {
     const { col, row, value } = changeValues[i];
     const oldValue = table.getCellOriginValue(col, row);
-    listTableChangeCellValue(col, row, value, false, triggerEvent, table);
+    listTableChangeCellValue(col, row, value, false, triggerEvent, table, true);
     if (oldValue !== value && triggerEvent) {
       resultChangeValues.push({
         col,
@@ -362,8 +365,9 @@ export async function listTableChangeCellValuesByIds(
       });
     }
   }
-
-  triggerEvent && table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  if (!silentChangeCellValuesEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  }
 }
 
 type CellUpdateType = 'normal' | 'sort' | 'group';

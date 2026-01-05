@@ -1595,9 +1595,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent: boolean | 'change_cell_values' = true
+    triggerEvent: boolean,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValue(
+      col,
+      row,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
   }
   /**
    * 批量更新多个单元格的数据
@@ -1612,9 +1621,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent: boolean | 'change_cell_values' = true
+    triggerEvent: boolean,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
   }
 
   changeCellValuesByIds(
@@ -1623,10 +1641,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       row: number;
       value: string | number | null;
     }[],
-    triggerEvent: boolean | 'change_cell_values' = true
+    triggerEvent: boolean,
+    silentChangeCellValuesEvent?: boolean
   ) {
     // @ts-ignore
-    return listTableChangeCellValuesByIds(changeValues, triggerEvent, this);
+    return listTableChangeCellValuesByIds(changeValues, triggerEvent, this, silentChangeCellValuesEvent);
   }
   /**
    * 添加数据 单条数据
