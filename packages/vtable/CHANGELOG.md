@@ -1,6 +1,18 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Sun, 28 Dec 2025 05:40:27 GMT and should not be manually modified.
+This log was last generated on Mon, 05 Jan 2026 03:31:14 GMT and should not be manually modified.
+
+## 1.22.10
+Mon, 05 Jan 2026 03:31:14 GMT
+
+### Updates
+
+- fix: prepareEdit logic occor some bug
+
+
+- fix: rose pivotchart show indicator title problem
+
+
 
 ## 1.22.9
 Sun, 28 Dec 2025 05:40:27 GMT
