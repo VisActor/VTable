@@ -22,7 +22,7 @@ export function listTableChangeCellValue(
   row: number,
   value: string | number | null,
   workOnEditableCell: boolean,
-  triggerEvent: boolean,
+  triggerEvent: boolean | 'change_cell_values',
   table: ListTable
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
@@ -103,7 +103,10 @@ export function listTableChangeCellValue(
         changedValue
       };
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
-      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      // 如果 triggerEvent 为 'change_cell_values'，则不触发 CHANGE_CELL_VALUES 事件
+      if (triggerEvent !== 'change_cell_values') {
+        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
     }
     table.scenegraph.updateNextFrame();
   }
@@ -121,7 +124,7 @@ export async function listTableChangeCellValues(
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
-  triggerEvent: boolean,
+  triggerEvent: boolean | 'change_cell_values',
   table: ListTable
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
@@ -335,7 +338,7 @@ export async function listTableChangeCellValuesByIds(
     row: number;
     value: string | number | null;
   }[],
-  triggerEvent: boolean,
+  triggerEvent: boolean | 'change_cell_values',
   table: ListTable
 ) {
   const resultChangeValues: {

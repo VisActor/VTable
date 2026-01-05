@@ -1592,7 +1592,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent: boolean | 'change_cell_values' = true
   ) {
     return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
   }
@@ -1609,7 +1609,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent: boolean | 'change_cell_values' = true
   ) {
     return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
   }
@@ -1620,7 +1620,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       row: number;
       value: string | number | null;
     }[],
-    triggerEvent = true
+    triggerEvent: boolean | 'change_cell_values' = true
   ) {
     // @ts-ignore
     return listTableChangeCellValuesByIds(changeValues, triggerEvent, this);
