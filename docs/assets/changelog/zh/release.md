@@ -1,3 +1,23 @@
+# v1.22.10
+
+2026-01-05
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix prepareEdit logic occor some bug
+- **@visactor/vtable-plugins**: fix delete and backbase key cann't delete cells
+- **@visactor/vtable**: rose pivotchart show indicator title problem
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: feat: support distanceToTaskBar config
+
+
+
+[更多详情请查看 v1.22.10](https://github.com/VisActor/VTable/releases/tag/v1.22.10)
+
 # v1.22.9
 
 2025-12-28
