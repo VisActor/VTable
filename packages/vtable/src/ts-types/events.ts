@@ -280,6 +280,8 @@ export interface TableEventHandlersEventArgumentMap {
   change_cell_value: {
     col: number;
     row: number;
+    recordIndex?: number | number[];
+    field?: FieldDef;
     rawValue: string | number;
     currentValue: string | number;
     changedValue: string | number;
@@ -288,6 +290,8 @@ export interface TableEventHandlersEventArgumentMap {
     values: {
       col: number;
       row: number;
+      recordIndex?: number | number[];
+      field?: FieldDef;
       rawValue: string | number;
       currentValue: string | number;
       changedValue: string | number;

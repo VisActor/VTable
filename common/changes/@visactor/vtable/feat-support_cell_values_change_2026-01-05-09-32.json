@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: 将 triggerEvent 参数默认值设为 true\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zhanghao.gino@bytedance.com"
+}

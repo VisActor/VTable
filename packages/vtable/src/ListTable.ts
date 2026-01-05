@@ -574,7 +574,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number | number[]): CellAddress {
     if (this.transpose) {
       return { col: this.getTableIndexByRecordIndex(recordIndex), row: this.getTableIndexByField(field) };
     }
@@ -1646,6 +1646,31 @@ export class ListTable extends BaseTable implements ListTableAPI {
   ) {
     // @ts-ignore
     return listTableChangeCellValuesByIds(changeValues, triggerEvent, this, silentChangeCellValuesEvent);
+  }
+
+  changeSourceCellValue(recordIndex: number | number[], field: FieldDef, value: string | number | null) {
+    const tableIndex = this.getTableIndexByRecordIndex(recordIndex);
+    const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+    if (tableIndex < 0 || cellAddr.col < 0 || cellAddr.row < 0) {
+      return;
+    }
+    this.dataSource.changeFieldValue(value, tableIndex, field, cellAddr.col, cellAddr.row, this);
+    const beforeChangeValue = this.getCellRawValue(cellAddr.col, cellAddr.row);
+    const oldValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    const changedValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    if (oldValue !== changedValue) {
+      const changeValue = {
+        col: cellAddr.col,
+        row: cellAddr.row,
+        recordIndex,
+        field,
+        rawValue: beforeChangeValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+    }
   }
   /**
    * 添加数据 单条数据
