@@ -1595,7 +1595,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent: boolean,
+    triggerEvent = true,
     silentChangeCellValuesEvent?: boolean
   ) {
     return listTableChangeCellValue(
@@ -1621,7 +1621,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent: boolean,
+    triggerEvent = true,
     silentChangeCellValuesEvent?: boolean
   ) {
     return listTableChangeCellValues(
@@ -1641,7 +1641,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       row: number;
       value: string | number | null;
     }[],
-    triggerEvent: boolean,
+    triggerEvent = true,
     silentChangeCellValuesEvent?: boolean
   ) {
     // @ts-ignore
