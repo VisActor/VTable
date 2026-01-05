@@ -15,7 +15,7 @@ export class InputEditor implements IEditor {
   col?: number;
   row?: number;
   // 存储事件处理器，用于在移除元素前解绑
-  private eventHandlers: Array<{ type: string; handler: EventListener }> = [];
+  protected eventHandlers: Array<{ type: string; handler: EventListener }> = [];
   constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
   }
