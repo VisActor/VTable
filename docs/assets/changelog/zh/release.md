@@ -5,14 +5,14 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix prepareEdit logic occor some bug
-- **@visactor/vtable-plugins**: fix delete and backbase key cann't delete cells
-- **@visactor/vtable**: rose pivotchart show indicator title problem
+- **@visactor/vtable**: 修复 prepareEdit 逻辑造成的一些问题
+- **@visactor/vtable-plugins**: 修复del和backspace键不能删除单元格的问题
+- **@visactor/vtable**: 修复透视图非笛卡尔坐标系的图表类型中显示指标标题问题
 
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: feat: support distanceToTaskBar config
+- **@visactor/vtable-gantt**: 甘特图依赖性支持自定义拐点距离taskbar的长度
 
 
 
