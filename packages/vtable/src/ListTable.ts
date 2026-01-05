@@ -1706,10 +1706,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
         if (typeof index === 'number') {
           record = this.dataSource.get(index);
         } else {
+          // 目前无法正确处理嵌套情况
           record = [];
-          index.forEach(item => {
-            record.push(this.dataSource.get(item));
-          });
         }
 
         deletedRecords.push(record);
