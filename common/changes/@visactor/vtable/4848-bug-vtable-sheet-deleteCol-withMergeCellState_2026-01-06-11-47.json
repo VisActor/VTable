@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: when has merge cells to delete column #4848\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
