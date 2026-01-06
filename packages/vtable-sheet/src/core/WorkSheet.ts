@@ -489,6 +489,64 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           const minIndex = Math.min(...deleteColIndexs.flat());
           const deletedCount = deleteColIndexs.length;
           this.vtableSheet.formulaManager.removeColumns(sheetKey, minIndex, deletedCount);
+          // 删除列后，需要更新合并单元格状态
+          // 完全在删除范围内：删除合并单元格
+          // 与删除范围有重叠（startCol <= deleteEndIndex && endCol >= minIndex）：
+          // 起始列在删除范围内：移到 minIndex
+          // 起始列在删除范围之前：保持不变
+          // 结束列在删除范围内：移到 minIndex - 1
+          // 结束列在删除范围之后：减去 deletedCount
+          // 完全在删除范围之后（startCol > deleteEndIndex）：起始列和结束列都减去 deletedCount
+          if (Array.isArray(this.tableInstance.options.customMergeCell)) {
+            const mergeCellsToRemove: number[] = [];
+            const deleteEndIndex = minIndex + deletedCount - 1;
+            const customMergeCellArray = this.tableInstance.options.customMergeCell;
+
+            customMergeCellArray.forEach((mergeCell, index) => {
+              const startCol = mergeCell.range.start.col;
+              const endCol = mergeCell.range.end.col;
+
+              // 如果合并单元格完全在删除范围内，标记为删除
+              if (startCol >= minIndex && endCol <= deleteEndIndex) {
+                mergeCellsToRemove.push(index);
+                return;
+              }
+
+              // 如果合并单元格与删除范围有重叠
+              if (startCol <= deleteEndIndex && endCol >= minIndex) {
+                // 如果起始列在删除范围内，将起始列移到删除范围的起始位置（删除后这个位置不存在，所以移到 minIndex）
+                if (startCol >= minIndex) {
+                  mergeCell.range.start.col = minIndex;
+                }
+                // 如果起始列在删除范围之前，不需要调整（保持不变）
+
+                // 如果结束列在删除范围内，将结束列移到删除范围之前
+                if (endCol <= deleteEndIndex) {
+                  mergeCell.range.end.col = minIndex - 1;
+                } else {
+                  // 结束列在删除范围之后，需要减去删除的列数
+                  mergeCell.range.end.col -= deletedCount;
+                }
+
+                // 如果调整后起始列大于结束列，标记为删除
+                if (mergeCell.range.start.col > mergeCell.range.end.col) {
+                  mergeCellsToRemove.push(index);
+                }
+              }
+              // 如果合并单元格完全在删除范围之后，只需要向前移动列索引
+              else if (startCol > deleteEndIndex) {
+                mergeCell.range.start.col -= deletedCount;
+                mergeCell.range.end.col -= deletedCount;
+              }
+            });
+
+            // 从后往前删除，避免索引变化影响
+            mergeCellsToRemove
+              .sort((a, b) => b - a)
+              .forEach(index => {
+                customMergeCellArray.splice(index, 1);
+              });
+          }
         }
       }
       // update 事件不需要调整引用，因为只是数据内容变更

@@ -3256,6 +3256,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
@@ -3277,13 +3279,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 结束拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来结束拖拽选择整列或者整行
    */
   endDragSelect() {
     this.stateManager.updateInteractionState(InteractionState.default);
-    this.stateManager.endSelectCells(false, false);
+    //上面方法dragSelectCol和startDragSelectCol方法中已经设置了select.selecting = false，所以这里不需要再调用endSelectCells方法
+    // this.stateManager.endSelectCells(false, false);
   }
 
   /**
