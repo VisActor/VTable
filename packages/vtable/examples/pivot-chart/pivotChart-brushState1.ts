@@ -9447,6 +9447,7 @@ export function createTable() {
     //   }
     // }
   };
+
   const option = {
     animation: true,
     rows: [],
@@ -9472,7 +9473,7 @@ export function createTable() {
           animation: true,
           brush: {
             visible: true,
-            brushType: 'rect',
+            brushType: 'x',
             inBrush: {
               colorAlpha: 1
             },
@@ -9525,14 +9526,6 @@ export function createTable() {
             state: {
               hover: {
                 fillOpacity: 0.6
-              },
-              selected: {
-                fillOpacity: 1,
-                fill: 'red'
-              },
-              selected_reverse: {
-                fillOpacity: 0.2,
-                fill: 'black'
               }
             }
           }
@@ -9561,7 +9554,7 @@ export function createTable() {
           animation: true,
           brush: {
             visible: true,
-            brushType: 'rect',
+            brushType: 'x',
             inBrush: {
               colorAlpha: 1
             },
@@ -9614,14 +9607,6 @@ export function createTable() {
             state: {
               hover: {
                 fillOpacity: 0.6
-              },
-              selected: {
-                fillOpacity: 1,
-                fill: 'red'
-              },
-              selected_reverse: {
-                fillOpacity: 0.2,
-                fill: 'black'
               }
             }
           }
@@ -9639,6 +9624,7 @@ export function createTable() {
             date: '2019',
             profit: 10,
             sales: 20,
+
             rateOfReturn: 0.1
           },
           sales: 20,
@@ -9897,10 +9883,9 @@ export function createTable() {
     defaultHeaderColWidth: 'auto',
     defaultColWidth: 240,
     heightMode: 'standard',
-    autoFillHeight: true,
-    defaultRowHeight: 380,
-
-    // "defaultHeaderRowHeight": "auto",
+    // "autoFillHeight": true,
+    defaultRowHeight: 480,
+    defaultHeaderRowHeight: 'auto',
     indicatorsAsCol: false,
     select: {
       highlightMode: 'cell',
@@ -9914,6 +9899,11 @@ export function createTable() {
     },
     corner: {
       titleOnDimension: 'row'
+    },
+    animationAppear: {
+      duration: 600,
+      type: 'all',
+      direction: 'row'
     },
     theme: {
       underlayBackgroundColor: 'rgba(0,0,0,0)',
@@ -10121,32 +10111,47 @@ export function createTable() {
           }
         }
       }
+    },
+    chartDimensionLinkage: {
+      showTooltip: true,
+      listenBrushChange: true,
+      brushChangeDelay: 100,
+      clearChartState() {
+        console.log('clearChartState');
+        window.xValues = [];
+        tableInstance.enableDimensionHoverToAllChartInstances();
+      },
+      inBrushStateFilter: datum => {
+        const match = getXValues().includes(datum['__Dim_X__']);
+        // console.log('inBrushStateFilter,!!!!!', datum.__MeaName__, getXValues())
+        return match;
+      },
+      outOfBrushStateFilter: datum => {
+        const match = getXValues().includes(datum['__Dim_X__']);
+        // console.log('outOfBrushStateFilter,!!!!!', datum.__MeaName__, getXValues())
+        return getXValues().length ? !match : false;
+      }
     }
-    // chartDimensionLinkage: {
-    //   selectedStateFilter: (datum) => {
-    //     const match = ["2022", "2023"].includes(datum["__Dim_X__"])
-    //       console.log('brush,!!!!!', datum.__MeaName__, datum)
-    //         return match
-    //     },
-    //     selectedReverseStateFilter: (datum) => {
-    //       const match = ["2020", "2021"].includes(datum["__Dim_X__"])
-    //         console.log('brush,????', match, datum)
-
-    //         return match
-    //     }
-    // },
   };
 
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  tableInstance.on('before_cache_chart_image', args => {
-    console.log('before_cache_chart_image', args);
+
+  window.xValues = [];
+  function getXValues() {
+    return window.xValues;
+  }
+  tableInstance.onVChartEvent('brushEnd', params => {
+    window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);
+    console.log('brush_end', params?.value?.inBrushData);
   });
-  tableInstance.onVChartEvent('click', args => {
-    console.log('onVChartEvent click', args);
+  tableInstance.onVChartEvent('brushStart', params => {
+    tableInstance.disableDimensionHoverToAllChartInstances();
   });
-  tableInstance.onVChartEvent('mouseover', args => {
-    console.log('onVChartEvent mouseover', args);
+  tableInstance.onVChartEvent('brushChange', params => {
+    window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);
+    // console.log('brushChange')
   });
+
   window.tableInstance = tableInstance;
 
   window.update = () => {

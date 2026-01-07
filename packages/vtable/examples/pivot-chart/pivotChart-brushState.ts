@@ -9449,6 +9449,10 @@ export function createTable() {
   };
   const option: VTable.PivotChartConstructorOptions = {
     chartDimensionLinkage: {
+      // showTooltip:true,
+      // listenBrushChange:true,
+      // brushChangeDelay:100,
+
       // selectedStateFilter: (datum: any) => {
       //   console.log('selectedStateFilter', datum);
       //   // return datum['230417171050031'] === '中国';

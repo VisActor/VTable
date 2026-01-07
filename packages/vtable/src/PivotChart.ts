@@ -75,6 +75,10 @@ import {
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
 import { cacheStageCanvas, clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import {
+  disableDimensionHoverToAllChartInstances,
+  enableDimensionHoverToAllChartInstances
+} from './scenegraph/graphic/active-cell-chart-list';
 
 registerAxis();
 registerEmptyTip();
@@ -1721,5 +1725,13 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const layoutMap = this.internalProps.layoutMap;
     const headerNodes = layoutMap.getCellHeaderPathsWithTreeNode(col, row);
     return headerNodes;
+  }
+  disableDimensionHoverToAllChartInstances() {
+    //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
+    disableDimensionHoverToAllChartInstances();
+  }
+  enableDimensionHoverToAllChartInstances() {
+    //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
+    enableDimensionHoverToAllChartInstances();
   }
 }

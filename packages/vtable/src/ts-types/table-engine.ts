@@ -612,6 +612,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     listenBrushChange?: boolean;
     /** brushChange事件处理的延迟时间。节流防止频繁触发卡顿，默认100毫秒 */
     brushChangeDelay?: number;
+    /** 清除图表状态的函数 */
+    clearChartState?: () => void;
   };
 }
 export interface PivotTableAPI extends BaseTableAPI {

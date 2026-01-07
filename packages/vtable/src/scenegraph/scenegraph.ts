@@ -861,9 +861,14 @@ export class Scenegraph {
   updateChartSizeForResizeRowHeight(row: number) {
     updateChartSizeForResizeRowHeight(this, row);
   }
-  /** 更新图表的高亮状态 */
+  /** 更新图表的高亮状态 点击图元或者框选brush选中图元 一般有高亮状态*/
   updateChartState(datum: any, selectedDataMode: 'click' | 'brush') {
-    this.table.isPivotChart() && updateChartState(this, datum, selectedDataMode);
+    if (this.table.isPivotChart()) {
+      if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.clearChartState?.();
+      }
+      updateChartState(this, datum, selectedDataMode);
+    }
   }
 
   updateCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {

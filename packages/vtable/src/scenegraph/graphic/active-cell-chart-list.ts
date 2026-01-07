@@ -109,27 +109,6 @@ export function generateChartInstanceListByColumnDirection(
     table.scenegraph.updateNextFrame();
   }
 }
-export function clearChartInstanceListByColumnDirection(col: number, excludedRow: number, table: BaseTableAPI) {
-  if (isValid(chartInstanceListColumnByColumnDirection[col])) {
-    for (const i in chartInstanceListColumnByColumnDirection[col]) {
-      if (isValid(excludedRow) && Number(i) === excludedRow) {
-        continue;
-      }
-      const cellGroup = table.scenegraph.getCell(col, Number(i));
-      const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.addUpdateShapeAndBoundsTag();
-      if (isValid(chartNode)) {
-        chartNode.deactivate(table, {
-          releaseChartInstance: true,
-          releaseColumnChartInstance: false,
-          releaseRowChartInstance: false
-        });
-        chartInstanceListColumnByColumnDirection[col][i] = null;
-      }
-    }
-    delete chartInstanceListColumnByColumnDirection[col];
-  }
-}
 
 /**
  * 根据行号生成可视区域内图表实例列表
@@ -273,6 +252,13 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
     }
   }
 }
+/**
+ * 检查是否显示tooltip 用于检查是否边缘行，且单元格被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。
+ * @param row 行号
+ * @param table 表格实例
+ * @returns 是否显示tooltip
+ * @returns
+ */
 function checkIsShowTooltipForEdgeRow(row: number, table: BaseTableAPI) {
   let isShowTooltip = true;
   const { rowStart } = table.getBodyVisibleRowRange();
@@ -351,13 +337,28 @@ function checkIsShowTooltipForEdgeColumn(col: number, table: BaseTableAPI) {
   }
   return isShowTooltip;
 }
-/**
- * 检查是否显示tooltip 用于检查是否边缘行，且单元格被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。
- * @param row 行号
- * @param table 表格实例
- * @returns 是否显示tooltip
- * @returns
- */
+export function clearChartInstanceListByColumnDirection(col: number, excludedRow: number, table: BaseTableAPI) {
+  if (isValid(chartInstanceListColumnByColumnDirection[col])) {
+    for (const i in chartInstanceListColumnByColumnDirection[col]) {
+      if (isValid(excludedRow) && Number(i) === excludedRow) {
+        continue;
+      }
+      const cellGroup = table.scenegraph.getCell(col, Number(i));
+      const chartNode = cellGroup?.getChildren()?.[0] as Chart;
+      chartNode.addUpdateShapeAndBoundsTag();
+      if (isValid(chartNode)) {
+        chartNode.deactivate(table, {
+          releaseChartInstance: true,
+          releaseColumnChartInstance: false,
+          releaseRowChartInstance: false
+        });
+        chartInstanceListColumnByColumnDirection[col][i] = null;
+      }
+    }
+    delete chartInstanceListColumnByColumnDirection[col];
+  }
+}
+
 export function clearChartInstanceListByRowDirection(row: number, excludedCol: number, table: BaseTableAPI) {
   if (isValid(chartInstanceListRowByRowDirection[row])) {
     for (const i in chartInstanceListRowByRowDirection[row]) {
@@ -386,5 +387,36 @@ export function clearAllChartInstanceList(table: BaseTableAPI) {
   }
   for (const row in chartInstanceListRowByRowDirection) {
     clearChartInstanceListByRowDirection(Number(row), undefined, table);
+  }
+}
+
+export function disableDimensionHoverToAllChartInstances() {
+  for (const col in chartInstanceListColumnByColumnDirection) {
+    for (const row in chartInstanceListColumnByColumnDirection[col]) {
+      chartInstanceListColumnByColumnDirection[col][row]
+        .getChart()
+        .getComponentsByKey('brush')[0]
+        .disableDimensionHover();
+    }
+  }
+  for (const row in chartInstanceListRowByRowDirection) {
+    for (const col in chartInstanceListRowByRowDirection[row]) {
+      chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].disableDimensionHover();
+    }
+  }
+}
+export function enableDimensionHoverToAllChartInstances() {
+  for (const col in chartInstanceListColumnByColumnDirection) {
+    for (const row in chartInstanceListColumnByColumnDirection[col]) {
+      chartInstanceListColumnByColumnDirection[col][row]
+        .getChart()
+        .getComponentsByKey('brush')[0]
+        .enableDimensionHover();
+    }
+  }
+  for (const row in chartInstanceListRowByRowDirection) {
+    for (const col in chartInstanceListRowByRowDirection[row]) {
+      chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
+    }
   }
 }

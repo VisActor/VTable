@@ -69,7 +69,7 @@
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
     "luxon": "*",
-    "@visactor/vchart": "2.0.13-alpha.3",
+    "@visactor/vchart": " 2.0.13-alpha.4",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
