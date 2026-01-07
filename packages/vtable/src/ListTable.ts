@@ -1891,12 +1891,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number | number[]) {
+  addRecord(record: any, recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecord(record, recordIndex, this);
     adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, [record]);
     this.internalProps.emptyTip?.resetVisible();
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records: [record],
         recordIndex,
@@ -1912,7 +1912,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number | number[]) {
+  addRecords(records: any[], recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecords(records, recordIndex, this);
     //_heightResizedRowMap修正，里面的行号需要修正，保证添加数据后 其他行号做对应调整
     if (typeof recordIndex === 'number') {
@@ -1921,7 +1921,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.emptyTip?.resetVisible();
 
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records,
         recordIndex,
@@ -1934,7 +1934,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  deleteRecords(recordIndexs: number[] | number[][]) {
+  deleteRecords(recordIndexs: number[] | number[][], triggerEvent = true) {
     const deletedRecords: any[] = [];
     // 收集被删除的记录
     if (recordIndexs?.length > 0) {
@@ -1959,14 +1959,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
       rowIndexs.push(this.getBodyRowIndexByRecordIndex(recordIndexs[i]) + this.columnHeaderLevelCount);
     }
     // 触发删除数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
-      recordIndexs,
-      records: deletedRecords,
-      rowIndexs,
-      deletedCount: Array.isArray(recordIndexs[0])
-        ? (recordIndexs as number[][]).length
-        : (recordIndexs as number[]).length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
+        recordIndexs,
+        records: deletedRecords,
+        rowIndexs,
+        deletedCount: Array.isArray(recordIndexs[0])
+          ? (recordIndexs as number[][]).length
+          : (recordIndexs as number[]).length
+      });
+    }
   }
 
   /**
@@ -1976,15 +1978,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
     listTableUpdateRecords(records, recordIndexs, this);
 
     // 触发更新数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
-      records,
-      recordIndexs,
-      updateCount: records.length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
+        records,
+        recordIndexs,
+        updateCount: records.length
+      });
+    }
   }
 
   _hasCustomRenderOrLayout() {

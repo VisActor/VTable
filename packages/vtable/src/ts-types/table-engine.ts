@@ -451,10 +451,10 @@ export interface ListTableAPI extends BaseTableAPI {
   /** 结束编辑 */
   completeEditCell: () => void;
   //#endregion
-  addRecord: (record: any, recordIndex?: number) => void;
-  addRecords: (records: any[], recordIndex?: number) => void;
-  deleteRecords: (recordIndexs: number[]) => void;
-  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
+  addRecord: (record: any, recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  addRecords: (records: any[], recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  deleteRecords: (recordIndexs: number[] | number[][], triggerEvent?: boolean) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[], triggerEvent?: boolean) => void;
   updateFilterRules: (filterRules: FilterRules, options: { clearRowHeightCache?: boolean }) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;
