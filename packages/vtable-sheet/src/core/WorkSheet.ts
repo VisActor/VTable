@@ -448,6 +448,76 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           // 为了简化，我们假设删除的是连续的行，从最小的索引开始
           const minIndex = Math.min(...rowIndexs.flat());
           this.vtableSheet.formulaManager.removeRows(sheetKey, minIndex, deletedCount);
+          // 删除行后，需要更新合并单元格状态
+          // 完全在删除范围内：删除合并单元格
+          // 与删除范围有重叠（startRow <= deleteEndIndex && endRow >= minIndex）：
+          // 起始行在删除范围内：移到 minIndex
+          // 起始行在删除范围之前：保持不变
+          // 结束行在删除范围内：移到 minIndex - 1
+          // 结束行在删除范围之后：减去 deletedCount
+          // 完全在删除范围之后（startRow > deleteEndIndex）：起始行和结束行都减去 deletedCount
+          if (Array.isArray(this.tableInstance.options.customMergeCell)) {
+            const mergeCellsToRemove: number[] = [];
+            const deleteEndIndex = minIndex + deletedCount - 1;
+            const customMergeCellArray = this.tableInstance.options.customMergeCell;
+            // 需要clone一份mergeCellArray，因为后续会修改mergeCellArray
+            const cloneMergeCellArray = customMergeCellArray.map(mergeCell => ({
+              ...mergeCell,
+              range: {
+                start: { ...mergeCell.range.start },
+                end: { ...mergeCell.range.end }
+              }
+            }));
+            customMergeCellArray.forEach((mergeCell, index) => {
+              const startRow = mergeCell.range.start.row;
+              const endRow = mergeCell.range.end.row;
+
+              // 如果合并单元格完全在删除范围内，标记为删除
+              if (startRow >= minIndex && endRow <= deleteEndIndex) {
+                mergeCellsToRemove.push(index);
+                return;
+              }
+
+              // 如果合并单元格与删除范围有重叠
+              if (startRow <= deleteEndIndex && endRow >= minIndex) {
+                // 如果起始行在删除范围内，将起始行移到删除范围的起始位置（删除后这个位置不存在，所以移到 minIndex）
+                if (startRow >= minIndex) {
+                  mergeCell.range.start.row = minIndex;
+                }
+                // 如果起始行在删除范围之前，不需要调整（保持不变）
+
+                // 如果结束行在删除范围内，将结束行移到删除范围之前
+                if (endRow <= deleteEndIndex) {
+                  mergeCell.range.end.row = minIndex - 1;
+                } else {
+                  // 结束行在删除范围之后，需要减去删除的行数
+                  mergeCell.range.end.row -= deletedCount;
+                }
+
+                // 如果调整后起始行大于结束行，标记为删除
+                if (mergeCell.range.start.row > mergeCell.range.end.row) {
+                  mergeCellsToRemove.push(index);
+                }
+              }
+              // 如果合并单元格完全在删除范围之后，只需要向前移动行索引
+              else if (startRow > deleteEndIndex) {
+                mergeCell.range.start.row -= deletedCount;
+                mergeCell.range.end.row -= deletedCount;
+              }
+            });
+
+            // 从后往前删除，避免索引变化影响
+            mergeCellsToRemove
+              .sort((a, b) => b - a)
+              .forEach(index => {
+                customMergeCellArray.splice(index, 1);
+              });
+            const updateRanges = cloneMergeCellArray.map(mergeCell => ({
+              start: { ...mergeCell.range.start },
+              end: { ...mergeCell.range.end }
+            }));
+            (this.tableInstance as any).updateCellContentRange(updateRanges);
+          }
         }
       }
       // update 事件不需要调整引用，因为只是数据内容变更
@@ -501,7 +571,14 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
             const mergeCellsToRemove: number[] = [];
             const deleteEndIndex = minIndex + deletedCount - 1;
             const customMergeCellArray = this.tableInstance.options.customMergeCell;
-
+            // 需要clone一份mergeCellArray，因为后续会修改mergeCellArray
+            const cloneMergeCellArray = customMergeCellArray.map(mergeCell => ({
+              ...mergeCell,
+              range: {
+                start: { ...mergeCell.range.start },
+                end: { ...mergeCell.range.end }
+              }
+            }));
             customMergeCellArray.forEach((mergeCell, index) => {
               const startCol = mergeCell.range.start.col;
               const endCol = mergeCell.range.end.col;
@@ -546,6 +623,12 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
               .forEach(index => {
                 customMergeCellArray.splice(index, 1);
               });
+
+            const updateRanges = cloneMergeCellArray.map(mergeCell => ({
+              start: { ...mergeCell.range.start },
+              end: { ...mergeCell.range.end }
+            }));
+            (this.tableInstance as any).updateCellContentRange(updateRanges);
           }
         }
       }
