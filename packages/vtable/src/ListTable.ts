@@ -44,6 +44,7 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
 import { DataSource, type CachedDataSource } from './data';
+import { getValueFromDeepArray } from './data/DataSource';
 import {
   listTableAddRecord,
   listTableAddRecords,
@@ -1636,16 +1637,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   changeCellValuesByIds(
-    changeValues: {
-      col: number;
-      row: number;
-      value: string | number | null;
-    }[],
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell = false,
     triggerEvent = true,
     silentChangeCellValuesEvent?: boolean
   ) {
     // @ts-ignore
-    return listTableChangeCellValuesByIds(changeValues, triggerEvent, this, silentChangeCellValuesEvent);
+    return listTableChangeCellValuesByIds(
+      ranges,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
   }
 
   changeSourceCellValue(recordIndex: number | number[], field: FieldDef, value: string | number | null) {
@@ -1671,6 +1677,212 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
       this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
     }
+  }
+
+  changeCellValueByRecord(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+    let record: any;
+    let oldValue: any;
+    if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+      record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+      oldValue = record?.[field as any];
+    }
+
+    this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+    if (!triggerEvent) {
+      return;
+    }
+
+    const changedValue =
+      record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+
+    if (oldValue !== changedValue) {
+      const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+      const changeValue = {
+        col: cellAddr?.col ?? -1,
+        row: cellAddr?.row ?? -1,
+        recordIndex,
+        field,
+        rawValue: oldValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      if (!silentChangeCellValuesEvent) {
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  changeCellValueBySource(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValueByRecord(recordIndex, field, value, {
+      triggerEvent,
+      silentChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  changeCellValuesByRecords(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const resultChangeValues: {
+      col: number;
+      row: number;
+      recordIndex?: number | number[];
+      field?: any;
+      rawValue: string | number;
+      currentValue: string | number;
+      changedValue: string | number;
+    }[] = [];
+
+    for (let i = 0; i < changeValues.length; i++) {
+      const { recordIndex, field, value } = changeValues[i];
+
+      const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+      let record: any;
+      let oldValue: any;
+      if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+        record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+        oldValue = record?.[field as any];
+      }
+
+      this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+      if (triggerEvent) {
+        const changedValue =
+          record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+        if (oldValue !== changedValue) {
+          const changeValue = {
+            col: (this.getCellAddrByFieldRecord(field, recordIndex)?.col ?? -1) as number,
+            row: (this.getCellAddrByFieldRecord(field, recordIndex)?.row ?? -1) as number,
+            recordIndex,
+            field,
+            rawValue: oldValue,
+            currentValue: oldValue,
+            changedValue
+          };
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
+        }
+      }
+    }
+
+    if (!silentChangeCellValuesEvent && resultChangeValues.length && triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  changeCellValuesBySource(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValuesByRecords(changeValues, {
+      triggerEvent,
+      silentChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  refreshAfterSourceChange(options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) {
+    const reapplyFilter = options?.reapplyFilter ?? true;
+    const reapplySort = options?.reapplySort ?? true;
+    const clearRowHeightCache = options?.clearRowHeightCache ?? true;
+
+    this.scenegraph.clearCells();
+
+    if (this.sortState && reapplySort) {
+      (this.dataSource as any).clearSortedIndexMap?.();
+      (this.dataSource as any).sortedIndexMap?.clear?.();
+    }
+
+    if (reapplyFilter) {
+      if (this.sortState && reapplySort) {
+        this.dataSource.updateFilterRulesForSorted(this.dataSource.dataConfig?.filterRules);
+        sortRecords(this);
+      } else {
+        this.dataSource.updateFilterRules(this.dataSource.dataConfig?.filterRules);
+      }
+    } else if (this.sortState && reapplySort) {
+      sortRecords(this);
+    }
+
+    const traverseColumns = (columns: ColumnsDefine) => {
+      for (let i = 0; i < (columns?.length ?? 0); i++) {
+        const column: any = columns[i];
+        const aggregators = column?.vtable_aggregator;
+        if (aggregators) {
+          if (Array.isArray(aggregators)) {
+            for (let j = 0; j < aggregators.length; j++) {
+              aggregators[j]?.recalculate?.();
+            }
+          } else {
+            aggregators?.recalculate?.();
+          }
+        }
+        if (column?.columns) {
+          traverseColumns(column.columns);
+        }
+      }
+    };
+    traverseColumns(this.internalProps.columns);
+
+    this.refreshRowColCount();
+    this.internalProps.layoutMap.clearCellRangeMap();
+    this.internalProps.useOneRowHeightFillAll = false;
+    this.stateManager.initCheckedState(this.records);
+    this.scenegraph.createSceneGraph(!clearRowHeightCache);
+    this.internalProps.emptyTip?.resetVisible();
+    this.resize();
   }
   /**
    * 添加数据 单条数据

@@ -372,11 +372,9 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param changeValues
    */
   changeCellValuesByIds: (
-    changeValues: {
-      col: number;
-      row: number;
-      value: string | number | null;
-    }[],
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
     triggerEvent?: boolean,
     silentChangeCellValuesEvent?: boolean
   ) => void;
@@ -395,6 +393,49 @@ export interface ListTableAPI extends BaseTableAPI {
     triggerEvent?: boolean,
     silentChangeCellValuesEvent?: boolean
   ) => Promise<boolean[][]> | boolean[][];
+  changeCellValueByRecord: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  changeCellValuesByRecords: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  changeCellValueBySource: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
+  changeCellValuesBySource: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
+  refreshAfterSourceChange: (options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

@@ -5,7 +5,7 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { ListTableProtected, SortState } from '../ts-types';
+import type { CellRange, ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 import { isNumber } from '@visactor/vutils';
 
@@ -343,11 +343,9 @@ export async function listTableChangeCellValues(
 }
 
 export async function listTableChangeCellValuesByIds(
-  changeValues: {
-    col: number;
-    row: number;
-    value: string | number | null;
-  }[],
+  ranges: CellRange[],
+  value: string | number | null,
+  workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
   silentChangeCellValuesEvent?: boolean
@@ -361,26 +359,81 @@ export async function listTableChangeCellValuesByIds(
     currentValue: string | number;
     changedValue: string | number;
   }[] = [];
-  for (let i = 0; i < changeValues.length; i++) {
-    const { col, row, value } = changeValues[i];
-    const recordShowIndex = table.getRecordShowIndexByCell(col, row);
-    const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
-    const { field } = table.internalProps.layoutMap.getBody(col, row);
-    const oldValue = table.getCellOriginValue(col, row);
-    listTableChangeCellValue(col, row, value, false, triggerEvent, table, true);
-    if (oldValue !== value && triggerEvent) {
-      resultChangeValues.push({
-        col,
-        row,
-        recordIndex,
-        field,
-        rawValue: oldValue, // Assuming origin value as raw value for simplicity in this discrete update, or fetch raw if needed
-        currentValue: oldValue,
-        changedValue: value as string | number
-      });
+
+  const processed = new Set<string>();
+  const nextValue = (value ?? '') as string | number;
+
+  for (let i = 0; i < (ranges?.length ?? 0); i++) {
+    const range = ranges[i];
+    const startCol = Math.min(range.start.col, range.end.col);
+    const endCol = Math.max(range.start.col, range.end.col);
+    const startRow = Math.min(range.start.row, range.end.row);
+    const endRow = Math.max(range.start.row, range.end.row);
+
+    if (startCol > endCol || startRow > endRow) {
+      continue;
+    }
+
+    const values: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let row = startRow; row <= endRow; row++) {
+      const rowValues: (string | number)[] = [];
+      const rowOldValues: (string | number)[] = [];
+      for (let col = startCol; col <= endCol; col++) {
+        rowValues.push(nextValue);
+        rowOldValues.push(table.getCellOriginValue(col, row));
+      }
+      values.push(rowValues);
+      oldValues.push(rowOldValues);
+    }
+
+    const changedCellResults = await listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      table,
+      true
+    );
+
+    for (let r = 0; r < values.length; r++) {
+      for (let c = 0; c < values[r].length; c++) {
+        const col = startCol + c;
+        const row = startRow + r;
+        const key = `${col},${row}`;
+        if (processed.has(key)) {
+          continue;
+        }
+        processed.add(key);
+
+        if (!triggerEvent || !changedCellResults?.[r]?.[c]) {
+          continue;
+        }
+
+        const oldValue = oldValues[r][c];
+        const changedValue = table.getCellOriginValue(col, row);
+        if (oldValue === changedValue) {
+          continue;
+        }
+
+        const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+        const { field } = table.internalProps.layoutMap.getBody(col, row);
+        resultChangeValues.push({
+          col,
+          row,
+          recordIndex,
+          field,
+          rawValue: oldValue,
+          currentValue: oldValue,
+          changedValue
+        });
+      }
     }
   }
-  if (!silentChangeCellValuesEvent) {
+
+  if (!silentChangeCellValuesEvent && triggerEvent) {
     table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
   }
 }
