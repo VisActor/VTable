@@ -771,6 +771,58 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // return getField(record, field);
   }
 
+  changeFieldValueByRecordIndex(
+    value: FieldData,
+    recordIndex: number | number[],
+    field: FieldDef,
+    table?: BaseTableAPI
+  ): FieldData {
+    if (field === null) {
+      return undefined;
+    }
+    if (recordIndex === undefined || recordIndex === null) {
+      return;
+    }
+
+    const rawKey = recordIndex.toString();
+    if (!this.beforeChangedRecordsMap.has(rawKey)) {
+      const rawRecords = Array.isArray((this.dataSourceObj as any)?.records)
+        ? (this.dataSourceObj as any).records
+        : null;
+      const originRecord = rawRecords
+        ? Array.isArray(recordIndex)
+          ? getValueFromDeepArray(rawRecords, recordIndex)
+          : rawRecords[recordIndex]
+        : undefined;
+      this.beforeChangedRecordsMap.set(
+        rawKey,
+        cloneDeep(originRecord, undefined, ['vtable_gantt_linkedFrom', 'vtable_gantt_linkedTo']) ?? {}
+      );
+    }
+
+    if (typeof field === 'string' || typeof field === 'number') {
+      const beforeChangedValue = this.beforeChangedRecordsMap.get(rawKey)?.[field as any];
+      const rawRecords = Array.isArray((this.dataSourceObj as any)?.records)
+        ? (this.dataSourceObj as any).records
+        : null;
+      const record = rawRecords
+        ? Array.isArray(recordIndex)
+          ? getValueFromDeepArray(rawRecords, recordIndex)
+          : rawRecords[recordIndex]
+        : undefined;
+      let formatValue = value;
+      if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
+        formatValue = parseFloat(value);
+      }
+      if (record) {
+        record[field] = formatValue;
+      } else if (rawRecords && typeof recordIndex === 'number') {
+        rawRecords[recordIndex] = this.addRecordRule === 'Array' ? [] : {};
+        rawRecords[recordIndex][field] = formatValue;
+      }
+    }
+  }
+
   cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
     if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
       const originRecord = this.getOriginalRecord(dataIndex);
@@ -930,11 +982,23 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
 
   adjustBeforeChangedRecordsMap(insertIndex: number, insertCount: number, type: 'add' | 'delete' = 'add') {
-    const length = this.beforeChangedRecordsMap.size;
-    for (let key = length - 1; key >= insertIndex; key--) {
+    const delta = type === 'add' ? insertCount : -insertCount;
+
+    const numericKeys: number[] = [];
+    this.beforeChangedRecordsMap.forEach((_, key) => {
+      const numKey = Number(key);
+      if (Number.isInteger(numKey) && numKey.toString() === key && numKey >= insertIndex) {
+        numericKeys.push(numKey);
+      }
+    });
+
+    numericKeys.sort((a, b) => (type === 'add' ? b - a : a - b));
+
+    for (let i = 0; i < numericKeys.length; i++) {
+      const key = numericKeys[i];
       const record = this.beforeChangedRecordsMap.get(key.toString());
       this.beforeChangedRecordsMap.delete(key.toString());
-      this.beforeChangedRecordsMap.set((key + (type === 'add' ? insertCount : -insertCount)).toString(), record);
+      this.beforeChangedRecordsMap.set((key + delta).toString(), record);
     }
   }
   /**
@@ -1165,7 +1229,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     // If there were no caches, initialize them
     if (!filedMapArray.length) {
-      filedMapArray = states.map(() => ({ asc: [], desc: [], normal: [] }));
+      filedMapArray = states.map(
+        (): ISortedMapItem => ({
+          asc: [] as (number | number[])[],
+          desc: [] as (number | number[])[],
+          normal: [] as (number | number[])[]
+        })
+      );
       for (let index = 0; index < states.length; index++) {
         this.sortedIndexMap.set(states[index].field, filedMapArray[index]);
       }

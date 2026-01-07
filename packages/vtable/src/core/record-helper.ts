@@ -5,7 +5,7 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { ListTableProtected, SortState } from '../ts-types';
+import type { CellRange, ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 import { isNumber } from '@visactor/vutils';
 
@@ -23,17 +23,19 @@ export function listTableChangeCellValue(
   value: string | number | null,
   workOnEditableCell: boolean,
   triggerEvent: boolean,
-  table: ListTable
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
-    const recordIndex = table.getRecordShowIndexByCell(col, row);
+    const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+    const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     const beforeChangeValue = table.getCellRawValue(col, row);
     const oldValue = table.getCellOriginValue(col, row);
     if (table.isHeader(col, row)) {
       table.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
     } else {
-      table.dataSource.changeFieldValue(value, recordIndex, field, col, row, table);
+      table.dataSource.changeFieldValue(value, recordShowIndex, field, col, row, table);
     }
     const range = table.getCellRange(col, row);
     //改变单元格的值后 聚合值做重新计算
@@ -95,13 +97,19 @@ export function listTableChangeCellValue(
     }
     const changedValue = table.getCellOriginValue(col, row);
     if (oldValue !== changedValue && triggerEvent) {
-      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      const changeValue = {
         col,
         row,
+        recordIndex,
+        field,
         rawValue: beforeChangeValue,
         currentValue: oldValue,
         changedValue
-      });
+      };
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      if (!silentChangeCellValuesEvent) {
+        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
     }
     table.scenegraph.updateNextFrame();
   }
@@ -120,7 +128,8 @@ export async function listTableChangeCellValues(
   values: (string | number)[][],
   workOnEditableCell: boolean,
   triggerEvent: boolean,
-  table: ListTable
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -151,6 +160,17 @@ export async function listTableChangeCellValues(
       oldRowValues.push(oldValue);
     }
   }
+
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: any;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+
   //#endregion
   for (let i = 0; i < values.length; i++) {
     if (startRow + i > table.rowCount - 1) {
@@ -191,7 +211,8 @@ export async function listTableChangeCellValues(
       if (isCanChange) {
         changedCellResults[i][j] = true;
         const value = rowValues[j];
-        const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordShowIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
         // const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
         // const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
@@ -200,23 +221,30 @@ export async function listTableChangeCellValues(
         if (table.isHeader(startCol + j, startRow + i)) {
           table.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
         } else {
-          table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
+          table.dataSource.changeFieldValue(value, recordShowIndex, field, startCol + j, startRow + i, table);
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
         if (oldValue !== changedValue && triggerEvent) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          const changeValue = {
             col: startCol + j,
             row: startRow + i,
+            recordIndex,
+            field,
             rawValue: beforeChangeValue,
             currentValue: oldValue,
             changedValue
-          });
+          };
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
         }
       } else {
         changedCellResults[i][j] = false;
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
+  }
+  if (!silentChangeCellValuesEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
   }
 
   // const cell_value = table.getCellValue(col, row);
@@ -312,6 +340,102 @@ export async function listTableChangeCellValues(
 
   table.scenegraph.updateNextFrame();
   return changedCellResults;
+}
+
+export async function listTableChangeCellValuesByIds(
+  ranges: CellRange[],
+  value: string | number | null,
+  workOnEditableCell: boolean,
+  triggerEvent: boolean,
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
+) {
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: any;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+
+  const processed = new Set<string>();
+  const nextValue = (value ?? '') as string | number;
+
+  for (let i = 0; i < (ranges?.length ?? 0); i++) {
+    const range = ranges[i];
+    const startCol = Math.min(range.start.col, range.end.col);
+    const endCol = Math.max(range.start.col, range.end.col);
+    const startRow = Math.min(range.start.row, range.end.row);
+    const endRow = Math.max(range.start.row, range.end.row);
+
+    if (startCol > endCol || startRow > endRow) {
+      continue;
+    }
+
+    const values: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let row = startRow; row <= endRow; row++) {
+      const rowValues: (string | number)[] = [];
+      const rowOldValues: (string | number)[] = [];
+      for (let col = startCol; col <= endCol; col++) {
+        rowValues.push(nextValue);
+        rowOldValues.push(table.getCellOriginValue(col, row));
+      }
+      values.push(rowValues);
+      oldValues.push(rowOldValues);
+    }
+
+    const changedCellResults = await listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      table,
+      true
+    );
+
+    for (let r = 0; r < values.length; r++) {
+      for (let c = 0; c < values[r].length; c++) {
+        const col = startCol + c;
+        const row = startRow + r;
+        const key = `${col},${row}`;
+        if (processed.has(key)) {
+          continue;
+        }
+        processed.add(key);
+
+        if (!triggerEvent || !changedCellResults?.[r]?.[c]) {
+          continue;
+        }
+
+        const oldValue = oldValues[r][c];
+        const changedValue = table.getCellOriginValue(col, row);
+        if (oldValue === changedValue) {
+          continue;
+        }
+
+        const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+        const { field } = table.internalProps.layoutMap.getBody(col, row);
+        resultChangeValues.push({
+          col,
+          row,
+          recordIndex,
+          field,
+          rawValue: oldValue,
+          currentValue: oldValue,
+          changedValue
+        });
+      }
+    }
+  }
+
+  if (!silentChangeCellValuesEvent && triggerEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  }
 }
 
 type CellUpdateType = 'normal' | 'sort' | 'group';
