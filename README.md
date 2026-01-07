@@ -192,9 +192,6 @@ $ rush update
 
 # ⭐️ Star History
 
-## Star History
-
-## Star History
 
 <a href="https://gitdata.xuanhun520.com/?repos=visactor/vtable&type=Date">
 <picture >
