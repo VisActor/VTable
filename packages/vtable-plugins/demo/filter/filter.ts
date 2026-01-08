@@ -439,13 +439,26 @@ export function createTable() {
   // }, 2000);
 
   // 插件更新
-  // setTimeout(() => {
-  //   console.log('update');
-  //   tableInstance.updateOption({
-  //     ...option,
-  //     plugins: [filterPlugin]
-  //   });
-  // }, 8000);
+  setTimeout(() => {
+    console.log('update');
+    // tableInstance.updateOption({
+    //   ...option,
+    //   plugins: [filterPlugin]
+    // });
+    filterPlugin.updatePluginOptions({
+      ...getTableFilterPluginAttrFromProps(),
+      filterIcon: {
+        name: 'filter-icon',
+        type: 'svg',
+        width: 120,
+        height: 120,
+        positionType: VTable.TYPES.IconPosition.right,
+        cursor: 'pointer',
+        marginRight: 4,
+        svg: `<svg t="1752821809070" class="icon" viewBox="0 0 1664 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12092" width="200" height="200" transform="translate(0,30)"><path d="M89.6 179.2A89.6 89.6 0 0 1 89.6 0h1408a89.6 89.6 0 0 1 0 179.2H89.6z m256 384a89.6 89.6 0 0 1 0-179.2h896a89.6 89.6 0 0 1 0 179.2h-896z m256 384a89.6 89.6 0 0 1 0-179.2h384a89.6 89.6 0 0 1 0 179.2h-384z" fill="red" p-id="12093"></path></svg>`
+      }
+    });
+  }, 5000);
 
   // 实例释放
   // setTimeout(() => {
@@ -463,5 +476,21 @@ export function createTable() {
     args[0].event.stopPropagation();
     args[0].event.preventDefault();
     console.log('icon_click');
+  });
+
+  const HEADER_FILTER_HIGHLIGHT = 'header_filter_highlight';
+  const HEADER_FILTER_DEFAULT = 'header_filter_default';
+  tableInstance.registerCustomCellStyle(HEADER_FILTER_HIGHLIGHT, {
+    bgColor: 'red'
+  });
+  tableInstance.registerCustomCellStyle(HEADER_FILTER_DEFAULT, {
+    bgColor: 'blue'
+  });
+
+  tableInstance.on('filter_menu_show', ({ col, row }) => {
+    tableInstance.arrangeCustomCellStyle({ col, row }, HEADER_FILTER_HIGHLIGHT);
+  });
+  tableInstance.on('filter_menu_hide', ({ col, row }) => {
+    tableInstance.arrangeCustomCellStyle({ col, row }, HEADER_FILTER_DEFAULT);
   });
 }
