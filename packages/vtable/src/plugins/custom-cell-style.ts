@@ -33,6 +33,23 @@ export class CustomCellStylePlugin {
     this.customCellStyleArrangement = customCellStyleArrangement;
   }
 
+  clearCustomCellStyleArrangement() {
+    this.customCellStyleArrangement = [];
+  }
+
+  addCustomCellStyleArrangement(
+    cellPosition: {
+      col: number;
+      row: number;
+    },
+    customStyleId: string | undefined | null
+  ) {
+    this.customCellStyleArrangement.push({
+      cellPosition,
+      customStyleId
+    });
+  }
+
   getCustomCellStyle(col: number, row: number) {
     const customStyleIds = this.getCustomCellStyleIds(col, row);
     if (customStyleIds.length) {
