@@ -92,7 +92,7 @@ function updateComponent(
   // const rowsHeight = table.getRowsHeight(cellRange.start.row, endRow);
   const colsWidth = table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
   const rowsHeight = table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
-  
+
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow

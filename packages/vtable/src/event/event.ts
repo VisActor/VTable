@@ -284,7 +284,7 @@ export class EventManager {
         eventArgs.event.shiftKey && shiftMultiSelect,
         (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
-        isSelectMoving ? false : (this.table.options.select?.makeSelectCellVisible ?? true)
+        isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;

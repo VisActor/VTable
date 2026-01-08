@@ -73,7 +73,7 @@ export function createProgressBarCell(
   } else {
     height = table.getRowHeight(row);
   }
-  
+
   // 检查是否有主从表插件，如果有则使用原始高度
   if ((table as any).pluginManager) {
     const masterDetailPlugin = (table as any).pluginManager.getPluginByName('Master Detail Plugin');

@@ -22,6 +22,8 @@ export class CustomCellStylePlugin {
   table: BaseTableAPI;
   customCellStyle: CustomCellStyle[];
   customCellStyleArrangement: CustomCellStyleArrangement[];
+  private _customCellStyleArrangementIndex: Map<string, number>;
+  private _customCellStyleArrangementTombstoneCount: number;
 
   constructor(
     table: BaseTableAPI,
@@ -31,6 +33,53 @@ export class CustomCellStylePlugin {
     this.table = table;
     this.customCellStyle = customCellStyle;
     this.customCellStyleArrangement = customCellStyleArrangement;
+    this._customCellStyleArrangementIndex = new Map();
+    this._customCellStyleArrangementTombstoneCount = 0;
+    this._rebuildCustomCellStyleArrangementIndex();
+  }
+
+  private _getCustomCellStyleArrangementKey(cellPos: { col?: number; row?: number; range?: CellRange }) {
+    if (cellPos.range) {
+      const { start, end } = cellPos.range;
+      return `range:${start.col},${start.row},${end.col},${end.row}`;
+    }
+    if (cellPos.col === undefined || cellPos.row === undefined) {
+      return undefined;
+    }
+    return `cell:${cellPos.col},${cellPos.row}`;
+  }
+
+  private _rebuildCustomCellStyleArrangementIndex() {
+    this._customCellStyleArrangementIndex.clear();
+    this._customCellStyleArrangementTombstoneCount = 0;
+    for (let i = 0; i < this.customCellStyleArrangement.length; i++) {
+      if (!isValid((this.customCellStyleArrangement[i] as any).customStyleId)) {
+        this._customCellStyleArrangementTombstoneCount++;
+        continue;
+      }
+      const key = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[i].cellPosition);
+      if (key) {
+        this._customCellStyleArrangementIndex.set(key, i);
+      }
+    }
+  }
+
+  private _compactCustomCellStyleArrangementIfNeeded() {
+    const length = this.customCellStyleArrangement.length;
+    if (this._customCellStyleArrangementTombstoneCount < 2048) {
+      return;
+    }
+    if (this._customCellStyleArrangementTombstoneCount * 4 < length) {
+      return;
+    }
+    const compacted = this.customCellStyleArrangement.filter(style => isValid((style as any).customStyleId));
+    if (compacted.length === this.customCellStyleArrangement.length) {
+      this._customCellStyleArrangementTombstoneCount = 0;
+      return;
+    }
+    this.customCellStyleArrangement.length = 0;
+    this.customCellStyleArrangement.push(...compacted);
+    this._rebuildCustomCellStyleArrangementIndex();
   }
 
   getCustomCellStyle(col: number, row: number) {
@@ -55,6 +104,9 @@ export class CustomCellStylePlugin {
         }
       });
 
+      if (!styles.length) {
+        return undefined;
+      }
       return merge({}, ...styles);
       // const styleOption = this.getCustomCellStyleOption(customStyleId);
       // return styleOption?.style;
@@ -71,6 +123,9 @@ export class CustomCellStylePlugin {
       for (let r = range.start.row; r <= range.end.row; r++) {
         // eslint-disable-next-line no-loop-func
         this.customCellStyleArrangement.forEach(style => {
+          if (!isValid(style.customStyleId)) {
+            return;
+          }
           if (style.cellPosition.range) {
             if (
               style.cellPosition.range.start.col <= c &&
@@ -79,11 +134,11 @@ export class CustomCellStylePlugin {
               style.cellPosition.range.end.row >= r
             ) {
               // customStyleId = style.customStyleId;
-              customStyleIds.push(style.customStyleId);
+              customStyleIds.push(style.customStyleId as string);
             }
           } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
             // customStyleId = style.customStyleId;
-            customStyleIds.push(style.customStyleId);
+            customStyleIds.push(style.customStyleId as string);
           }
         });
       }
@@ -147,17 +202,41 @@ export class CustomCellStylePlugin {
     customStyleId: string | undefined | null,
     forceFastUpdate?: boolean
   ) {
-    const index = this.customCellStyleArrangement.findIndex(style => {
-      if (style.cellPosition.range && cellPos.range) {
-        return (
-          style.cellPosition.range.start.col === cellPos.range.start.col &&
-          style.cellPosition.range.start.row === cellPos.range.start.row &&
-          style.cellPosition.range.end.col === cellPos.range.end.col &&
-          style.cellPosition.range.end.row === cellPos.range.end.row
-        );
+    const inputKey = this._getCustomCellStyleArrangementKey(cellPos);
+    let index = inputKey ? this._customCellStyleArrangementIndex.get(inputKey) ?? -1 : -1;
+    if (inputKey && index !== -1) {
+      const item = this.customCellStyleArrangement[index];
+      const itemKey = item ? this._getCustomCellStyleArrangementKey(item.cellPosition) : undefined;
+      if (!item || !isValid((item as any).customStyleId) || itemKey !== inputKey) {
+        index = this.customCellStyleArrangement.findIndex(style => {
+          if (!isValid((style as any).customStyleId)) {
+            return false;
+          }
+          return this._getCustomCellStyleArrangementKey(style.cellPosition) === inputKey;
+        });
+        if (index !== -1) {
+          this._customCellStyleArrangementIndex.set(inputKey, index);
+        } else {
+          this._customCellStyleArrangementIndex.delete(inputKey);
+        }
       }
-      return style.cellPosition.col === cellPos.col && style.cellPosition.row === cellPos.row;
-    });
+    }
+    if (index === -1 && !inputKey) {
+      index = this.customCellStyleArrangement.findIndex(style => {
+        if (!isValid((style as any).customStyleId)) {
+          return false;
+        }
+        if (style.cellPosition.range && cellPos.range) {
+          return (
+            style.cellPosition.range.start.col === cellPos.range.start.col &&
+            style.cellPosition.range.start.row === cellPos.range.start.row &&
+            style.cellPosition.range.end.col === cellPos.range.end.col &&
+            style.cellPosition.range.end.row === cellPos.range.end.row
+          );
+        }
+        return style.cellPosition.col === cellPos.col && style.cellPosition.row === cellPos.row;
+      });
+    }
 
     if (index === -1 && !customStyleId) {
       // do nothing
@@ -172,6 +251,13 @@ export class CustomCellStylePlugin {
         },
         customStyleId: customStyleId
       });
+      const pushedIndex = this.customCellStyleArrangement.length - 1;
+      const pushedKey = this._getCustomCellStyleArrangementKey(
+        this.customCellStyleArrangement[pushedIndex].cellPosition
+      );
+      if (pushedKey) {
+        this._customCellStyleArrangementIndex.set(pushedKey, pushedIndex);
+      }
     } else if (this.customCellStyleArrangement[index].customStyleId === customStyleId) {
       // same style
       return;
@@ -180,10 +266,18 @@ export class CustomCellStylePlugin {
       this.customCellStyleArrangement[index].customStyleId = customStyleId;
     } else {
       // delete useless style
-      this.customCellStyleArrangement.splice(index, 1);
+      const existedKey = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[index].cellPosition);
+      if (isValid((this.customCellStyleArrangement[index] as any).customStyleId)) {
+        this._customCellStyleArrangementTombstoneCount++;
+      }
+      (this.customCellStyleArrangement[index] as any).customStyleId = null;
+      if (existedKey) {
+        this._customCellStyleArrangementIndex.delete(existedKey);
+      }
+      this._compactCustomCellStyleArrangementIfNeeded();
     }
 
-    const style = this.getCustomCellStyleOption(customStyleId)?.style;
+    const style = customStyleId ? this.getCustomCellStyleOption(customStyleId)?.style : undefined;
     // let forceFastUpdate;
     if (style) {
       forceFastUpdate = true;
@@ -226,6 +320,8 @@ export class CustomCellStylePlugin {
   updateCustomCell(customCellStyle: CustomCellStyle[], customCellStyleArrangement: CustomCellStyleArrangement[]) {
     this.customCellStyle.length = 0;
     this.customCellStyleArrangement.length = 0;
+    this._customCellStyleArrangementIndex.clear();
+    this._customCellStyleArrangementTombstoneCount = 0;
     customCellStyle.forEach((cellStyle: CustomCellStyle) => {
       this.registerCustomCellStyle(cellStyle.id, cellStyle.style);
     });
