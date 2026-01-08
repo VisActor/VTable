@@ -153,6 +153,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.pluginOptions = merge(this.pluginOptions, pluginOptions);
     // 更新筛选器UI样式
     this.filterToolbar.updateStyles(this.pluginOptions.styles);
+    // 更新icon
+    (this.table as ListTable).updateColumns(this.columns, {
+      clearRowHeightCache: false
+    });
   }
 
   // 当用户的配置项更新时调用
@@ -235,6 +239,8 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   private updateFilterIcons(columns: ColumnsDefine = []) {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
+
+    // console.log('filterIcon', filterIcon);
 
     const isIconEqual = (a: any, b: any) =>
       a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
