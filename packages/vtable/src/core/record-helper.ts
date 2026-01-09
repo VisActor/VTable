@@ -514,7 +514,12 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.addRecordForSorted(record);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).addRecord(record, table.dataSource.records.length, true);
+      } else {
+        table.dataSource.addRecordForSorted(record);
+      }
       // 清理checkedState
       table.stateManager.checkedState.clear();
       sortRecords(table);
@@ -528,8 +533,16 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
         recordIndex = table.dataSource.sourceLength;
       }
       const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-      table.dataSource.addRecord(record, recordIndex);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      (table.dataSource as any).addRecord(record, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
       const oldRowCount = table.rowCount;
       table.refreshRowColCount();
       if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -653,7 +666,12 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.addRecordsForSorted(records);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).addRecords(records, table.dataSource.records.length, true);
+      } else {
+        table.dataSource.addRecordsForSorted(records);
+      }
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
@@ -667,8 +685,16 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
         recordIndex = 0;
       }
       const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-      table.dataSource.addRecords(records, recordIndex);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      (table.dataSource as any).addRecords(records, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
       if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -801,7 +827,12 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).deleteRecords(recordIndexs as number[], true);
+      } else {
+        table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      }
       // Note: For sorted records, checkbox state is cleared entirely (checkedState.clear())
       // So no need to adjust individual state mappings
       sortRecords(table);
@@ -810,7 +841,11 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else {
-      const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      const deletedRecordIndexs = (table.dataSource as any).deleteRecords(
+        recordIndexs as number[],
+        syncToOriginalRecords
+      ) as number[];
       if (deletedRecordIndexs.length === 0) {
         return;
       }
@@ -818,10 +853,17 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       for (let index = 0; index < deletedRecordIndexs.length; index++) {
         adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
       }
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return;
+      }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
       const newRowCount = table.transpose ? table.colCount : table.rowCount;
-      const recordIndexsMinToMax = deletedRecordIndexs.sort((a, b) => a - b);
+      const recordIndexsMinToMax = deletedRecordIndexs.sort((a: number, b: number) => a - b);
       const minRecordIndex = recordIndexsMinToMax[0];
       if (table.pagination) {
         const { perPageCount, currentPage } = table.pagination;
@@ -948,19 +990,34 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.updateRecordsForSorted(records, recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).updateRecords(records, recordIndexs as number[], true);
+      } else {
+        table.dataSource.updateRecordsForSorted(records, recordIndexs as number[]);
+      }
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else {
-      const updateRecordIndexs = table.dataSource.updateRecords(records, recordIndexs);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      const updateRecordIndexs = (table.dataSource as any).updateRecords(records, recordIndexs, syncToOriginalRecords);
       if (updateRecordIndexs.length === 0) {
         return;
       }
-      const bodyRowIndex = updateRecordIndexs.map(index => table.getBodyRowIndexByRecordIndex(index));
-      const recordIndexsMinToMax = bodyRowIndex.sort((a, b) => a - b);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return;
+      }
+      const bodyRowIndex = (updateRecordIndexs as (number | number[])[]).map((index: number | number[]) =>
+        table.getBodyRowIndexByRecordIndex(index)
+      );
+      const recordIndexsMinToMax = bodyRowIndex.sort((a: number, b: number) => a - b);
       if (table.pagination) {
         const { perPageCount, currentPage } = table.pagination;
         const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
@@ -1086,7 +1143,7 @@ function adjustCheckBoxStateMapWithDeleteRecordIndex(table: ListTable, recordInd
       }
     });
     //需要将targetResult按originKey排序进行升序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'后面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'后面
-    targetResult.sort((a, b) => {
+    targetResult.sort((a: { originKey: string }, b: { originKey: string }) => {
       const aArray = a.originKey.split(',');
       const bArray = b.originKey.split(',');
       const aLength = aArray.length;
@@ -1187,7 +1244,7 @@ function adjustCheckBoxStateMapWithAddRecordIndex(table: ListTable, recordIndex:
       }
     });
     //需要将targetResult按originKey排序进行降序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'前面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'前面
-    targetResult.sort((a, b) => {
+    targetResult.sort((a: { originKey: string }, b: { originKey: string }) => {
       const aArray = a.originKey.split(',');
       const bArray = b.originKey.split(',');
       const aLength = aArray.length;

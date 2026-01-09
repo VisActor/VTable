@@ -38,6 +38,26 @@ export function createTable() {
   statusDom.style.whiteSpace = 'pre';
   statusDom.textContent = 'source-change test: ready';
 
+  const createCheckbox = (text: string, initialChecked: boolean, onChange: (checked: boolean) => void) => {
+    const label = document.createElement('label');
+    label.style.display = 'inline-flex';
+    label.style.alignItems = 'center';
+    label.style.gap = '6px';
+    label.style.cursor = 'pointer';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = initialChecked;
+    input.addEventListener('change', () => onChange(input.checked));
+
+    const span = document.createElement('span');
+    span.textContent = text;
+
+    label.appendChild(input);
+    label.appendChild(span);
+    return { label, input };
+  };
+
   const createButton = (text: string, onClick: () => void) => {
     const btn = document.createElement('button');
     btn.textContent = text;
@@ -347,6 +367,7 @@ export function createTable() {
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
+    syncRecordOperationsToSourceRecords: true,
     // dataConfig: {
     //   filterRules: [
     //     {
@@ -371,7 +392,12 @@ export function createTable() {
       pasteValueToCell: true
     },
     eventOptions: {
-      preventDefaultContextMenu: false
+      preventDefaultContextMenu: true
+    },
+    menu: {
+      renderMode: 'html',
+      contextMenuItems: ['向下插入空行', '向右插入空列', '删除该行'],
+      contextMenuWorkOnlyCell: true
     },
     pagination: {
       perPageCount: 100,
@@ -402,6 +428,7 @@ export function createTable() {
   }[] = [];
 
   let suppressRecord = false;
+  let syncRecordOpsToSourceRecordsForTest = true;
 
   const updateStatus = () => {
     const filteredCount = tableInstance.getFilteredRecords().length;
@@ -416,7 +443,8 @@ export function createTable() {
     statusDom.textContent = `filtered=${filteredCount}
 sort=${sortText}
 undo=${undoStack.length} redo=${redoStack.length}
-record[${targetSourceIndex}].id=${record?.id} sex=${record?.sex}`;
+record[${targetSourceIndex}].id=${record?.id} sex=${record?.sex}
+syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
   };
 
   const applyFilter = () => {
@@ -499,6 +527,71 @@ record[${targetSourceIndex}].id=${record?.id} sex=${record?.sex}`;
     updateStatus();
   };
 
+  const runFilterAddRecordTest = () => {
+    const testContainer = document.createElement('div');
+    testContainer.style.position = 'fixed';
+    testContainer.style.left = '-10000px';
+    testContainer.style.top = '0';
+    testContainer.style.width = '800px';
+    testContainer.style.height = '600px';
+    document.body.appendChild(testContainer);
+
+    const testRecords = generatePersons(4000);
+    const testColumns: VTable.ColumnsDefine = [
+      { field: 'id', title: 'id', width: 120 },
+      { field: 'sex', title: 'sex', width: 120 },
+      { field: 'name', title: 'name', width: 180 }
+    ];
+    const testTable = new VTable.ListTable({
+      container: testContainer,
+      columns: testColumns,
+      records: testRecords,
+      syncRecordOperationsToSourceRecords: syncRecordOpsToSourceRecordsForTest,
+      heightMode: 'standard'
+    } as any);
+
+    let calls = 0;
+    const rules = [
+      {
+        filterFunc: () => {
+          calls++;
+          return true;
+        }
+      }
+    ] as any;
+
+    testTable.updateFilterRules(rules);
+    const firstCalls = calls;
+
+    const newRecord1 = { id: 4001, email1: '4001@xxx.com', name: '新增4001', sex: 'boy' };
+    testTable.addRecord(newRecord1);
+    calls = 0;
+    testTable.updateFilterRules(rules);
+    const secondCalls = calls;
+
+    testTable.updateSortState({ field: 'id', order: 'desc' } as any);
+    const newRecord2 = { id: 4002, email1: '4002@xxx.com', name: '新增4002', sex: 'girl' };
+    testTable.addRecord(newRecord2);
+    calls = 0;
+    testTable.updateFilterRules(rules);
+    const thirdCalls = calls;
+
+    testTable.deleteRecords([0] as any, false);
+    calls = 0;
+    testTable.updateFilterRules(rules);
+    const fourthCalls = calls;
+
+    testTable.release();
+    testContainer.remove();
+
+    statusDom.textContent = `${statusDom.textContent}\n\nfilter+addRecord test:
+sync=${syncRecordOpsToSourceRecordsForTest}
+first updateFilterRules calls=${firstCalls} expect=4000
+after addRecord(4001) calls=${secondCalls} expect=4001
+after sort+addRecord(4002) calls=${thirdCalls} expect=4002
+after deleteRecords([0]) calls=${fourthCalls} expect=4001`;
+  };
+
   const undo = () => {
     const entry = undoStack.pop();
     if (!entry) {
@@ -550,6 +643,16 @@ record[${targetSourceIndex}].id=${record?.id} sex=${record?.sex}`;
   buttonRowDom.appendChild(createButton('Apply Sort(id desc)', applySort));
   buttonRowDom.appendChild(createButton('Clear Sort', clearSort));
   buttonRowDom.appendChild(createButton('Run Source Change', runSourceChangeTest));
+  const { label: syncLabel } = createCheckbox(
+    'Sync record ops (test)',
+    syncRecordOpsToSourceRecordsForTest,
+    checked => {
+      syncRecordOpsToSourceRecordsForTest = checked;
+      updateStatus();
+    }
+  );
+  buttonRowDom.appendChild(syncLabel);
+  buttonRowDom.appendChild(createButton('Run Filter+AddRecord Test', runFilterAddRecordTest));
   buttonRowDom.appendChild(createButton('Reset Target', resetTargetRecord));
   buttonRowDom.appendChild(createButton('Undo', undo));
   buttonRowDom.appendChild(createButton('Redo', redo));
@@ -574,5 +677,59 @@ record[${targetSourceIndex}].id=${record?.id} sex=${record?.sex}`;
     }
     undoStack.push({ changes });
     redoStack.length = 0;
+  });
+
+  tableInstance.on('dropdown_menu_click', (arg: any) => {
+    const { menuKey, col, row } = arg || {};
+    const cellLocation = tableInstance.getCellLocation(col, row);
+    if (cellLocation !== 'body') {
+      return;
+    }
+
+    const recordIndex = tableInstance.getRecordShowIndexByCell(col, row);
+    if (typeof recordIndex !== 'number' || recordIndex < 0) {
+      return;
+    }
+
+    if (menuKey === '向下插入空行') {
+      const newRecord = {
+        id: records.length + 1,
+        email1: `${records.length + 1}@xxx.com`,
+        name: `新增${records.length + 1}`,
+        lastName: '王',
+        date1: '2022年9月1日',
+        tel: '000-0000-0000',
+        sex: 'boy',
+        work: 'new row',
+        city: 'beijing'
+      };
+      tableInstance.addRecord(newRecord, recordIndex + 1);
+      updateStatus();
+      return;
+    }
+
+    if (menuKey === '删除该行') {
+      tableInstance.deleteRecords([recordIndex]);
+      updateStatus();
+      return;
+    }
+
+    if (menuKey === '向右插入空列') {
+      const newField = `new_field_${Date.now()}`;
+      const insertColIndex = typeof col === 'number' && col >= 0 ? col + 1 : undefined;
+      tableInstance.addColumns(
+        [
+          {
+            field: newField,
+            title: newField,
+            width: 160
+          } as any
+        ],
+        insertColIndex,
+        false
+      );
+      updateStatus();
+      return;
+    }
   });
 }

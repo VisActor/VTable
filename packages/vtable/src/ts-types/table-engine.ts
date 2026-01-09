@@ -339,6 +339,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
   columnWidthConfig?: { key: string | number; width: number }[];
   rowHeightConfig?: { key: number; height: number }[];
+  syncRecordOperationsToSourceRecords?: boolean;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
