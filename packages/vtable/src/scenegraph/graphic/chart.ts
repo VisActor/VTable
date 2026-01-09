@@ -5,12 +5,14 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
 import {
+  setBrushingChartInstance,
   clearAllChartInstanceList,
   clearChartInstanceListByColumnDirection,
   clearChartInstanceListByRowDirection,
   generateChartInstanceListByColumnDirection,
   generateChartInstanceListByRowDirection,
-  generateChartInstanceListByViewRange
+  generateChartInstanceListByViewRange,
+  getBrushingChartInstance
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -122,8 +124,9 @@ export class Chart extends Rect {
       y1: y1 - table.scrollTop,
       y2: y2 - table.scrollTop
     });
-    this.activeChartInstance?.release();
+    // this.activeChartInstance?.release();
     this.attribute.ClassType.globalConfig.uniqueTooltip = false;
+    // console.log('---activate', Date.now(), this.parent.col, this.parent.row);
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
       merge({}, this.attribute.tableChartOption, {
@@ -250,6 +253,15 @@ export class Chart extends Rect {
         brushChangeThrottle.throttled(params?.value?.inBrushData, 'brush');
       });
     }
+    this.activeChartInstance.on('brushStart', (params: any) => {
+      const brushingChartInstance = getBrushingChartInstance();
+      if (brushingChartInstance !== this.activeChartInstance) {
+        if (brushingChartInstance) {
+          brushingChartInstance.getChart().getComponentsByKey('brush')[0].clearBrushStateAndMask();
+        }
+        setBrushingChartInstance(this.activeChartInstance, col, row);
+      }
+    });
     this.activeChartInstance.on('brushEnd', (params: any) => {
       // 取消 brushChange 中可能还在等待的节流执行
       brushChangeThrottle?.cancel();
@@ -482,11 +494,13 @@ export class Chart extends Rect {
   deactivate(
     table: BaseTableAPI,
     {
+      forceRelease = false,
       releaseChartInstance = true,
       releaseColumnChartInstance = true,
       releaseRowChartInstance = true,
       releaseAllChartInstance = false
     }: {
+      forceRelease?: boolean;
       releaseChartInstance?: boolean;
       releaseColumnChartInstance?: boolean;
       releaseRowChartInstance?: boolean;
@@ -502,18 +516,22 @@ export class Chart extends Rect {
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd
-      this.activeChartInstance?.updateViewBox(
-        {
-          x1: -1000,
-          x2: -800,
-          y1: -1000,
-          y2: -800
-        },
-        false,
-        false
-      );
-      this.activeChartInstance?.release();
-      this.activeChartInstance = null;
+
+      if (forceRelease || !getBrushingChartInstance() || getBrushingChartInstance() !== this.activeChartInstance) {
+        this.activeChartInstance?.updateViewBox(
+          {
+            x1: -1000,
+            x2: -800,
+            y1: -1000,
+            y2: -800
+          },
+          false,
+          false
+        );
+        this.activeChartInstance?.release();
+        this.activeChartInstance = null;
+      }
+
       const { col, row } = this.parent;
       // 隐藏左侧纵向crosshair的labelHoverOnAxis
       table.internalProps.layoutMap.isAxisCell(table.rowHeaderLevelCount - 1, row) &&
@@ -537,20 +555,22 @@ export class Chart extends Rect {
       }
     }
     if (releaseAllChartInstance) {
-      clearAllChartInstanceList(table);
+      clearAllChartInstanceList(table, forceRelease);
     } else {
       if (releaseColumnChartInstance) {
         clearChartInstanceListByColumnDirection(
           this.parent.col,
           this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
-          table
+          table,
+          forceRelease
         );
       }
       if (releaseRowChartInstance) {
         clearChartInstanceListByRowDirection(
           this.parent.row,
           this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
-          table
+          table,
+          forceRelease
         );
       }
     }

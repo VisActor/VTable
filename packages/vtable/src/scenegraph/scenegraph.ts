@@ -84,6 +84,11 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
 import type { Chart } from './graphic/chart';
+import {
+  clearBrushingChartInstance,
+  getBrushingChartInstance,
+  getBrushingChartInstanceCellPos
+} from './graphic/active-cell-chart-list';
 
 registerForVrender();
 
@@ -712,12 +717,29 @@ export class Scenegraph {
    */
   deactivateChart(col: number, row: number, forceRelease: boolean = false) {
     if (col === -1 || row === -1) {
+      if (forceRelease) {
+        // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
+        const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
+        const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
+        if ((cellGroup?.firstChild as any)?.deactivate) {
+          clearBrushingChartInstance();
+          (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+            forceRelease: true,
+            releaseChartInstance: true,
+            releaseColumnChartInstance: true,
+            releaseRowChartInstance: true,
+            releaseAllChartInstance: true
+          });
+        }
+      }
       return;
     }
     const cellGroup = this.getCell(col, row);
     if ((cellGroup?.firstChild as any)?.deactivate) {
       if (forceRelease) {
+        clearBrushingChartInstance();
         (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+          forceRelease: true,
           releaseChartInstance: true,
           releaseColumnChartInstance: true,
           releaseRowChartInstance: true,
@@ -865,6 +887,10 @@ export class Scenegraph {
   updateChartState(datum: any, selectedDataMode: 'click' | 'brush') {
     if (this.table.isPivotChart()) {
       if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
+        const brushingChartInstance = getBrushingChartInstance();
+        if (brushingChartInstance) {
+          brushingChartInstance.getChart().getComponentsByKey('brush')[0].clearBrushStateAndMask();
+        }
         (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.clearChartState?.();
       }
       updateChartState(this, datum, selectedDataMode);

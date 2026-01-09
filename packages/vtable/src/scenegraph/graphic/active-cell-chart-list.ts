@@ -3,11 +3,28 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from './chart';
 import type { PivotChartConstructorOptions } from '../../ts-types/table-engine';
 import { debug } from 'console';
-
+/** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
+let brushingChartInstance: any;
+let brushingChartInstanceCellPos: { col: number; row: number } = { col: -1, row: -1 };
+// window.brushingChartInstance = brushingChartInstance;
+export function setBrushingChartInstance(chartInstance: any, col: number, row: number) {
+  brushingChartInstance = chartInstance;
+  brushingChartInstanceCellPos = { col, row };
+}
+export function clearBrushingChartInstance() {
+  brushingChartInstance = undefined;
+  brushingChartInstanceCellPos = { col: -1, row: -1 };
+}
+export function getBrushingChartInstance() {
+  return brushingChartInstance;
+}
+export function getBrushingChartInstanceCellPos() {
+  return brushingChartInstanceCellPos;
+}
 //存储可视区域内鼠标hover到的该列的图表实例，key为列号做个缓存
 export const chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>> = {};
 export const chartInstanceListRowByRowDirection: Record<number, Record<number, any>> = {};
-
+const delayRunDimensionHoverTimer: any[] = [];
 //临时存储 用于调试
 // window.chartInstanceListColumnByColumnDirection = chartInstanceListColumnByColumnDirection;
 // window.chartInstanceListRowByRowDirection = chartInstanceListRowByRowDirection;
@@ -25,6 +42,8 @@ export function generateChartInstanceListByColumnDirection(
   hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
+  // 清除之前的定时器，避免旧的定时器执行
+  clearDelayRunDimensionHoverTimers();
   if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
     chartInstanceListColumnByColumnDirection[col] = {};
   }
@@ -35,9 +54,10 @@ export function generateChartInstanceListByColumnDirection(
   for (let i = rowStart; i <= rowEnd; i++) {
     const cellGroup = table.scenegraph.getCell(col, i);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-    chartNode.addUpdateShapeAndBoundsTag();
+
     if (chartInstanceListColumnByColumnDirection[col][i]) {
     } else if (isValid(chartNode)) {
+      chartNode.addUpdateShapeAndBoundsTag();
       if (chartNode.activeChartInstance) {
         chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
       } else {
@@ -46,7 +66,7 @@ export function generateChartInstanceListByColumnDirection(
       }
     }
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
       if (chartInstanceListColumnByColumnDirection[col]?.[i]) {
         const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
@@ -106,6 +126,7 @@ export function generateChartInstanceListByColumnDirection(
       }
     }, 0);
 
+    delayRunDimensionHoverTimer.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
@@ -124,6 +145,8 @@ export function generateChartInstanceListByRowDirection(
   hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
+  // 清除之前的定时器，避免旧的定时器执行
+  clearDelayRunDimensionHoverTimers();
   if (!isValid(chartInstanceListRowByRowDirection[row])) {
     chartInstanceListRowByRowDirection[row] = {};
   }
@@ -133,9 +156,10 @@ export function generateChartInstanceListByRowDirection(
   for (let i = colStart; i <= colEnd; i++) {
     const cellGroup = table.scenegraph.getCell(i, row);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-    chartNode.addUpdateShapeAndBoundsTag();
+
     if (chartInstanceListRowByRowDirection[row][i]) {
     } else if (isValid(chartNode)) {
+      chartNode.addUpdateShapeAndBoundsTag();
       if (chartNode.activeChartInstance) {
         chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
       } else {
@@ -143,7 +167,7 @@ export function generateChartInstanceListByRowDirection(
         chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
       }
     }
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才可触发setDimensionIndex绘制出东西 否则会绘制出空的
       if (chartInstanceListRowByRowDirection[row]?.[i]) {
         const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
@@ -194,10 +218,13 @@ export function generateChartInstanceListByRowDirection(
       }
     }, 0);
 
+    delayRunDimensionHoverTimer.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
 export function generateChartInstanceListByViewRange(datum: any, table: BaseTableAPI, deactivate: boolean = false) {
+  // 清除之前的定时器，避免旧的定时器执行
+  clearDelayRunDimensionHoverTimers();
   const { rowStart } = table.getBodyVisibleRowRange();
   let rowEnd = table.getBodyVisibleRowRange().rowEnd;
   rowEnd = Math.min(table.rowCount - 1 - table.bottomFrozenRowCount, rowEnd);
@@ -212,9 +239,10 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
     for (let i = rowStart; i <= rowEnd; i++) {
       const cellGroup = table.scenegraph.getCell(col, i);
       const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.addUpdateShapeAndBoundsTag();
+
       if (chartInstanceListColumnByColumnDirection[col][i]) {
       } else if (isValid(chartNode)) {
+        chartNode.addUpdateShapeAndBoundsTag();
         if (chartNode.activeChartInstance) {
           chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
         } else {
@@ -225,7 +253,7 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
         }
       }
 
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
         if (chartInstanceListColumnByColumnDirection[col]?.[i]) {
           const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
@@ -248,6 +276,7 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
         }
       }, 0);
 
+      delayRunDimensionHoverTimer.push(timer);
       table.scenegraph.updateNextFrame();
     }
   }
@@ -337,7 +366,12 @@ function checkIsShowTooltipForEdgeColumn(col: number, table: BaseTableAPI) {
   }
   return isShowTooltip;
 }
-export function clearChartInstanceListByColumnDirection(col: number, excludedRow: number, table: BaseTableAPI) {
+export function clearChartInstanceListByColumnDirection(
+  col: number,
+  excludedRow: number,
+  table: BaseTableAPI,
+  forceRelease: boolean = false
+) {
   if (isValid(chartInstanceListColumnByColumnDirection[col])) {
     for (const i in chartInstanceListColumnByColumnDirection[col]) {
       if (isValid(excludedRow) && Number(i) === excludedRow) {
@@ -345,9 +379,11 @@ export function clearChartInstanceListByColumnDirection(col: number, excludedRow
       }
       const cellGroup = table.scenegraph.getCell(col, Number(i));
       const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.addUpdateShapeAndBoundsTag();
+
       if (isValid(chartNode)) {
+        chartNode.addUpdateShapeAndBoundsTag();
         chartNode.deactivate(table, {
+          forceRelease: forceRelease,
           releaseChartInstance: true,
           releaseColumnChartInstance: false,
           releaseRowChartInstance: false
@@ -359,7 +395,12 @@ export function clearChartInstanceListByColumnDirection(col: number, excludedRow
   }
 }
 
-export function clearChartInstanceListByRowDirection(row: number, excludedCol: number, table: BaseTableAPI) {
+export function clearChartInstanceListByRowDirection(
+  row: number,
+  excludedCol: number,
+  table: BaseTableAPI,
+  forceRelease: boolean = false
+) {
   if (isValid(chartInstanceListRowByRowDirection[row])) {
     for (const i in chartInstanceListRowByRowDirection[row]) {
       if (isValid(excludedCol) && Number(i) === excludedCol) {
@@ -367,9 +408,11 @@ export function clearChartInstanceListByRowDirection(row: number, excludedCol: n
       }
       const cellGroup = table.scenegraph.getCell(Number(i), row);
       const chartNode = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.addUpdateShapeAndBoundsTag();
+
       if (isValid(chartNode)) {
+        chartNode.addUpdateShapeAndBoundsTag();
         chartNode.deactivate(table, {
+          forceRelease: forceRelease,
           releaseChartInstance: true,
           releaseColumnChartInstance: false,
           releaseRowChartInstance: false
@@ -381,42 +424,68 @@ export function clearChartInstanceListByRowDirection(row: number, excludedCol: n
   delete chartInstanceListRowByRowDirection[row];
 }
 
-export function clearAllChartInstanceList(table: BaseTableAPI) {
+/**
+ * 清除所有延迟执行的定时器
+ */
+export function clearDelayRunDimensionHoverTimers() {
+  for (const timer of delayRunDimensionHoverTimer) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimer.length = 0;
+}
+
+export function clearAllChartInstanceList(table: BaseTableAPI, forceRelease: boolean = false) {
+  // 清除所有延迟执行的定时器
+  clearDelayRunDimensionHoverTimers();
   for (const col in chartInstanceListColumnByColumnDirection) {
-    clearChartInstanceListByColumnDirection(Number(col), undefined, table);
+    clearChartInstanceListByColumnDirection(Number(col), undefined, table, forceRelease);
   }
   for (const row in chartInstanceListRowByRowDirection) {
-    clearChartInstanceListByRowDirection(Number(row), undefined, table);
+    clearChartInstanceListByRowDirection(Number(row), undefined, table, forceRelease);
   }
 }
 
 export function disableDimensionHoverToAllChartInstances() {
+  clearDelayRunDimensionHoverTimers();
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      chartInstanceListColumnByColumnDirection[col][row]
-        .getChart()
-        .getComponentsByKey('brush')[0]
-        .disableDimensionHover();
+      // chartInstanceListColumnByColumnDirection[col][row]
+      //   .getChart()
+      //   .getComponentsByKey('brush')[0]
+      //   .disableDimensionHover();
+      chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(true);
+      chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(true);
+      chartInstanceListColumnByColumnDirection[col][row].disableTooltip(true);
+      chartInstanceListColumnByColumnDirection[col][row].hideTooltip();
     }
   }
   for (const row in chartInstanceListRowByRowDirection) {
     for (const col in chartInstanceListRowByRowDirection[row]) {
-      chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].disableDimensionHover();
+      chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(true);
+      chartInstanceListRowByRowDirection[row][col].disableCrossHair(true);
+      chartInstanceListRowByRowDirection[row][col].disableTooltip(true);
+      chartInstanceListRowByRowDirection[row][col].hideTooltip();
     }
   }
 }
 export function enableDimensionHoverToAllChartInstances() {
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      chartInstanceListColumnByColumnDirection[col][row]
-        .getChart()
-        .getComponentsByKey('brush')[0]
-        .enableDimensionHover();
+      // chartInstanceListColumnByColumnDirection[col][row]
+      //   .getChart()
+      //   .getComponentsByKey('brush')[0]
+      //   .enableDimensionHover();
+      chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);
+      chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(false);
+      chartInstanceListColumnByColumnDirection[col][row].disableTooltip(false);
     }
   }
   for (const row in chartInstanceListRowByRowDirection) {
     for (const col in chartInstanceListRowByRowDirection[row]) {
-      chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
+      // chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
+      chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(false);
+      chartInstanceListRowByRowDirection[row][col].disableCrossHair(false);
+      chartInstanceListRowByRowDirection[row][col].disableTooltip(false);
     }
   }
 }
