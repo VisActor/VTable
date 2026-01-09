@@ -44,11 +44,13 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
 import { DataSource, type CachedDataSource } from './data';
+import { getValueFromDeepArray } from './data/DataSource';
 import {
   listTableAddRecord,
   listTableAddRecords,
   listTableChangeCellValue,
   listTableChangeCellValues,
+  listTableChangeCellValuesByIds,
   listTableDeleteRecords,
   listTableUpdateRecords,
   sortRecords
@@ -573,7 +575,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number | number[]): CellAddress {
     if (this.transpose) {
       return { col: this.getTableIndexByRecordIndex(recordIndex), row: this.getTableIndexByField(field) };
     }
@@ -1594,9 +1596,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValue(
+      col,
+      row,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
   }
   /**
    * 批量更新多个单元格的数据
@@ -1611,9 +1622,267 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
+  }
+
+  changeCellValuesByIds(
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    // @ts-ignore
+    return listTableChangeCellValuesByIds(
+      ranges,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      silentChangeCellValuesEvent
+    );
+  }
+
+  changeSourceCellValue(recordIndex: number | number[], field: FieldDef, value: string | number | null) {
+    const tableIndex = this.getTableIndexByRecordIndex(recordIndex);
+    const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+    if (tableIndex < 0 || cellAddr.col < 0 || cellAddr.row < 0) {
+      return;
+    }
+    this.dataSource.changeFieldValue(value, tableIndex, field, cellAddr.col, cellAddr.row, this);
+    const beforeChangeValue = this.getCellRawValue(cellAddr.col, cellAddr.row);
+    const oldValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    const changedValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    if (oldValue !== changedValue) {
+      const changeValue = {
+        col: cellAddr.col,
+        row: cellAddr.row,
+        recordIndex,
+        field,
+        rawValue: beforeChangeValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+    }
+  }
+
+  changeCellValueByRecord(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+    let record: any;
+    let oldValue: any;
+    if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+      record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+      oldValue = record?.[field as any];
+    }
+
+    this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+    if (!triggerEvent) {
+      return;
+    }
+
+    const changedValue =
+      record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+
+    if (oldValue !== changedValue) {
+      const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+      const changeValue = {
+        col: cellAddr?.col ?? -1,
+        row: cellAddr?.row ?? -1,
+        recordIndex,
+        field,
+        rawValue: oldValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      if (!silentChangeCellValuesEvent) {
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  changeCellValueBySource(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValueByRecord(recordIndex, field, value, {
+      triggerEvent,
+      silentChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  changeCellValuesByRecords(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const resultChangeValues: {
+      col: number;
+      row: number;
+      recordIndex?: number | number[];
+      field?: any;
+      rawValue: string | number;
+      currentValue: string | number;
+      changedValue: string | number;
+    }[] = [];
+
+    for (let i = 0; i < changeValues.length; i++) {
+      const { recordIndex, field, value } = changeValues[i];
+
+      const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+      let record: any;
+      let oldValue: any;
+      if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+        record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+        oldValue = record?.[field as any];
+      }
+
+      this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+      if (triggerEvent) {
+        const changedValue =
+          record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+        if (oldValue !== changedValue) {
+          const changeValue = {
+            col: (this.getCellAddrByFieldRecord(field, recordIndex)?.col ?? -1) as number,
+            row: (this.getCellAddrByFieldRecord(field, recordIndex)?.row ?? -1) as number,
+            recordIndex,
+            field,
+            rawValue: oldValue,
+            currentValue: oldValue,
+            changedValue
+          };
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
+        }
+      }
+    }
+
+    if (!silentChangeCellValuesEvent && resultChangeValues.length && triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  changeCellValuesBySource(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent = true,
+    silentChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValuesByRecords(changeValues, {
+      triggerEvent,
+      silentChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  refreshAfterSourceChange(options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) {
+    const reapplyFilter = options?.reapplyFilter ?? true;
+    const reapplySort = options?.reapplySort ?? true;
+    const clearRowHeightCache = options?.clearRowHeightCache ?? true;
+
+    this.scenegraph.clearCells();
+
+    if (this.sortState && reapplySort) {
+      (this.dataSource as any).clearSortedIndexMap?.();
+      (this.dataSource as any).sortedIndexMap?.clear?.();
+    }
+
+    if (reapplyFilter) {
+      if (this.sortState && reapplySort) {
+        this.dataSource.updateFilterRulesForSorted(this.dataSource.dataConfig?.filterRules);
+        sortRecords(this);
+      } else {
+        this.dataSource.updateFilterRules(this.dataSource.dataConfig?.filterRules);
+      }
+    } else if (this.sortState && reapplySort) {
+      sortRecords(this);
+    }
+
+    const traverseColumns = (columns: ColumnsDefine) => {
+      for (let i = 0; i < (columns?.length ?? 0); i++) {
+        const column: any = columns[i];
+        const aggregators = column?.vtable_aggregator;
+        if (aggregators) {
+          if (Array.isArray(aggregators)) {
+            for (let j = 0; j < aggregators.length; j++) {
+              aggregators[j]?.recalculate?.();
+            }
+          } else {
+            aggregators?.recalculate?.();
+          }
+        }
+        if (column?.columns) {
+          traverseColumns(column.columns);
+        }
+      }
+    };
+    traverseColumns(this.internalProps.columns);
+
+    this.refreshRowColCount();
+    this.internalProps.layoutMap.clearCellRangeMap();
+    this.internalProps.useOneRowHeightFillAll = false;
+    this.stateManager.initCheckedState(this.records);
+    this.scenegraph.createSceneGraph(!clearRowHeightCache);
+    this.internalProps.emptyTip?.resetVisible();
+    this.resize();
   }
   /**
    * 添加数据 单条数据
@@ -1622,12 +1891,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number | number[]) {
+  addRecord(record: any, recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecord(record, recordIndex, this);
     adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, [record]);
     this.internalProps.emptyTip?.resetVisible();
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records: [record],
         recordIndex,
@@ -1643,7 +1912,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number | number[]) {
+  addRecords(records: any[], recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecords(records, recordIndex, this);
     //_heightResizedRowMap修正，里面的行号需要修正，保证添加数据后 其他行号做对应调整
     if (typeof recordIndex === 'number') {
@@ -1652,7 +1921,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.emptyTip?.resetVisible();
 
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records,
         recordIndex,
@@ -1665,7 +1934,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  deleteRecords(recordIndexs: number[] | number[][]) {
+  deleteRecords(recordIndexs: number[] | number[][], triggerEvent = true) {
+    const deletedRecords: any[] = [];
+    // 收集被删除的记录
+    if (recordIndexs?.length > 0) {
+      recordIndexs.forEach(index => {
+        let record = null;
+        if (typeof index === 'number') {
+          record = this.dataSource.get(index);
+        } else {
+          // 目前无法正确处理嵌套情况
+          record = [];
+        }
+
+        deletedRecords.push(record);
+      });
+    }
+
     listTableDeleteRecords(recordIndexs, this);
     adjustHeightResizedRowMapWithDeleteRecordIndex(this as ListTable, recordIndexs as number[]);
     this.internalProps.emptyTip?.resetVisible();
@@ -1674,13 +1959,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
       rowIndexs.push(this.getBodyRowIndexByRecordIndex(recordIndexs[i]) + this.columnHeaderLevelCount);
     }
     // 触发删除数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
-      recordIndexs,
-      rowIndexs,
-      deletedCount: Array.isArray(recordIndexs[0])
-        ? (recordIndexs as number[][]).length
-        : (recordIndexs as number[]).length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
+        recordIndexs,
+        records: deletedRecords,
+        rowIndexs,
+        deletedCount: Array.isArray(recordIndexs[0])
+          ? (recordIndexs as number[][]).length
+          : (recordIndexs as number[]).length
+      });
+    }
   }
 
   /**
@@ -1690,15 +1978,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
     listTableUpdateRecords(records, recordIndexs, this);
 
     // 触发更新数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
-      records,
-      recordIndexs,
-      updateCount: records.length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
+        records,
+        recordIndexs,
+        updateCount: records.length
+      });
+    }
   }
 
   _hasCustomRenderOrLayout() {

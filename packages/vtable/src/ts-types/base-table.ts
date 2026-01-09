@@ -860,7 +860,7 @@ export interface BaseTableAPI {
    * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
    */
-  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  getTableIndexByRecordIndex: (recordIndex: number | number[]) => number;
   /**
    * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
@@ -872,7 +872,7 @@ export interface BaseTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number | number[]) => CellAddress;
   getRecordShowIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 

@@ -359,7 +359,25 @@ export interface ListTableAPI extends BaseTableAPI {
   isListTable: () => true;
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell?: boolean) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * 批量更新多个单元格的数据(根据col, row坐标, 支持离散数据)
+   * @param changeValues
+   */
+  changeCellValuesByIds: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
@@ -371,8 +389,53 @@ export interface ListTableAPI extends BaseTableAPI {
     col: number,
     row: number,
     values: (string | number)[][],
-    workOnEditableCell?: boolean
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
   ) => Promise<boolean[][]> | boolean[][];
+  changeCellValueByRecord: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  changeCellValuesByRecords: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      silentChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  changeCellValueBySource: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
+  changeCellValuesBySource: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent?: boolean,
+    silentChangeCellValuesEvent?: boolean
+  ) => void;
+  refreshAfterSourceChange: (options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
@@ -388,10 +451,10 @@ export interface ListTableAPI extends BaseTableAPI {
   /** 结束编辑 */
   completeEditCell: () => void;
   //#endregion
-  addRecord: (record: any, recordIndex?: number) => void;
-  addRecords: (records: any[], recordIndex?: number) => void;
-  deleteRecords: (recordIndexs: number[]) => void;
-  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
+  addRecord: (record: any, recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  addRecords: (records: any[], recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  deleteRecords: (recordIndexs: number[] | number[][], triggerEvent?: boolean) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[], triggerEvent?: boolean) => void;
   updateFilterRules: (filterRules: FilterRules, options: { clearRowHeightCache?: boolean }) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;
