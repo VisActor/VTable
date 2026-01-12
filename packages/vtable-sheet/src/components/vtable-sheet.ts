@@ -5,18 +5,16 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent, ImportResult } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
-import { WorkSheetEventType } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
-import { checkTabTitle } from '../tools';
 import { FormulaAutocomplete } from '../formula/formula-autocomplete';
 import { formulaEditor } from '../formula/formula-editor';
-import { CellHighlightManager } from '../formula/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
+import { TableEventRelay } from '../core/table-event-relay';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -40,6 +38,8 @@ export default class VTableSheet {
   workSheetInstances: Map<string, WorkSheet> = new Map();
   /** 公式自动补全 */
   private formulaAutocomplete: FormulaAutocomplete | null = null;
+  /** Table 事件中转器 */
+  private tableEventRelay: TableEventRelay;
 
   /** 公式UI管理器 */
   formulaUIManager: FormulaUIManager;
@@ -64,10 +64,11 @@ export default class VTableSheet {
     this.container = container;
     this.options = this.mergeDefaultOptions(options);
 
-    // 创建管理器
+    // 创建管理器（注意：tableEventRelay 必须在 eventManager 之前初始化）
     this.sheetManager = new SheetManager();
     this.formulaManager = new FormulaManager(this);
-    this.eventManager = new EventManager(this);
+    this.tableEventRelay = new TableEventRelay(this); // ⚠️ 必须在 EventManager 之前初始化
+    this.eventManager = new EventManager(this); // EventManager 构造函数会调用 this.onTableEvent()
     this.dragManager = new SheetTabDragManager(this);
     this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
@@ -433,7 +434,7 @@ export default class VTableSheet {
     // 删除实例对应的dom元素
     const instance = this.workSheetInstances.get(sheetKey);
     if (instance) {
-      instance.getElement().remove();
+      instance.release();
       this.workSheetInstances.delete(sheetKey);
     }
     // 删除sheet定义
@@ -491,11 +492,7 @@ export default class VTableSheet {
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
 
-    // 注册事件 - 使用预先绑定的事件处理方法和WorkSheetEventType枚举
-    sheet.on(WorkSheetEventType.CELL_CLICK, this.eventManager.handleCellClickBind);
-    sheet.on(WorkSheetEventType.CELL_VALUE_CHANGED, this.eventManager.handleCellValueChangedBind);
-    sheet.on(WorkSheetEventType.SELECTION_CHANGED, this.eventManager.handleSelectionChangedForRangeModeBind);
-    sheet.on(WorkSheetEventType.SELECTION_END, this.eventManager.handleSelectionChangedForRangeModeBind);
+    // 不再需要在这里注册事件，EventManager 会直接使用 VTableSheet 的 onTableEvent
 
     // 在公式管理器中添加这个sheet
     try {
@@ -650,6 +647,52 @@ export default class VTableSheet {
    */
   getActiveSheet(): WorkSheet | null {
     return this.activeWorkSheet;
+  }
+
+  /**
+   * 监听 Table 事件（统一监听所有 sheet）
+   *
+   * 提供通用的事件转发机制
+   * 当任何 sheet 触发事件时，回调函数会自动接收到增强的事件对象（附带 sheetKey）
+   *
+   * @example
+   * ```typescript
+   * // 监听所有 sheet 的单元格点击
+   * sheet.onTableEvent('click_cell', (event) => {
+   *   // event.sheetKey 告诉你是哪个 sheet
+   *   // event 的其他属性是原始 VTable 事件
+   *   console.log(`Sheet ${event.sheetKey} 的单元格 [${event.row}, ${event.col}] 被点击`);
+   * });
+   *
+   * // 监听所有 sheet 的单元格值改变
+   * sheet.onTableEvent('change_cell_value', (event) => {
+   *   console.log(`Sheet ${event.sheetKey} 的值改变`);
+   *   autoSave(event);
+   * });
+   *
+   * // 可以监听任何 VTable 支持的事件
+   * sheet.onTableEvent('scroll', (event) => {
+   *   console.log(`Sheet ${event.sheetKey} 滚动了`);
+   * });
+   * ```
+   *
+   * @param type VTable 事件类型
+   * @param callback 事件回调函数，参数是增强后的事件对象（包含 sheetKey）
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onTableEvent(type: string, callback: (...args: any[]) => void): void {
+    this.tableEventRelay.onTableEvent(type, callback);
+  }
+
+  /**
+   * 移除 Table 事件监听器
+   *
+   * @param type VTable 事件类型
+   * @param callback 事件回调函数（可选）
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  offTableEvent(type: string, callback?: (...args: any[]) => void): void {
+    this.tableEventRelay.offTableEvent(type, callback);
   }
 
   /**
@@ -887,6 +930,9 @@ export default class VTableSheet {
    * 销毁实例
    */
   release(): void {
+    // 清除所有 Table 事件监听器
+    this.tableEventRelay.clearAllListeners();
+
     // 释放事件管理器
     this.eventManager.release();
     this.formulaManager.release();

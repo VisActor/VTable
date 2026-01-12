@@ -122,3 +122,4 @@ export * from './event';
 export * from './formula';
 export * from './filter';
 export * from './sheet';
+export * from './spreadsheet-events';

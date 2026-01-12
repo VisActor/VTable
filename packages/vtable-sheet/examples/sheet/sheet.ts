@@ -805,7 +805,9 @@ export function createTable() {
     }
   });
   (window as any).sheetInstance = sheetInstance;
-
+  sheetInstance.onTableEvent('click_cell', event => {
+    console.log('点击了单元格', event.sheetKey, event.row, event.col);
+  });
   // bindDebugTool(sheetInstance.activeWorkSheet.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });

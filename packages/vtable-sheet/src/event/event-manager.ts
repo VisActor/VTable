@@ -1,18 +1,12 @@
-import type { CellClickEvent, CellValueChangedEvent, SelectionChangedEvent } from '../ts-types';
 import type VTableSheet from '../components/vtable-sheet';
 
 /**
  * 事件管理器类
- * 负责处理VTableSheet组件的事件系统中转和基础DOM事件
+ * 负责处理VTableSheet组件的DOM事件和内部业务逻辑
  */
 export class EventManager {
   private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
-
-  // 预先绑定的事件处理方法
-  readonly handleCellClickBind: (event: CellClickEvent) => void;
-  readonly handleCellValueChangedBind: (event: CellValueChangedEvent) => void;
-  readonly handleSelectionChangedForRangeModeBind: (event: SelectionChangedEvent) => void;
 
   /**
    * 创建事件管理器实例
@@ -21,12 +15,8 @@ export class EventManager {
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
 
-    // 预先绑定事件处理方法
-    this.handleCellClickBind = this.handleCellClick.bind(this);
-    this.handleCellValueChangedBind = this.handleCellValueChanged.bind(this);
-    this.handleSelectionChangedForRangeModeBind = this.handleSelectionChangedForRangeMode.bind(this);
-
     this.setupEventListeners();
+    this.setupTableEventListeners();
   }
 
   /**
@@ -71,39 +61,41 @@ export class EventManager {
   }
 
   /**
-   * 处理单元格选择事件
-   * 这个方法处理从Worksheet冒泡上来的cell-selected事件
-   * @param event 单元格选择事件数据
+   * 设置 Table 事件监听器（内部业务逻辑）
+   * 使用统一的 onTableEvent API
    */
-  handleCellClick(event: CellClickEvent): void {
-    // 如果在公式编辑状态，不处理
-    if (this.sheet.formulaManager.formulaWorkingOnCell) {
-      return;
-    }
+  private setupTableEventListeners(): void {
+    // 监听单元格点击 - 用于更新公式栏
+    this.sheet.onTableEvent('click_cell', event => {
+      // 如果在公式编辑状态，不处理
+      if (this.sheet.formulaManager.formulaWorkingOnCell) {
+        return;
+      }
 
-    // 重置公式栏显示标志，让公式栏显示选中单元格的值
-    const formulaUIManager = this.sheet.formulaUIManager;
-    formulaUIManager.isFormulaBarShowingResult = false;
-    formulaUIManager.clearFormula();
-    formulaUIManager.updateFormulaBar();
-  }
+      // 重置公式栏显示标志，让公式栏显示选中单元格的值
+      const formulaUIManager = this.sheet.formulaUIManager;
+      formulaUIManager.isFormulaBarShowingResult = false;
+      formulaUIManager.clearFormula();
+      formulaUIManager.updateFormulaBar();
+    });
 
-  /**
-   * 处理单元格值变更事件
-   * @param event 单元格值变更事件数据
-   */
-  handleCellValueChanged(event: CellValueChangedEvent): void {
-    // 处理公式相关逻辑
-    this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
-  }
+    // 监听单元格值改变 - 用于公式相关逻辑
+    this.sheet.onTableEvent('change_cell_value', event => {
+      // 处理公式相关逻辑
+      this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
+    });
 
-  /**
-   * 处理选择范围变化事件
-   * @param event 选择范围变化事件数据
-   */
-  handleSelectionChangedForRangeMode(event: SelectionChangedEvent): void {
-    // 处理公式相关逻辑
-    this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
+    // 监听选择范围变化 - 用于公式范围选择
+    this.sheet.onTableEvent('selected_changed', event => {
+      // 处理公式相关逻辑
+      this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
+    });
+
+    // 监听拖拽选择结束 - 用于公式范围选择
+    this.sheet.onTableEvent('drag_select_end', event => {
+      // 处理公式相关逻辑
+      this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
+    });
   }
 
   // 原有DOM事件处理方法保持不变

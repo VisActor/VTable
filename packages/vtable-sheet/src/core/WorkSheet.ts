@@ -1,23 +1,17 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { isValid, type EventEmitter } from '@visactor/vutils';
-import { EventTarget } from '../event/event-target';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
   CellCoord,
   CellRange,
   CellValue,
-  CellValueChangedEvent,
-  CellClickEvent,
-  SelectionChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
-import { WorkSheetEventType } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
-import { detectFunctionParameterPosition } from '../formula/formula-helper';
 import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
 
 /**
@@ -34,7 +28,7 @@ export type WorkSheetConstructorOptions = {
   sheetTitle: string;
 } & Omit<ListTableConstructorOptions, 'records'>;
 
-export class WorkSheet extends EventTarget implements IWorkSheetAPI {
+export class WorkSheet implements IWorkSheetAPI {
   /** 选项 */
   options: IWorkSheetOptions;
   /** 容器 */
@@ -58,7 +52,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   editingCell: { sheet: string; row: number; col: number } | null = null;
 
   constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
-    super();
     this.options = options;
     this.container = options.container;
 
@@ -153,6 +146,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     this.eventBus = (this.tableInstance as any).eventBus;
     // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
     (this.tableInstance as any).__vtableSheet = this.vtableSheet;
+
+    // 通知 VTableSheet 的事件中转器绑定这个 sheet 的事件
+    (this.vtableSheet as any).tableEventRelay.bindSheetEvents(this.sheetKey, this.tableInstance);
   }
 
   /**
@@ -337,16 +333,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endRow: event.row,
       endCol: event.col
     };
-
-    // 使用事件类型枚举触发事件给父组件
-    const cellSelectedEvent: CellClickEvent = {
-      row: event.row,
-      col: event.col,
-      value: event.value,
-      cellElement: event.cellElement,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.CELL_CLICK, cellSelectedEvent);
+    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
   }
 
   /**
@@ -363,15 +350,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: r.end.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionChangedEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_CHANGED, selectionChangedEvent);
+    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
   }
 
   /**
@@ -390,15 +369,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: last.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionEndEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_END, selectionEndEvent);
+    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
   }
 
   /**
@@ -406,13 +377,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param event 值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    const cellValueChangedEvent: CellValueChangedEvent = {
-      row: event.row,
-      col: event.col,
-      oldValue: event.rawValue,
-      newValue: event.changedValue
-    };
-    this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
+    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
   }
 
   /**
@@ -548,24 +513,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     //#endregion
     // 在指定位置插入行，需要调整该位置之后的公式引用
     this.vtableSheet.formulaManager.changeRowHeaderPosition(sheetKey, sourceRow, targetRow);
-  }
-
-  /**
-   * 触发事件
-   * @param eventName 事件名称
-   * @param eventData 事件数据
-   */
-  protected fireEvent(eventName: string, eventData: any): void {
-    this.fire(eventName, eventData);
-  }
-
-  /**
-   * 监听事件
-   * @param eventName 事件名称
-   * @param handler 事件处理函数
-   */
-  on(eventName: string, handler: (...args: any[]) => void): this {
-    return super.on(eventName, handler);
   }
 
   // 用于防止短时间内多次调用resize的节流变量
@@ -743,7 +690,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
-      const oldValue = data[row][col];
       data[row][col] = value;
 
       // 更新表格实例
@@ -751,15 +697,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.tableInstance.changeCellValue(col, row, value);
       }
 
-      // 触发事件
-      const event: CellValueChangedEvent = {
-        row,
-        col,
-        oldValue,
-        newValue: value
-      };
-
-      this.fire('cellValueChanged', event);
+      // 不再触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
     }
   }
 
@@ -1034,6 +972,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    */
   release(): void {
     // 清理事件监听器
+    if (this.tableInstance) {
+      (this.vtableSheet as any).tableEventRelay.unbindSheetEvents(this.sheetKey, this.tableInstance);
+    }
 
     // 释放表格实例
     if (this.tableInstance) {
