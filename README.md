@@ -181,7 +181,7 @@ $ rush update
 
 ## 🔗 Related Links
 
-- [Official website](https://visactor.io/vtable)
+- [Official website](https://visactor.com/vtable)
 - [Usage Trend](https://npm-compare.com/@visactor/vtable)
 
 # 💫 Ecosystem
@@ -192,14 +192,15 @@ $ rush update
 
 # ⭐️ Star History
 
-## Star History
 
-<a href="https://gitdata.xuanhun520.com/#visactor/vtable&Date">
+<a href="https://gitdata.xuanhun520.com/?repos=visactor/vtable&type=Date">
 <picture >
-
+  <source media="(prefers-color-scheme: dark) and (max-width: 800px)" srcset="https://gitdata.xuanhun520.com/api/starimg?repos=visactor/vtable&type=Date&theme=dark" />
+  <source  media="(prefers-color-scheme: light) and (max-width: 800px)" srcset="https://gitdata.xuanhun520.com/api/starimg?repos=visactor/vtable&type=Date&theme=light" />
   <img style="width: 800px; height: 533px;" alt="Star History Chart" src="https://gitdata.xuanhun520.com/api/starimg?repos=visactor/vtable&type=Date&theme=dark" />
 </picture>
 </a>
+
 
 
 # 🤝 Contribution

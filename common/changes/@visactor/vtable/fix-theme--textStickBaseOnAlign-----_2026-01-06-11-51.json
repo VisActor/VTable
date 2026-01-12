@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "2684196398@qq.com"
+}
