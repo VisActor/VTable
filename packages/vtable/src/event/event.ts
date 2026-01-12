@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText, vglobal } from '@src/vrender';
-import type { CellInfo, ListTableAPI, ListTableConstructorOptions } from '../ts-types';
+import type { CellInfo, CellRange, ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -83,6 +83,7 @@ export class EventManager {
   private cutOperationTime: number = 0; // 记录剪切操作的时间
   lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
   cutCellRange: CellInfo[][] | null = null;
+  cutRanges: CellRange[] | null = null;
   /** 复制时的源位置信息（用于公式相对引用调整） */
   copySourceRange: { startCol: number; startRow: number } | null = null;
   constructor(table: BaseTableAPI) {
@@ -284,7 +285,7 @@ export class EventManager {
         eventArgs.event.shiftKey && shiftMultiSelect,
         (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
-        isSelectMoving ? false : (this.table.options.select?.makeSelectCellVisible ?? true)
+        isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
 
       return true;
@@ -925,6 +926,10 @@ export class EventManager {
     this.handleCopy(e, true);
     this.cutWaitPaste = true;
     this.cutCellRange = this.table.getSelectedCellInfos();
+    this.cutRanges = this.table.stateManager.select.ranges?.map(r => ({
+      start: { col: r.start.col, row: r.start.row },
+      end: { col: r.end.col, row: r.end.row }
+    }));
     // 设置自动超时，防止剪切状态无限期保持
     if (this.clipboardCheckTimer) {
       clearTimeout(this.clipboardCheckTimer);
@@ -936,6 +941,7 @@ export class EventManager {
         // 剪切操作超时，重置剪切状态
         this.cutWaitPaste = false;
         this.cutCellRange = null;
+        this.cutRanges = null;
         this.clipboardCheckTimer = null;
       }
     }, 30000); // 30秒超时
@@ -963,6 +969,7 @@ export class EventManager {
         if (this.cutWaitPaste) {
           this.cutWaitPaste = false;
           this.cutCellRange = null;
+          this.cutRanges = null;
           // 清除定时器
           if (this.clipboardCheckTimer) {
             clearTimeout(this.clipboardCheckTimer);
@@ -1117,18 +1124,12 @@ export class EventManager {
   // 清空选中区域的内容
   private clearCutArea(table: ListTableAPI): void {
     try {
-      const selectCells = this.cutCellRange;
-      if (!selectCells || selectCells.length === 0) {
+      const ranges = this.cutRanges;
+      if (!ranges || ranges.length === 0) {
         return;
       }
 
-      for (let i = 0; i < selectCells.length; i++) {
-        for (let j = 0; j < selectCells[i].length; j++) {
-          if (selectCells[i][j]) {
-            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
-          }
-        }
-      }
+      table.changeCellValuesByIds(ranges, '');
     } catch (error) {
       console.error('清空单元格内容失败', error);
     }
@@ -1193,7 +1194,7 @@ export class EventManager {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
           // const matches = pastedData.matchAll(regex);
-          const matches = Array.from(pastedData.matchAll(regex));
+          const matches = Array.from(pastedData.matchAll(regex)) as RegExpMatchArray[];
           for (const match of matches) {
             const rowContent = match[1]; // 获取<tr>标签中的内容
             const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat(数据操作): 添加syncRecordOperationsToSourceRecords选项支持同步操作到源数据\n\n添加syncRecordOperationsToSourceRecords配置选项，当设置为true时，表格的增删改操作会同步到原始records数组\n修改DataSource类实现源数据同步逻辑，包括添加、删除和更新记录时对原始数据的处理\n添加相关测试用例验证同步功能\n在示例中添加同步选项的UI控制\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zhanghao.gino@bytedance.com"
+}

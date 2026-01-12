@@ -381,6 +381,12 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
+  tableInstance.on('change_cell_values', arg => {
+    console.log(arg);
+  });
+  tableInstance.on('delete_record', arg => {
+    console.log(arg);
+  });
   window.tableInstance = tableInstance;
   tableInstance.on('dropdown_menu_click', args => {
     console.log('dropdown_menu_click', args);
