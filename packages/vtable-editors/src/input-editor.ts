@@ -86,6 +86,16 @@ export class InputEditor implements IEditor {
     };
     input.addEventListener('wheel', wheelHandler);
     this.eventHandlers.push({ type: 'wheel', handler: wheelHandler });
+
+    const pasteHandler: EventListener = (e: Event) => {
+      const pasteEvent = e as ClipboardEvent;
+      // 在prepare阶段（opacity为'0'时）禁止粘贴
+      if (this.element.style.opacity === '0') {
+        pasteEvent.preventDefault();
+      }
+    };
+    input.addEventListener('paste', pasteHandler);
+    this.eventHandlers.push({ type: 'paste', handler: pasteHandler });
   }
 
   setValue(value: string) {
