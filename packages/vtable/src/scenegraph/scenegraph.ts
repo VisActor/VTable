@@ -720,16 +720,19 @@ export class Scenegraph {
       if (forceRelease) {
         // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
         const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
-        const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
-        if ((cellGroup?.firstChild as any)?.deactivate) {
-          clearBrushingChartInstance();
-          (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
-            forceRelease: true,
-            releaseChartInstance: true,
-            releaseColumnChartInstance: true,
-            releaseRowChartInstance: true,
-            releaseAllChartInstance: true
-          });
+        const brushingChartInstance = getBrushingChartInstance();
+        if (brushingChartInstanceCellPos && brushingChartInstance) {
+          const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
+          if ((cellGroup?.firstChild as any)?.deactivate) {
+            clearBrushingChartInstance();
+            (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+              forceRelease: true,
+              releaseChartInstance: true,
+              releaseColumnChartInstance: true,
+              releaseRowChartInstance: true,
+              releaseAllChartInstance: true
+            });
+          }
         }
       }
       return;

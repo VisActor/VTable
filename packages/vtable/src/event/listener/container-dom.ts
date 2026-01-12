@@ -353,6 +353,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
           stateManager.endSelectCells(true, isHasSelected);
         }
       });
+      table.scenegraph.updateChartState(null, undefined);
+      table.scenegraph.deactivateChart(-1, -1, true);
     }
   };
   eventManager.globalEventListeners.push({

@@ -12,7 +12,8 @@ import {
   generateChartInstanceListByColumnDirection,
   generateChartInstanceListByRowDirection,
   generateChartInstanceListByViewRange,
-  getBrushingChartInstance
+  getBrushingChartInstance,
+  isDisabledShowTooltipToAllChartInstances
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -221,6 +222,7 @@ export class Chart extends Rect {
             : undefined
       })
     );
+
     const chartStage = this.activeChartInstance.getStage();
     // chartStage.needRender = true;
     // chartStage.background = 'red';
@@ -287,6 +289,12 @@ export class Chart extends Rect {
         });
       }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
+        if (isDisabledShowTooltipToAllChartInstances()) {
+          return;
+        }
+        //和下面调用disableTooltip做对应，一个关闭，一个打开。如果这里不加这句话可能导致这个实例没有tooltip的情况（如这个实例没有机会被加入到chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中）
+        this.activeChartInstance.disableTooltip(false);
+
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
         const viewport = params?.event?.viewport;
@@ -349,12 +357,10 @@ export class Chart extends Rect {
               }
             } else if (prev_justShowMarkTooltip === false && justShowMarkTooltip === true) {
               delayRunDimensionHover = false;
-              clearTimeout(this.delayRunDimensionHoverTimer);
-              this.delayRunDimensionHoverTimer = undefined;
+              this.clearDelayRunDimensionHoverTimer();
             } else if (prev_justShowMarkTooltip === true && justShowMarkTooltip === true) {
               delayRunDimensionHover = false;
-              clearTimeout(this.delayRunDimensionHoverTimer); //及时清除之前的定时器
-              this.delayRunDimensionHoverTimer = undefined;
+              this.clearDelayRunDimensionHoverTimer(); //及时清除之前的定时器
             }
             //#endregion
 
@@ -390,9 +396,13 @@ export class Chart extends Rect {
                   );
                 }
               } else {
-                clearTimeout(this.delayRunDimensionHoverTimer);
+                this.clearDelayRunDimensionHoverTimer();
                 //还是需要有个延迟出现的时间，否则从mark切换到dimension时，tooltip不会出现了（ preMark !== this.activeChartInstanceHoverOnMark总是为false）
                 this.delayRunDimensionHoverTimer = setTimeout(() => {
+                  if (isDisabledShowTooltipToAllChartInstances()) {
+                    // 如果当前是禁止显示tooltip的状态，这里的逻辑不会执行。否则这个延时会导致显示tooltip
+                    return;
+                  }
                   if (indicatorsAsCol) {
                     generateChartInstanceListByRowDirection(
                       row,
@@ -485,8 +495,18 @@ export class Chart extends Rect {
       });
     }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
+
+    if (isDisabledShowTooltipToAllChartInstances()) {
+      // 如果所有图表实例都禁用了dimensionHover，新建图表实例时，禁用当前图表实例的tooltip。避免在brush过程中显示tooltip
+      this.activeChartInstance.disableTooltip(true);
+    }
   }
   static temp: number = 1;
+
+  clearDelayRunDimensionHoverTimer() {
+    clearTimeout(this.delayRunDimensionHoverTimer);
+    this.delayRunDimensionHoverTimer = undefined;
+  }
   /**
    * 图表失去焦点
    * @param table
@@ -511,8 +531,7 @@ export class Chart extends Rect {
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
-    clearTimeout(this.delayRunDimensionHoverTimer);
-    this.delayRunDimensionHoverTimer = undefined;
+    this.clearDelayRunDimensionHoverTimer();
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd

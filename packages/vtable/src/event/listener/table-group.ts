@@ -423,6 +423,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     //处理当点击到的不是图表上时 更新图表的状态为空
     if (table.isPivotChart() && eventArgsSet?.eventArgs?.target.type !== 'chart') {
       table.scenegraph.updateChartState(null, undefined);
+      table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
     }
     // 处理menu
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
@@ -521,6 +522,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
             // eventManager.startColumnResize(e);
             // eventManager._resizing = true;
             table.scenegraph.updateChartState(null, undefined);
+            table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
             stateManager.updateInteractionState(InteractionState.grabing);
             return;
           }
@@ -869,6 +871,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         // eventManager.startColumnResize(e);
         // eventManager._resizing = true;
         table.scenegraph.updateChartState(null, undefined);
+        table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
         stateManager.updateInteractionState(InteractionState.grabing);
 
         // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
@@ -935,6 +938,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
       stateManager.updateCursor();
       table.scenegraph.updateChartState(null, undefined);
+      // 如果有brush状态的图表，dealTableHover方法无法将其释放，所以需要强制释放
+      table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       // 如果鼠标拖拽后是否 则结束选中
       stateManager.endSelectCells();

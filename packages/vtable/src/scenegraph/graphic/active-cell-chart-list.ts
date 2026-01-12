@@ -2,7 +2,7 @@ import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from './chart';
 import type { PivotChartConstructorOptions } from '../../ts-types/table-engine';
-import { debug } from 'console';
+
 /** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
 let brushingChartInstance: any;
 let brushingChartInstanceCellPos: { col: number; row: number } = { col: -1, row: -1 };
@@ -10,10 +10,14 @@ let brushingChartInstanceCellPos: { col: number; row: number } = { col: -1, row:
 export function setBrushingChartInstance(chartInstance: any, col: number, row: number) {
   brushingChartInstance = chartInstance;
   brushingChartInstanceCellPos = { col, row };
+
+  // window.brushingChartInstance = brushingChartInstance;
 }
 export function clearBrushingChartInstance() {
   brushingChartInstance = undefined;
   brushingChartInstanceCellPos = { col: -1, row: -1 };
+
+  // window.brushingChartInstance = brushingChartInstance;
 }
 export function getBrushingChartInstance() {
   return brushingChartInstance;
@@ -445,46 +449,44 @@ export function clearAllChartInstanceList(table: BaseTableAPI, forceRelease: boo
   }
 }
 
-export function disableDimensionHoverToAllChartInstances() {
+let disabledShowTooltipToAllChartInstances: boolean = false;
+export function isDisabledShowTooltipToAllChartInstances() {
+  return disabledShowTooltipToAllChartInstances;
+}
+export function disableTooltipToAllChartInstances() {
+  disabledShowTooltipToAllChartInstances = true;
   clearDelayRunDimensionHoverTimers();
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      // chartInstanceListColumnByColumnDirection[col][row]
-      //   .getChart()
-      //   .getComponentsByKey('brush')[0]
-      //   .disableDimensionHover();
-      chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(true);
-      chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(true);
+      // chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(true);
+      // chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(true);
       chartInstanceListColumnByColumnDirection[col][row].disableTooltip(true);
       chartInstanceListColumnByColumnDirection[col][row].hideTooltip();
     }
   }
   for (const row in chartInstanceListRowByRowDirection) {
     for (const col in chartInstanceListRowByRowDirection[row]) {
-      chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(true);
-      chartInstanceListRowByRowDirection[row][col].disableCrossHair(true);
+      // chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(true);
+      // chartInstanceListRowByRowDirection[row][col].disableCrossHair(true);
       chartInstanceListRowByRowDirection[row][col].disableTooltip(true);
       chartInstanceListRowByRowDirection[row][col].hideTooltip();
     }
   }
 }
-export function enableDimensionHoverToAllChartInstances() {
+export function enableTooltipToAllChartInstances() {
+  disabledShowTooltipToAllChartInstances = false;
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      // chartInstanceListColumnByColumnDirection[col][row]
-      //   .getChart()
-      //   .getComponentsByKey('brush')[0]
-      //   .enableDimensionHover();
-      chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);
-      chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(false);
+      // chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);
+      // chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(false);
       chartInstanceListColumnByColumnDirection[col][row].disableTooltip(false);
     }
   }
   for (const row in chartInstanceListRowByRowDirection) {
     for (const col in chartInstanceListRowByRowDirection[row]) {
       // chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
-      chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(false);
-      chartInstanceListRowByRowDirection[row][col].disableCrossHair(false);
+      // chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(false);
+      // chartInstanceListRowByRowDirection[row][col].disableCrossHair(false);
       chartInstanceListRowByRowDirection[row][col].disableTooltip(false);
     }
   }

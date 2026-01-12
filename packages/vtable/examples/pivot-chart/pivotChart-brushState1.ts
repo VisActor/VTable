@@ -776,7 +776,7 @@ export function createTable() {
       clearChartState() {
         console.log('clearChartState');
         window.xValues = [];
-        tableInstance.enableDimensionHoverToAllChartInstances();
+        tableInstance.enableTooltipToAllChartInstances();
       },
       inBrushStateFilter: datum => {
         const match = getXValues().includes(datum['__Dim_X__']);
@@ -801,7 +801,7 @@ export function createTable() {
     window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);
   });
   tableInstance.onVChartEvent('brushStart', params => {
-    tableInstance.disableDimensionHoverToAllChartInstances();
+    tableInstance.disableTooltipToAllChartInstances();
   });
   tableInstance.onVChartEvent('brushChange', params => {
     window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);

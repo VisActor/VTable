@@ -9452,7 +9452,6 @@ export function createTable() {
       // showTooltip:true,
       // listenBrushChange:true,
       // brushChangeDelay:100,
-
       // selectedStateFilter: (datum: any) => {
       //   console.log('selectedStateFilter', datum);
       //   // return datum['230417171050031'] === '中国';
@@ -9463,54 +9462,54 @@ export function createTable() {
       //   // return datum['230417171050031'] !== '中国';
       //   return undefined;
       // },
-      inBrushStateFilter: (datum: any) => {
-        // console.log('----inBrushStateFilter');
-        if ((tableInstance as PivotChart)._selectedDataItemsInChart.length >= 1) {
-          const match = (tableInstance as PivotChart)._selectedDataItemsInChart.find(item => {
-            for (const itemKey in item) {
-              if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
-                return false;
-              }
-            }
-            return true;
-          });
-          return !!match;
-        } else if ((tableInstance as PivotChart)._selectedDimensionInChart?.length) {
-          // 判断维度点击
-          const match = (tableInstance as PivotChart)._selectedDimensionInChart.every(item => {
-            if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
-              return false;
-            }
-            return true;
-          });
-          return !!match;
-        }
-        return false;
-      },
-      outOfBrushStateFilter: (datum: any) => {
-        // console.log('----outOfBrushStateFilter');
-        if ((tableInstance as PivotChart)._selectedDataItemsInChart.length >= 1) {
-          const match = (tableInstance as PivotChart)._selectedDataItemsInChart.find(item => {
-            for (const itemKey in item) {
-              if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
-                return false;
-              }
-            }
-            return true;
-          });
-          return !match;
-        } else if ((tableInstance as PivotChart)._selectedDimensionInChart?.length) {
-          // 判断维度点击
-          const match = (tableInstance as PivotChart)._selectedDimensionInChart.every(item => {
-            if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
-              return false;
-            }
-            return true;
-          });
-          return !match;
-        }
-        return false;
-      }
+      // inBrushStateFilter: (datum: any) => {
+      //   // console.log('----inBrushStateFilter');
+      //   if ((tableInstance as PivotChart)._selectedDataItemsInChart.length >= 1) {
+      //     const match = (tableInstance as PivotChart)._selectedDataItemsInChart.find(item => {
+      //       for (const itemKey in item) {
+      //         if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+      //           return false;
+      //         }
+      //       }
+      //       return true;
+      //     });
+      //     return !!match;
+      //   } else if ((tableInstance as PivotChart)._selectedDimensionInChart?.length) {
+      //     // 判断维度点击
+      //     const match = (tableInstance as PivotChart)._selectedDimensionInChart.every(item => {
+      //       if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+      //         return false;
+      //       }
+      //       return true;
+      //     });
+      //     return !!match;
+      //   }
+      //   return false;
+      // },
+      // outOfBrushStateFilter: (datum: any) => {
+      //   // console.log('----outOfBrushStateFilter');
+      //   if ((tableInstance as PivotChart)._selectedDataItemsInChart.length >= 1) {
+      //     const match = (tableInstance as PivotChart)._selectedDataItemsInChart.find(item => {
+      //       for (const itemKey in item) {
+      //         if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+      //           return false;
+      //         }
+      //       }
+      //       return true;
+      //     });
+      //     return !match;
+      //   } else if ((tableInstance as PivotChart)._selectedDimensionInChart?.length) {
+      //     // 判断维度点击
+      //     const match = (tableInstance as PivotChart)._selectedDimensionInChart.every(item => {
+      //       if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+      //         return false;
+      //       }
+      //       return true;
+      //     });
+      //     return !match;
+      //   }
+      //   return false;
+      // }
     },
     columnWidthConfig: [
       {
