@@ -1311,6 +1311,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
+    (this.dataSource as any).clearForceVisibleRecords?.();
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);

@@ -163,6 +163,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
    * 缓存按字段进行排序的结果
    */
   protected sortedIndexMap: Map<FieldDef, ISortedMapItem>;
+  private _forceVisibleRecords?: WeakSet<object>;
   /**
    * 记录最近一次排序规则 当展开树形结构的节点时需要用到
    */
@@ -885,12 +886,22 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     return index;
   }
   private _mapViewInsertIndexToRawInsertIndex(rawRecords: any[], viewIndex: number): number {
-    if (viewIndex >= this.records.length) {
+    if (this.records.length === 0) {
       return rawRecords.length;
     }
+
     if (viewIndex <= 0) {
-      return 0;
+      const firstVisibleRecord = this.records[0];
+      const rawIndex = rawRecords.indexOf(firstVisibleRecord);
+      return rawIndex >= 0 ? rawIndex : 0;
     }
+
+    if (viewIndex >= this.records.length) {
+      const lastVisibleRecord = this.records[this.records.length - 1];
+      const rawIndex = rawRecords.indexOf(lastVisibleRecord);
+      return rawIndex >= 0 ? rawIndex + 1 : rawRecords.length;
+    }
+
     const prevRecord = this.records[viewIndex - 1];
     const rawIndex = rawRecords.indexOf(prevRecord);
     return rawIndex >= 0 ? rawIndex + 1 : rawRecords.length;
@@ -956,6 +967,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       : this._normalizeInsertIndex(viewInsertIndex, rawRecords.length);
 
     rawRecords.splice(rawInsertIndex, 0, record);
+    if (syncToOriginalRecords && this._hasFilterInEffect()) {
+      this.markForceVisibleRecord(record);
+    }
     this.beforeChangedRecordsMap.clear();
     this.sortedIndexMap.clear();
     this.updateFilterRules(this.dataConfig?.filterRules);
@@ -1019,6 +1033,11 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       : this._normalizeInsertIndex(viewInsertIndex, rawRecords.length);
 
     rawRecords.splice(rawInsertIndex, 0, ...recordArr);
+    if (syncToOriginalRecords && this._hasFilterInEffect()) {
+      for (let i = 0; i < recordArr.length; i++) {
+        this.markForceVisibleRecord(recordArr[i]);
+      }
+    }
     this.beforeChangedRecordsMap.clear();
     this.sortedIndexMap.clear();
     this.updateFilterRules(this.dataConfig?.filterRules);
@@ -1403,6 +1422,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
     this.sortedIndexMap.set(field, filedMap);
   }
+  markForceVisibleRecord(record: any) {
+    if (!record || (typeof record !== 'object' && typeof record !== 'function')) {
+      return;
+    }
+    this._forceVisibleRecords ||= new WeakSet<object>();
+    this._forceVisibleRecords.add(record as object);
+  }
+  clearForceVisibleRecords() {
+    this._forceVisibleRecords = undefined;
+  }
 
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
@@ -1411,6 +1440,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
   }
   private filterRecord(record: any) {
+    if (this._forceVisibleRecords?.has(record as any)) {
+      return true;
+    }
     let isReserved = true;
     for (let i = 0; i < this.dataConfig.filterRules?.length; i++) {
       const filterRule = this.dataConfig?.filterRules[i];

@@ -396,7 +396,15 @@ export function createTable() {
     },
     menu: {
       renderMode: 'html',
-      contextMenuItems: ['向下插入空行', '向右插入空列', '删除该行'],
+      contextMenuItems: [
+        {
+          text: '向下插入行数…',
+          menuKey: 'INSERT_ROW_BELOW'
+        },
+        '向下插入空行',
+        '向右插入空列',
+        '删除该行'
+      ],
       contextMenuWorkOnlyCell: true
     },
     pagination: {
@@ -452,6 +460,10 @@ syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
       {
         filterKey: 'sex',
         filteredValues: ['boy']
+      },
+      {
+        filterKey: 'id',
+        filteredValues: [3]
       }
     ]);
     updateStatus();
@@ -569,17 +581,26 @@ syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
     testTable.updateFilterRules(rules);
     const secondCalls = calls;
 
-    testTable.updateSortState({ field: 'id', order: 'desc' } as any);
-    const newRecord2 = { id: 4002, email1: '4002@xxx.com', name: '新增4002', sex: 'girl' };
-    testTable.addRecord(newRecord2);
+    const newRecords = [
+      { id: 4002, email1: '4002@xxx.com', name: '新增4002', sex: 'girl' },
+      { id: 4003, email1: '4003@xxx.com', name: '新增4003', sex: 'boy' }
+    ];
+    testTable.addRecords(newRecords);
     calls = 0;
     testTable.updateFilterRules(rules);
     const thirdCalls = calls;
 
-    testTable.deleteRecords([0] as any, false);
+    testTable.updateSortState({ field: 'id', order: 'desc' } as any);
+    const newRecord2 = { id: 4004, email1: '4004@xxx.com', name: '新增4004', sex: 'girl' };
+    testTable.addRecord(newRecord2);
     calls = 0;
     testTable.updateFilterRules(rules);
     const fourthCalls = calls;
+
+    testTable.deleteRecords([0] as any, false);
+    calls = 0;
+    testTable.updateFilterRules(rules);
+    const fifthCalls = calls;
 
     testTable.release();
     testContainer.remove();
@@ -588,8 +609,9 @@ syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
 sync=${syncRecordOpsToSourceRecordsForTest}
 first updateFilterRules calls=${firstCalls} expect=4000
 after addRecord(4001) calls=${secondCalls} expect=4001
-after sort+addRecord(4002) calls=${thirdCalls} expect=4002
-after deleteRecords([0]) calls=${fourthCalls} expect=4001`;
+after addRecords(4002..4003) calls=${thirdCalls} expect=4003
+after sort+addRecord(4004) calls=${fourthCalls} expect=4004
+after deleteRecords([0]) calls=${fifthCalls} expect=4003`;
   };
 
   const undo = () => {
@@ -691,6 +713,29 @@ after deleteRecords([0]) calls=${fourthCalls} expect=4001`;
       return;
     }
 
+    if (menuKey === 'INSERT_ROW_BELOW') {
+      const inputValueRaw = window.prompt('向下插入行数：', '1');
+      const inputValue = Math.max(0, Number(inputValueRaw ?? 1) || 0);
+      if (!inputValue) {
+        return;
+      }
+
+      const newRecords = Array.from({ length: inputValue }, () => ({
+        id: records.length + 1,
+        email1: `${records.length + 1}@xxx.com`,
+        name: `新增${records.length + 1}`,
+        lastName: '王',
+        date1: '2022年9月1日',
+        tel: '000-0000-0000',
+        sex: undefined,
+        work: 'new row',
+        city: 'beijing'
+      }));
+      tableInstance.addRecords(newRecords, recordIndex + 1);
+      updateStatus();
+      return;
+    }
+
     if (menuKey === '向下插入空行') {
       const newRecord = {
         id: records.length + 1,
@@ -699,7 +744,7 @@ after deleteRecords([0]) calls=${fourthCalls} expect=4001`;
         lastName: '王',
         date1: '2022年9月1日',
         tel: '000-0000-0000',
-        sex: 'boy',
+        sex: undefined,
         work: 'new row',
         city: 'beijing'
       };
