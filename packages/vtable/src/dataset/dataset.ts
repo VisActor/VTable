@@ -1179,10 +1179,13 @@ export class Dataset {
         // 如果是平铺树结构 小计需要处理补充到rowKey中
         if (rowKey[0] === this.rowGrandTotalLabel) {
         } else if (
-          this.totals?.row?.subTotalsDimensions &&
-          this.totals?.row?.subTotalsDimensions?.length >= 1 &&
-          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel &&
-          this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到rowKey中
+          (
+            (this.totals?.row?.subTotalsDimensions &&
+             this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+             this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey)) ||
+            this.totals?.row?.showSubTotalsOnTreeNode
+          ) &&
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
         ) {
           rowKey.push(this.rowSubTotalLabel);
         }
@@ -1205,10 +1208,11 @@ export class Dataset {
       if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
         if (colKey[0] === this.colGrandTotalLabel) {
         } else if (
-          this.totals?.column?.subTotalsDimensions &&
-          this.totals?.column?.subTotalsDimensions?.length >= 1 &&
-          colKey[colKey.length - 1] !== this.colSubTotalLabel &&
-          this.totals.column.subTotalsDimensions.find((dimension: string) => dimension === colDimensionKey) //如果维度key在subTotalsDimensions中 则需要补充小计标签名到colKey中
+          ((this.totals?.column?.subTotalsDimensions &&
+            this.totals?.column?.subTotalsDimensions?.length >= 1 &&
+            this.totals.column.subTotalsDimensions.find((dimension: string) => dimension === colDimensionKey)) ||
+            this.totals?.column?.showSubTotalsOnTreeNode) &&
+          colKey[colKey.length - 1] !== this.colSubTotalLabel
         ) {
           colKey.push(this.colSubTotalLabel);
         }
@@ -1542,12 +1546,20 @@ export class Dataset {
       }
       const colKey = flatColKey.split(this.stringJoinChar);
       if (
-        that.totals?.column?.subTotalsDimensions &&
+        (that.totals?.column?.subTotalsDimensions &&
         that.totals?.column?.subTotalsDimensions?.length > 0 &&
-        that.totals.column.showSubTotals !== false
+        (that.totals.column.showSubTotals !== false || that.totals.column.showSubTotalsOnTreeNode)) ||
+        (that.totals.column.showSubTotalsOnTreeNode && that.columns.length > 0)
       ) {
-        for (let i = 0, len = that.totals?.column?.subTotalsDimensions?.length; i < len; i++) {
-          const dimension = that.totals.column.subTotalsDimensions[i];
+        // 确定要处理的列维度
+        let colSubTotalDimensions = that.totals?.column?.subTotalsDimensions || [];
+        if (that.totals?.column?.showSubTotalsOnTreeNode && colSubTotalDimensions.length === 0) {
+          // 如果设置了showSubTotalsOnTreeNode但没有配置subTotalsDimensions，则使用所有列维度
+          colSubTotalDimensions = that.columns.map(col => col);
+        }
+
+        for (let i = 0, len = colSubTotalDimensions.length; i < len; i++) {
+          const dimension = colSubTotalDimensions[i];
           const dimensionIndex = that.columns.indexOf(dimension);
           if (dimensionIndex >= 0) {
             const colTotalKey = colKey.slice(0, dimensionIndex + 1);
@@ -1687,7 +1699,9 @@ export class Dataset {
       (that?.totals?.column?.subTotalsDimensions && that?.totals?.column?.subTotalsDimensions?.length >= 1) ||
       (that?.totals?.row?.subTotalsDimensions && that?.totals?.row?.subTotalsDimensions?.length >= 1) ||
       that?.totals?.column?.showGrandTotals ||
-      that?.totals?.row?.showGrandTotals
+      that?.totals?.row?.showGrandTotals ||
+      that?.totals?.row?.showSubTotalsOnTreeNode ||
+      that?.totals?.column?.showSubTotalsOnTreeNode
       // ||
       // that.rows.length === 0 || //todo  这里原有逻辑暂时注释掉
       // that.columns.length === 0
@@ -1698,12 +1712,20 @@ export class Dataset {
         const rowKey = flatRowKey.split(this.stringJoinChar);
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
           if (
-            that.totals?.row?.subTotalsDimensions &&
+            (that.totals?.row?.subTotalsDimensions &&
             that.totals?.row?.subTotalsDimensions?.length > 0 &&
-            that.totals.row.showSubTotals !== false
+            (that.totals.row.showSubTotals !== false || that.totals.row.showSubTotalsOnTreeNode)) ||
+            (that.totals.row.showSubTotalsOnTreeNode && that.rows.length > 0)
           ) {
-            for (let i = 0, len = that.totals?.row?.subTotalsDimensions?.length; i < len; i++) {
-              const dimension = that.totals.row.subTotalsDimensions[i];
+            // 确定要处理的行维度
+            let rowSubTotalDimensions = that.totals?.row?.subTotalsDimensions || [];
+            if (that.totals?.row?.showSubTotalsOnTreeNode && rowSubTotalDimensions.length === 0) {
+              // 如果设置了showSubTotalsOnTreeNode但没有配置subTotalsDimensions，则使用所有行维度
+              rowSubTotalDimensions = that.rows.map(row => row);
+            }
+
+            for (let i = 0, len = rowSubTotalDimensions.length; i < len; i++) {
+              const dimension = rowSubTotalDimensions[i];
               const dimensionIndex = that.rows.indexOf(dimension);
               if (dimensionIndex >= 0 && dimensionIndex < that.rows.length - 1) {
                 const rowTotalKey = rowKey.slice(0, dimensionIndex + 1);
