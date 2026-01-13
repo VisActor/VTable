@@ -678,9 +678,6 @@ export function computeCountToTimeScale(
   let difference: number;
   const adjusted_date = new Date(date.getTime() + diffMS);
 
-  const startDaysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
-  const adjustedDaysInMonth = new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate();
-
   switch (timeScale) {
     case 'second':
       difference = (adjusted_date.getTime() - startDate.getTime()) / msInSecond;
@@ -698,6 +695,8 @@ export function computeCountToTimeScale(
       difference = (adjusted_date.getTime() - startDate.getTime()) / msInWeek;
       break;
     case 'month':
+      const startDaysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+      const adjustedDaysInMonth = new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate();
       difference =
         (adjusted_date.getFullYear() - startDate.getFullYear()) * 12 +
         (adjusted_date.getMonth() - startDate.getMonth());
