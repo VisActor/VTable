@@ -240,8 +240,6 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
 
-    // console.log('filterIcon', filterIcon);
-
     const isIconEqual = (a: any, b: any) =>
       a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
 
