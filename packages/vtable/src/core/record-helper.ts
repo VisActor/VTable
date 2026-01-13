@@ -5,7 +5,7 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { ListTableProtected, SortState } from '../ts-types';
+import type { CellRange, ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 import { isNumber } from '@visactor/vutils';
 
@@ -23,17 +23,19 @@ export function listTableChangeCellValue(
   value: string | number | null,
   workOnEditableCell: boolean,
   triggerEvent: boolean,
-  table: ListTable
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
-    const recordIndex = table.getRecordShowIndexByCell(col, row);
+    const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+    const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
     const { field } = table.internalProps.layoutMap.getBody(col, row);
     const beforeChangeValue = table.getCellRawValue(col, row);
     const oldValue = table.getCellOriginValue(col, row);
     if (table.isHeader(col, row)) {
       table.internalProps.layoutMap.updateColumnTitle(col, row, value as string);
     } else {
-      table.dataSource.changeFieldValue(value, recordIndex, field, col, row, table);
+      table.dataSource.changeFieldValue(value, recordShowIndex, field, col, row, table);
     }
     const range = table.getCellRange(col, row);
     //改变单元格的值后 聚合值做重新计算
@@ -95,13 +97,19 @@ export function listTableChangeCellValue(
     }
     const changedValue = table.getCellOriginValue(col, row);
     if (oldValue !== changedValue && triggerEvent) {
-      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+      const changeValue = {
         col,
         row,
+        recordIndex,
+        field,
         rawValue: beforeChangeValue,
         currentValue: oldValue,
         changedValue
-      });
+      };
+      table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      if (!silentChangeCellValuesEvent) {
+        table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
     }
     table.scenegraph.updateNextFrame();
   }
@@ -120,7 +128,8 @@ export async function listTableChangeCellValues(
   values: (string | number)[][],
   workOnEditableCell: boolean,
   triggerEvent: boolean,
-  table: ListTable
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -151,6 +160,17 @@ export async function listTableChangeCellValues(
       oldRowValues.push(oldValue);
     }
   }
+
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: any;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+
   //#endregion
   for (let i = 0; i < values.length; i++) {
     if (startRow + i > table.rowCount - 1) {
@@ -191,7 +211,8 @@ export async function listTableChangeCellValues(
       if (isCanChange) {
         changedCellResults[i][j] = true;
         const value = rowValues[j];
-        const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordShowIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
         // const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
         // const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
@@ -200,23 +221,30 @@ export async function listTableChangeCellValues(
         if (table.isHeader(startCol + j, startRow + i)) {
           table.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
         } else {
-          table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
+          table.dataSource.changeFieldValue(value, recordShowIndex, field, startCol + j, startRow + i, table);
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
         if (oldValue !== changedValue && triggerEvent) {
-          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
+          const changeValue = {
             col: startCol + j,
             row: startRow + i,
+            recordIndex,
+            field,
             rawValue: beforeChangeValue,
             currentValue: oldValue,
             changedValue
-          });
+          };
+          table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
         }
       } else {
         changedCellResults[i][j] = false;
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
+  }
+  if (!silentChangeCellValuesEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
   }
 
   // const cell_value = table.getCellValue(col, row);
@@ -314,6 +342,102 @@ export async function listTableChangeCellValues(
   return changedCellResults;
 }
 
+export async function listTableChangeCellValuesByIds(
+  ranges: CellRange[],
+  value: string | number | null,
+  workOnEditableCell: boolean,
+  triggerEvent: boolean,
+  table: ListTable,
+  silentChangeCellValuesEvent?: boolean
+) {
+  const resultChangeValues: {
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: any;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }[] = [];
+
+  const processed = new Set<string>();
+  const nextValue = (value ?? '') as string | number;
+
+  for (let i = 0; i < (ranges?.length ?? 0); i++) {
+    const range = ranges[i];
+    const startCol = Math.min(range.start.col, range.end.col);
+    const endCol = Math.max(range.start.col, range.end.col);
+    const startRow = Math.min(range.start.row, range.end.row);
+    const endRow = Math.max(range.start.row, range.end.row);
+
+    if (startCol > endCol || startRow > endRow) {
+      continue;
+    }
+
+    const values: (string | number)[][] = [];
+    const oldValues: (string | number)[][] = [];
+    for (let row = startRow; row <= endRow; row++) {
+      const rowValues: (string | number)[] = [];
+      const rowOldValues: (string | number)[] = [];
+      for (let col = startCol; col <= endCol; col++) {
+        rowValues.push(nextValue);
+        rowOldValues.push(table.getCellOriginValue(col, row));
+      }
+      values.push(rowValues);
+      oldValues.push(rowOldValues);
+    }
+
+    const changedCellResults = await listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      table,
+      true
+    );
+
+    for (let r = 0; r < values.length; r++) {
+      for (let c = 0; c < values[r].length; c++) {
+        const col = startCol + c;
+        const row = startRow + r;
+        const key = `${col},${row}`;
+        if (processed.has(key)) {
+          continue;
+        }
+        processed.add(key);
+
+        if (!triggerEvent || !changedCellResults?.[r]?.[c]) {
+          continue;
+        }
+
+        const oldValue = oldValues[r][c];
+        const changedValue = table.getCellOriginValue(col, row);
+        if (oldValue === changedValue) {
+          continue;
+        }
+
+        const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+        const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+        const { field } = table.internalProps.layoutMap.getBody(col, row);
+        resultChangeValues.push({
+          col,
+          row,
+          recordIndex,
+          field,
+          rawValue: oldValue,
+          currentValue: oldValue,
+          changedValue
+        });
+      }
+    }
+  }
+
+  if (!silentChangeCellValuesEvent && triggerEvent) {
+    table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+  }
+}
+
 type CellUpdateType = 'normal' | 'sort' | 'group';
 function getCellUpdateType(
   col: number,
@@ -390,7 +514,12 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.addRecordForSorted(record);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).addRecord(record, table.dataSource.records.length, true);
+      } else {
+        table.dataSource.addRecordForSorted(record);
+      }
       // 清理checkedState
       table.stateManager.checkedState.clear();
       sortRecords(table);
@@ -404,8 +533,16 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
         recordIndex = table.dataSource.sourceLength;
       }
       const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-      table.dataSource.addRecord(record, recordIndex);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      (table.dataSource as any).addRecord(record, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
       const oldRowCount = table.rowCount;
       table.refreshRowColCount();
       if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -529,7 +666,12 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.addRecordsForSorted(records);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).addRecords(records, table.dataSource.records.length, true);
+      } else {
+        table.dataSource.addRecordsForSorted(records);
+      }
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
@@ -543,8 +685,16 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
         recordIndex = 0;
       }
       const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-      table.dataSource.addRecords(records, recordIndex);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      (table.dataSource as any).addRecords(records, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
       if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -677,7 +827,12 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).deleteRecords(recordIndexs as number[], true);
+      } else {
+        table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      }
       // Note: For sorted records, checkbox state is cleared entirely (checkedState.clear())
       // So no need to adjust individual state mappings
       sortRecords(table);
@@ -686,7 +841,11 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else {
-      const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      const deletedRecordIndexs = (table.dataSource as any).deleteRecords(
+        recordIndexs as number[],
+        syncToOriginalRecords
+      ) as number[];
       if (deletedRecordIndexs.length === 0) {
         return;
       }
@@ -694,10 +853,17 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       for (let index = 0; index < deletedRecordIndexs.length; index++) {
         adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
       }
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return;
+      }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
       const newRowCount = table.transpose ? table.colCount : table.rowCount;
-      const recordIndexsMinToMax = deletedRecordIndexs.sort((a, b) => a - b);
+      const recordIndexsMinToMax = deletedRecordIndexs.sort((a: number, b: number) => a - b);
       const minRecordIndex = recordIndexsMinToMax[0];
       if (table.pagination) {
         const { perPageCount, currentPage } = table.pagination;
@@ -824,19 +990,34 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
-      table.dataSource.updateRecordsForSorted(records, recordIndexs as number[]);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      if (syncToOriginalRecords) {
+        (table.dataSource as any).updateRecords(records, recordIndexs as number[], true);
+      } else {
+        table.dataSource.updateRecordsForSorted(records, recordIndexs as number[]);
+      }
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else {
-      const updateRecordIndexs = table.dataSource.updateRecords(records, recordIndexs);
+      const syncToOriginalRecords = !!(table.options as any)?.syncRecordOperationsToSourceRecords;
+      const updateRecordIndexs = (table.dataSource as any).updateRecords(records, recordIndexs, syncToOriginalRecords);
       if (updateRecordIndexs.length === 0) {
         return;
       }
-      const bodyRowIndex = updateRecordIndexs.map(index => table.getBodyRowIndexByRecordIndex(index));
-      const recordIndexsMinToMax = bodyRowIndex.sort((a, b) => a - b);
+      if (syncToOriginalRecords) {
+        table.refreshRowColCount();
+        table.internalProps.layoutMap.clearCellRangeMap();
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return;
+      }
+      const bodyRowIndex = (updateRecordIndexs as (number | number[])[]).map((index: number | number[]) =>
+        table.getBodyRowIndexByRecordIndex(index)
+      );
+      const recordIndexsMinToMax = bodyRowIndex.sort((a: number, b: number) => a - b);
       if (table.pagination) {
         const { perPageCount, currentPage } = table.pagination;
         const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
@@ -962,7 +1143,7 @@ function adjustCheckBoxStateMapWithDeleteRecordIndex(table: ListTable, recordInd
       }
     });
     //需要将targetResult按originKey排序进行升序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'后面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'后面
-    targetResult.sort((a, b) => {
+    targetResult.sort((a: { originKey: string }, b: { originKey: string }) => {
       const aArray = a.originKey.split(',');
       const bArray = b.originKey.split(',');
       const aLength = aArray.length;
@@ -1063,7 +1244,7 @@ function adjustCheckBoxStateMapWithAddRecordIndex(table: ListTable, recordIndex:
       }
     });
     //需要将targetResult按originKey排序进行降序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'前面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'前面
-    targetResult.sort((a, b) => {
+    targetResult.sort((a: { originKey: string }, b: { originKey: string }) => {
       const aArray = a.originKey.split(',');
       const bArray = b.originKey.split(',');
       const aLength = aArray.length;
