@@ -1,33 +1,3 @@
-import { SelectionMode } from './ts-types';
-import type { SheetConstructorOptions } from './ts-types';
-
-/**
- * Initialize options with defaults for the Sheet component
- * @param options User provided options
- * @returns Parsed options with defaults applied
- */
-export function initOptions(options: SheetConstructorOptions): {
-  defaultRowHeight: number;
-  defaultColWidth: number;
-  showRowHeader: boolean;
-  showColHeader: boolean;
-  editable: boolean;
-  theme: string;
-  selectionMode: SelectionMode;
-  pixelRatio: number;
-} {
-  return {
-    defaultRowHeight: options.defaultRowHeight ?? 25,
-    defaultColWidth: options.defaultColWidth ?? 100,
-    showRowHeader: options.showRowHeader ?? true,
-    showColHeader: options.showColHeader ?? true,
-    editable: options.editable ?? true,
-    theme: options.theme ?? 'light',
-    selectionMode: options.selectionMode ?? SelectionMode.CELL,
-    pixelRatio: window.devicePixelRatio || 1
-  };
-}
-
 /**
  * Convert A1 notation to column index (0-based)
  * @param colStr Column string (e.g., 'A', 'B', 'AA')

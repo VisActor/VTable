@@ -7,12 +7,13 @@
  */
 
 import type { ListTable } from '@visactor/vtable';
+import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import type VTableSheet from '../components/vtable-sheet';
 
 type EventCallback = (...args: any[]) => void;
 
 interface EventHandler {
-  callback: EventCallback;
+  callback: (event: any) => void;
 }
 
 /**
@@ -57,7 +58,10 @@ export class TableEventRelay {
    * });
    * ```
    */
-  onTableEvent(type: string, callback: EventCallback): void {
+  onTableEvent<K extends keyof TableEventHandlersEventArgumentMap>(
+    type: K,
+    callback: (event: TableEventHandlersEventArgumentMap[K] & { sheetKey: string }) => void
+  ): void {
     if (!this._tableEventMap[type]) {
       this._tableEventMap[type] = [];
     }
@@ -135,7 +139,7 @@ export class TableEventRelay {
         };
 
         // 调用用户的回调，传入增强后的事件对象
-        handler.callback(enhancedEvent, ...args.slice(1));
+        handler.callback(enhancedEvent);
       };
 
       // 保存包装函数的引用，用于后续解绑

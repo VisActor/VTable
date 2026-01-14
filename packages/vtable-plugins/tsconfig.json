@@ -17,7 +17,8 @@
     ],
     "strict": false,
     "paths": {
-      "@src/*": ["./src/*"],
+      "@src/vrender": ["../vtable/src/vrender"],
+      "@src/*": ["./src/*"]
     }
   },
   "ts-node": {

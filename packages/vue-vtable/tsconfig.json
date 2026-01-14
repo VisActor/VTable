@@ -6,7 +6,9 @@
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
-    "paths": {}
+    "paths": {
+      "@src/vrender": ["../vtable/src/vrender"]
+    }
   },
   "ts-node": {
     "transpileOnly": true,

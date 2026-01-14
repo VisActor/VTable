@@ -7,6 +7,7 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "paths": {
+      "@src/vrender": ["../vtable/src/vrender"]
     }
   },
   "ts-node": {

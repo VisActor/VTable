@@ -34,8 +34,8 @@ export function getTablePlugins(
   sheetDefine?: ISheetDefine,
   options?: IVTableSheetOptions,
   vtableSheet?: any
-): VTable.plugins.IVTablePlugin[] {
-  const plugins: VTable.plugins.IVTablePlugin[] = [];
+): VTable.pluginsDefinition.IVTablePlugin[] {
+  const plugins: VTable.pluginsDefinition.IVTablePlugin[] = [];
   // 结合options.VTablePluginModules，来判断是否禁用插件
   const disabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => module.disabled);
   let enabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => !module.disabled);
@@ -155,7 +155,7 @@ export function getTablePlugins(
   if (enabledPluginsUserSetted?.length) {
     enabledPluginsUserSetted.forEach(
       (module: {
-        module: new (options: unknown) => VTable.plugins.IVTablePlugin;
+        module: new (options: unknown) => VTable.pluginsDefinition.IVTablePlugin;
         moduleOptions: unknown;
         disabled: boolean;
       }) => {

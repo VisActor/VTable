@@ -3,10 +3,11 @@ import SheetManager from '../managers/sheet-manager';
 import { WorkSheet } from '../core/WorkSheet';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
-import { EventManager } from '../event/event-manager';
+import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
+import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { FormulaAutocomplete } from '../formula/formula-autocomplete';
 import { formulaEditor } from '../formula/formula-editor';
@@ -14,7 +15,7 @@ import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
-import { TableEventRelay } from '../core/table-event-relay';
+import { TableEventRelay } from '../event/table-event-relay';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -28,7 +29,7 @@ export default class VTableSheet {
   /** 公式管理器 */
   formulaManager: FormulaManager;
   /** 事件管理器 */
-  private eventManager: EventManager;
+  private eventManager: DomEventManager;
 
   /** 菜单管理 */
   private menuManager: MenuManager;
@@ -68,7 +69,7 @@ export default class VTableSheet {
     this.sheetManager = new SheetManager();
     this.formulaManager = new FormulaManager(this);
     this.tableEventRelay = new TableEventRelay(this); // ⚠️ 必须在 EventManager 之前初始化
-    this.eventManager = new EventManager(this); // EventManager 构造函数会调用 this.onTableEvent()
+    this.eventManager = new DomEventManager(this); // EventManager 构造函数会调用 this.onTableEvent()
     this.dragManager = new SheetTabDragManager(this);
     this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
@@ -679,8 +680,10 @@ export default class VTableSheet {
    * @param type VTable 事件类型
    * @param callback 事件回调函数，参数是增强后的事件对象（包含 sheetKey）
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onTableEvent(type: string, callback: (...args: any[]) => void): void {
+  onTableEvent<K extends keyof TableEventHandlersEventArgumentMap>(
+    type: K,
+    callback: (event: TableEventHandlersEventArgumentMap[K] & { sheetKey: string }) => void
+  ): void {
     this.tableEventRelay.onTableEvent(type, callback);
   }
 

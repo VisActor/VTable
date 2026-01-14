@@ -333,7 +333,16 @@ export class WorkSheet implements IWorkSheetAPI {
       endRow: event.row,
       endCol: event.col
     };
-    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
+    // 如果在公式编辑状态，不处理
+    if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+      return;
+    }
+
+    // 重置公式栏显示标志，让公式栏显示选中单元格的值
+    const formulaUIManager = this.vtableSheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
   }
 
   /**
@@ -350,7 +359,7 @@ export class WorkSheet implements IWorkSheetAPI {
         endCol: r.end.col
       };
     }
-    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -369,7 +378,7 @@ export class WorkSheet implements IWorkSheetAPI {
         endCol: last.col
       };
     }
-    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -377,7 +386,7 @@ export class WorkSheet implements IWorkSheetAPI {
    * @param event 值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    // 不再需要触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
   }
 
   /**

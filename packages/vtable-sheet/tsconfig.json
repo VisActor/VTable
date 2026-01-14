@@ -17,11 +17,17 @@
     ],
     "strict": false,
     "paths": {
+      "@visactor/vtable": ["../vtable/src/index"],
+      "@visactor/vtable/es/*": ["../vtable/src/*"],
+      "@src/vrender": ["../vtable/src/vrender"],
       "@src/*": ["./src/*"],
       "@vutils-extension": ["./src/vutil-extension-temp"]
     }
   },
   "references": [
+    {
+      "path": "../vtable"
+    },
     {
       "path": "../vtable-editors"
     }
