@@ -63,6 +63,10 @@ import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import type { GetAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 import { Factory } from '../core/factory';
+import {
+  clearAllChartInstanceList,
+  clearAndReleaseBrushingChartInstance
+} from '../scenegraph/graphic/active-cell-chart-list';
 
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
@@ -3874,6 +3878,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._indicators?.forEach(indicatorObject => {
       indicatorObject.chartInstance?.release();
     });
+    clearAllChartInstanceList(this._table, true);
+    clearAndReleaseBrushingChartInstance(this._table.scenegraph);
   }
 
   getHeadNode(col: number, row: number) {

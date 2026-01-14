@@ -86,7 +86,7 @@ import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
 import type { Chart } from './graphic/chart';
 import {
-  clearBrushingChartInstance,
+  clearAndReleaseBrushingChartInstance,
   getBrushingChartInstance,
   getBrushingChartInstanceCellPos
 } from './graphic/active-cell-chart-list';
@@ -722,20 +722,9 @@ export class Scenegraph {
       const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
       const brushingChartInstance = getBrushingChartInstance();
       if (brushingChartInstanceCellPos && brushingChartInstance) {
-        const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
-        if ((cellGroup?.firstChild as any)?.deactivate) {
-          (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
-            forceRelease: true,
-            releaseChartInstance: true,
-            releaseColumnChartInstance: true,
-            releaseRowChartInstance: true,
-            releaseAllChartInstance: true
-          });
-        }
-
+        clearAndReleaseBrushingChartInstance(this);
         //单独清理brush操作的单元格的chart缓存图片  因为updateChartState逻辑走到的clearChartCacheImage方法清理时排除了brushing cell的chart缓存图片(有绘制图片的那个共享图表实例覆盖到activechart实例上问题)
         clearCellChartCacheImage(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row, this);
-        clearBrushingChartInstance();
       }
     }
     if (col === -1 || row === -1) {

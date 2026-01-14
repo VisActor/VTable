@@ -2,6 +2,7 @@ import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Chart } from './chart';
 import type { PivotChartConstructorOptions } from '../../ts-types/table-engine';
+import type { Scenegraph } from '../scenegraph';
 
 /** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
 let brushingChartInstance: any;
@@ -13,7 +14,17 @@ export function setBrushingChartInstance(chartInstance: any, col: number, row: n
 
   // window.brushingChartInstance = brushingChartInstance;
 }
-export function clearBrushingChartInstance() {
+export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
+  const cellGroup = scenegraph.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
+  if ((cellGroup?.firstChild as any)?.deactivate) {
+    (cellGroup?.firstChild as any)?.deactivate?.(scenegraph.table, {
+      forceRelease: true,
+      releaseChartInstance: true,
+      releaseColumnChartInstance: false,
+      releaseRowChartInstance: false,
+      releaseAllChartInstance: false
+    });
+  }
   brushingChartInstance = undefined;
   brushingChartInstanceCellPos = { col: -1, row: -1 };
 

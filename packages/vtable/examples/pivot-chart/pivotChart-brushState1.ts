@@ -805,9 +805,18 @@ export function createTable() {
   function getXValues() {
     return window.xValues;
   }
-  tableInstance.onVChartEvent('brushEnd', params => {
-    window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);
-  });
+  // tableInstance.onVChartEvent('brushEnd', params => {
+  //   window.xValues = params?.value?.inBrushData.map(v => v['__Dim_X__']);
+  //   setTimeout(()=> {
+  //     tableInstance.updateOption({
+  //         ...option,
+  //       records: {
+  //         'sales-and-profit': option.records['sales-and-profit'].filter(v => ['2019', '2022'].includes(v['__Dim_X__'])),
+  //         'ratio': option.records['ratio'].filter(v => ['2019', '2022'].includes(v['__Dim_X__']))
+  //       }
+  //     })
+  // }, 1000)
+  // });
   tableInstance.onVChartEvent('brushStart', params => {
     tableInstance.disableTooltipToAllChartInstances();
   });
