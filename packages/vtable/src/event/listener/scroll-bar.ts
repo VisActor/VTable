@@ -130,6 +130,8 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
+    //滚动后 选中图元的状态希望能保留 所以这里不更新chart状态
+    // table.scenegraph.updateChartState(null, undefined);
     table.scenegraph.deactivateChart(-1, -1, true);
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);
     throttleVerticalWheel(ratio, e);
@@ -145,6 +147,8 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
     scenegraph.table.stateManager.hideMenu();
     (scenegraph.table as ListTableAPI).editorManager?.completeEdit();
+    //滚动后 选中图元的状态希望能保留 所以这里不更新chart状态
+    // table.scenegraph.updateChartState(null, undefined);
     table.scenegraph.deactivateChart(-1, -1, true);
     // stateManager.table.scenegraph.proxy.isSkipProgress = true;
     const ratio = e.detail.value[0] / (1 - e.detail.value[1] + e.detail.value[0]);

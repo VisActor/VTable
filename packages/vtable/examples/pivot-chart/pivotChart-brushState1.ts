@@ -694,11 +694,19 @@ export function createTable() {
         hoverOn: false
       }
     },
+    title: {
+      text: 'dsagf',
+      align: 'center',
+      subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
+      orient: 'top',
+      padding: 40
+    },
+
     legends: {
       padding: 0,
       visible: true,
       type: 'discrete',
-      orient: 'right',
+      orient: 'bottom',
       position: 'start',
       maxCol: 1,
       maxRow: 1,
@@ -774,7 +782,7 @@ export function createTable() {
       listenBrushChange: true,
       brushChangeDelay: 100,
       clearChartState() {
-        console.log('clearChartState');
+        // console.log('clearChartState');
         window.xValues = [];
         tableInstance.enableTooltipToAllChartInstances();
       },
@@ -814,4 +822,13 @@ export function createTable() {
     theme.cornerLeftBottomCellStyle.borderColor = 'red';
     tableInstance.updateTheme(theme);
   };
+  // setTimeout(() => {
+  //   tableInstance.updateOption({
+  //             ...option,
+  //           records: {
+  //             'sales-and-profit': option.records['sales-and-profit'].filter(v => ['2019', '2022'].includes(v['__Dim_X__'])),
+  //             'ratio': option.records['ratio'].filter(v => ['2019', '2022'].includes(v['__Dim_X__']))
+  //           }
+  //         })
+  // }, 10000);
 }

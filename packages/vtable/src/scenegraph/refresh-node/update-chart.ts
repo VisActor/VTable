@@ -9,6 +9,7 @@ import type { Scenegraph } from '../scenegraph';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
+import { getBrushingChartInstanceCellPos } from '../graphic/active-cell-chart-list';
 
 /** 供调整列宽后更新chart使用 */
 export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: number) {
@@ -304,10 +305,15 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
 }
 /** 清理所有chart节点的 图表缓存图片 */
 export function clearChartCacheImage(scenegraph: Scenegraph) {
+  const brushingCellPos = getBrushingChartInstanceCellPos();
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
     columnGroup?.getChildren()?.forEach((cellNode: Group) => {
+      if (brushingCellPos && brushingCellPos.col === cellNode.col && brushingCellPos.row === cellNode.row) {
+        // brushing cell 不清理更新缓存图片 激活的chart实例仍然存在。这里主要为了修复个bug 这里清除后后续截图时chart绘制的范围可能会超出单元格范围（列最后一行才可能复现这个问题）
+        return;
+      }
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.cacheCanvas = null;

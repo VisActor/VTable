@@ -335,6 +335,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options, updateConfig);
+    this.scenegraph.updateChartState(null, undefined);
+    this.scenegraph.deactivateChart(-1, -1, true);
     this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
@@ -1616,6 +1618,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   setRecords(records: Array<any>): void {
     this.internalProps.layoutMap.release();
     clearChartRenderQueue();
+    this.scenegraph.updateChartState(null, undefined);
+    this.scenegraph.deactivateChart(-1, -1, true);
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;

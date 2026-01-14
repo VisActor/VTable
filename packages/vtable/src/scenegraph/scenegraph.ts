@@ -43,6 +43,7 @@ import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen, resetRowFrozen } from './layout/frozen';
 import {
+  clearCellChartCacheImage,
   updateChartSizeForResizeColWidth,
   updateChartSizeForResizeRowHeight,
   updateChartState
@@ -716,31 +717,33 @@ export class Scenegraph {
    * @returns
    */
   deactivateChart(col: number, row: number, forceRelease: boolean = false) {
-    if (col === -1 || row === -1) {
-      if (forceRelease) {
-        // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
-        const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
-        const brushingChartInstance = getBrushingChartInstance();
-        if (brushingChartInstanceCellPos && brushingChartInstance) {
-          const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
-          if ((cellGroup?.firstChild as any)?.deactivate) {
-            clearBrushingChartInstance();
-            (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
-              forceRelease: true,
-              releaseChartInstance: true,
-              releaseColumnChartInstance: true,
-              releaseRowChartInstance: true,
-              releaseAllChartInstance: true
-            });
-          }
+    if (forceRelease) {
+      // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
+      const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
+      const brushingChartInstance = getBrushingChartInstance();
+      if (brushingChartInstanceCellPos && brushingChartInstance) {
+        const cellGroup = this.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
+        if ((cellGroup?.firstChild as any)?.deactivate) {
+          (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+            forceRelease: true,
+            releaseChartInstance: true,
+            releaseColumnChartInstance: true,
+            releaseRowChartInstance: true,
+            releaseAllChartInstance: true
+          });
         }
+
+        //单独清理brush操作的单元格的chart缓存图片  因为updateChartState逻辑走到的clearChartCacheImage方法清理时排除了brushing cell的chart缓存图片(有绘制图片的那个共享图表实例覆盖到activechart实例上问题)
+        clearCellChartCacheImage(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row, this);
+        clearBrushingChartInstance();
       }
+    }
+    if (col === -1 || row === -1) {
       return;
     }
     const cellGroup = this.getCell(col, row);
     if ((cellGroup?.firstChild as any)?.deactivate) {
       if (forceRelease) {
-        clearBrushingChartInstance();
         (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
           forceRelease: true,
           releaseChartInstance: true,
@@ -892,7 +895,7 @@ export class Scenegraph {
       if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
         const brushingChartInstance = getBrushingChartInstance();
         if (brushingChartInstance) {
-          brushingChartInstance.getChart().getComponentsByKey('brush')[0].clearBrushStateAndMask();
+          brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
         }
         (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.clearChartState?.();
       }

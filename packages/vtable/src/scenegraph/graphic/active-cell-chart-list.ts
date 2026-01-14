@@ -449,12 +449,12 @@ export function clearAllChartInstanceList(table: BaseTableAPI, forceRelease: boo
   }
 }
 
-let disabledShowTooltipToAllChartInstances: boolean = false;
-export function isDisabledShowTooltipToAllChartInstances() {
-  return disabledShowTooltipToAllChartInstances;
+let disabledTooltipToAllChartInstances: boolean = false;
+export function isDisabledTooltipToAllChartInstances() {
+  return disabledTooltipToAllChartInstances;
 }
 export function disableTooltipToAllChartInstances() {
-  disabledShowTooltipToAllChartInstances = true;
+  disabledTooltipToAllChartInstances = true;
   clearDelayRunDimensionHoverTimers();
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
@@ -474,7 +474,7 @@ export function disableTooltipToAllChartInstances() {
   }
 }
 export function enableTooltipToAllChartInstances() {
-  disabledShowTooltipToAllChartInstances = false;
+  disabledTooltipToAllChartInstances = false;
   for (const col in chartInstanceListColumnByColumnDirection) {
     for (const row in chartInstanceListColumnByColumnDirection[col]) {
       // chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);

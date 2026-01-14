@@ -13,7 +13,7 @@ import {
   generateChartInstanceListByRowDirection,
   generateChartInstanceListByViewRange,
   getBrushingChartInstance,
-  isDisabledShowTooltipToAllChartInstances
+  isDisabledTooltipToAllChartInstances
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -125,9 +125,9 @@ export class Chart extends Rect {
       y1: y1 - table.scrollTop,
       y2: y2 - table.scrollTop
     });
-    // this.activeChartInstance?.release();
+    // this.chartInstance?.release();
+    // this.chartInstance = null;
     this.attribute.ClassType.globalConfig.uniqueTooltip = false;
-    // console.log('---activate', Date.now(), this.parent.col, this.parent.row);
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
       merge({}, this.attribute.tableChartOption, {
@@ -222,7 +222,6 @@ export class Chart extends Rect {
             : undefined
       })
     );
-
     const chartStage = this.activeChartInstance.getStage();
     // chartStage.needRender = true;
     // chartStage.background = 'red';
@@ -259,7 +258,7 @@ export class Chart extends Rect {
       const brushingChartInstance = getBrushingChartInstance();
       if (brushingChartInstance !== this.activeChartInstance) {
         if (brushingChartInstance) {
-          brushingChartInstance.getChart().getComponentsByKey('brush')[0].clearBrushStateAndMask();
+          brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
         }
         setBrushingChartInstance(this.activeChartInstance, col, row);
       }
@@ -267,6 +266,7 @@ export class Chart extends Rect {
     this.activeChartInstance.on('brushEnd', (params: any) => {
       // 取消 brushChange 中可能还在等待的节流执行
       brushChangeThrottle?.cancel();
+
       // 立即执行 updateChartState，确保 brushEnd 的调用能及时执行
       table.scenegraph.updateChartState(params?.value?.inBrushData, 'brush');
       Chart.temp = 0;
@@ -289,7 +289,7 @@ export class Chart extends Rect {
         });
       }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
-        if (isDisabledShowTooltipToAllChartInstances()) {
+        if (isDisabledTooltipToAllChartInstances()) {
           return;
         }
         //和下面调用disableTooltip做对应，一个关闭，一个打开。如果这里不加这句话可能导致这个实例没有tooltip的情况（如这个实例没有机会被加入到chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中）
@@ -399,7 +399,7 @@ export class Chart extends Rect {
                 this.clearDelayRunDimensionHoverTimer();
                 //还是需要有个延迟出现的时间，否则从mark切换到dimension时，tooltip不会出现了（ preMark !== this.activeChartInstanceHoverOnMark总是为false）
                 this.delayRunDimensionHoverTimer = setTimeout(() => {
-                  if (isDisabledShowTooltipToAllChartInstances()) {
+                  if (isDisabledTooltipToAllChartInstances()) {
                     // 如果当前是禁止显示tooltip的状态，这里的逻辑不会执行。否则这个延时会导致显示tooltip
                     return;
                   }
@@ -496,7 +496,7 @@ export class Chart extends Rect {
     }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
 
-    if (isDisabledShowTooltipToAllChartInstances()) {
+    if (isDisabledTooltipToAllChartInstances()) {
       // 如果所有图表实例都禁用了dimensionHover，新建图表实例时，禁用当前图表实例的tooltip。避免在brush过程中显示tooltip
       this.activeChartInstance.disableTooltip(true);
     }
@@ -536,7 +536,10 @@ export class Chart extends Rect {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd
 
-      if (forceRelease || !getBrushingChartInstance() || getBrushingChartInstance() !== this.activeChartInstance) {
+      if (
+        this.activeChartInstance &&
+        (forceRelease || !getBrushingChartInstance() || getBrushingChartInstance() !== this.activeChartInstance)
+      ) {
         this.activeChartInstance?.updateViewBox(
           {
             x1: -1000,
