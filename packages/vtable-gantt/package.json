@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-gantt",
-  "version": "1.22.10",
+  "version": "1.22.11-alpha.11",
   "description": "canvas table width high performance",
   "keywords": [
     "vtable-gantt",
@@ -50,8 +50,8 @@
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vtable": "workspace:1.22.11-alpha.11",
+    "@visactor/vtable-editors": "workspace:1.22.11-alpha.11",
     "@visactor/vutils": "~1.0.17",
     "@visactor/vscale": "~1.0.17",
     "@visactor/vdataset": "~1.0.17",
