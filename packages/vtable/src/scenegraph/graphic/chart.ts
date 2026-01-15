@@ -13,7 +13,8 @@ import {
   generateChartInstanceListByRowDirection,
   generateChartInstanceListByViewRange,
   getBrushingChartInstance,
-  isDisabledTooltipToAllChartInstances
+  isDisabledTooltipToAllChartInstances,
+  clearAndReleaseBrushingChartInstance
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
@@ -258,7 +259,9 @@ export class Chart extends Rect {
       const brushingChartInstance = getBrushingChartInstance();
       if (brushingChartInstance !== this.activeChartInstance) {
         if (brushingChartInstance) {
-          brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
+          // brush框选完一个图表，马上去框选另一个单元格的图表，释放掉前一个图表的实例，如果有联动情况下这个释放可能会影响，但是在dimensionhover事件中会马上新建个实例的
+          clearAndReleaseBrushingChartInstance(table.scenegraph);
+          // brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
         }
         setBrushingChartInstance(this.activeChartInstance, col, row);
       }
@@ -527,7 +530,6 @@ export class Chart extends Rect {
       releaseAllChartInstance?: boolean;
     } = {}
   ) {
-    // console.trace('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();

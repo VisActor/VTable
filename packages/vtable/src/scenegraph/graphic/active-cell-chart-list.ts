@@ -15,6 +15,7 @@ export function setBrushingChartInstance(chartInstance: any, col: number, row: n
   // window.brushingChartInstance = brushingChartInstance;
 }
 export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
+  enableTooltipToAllChartInstances();
   const cellGroup = scenegraph.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
   if ((cellGroup?.firstChild as any)?.deactivate) {
     (cellGroup?.firstChild as any)?.deactivate?.(scenegraph.table, {
@@ -24,6 +25,13 @@ export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
       releaseRowChartInstance: false,
       releaseAllChartInstance: false
     });
+  }
+  //将这个单元格的chart引用从chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中删除
+  if (isValid(chartInstanceListColumnByColumnDirection[brushingChartInstanceCellPos.col])) {
+    delete chartInstanceListColumnByColumnDirection[brushingChartInstanceCellPos.col][brushingChartInstanceCellPos.row];
+  }
+  if (isValid(chartInstanceListRowByRowDirection[brushingChartInstanceCellPos.row])) {
+    delete chartInstanceListRowByRowDirection[brushingChartInstanceCellPos.row][brushingChartInstanceCellPos.col];
   }
   brushingChartInstance = undefined;
   brushingChartInstanceCellPos = { col: -1, row: -1 };
@@ -39,7 +47,9 @@ export function getBrushingChartInstanceCellPos() {
 //存储可视区域内鼠标hover到的该列的图表实例，key为列号做个缓存
 export const chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>> = {};
 export const chartInstanceListRowByRowDirection: Record<number, Record<number, any>> = {};
-const delayRunDimensionHoverTimer: any[] = [];
+const delayRunDimensionHoverTimerForColumnDirection: any[] = [];
+const delayRunDimensionHoverTimerForRowDirection: any[] = [];
+const delayRunDimensionHoverTimerForViewRange: any[] = [];
 //临时存储 用于调试
 // window.chartInstanceListColumnByColumnDirection = chartInstanceListColumnByColumnDirection;
 // window.chartInstanceListRowByRowDirection = chartInstanceListRowByRowDirection;
@@ -58,7 +68,7 @@ export function generateChartInstanceListByColumnDirection(
   isScatter: boolean = false
 ) {
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimers();
+  clearDelayRunDimensionHoverTimerForColumnDirection();
   if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
     chartInstanceListColumnByColumnDirection[col] = {};
   }
@@ -141,7 +151,7 @@ export function generateChartInstanceListByColumnDirection(
       }
     }, 0);
 
-    delayRunDimensionHoverTimer.push(timer);
+    delayRunDimensionHoverTimerForColumnDirection.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
@@ -161,7 +171,7 @@ export function generateChartInstanceListByRowDirection(
   isScatter: boolean = false
 ) {
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimers();
+  clearDelayRunDimensionHoverTimerForRowDirection();
   if (!isValid(chartInstanceListRowByRowDirection[row])) {
     chartInstanceListRowByRowDirection[row] = {};
   }
@@ -233,13 +243,13 @@ export function generateChartInstanceListByRowDirection(
       }
     }, 0);
 
-    delayRunDimensionHoverTimer.push(timer);
+    delayRunDimensionHoverTimerForRowDirection.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
 export function generateChartInstanceListByViewRange(datum: any, table: BaseTableAPI, deactivate: boolean = false) {
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimers();
+  clearDelayRunDimensionHoverTimerForViewRange();
   const { rowStart } = table.getBodyVisibleRowRange();
   let rowEnd = table.getBodyVisibleRowRange().rowEnd;
   rowEnd = Math.min(table.rowCount - 1 - table.bottomFrozenRowCount, rowEnd);
@@ -291,7 +301,7 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
         }
       }, 0);
 
-      delayRunDimensionHoverTimer.push(timer);
+      delayRunDimensionHoverTimerForViewRange.push(timer);
       table.scenegraph.updateNextFrame();
     }
   }
@@ -438,15 +448,40 @@ export function clearChartInstanceListByRowDirection(
   }
   delete chartInstanceListRowByRowDirection[row];
 }
-
+export function clearDelayRunDimensionHoverTimerForColumnDirection() {
+  for (const timer of delayRunDimensionHoverTimerForColumnDirection) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimerForColumnDirection.length = 0;
+}
+export function clearDelayRunDimensionHoverTimerForRowDirection() {
+  for (const timer of delayRunDimensionHoverTimerForRowDirection) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimerForRowDirection.length = 0;
+}
+export function clearDelayRunDimensionHoverTimerForViewRange() {
+  for (const timer of delayRunDimensionHoverTimerForViewRange) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimerForViewRange.length = 0;
+}
 /**
  * 清除所有延迟执行的定时器
  */
 export function clearDelayRunDimensionHoverTimers() {
-  for (const timer of delayRunDimensionHoverTimer) {
+  for (const timer of delayRunDimensionHoverTimerForColumnDirection) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimer.length = 0;
+  delayRunDimensionHoverTimerForColumnDirection.length = 0;
+  for (const timer of delayRunDimensionHoverTimerForRowDirection) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimerForRowDirection.length = 0;
+  for (const timer of delayRunDimensionHoverTimerForViewRange) {
+    clearTimeout(timer);
+  }
+  delayRunDimensionHoverTimerForViewRange.length = 0;
 }
 
 export function clearAllChartInstanceList(table: BaseTableAPI, forceRelease: boolean = false) {

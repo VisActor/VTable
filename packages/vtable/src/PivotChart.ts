@@ -1730,10 +1730,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const headerNodes = layoutMap.getCellHeaderPathsWithTreeNode(col, row);
     return headerNodes;
   }
+  /** 暂时关闭透视图的联动效果中的tooltip的显示 */
   disableTooltipToAllChartInstances() {
     //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     disableTooltipToAllChartInstances();
   }
+  /** 恢复透视图的联动效果中的tooltip的显示 */
   enableTooltipToAllChartInstances() {
     //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     enableTooltipToAllChartInstances();
