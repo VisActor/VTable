@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "1.19.10-alpha.0",
+  "version": "1.19.10-alpha.4",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -50,7 +50,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.19.10-alpha.0",
+    "@visactor/vtable": "workspace:1.19.10-alpha.4",
     "@visactor/vutils": "~0.19.1",
     "react-is": "^18.2.0",
     "react-reconciler": "0.29.2"

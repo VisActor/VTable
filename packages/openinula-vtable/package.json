@@ -1,6 +1,6 @@
 {
   "name": "@visactor/openinula-vtable",
-  "version": "1.19.10-alpha.0",
+  "version": "1.19.10-alpha.4",
   "description": "The openinula version of VTable",
   "keywords": [
     "openinula",
@@ -48,7 +48,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.19.10-alpha.0",
+    "@visactor/vtable": "workspace:1.19.10-alpha.4",
     "@visactor/vutils": "~0.19.1"
   },
   "devDependencies": {
