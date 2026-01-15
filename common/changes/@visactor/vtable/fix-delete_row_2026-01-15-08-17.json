@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix(scenegraph): reset proxy row status when start exceeds end",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
