@@ -68,6 +68,9 @@ export function updateRow(
 
   scene.table._clearRowRangeHeightsMap();
 
+  // verify proxy row status
+  verifyProxyRowStatus(scene);
+
   // add cells
   let updateAfter: number;
   addRows.forEach(row => {
@@ -617,5 +620,17 @@ function setRowSeriesNumberCellNeedUpdate(startUpdateRow: number, scene: Scenegr
     for (let row = startUpdateRow; row <= scene.table.rowCount - 1; row++) {
       updateCell(0, row, scene.table, false);
     }
+  }
+}
+
+function verifyProxyRowStatus(scene: Scenegraph) {
+  const proxy = scene.proxy;
+  const { rowStart, rowEnd, rowLimit, totalRow } = proxy;
+
+  if (rowStart > rowEnd) {
+    // 当前维护行全部清空, 重置proxy row状态
+    proxy.rowStart = scene.table.columnHeaderLevelCount;
+    proxy.rowEnd = Math.min(totalRow, proxy.rowStart + rowLimit - 1);
+    proxy.currentRow = 0;
   }
 }
