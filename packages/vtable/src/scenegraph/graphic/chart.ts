@@ -240,6 +240,10 @@ export class Chart extends Rect {
       if (this.attribute.spec.select?.enable === false) {
         table.scenegraph.updateChartState(null, undefined);
       } else if (Chart.temp) {
+        // const brushingChartInstance = getBrushingChartInstance();
+        // if (brushingChartInstance && brushingChartInstance !== this.activeChartInstance) {
+        table.scenegraph.updateChartState(null, 'brush');
+        // }
         table.scenegraph.updateChartState(params?.datum, 'click');
       }
     });

@@ -126,6 +126,17 @@ export function createTable() {
             }
           ],
           animation: true,
+          bar: {
+            state: {
+              selected: {
+                fill: 'yellow'
+              },
+              selected_reverse: {
+                // fill: '#ddd',
+                opacity: 0.2
+              }
+            }
+          },
           brush: {
             // disableDimensionHoverWhenBrushing: true,
             visible: true,
@@ -172,19 +183,7 @@ export function createTable() {
           large: false,
           largeThreshold: null,
           progressiveStep: 400,
-          progressiveThreshold: null,
-          bar: {
-            style: {
-              visible: true,
-              fillOpacity: 1,
-              lineWidth: 1
-            },
-            state: {
-              hover: {
-                fillOpacity: 0.6
-              }
-            }
-          }
+          progressiveThreshold: null
         },
         style: {
           padding: [1, 1, 0, 1]
