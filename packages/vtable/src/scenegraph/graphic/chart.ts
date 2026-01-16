@@ -128,6 +128,7 @@ export class Chart extends Rect {
     });
     // this.chartInstance?.release();
     // this.chartInstance = null;
+    // 是否全局显示唯一tooltip。如果置为 true， 当某个图表触发 tooltip时，同一页面的所有其他图表的 tooltip 将自动消失。
     this.attribute.ClassType.globalConfig.uniqueTooltip = false;
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
