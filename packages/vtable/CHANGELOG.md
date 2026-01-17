@@ -7,6 +7,9 @@ Mon, 05 Jan 2026 03:31:14 GMT
 
 ### Updates
 
+- feat: add cancelEditCell method to cancel editing without saving changes
+
+
 - fix: prepareEdit logic occor some bug
 
 
