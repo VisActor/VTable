@@ -810,7 +810,7 @@ Here, the `PivotTable` instance `this` is passed as a parameter to the construct
 
 1. Call `EditManager` method    
 
-In the `PivotTable` class, the `startEditCell` and `completeEditCell` methods are defined to call the corresponding methods of the `EditManager` instance:    
+In the `PivotTable` class, the `startEditCell`, `cancelEditCell` and `completeEditCell` methods are defined to call the corresponding methods of the `EditManager` instance:    
 
 ```xml
 startEditCell(col?: number, row?: number, value?: string | number) {
@@ -819,10 +819,14 @@ startEditCell(col?: number, row?: number, value?: string | number) {
 
 completeEditCell() {
   this.editManager.completeEdit();
+}
+
+cancelEditCell() {
+  this.editorManager.cancelEdit();
 }    
 
 ```
-`startEditCell` method calls the `EditManager` instance's `startEditCell` method to start cell editing; `completeEditCell` method calls the `EditManager` instance's `completeEdit` method to end cell editing.
+`startEditCell` method calls the `EditManager` instance's `startEditCell` method to start cell editing; `completeEditCell` method calls the `EditManager` instance's `completeEdit` method to end cell editing; `cancelEditCell` method calls the `EditManager` instance's `cancelEdit` method to cancel cell editing.
 
 `EditManager` class provides support for cell editing functionality for `PivotTable` and `ListTable`. In the constructors of these two classes, an instance of `EditManager` is created, and the instance itself is passed as a parameter to the constructor of `EditManager`. In the subsequent implementation of editing functionality, methods of the `EditManager` instance are called to handle cell editing operations.
 
