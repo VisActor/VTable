@@ -1,5 +1,6 @@
 import { VTableSheet, TYPES } from '../../src/index';
 import * as VTablePlugins from '@visactor/vtable-plugins';
+import { WorkSheetEventType } from '../../src/ts-types/spreadsheet-events';
 const CONTAINER_ID = 'vTable';
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
@@ -807,6 +808,57 @@ export function createTable() {
   (window as any).sheetInstance = sheetInstance;
   sheetInstance.onTableEvent('click_cell', event => {
     console.log('点击了单元格', event.sheetKey, event.row, event.col);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.RESIZED, event => {
+    console.log('工作表尺寸改变了', event.sheetKey, event.width, event.height);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.READY, event => {
+    console.log('工作表初始化完成了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.ACTIVATED, event => {
+    console.log('工作表被激活了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DEACTIVATED, event => {
+    console.log('工作表被停用了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_CALCULATE_START, event => {
+    console.log('公式计算开始了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_CALCULATE_END, event => {
+    console.log('公式计算结束了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_ERROR, event => {
+    console.log('公式计算错误了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED, event => {
+    console.log('公式依赖关系改变了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_ADDED, event => {
+    console.log('公式添加了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_REMOVED, event => {
+    console.log('公式移除了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_LOADED, event => {
+    console.log('数据加载完成了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_SORTED, event => {
+    console.log('数据排序完成了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_FILTERED, event => {
+    console.log('数据筛选完成了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_ADDED, event => {
+    console.log('工作表新增了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_MOVED, event => {
+    console.log('工作表移动了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_RENAMED, event => {
+    console.log('工作表重命名了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_REMOVED, event => {
+    console.log('工作表删除了', event.sheetKey);
   });
   // bindDebugTool(sheetInstance.activeWorkSheet.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']

@@ -1,6 +1,6 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import { isValid, type EventEmitter } from '@visactor/vutils';
+import { isValid, EventEmitter, type EventEmitter as EventEmitterType } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
@@ -13,6 +13,7 @@ import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
 import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
+import { WorkSheetEventManager } from '../event/worksheet-event-manager';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -40,24 +41,48 @@ export class WorkSheet implements IWorkSheetAPI {
   /** 选择范围 */
   private selection: CellRange | null = null;
   /** Sheet 唯一标识 */
-  private sheetKey: string;
+  private _sheetKey: string;
   /** Sheet 标题 */
-  private sheetTitle: string;
+  private _sheetTitle: string;
 
   /** 事件总线 */
-  private eventBus: EventEmitter;
+  private eventBus: EventEmitterType;
+
+  /** WorkSheet 事件管理器 */
+  eventManager: WorkSheetEventManager;
 
   private vtableSheet: VTableSheet;
 
   editingCell: { sheet: string; row: number; col: number } | null = null;
+
+  /**
+   * 获取 Sheet Key
+   */
+  get sheetKey(): string {
+    return this._sheetKey;
+  }
+
+  /**
+   * 获取 Sheet 标题
+   */
+  get sheetTitle(): string {
+    return this._sheetTitle;
+  }
+
+  /**
+   * 设置 Sheet 标题
+   */
+  set sheetTitle(title: string) {
+    this._sheetTitle = title;
+  }
 
   constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
     this.options = options;
     this.container = options.container;
 
     // 初始化基本属性
-    this.sheetKey = options.sheetKey;
-    this.sheetTitle = options.sheetTitle;
+    this._sheetKey = options.sheetKey;
+    this._sheetTitle = options.sheetTitle;
     this.vtableSheet = sheet;
 
     // 创建表格元素
@@ -75,16 +100,14 @@ export class WorkSheet implements IWorkSheetAPI {
    * 获取行数
    */
   get rowCount(): number {
-    const data = this.getData();
-    return data ? data.length : 0;
+    return this.getRowCount();
   }
 
   /**
    * 获取列数
    */
   get colCount(): number {
-    const data = this.getData();
-    return data && data.length > 0 ? data[0].length : 0;
+    return this.getColumnCount();
   }
 
   /**
@@ -144,11 +167,26 @@ export class WorkSheet implements IWorkSheetAPI {
     this.element.classList.add('vtable-excel-cursor');
     // 获取事件总线
     this.eventBus = (this.tableInstance as any).eventBus;
+
+    // 确保 eventBus 存在，如果不存在则创建一个
+    if (!this.eventBus) {
+      this.eventBus = new EventEmitter();
+    }
+
+    // 初始化 WorkSheet 事件管理器
+    this.eventManager = new WorkSheetEventManager(this, this.eventBus);
     // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
     (this.tableInstance as any).__vtableSheet = this.vtableSheet;
 
     // 通知 VTableSheet 的事件中转器绑定这个 sheet 的事件
     (this.vtableSheet as any).tableEventRelay.bindSheetEvents(this.sheetKey, this.tableInstance);
+
+    // 触发工作表准备就绪事件
+    if (this.eventManager) {
+      this.eventManager.emitReady();
+      // 触发数据加载完成事件
+      this.eventManager.emitDataLoaded(this.rowCount, this.colCount);
+    }
   }
 
   /**
@@ -288,6 +326,20 @@ export class WorkSheet implements IWorkSheetAPI {
       // 监听单元格值变更事件
       this.tableInstance.on('change_cell_value', (event: any) => {
         this.handleCellValueChanged(event);
+      });
+
+      // 监听排序状态变更事件
+      this.tableInstance.on('after_sort' as any, (event: any) => {
+        if (this.eventManager) {
+          this.eventManager.emitDataSorted(event);
+        }
+      });
+
+      // 监听筛选状态变更事件
+      this.tableInstance.on('filter_menu_show' as any, (event: any) => {
+        if (this.eventManager) {
+          this.eventManager.emitDataFiltered(event);
+        }
       });
 
       // 监听数据记录变更事件 - 用于调整公式引用
@@ -490,8 +542,8 @@ export class WorkSheet implements IWorkSheetAPI {
     console.log('handleChangeColumnHeaderPosition', event);
     // 注意：tableInstance.options.columns 中的顺序并未更新（和其他操作如delete/add等操作不同）需要注意后续是否有什么问题
     const { source, target } = event;
-    const { col: sourceCol, row: sourceRow } = source;
-    const { col: targetCol, row: targetRow } = target;
+    const { col: sourceCol } = source;
+    const { col: targetCol } = target;
     const sheetKey = this.getKey();
     //#region 处理数据变化后，公式引擎中的数据也需要更新
     const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
@@ -576,6 +628,11 @@ export class WorkSheet implements IWorkSheetAPI {
         if (this.tableInstance) {
           // 触发VTable的resize
           this.tableInstance.resize();
+        }
+
+        // 触发工作表尺寸改变事件
+        if (this.eventManager) {
+          this.eventManager.emitResized(width, height);
         }
       }
     } catch (error) {
@@ -699,6 +756,9 @@ export class WorkSheet implements IWorkSheetAPI {
   setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
+      // 获取旧值
+      const oldValue = this.getCellValue(col, row);
+
       data[row][col] = value;
 
       // 更新表格实例
@@ -706,7 +766,12 @@ export class WorkSheet implements IWorkSheetAPI {
         this.tableInstance.changeCellValue(col, row, value);
       }
 
-      // 不再触发 WorkSheet 层的事件，统一由 TableEventRelay 处理
+      // 触发范围数据变更事件
+      if (this.eventManager) {
+        this.eventManager.emitRangeDataChanged({ startRow: row, startCol: col, endRow: row, endCol: col }, [
+          { row, col, oldValue, newValue: value }
+        ]);
+      }
     }
   }
 
@@ -845,9 +910,9 @@ export class WorkSheet implements IWorkSheetAPI {
   processFormulaPaste(
     formulas: string[][],
     sourceStartCol: number,
-    sourceStartRow: number,
+    _sourceStartRow: number,
     targetStartCol: number,
-    targetStartRow: number
+    _targetStartRow: number
   ): string[][] {
     if (!formulas || formulas.length === 0) {
       return formulas;
@@ -855,7 +920,7 @@ export class WorkSheet implements IWorkSheetAPI {
 
     // 计算整个范围的相对位移
     const colOffset = targetStartCol - sourceStartCol;
-    const rowOffset = targetStartRow - sourceStartRow;
+    const rowOffset = _targetStartRow - _sourceStartRow;
 
     // 使用计算出的位移来调整公式
     return FormulaPasteProcessor.adjustFormulasForPasteWithOffset(formulas, colOffset, rowOffset);
@@ -973,6 +1038,9 @@ export class WorkSheet implements IWorkSheetAPI {
         },
         formula
       );
+
+      // 事件触发移到 formula-manager 中处理，这里不再触发
+      // 这样可以确保事件在正确的时机触发，并且只在操作成功时触发
     }
   }
 

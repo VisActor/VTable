@@ -16,6 +16,7 @@ import { MenuManager } from '../managers/menu-manager';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
 import { TableEventRelay } from '../event/table-event-relay';
+import { WorkSheetEventType } from '../ts-types/spreadsheet-events';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -37,6 +38,8 @@ export default class VTableSheet {
   private activeWorkSheet: WorkSheet | null = null;
   /** 所有sheet实例 */
   workSheetInstances: Map<string, WorkSheet> = new Map();
+  /** 全局工作表事件监听器注册表 */
+  private globalWorkSheetListeners: Map<string, Set<(event: any) => void>> = new Map();
   /** 公式自动补全 */
   private formulaAutocomplete: FormulaAutocomplete | null = null;
   /** Table 事件中转器 */
@@ -74,6 +77,9 @@ export default class VTableSheet {
     this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
     this.sheetTabEventHandler = new SheetTabEventHandler(this);
+
+    // 监听SheetManager的事件并转发给工作表实例
+    this.setupSheetManagerEventListeners();
 
     // 初始化UI
     this.initUI();
@@ -340,6 +346,10 @@ export default class VTableSheet {
    * @param sheetKey sheet的key
    */
   activateSheet(sheetKey: string): void {
+    // 获取之前激活的sheet信息
+    const previousActiveSheet = this.sheetManager.getActiveSheet();
+    const previousSheetKey = previousActiveSheet?.sheetKey;
+
     // 设置活动sheet
     this.sheetManager.setActiveSheet(sheetKey);
 
@@ -387,6 +397,20 @@ export default class VTableSheet {
     }
 
     this.updateFormulaBar();
+
+    // 触发工作表激活事件
+    const activeWorkSheet = this.workSheetInstances.get(sheetKey);
+    if (activeWorkSheet && activeWorkSheet.eventManager) {
+      activeWorkSheet.eventManager.emitActivated();
+    }
+
+    // 触发之前工作表的停用事件
+    if (previousSheetKey && previousSheetKey !== sheetKey) {
+      const previousWorkSheet = this.workSheetInstances.get(previousSheetKey);
+      if (previousWorkSheet && previousWorkSheet.eventManager) {
+        previousWorkSheet.eventManager.emitDeactivated();
+      }
+    }
   }
 
   addSheet(sheet: ISheetDefine): void {
@@ -432,14 +456,17 @@ export default class VTableSheet {
       showSnackbar('至少保留一个工作表', 1300);
       return;
     }
+
     // 删除实例对应的dom元素
     const instance = this.workSheetInstances.get(sheetKey);
     if (instance) {
       instance.release();
       this.workSheetInstances.delete(sheetKey);
     }
+
     // 删除sheet定义
     const newActiveSheetKey = this.sheetManager.removeSheet(sheetKey);
+
     // 激活新的sheet(如果有)
     if (newActiveSheetKey) {
       this.activateSheet(newActiveSheetKey);
@@ -492,6 +519,13 @@ export default class VTableSheet {
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
+
+    // 应用所有存储的全局工作表事件监听器到新创建的实例
+    this.globalWorkSheetListeners.forEach((callbacks, type) => {
+      callbacks.forEach(callback => {
+        sheet.eventManager.on(type as any, callback);
+      });
+    });
 
     // 不再需要在这里注册事件，EventManager 会直接使用 VTableSheet 的 onTableEvent
 
@@ -636,6 +670,15 @@ export default class VTableSheet {
   getFormulaManager(): FormulaManager {
     return this.formulaManager;
   }
+
+  /**
+   * 设置SheetManager事件监听器
+   * 这个方法现在不需要做任何事情，因为事件监听直接在 onWorkSheetEvent 中处理
+   */
+  private setupSheetManagerEventListeners(): void {
+    // 事件监听逻辑已经集成到 onWorkSheetEvent 方法中
+    // 这里可以保留用于未来的扩展或调试目的
+  }
   /**
    * 获取Sheet管理器
    */
@@ -696,6 +739,90 @@ export default class VTableSheet {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   offTableEvent(type: string, callback?: (...args: any[]) => void): void {
     this.tableEventRelay.offTableEvent(type, callback);
+  }
+
+  /**
+   * 注册 WorkSheet 事件监听器（在 VTableSheet 层）
+   *
+   * 会监听所有 sheet 的 WorkSheet 层事件，并在回调时自动附带 sheetKey
+   * 同时也会监听来自 SheetManager 的工作簿级别事件（如工作表添加、移除、重命名、移动）
+   *
+   * @example
+   * ```typescript
+   * // 在 VTableSheet 层注册
+   * sheet.onWorkSheetEvent('worksheet:activated', (event) => {
+   *   console.log(`工作表 ${event.sheetKey} 被激活`);
+   * });
+   *
+   * // 监听工作表添加事件
+   * sheet.onWorkSheetEvent('worksheet:sheet_added', (event) => {
+   *   console.log(`新工作表添加: ${event.sheetTitle}`);
+   * });
+   * ```
+   */
+  onWorkSheetEvent(type: string, callback: (event: any) => void): void {
+    // 检查是否是工作簿级别的事件（来自 SheetManager）
+    const sheetManagerEvents = [
+      WorkSheetEventType.SHEET_ADDED,
+      WorkSheetEventType.SHEET_REMOVED,
+      WorkSheetEventType.SHEET_RENAMED,
+      WorkSheetEventType.SHEET_MOVED
+    ];
+
+    if (sheetManagerEvents.includes(type as WorkSheetEventType)) {
+      // 如果是工作簿级别的事件，监听 SheetManager 的事件
+      this.sheetManager.getEventBus().on(type, callback);
+    } else {
+      // 存储监听器到全局注册表，以便新创建的sheet实例也能使用
+      if (!this.globalWorkSheetListeners.has(type)) {
+        this.globalWorkSheetListeners.set(type, new Set());
+      }
+      this.globalWorkSheetListeners.get(type)!.add(callback);
+
+      // 为所有已存在的 sheet 绑定事件
+      this.workSheetInstances.forEach(worksheet => {
+        if (worksheet.eventManager) {
+          worksheet.eventManager.on(type as any, callback);
+        }
+      });
+    }
+  }
+
+  /**
+   * 移除 WorkSheet 事件监听器
+   *
+   * @param type 事件类型
+   * @param callback 回调函数（可选）
+   */
+  offWorkSheetEvent(type: string, callback?: (event: any) => void): void {
+    // 检查是否是工作簿级别的事件（来自 SheetManager）
+    const sheetManagerEvents = [
+      WorkSheetEventType.SHEET_ADDED,
+      WorkSheetEventType.SHEET_REMOVED,
+      WorkSheetEventType.SHEET_RENAMED,
+      WorkSheetEventType.SHEET_MOVED
+    ];
+
+    if (sheetManagerEvents.includes(type as WorkSheetEventType)) {
+      // 如果是工作簿级别的事件，从 SheetManager 移除监听器
+      this.sheetManager.getEventBus().off(type, callback);
+    } else {
+      // 从全局注册表中移除监听器
+      if (this.globalWorkSheetListeners.has(type)) {
+        if (callback) {
+          this.globalWorkSheetListeners.get(type)!.delete(callback);
+        } else {
+          this.globalWorkSheetListeners.get(type)!.clear();
+        }
+      }
+
+      // 从现有实例中移除监听器
+      this.workSheetInstances.forEach(worksheet => {
+        if (worksheet.eventManager) {
+          worksheet.eventManager.off(type as any, callback);
+        }
+      });
+    }
   }
 
   /**

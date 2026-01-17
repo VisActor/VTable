@@ -31,6 +31,14 @@ export enum WorkSheetEventType {
   READY = 'worksheet:ready',
   /** 工作表尺寸改变 */
   RESIZED = 'worksheet:resized',
+  /** 工作表新增 */
+  SHEET_ADDED = 'worksheet:sheet_added',
+  /** 工作表删除 */
+  SHEET_REMOVED = 'worksheet:sheet_removed',
+  /** 工作表重命名 */
+  SHEET_RENAMED = 'worksheet:sheet_renamed',
+  /** 工作表移动 */
+  SHEET_MOVED = 'worksheet:sheet_moved',
 
   // ===== 公式相关事件 =====
   /** 公式计算开始 */
@@ -127,6 +135,18 @@ export interface WorkSheetActivatedEvent {
   sheetTitle: string;
 }
 
+/** 工作表尺寸改变事件数据 */
+export interface WorkSheetResizedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** Sheet 标题 */
+  sheetTitle: string;
+  /** 宽度 */
+  width: number;
+  /** 高度 */
+  height: number;
+}
+
 /** 公式计算事件数据 */
 export interface FormulaCalculateEvent {
   /** Sheet Key */
@@ -159,6 +179,28 @@ export interface FormulaChangeEvent {
   formula?: string;
 }
 
+/** 公式依赖关系改变事件数据 */
+export interface FormulaDependencyChangedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+}
+
+/** 数据排序事件数据 */
+export interface DataSortedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** 排序信息 */
+  sortInfo: any;
+}
+
+/** 数据筛选事件数据 */
+export interface DataFilteredEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** 筛选信息 */
+  filterInfo: any;
+}
+
 /** 数据加载事件数据 */
 export interface DataLoadedEvent {
   /** Sheet Key */
@@ -167,6 +209,46 @@ export interface DataLoadedEvent {
   rowCount: number;
   /** 列数 */
   colCount: number;
+}
+
+/** 工作表添加事件数据 */
+export interface SheetAddedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** Sheet 标题 */
+  sheetTitle: string;
+  /** Sheet 索引 */
+  index: number;
+}
+
+/** 工作表移除事件数据 */
+export interface SheetRemovedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** Sheet 标题 */
+  sheetTitle: string;
+  /** 原 Sheet 索引 */
+  index: number;
+}
+
+/** 工作表重命名事件数据 */
+export interface SheetRenamedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** 旧标题 */
+  oldTitle: string;
+  /** 新标题 */
+  newTitle: string;
+}
+
+/** 工作表移动事件数据 */
+export interface SheetMovedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** 旧索引 */
+  fromIndex: number;
+  /** 新索引 */
+  toIndex: number;
 }
 
 /** 范围数据变更事件数据 */
@@ -293,12 +375,20 @@ export interface WorkSheetEventMap {
   [WorkSheetEventType.ACTIVATED]: WorkSheetActivatedEvent;
   [WorkSheetEventType.DEACTIVATED]: WorkSheetActivatedEvent;
   [WorkSheetEventType.READY]: WorkSheetActivatedEvent;
+  [WorkSheetEventType.RESIZED]: WorkSheetResizedEvent;
+  [WorkSheetEventType.SHEET_ADDED]: SheetAddedEvent;
+  [WorkSheetEventType.SHEET_REMOVED]: SheetRemovedEvent;
+  [WorkSheetEventType.SHEET_RENAMED]: SheetRenamedEvent;
+  [WorkSheetEventType.SHEET_MOVED]: SheetMovedEvent;
   [WorkSheetEventType.FORMULA_CALCULATE_START]: FormulaCalculateEvent;
   [WorkSheetEventType.FORMULA_CALCULATE_END]: FormulaCalculateEvent;
   [WorkSheetEventType.FORMULA_ERROR]: FormulaErrorEvent;
+  [WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED]: FormulaDependencyChangedEvent;
   [WorkSheetEventType.FORMULA_ADDED]: FormulaChangeEvent;
   [WorkSheetEventType.FORMULA_REMOVED]: FormulaChangeEvent;
   [WorkSheetEventType.DATA_LOADED]: DataLoadedEvent;
+  [WorkSheetEventType.DATA_SORTED]: DataSortedEvent;
+  [WorkSheetEventType.DATA_FILTERED]: DataFilteredEvent;
   [WorkSheetEventType.RANGE_DATA_CHANGED]: RangeDataChangedEvent;
 }
 

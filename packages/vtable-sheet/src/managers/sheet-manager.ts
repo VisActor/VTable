@@ -1,14 +1,32 @@
 import type { ISheetManager, IWorkSheetAPI } from '../ts-types/sheet';
 import type { ISheetDefine } from '../ts-types';
+import type { EventEmitter as EventEmitterType } from '@visactor/vutils';
+import { EventEmitter } from '@visactor/vutils';
+import { WorkSheetEventType } from '../ts-types/spreadsheet-events';
+import type {
+  SheetAddedEvent,
+  SheetRemovedEvent,
+  SheetRenamedEvent,
+  SheetMovedEvent
+} from '../ts-types/spreadsheet-events';
 
 export default class SheetManager implements ISheetManager {
   /** sheets集合 */
   _sheets: Map<string, ISheetDefine> = new Map();
   /** 当前活动sheet的key */
   _activeSheetKey: string = '';
+  /** 事件总线 */
+  private eventBus: EventEmitterType;
 
   constructor() {
-    // 初始化
+    this.eventBus = new EventEmitter();
+  }
+
+  /**
+   * 获取事件总线
+   */
+  getEventBus(): EventEmitterType {
+    return this.eventBus;
   }
 
   /**
@@ -57,8 +75,18 @@ export default class SheetManager implements ISheetManager {
       throw new Error(`Sheet with key '${sheet.sheetKey}' already exists`);
     }
 
+    const index = this._sheets.size;
+
     // 添加sheet
     this._sheets.set(sheet.sheetKey, sheet);
+
+    // 触发工作表添加事件
+    const event: SheetAddedEvent = {
+      sheetKey: sheet.sheetKey,
+      sheetTitle: sheet.sheetTitle,
+      index
+    };
+    this.eventBus.emit(WorkSheetEventType.SHEET_ADDED, event);
   }
 
   /**
@@ -72,6 +100,11 @@ export default class SheetManager implements ISheetManager {
       throw new Error(`Sheet with key '${sheetKey}' not found`);
     }
 
+    // 获取要删除的sheet信息
+    const sheetToRemove = this._sheets.get(sheetKey)!;
+    const allSheets = Array.from(this._sheets.values());
+    const index = allSheets.findIndex(sheet => sheet.sheetKey === sheetKey);
+    let willReplaceSheetKey;
     // 如果要移除的是当前活动sheet，需要选择新的活动sheet
     if (sheetKey === this._activeSheetKey) {
       // 查找其他sheet
@@ -86,16 +119,27 @@ export default class SheetManager implements ISheetManager {
 
       // 如果有其他sheet，将其设为活动sheet
       if (nextSheet) {
-        this._activeSheetKey = nextSheet.sheetKey;
+        willReplaceSheetKey = nextSheet.sheetKey;
         nextSheet.active = true;
       } else {
         this._activeSheetKey = '';
+        willReplaceSheetKey = '';
       }
+      this._activeSheetKey = willReplaceSheetKey;
     }
 
     // 移除sheet
     this._sheets.delete(sheetKey);
-    return this._activeSheetKey;
+
+    // 触发工作表移除事件
+    const event: SheetRemovedEvent = {
+      sheetKey: sheetToRemove.sheetKey,
+      sheetTitle: sheetToRemove.sheetTitle,
+      index
+    };
+    this.eventBus.emit(WorkSheetEventType.SHEET_REMOVED, event);
+
+    return willReplaceSheetKey;
   }
 
   /**
@@ -109,9 +153,20 @@ export default class SheetManager implements ISheetManager {
       throw new Error(`Sheet with key '${sheetKey}' not found`);
     }
 
-    // 更新标题
+    // 获取旧标题
     const sheet = this._sheets.get(sheetKey)!;
+    const oldTitle = sheet.sheetTitle;
+
+    // 更新标题
     sheet.sheetTitle = newTitle;
+
+    // 触发工作表重命名事件
+    const event: SheetRenamedEvent = {
+      sheetKey,
+      oldTitle,
+      newTitle
+    };
+    this.eventBus.emit(WorkSheetEventType.SHEET_RENAMED, event);
   }
 
   /**
@@ -197,26 +252,38 @@ export default class SheetManager implements ISheetManager {
     if (!this._sheets.has(targetKey)) {
       throw new Error(`Target sheet '${targetKey}' does not exist`);
     }
-    // 计算索引
+
+    // 获取移动前的索引
     const sheetsArray = Array.from(this._sheets.entries());
     const sourceIndex = sheetsArray.findIndex(([key]) => key === sourceKey);
     const targetIndex = sheetsArray.findIndex(([key]) => key === targetKey);
     if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) {
       return;
     }
+
     // 计算插入位置
     let insertIndex = position === 'left' ? targetIndex : targetIndex + 1;
     // 调整索引
     if (sourceIndex < insertIndex) {
       insertIndex--;
     }
+
     // 重排序
     const [movedSheet] = sheetsArray.splice(sourceIndex, 1);
     sheetsArray.splice(insertIndex, 0, movedSheet);
+
     // 清空并重新添加
     this._sheets.clear();
     sheetsArray.forEach(([key, sheet]) => {
       this._sheets.set(key, sheet);
     });
+
+    // 触发工作表移动事件
+    const event: SheetMovedEvent = {
+      sheetKey: sourceKey,
+      fromIndex: sourceIndex,
+      toIndex: insertIndex
+    };
+    this.eventBus.emit(WorkSheetEventType.SHEET_MOVED, event);
   }
 }
