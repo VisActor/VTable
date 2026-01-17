@@ -786,7 +786,7 @@ this.editManager = new EditManager(this);
 
 1. 调用 `EditManager` 方法    
 
-在 `PivotTable` 类中，定义了 `startEditCell`、 `cancelEditCell` 和 `completeEditCell` 方法，用于调用 `EditManager` 实例的对应方法：    
+在 `PivotTable` 类中，定义了 `startEditCell` 和 `completeEditCell` 方法，用于调用 `EditManager` 实例的对应方法：    
 
 ```xml
 startEditCell(col?: number, row?: number, value?: string | number) {
@@ -795,13 +795,10 @@ startEditCell(col?: number, row?: number, value?: string | number) {
 
 completeEditCell() {
   this.editManager.completeEdit();
-}
+}    
 
-cancelEditCell() {
-  this.editorManager.cancelEdit();
-}
 ```
-`startEditCell` 方法调用 `EditManager` 实例的 `startEditCell` 方法，开启单元格编辑；`completeEditCell` 方法调用 `EditManager` 实例的 `completeEdit` 方法，结束单元格编辑; `cancelEditCell` 方法调用 `EditManager` 实例的 `cancelEdit` 方法，取消单元格编辑。   
+`startEditCell` 方法调用 `EditManager` 实例的 `startEditCell` 方法，开启单元格编辑；`completeEditCell` 方法调用 `EditManager` 实例的 `completeEdit` 方法，结束单元格编辑。    
 
 `EditManager` 类为 `PivotTable` 和 `ListTable` 提供了单元格编辑功能的支持。在这两个类的构造函数中，都会创建 `EditManager` 实例，并且把自身实例作为参数传递给 `EditManager` 的构造函数。在后续的编辑功能实现中，会调用 `EditManager` 实例的方法来处理单元格编辑操作。    
 
