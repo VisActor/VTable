@@ -1530,6 +1530,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
   completeEditCell() {
     this.editorManager.completeEdit();
   }
+  cancelEditCell() {
+    this.editorManager.cancelEdit();
+}
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
     const lastSelectedCellEditor = this.editorManager.cacheLastSelectedCellEditor[`${col}-${row}`];

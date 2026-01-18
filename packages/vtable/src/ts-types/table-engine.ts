@@ -387,6 +387,7 @@ export interface ListTableAPI extends BaseTableAPI {
   startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
+  cancelEditCell: () => void;
   //#endregion
   addRecord: (record: any, recordIndex?: number) => void;
   addRecords: (records: any[], recordIndex?: number) => void;
