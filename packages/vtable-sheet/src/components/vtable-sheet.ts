@@ -17,6 +17,8 @@ import { FormulaUIManager } from '../formula/formula-ui-manager';
 import { SheetTabEventHandler } from './sheet-tab-event-handler';
 import { TableEventRelay } from '../event/table-event-relay';
 import { WorkSheetEventType } from '../ts-types/spreadsheet-events';
+import { SpreadSheetEventManager } from '../event/spreadsheet-event-manager';
+import { SpreadSheetEventType } from '../ts-types/spreadsheet-events';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -44,6 +46,8 @@ export default class VTableSheet {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
   /** Table 事件中转器 */
   private tableEventRelay: TableEventRelay;
+  /** 电子表格事件管理器 */
+  private spreadsheetEventManager: SpreadSheetEventManager;
 
   /** 公式UI管理器 */
   formulaUIManager: FormulaUIManager;
@@ -77,6 +81,7 @@ export default class VTableSheet {
     this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
     this.sheetTabEventHandler = new SheetTabEventHandler(this);
+    this.spreadsheetEventManager = new SpreadSheetEventManager(this);
 
     // 监听SheetManager的事件并转发给工作表实例
     this.setupSheetManagerEventListeners();
@@ -349,6 +354,7 @@ export default class VTableSheet {
     // 获取之前激活的sheet信息
     const previousActiveSheet = this.sheetManager.getActiveSheet();
     const previousSheetKey = previousActiveSheet?.sheetKey;
+    const previousSheetTitle = previousActiveSheet?.sheetTitle;
 
     // 设置活动sheet
     this.sheetManager.setActiveSheet(sheetKey);
@@ -398,7 +404,15 @@ export default class VTableSheet {
 
     this.updateFormulaBar();
 
-    // 触发工作表激活事件
+    // 触发工作表激活事件（电子表格级别）
+    this.spreadsheetEventManager.emitSheetActivated(
+      sheetKey,
+      sheetDefine.sheetTitle,
+      previousSheetKey,
+      previousSheetTitle
+    );
+
+    // 触发工作表激活事件（工作表级别）
     const activeWorkSheet = this.workSheetInstances.get(sheetKey);
     if (activeWorkSheet && activeWorkSheet.eventManager) {
       activeWorkSheet.eventManager.emitActivated();
@@ -670,14 +684,39 @@ export default class VTableSheet {
   getFormulaManager(): FormulaManager {
     return this.formulaManager;
   }
+  /**
+   * 获取电子表格事件管理器
+   */
+  getSpreadSheetEventManager(): SpreadSheetEventManager {
+    return this.spreadsheetEventManager;
+  }
 
   /**
    * 设置SheetManager事件监听器
-   * 这个方法现在不需要做任何事情，因为事件监听直接在 onWorkSheetEvent 中处理
+   * 监听SheetManager的事件并转发给电子表格事件管理器
    */
   private setupSheetManagerEventListeners(): void {
-    // 事件监听逻辑已经集成到 onWorkSheetEvent 方法中
-    // 这里可以保留用于未来的扩展或调试目的
+    const sheetManagerEventBus = this.sheetManager.getEventBus();
+
+    // 监听工作表添加事件 - 转发给电子表格事件管理器
+    sheetManagerEventBus.on(SpreadSheetEventType.SHEET_ADDED, event => {
+      this.spreadsheetEventManager.emit(SpreadSheetEventType.SHEET_ADDED, event);
+    });
+
+    // 监听工作表移除事件 - 转发给电子表格事件管理器
+    sheetManagerEventBus.on(SpreadSheetEventType.SHEET_REMOVED, event => {
+      this.spreadsheetEventManager.emit(SpreadSheetEventType.SHEET_REMOVED, event);
+    });
+
+    // 监听工作表重命名事件 - 转发给电子表格事件管理器
+    sheetManagerEventBus.on(SpreadSheetEventType.SHEET_RENAMED, event => {
+      this.spreadsheetEventManager.emit(SpreadSheetEventType.SHEET_RENAMED, event);
+    });
+
+    // 监听工作表移动事件 - 转发给电子表格事件管理器
+    sheetManagerEventBus.on(SpreadSheetEventType.SHEET_MOVED, event => {
+      this.spreadsheetEventManager.emit(SpreadSheetEventType.SHEET_MOVED, event);
+    });
   }
   /**
    * 获取Sheet管理器
@@ -745,7 +784,7 @@ export default class VTableSheet {
    * 注册 WorkSheet 事件监听器（在 VTableSheet 层）
    *
    * 会监听所有 sheet 的 WorkSheet 层事件，并在回调时自动附带 sheetKey
-   * 同时也会监听来自 SheetManager 的工作簿级别事件（如工作表添加、移除、重命名、移动）
+   * 同时也会监听来自电子表格级别的事件（如工作表添加、移除、重命名、移动）
    *
    * @example
    * ```typescript
@@ -754,24 +793,38 @@ export default class VTableSheet {
    *   console.log(`工作表 ${event.sheetKey} 被激活`);
    * });
    *
-   * // 监听工作表添加事件
-   * sheet.onWorkSheetEvent('worksheet:sheet_added', (event) => {
+   * // 监听工作表添加事件（电子表格级别）
+   * sheet.onWorkSheetEvent('spreadsheet:sheet_added', (event) => {
    *   console.log(`新工作表添加: ${event.sheetTitle}`);
    * });
    * ```
    */
   onWorkSheetEvent(type: string, callback: (event: any) => void): void {
-    // 检查是否是工作簿级别的事件（来自 SheetManager）
-    const sheetManagerEvents = [
-      WorkSheetEventType.SHEET_ADDED,
-      WorkSheetEventType.SHEET_REMOVED,
-      WorkSheetEventType.SHEET_RENAMED,
-      WorkSheetEventType.SHEET_MOVED
+    // 检查是否是电子表格级别的事件
+    const spreadsheetEvents = [
+      'spreadsheet:sheet_added',
+      'spreadsheet:sheet_removed',
+      'spreadsheet:sheet_renamed',
+      'spreadsheet:sheet_moved',
+      'spreadsheet:sheet_activated',
+      'spreadsheet:sheet_visibility_changed',
+      'spreadsheet:ready',
+      'spreadsheet:destroyed',
+      'spreadsheet:resized',
+      'spreadsheet:import_start',
+      'spreadsheet:import_completed',
+      'spreadsheet:import_error',
+      'spreadsheet:export_start',
+      'spreadsheet:export_completed',
+      'spreadsheet:export_error',
+      'spreadsheet:cross_sheet_reference_updated',
+      'spreadsheet:cross_sheet_formula_calculate_start',
+      'spreadsheet:cross_sheet_formula_calculate_end'
     ];
 
-    if (sheetManagerEvents.includes(type as WorkSheetEventType)) {
-      // 如果是工作簿级别的事件，监听 SheetManager 的事件
-      this.sheetManager.getEventBus().on(type, callback);
+    if (spreadsheetEvents.includes(type)) {
+      // 如果是电子表格级别的事件，使用 SpreadSheetEventManager
+      this.spreadsheetEventManager.on(type as any, callback);
     } else {
       // 存储监听器到全局注册表，以便新创建的sheet实例也能使用
       if (!this.globalWorkSheetListeners.has(type)) {
@@ -795,17 +848,31 @@ export default class VTableSheet {
    * @param callback 回调函数（可选）
    */
   offWorkSheetEvent(type: string, callback?: (event: any) => void): void {
-    // 检查是否是工作簿级别的事件（来自 SheetManager）
-    const sheetManagerEvents = [
-      WorkSheetEventType.SHEET_ADDED,
-      WorkSheetEventType.SHEET_REMOVED,
-      WorkSheetEventType.SHEET_RENAMED,
-      WorkSheetEventType.SHEET_MOVED
+    // 检查是否是电子表格级别的事件
+    const spreadsheetEvents = [
+      'spreadsheet:sheet_added',
+      'spreadsheet:sheet_removed',
+      'spreadsheet:sheet_renamed',
+      'spreadsheet:sheet_moved',
+      'spreadsheet:sheet_activated',
+      'spreadsheet:sheet_visibility_changed',
+      'spreadsheet:ready',
+      'spreadsheet:destroyed',
+      'spreadsheet:resized',
+      'spreadsheet:import_start',
+      'spreadsheet:import_completed',
+      'spreadsheet:import_error',
+      'spreadsheet:export_start',
+      'spreadsheet:export_completed',
+      'spreadsheet:export_error',
+      'spreadsheet:cross_sheet_reference_updated',
+      'spreadsheet:cross_sheet_formula_calculate_start',
+      'spreadsheet:cross_sheet_formula_calculate_end'
     ];
 
-    if (sheetManagerEvents.includes(type as WorkSheetEventType)) {
-      // 如果是工作簿级别的事件，从 SheetManager 移除监听器
-      this.sheetManager.getEventBus().off(type, callback);
+    if (spreadsheetEvents.includes(type)) {
+      // 如果是电子表格级别的事件，从 SpreadSheetEventManager 移除监听器
+      this.spreadsheetEventManager.off(type as any, callback);
     } else {
       // 从全局注册表中移除监听器
       if (this.globalWorkSheetListeners.has(type)) {
@@ -947,26 +1014,44 @@ export default class VTableSheet {
 
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
-    const sheet = this.getActiveSheet();
-    if (!sheet) {
-      return;
-    }
-    if (fileType === 'csv') {
-      if ((sheet.tableInstance as any)?.exportToCsv) {
-        (sheet.tableInstance as any).exportToCsv();
-      } else {
-        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+    try {
+      // 触发导出开始事件
+      this.spreadsheetEventManager.emitExportStart(fileType, allSheets);
+
+      const sheet = this.getActiveSheet();
+      if (!sheet) {
+        throw new Error('No active sheet available for export');
       }
-    } else {
-      if (allSheets) {
-        this.exportAllSheetsToExcel();
-      } else {
-        if ((sheet.tableInstance as any)?.exportToExcel) {
-          (sheet.tableInstance as any).exportToExcel();
+
+      let sheetCount = 0;
+      if (fileType === 'csv') {
+        if ((sheet.tableInstance as any)?.exportToCsv) {
+          (sheet.tableInstance as any).exportToCsv();
+          sheetCount = 1;
         } else {
-          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+          throw new Error('TableExportPlugin not configured for CSV export');
+        }
+      } else {
+        if (allSheets) {
+          this.exportAllSheetsToExcel();
+          sheetCount = this.sheetManager.getSheetCount();
+        } else {
+          if ((sheet.tableInstance as any)?.exportToExcel) {
+            (sheet.tableInstance as any).exportToExcel();
+            sheetCount = 1;
+          } else {
+            throw new Error('TableExportPlugin not configured for Excel export');
+          }
         }
       }
+
+      // 触发导出完成事件
+      this.spreadsheetEventManager.emitExportCompleted(fileType, allSheets, sheetCount);
+    } catch (error) {
+      // 触发导出失败事件
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.spreadsheetEventManager.emitExportError(fileType, allSheets, errorMessage);
+      console.warn('Export failed:', errorMessage);
     }
   }
   exportAllSheetsToExcel(): void {
@@ -995,24 +1080,43 @@ export default class VTableSheet {
   async importFileToSheet(
     options: { clearExisting?: boolean } = { clearExisting: true }
   ): Promise<MultiSheetImportResult | void> {
-    // 使用绑定到 VTableSheet 实例的导入方法（插件内部会处理文件选择）
-    if ((this as any)?._importFile) {
-      return await (this as any)._importFile({
-        clearExisting: options?.clearExisting !== false
-      });
-    }
+    try {
+      // 触发导入开始事件
+      this.spreadsheetEventManager.emitImportStart('xlsx');
 
-    // 回退到 tableInstance 的 importFile 方法
-    const sheet = this.getActiveSheet();
-    if (!sheet) {
-      return;
+      // 使用绑定到 VTableSheet 实例的导入方法（插件内部会处理文件选择）
+      let result: MultiSheetImportResult | void;
+      if ((this as any)?._importFile) {
+        result = await (this as any)._importFile({
+          clearExisting: options?.clearExisting !== false
+        });
+      } else {
+        // 回退到 tableInstance 的 importFile 方法
+        const sheet = this.getActiveSheet();
+        if (!sheet) {
+          throw new Error('No active sheet available for import');
+        }
+        if ((sheet.tableInstance as any)?.importFile) {
+          result = await (sheet.tableInstance as any).importFile({
+            clearExisting: options?.clearExisting !== false
+          });
+        } else {
+          throw new Error('ExcelImportPlugin not configured');
+        }
+      }
+
+      // 触发导入完成事件
+      const sheetCount = result && 'sheets' in result ? result.sheets?.length || 0 : 0;
+      this.spreadsheetEventManager.emitImportCompleted('xlsx', sheetCount);
+
+      return result;
+    } catch (error) {
+      // 触发导入失败事件
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.spreadsheetEventManager.emitImportError('xlsx', errorMessage);
+      console.warn('Import failed:', errorMessage);
+      throw error;
     }
-    if ((sheet.tableInstance as any)?.importFile) {
-      return await (sheet.tableInstance as any).importFile({
-        clearExisting: options?.clearExisting !== false
-      });
-    }
-    console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
   }
   /**
    * 获取容器元素
@@ -1060,6 +1164,9 @@ export default class VTableSheet {
    * 销毁实例
    */
   release(): void {
+    // 触发电子表格销毁事件
+    this.spreadsheetEventManager.emitDestroyed();
+
     // 清除所有 Table 事件监听器
     this.tableEventRelay.clearAllListeners();
 
@@ -1067,12 +1174,16 @@ export default class VTableSheet {
     this.eventManager.release();
     this.formulaManager.release();
     this.formulaUIManager.release();
+    this.spreadsheetEventManager.clearAllListeners();
+
     // 移除点击外部监听器
     this.sheetTabEventHandler.removeClickOutsideListener();
+
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();
     });
+
     // 清空容器
     if (this.rootElement && this.rootElement.parentNode) {
       this.rootElement.parentNode.removeChild(this.rootElement);

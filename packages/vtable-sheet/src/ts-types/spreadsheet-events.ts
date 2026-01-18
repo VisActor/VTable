@@ -31,14 +31,6 @@ export enum WorkSheetEventType {
   READY = 'worksheet:ready',
   /** 工作表尺寸改变 */
   RESIZED = 'worksheet:resized',
-  /** 工作表新增 */
-  SHEET_ADDED = 'worksheet:sheet_added',
-  /** 工作表删除 */
-  SHEET_REMOVED = 'worksheet:sheet_removed',
-  /** 工作表重命名 */
-  SHEET_RENAMED = 'worksheet:sheet_renamed',
-  /** 工作表移动 */
-  SHEET_MOVED = 'worksheet:sheet_moved',
 
   // ===== 公式相关事件 =====
   /** 公式计算开始 */
@@ -376,10 +368,6 @@ export interface WorkSheetEventMap {
   [WorkSheetEventType.DEACTIVATED]: WorkSheetActivatedEvent;
   [WorkSheetEventType.READY]: WorkSheetActivatedEvent;
   [WorkSheetEventType.RESIZED]: WorkSheetResizedEvent;
-  [WorkSheetEventType.SHEET_ADDED]: SheetAddedEvent;
-  [WorkSheetEventType.SHEET_REMOVED]: SheetRemovedEvent;
-  [WorkSheetEventType.SHEET_RENAMED]: SheetRenamedEvent;
-  [WorkSheetEventType.SHEET_MOVED]: SheetMovedEvent;
   [WorkSheetEventType.FORMULA_CALCULATE_START]: FormulaCalculateEvent;
   [WorkSheetEventType.FORMULA_CALCULATE_END]: FormulaCalculateEvent;
   [WorkSheetEventType.FORMULA_ERROR]: FormulaErrorEvent;

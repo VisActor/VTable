@@ -2,7 +2,7 @@ import type { ISheetManager, IWorkSheetAPI } from '../ts-types/sheet';
 import type { ISheetDefine } from '../ts-types';
 import type { EventEmitter as EventEmitterType } from '@visactor/vutils';
 import { EventEmitter } from '@visactor/vutils';
-import { WorkSheetEventType } from '../ts-types/spreadsheet-events';
+import { SpreadSheetEventType } from '../ts-types/spreadsheet-events';
 import type {
   SheetAddedEvent,
   SheetRemovedEvent,
@@ -80,13 +80,13 @@ export default class SheetManager implements ISheetManager {
     // 添加sheet
     this._sheets.set(sheet.sheetKey, sheet);
 
-    // 触发工作表添加事件
+    // 触发工作表添加事件（电子表格级别）
     const event: SheetAddedEvent = {
       sheetKey: sheet.sheetKey,
       sheetTitle: sheet.sheetTitle,
       index
     };
-    this.eventBus.emit(WorkSheetEventType.SHEET_ADDED, event);
+    this.eventBus.emit(SpreadSheetEventType.SHEET_ADDED, event);
   }
 
   /**
@@ -131,13 +131,13 @@ export default class SheetManager implements ISheetManager {
     // 移除sheet
     this._sheets.delete(sheetKey);
 
-    // 触发工作表移除事件
+    // 触发工作表移除事件（电子表格级别）
     const event: SheetRemovedEvent = {
       sheetKey: sheetToRemove.sheetKey,
       sheetTitle: sheetToRemove.sheetTitle,
       index
     };
-    this.eventBus.emit(WorkSheetEventType.SHEET_REMOVED, event);
+    this.eventBus.emit(SpreadSheetEventType.SHEET_REMOVED, event);
 
     return willReplaceSheetKey;
   }
@@ -160,13 +160,13 @@ export default class SheetManager implements ISheetManager {
     // 更新标题
     sheet.sheetTitle = newTitle;
 
-    // 触发工作表重命名事件
+    // 触发工作表重命名事件（电子表格级别）
     const event: SheetRenamedEvent = {
       sheetKey,
       oldTitle,
       newTitle
     };
-    this.eventBus.emit(WorkSheetEventType.SHEET_RENAMED, event);
+    this.eventBus.emit(SpreadSheetEventType.SHEET_RENAMED, event);
   }
 
   /**
@@ -278,12 +278,12 @@ export default class SheetManager implements ISheetManager {
       this._sheets.set(key, sheet);
     });
 
-    // 触发工作表移动事件
+    // 触发工作表移动事件（电子表格级别）
     const event: SheetMovedEvent = {
       sheetKey: sourceKey,
       fromIndex: sourceIndex,
       toIndex: insertIndex
     };
-    this.eventBus.emit(WorkSheetEventType.SHEET_MOVED, event);
+    this.eventBus.emit(SpreadSheetEventType.SHEET_MOVED, event);
   }
 }

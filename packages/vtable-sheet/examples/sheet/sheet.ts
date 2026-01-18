@@ -1,6 +1,6 @@
 import { VTableSheet, TYPES } from '../../src/index';
 import * as VTablePlugins from '@visactor/vtable-plugins';
-import { WorkSheetEventType } from '../../src/ts-types/spreadsheet-events';
+import { SpreadSheetEventType, WorkSheetEventType } from '../../src/ts-types/spreadsheet-events';
 const CONTAINER_ID = 'vTable';
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
@@ -848,17 +848,50 @@ export function createTable() {
   sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_FILTERED, event => {
     console.log('数据筛选完成了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_ADDED, event => {
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_ADDED, event => {
     console.log('工作表新增了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_MOVED, event => {
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_MOVED, event => {
     console.log('工作表移动了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_RENAMED, event => {
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_RENAMED, event => {
     console.log('工作表重命名了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.SHEET_REMOVED, event => {
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_REMOVED, event => {
     console.log('工作表删除了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_ACTIVATED, event => {
+    console.log('工作表激活了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_VISIBILITY_CHANGED, event => {
+    console.log('工作表显示状态改变了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_START, event => {
+    console.log('导入开始了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_COMPLETED, event => {
+    console.log('导入完成了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_ERROR, event => {
+    console.log('导入错误了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_START, event => {
+    console.log('导出了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_COMPLETED, event => {
+    console.log('导出完成了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_ERROR, event => {
+    console.log('导出错误了', event.fileType);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, event => {
+    console.log('跨工作表引用更新了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, event => {
+    console.log('跨工作表公式计算开始了', event.sheetKey);
+  });
+  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, event => {
+    console.log('跨工作表公式计算结束了', event.sheetKey);
   });
   // bindDebugTool(sheetInstance.activeWorkSheet.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']

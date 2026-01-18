@@ -156,6 +156,7 @@ export class MenuManager {
   }
   handleMenuClick(menuKey: MainMenuItemKey) {
     const tableInstance = this.sheet.getActiveSheet().tableInstance;
+    const eventManager = this.sheet.getSpreadSheetEventManager();
 
     switch (menuKey) {
       case MainMenuItemKey.IMPORT:
@@ -165,23 +166,73 @@ export class MenuManager {
         break;
 
       case MainMenuItemKey.EXPORT_CURRENT_SHEET_CSV:
-        if ((tableInstance as any)?.exportToCsv) {
-          (tableInstance as any).exportToCsv();
-        } else {
-          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        try {
+          // 触发导出开始事件
+          eventManager.emitExportStart('csv', false);
+
+          if ((tableInstance as any)?.exportToCsv) {
+            (tableInstance as any).exportToCsv();
+            // 触发导出完成事件
+            eventManager.emitExportCompleted('csv', false, 1);
+          } else {
+            console.warn('Please configure TableExportPlugin in VTablePluginModules');
+            // 触发导出失败事件
+            eventManager.emitExportError('csv', false, 'TableExportPlugin not configured');
+          }
+        } catch (error) {
+          // 触发导出失败事件
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          eventManager.emitExportError('csv', false, errorMessage);
+          console.warn('Export to CSV failed:', errorMessage);
         }
         break;
+
       case MainMenuItemKey.EXPORT_CURRENT_SHEET_XLSX:
-        if ((tableInstance as any)?.exportToExcel) {
-          (tableInstance as any).exportToExcel();
-        } else {
-          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        try {
+          // 触发导出开始事件
+          eventManager.emitExportStart('xlsx', false);
+
+          if ((tableInstance as any)?.exportToExcel) {
+            (tableInstance as any).exportToExcel();
+            // 触发导出完成事件
+            eventManager.emitExportCompleted('xlsx', false, 1);
+          } else {
+            console.warn('Please configure TableExportPlugin in VTablePluginModules');
+            // 触发导出失败事件
+            eventManager.emitExportError('xlsx', false, 'TableExportPlugin not configured');
+          }
+        } catch (error) {
+          // 触发导出失败事件
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          eventManager.emitExportError('xlsx', false, errorMessage);
+          console.warn('Export to Excel failed:', errorMessage);
         }
         break;
+
       case MainMenuItemKey.EXPORT_ALL_SHEETS_XLSX:
-        // 多 sheet 导出走 vtable-plugins 的导出工具，不依赖向 tableInstance 注入 exportToExcel
-        this.sheet.exportAllSheetsToExcel?.();
+        try {
+          // 触发导出开始事件
+          eventManager.emitExportStart('xlsx', true);
+
+          // 多 sheet 导出走 vtable-plugins 的导出工具，不依赖向 tableInstance 注入 exportToExcel
+          if (this.sheet.exportAllSheetsToExcel) {
+            this.sheet.exportAllSheetsToExcel();
+            // 触发导出完成事件
+            const sheetCount = this.sheet.getSheetCount();
+            eventManager.emitExportCompleted('xlsx', true, sheetCount);
+          } else {
+            console.warn('Export all sheets method not available');
+            // 触发导出失败事件
+            eventManager.emitExportError('xlsx', true, 'Export all sheets method not available');
+          }
+        } catch (error) {
+          // 触发导出失败事件
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          eventManager.emitExportError('xlsx', true, errorMessage);
+          console.warn('Export all sheets failed:', errorMessage);
+        }
         break;
+
       default:
         break;
     }
