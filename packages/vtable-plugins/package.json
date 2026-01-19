@@ -62,7 +62,7 @@
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",
-    "@visactor/vchart": "2.0.11-alpha.3",
+    "@visactor/vchart": "2.0.14-alpha.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

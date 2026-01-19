@@ -1,6 +1,11 @@
 import { getTargetCell } from '@visactor/vtable';
 import type { CreateDOMParamsType, IGraphic } from '@visactor/vtable/es/vrender';
-import { ContainerModule, EnvContribution, BrowserEnvContribution } from '@visactor/vtable/es/vrender';
+import {
+  EnvContribution,
+  BrowserEnvContribution,
+  serviceRegistry,
+  contributionRegistry
+} from '@visactor/vtable/es/vrender';
 import { isString } from '@visactor/vutils';
 
 export type CreateDOMParamsTypeForVTable = CreateDOMParamsType & {
@@ -8,14 +13,14 @@ export type CreateDOMParamsTypeForVTable = CreateDOMParamsType & {
   style?: Record<string, any>;
 };
 
-export const reactEnvModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  bind(VTableBrowserEnvContribution).toSelf().inSingletonScope();
-  if (isBound(EnvContribution)) {
-    rebind(EnvContribution).toService(VTableBrowserEnvContribution);
-  } else {
-    bind(EnvContribution).toService(VTableBrowserEnvContribution);
+export const registerReactEnvModule = () => {
+  serviceRegistry.registerSingletonFactory(VTableBrowserEnvContribution, () => new VTableBrowserEnvContribution());
+
+  if (contributionRegistry.has(EnvContribution)) {
+    contributionRegistry.clear(EnvContribution);
   }
-});
+  contributionRegistry.register(EnvContribution, serviceRegistry.get(VTableBrowserEnvContribution));
+};
 
 class VTableBrowserEnvContribution extends BrowserEnvContribution {
   updateDom(dom: HTMLElement, params: CreateDOMParamsTypeForVTable): boolean {

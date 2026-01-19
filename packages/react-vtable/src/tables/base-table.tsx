@@ -23,8 +23,8 @@ import type {
 } from '../eventsUtils';
 import { bindEventsToTable, TABLE_EVENTS_KEYS, TABLE_EVENTS } from '../eventsUtils';
 import { VTableReactAttributePlugin } from '../table-components/custom/vtable-react-attribute-plugin';
-import { reactEnvModule } from '../table-components/custom/vtable-browser-env-contribution';
-import { container, isBrowserEnv } from '@visactor/vtable/es/vrender';
+import { registerReactEnvModule } from '../table-components/custom/vtable-browser-env-contribution';
+import { isBrowserEnv } from '@visactor/vtable/es/vrender';
 import type {
   ListTable,
   PivotTable,
@@ -67,7 +67,7 @@ export type BaseTableProps = EventsProps &
 
 // for react-vtable
 if (isBrowserEnv()) {
-  container.load(reactEnvModule);
+  registerReactEnvModule();
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;

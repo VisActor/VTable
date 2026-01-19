@@ -1,6 +1,6 @@
 import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule, registerFlexLayoutPlugin } from '@visactor/vrender-core';
+import { isBrowserEnv, isNodeEnv, registerAllModules, registerFlexLayoutPlugin } from '@visactor/vrender-core';
 import {
   loadBrowserEnv,
   loadNodeEnv,
@@ -32,13 +32,11 @@ export function registerForVrender() {
     return;
   }
   registed = true;
-  // 注册内置组件
-  preLoadAllModule();
 
   if (isBrowserEnv()) {
-    loadBrowserEnv(container);
+    loadBrowserEnv();
   } else if (isNodeEnv()) {
-    loadNodeEnv(container);
+    loadNodeEnv();
   }
   registerArc();
   // registerArc3d();

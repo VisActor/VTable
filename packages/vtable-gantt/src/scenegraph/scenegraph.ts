@@ -10,14 +10,14 @@ import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
 import { findRecordByTaskKey, getTaskIndexsByTaskY } from '../gantt-helper';
-import graphicContribution from './graphic';
+import registerGroupContributions from './graphic';
 import { TaskCreationButton } from './task-creation-button';
 import { ToolTip } from './tooltip';
 import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
 import type { GanttTaskBarNode } from './gantt-node';
 import { TasksShowMode, TaskType } from '../ts-types';
-container.load(graphicContribution);
+registerGroupContributions();
 export class Scenegraph {
   dateStepWidth: number;
   rowHeight: number;

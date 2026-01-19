@@ -1,5 +1,5 @@
 import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
+import { createStage, createRect, IContainPointMode, vglobal, registerForVrender } from '@src/vrender';
 import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
@@ -19,7 +19,7 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import splitModule from './graphic/contributions';
+import registerSplits from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
@@ -51,7 +51,7 @@ import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
 import type { CheckBox } from '@src/vrender';
 import { loadPoptip, setPoptipTheme } from '@src/vrender';
-import textMeasureModule from './utils/text-measure';
+import registerTextMeasure from './utils/text-measure';
 import {
   getIconByXY,
   hideClickIcon,
@@ -89,8 +89,8 @@ registerForVrender();
 
 // VChart poptip theme
 // loadPoptip();
-container.load(splitModule);
-container.load(textMeasureModule);
+registerSplits();
+registerTextMeasure();
 // container.load(renderServiceModule);
 // container.load(contextModule);
 // console.log(container);

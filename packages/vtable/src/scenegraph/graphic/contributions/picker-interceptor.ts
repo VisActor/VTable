@@ -1,8 +1,7 @@
 import type { IPickerService, IPickParams, PickResult } from '@src/vrender';
-import { injectable } from '@src/vrender';
+
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 
-@injectable()
 export class VChartPickServiceInterceptorContribution {
   order: number = 1;
   afterPickItem(

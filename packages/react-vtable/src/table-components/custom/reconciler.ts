@@ -1,4 +1,4 @@
-import { application, REACT_TO_CANOPUS_EVENTS, Tag } from '@visactor/vtable/es/vrender';
+import { graphicService, REACT_TO_CANOPUS_EVENTS, Tag } from '@visactor/vtable/es/vrender';
 import type { FlexLayoutPlugin, Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
 import { isFunction, isNumber, merge } from '@visactor/vutils';
 import React from 'react';
@@ -138,10 +138,10 @@ function createGraphic(type: string, props: any) {
   if (component) {
     return component;
   }
-  if (!application.graphicService.creator[type as keyof IGraphicCreator]) {
+  if (!graphicService.creator[type as keyof IGraphicCreator]) {
     return undefined;
   }
-  const graphic = application.graphicService.creator[type as keyof IGraphicCreator]((props as any).attribute);
+  const graphic = graphicService.creator[type as keyof IGraphicCreator]((props as any).attribute);
   return graphic;
 }
 

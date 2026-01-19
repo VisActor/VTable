@@ -9,7 +9,7 @@ import type {
   IDrawContext,
   IRectGraphicAttribute
 } from '@src/vrender';
-import { BaseRenderContributionTime, injectable, createRectPath } from '@src/vrender';
+import { BaseRenderContributionTime, createRectPath } from '@src/vrender';
 import type { Group } from '../group';
 import { getCellHoverColor } from '../../../state/hover/is-cell-hover';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -23,7 +23,6 @@ import { renderStrokeWithCornerRadius } from './rect-contribution-render';
 
 // SplitGroupContribution处理分段渲染stroke
 // stroke/strokeArrayWidth/strokeArrayColor 为数组时调用
-@injectable()
 export class SplitGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -95,7 +94,6 @@ export class SplitGroupBeforeRenderContribution implements IGroupRenderContribut
     // }
   }
 }
-@injectable()
 export class SplitGroupAfterRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;
@@ -476,7 +474,6 @@ export function renderStroke(
 
 // DashGroupContribution处理虚线边框对齐
 // lineDash 为非空数组时调用
-@injectable()
 export class DashGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -523,7 +520,6 @@ export class DashGroupBeforeRenderContribution implements IGroupRenderContributi
     }
   }
 }
-@injectable()
 export class DashGroupAfterRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;
@@ -662,7 +658,6 @@ export class DashGroupAfterRenderContribution implements IGroupRenderContributio
 
 // AdjustPosGroupContribution处理线宽为奇数时stroke位置偏移0.5px
 // lineWidth 为奇数时调用
-@injectable()
 export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -715,7 +710,6 @@ export class AdjustPosGroupBeforeRenderContribution implements IGroupRenderContr
   }
 }
 
-@injectable()
 export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;
@@ -838,7 +832,6 @@ export class AdjustPosGroupAfterRenderContribution implements IGroupRenderContri
   }
 }
 
-@injectable()
 export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -885,7 +878,6 @@ export class AdjustColorGroupBeforeRenderContribution implements IGroupRenderCon
   }
 }
 
-@injectable()
 export class AdjustColorGroupAfterRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;
@@ -930,7 +922,6 @@ export class AdjustColorGroupAfterRenderContribution implements IGroupRenderCont
   }
 }
 
-@injectable()
 export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;

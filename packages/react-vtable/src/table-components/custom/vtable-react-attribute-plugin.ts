@@ -7,7 +7,7 @@ import type {
   IText,
   SimpleDomStyleOptions
 } from '@visactor/vtable/es/vrender';
-import { DefaultAttribute, ReactAttributePlugin, application } from '@visactor/vtable/es/vrender';
+import { DefaultAttribute, ReactAttributePlugin, vglobal } from '@visactor/vtable/es/vrender';
 import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleStringToObject } from '@visactor/vutils';
 import type { CreateDOMParamsTypeForVTable } from './vtable-browser-env-contribution';
 import { CUSTOM_CONTAINER_NAME } from '@visactor/vtable';
@@ -107,7 +107,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     let nativeContainer;
     if (userContainer) {
       if (typeof userContainer === 'string') {
-        nativeContainer = application.global.getElementById(userContainer);
+        nativeContainer = vglobal.getElementById(userContainer);
       } else {
         nativeContainer = userContainer;
       }
@@ -116,7 +116,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     }
     // 创建wrapGroup
     return {
-      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
+      wrapContainer: vglobal.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
       nativeContainer
     };
   }
@@ -185,8 +185,8 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     }
 
     // 查看wrapGroup的位置
-    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
-    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
+    // const wrapGroupTL = vglobal.getElementTopLeft(wrapGroup, false);
+    const containerTL = vglobal.getElementTopLeft(nativeContainer, false);
     const windowTL = stage.window.getTopLeft(false);
     const offsetX = left + windowTL.left - containerTL.left;
     const offsetTop = top + windowTL.top - containerTL.top;
@@ -218,7 +218,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
     }
 
     // 更新样式
-    application.global.updateDom(wrapContainer, {
+    vglobal.updateDom(wrapContainer, {
       width: options.width,
       height: options.height,
       style: calculateStyle,
@@ -227,7 +227,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
   }
 
   protected drawHTML() {
-    if (application?.global?.env === 'browser') {
+    if (vglobal.env === 'browser') {
       (this.pluginService.stage as any).children // fix interactive layer problem
         .sort((a: IGraphic, b: IGraphic) => {
           return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);

@@ -8,13 +8,12 @@ import type {
   IImageRenderContribution,
   IDrawContext
 } from '@src/vrender';
-import { BaseRenderContributionTime, injectable } from '@src/vrender';
+import { BaseRenderContributionTime } from '@src/vrender';
 
 /**
  * @description: image支持绘制部分形状
  * @return {*}
  */
-@injectable()
 export class BeforeImageRenderContribution implements IImageRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -57,7 +56,6 @@ export class BeforeImageRenderContribution implements IImageRenderContribution {
   }
 }
 
-@injectable()
 export class AfterImageRenderContribution implements IImageRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;
@@ -97,7 +95,6 @@ export class AfterImageRenderContribution implements IImageRenderContribution {
  * @description: image支持gif动态图片
  * @return {*}
  */
-@injectable()
 export class BeforeGifImageRenderContribution implements IImageRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;
@@ -133,7 +130,6 @@ export class BeforeGifImageRenderContribution implements IImageRenderContributio
   }
 }
 
-@injectable()
 export class AfterGifImageRenderContribution implements IImageRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle = true;

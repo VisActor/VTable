@@ -8,13 +8,13 @@ import type {
   IGroup,
   IGroupRenderContribution
 } from '@visactor/vtable/es/vrender';
-import { injectable, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
+import { BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
 
 // const highlightDash: number[] = [];
 
 // SplitGroupContribution处理分段渲染stroke
 // stroke/strokeArrayWidth/strokeArrayColor 为数组时调用
-@injectable()
+
 export class DateHeaderGroupBeforeRenderContribution implements IGroupRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle = true;

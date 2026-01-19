@@ -7,12 +7,11 @@ import type {
   IGraphicRenderDrawParams,
   IImage
 } from '@src/vrender';
-import { injectable, createImage } from '@src/vrender';
+import { createImage } from '@src/vrender';
 import * as icons from '../../../icons';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 let loadingImage: IImage;
 
-@injectable()
 export class VTableDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   interceptors: IDrawItemInterceptorContribution[];

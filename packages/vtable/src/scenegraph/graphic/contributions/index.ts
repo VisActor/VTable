@@ -5,10 +5,11 @@ import {
   RectRenderContribution,
   SplitRectBeforeRenderContribution,
   SplitRectAfterRenderContribution,
-  ContainerModule,
   DrawItemInterceptor,
   TextRenderContribution,
-  CanvasPickerContribution
+  CanvasPickerContribution,
+  serviceRegistry,
+  contributionRegistry
 } from '@src/vrender';
 import { ChartRender, DefaultCanvasChartRender } from './chart-render';
 import {
@@ -38,73 +39,91 @@ import { SuffixTextBeforeRenderContribution } from './text-contribution-render';
 import { VChartPicker } from './vchart-graphic-picker';
 // import { VChartPickServiceInterceptorContribution } from './picker-interceptor';
 
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
-  // rect 渲染器注入contributions
-  if (isBound(SplitRectBeforeRenderContribution)) {
-    rebind(SplitRectBeforeRenderContribution).to(VTableSplitRectBeforeRenderContribution).inSingletonScope();
-  } else {
-    bind(VTableSplitRectBeforeRenderContribution).toSelf().inSingletonScope();
-    bind(RectRenderContribution).toService(VTableSplitRectBeforeRenderContribution);
+export default function registerSplits() {
+  serviceRegistry.registerSingleton(
+    VTableSplitRectBeforeRenderContribution,
+    new VTableSplitRectBeforeRenderContribution()
+  );
+
+  const prevSplitRectBeforeRender = contributionRegistry
+    .get(RectRenderContribution)
+    .find(imp => imp instanceof SplitRectBeforeRenderContribution);
+  if (prevSplitRectBeforeRender) {
+    contributionRegistry.unregister(RectRenderContribution, prevSplitRectBeforeRender);
   }
-  if (isBound(SplitRectAfterRenderContribution)) {
-    rebind(SplitRectAfterRenderContribution).to(VTableSplitRectAfterRenderContribution).inSingletonScope();
-  } else {
-    bind(VTableSplitRectAfterRenderContribution).toSelf().inSingletonScope();
-    bind(RectRenderContribution).toService(VTableSplitRectAfterRenderContribution);
+  contributionRegistry.register(RectRenderContribution, serviceRegistry.get(VTableSplitRectBeforeRenderContribution));
+
+  serviceRegistry.registerSingleton(
+    VTableSplitRectAfterRenderContribution,
+    new VTableSplitRectAfterRenderContribution()
+  );
+  const prevSplitRectAfterRender = contributionRegistry
+    .get(RectRenderContribution)
+    .find(imp => imp instanceof SplitRectAfterRenderContribution);
+  if (prevSplitRectAfterRender) {
+    contributionRegistry.unregister(RectRenderContribution, prevSplitRectAfterRender);
   }
+  contributionRegistry.register(RectRenderContribution, serviceRegistry.get(VTableSplitRectAfterRenderContribution));
 
   // chart渲染器注入
-  bind(DefaultCanvasChartRender).toSelf().inSingletonScope();
-  bind(ChartRender).to(DefaultCanvasChartRender);
-  bind(GraphicRender).to(DefaultCanvasChartRender);
+  serviceRegistry.registerSingleton(DefaultCanvasChartRender, new DefaultCanvasChartRender());
+  contributionRegistry.register(ChartRender, serviceRegistry.get(DefaultCanvasChartRender));
+  contributionRegistry.register(GraphicRender, serviceRegistry.get(DefaultCanvasChartRender));
   // chart picker 注入
-  bind(VChartPicker).toSelf().inSingletonScope();
-  bind(CanvasPickerContribution).toService(VChartPicker);
-  // bind(VChartPickServiceInterceptorContribution).toSelf().inSingletonScope();
-  // bind(PickServiceInterceptor).toService(VChartPickServiceInterceptorContribution);
+  serviceRegistry.registerSingleton(VChartPicker, new VChartPicker());
+  contributionRegistry.register(CanvasPickerContribution, serviceRegistry.get(VChartPicker));
 
   // image 渲染器注入contributions
-  bind(BeforeImageRenderContribution).toSelf().inSingletonScope();
-  bind(ImageRenderContribution).toService(BeforeImageRenderContribution);
-  bind(AfterImageRenderContribution).toSelf().inSingletonScope();
-  bind(ImageRenderContribution).toService(AfterImageRenderContribution);
+  serviceRegistry.registerSingleton(BeforeImageRenderContribution, new BeforeImageRenderContribution());
+  contributionRegistry.register(ImageRenderContribution, serviceRegistry.get(BeforeImageRenderContribution));
+  serviceRegistry.registerSingleton(AfterImageRenderContribution, new AfterImageRenderContribution());
+  contributionRegistry.register(ImageRenderContribution, serviceRegistry.get(AfterImageRenderContribution));
 
-  bind(BeforeGifImageRenderContribution).toSelf().inSingletonScope();
-  bind(ImageRenderContribution).toService(BeforeGifImageRenderContribution);
-  bind(AfterGifImageRenderContribution).toSelf().inSingletonScope();
-  bind(ImageRenderContribution).toService(AfterGifImageRenderContribution);
+  serviceRegistry.registerSingleton(BeforeGifImageRenderContribution, new BeforeGifImageRenderContribution());
+  contributionRegistry.register(ImageRenderContribution, serviceRegistry.get(BeforeGifImageRenderContribution));
+  serviceRegistry.registerSingleton(AfterGifImageRenderContribution, new AfterGifImageRenderContribution());
+  contributionRegistry.register(ImageRenderContribution, serviceRegistry.get(AfterGifImageRenderContribution));
 
   // group 渲染器注入contributions
-  bind(AdjustColorGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustColorGroupBeforeRenderContribution);
-  bind(AdjustColorGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustColorGroupAfterRenderContribution);
+  serviceRegistry.registerSingleton(
+    AdjustColorGroupBeforeRenderContribution,
+    new AdjustColorGroupBeforeRenderContribution()
+  );
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(AdjustColorGroupBeforeRenderContribution));
+  serviceRegistry.registerSingleton(
+    AdjustColorGroupAfterRenderContribution,
+    new AdjustColorGroupAfterRenderContribution()
+  );
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(AdjustColorGroupAfterRenderContribution));
 
-  bind(SplitGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(SplitGroupAfterRenderContribution);
-  bind(SplitGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(SplitGroupBeforeRenderContribution);
+  serviceRegistry.registerSingleton(SplitGroupAfterRenderContribution, new SplitGroupAfterRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(SplitGroupAfterRenderContribution));
+  serviceRegistry.registerSingleton(SplitGroupBeforeRenderContribution, new SplitGroupBeforeRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(SplitGroupBeforeRenderContribution));
 
-  bind(DashGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(DashGroupBeforeRenderContribution);
-  bind(DashGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(DashGroupAfterRenderContribution);
+  serviceRegistry.registerSingleton(DashGroupBeforeRenderContribution, new DashGroupBeforeRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(DashGroupBeforeRenderContribution));
+  serviceRegistry.registerSingleton(DashGroupAfterRenderContribution, new DashGroupAfterRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(DashGroupAfterRenderContribution));
 
-  bind(AdjustPosGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustPosGroupBeforeRenderContribution);
-  bind(AdjustPosGroupAfterRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(AdjustPosGroupAfterRenderContribution);
+  serviceRegistry.registerSingleton(
+    AdjustPosGroupBeforeRenderContribution,
+    new AdjustPosGroupBeforeRenderContribution()
+  );
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(AdjustPosGroupBeforeRenderContribution));
+  serviceRegistry.registerSingleton(AdjustPosGroupAfterRenderContribution, new AdjustPosGroupAfterRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(AdjustPosGroupAfterRenderContribution));
 
-  bind(ClipBodyGroupBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(ClipBodyGroupBeforeRenderContribution);
+  serviceRegistry.registerSingleton(ClipBodyGroupBeforeRenderContribution, new ClipBodyGroupBeforeRenderContribution());
+  contributionRegistry.register(GroupRenderContribution, serviceRegistry.get(ClipBodyGroupBeforeRenderContribution));
   // bind(ClipBodyGroupAfterRenderContribution).toSelf().inSingletonScope();
   // bind(GroupRenderContribution).toService(ClipBodyGroupAfterRenderContribution);
 
   // interceptor
-  bind(VTableDrawItemInterceptorContribution).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(VTableDrawItemInterceptorContribution);
+  serviceRegistry.registerSingleton(VTableDrawItemInterceptorContribution, new VTableDrawItemInterceptorContribution());
+  contributionRegistry.register(DrawItemInterceptor, serviceRegistry.get(VTableDrawItemInterceptorContribution));
 
   // text 渲染器注入contributions
-  bind(SuffixTextBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(TextRenderContribution).toService(SuffixTextBeforeRenderContribution);
-});
+  serviceRegistry.registerSingleton(SuffixTextBeforeRenderContribution, new SuffixTextBeforeRenderContribution());
+  contributionRegistry.register(TextRenderContribution, serviceRegistry.get(SuffixTextBeforeRenderContribution));
+}

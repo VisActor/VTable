@@ -8,17 +8,10 @@ import type {
   ITextRenderContribution,
   IThemeAttribute
 } from '@src/vrender';
-import {
-  BaseRenderContributionTime,
-  calculateLineHeight,
-  injectable,
-  textDrawOffsetX,
-  textLayoutOffsetY
-} from '@src/vrender';
+import { BaseRenderContributionTime, calculateLineHeight, textDrawOffsetX, textLayoutOffsetY } from '@src/vrender';
 import { isString } from '@visactor/vutils';
 import { textMeasure } from '../../utils/text-measure';
 
-@injectable()
 export class SuffixTextBeforeRenderContribution implements ITextRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;

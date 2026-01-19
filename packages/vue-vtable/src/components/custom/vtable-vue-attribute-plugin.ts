@@ -8,7 +8,7 @@ import type {
   IText,
   SimpleDomStyleOptions
 } from '@visactor/vtable/es/vrender';
-import { HtmlAttributePlugin, application, vglobal } from '@visactor/vtable/es/vrender';
+import { HtmlAttributePlugin, vglobal } from '@visactor/vtable/es/vrender';
 import {
   calculateAnchorOfBounds,
   isArray,
@@ -433,8 +433,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   getWrapContainer(stage: IStage, userContainer?: string | HTMLElement | null, domParams?: any) {
     let nativeContainer: HTMLElement;
     if (userContainer) {
-      nativeContainer =
-        typeof userContainer === 'string' ? application.global.getElementById(userContainer) : userContainer;
+      nativeContainer = typeof userContainer === 'string' ? vglobal.getElementById(userContainer) : userContainer;
     } else {
       nativeContainer = stage.window.getContainer();
     }
@@ -456,7 +455,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     return {
-      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer }),
+      wrapContainer: vglobal.createDom({ tagName: 'div', parent: nativeContainer }),
       nativeContainer
     };
   }
@@ -529,7 +528,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       // 请求批量更新
       this.requestStyleUpdate();
       // TODO 确认是否需要对接 VTableBrowserEnvContribution
-      // application.global.updateDom(wrapContainer, {
+      // vglobal.updateDom(wrapContainer, {
       //   width,
       //   height,
       //   style: calculateStyle
@@ -618,7 +617,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
    * @return {*}
    */
   private calculateOffset(stage: IStage, nativeContainer: HTMLElement, x: number, y: number) {
-    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
+    const containerTL = vglobal.getElementTopLeft(nativeContainer, false);
     const windowTL = stage.window.getTopLeft(false);
     return {
       left: x + windowTL.left - containerTL.left,

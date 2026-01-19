@@ -11,14 +11,13 @@ import type {
   IDrawContext,
   ICustomPath2D
 } from '@src/vrender';
-import { BaseRenderContributionTime, injectable } from '@src/vrender';
+import { BaseRenderContributionTime } from '@src/vrender';
 import { getWidthInfo, renderStroke } from './group-contribution-render';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { vec2, vec4 } from '@visactor/vutils';
 import { abs, arrayEqual, halfPi, isArray, isNumber, pi } from '@visactor/vutils';
 import { createRectPath } from '@src/vrender';
 
-@injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -64,7 +63,6 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   }
 }
 
-@injectable()
 export class SplitRectAfterRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;

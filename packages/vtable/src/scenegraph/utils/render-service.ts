@@ -1,12 +1,14 @@
-import type { IGraphic } from '@src/vrender';
-import { ContainerModule, DefaultRenderService, RenderService } from '@src/vrender';
+import type { IDrawContribution } from '@src/vrender';
+import { DefaultRenderService, RenderService, serviceRegistry, DrawContribution } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { InteractionState } from '../../ts-types';
 
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
-  bind(RenderServiceForVTable).toSelf();
-  rebind(RenderService).toService(RenderServiceForVTable);
-});
+export default function registerRenderService() {
+  serviceRegistry.registerFactory(RenderService, () => {
+    const drawContribution = serviceRegistry.get(DrawContribution) as IDrawContribution;
+    return new RenderServiceForVTable(drawContribution);
+  });
+}
 
 export class RenderServiceForVTable extends DefaultRenderService {
   lastPrepareTime = 0;

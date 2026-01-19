@@ -4,11 +4,10 @@ import {
   getTextBounds,
   DefaultTextMeasureContribution,
   TextMeasureContribution,
-  ContainerModule,
-  container,
-  Text
+  Text,
+  contributionRegistry,
+  serviceRegistry
 } from '@src/vrender';
-import { MeasureModeEnum } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
 //   DefaultTextMeasureContribution,
@@ -24,23 +23,17 @@ type ITextGraphicAttributeFroMeasure = Omit<ITextGraphicAttribute, 'lineHeight'>
   lineHeight?: number;
 };
 
-const textMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (isBound(TextMeasureContribution)) {
-    rebind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
-  } else {
-    bind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
-  }
-});
+const registerTextMeasure = () => {
+  serviceRegistry.registerSingletonFactory(FastTextMeasureContribution, () => new FastTextMeasureContribution());
+  contributionRegistry.register(TextMeasureContribution, serviceRegistry.get(FastTextMeasureContribution));
+};
 
-const restoreTextMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (isBound(TextMeasureContribution)) {
-    rebind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
-  } else {
-    bind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
-  }
-});
+const restoreTextMeasureModule = () => {
+  contributionRegistry.clear(TextMeasureContribution);
+  contributionRegistry.register(TextMeasureContribution, new DefaultTextMeasureContribution());
+};
 
-export default textMeasureModule;
+export default registerTextMeasure;
 
 export const initTextMeasure = (
   textSpec?: ITextGraphicAttributeFroMeasure,
@@ -285,7 +278,7 @@ export function setCustomAlphabetCharSet(str: string) {
 // change fast textMeasure into canvas textMeasure
 export function restoreMeasureText() {
   textMeasureMode = 'canvas';
-  container.load(restoreTextMeasureModule);
+  restoreTextMeasureModule();
 }
 
 const utilTextMark = new Text({

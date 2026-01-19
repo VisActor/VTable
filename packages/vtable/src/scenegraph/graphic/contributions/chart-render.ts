@@ -8,16 +8,7 @@ import type {
   IRenderService,
   IThemeAttribute
 } from '@src/vrender';
-import {
-  ContributionProvider,
-  getTheme,
-  IGroupRenderContribution,
-  createImage,
-  inject,
-  injectable,
-  named,
-  BaseRender
-} from '@src/vrender';
+import { ContributionProvider, getTheme, IGroupRenderContribution, createImage, BaseRender } from '@src/vrender';
 import type { Chart } from '../chart';
 import { CHART_NUMBER_TYPE } from '../chart';
 import {
@@ -32,7 +23,6 @@ import { isArray } from '@visactor/vutils';
 export const ChartRender = Symbol.for('ChartRender');
 export const ChartRenderContribution = Symbol.for('ChartRenderContribution');
 
-@injectable()
 export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGraphicRender {
   type: 'chart';
   numberType: number = CHART_NUMBER_TYPE;

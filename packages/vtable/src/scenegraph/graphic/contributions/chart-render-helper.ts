@@ -1,4 +1,4 @@
-import { container, vglobal, VWindow, type IStage, type IWindow } from '@src/vrender';
+import { serviceRegistry, vglobal, VWindow, type IStage, type IWindow } from '@src/vrender';
 import type { Chart } from '../chart';
 import type { IAABBBounds } from '@visactor/vutils';
 import { Bounds, isValid } from '@visactor/vutils';
@@ -273,7 +273,7 @@ function toCanvas(stage: IStage, fullImage: boolean = true, viewBox?: IAABBBound
 
 function renderToNewWindow(stage: IStage, fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
   const matrix = stage.window.getViewBoxTransform();
-  const window = container.get<IWindow>(VWindow);
+  const window = serviceRegistry.getFactory(VWindow)() as IWindow;
   const x1 = viewBox ? -viewBox.x1 : 0;
   const y1 = viewBox ? -viewBox.y1 : 0;
   const x2 = viewBox ? viewBox.x2 : stage.viewWidth;
