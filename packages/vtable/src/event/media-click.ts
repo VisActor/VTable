@@ -108,7 +108,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         const overlay = document.createElement('div');
         overlay.style.width = '100%';
         overlay.style.height = '100%';
-        overlay.style.position = 'absolute';
+        overlay.style.position = 'fixed';
         overlay.style.top = '0';
         overlay.style.left = '0';
         overlay.style.backgroundColor = 'rgba(30, 30, 30, 0.4)';
@@ -150,7 +150,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         const overlay = document.createElement('div');
         overlay.style.width = '100%';
         overlay.style.height = '100%';
-        overlay.style.position = 'absolute';
+        overlay.style.position = 'fixed';
         overlay.style.top = '0';
         overlay.style.left = '0';
         overlay.style.backgroundColor = 'rgba(30, 30, 30, 0.4)';
