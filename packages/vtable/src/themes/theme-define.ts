@@ -242,6 +242,9 @@ export class TableTheme implements ITableThemeDefine {
         get textAlign(): TextAlignType {
           return defaultStyle.textAlign ?? 'left';
         },
+        get textStickBaseOnAlign(): boolean | undefined {
+          return defaultStyle.textStickBaseOnAlign;
+        },
         get textBaseline(): TextBaselineType {
           return defaultStyle.textBaseline ?? 'middle';
         },
@@ -997,6 +1000,9 @@ export class TableTheme implements ITableThemeDefine {
       },
       get textStick(): boolean | 'vertical' | 'horizontal' | undefined {
         return style.textStick;
+      },
+      get textStickBaseOnAlign(): boolean | undefined {
+        return style.textStickBaseOnAlign;
       },
       get marked(): MarkedPropertyDefine | undefined {
         return style.marked;

@@ -68,6 +68,9 @@ export function updateRow(
 
   scene.table._clearRowRangeHeightsMap();
 
+  // verify proxy row status
+  verifyProxyRowStatus(scene);
+
   // add cells
   let updateAfter: number;
   addRows.forEach(row => {
@@ -617,5 +620,42 @@ function setRowSeriesNumberCellNeedUpdate(startUpdateRow: number, scene: Scenegr
     for (let row = startUpdateRow; row <= scene.table.rowCount - 1; row++) {
       updateCell(0, row, scene.table, false);
     }
+  }
+}
+
+function verifyProxyRowStatus(scene: Scenegraph) {
+  const proxy = scene.proxy;
+  const { rowStart, rowEnd, rowLimit, totalRow } = proxy;
+
+  if (rowStart > rowEnd) {
+    // 当前维护行全部清空, 重置proxy row状态
+    proxy.rowStart = scene.table.columnHeaderLevelCount;
+    proxy.rowEnd = Math.min(totalRow, proxy.rowStart + rowLimit - 1);
+    proxy.currentRow = 0;
+
+    return;
+  }
+
+  // 当前维护行部分清空，并且rowEnd向下已经超出范围，rowStart 需要向上更新
+  if (rowStart + rowLimit - 1 > totalRow) {
+    const oldRowStart = proxy.rowStart;
+    const newRowStart = Math.max(scene.table.columnHeaderLevelCount, totalRow - rowLimit + 1);
+
+    if (newRowStart === oldRowStart) {
+      return;
+    }
+    proxy.rowStart = newRowStart;
+    proxy.rowEnd = Math.min(totalRow, newRowStart + rowLimit - 1);
+    proxy.currentRow = proxy.rowEnd + 1;
+
+    const addRowCount = oldRowStart - proxy.rowStart;
+
+    // 补充缺失的空行
+    for (let i = 0; i < addRowCount; i++) {
+      addRowCellGroup(proxy.rowStart + i, scene);
+    }
+
+    // 更新行内容
+    proxy.rowUpdatePos = proxy.rowStart;
   }
 }

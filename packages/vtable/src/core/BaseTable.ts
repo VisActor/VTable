@@ -3256,6 +3256,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
@@ -3277,13 +3279,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 结束拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来结束拖拽选择整列或者整行
    */
   endDragSelect() {
     this.stateManager.updateInteractionState(InteractionState.default);
-    this.stateManager.endSelectCells(false, false);
+    //上面方法dragSelectCol和startDragSelectCol方法中已经设置了select.selecting = false，所以这里不需要再调用endSelectCells方法
+    // this.stateManager.endSelectCells(false, false);
   }
 
   /**
@@ -3317,6 +3322,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整行
@@ -3338,6 +3345,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.options.select?.makeSelectCellVisible ?? true,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
 
   abstract isListTable(): boolean;
@@ -5027,5 +5036,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     return false;
+  }
+  /** 更新某个单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContent(col: number, row: number) {
+    this.scenegraph.updateCellContent(col, row);
+  }
+
+  /** 更新某个区域单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContentRange(startCol: number, startRow: number, endCol: number, endRow: number) {
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+  }
+
+  /** 更新某个区域单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContentRanges(ranges: CellRange[]) {
+    //ranges中每个range都调用updateCellContent
+    for (let i = 0; i < ranges.length; i++) {
+      const range = ranges[i];
+      this.updateCellContentRange(range.start.col, range.start.row, range.end.col, range.end.row);
+    }
   }
 }
