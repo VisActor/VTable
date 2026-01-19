@@ -1179,12 +1179,10 @@ export class Dataset {
         // 如果是平铺树结构 小计需要处理补充到rowKey中
         if (rowKey[0] === this.rowGrandTotalLabel) {
         } else if (
-          (
-            (this.totals?.row?.subTotalsDimensions &&
-             this.totals?.row?.subTotalsDimensions?.length >= 1 &&
-             this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey)) ||
-            this.totals?.row?.showSubTotalsOnTreeNode
-          ) &&
+          ((this.totals?.row?.subTotalsDimensions &&
+            this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+            this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey)) ||
+            this.totals?.row?.showSubTotalsOnTreeNode) &&
           rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
         ) {
           rowKey.push(this.rowSubTotalLabel);
@@ -1547,9 +1545,9 @@ export class Dataset {
       const colKey = flatColKey.split(this.stringJoinChar);
       if (
         (that.totals?.column?.subTotalsDimensions &&
-        that.totals?.column?.subTotalsDimensions?.length > 0 &&
-        (that.totals.column.showSubTotals !== false || that.totals.column.showSubTotalsOnTreeNode)) ||
-        (that.totals.column.showSubTotalsOnTreeNode && that.columns.length > 0)
+          that.totals?.column?.subTotalsDimensions?.length > 0 &&
+          (that.totals?.column?.showSubTotals !== false || that.totals?.column?.showSubTotalsOnTreeNode)) ||
+        (that.totals?.column?.showSubTotalsOnTreeNode && that.columns.length > 0)
       ) {
         // 确定要处理的列维度
         let colSubTotalDimensions = that.totals?.column?.subTotalsDimensions || [];
@@ -1713,9 +1711,9 @@ export class Dataset {
         Object.keys(that.tree[flatRowKey]).forEach(flatColKey => {
           if (
             (that.totals?.row?.subTotalsDimensions &&
-            that.totals?.row?.subTotalsDimensions?.length > 0 &&
-            (that.totals.row.showSubTotals !== false || that.totals.row.showSubTotalsOnTreeNode)) ||
-            (that.totals.row.showSubTotalsOnTreeNode && that.rows.length > 0)
+              that.totals?.row?.subTotalsDimensions?.length > 0 &&
+              (that.totals?.row?.showSubTotals !== false || that.totals?.row?.showSubTotalsOnTreeNode)) ||
+            (that.totals?.row?.showSubTotalsOnTreeNode && that.rows.length > 0)
           ) {
             // 确定要处理的行维度
             let rowSubTotalDimensions = that.totals?.row?.subTotalsDimensions || [];
