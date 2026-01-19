@@ -10,10 +10,6 @@ import {
   type WorkSheetEventMap,
   type WorkSheetActivatedEvent,
   type WorkSheetResizedEvent,
-  type SheetAddedEvent,
-  type SheetRemovedEvent,
-  type SheetRenamedEvent,
-  type SheetMovedEvent,
   type FormulaCalculateEvent,
   type FormulaErrorEvent,
   type FormulaChangeEvent,
@@ -113,53 +109,8 @@ export class WorkSheetEventManager {
     this.emit(WorkSheetEventType.RESIZED, event);
   }
 
-  /**
-   * 触发工作表添加事件
-   */
-  emitSheetAdded(sheetKey: string, sheetTitle: string, index: number): void {
-    const event: SheetAddedEvent = {
-      sheetKey,
-      sheetTitle,
-      index
-    };
-    this.emit(WorkSheetEventType.SHEET_ADDED, event);
-  }
-
-  /**
-   * 触发工作表移除事件
-   */
-  emitSheetRemoved(sheetKey: string, sheetTitle: string, index: number): void {
-    const event: SheetRemovedEvent = {
-      sheetKey,
-      sheetTitle,
-      index
-    };
-    this.emit(WorkSheetEventType.SHEET_REMOVED, event);
-  }
-
-  /**
-   * 触发工作表重命名事件
-   */
-  emitSheetRenamed(sheetKey: string, oldTitle: string, newTitle: string): void {
-    const event: SheetRenamedEvent = {
-      sheetKey,
-      oldTitle,
-      newTitle
-    };
-    this.emit(WorkSheetEventType.SHEET_RENAMED, event);
-  }
-
-  /**
-   * 触发工作表移动事件
-   */
-  emitSheetMoved(sheetKey: string, fromIndex: number, toIndex: number): void {
-    const event: SheetMovedEvent = {
-      sheetKey,
-      fromIndex,
-      toIndex
-    };
-    this.emit(WorkSheetEventType.SHEET_MOVED, event);
-  }
+  // 注意：工作表管理事件（SHEET_ADDED, SHEET_REMOVED, SHEET_RENAMED, SHEET_MOVED）
+  // 现在只在 SpreadSheet 层级处理，不在 WorkSheet 层级重复定义
 
   /**
    * 触发公式计算开始事件

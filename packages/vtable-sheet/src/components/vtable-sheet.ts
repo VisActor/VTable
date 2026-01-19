@@ -907,6 +907,13 @@ export default class VTableSheet {
   }
 
   /**
+   * 根据key获取Sheet实例
+   */
+  getWorkSheetByKey(sheetKey: string): WorkSheet | null {
+    return this.workSheetInstances.get(sheetKey) || null;
+  }
+
+  /**
    * 保存所有数据为配置
    */
   saveToConfig(): IVTableSheetOptions {

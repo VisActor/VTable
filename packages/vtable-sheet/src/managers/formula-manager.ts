@@ -483,7 +483,25 @@ export class FormulaManager implements IFormulaManager {
     formula?: string,
     error?: any
   ): void {
-    const worksheet = this.sheet.workSheetInstances.get(cell.sheet);
+    // Safely get the worksheet instance
+    let worksheet: any = null;
+
+    // Try to get worksheet using the public method if available
+    if (this.sheet && typeof this.sheet.getWorkSheetByKey === 'function') {
+      worksheet = this.sheet.getWorkSheetByKey(cell.sheet);
+    } else {
+      // Fallback: try to access the private property directly (for backwards compatibility in tests)
+      try {
+        const workSheetInstances = (this.sheet as any).workSheetInstances;
+        if (workSheetInstances && workSheetInstances.get) {
+          worksheet = workSheetInstances.get(cell.sheet);
+        }
+      } catch (e) {
+        // If we can't access the worksheet, just return silently
+        return;
+      }
+    }
+
     if (!worksheet || !worksheet.eventManager) {
       return;
     }

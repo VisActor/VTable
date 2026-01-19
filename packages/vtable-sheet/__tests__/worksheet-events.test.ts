@@ -232,55 +232,6 @@ describe('WorkSheetEventManager', () => {
     expect(eventManager.getListenerCount(WorkSheetEventType.ACTIVATED)).toBe(2);
   });
 
-  test('应该能触发工作表添加事件', () => {
-    const mockCallback = jest.fn();
-    eventManager.on(WorkSheetEventType.SHEET_ADDED, mockCallback);
-
-    eventManager.emitSheetAdded('new-sheet', 'New Sheet', 1);
-
-    expect(mockCallback).toHaveBeenCalledWith({
-      sheetKey: 'new-sheet',
-      sheetTitle: 'New Sheet',
-      index: 1
-    });
-  });
-
-  test('应该能触发工作表移除事件', () => {
-    const mockCallback = jest.fn();
-    eventManager.on(WorkSheetEventType.SHEET_REMOVED, mockCallback);
-
-    eventManager.emitSheetRemoved('removed-sheet', 'Removed Sheet', 2);
-
-    expect(mockCallback).toHaveBeenCalledWith({
-      sheetKey: 'removed-sheet',
-      sheetTitle: 'Removed Sheet',
-      index: 2
-    });
-  });
-
-  test('应该能触发工作表重命名事件', () => {
-    const mockCallback = jest.fn();
-    eventManager.on(WorkSheetEventType.SHEET_RENAMED, mockCallback);
-
-    eventManager.emitSheetRenamed('test-sheet', 'Old Title', 'New Title');
-
-    expect(mockCallback).toHaveBeenCalledWith({
-      sheetKey: 'test-sheet',
-      oldTitle: 'Old Title',
-      newTitle: 'New Title'
-    });
-  });
-
-  test('应该能触发工作表移动事件', () => {
-    const mockCallback = jest.fn();
-    eventManager.on(WorkSheetEventType.SHEET_MOVED, mockCallback);
-
-    eventManager.emitSheetMoved('moved-sheet', 1, 3);
-
-    expect(mockCallback).toHaveBeenCalledWith({
-      sheetKey: 'moved-sheet',
-      fromIndex: 1,
-      toIndex: 3
-    });
-  });
+  // 注意：工作表管理事件（SHEET_ADDED, SHEET_REMOVED, SHEET_RENAMED, SHEET_MOVED）
+  // 现在只在 SpreadSheet 层级处理，不在 WorkSheet 层级重复定义
 });

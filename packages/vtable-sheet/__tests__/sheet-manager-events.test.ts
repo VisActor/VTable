@@ -4,7 +4,7 @@
  */
 
 import SheetManager from '../src/managers/sheet-manager';
-import { WorkSheetEventType } from '../src/ts-types/spreadsheet-events';
+import { SpreadSheetEventType } from '../src/ts-types/spreadsheet-events';
 import type { ISheetDefine } from '../src/ts-types';
 
 describe('SheetManager 事件测试', () => {
@@ -17,7 +17,7 @@ describe('SheetManager 事件测试', () => {
   test('应该能触发工作表添加事件', () => {
     const mockCallback = jest.fn();
     const eventBus = sheetManager.getEventBus();
-    eventBus.on(WorkSheetEventType.SHEET_ADDED, mockCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_ADDED, mockCallback);
 
     const newSheet: ISheetDefine = {
       sheetKey: 'sheet1',
@@ -40,7 +40,7 @@ describe('SheetManager 事件测试', () => {
   test('应该能触发工作表移除事件', () => {
     const mockCallback = jest.fn();
     const eventBus = sheetManager.getEventBus();
-    eventBus.on(WorkSheetEventType.SHEET_REMOVED, mockCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_REMOVED, mockCallback);
 
     // 先添加一个工作表
     const sheet1: ISheetDefine = {
@@ -79,7 +79,7 @@ describe('SheetManager 事件测试', () => {
   test('应该能触发工作表重命名事件', () => {
     const mockCallback = jest.fn();
     const eventBus = sheetManager.getEventBus();
-    eventBus.on(WorkSheetEventType.SHEET_RENAMED, mockCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_RENAMED, mockCallback);
 
     // 添加工作表
     const sheet: ISheetDefine = {
@@ -105,7 +105,7 @@ describe('SheetManager 事件测试', () => {
   test('应该能触发工作表移动事件', () => {
     const mockCallback = jest.fn();
     const eventBus = sheetManager.getEventBus();
-    eventBus.on(WorkSheetEventType.SHEET_MOVED, mockCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_MOVED, mockCallback);
 
     // 添加三个工作表
     const sheet1: ISheetDefine = {
@@ -152,10 +152,10 @@ describe('SheetManager 事件测试', () => {
     const sheetMovedCallback = jest.fn();
 
     const eventBus = sheetManager.getEventBus();
-    eventBus.on(WorkSheetEventType.SHEET_ADDED, sheetAddedCallback);
-    eventBus.on(WorkSheetEventType.SHEET_REMOVED, sheetRemovedCallback);
-    eventBus.on(WorkSheetEventType.SHEET_RENAMED, sheetRenamedCallback);
-    eventBus.on(WorkSheetEventType.SHEET_MOVED, sheetMovedCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_ADDED, sheetAddedCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_REMOVED, sheetRemovedCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_RENAMED, sheetRenamedCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_MOVED, sheetMovedCallback);
 
     // 添加工作表
     const sheet1: ISheetDefine = {
@@ -196,7 +196,7 @@ describe('SheetManager 事件测试', () => {
     const mockCallback = jest.fn();
     const eventBus = sheetManager.getEventBus();
 
-    eventBus.on(WorkSheetEventType.SHEET_ADDED, mockCallback);
+    eventBus.on(SpreadSheetEventType.SHEET_ADDED, mockCallback);
 
     // 添加工作表（应该触发事件）
     const sheet: ISheetDefine = {
@@ -211,7 +211,7 @@ describe('SheetManager 事件测试', () => {
     expect(mockCallback).toHaveBeenCalledTimes(1);
 
     // 移除事件监听器
-    eventBus.off(WorkSheetEventType.SHEET_ADDED, mockCallback);
+    eventBus.off(SpreadSheetEventType.SHEET_ADDED, mockCallback);
 
     // 再次添加工作表（不应该触发事件）
     const sheet2: ISheetDefine = {
@@ -231,19 +231,19 @@ describe('SheetManager 事件测试', () => {
     const eventBus = sheetManager.getEventBus();
 
     // 注册各种事件监听器，记录事件顺序
-    eventBus.on(WorkSheetEventType.SHEET_ADDED, event => {
+    eventBus.on(SpreadSheetEventType.SHEET_ADDED, event => {
       events.push(`ADDED:${event.sheetKey}`);
     });
 
-    eventBus.on(WorkSheetEventType.SHEET_RENAMED, event => {
+    eventBus.on(SpreadSheetEventType.SHEET_RENAMED, event => {
       events.push(`RENAMED:${event.sheetKey}:${event.oldTitle}->${event.newTitle}`);
     });
 
-    eventBus.on(WorkSheetEventType.SHEET_MOVED, event => {
+    eventBus.on(SpreadSheetEventType.SHEET_MOVED, event => {
       events.push(`MOVED:${event.sheetKey}:${event.fromIndex}->${event.toIndex}`);
     });
 
-    eventBus.on(WorkSheetEventType.SHEET_REMOVED, event => {
+    eventBus.on(SpreadSheetEventType.SHEET_REMOVED, event => {
       events.push(`REMOVED:${event.sheetKey}`);
     });
 
