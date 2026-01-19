@@ -84,14 +84,16 @@ dataConfig: {
           subTotalsDimensions: ['province'],
           grandTotalLabel: '行总计',
           subTotalLabel: '小计',
-          showGrandTotalsOnTop: true //汇总值显示在上
+          showGrandTotalsOnTop: true, //汇总值显示在上
+          showSubTotalsOnTreeNode: false // 当在透视表中禁用小计时，此选项允许在折叠的树节点上显示聚合值。默认值为 false
         },
         column: {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['quarter'],
           grandTotalLabel: '列总计',
-          subTotalLabel: '小计'
+          subTotalLabel: '小计',
+          showSubTotalsOnTreeNode: false // 当在透视表中禁用小计时，此选项允许在折叠的树节点上显示聚合值。默认值为 false
         }
       }
     },
@@ -163,7 +165,7 @@ dataConfig: {
 
 通常情况下指标应该是 `number` 类型，这样内部才能进行计算。
 
-如果指标是字符串型或者 `null`，且需要在单元格中进行展示，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值; 或者在指标format函数中结合接口`getCellOriginRecord`获取到单元格对应的数据源条目，然后进行特殊处理。
+如果指标是字符串型或者 `null`，且需要在单元格中进行展示，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.NONE` 来显示数据源字段的原始值; 或者在指标 format 函数中结合接口`getCellOriginRecord`获取到单元格对应的数据源条目，然后进行特殊处理。
 
 如果用到了自定义渲染 `customLayout`，在 `customLayout` 函数中想获取单元格对应的所有数据 `records`，可以配置 `aggregationType` 为 `VTable.TYPES.AggregationType.RECORD`。
 
@@ -218,7 +220,7 @@ dataConfig: {
         {
           indicatorKey: '商品均价（注册聚合类）', //指标名称
           field: 'sales', //指标依据字段
-          aggregationType: 'avgPrice', //自己注册的聚合类型 
+          aggregationType: 'avgPrice', //自己注册的聚合类型
         }
       ]
 }
@@ -252,7 +254,7 @@ dataConfig:{
 }
 ```
 
-  其中该条数据 record 中 sales 指标是个非数值型的值，如果产品需求要将`"NULL"`直接显示到表格单元格中，那么可以设置聚合规则为`VTable.TYPES.AggregationType.NONE`，这样 VTable 的内部不会进行聚合计算，而是直接取`sales`字段值作为单元格展示值。
+其中该条数据 record 中 sales 指标是个非数值型的值，如果产品需求要将`"NULL"`直接显示到表格单元格中，那么可以设置聚合规则为`VTable.TYPES.AggregationType.NONE`，这样 VTable 的内部不会进行聚合计算，而是直接取`sales`字段值作为单元格展示值。
 
 2. AggregationType.RECORD 使用场景主要用于根据用户传入数据 record 匹配到所有数据，将其作为单元格的展示数据，用法场景如：需要搜集数据集作为迷你图展示，具体 demo 见：https://visactor.io/vtable/demo/cell-type/pivot-sparkline
 
@@ -315,20 +317,21 @@ const option={
         {
           indicatorKey: '商品均价（注册聚合类）', //指标名称
           field: 'sales', //指标依据字段
-          aggregationType: 'avgPrice', //自己注册的聚合类型 
+          aggregationType: 'avgPrice', //自己注册的聚合类型
         }
       ]
   }
 }
 ```
 
-VTable内部的几种聚合规则代码地址：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/ts-types/dataset/aggregation.ts，可予以参考！
+VTable 内部的几种聚合规则代码地址：https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/ts-types/dataset/aggregation.ts，可予以参考！
 
 其中聚合类型需要实现的几个方法分别为：
+
 - constructor：构造函数，用于初始化聚合器。
 - push：将数据记录添加到聚合器中，用于计算聚合值。
-- deleteRecord：从聚合器中删除记录，并更新聚合值，调用vtable的删除接口deleteRecords会调用该接口。
-- updateRecord：更新数据记录，并更新聚合值，调用接口updateRecords会调用该接口。
+- deleteRecord：从聚合器中删除记录，并更新聚合值，调用 vtable 的删除接口 deleteRecords 会调用该接口。
+- updateRecord：更新数据记录，并更新聚合值，调用接口 updateRecords 会调用该接口。
 - recalculate：重新计算聚合值，目前复制粘贴单元格值会调用该方法。
 - value：获取聚合值。
 - reset：重置聚合器。
