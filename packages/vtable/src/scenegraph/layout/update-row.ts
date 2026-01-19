@@ -639,11 +639,16 @@ function verifyProxyRowStatus(scene: Scenegraph) {
   // 当前维护行部分清空，并且rowEnd向下已经超出范围，rowStart 需要向上更新
   if (rowStart + rowLimit - 1 > totalRow) {
     const oldRowStart = proxy.rowStart;
-    proxy.rowStart = Math.max(scene.table.columnHeaderLevelCount, totalRow - rowLimit + 1);
-    proxy.rowEnd = Math.min(totalRow, proxy.rowStart + rowLimit - 1);
+    const newRowStart = Math.max(scene.table.columnHeaderLevelCount, totalRow - rowLimit + 1);
+
+    if (newRowStart === oldRowStart) {
+      return;
+    }
+    proxy.rowStart = newRowStart;
+    proxy.rowEnd = Math.min(totalRow, newRowStart + rowLimit - 1);
     proxy.currentRow = proxy.rowEnd + 1;
 
-    const addRowCount = oldRowStart - proxy.rowStart + 1;
+    const addRowCount = oldRowStart - proxy.rowStart;
 
     // 补充缺失的空行
     for (let i = 0; i < addRowCount; i++) {
