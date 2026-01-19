@@ -1,3 +1,4 @@
+import { isValid } from '@visactor/vutils';
 import type { ListTable } from '../..';
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
@@ -160,7 +161,7 @@ export function updateSelectPosition(
       //   // 更新select border
       //   scenegraph.updateCellSelectBorder(cellPos);
     } else {
-      let extendSelectRange = true;
+      let extendSelectRange = isValid(skipBodyMerge) ? !skipBodyMerge : true;
       // 单选或多选开始
       if (cellPos.col !== -1 && cellPos.row !== -1 && !enableCtrlSelectMode) {
         state.select.ranges = [];
@@ -349,7 +350,7 @@ export function updateSelectPosition(
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
     !table.stateManager.isResizeCol()
   ) {
-    let extendSelectRange = true;
+    let extendSelectRange = isValid(skipBodyMerge) ? !skipBodyMerge : true;
     // 可能有cellPosStart从-1开始grabing的情况
     if (cellPos.col === -1) {
       cellPos.col = col;
