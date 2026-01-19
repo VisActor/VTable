@@ -4100,7 +4100,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedStateFilter) {
             return (this._table as PivotChart).options.chartDimensionLinkage.selectedStateFilter(datum);
           }
-          if ((this._table as PivotChart)._selectedDataMode === 'click') {
+          if (
+            (this._table as PivotChart)._selectedDataMode === 'click' ||
+            (this._table as PivotChart)._selectedDataMode === 'multiple-select'
+          ) {
             return select_filter(datum);
           }
           return false;
@@ -4111,7 +4114,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedReverseStateFilter) {
             return (this._table as PivotChart).options.chartDimensionLinkage.selectedReverseStateFilter(datum);
           }
-          if ((this._table as PivotChart)._selectedDataMode === 'click') {
+          if (
+            (this._table as PivotChart)._selectedDataMode === 'click' ||
+            (this._table as PivotChart)._selectedDataMode === 'multiple-select'
+          ) {
             return selected_reverse(datum);
           }
           return false;
@@ -4144,14 +4150,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return state;
   }
   updateDataStateToChartInstance(activeChartInstance?: any): void {
-    if (activeChartInstance?.getSpec().select?.enable !== false) {
+    if (
+      activeChartInstance?.getSpec().select?.enable !== false ||
+      activeChartInstance?.getSpec().interactions.find((interaction: any) => interaction.type === 'element-select')
+    ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
       }
       const state = this._generateChartState();
       this._indicators.forEach((_indicatorObject: IndicatorData) => {
         const chartInstance = _indicatorObject.chartInstance;
-        if (_indicatorObject.chartSpec.select?.enable !== false) {
+        if (
+          _indicatorObject.chartSpec.select?.enable !== false ||
+          _indicatorObject.chartSpec.interactions.find((interaction: any) => interaction.type === 'element-select')
+        ) {
           chartInstance.updateState(state);
         }
       });
@@ -4159,7 +4171,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
   }
   updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
-    if (activeChartInstance?.getSpec().select?.enable !== false) {
+    if (
+      activeChartInstance?.getSpec().select?.enable !== false ||
+      activeChartInstance?.getSpec().interactions.find((interaction: any) => interaction.type === 'element-select')
+    ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
       }

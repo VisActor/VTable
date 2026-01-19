@@ -371,7 +371,11 @@ export function updateChartData(scenegraph: Scenegraph) {
   updateTableAxes(scenegraph.bottomFrozenGroup, scenegraph.table);
 }
 /** 组织图表数据状态_selectedDataItemsInChart 更新选中的图表图元状态 */
-export function updateChartState(scenegraph: Scenegraph, datum: any, selectedDataMode: 'click' | 'brush') {
+export function updateChartState(
+  scenegraph: Scenegraph,
+  datum: any,
+  selectedDataMode: 'click' | 'brush' | 'multiple-select'
+) {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
     (table as PivotChart)._selectedDataMode = selectedDataMode;
@@ -409,7 +413,17 @@ export function updateChartState(scenegraph: Scenegraph, datum: any, selectedDat
       newSelectedDataItemsInChart.push(selectedState);
     }
     //避免无效的更新
-    if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
+    if (selectedDataMode === 'multiple-select') {
+      if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
+        (table as PivotChart)._selectedDataItemsInChart = [];
+      } else {
+        (table as PivotChart)._selectedDataItemsInChart.push(...newSelectedDataItemsInChart);
+      }
+      (table.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataStateToChartInstance();
+      // 清楚chart缓存图片
+      clearChartCacheImage(scenegraph);
+      table.scenegraph.updateNextFrame();
+    } else if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
       (table as PivotChart)._selectedDataItemsInChart = newSelectedDataItemsInChart;
       (table.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataStateToChartInstance();
       // 清楚chart缓存图片

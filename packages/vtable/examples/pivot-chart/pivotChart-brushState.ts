@@ -159,6 +159,14 @@ export function createTable() {
             }
           }
         },
+        interactions: [
+          {
+            type: 'element-select',
+            isMultiple: true,
+            triggerOff: 'empty'
+          }
+        ],
+        select: { enable: false },
         theme: {
           // axis: {
           //   label: {
@@ -9562,8 +9570,12 @@ export function createTable() {
         padding: 0
       }
     },
-    theme
-
+    theme,
+    customConfig: {
+      shouldTreatAsClickOnTable: (e: MouseEvent) => {
+        return true;
+      }
+    }
     // select: {
     //   disableSelect: true
     // }

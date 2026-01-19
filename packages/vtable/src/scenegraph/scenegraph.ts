@@ -879,7 +879,8 @@ export class Scenegraph {
     updateChartSizeForResizeRowHeight(this, row);
   }
   /** 更新图表的高亮状态 点击图元或者框选brush选中图元 一般有高亮状态*/
-  updateChartState(datum: any, selectedDataMode: 'click' | 'brush') {
+  updateChartState(datum: any, selectedDataMode: 'click' | 'brush' | 'multiple-select') {
+    console.trace('-----updateChartState', datum, selectedDataMode);
     if (this.table.isPivotChart()) {
       if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
         const brushingChartInstance = getBrushingChartInstance();

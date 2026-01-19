@@ -239,7 +239,17 @@ export class Chart extends Rect {
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
       if (this.attribute.spec.select?.enable === false) {
-        table.scenegraph.updateChartState(null, undefined);
+        if (
+          this.attribute.spec.interactions.find(
+            (interaction: any) => interaction.type === 'element-select' && interaction.isMultiple
+          )
+        ) {
+          table.scenegraph.updateChartState(params?.datum, 'multiple-select');
+        } else {
+          table.scenegraph.updateChartState(null, undefined);
+        }
+      } else if (this.attribute.spec.select?.enable === true && this.attribute.spec.select?.mode === 'multiple') {
+        table.scenegraph.updateChartState(params?.datum, 'multiple-select');
       } else if (Chart.temp) {
         // const brushingChartInstance = getBrushingChartInstance();
         // if (brushingChartInstance && brushingChartInstance !== this.activeChartInstance) {
