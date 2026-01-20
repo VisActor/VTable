@@ -1,3 +1,16 @@
+# v1.18.8
+
+2026-01-20
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: update vrender into 0.22.16
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.22.10...v1.18.8
+
+[more detail about v1.18.8](https://github.com/VisActor/VTable/releases/tag/v1.18.8)
+
 # v1.22.11
 
 2026-01-20
