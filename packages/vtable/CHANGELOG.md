@@ -38,9 +38,6 @@ Mon, 05 Jan 2026 03:31:14 GMT
 - fix: prepareEdit logic occor some bug
 
 
-- feat: add cancelEditCell method to cancel editing without saving changes
-
-
 - fix: rose pivotchart show indicator title problem
 
 
