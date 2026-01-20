@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: remove inversify of vrender\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "dingling112@gmail.com"
+}
