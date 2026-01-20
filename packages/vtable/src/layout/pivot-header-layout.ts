@@ -2353,7 +2353,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
-      colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
+      // 如果value为null且没有indicatorKey时保持value为null（区分null和空字符串，防止单元格数据匹配不对）
+      colHeaderPath.value =
+        colHeader.value ??
+        (colHeader.indicatorKey
+          ? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? ''
+          : colHeader.value);
       colHeaderPath.virtual = colHeader.virtual;
       colHeaderPath.role = colHeader.role;
       headerPaths.colHeaderPaths!.push(colHeaderPath);

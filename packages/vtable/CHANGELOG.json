@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.11",
+      "tag": "@visactor/vtable_v1.22.11",
+      "date": "Mon, 19 Jan 2026 11:52:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: when has merge cells to delete column #4848\n\n"
+          },
+          {
+            "comment": "refactor: update cell merge delete records logic #4848\n\n"
+          },
+          {
+            "comment": "fix: prepareEdit occor error #4871\n\n"
+          },
+          {
+            "comment": "fix: paste to table performance when has prepared edit cell #4912\n\n"
+          },
+          {
+            "comment": "fix: distinguish null and empty string values in column dimensions\n\n"
+          },
+          {
+            "comment": "fix(scenegraph): reset proxy row status when start exceeds end"
+          },
+          {
+            "comment": "fix: time unit computeCountToTimeScale month exactitude #4909\n\n"
+          },
+          {
+            "comment": "fix: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.10",
       "tag": "@visactor/vtable_v1.22.10",
       "date": "Mon, 05 Jan 2026 03:31:14 GMT",

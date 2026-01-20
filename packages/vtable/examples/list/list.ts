@@ -304,7 +304,7 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
   window.tableInstance = tableInstance;
-
+  tableInstance.mergeCells(3, 4, 5, 4);
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });

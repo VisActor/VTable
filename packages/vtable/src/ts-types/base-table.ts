@@ -1075,6 +1075,9 @@ export interface BaseTableAPI {
   _getComputedFrozenColCount: (frozenColCount: number) => number;
   isColumnSelected: (col: number) => boolean;
   isRowSelected: (row: number) => boolean;
+  updateCellContentRanges: (ranges: CellRange[]) => void;
+  updateCellContent: (col: number, row: number) => void;
+  updateCellContentRange: (startCol: number, startRow: number, endCol: number, endRow: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
