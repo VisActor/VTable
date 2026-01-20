@@ -58,7 +58,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
-    "@visactor/vchart": "  2.0.13-alpha.9",
+    "@visactor/vchart": "2.0.13-alpha.10",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

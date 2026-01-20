@@ -781,7 +781,7 @@ export function createTable() {
       listenBrushChange: true,
       brushChangeDelay: 100,
       clearChartState() {
-        // console.log('clearChartState');
+        console.log('----clearChartState');
         window.xValues = [];
         tableInstance.enableTooltipToAllChartInstances();
       },
@@ -817,6 +817,7 @@ export function createTable() {
   // }, 1000)
   // });
   tableInstance.onVChartEvent('brushStart', params => {
+    console.log('----brushStart');
     tableInstance.disableTooltipToAllChartInstances();
   });
   tableInstance.onVChartEvent('brushChange', params => {

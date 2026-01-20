@@ -1732,11 +1732,23 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   }
   /** 暂时关闭透视图的联动效果中的tooltip的显示 */
   disableTooltipToAllChartInstances() {
+    const hoverCell = this.stateManager.hover.cellPos;
+    if (hoverCell.col !== -1 && hoverCell.row !== -1) {
+      const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      chartNode.activeChartInstance?.disableTooltip(true);
+    }
     //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     disableTooltipToAllChartInstances();
   }
   /** 恢复透视图的联动效果中的tooltip的显示 */
   enableTooltipToAllChartInstances() {
+    const hoverCell = this.stateManager.hover.cellPos;
+    if (hoverCell.col !== -1 && hoverCell.row !== -1) {
+      const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      chartNode.activeChartInstance?.disableTooltip(false);
+    }
     //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     enableTooltipToAllChartInstances();
   }

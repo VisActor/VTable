@@ -7,12 +7,13 @@ import type { Scenegraph } from '../scenegraph';
 /** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
 let brushingChartInstance: any;
 let brushingChartInstanceCellPos: { col: number; row: number } = { col: -1, row: -1 };
-// window.brushingChartInstance = brushingChartInstance;
 export function setBrushingChartInstance(chartInstance: any, col: number, row: number) {
   brushingChartInstance = chartInstance;
   brushingChartInstanceCellPos = { col, row };
-
-  // window.brushingChartInstance = brushingChartInstance;
+}
+export function clearBrushingChartInstance() {
+  brushingChartInstance = undefined;
+  brushingChartInstanceCellPos = { col: -1, row: -1 };
 }
 export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
   enableTooltipToAllChartInstances();
@@ -35,8 +36,6 @@ export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
   }
   brushingChartInstance = undefined;
   brushingChartInstanceCellPos = { col: -1, row: -1 };
-
-  // window.brushingChartInstance = brushingChartInstance;
 }
 export function getBrushingChartInstance() {
   return brushingChartInstance;

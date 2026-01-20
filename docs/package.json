@@ -22,7 +22,7 @@
     "@visactor/vtable-search": "workspace:*",
     "@visactor/vtable-sheet": "workspace:*",
     "buble": "^0.20.0",
-    "@visactor/vchart": "  2.0.13-alpha.9",
+    "@visactor/vchart": "2.0.13-alpha.10",
     "markdown-it": "^13.0.0",
     "highlight.js": "^11.8.0",
     "axios": "^1.4.0",
