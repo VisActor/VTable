@@ -44,7 +44,8 @@ import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
 import { restoreMeasureText, setCustomAlphabetCharSet, textMeasure } from './scenegraph/utils/text-measure';
 import type { BaseTableAPI } from './ts-types/base-table';
-
+import type { ListTableAPI } from './ts-types/table-engine';
+import type { PivotTableAPI } from './ts-types/table-engine';
 // import { container, loadCanvasPicker } from '@src/vrender';
 // loadCanvasPicker(container);
 
@@ -72,6 +73,8 @@ export {
   ListTable,
   ListTableSimple,
   BaseTableAPI,
+  ListTableAPI,
+  PivotTableAPI,
   ListTableConstructorOptions,
   PivotTable,
   PivotTableSimple,

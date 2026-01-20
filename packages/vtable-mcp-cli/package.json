@@ -1,0 +1,63 @@
+{
+  "name": "@visactor/vtable-mcp-cli",
+  "version": "1.0.0",
+  "description": "MCP CLI for VTable - enables AI to control VTable through Model Context Protocol",
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
+  "bin": {
+    "vtable-mcp": "./dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bundle --clean",
+    "validate": "node scripts/validate.js",
+    "test:mcp:stdio": "node scripts/mcp-smoke-stdio.js",
+    "test:mcp:http": "node scripts/mcp-smoke-http.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "vtable",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "cursor",
+    "claude"
+  ],
+  "dependencies": {
+    "@visactor/vtable-mcp": "workspace:*"
+  },
+  "devDependencies": {
+    "@internal/bundler": "workspace:*",
+    "@internal/eslint-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "@types/node": "*",
+    "@typescript-eslint/eslint-plugin": "5.30.0",
+    "@typescript-eslint/parser": "5.30.0",
+    "eslint": "~8.18.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "6.0.0",
+    "prettier": "^2.8.8",
+    "typescript": "4.9.5"
+  },
+  "unpkg": "latest",
+  "unpkgFiles": [
+    "dist/vtable-mcp-cli.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
+}
