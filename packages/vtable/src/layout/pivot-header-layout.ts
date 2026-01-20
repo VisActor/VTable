@@ -4157,7 +4157,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   updateDataStateToChartInstance(activeChartInstance?: any): void {
     if (
       activeChartInstance?.getSpec().select?.enable !== false ||
-      activeChartInstance?.getSpec().interactions.find((interaction: any) => interaction.type === 'element-select')
+      activeChartInstance?.getSpec().interactions?.find((interaction: any) => interaction.type === 'element-select')
     ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
@@ -4167,7 +4167,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         const chartInstance = _indicatorObject.chartInstance;
         if (
           _indicatorObject.chartSpec.select?.enable !== false ||
-          _indicatorObject.chartSpec.interactions.find((interaction: any) => interaction.type === 'element-select')
+          _indicatorObject.chartSpec.interactions?.find((interaction: any) => interaction.type === 'element-select')
         ) {
           chartInstance.updateState(state);
         }
@@ -4178,7 +4178,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
     if (
       activeChartInstance?.getSpec().select?.enable !== false ||
-      activeChartInstance?.getSpec().interactions.find((interaction: any) => interaction.type === 'element-select')
+      activeChartInstance?.getSpec().interactions?.find((interaction: any) => interaction.type === 'element-select')
     ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();

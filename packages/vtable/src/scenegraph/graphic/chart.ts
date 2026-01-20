@@ -240,7 +240,7 @@ export class Chart extends Rect {
     this.activeChartInstance.on('click', (params: any) => {
       if (this.attribute.spec.select?.enable === false) {
         if (
-          this.attribute.spec.interactions.find(
+          this.attribute.spec.interactions?.find(
             (interaction: any) => interaction.type === 'element-select' && interaction.isMultiple
           )
         ) {
