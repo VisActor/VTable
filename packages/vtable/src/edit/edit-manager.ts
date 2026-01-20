@@ -114,20 +114,21 @@ export class EditManager {
           referencePosition.rect.height = rect.height + 1; // 这里的1应该根据单元格的borderWidth来定;
         }
         const editor = (this.table as ListTableAPI).getEditor(col, row);
-        setTimeout(() => {
-          // 为什么要加延时：因为这个SELECTED_CHANGED事件是pointerdown过来的，
-          // 如果这里不加延时，会导致鼠标抬起pointerup的时候将table.getElement()元素设置成焦点，从而导致编辑器失去焦点（因为prepareEdit只是将editor的element设置pointerEvents为none）
-          if (this.editingEditor !== editor) {
-            // 判断当前编辑器如果是当前需要准备的编辑器，则不进行准备编辑。这个是为了container-dom文件moveEditCellOnArrowKeys前后逻辑问题，前面有个selectCell会触发这个事件，后面有startEdit了，所以这个prepare就没必要了，触发的话反而有问题
-            editor.prepareEdit?.({
-              referencePosition,
-              container: this.table.getElement(),
-              table: this.table,
-              col,
-              row
-            });
-          }
-        }, 10);
+        editor &&
+          setTimeout(() => {
+            // 为什么要加延时：因为这个SELECTED_CHANGED事件是pointerdown过来的，
+            // 如果这里不加延时，会导致鼠标抬起pointerup的时候将table.getElement()元素设置成焦点，从而导致编辑器失去焦点（因为prepareEdit只是将editor的element设置pointerEvents为none）
+            if (editor && this.editingEditor !== editor) {
+              // 判断当前编辑器如果是当前需要准备的编辑器，则不进行准备编辑。这个是为了container-dom文件moveEditCellOnArrowKeys前后逻辑问题，前面有个selectCell会触发这个事件，后面有startEdit了，所以这个prepare就没必要了，触发的话反而有问题
+              (editor as any).prepareEdit?.({
+                referencePosition,
+                container: this.table.getElement(),
+                table: this.table,
+                col,
+                row
+              });
+            }
+          }, 10);
       }
     });
     this.listenersId.push(doubleClickEventId, clickEventId, selectedChangedEventId);
@@ -148,7 +149,7 @@ export class EditManager {
     }
     const editor = (this.table as ListTableAPI).getEditor(col, row);
     if (editor) {
-      editElement && editor.setElement(editElement);
+      editElement && (editor as any).setElement?.(editElement);
       // //自定义内容单元格不允许编辑
       // if (this.table.getCustomRender(col, row) || this.table.getCustomLayout(col, row)) {
       //   console.warn("VTable Warn: cell has config custom render or layout, can't be edited");
