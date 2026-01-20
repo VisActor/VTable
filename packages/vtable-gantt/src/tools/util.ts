@@ -677,6 +677,7 @@ export function computeCountToTimeScale(
 
   let difference: number;
   const adjusted_date = new Date(date.getTime() + diffMS);
+
   switch (timeScale) {
     case 'second':
       difference = (adjusted_date.getTime() - startDate.getTime()) / msInSecond;
@@ -694,12 +695,15 @@ export function computeCountToTimeScale(
       difference = (adjusted_date.getTime() - startDate.getTime()) / msInWeek;
       break;
     case 'month':
+      const startDaysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+      const adjustedDaysInMonth = new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate();
       difference =
         (adjusted_date.getFullYear() - startDate.getFullYear()) * 12 +
         (adjusted_date.getMonth() - startDate.getMonth());
-      difference +=
-        (adjusted_date.getDate() - startDate.getDate()) /
-        new Date(adjusted_date.getFullYear(), adjusted_date.getMonth() + 1, 0).getDate();
+
+      // Calculate fractional difference by normalizing day progress within each specific month
+      // This handles variable month lengths (28/29/30/31 days) correctly
+      difference += adjusted_date.getDate() / adjustedDaysInMonth - startDate.getDate() / startDaysInMonth;
       break;
     case 'quarter':
       difference =
