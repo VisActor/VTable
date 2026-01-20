@@ -1,3 +1,30 @@
+# v1.22.11
+
+2026-01-20
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: prepareEdit occor error [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: paste to table performance when has prepared edit cell [#4912](https://github.com/VisActor/VTable/issues/4912)
+- **@visactor/vtable**: distinguish null and empty string values in column dimensions
+- **scenegraph**: reset proxy row status when start exceeds end
+- **@visactor/vtable**: time unit computeCountToTimeScale month exactitude [#4909](https://github.com/VisActor/VTable/issues/4909)
+- **@visactor/vtable**: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add showSubTotalsOnTreeNode to dataConfig [#4850](https://github.com/VisActor/VTable/issues/4850)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when has merge cells to delete column [#4848](https://github.com/VisActor/VTable/issues/4848)
+- **@visactor/vtable**: update cell merge delete records logic [#4848](https://github.com/VisActor/VTable/issues/4848)
+
+
+
+[more detail about v1.22.11](https://github.com/VisActor/VTable/releases/tag/v1.22.11)
+
 # v1.22.10
 
 2026-01-05
