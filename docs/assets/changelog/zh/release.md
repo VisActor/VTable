@@ -5,21 +5,21 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: prepareEdit occor error [#4871](https://github.com/VisActor/VTable/issues/4871)
-- **@visactor/vtable**: paste to table performance when has prepared edit cell [#4912](https://github.com/VisActor/VTable/issues/4912)
-- **@visactor/vtable**: distinguish null and empty string values in column dimensions
-- **scenegraph**: reset proxy row status when start exceeds end
-- **@visactor/vtable**: time unit computeCountToTimeScale month exactitude [#4909](https://github.com/VisActor/VTable/issues/4909)
-- **@visactor/vtable**: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题
+- **@visactor/vtable**: 修复prepareEdit 代码运行报错问题 [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: 修复粘贴到表格时性能问题 [#4912](https://github.com/VisActor/VTable/issues/4912)
+- **@visactor/vtable**: 修复透视图列维度中区分空值和空字符串值问题
+- **scenegraph**: 修复开始超出结束时重置代理行状态问题
+- **@visactor/vtable**: 修复时间单位computeCountToTimeScale月精确度问题 [#4909](https://github.com/VisActor/VTable/issues/4909)
+- **@visactor/vtable**: 修复主题配置theme.headerStyle.textStickBaseOnAlign不生效问题
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add showSubTotalsOnTreeNode to dataConfig [#4850](https://github.com/VisActor/VTable/issues/4850)
+- **@visactor/vtable**: 新增showSubTotalsOnTreeNode 到 dataConfig配置 [#4850](https://github.com/VisActor/VTable/issues/4850)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: when has merge cells to delete column [#4848](https://github.com/VisActor/VTable/issues/4848)
-- **@visactor/vtable**: update cell merge delete records logic [#4848](https://github.com/VisActor/VTable/issues/4848)
+- **@visactor/vtable**: 修复当有合并单元格时删除列的问题 [#4848](https://github.com/VisActor/VTable/issues/4848)
+- **@visactor/vtable**: 修复单元格合并删除记录逻辑问题 [#4848](https://github.com/VisActor/VTable/issues/4848)
 
 
 
