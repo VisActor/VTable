@@ -1739,7 +1739,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       chartNode.activeChartInstance?.disableTooltip(true);
     }
     //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
-    disableTooltipToAllChartInstances();
+    disableTooltipToAllChartInstances(this.scenegraph);
   }
   /** 恢复透视图的联动效果中的tooltip的显示 */
   enableTooltipToAllChartInstances() {
@@ -1750,6 +1750,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       chartNode.activeChartInstance?.disableTooltip(false);
     }
     //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
-    enableTooltipToAllChartInstances();
+    enableTooltipToAllChartInstances(this.scenegraph);
   }
 }

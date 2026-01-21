@@ -4,20 +4,20 @@ import type { Chart } from './chart';
 import type { PivotChartConstructorOptions } from '../../ts-types/table-engine';
 import type { Scenegraph } from '../scenegraph';
 
-/** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
-let brushingChartInstance: any;
-let brushingChartInstanceCellPos: { col: number; row: number } = { col: -1, row: -1 };
-export function setBrushingChartInstance(chartInstance: any, col: number, row: number) {
-  brushingChartInstance = chartInstance;
-  brushingChartInstanceCellPos = { col, row };
+export function setBrushingChartInstance(chartInstance: any, col: number, row: number, scenegraph: Scenegraph) {
+  scenegraph.brushingChartInstance = chartInstance;
+  scenegraph.brushingChartInstanceCellPos = { col, row };
 }
-export function clearBrushingChartInstance() {
-  brushingChartInstance = undefined;
-  brushingChartInstanceCellPos = { col: -1, row: -1 };
+export function clearBrushingChartInstance(scenegraph: Scenegraph) {
+  scenegraph.brushingChartInstance = undefined;
+  scenegraph.brushingChartInstanceCellPos = { col: -1, row: -1 };
 }
 export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
-  enableTooltipToAllChartInstances();
-  const cellGroup = scenegraph.getCell(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row);
+  enableTooltipToAllChartInstances(scenegraph);
+  const cellGroup = scenegraph.getCell(
+    scenegraph.brushingChartInstanceCellPos.col,
+    scenegraph.brushingChartInstanceCellPos.row
+  );
   if ((cellGroup?.firstChild as any)?.deactivate) {
     (cellGroup?.firstChild as any)?.deactivate?.(scenegraph.table, {
       forceRelease: true,
@@ -28,27 +28,27 @@ export function clearAndReleaseBrushingChartInstance(scenegraph: Scenegraph) {
     });
   }
   //将这个单元格的chart引用从chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中删除
-  if (isValid(chartInstanceListColumnByColumnDirection[brushingChartInstanceCellPos.col])) {
-    delete chartInstanceListColumnByColumnDirection[brushingChartInstanceCellPos.col][brushingChartInstanceCellPos.row];
+  if (isValid(scenegraph.chartInstanceListColumnByColumnDirection[scenegraph.brushingChartInstanceCellPos.col])) {
+    delete scenegraph.chartInstanceListColumnByColumnDirection[scenegraph.brushingChartInstanceCellPos.col][
+      scenegraph.brushingChartInstanceCellPos.row
+    ];
   }
-  if (isValid(chartInstanceListRowByRowDirection[brushingChartInstanceCellPos.row])) {
-    delete chartInstanceListRowByRowDirection[brushingChartInstanceCellPos.row][brushingChartInstanceCellPos.col];
+  if (isValid(scenegraph.chartInstanceListRowByRowDirection[scenegraph.brushingChartInstanceCellPos.row])) {
+    delete scenegraph.chartInstanceListRowByRowDirection[scenegraph.brushingChartInstanceCellPos.row][
+      scenegraph.brushingChartInstanceCellPos.col
+    ];
   }
-  brushingChartInstance = undefined;
-  brushingChartInstanceCellPos = { col: -1, row: -1 };
+  scenegraph.brushingChartInstance = undefined;
+  scenegraph.brushingChartInstanceCellPos = { col: -1, row: -1 };
 }
-export function getBrushingChartInstance() {
-  return brushingChartInstance;
+export function getBrushingChartInstance(scenegraph: Scenegraph) {
+  return scenegraph.brushingChartInstance;
 }
-export function getBrushingChartInstanceCellPos() {
-  return brushingChartInstanceCellPos;
+export function getBrushingChartInstanceCellPos(scenegraph: Scenegraph) {
+  return scenegraph.brushingChartInstanceCellPos;
 }
 //存储可视区域内鼠标hover到的该列的图表实例，key为列号做个缓存
-export const chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>> = {};
-export const chartInstanceListRowByRowDirection: Record<number, Record<number, any>> = {};
-const delayRunDimensionHoverTimerForColumnDirection: any[] = [];
-const delayRunDimensionHoverTimerForRowDirection: any[] = [];
-const delayRunDimensionHoverTimerForViewRange: any[] = [];
+// 这些全局变量已经迁移到Scenegraph类中，现在通过scenegraph参数访问
 //临时存储 用于调试
 // window.chartInstanceListColumnByColumnDirection = chartInstanceListColumnByColumnDirection;
 // window.chartInstanceListRowByRowDirection = chartInstanceListRowByRowDirection;
@@ -66,10 +66,11 @@ export function generateChartInstanceListByColumnDirection(
   hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
+  const scenegraph = table.scenegraph;
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimerForColumnDirection();
-  if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
-    chartInstanceListColumnByColumnDirection[col] = {};
+  clearDelayRunDimensionHoverTimerForColumnDirection(scenegraph);
+  if (!isValid(scenegraph.chartInstanceListColumnByColumnDirection[col])) {
+    scenegraph.chartInstanceListColumnByColumnDirection[col] = {};
   }
   const { rowStart } = table.getBodyVisibleRowRange();
   let rowEnd = table.getBodyVisibleRowRange().rowEnd;
@@ -79,20 +80,20 @@ export function generateChartInstanceListByColumnDirection(
     const cellGroup = table.scenegraph.getCell(col, i);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
 
-    if (chartInstanceListColumnByColumnDirection[col][i]) {
+    if (scenegraph.chartInstanceListColumnByColumnDirection[col][i]) {
     } else if (isValid(chartNode)) {
       chartNode.addUpdateShapeAndBoundsTag();
       if (chartNode.activeChartInstance) {
-        chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
+        scenegraph.chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
       } else {
         chartNode.activate(table);
-        chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
+        scenegraph.chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
       }
     }
 
     const timer = setTimeout(() => {
       // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
-      if (chartInstanceListColumnByColumnDirection[col]?.[i]) {
+      if (scenegraph.chartInstanceListColumnByColumnDirection[col]?.[i]) {
         const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
         let isShowTooltip = !isScatter;
         if (!isScatter && typeof chartDimensionLinkage === 'object') {
@@ -110,7 +111,7 @@ export function generateChartInstanceListByColumnDirection(
         // );
         if (isScatter) {
           if (table.stateManager.hover.cellPos.col !== col || table.stateManager.hover.cellPos.row !== i) {
-            chartInstanceListColumnByColumnDirection[col][i].showCrosshair?.((axis: any) => {
+            scenegraph.chartInstanceListColumnByColumnDirection[col][i].showCrosshair?.((axis: any) => {
               // console.log('showCrosshair', axis.layoutOrient, dimensionValueOrXValue);
               if (axis.layoutOrient === 'left') {
                 return positionValueOrYValue;
@@ -126,9 +127,9 @@ export function generateChartInstanceListByColumnDirection(
           const absolutePositionTop = Math.max(bodyBoundryTop, table.getCellRelativeRect(col, i).top);
           if (hideTooltip) {
             if (table.stateManager.hover.cellPos.col !== col || table.stateManager.hover.cellPos.row !== i) {
-              chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
+              scenegraph.chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
             }
-            chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
+            scenegraph.chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
               tooltip: false,
               showTooltipOption: {
                 x: canvasXY.x - cellBoundry.left,
@@ -137,7 +138,7 @@ export function generateChartInstanceListByColumnDirection(
               }
             });
           } else {
-            chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
+            scenegraph.chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
               tooltip: isShowTooltip,
               showTooltipOption: {
                 x: canvasXY.x - cellBoundry.left,
@@ -150,7 +151,7 @@ export function generateChartInstanceListByColumnDirection(
       }
     }, 0);
 
-    delayRunDimensionHoverTimerForColumnDirection.push(timer);
+    scenegraph.delayRunDimensionHoverTimerForColumnDirection.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
@@ -169,10 +170,11 @@ export function generateChartInstanceListByRowDirection(
   hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
+  const scenegraph = table.scenegraph;
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimerForRowDirection();
-  if (!isValid(chartInstanceListRowByRowDirection[row])) {
-    chartInstanceListRowByRowDirection[row] = {};
+  clearDelayRunDimensionHoverTimerForRowDirection(scenegraph);
+  if (!isValid(scenegraph.chartInstanceListRowByRowDirection[row])) {
+    scenegraph.chartInstanceListRowByRowDirection[row] = {};
   }
   const { colStart } = table.getBodyVisibleColRange();
   let colEnd = table.getBodyVisibleColRange().colEnd;
@@ -181,19 +183,19 @@ export function generateChartInstanceListByRowDirection(
     const cellGroup = table.scenegraph.getCell(i, row);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
 
-    if (chartInstanceListRowByRowDirection[row][i]) {
+    if (scenegraph.chartInstanceListRowByRowDirection[row][i]) {
     } else if (isValid(chartNode)) {
       chartNode.addUpdateShapeAndBoundsTag();
       if (chartNode.activeChartInstance) {
-        chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
+        scenegraph.chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
       } else {
         chartNode.activate(table);
-        chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
+        scenegraph.chartInstanceListRowByRowDirection[row][i] = chartNode.activeChartInstance;
       }
     }
     const timer = setTimeout(() => {
       // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才可触发setDimensionIndex绘制出东西 否则会绘制出空的
-      if (chartInstanceListRowByRowDirection[row]?.[i]) {
+      if (scenegraph.chartInstanceListRowByRowDirection[row]?.[i]) {
         const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
         let isShowTooltip = !isScatter;
         if (!isScatter && typeof chartDimensionLinkage === 'object') {
@@ -203,7 +205,7 @@ export function generateChartInstanceListByRowDirection(
         // console.log('setDimensionIndex row', i, row, chartInstanceListRowByRowDirection[row][i].id);
         if (isScatter) {
           if (table.stateManager.hover.cellPos.col !== i || table.stateManager.hover.cellPos.row !== row) {
-            chartInstanceListRowByRowDirection[row][i].showCrosshair?.((axis: any) => {
+            scenegraph.chartInstanceListRowByRowDirection[row][i].showCrosshair?.((axis: any) => {
               if (axis.layoutOrient === 'left') {
                 return positionValueOrYValue;
               }
@@ -218,9 +220,9 @@ export function generateChartInstanceListByRowDirection(
           const absolutePositionLeft = Math.max(bodyBoundryLeft, table.getCellRelativeRect(i, row).left);
           if (hideTooltip) {
             if (table.stateManager.hover.cellPos.col !== i || table.stateManager.hover.cellPos.row !== row) {
-              chartInstanceListRowByRowDirection[row][i].hideTooltip();
+              scenegraph.chartInstanceListRowByRowDirection[row][i].hideTooltip();
             }
-            chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
+            scenegraph.chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
               tooltip: false,
               showTooltipOption: {
                 x: absolutePositionLeft - cellBoundry.left,
@@ -229,7 +231,7 @@ export function generateChartInstanceListByRowDirection(
               }
             });
           } else {
-            chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
+            scenegraph.chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
               tooltip: isShowTooltip,
               showTooltipOption: {
                 x: absolutePositionLeft - cellBoundry.left,
@@ -242,13 +244,14 @@ export function generateChartInstanceListByRowDirection(
       }
     }, 0);
 
-    delayRunDimensionHoverTimerForRowDirection.push(timer);
+    scenegraph.delayRunDimensionHoverTimerForRowDirection.push(timer);
     table.scenegraph.updateNextFrame();
   }
 }
 export function generateChartInstanceListByViewRange(datum: any, table: BaseTableAPI, deactivate: boolean = false) {
+  const scenegraph = table.scenegraph;
   // 清除之前的定时器，避免旧的定时器执行
-  clearDelayRunDimensionHoverTimerForViewRange();
+  clearDelayRunDimensionHoverTimerForViewRange(scenegraph);
   const { rowStart } = table.getBodyVisibleRowRange();
   let rowEnd = table.getBodyVisibleRowRange().rowEnd;
   rowEnd = Math.min(table.rowCount - 1 - table.bottomFrozenRowCount, rowEnd);
@@ -257,42 +260,42 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
   colEnd = Math.min(table.colCount - 1 - table.rightFrozenColCount, colEnd);
   //增加10像素的偏移量，最后一行不是完整显示的chart就不显示tooltip
   for (let col = colStart; col <= colEnd; col++) {
-    if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
-      chartInstanceListColumnByColumnDirection[col] = {};
+    if (!isValid(scenegraph.chartInstanceListColumnByColumnDirection[col])) {
+      scenegraph.chartInstanceListColumnByColumnDirection[col] = {};
     }
     for (let i = rowStart; i <= rowEnd; i++) {
       const cellGroup = table.scenegraph.getCell(col, i);
       const chartNode = cellGroup?.getChildren()?.[0] as Chart;
 
-      if (chartInstanceListColumnByColumnDirection[col][i]) {
+      if (scenegraph.chartInstanceListColumnByColumnDirection[col][i]) {
       } else if (isValid(chartNode)) {
         chartNode.addUpdateShapeAndBoundsTag();
         if (chartNode.activeChartInstance) {
-          chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
+          scenegraph.chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
         } else {
           if (chartNode.attribute.spec.type === 'pie') {
             chartNode.activate(table);
-            chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
+            scenegraph.chartInstanceListColumnByColumnDirection[col][i] = chartNode.activeChartInstance;
           }
         }
       }
 
       const timer = setTimeout(() => {
         // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
-        if (chartInstanceListColumnByColumnDirection[col]?.[i]) {
+        if (scenegraph.chartInstanceListColumnByColumnDirection[col]?.[i]) {
           const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
           let isShowTooltip = true;
           if (typeof chartDimensionLinkage === 'object') {
             if (deactivate) {
-              chartInstanceListColumnByColumnDirection[col][i].setHovered();
-              chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
+              scenegraph.chartInstanceListColumnByColumnDirection[col][i].setHovered();
+              scenegraph.chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
             } else {
               isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
               isShowTooltip = isShowTooltip && checkIsShowTooltipForEdgeRow(i, table);
               isShowTooltip = isShowTooltip && checkIsShowTooltipForEdgeColumn(col, table);
-              chartInstanceListColumnByColumnDirection[col][i].setHovered(datum);
+              scenegraph.chartInstanceListColumnByColumnDirection[col][i].setHovered(datum);
               isShowTooltip &&
-                chartInstanceListColumnByColumnDirection[col][i].showTooltip(datum, {
+                scenegraph.chartInstanceListColumnByColumnDirection[col][i].showTooltip(datum, {
                   activeType: 'mark'
                 });
             }
@@ -300,7 +303,7 @@ export function generateChartInstanceListByViewRange(datum: any, table: BaseTabl
         }
       }, 0);
 
-      delayRunDimensionHoverTimerForViewRange.push(timer);
+      scenegraph.delayRunDimensionHoverTimerForViewRange.push(timer);
       table.scenegraph.updateNextFrame();
     }
   }
@@ -396,8 +399,9 @@ export function clearChartInstanceListByColumnDirection(
   table: BaseTableAPI,
   forceRelease: boolean = false
 ) {
-  if (isValid(chartInstanceListColumnByColumnDirection[col])) {
-    for (const i in chartInstanceListColumnByColumnDirection[col]) {
+  const scenegraph = table.scenegraph;
+  if (isValid(scenegraph.chartInstanceListColumnByColumnDirection[col])) {
+    for (const i in scenegraph.chartInstanceListColumnByColumnDirection[col]) {
       if (isValid(excludedRow) && Number(i) === excludedRow) {
         continue;
       }
@@ -412,10 +416,10 @@ export function clearChartInstanceListByColumnDirection(
           releaseColumnChartInstance: false,
           releaseRowChartInstance: false
         });
-        chartInstanceListColumnByColumnDirection[col][i] = null;
+        scenegraph.chartInstanceListColumnByColumnDirection[col][i] = null;
       }
     }
-    delete chartInstanceListColumnByColumnDirection[col];
+    delete scenegraph.chartInstanceListColumnByColumnDirection[col];
   }
 }
 
@@ -425,8 +429,9 @@ export function clearChartInstanceListByRowDirection(
   table: BaseTableAPI,
   forceRelease: boolean = false
 ) {
-  if (isValid(chartInstanceListRowByRowDirection[row])) {
-    for (const i in chartInstanceListRowByRowDirection[row]) {
+  const scenegraph = table.scenegraph;
+  if (isValid(scenegraph.chartInstanceListRowByRowDirection[row])) {
+    for (const i in scenegraph.chartInstanceListRowByRowDirection[row]) {
       if (isValid(excludedCol) && Number(i) === excludedCol) {
         continue;
       }
@@ -441,98 +446,98 @@ export function clearChartInstanceListByRowDirection(
           releaseColumnChartInstance: false,
           releaseRowChartInstance: false
         });
-        chartInstanceListRowByRowDirection[row][i] = null;
+        scenegraph.chartInstanceListRowByRowDirection[row][i] = null;
       }
     }
   }
-  delete chartInstanceListRowByRowDirection[row];
+  delete scenegraph.chartInstanceListRowByRowDirection[row];
 }
-export function clearDelayRunDimensionHoverTimerForColumnDirection() {
-  for (const timer of delayRunDimensionHoverTimerForColumnDirection) {
+export function clearDelayRunDimensionHoverTimerForColumnDirection(scenegraph: Scenegraph) {
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForColumnDirection) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForColumnDirection.length = 0;
+  scenegraph.delayRunDimensionHoverTimerForColumnDirection.length = 0;
 }
-export function clearDelayRunDimensionHoverTimerForRowDirection() {
-  for (const timer of delayRunDimensionHoverTimerForRowDirection) {
+export function clearDelayRunDimensionHoverTimerForRowDirection(scenegraph: Scenegraph) {
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForRowDirection) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForRowDirection.length = 0;
+  scenegraph.delayRunDimensionHoverTimerForRowDirection.length = 0;
 }
-export function clearDelayRunDimensionHoverTimerForViewRange() {
-  for (const timer of delayRunDimensionHoverTimerForViewRange) {
+export function clearDelayRunDimensionHoverTimerForViewRange(scenegraph: Scenegraph) {
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForViewRange) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForViewRange.length = 0;
+  scenegraph.delayRunDimensionHoverTimerForViewRange.length = 0;
 }
 /**
  * 清除所有延迟执行的定时器
  */
-export function clearDelayRunDimensionHoverTimers() {
-  for (const timer of delayRunDimensionHoverTimerForColumnDirection) {
+export function clearDelayRunDimensionHoverTimers(scenegraph: Scenegraph) {
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForColumnDirection) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForColumnDirection.length = 0;
-  for (const timer of delayRunDimensionHoverTimerForRowDirection) {
+  scenegraph.delayRunDimensionHoverTimerForColumnDirection.length = 0;
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForRowDirection) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForRowDirection.length = 0;
-  for (const timer of delayRunDimensionHoverTimerForViewRange) {
+  scenegraph.delayRunDimensionHoverTimerForRowDirection.length = 0;
+  for (const timer of scenegraph.delayRunDimensionHoverTimerForViewRange) {
     clearTimeout(timer);
   }
-  delayRunDimensionHoverTimerForViewRange.length = 0;
+  scenegraph.delayRunDimensionHoverTimerForViewRange.length = 0;
 }
 
 export function clearAllChartInstanceList(table: BaseTableAPI, forceRelease: boolean = false) {
+  const scenegraph = table.scenegraph;
   // 清除所有延迟执行的定时器
-  clearDelayRunDimensionHoverTimers();
-  for (const col in chartInstanceListColumnByColumnDirection) {
+  clearDelayRunDimensionHoverTimers(scenegraph);
+  for (const col in scenegraph.chartInstanceListColumnByColumnDirection) {
     clearChartInstanceListByColumnDirection(Number(col), undefined, table, forceRelease);
   }
-  for (const row in chartInstanceListRowByRowDirection) {
+  for (const row in scenegraph.chartInstanceListRowByRowDirection) {
     clearChartInstanceListByRowDirection(Number(row), undefined, table, forceRelease);
   }
 }
 
-let disabledTooltipToAllChartInstances: boolean = false;
-export function isDisabledTooltipToAllChartInstances() {
-  return disabledTooltipToAllChartInstances;
+export function isDisabledTooltipToAllChartInstances(scenegraph: Scenegraph) {
+  return scenegraph.disabledTooltipToAllChartInstances;
 }
-export function disableTooltipToAllChartInstances() {
-  disabledTooltipToAllChartInstances = true;
-  clearDelayRunDimensionHoverTimers();
-  for (const col in chartInstanceListColumnByColumnDirection) {
-    for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      // chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(true);
-      // chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(true);
-      chartInstanceListColumnByColumnDirection[col][row].disableTooltip(true);
-      chartInstanceListColumnByColumnDirection[col][row].hideTooltip();
+export function disableTooltipToAllChartInstances(scenegraph: Scenegraph) {
+  scenegraph.disabledTooltipToAllChartInstances = true;
+  clearDelayRunDimensionHoverTimers(scenegraph);
+  for (const col in scenegraph.chartInstanceListColumnByColumnDirection) {
+    for (const row in scenegraph.chartInstanceListColumnByColumnDirection[col]) {
+      // scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(true);
+      // scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(true);
+      scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableTooltip(true);
+      scenegraph.chartInstanceListColumnByColumnDirection[col][row].hideTooltip();
     }
   }
-  for (const row in chartInstanceListRowByRowDirection) {
-    for (const col in chartInstanceListRowByRowDirection[row]) {
-      // chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(true);
-      // chartInstanceListRowByRowDirection[row][col].disableCrossHair(true);
-      chartInstanceListRowByRowDirection[row][col].disableTooltip(true);
-      chartInstanceListRowByRowDirection[row][col].hideTooltip();
+  for (const row in scenegraph.chartInstanceListRowByRowDirection) {
+    for (const col in scenegraph.chartInstanceListRowByRowDirection[row]) {
+      // scenegraph.chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(true);
+      // scenegraph.chartInstanceListRowByRowDirection[row][col].disableCrossHair(true);
+      scenegraph.chartInstanceListRowByRowDirection[row][col].disableTooltip(true);
+      scenegraph.chartInstanceListRowByRowDirection[row][col].hideTooltip();
     }
   }
 }
-export function enableTooltipToAllChartInstances() {
-  disabledTooltipToAllChartInstances = false;
-  for (const col in chartInstanceListColumnByColumnDirection) {
-    for (const row in chartInstanceListColumnByColumnDirection[col]) {
-      // chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);
-      // chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(false);
-      chartInstanceListColumnByColumnDirection[col][row].disableTooltip(false);
+export function enableTooltipToAllChartInstances(scenegraph: Scenegraph) {
+  scenegraph.disabledTooltipToAllChartInstances = false;
+  for (const col in scenegraph.chartInstanceListColumnByColumnDirection) {
+    for (const row in scenegraph.chartInstanceListColumnByColumnDirection[col]) {
+      // scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableDimensionHoverEvent(false);
+      // scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableCrossHair(false);
+      scenegraph.chartInstanceListColumnByColumnDirection[col][row].disableTooltip(false);
     }
   }
-  for (const row in chartInstanceListRowByRowDirection) {
-    for (const col in chartInstanceListRowByRowDirection[row]) {
-      // chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
-      // chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(false);
-      // chartInstanceListRowByRowDirection[row][col].disableCrossHair(false);
-      chartInstanceListRowByRowDirection[row][col].disableTooltip(false);
+  for (const row in scenegraph.chartInstanceListRowByRowDirection) {
+    for (const col in scenegraph.chartInstanceListRowByRowDirection[row]) {
+      // scenegraph.chartInstanceListRowByRowDirection[row][col].getChart().getComponentsByKey('brush')[0].enableDimensionHover();
+      // scenegraph.chartInstanceListRowByRowDirection[row][col].disableDimensionHoverEvent(false);
+      // scenegraph.chartInstanceListRowByRowDirection[row][col].disableCrossHair(false);
+      scenegraph.chartInstanceListRowByRowDirection[row][col].disableTooltip(false);
     }
   }
 }

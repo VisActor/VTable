@@ -305,7 +305,7 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
 }
 /** 清理所有chart节点的 图表缓存图片 */
 export function clearChartCacheImage(scenegraph: Scenegraph) {
-  const brushingCellPos = getBrushingChartInstanceCellPos();
+  const brushingCellPos = getBrushingChartInstanceCellPos(scenegraph);
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);

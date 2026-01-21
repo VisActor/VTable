@@ -259,7 +259,7 @@ export class Chart extends Rect {
           // }
           table.scenegraph.updateChartState(params?.datum, 'click');
         }
-        clearBrushingChartInstance();
+        clearBrushingChartInstance(table.scenegraph);
       }
     });
     let brushChangeThrottle: any;
@@ -275,14 +275,14 @@ export class Chart extends Rect {
       });
     }
     this.activeChartInstance.on('brushStart', (params: any) => {
-      const brushingChartInstance = getBrushingChartInstance();
+      const brushingChartInstance = getBrushingChartInstance(table.scenegraph);
       if (brushingChartInstance !== this.activeChartInstance) {
         if (brushingChartInstance) {
           // brush框选完一个图表，马上去框选另一个单元格的图表，释放掉前一个图表的实例，如果有联动情况下这个释放可能会影响，但是在dimensionhover事件中会马上新建个实例的
           clearAndReleaseBrushingChartInstance(table.scenegraph);
           // brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
         }
-        setBrushingChartInstance(this.activeChartInstance, col, row);
+        setBrushingChartInstance(this.activeChartInstance, col, row, table.scenegraph);
       }
     });
     this.activeChartInstance.on('brushEnd', (params: any) => {
@@ -311,7 +311,7 @@ export class Chart extends Rect {
         });
       }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
-        if (isDisabledTooltipToAllChartInstances()) {
+        if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
           return;
         }
         //和下面调用disableTooltip做对应，一个关闭，一个打开。如果这里不加这句话可能导致这个实例没有tooltip的情况（如这个实例没有机会被加入到chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中）
@@ -421,7 +421,7 @@ export class Chart extends Rect {
                 this.clearDelayRunDimensionHoverTimer();
                 //还是需要有个延迟出现的时间，否则从mark切换到dimension时，tooltip不会出现了（ preMark !== this.activeChartInstanceHoverOnMark总是为false）
                 this.delayRunDimensionHoverTimer = setTimeout(() => {
-                  if (isDisabledTooltipToAllChartInstances()) {
+                  if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
                     // 如果当前是禁止显示tooltip的状态，这里的逻辑不会执行。否则这个延时会导致显示tooltip
                     return;
                   }
@@ -518,7 +518,7 @@ export class Chart extends Rect {
     }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
 
-    if (isDisabledTooltipToAllChartInstances()) {
+    if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
       // 如果所有图表实例都禁用了dimensionHover，新建图表实例时，禁用当前图表实例的tooltip。避免在brush过程中显示tooltip
       this.activeChartInstance.disableTooltip(true);
     }
@@ -560,7 +560,9 @@ export class Chart extends Rect {
 
       if (
         this.activeChartInstance &&
-        (forceRelease || !getBrushingChartInstance() || getBrushingChartInstance() !== this.activeChartInstance)
+        (forceRelease ||
+          !getBrushingChartInstance(table.scenegraph) ||
+          getBrushingChartInstance(table.scenegraph) !== this.activeChartInstance)
       ) {
         this.activeChartInstance?.updateViewBox(
           {

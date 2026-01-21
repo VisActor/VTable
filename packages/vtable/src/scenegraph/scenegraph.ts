@@ -146,11 +146,39 @@ export class Scenegraph {
   _dealAutoFillHeightOriginRowsHeight: number; // hack 缓存一个值 用于处理autoFillHeight的逻辑判断 在某些情况下是需要更新此值的 如增删数据 但目前没有做这个
 
   _needUpdateContainer: boolean = false;
+
+  // 图表实例管理相关属性（从全局变量迁移过来）
+  /** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
+  brushingChartInstance: any;
+  /** brush操作对应的单元格位置 */
+  brushingChartInstanceCellPos: { col: number; row: number };
+  /** 存储可视区域内鼠标hover到的该列的图表实例，key为列号做个缓存 */
+  chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>>;
+  /** 存储可视区域内鼠标hover到的该行的图表实例，key为行号做个缓存 */
+  chartInstanceListRowByRowDirection: Record<number, Record<number, any>>;
+  /** 列方向延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForColumnDirection: any[];
+  /** 行方向延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForRowDirection: any[];
+  /** 视图范围延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForViewRange: any[];
+  /** 是否禁用所有图表实例的tooltip */
+  disabledTooltipToAllChartInstances: boolean;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
     this.mergeMap = new Map();
+
+    // 初始化图表实例管理相关属性
+    this.brushingChartInstance = undefined;
+    this.brushingChartInstanceCellPos = { col: -1, row: -1 };
+    this.chartInstanceListColumnByColumnDirection = {};
+    this.chartInstanceListRowByRowDirection = {};
+    this.delayRunDimensionHoverTimerForColumnDirection = [];
+    this.delayRunDimensionHoverTimerForRowDirection = [];
+    this.delayRunDimensionHoverTimerForViewRange = [];
+    this.disabledTooltipToAllChartInstances = false;
 
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
@@ -719,8 +747,8 @@ export class Scenegraph {
   deactivateChart(col: number, row: number, forceRelease: boolean = false) {
     if (forceRelease) {
       // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
-      const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos();
-      const brushingChartInstance = getBrushingChartInstance();
+      const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos(this);
+      const brushingChartInstance = getBrushingChartInstance(this);
       if (brushingChartInstanceCellPos && brushingChartInstance) {
         clearAndReleaseBrushingChartInstance(this);
         //单独清理brush操作的单元格的chart缓存图片  因为updateChartState逻辑走到的clearChartCacheImage方法清理时排除了brushing cell的chart缓存图片(有绘制图片的那个共享图表实例覆盖到activechart实例上问题)
@@ -882,7 +910,7 @@ export class Scenegraph {
   updateChartState(datum: any, selectedDataMode: 'click' | 'brush' | 'multiple-select') {
     if (this.table.isPivotChart()) {
       if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
-        const brushingChartInstance = getBrushingChartInstance();
+        const brushingChartInstance = getBrushingChartInstance(this);
         if (brushingChartInstance) {
           brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
         }
