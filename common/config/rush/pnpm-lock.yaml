@@ -1266,6 +1266,7 @@ importers:
       form-data: ~4.0.0
       node-fetch: 2.6.7
       ts-node: 10.9.0
+      tslib: 2.3.1
       typescript: 4.9.5
     dependencies:
       '@visactor/vtable': link:../../packages/vtable
@@ -1285,6 +1286,7 @@ importers:
       form-data: 4.0.5
       node-fetch: 2.6.7
       ts-node: 10.9.0_ddr2zf4qanikyvkn7p4jv6isbm
+      tslib: 2.3.1
       typescript: 4.9.5
 
   ../../tools/bundler:
