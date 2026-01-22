@@ -4,7 +4,6 @@
  */
 
 import type { WorkSheetEventManager } from './worksheet-event-manager';
-import { WorkSheetEventType } from '../ts-types/spreadsheet-events';
 import type { FormulaErrorEvent, FormulaCalculateEvent } from '../ts-types/spreadsheet-events';
 
 /**
@@ -18,7 +17,7 @@ export class FormulaEventUtils {
     eventManager: WorkSheetEventManager,
     errorHandler: (error: FormulaErrorEvent) => void
   ): void {
-    eventManager.on(WorkSheetEventType.FORMULA_ERROR, (event: FormulaErrorEvent) => {
+    eventManager.on('formula_error', (event: FormulaErrorEvent) => {
       // 调用用户提供的错误处理器
       errorHandler(event);
 
@@ -34,7 +33,7 @@ export class FormulaEventUtils {
     eventManager: WorkSheetEventManager,
     threshold: number = 1000 // 默认阈值1秒
   ): void {
-    eventManager.on(WorkSheetEventType.FORMULA_CALCULATE_END, (event: FormulaCalculateEvent) => {
+    eventManager.on('formula_calculate_end', (event: FormulaCalculateEvent) => {
       if (event.duration && event.duration > threshold) {
         console.warn(
           `慢公式计算警告 - Sheet: ${event.sheetKey}, 公式数量: ${event.formulaCount}, 耗时: ${event.duration}ms`
@@ -58,35 +57,37 @@ export class FormulaEventUtils {
     }
   ): void {
     if (listeners.onFormulaAdded) {
-      eventManager.on(WorkSheetEventType.FORMULA_ADDED, event => {
+      eventManager.on('formula_added', event => {
         listeners.onFormulaAdded!(event.cell, event.formula);
       });
     }
 
     if (listeners.onFormulaRemoved) {
-      eventManager.on(WorkSheetEventType.FORMULA_REMOVED, event => {
+      eventManager.on('formula_removed', event => {
         listeners.onFormulaRemoved!(event.cell, event.formula);
       });
     }
 
     if (listeners.onFormulaError) {
-      eventManager.on(WorkSheetEventType.FORMULA_ERROR, listeners.onFormulaError);
+      eventManager.on('formula_error', listeners.onFormulaError);
     }
 
     if (listeners.onFormulaCalculateStart) {
-      eventManager.on(WorkSheetEventType.FORMULA_CALCULATE_START, event => {
+      eventManager.on('formula_calculate_start', event => {
         listeners.onFormulaCalculateStart!(event.formulaCount);
       });
     }
 
     if (listeners.onFormulaCalculateEnd) {
-      eventManager.on(WorkSheetEventType.FORMULA_CALCULATE_END, event => {
+      eventManager.on('formula_calculate_end', event => {
         listeners.onFormulaCalculateEnd!(event.formulaCount, event.duration);
       });
     }
 
     if (listeners.onFormulaDependencyChanged) {
-      eventManager.on(WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED, listeners.onFormulaDependencyChanged);
+      eventManager.on('formula_dependency_changed', () => {
+        listeners.onFormulaDependencyChanged!();
+      });
     }
   }
 
@@ -121,12 +122,12 @@ export class FormulaEventUtils {
 
     return {
       start: () => {
-        eventManager.on(WorkSheetEventType.FORMULA_CALCULATE_START, startListener);
-        eventManager.on(WorkSheetEventType.FORMULA_CALCULATE_END, endListener);
+        eventManager.on('formula_calculate_start', startListener);
+        eventManager.on('formula_calculate_end', endListener);
       },
       end: () => {
-        eventManager.off(WorkSheetEventType.FORMULA_CALCULATE_START, startListener);
-        eventManager.off(WorkSheetEventType.FORMULA_CALCULATE_END, endListener);
+        eventManager.off('formula_calculate_start', startListener);
+        eventManager.off('formula_calculate_end', endListener);
       }
     };
   }
@@ -152,10 +153,10 @@ export class FormulaEventUtils {
         errors.length = 0;
       },
       start: () => {
-        eventManager.on(WorkSheetEventType.FORMULA_ERROR, errorListener);
+        eventManager.on('formula_error', errorListener);
       },
       end: () => {
-        eventManager.off(WorkSheetEventType.FORMULA_ERROR, errorListener);
+        eventManager.off('formula_error', errorListener);
       }
     };
   }

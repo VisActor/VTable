@@ -1,134 +1,159 @@
 /**
  * 电子表格事件类型定义
  *
- * 事件架构：
- * 1. Table 层事件 - 通过 VTableSheet.onTableEvent() 直接监听 VTable 原生事件
- * 2. WorkSheet 层事件 - 工作表级别的状态和操作事件（本文件定义）
- * 3. SpreadSheet 层事件 - 电子表格应用级别的事件（本文件定义）
+ * 统一事件架构：
+ * 所有事件通过统一的 VTableSheetEventType 枚举定义
+ * 用户只需使用 on() 和 off() 方法，无需区分事件层级
+ * 事件命名使用下划线格式，移除不必要的前缀区分
  */
 
 import type { CellCoord, CellRange, CellValue } from './base';
 
 /**
- * ============================================
- * WorkSheet 层事件（待实现）
- * ============================================
+ * 排序信息接口
  */
+export interface SortInfo {
+  /** 排序字段 */
+  field: string;
+  /** 排序方向 */
+  order: 'asc' | 'desc';
+  /** 排序的列索引 */
+  col: number;
+}
 
 /**
- * WorkSheet 层事件类型枚举
- * 工作表级别的状态和操作事件
- *
- * 注意：这些事件由 WorkSheet 自身触发，不是从 tableInstance 中转
+ * 筛选信息接口
  */
-export enum WorkSheetEventType {
-  // ===== 工作表状态事件 =====
-  /** 工作表被激活 */
-  ACTIVATED = 'worksheet:activated',
-  /** 工作表被停用 */
-  DEACTIVATED = 'worksheet:deactivated',
-  /** 工作表初始化完成 */
-  READY = 'worksheet:ready',
-  /** 工作表尺寸改变 */
-  RESIZED = 'worksheet:resized',
+export interface FilterInfo {
+  /** 筛选的列 */
+  col: number;
+  /** 筛选条件 */
+  conditions: FilterCondition[];
+}
 
+/**
+ * 筛选条件
+ */
+export interface FilterCondition {
+  /** 条件类型 */
+  type: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'between';
+  /** 条件值 */
+  value: string | number | [number, number];
+}
+
+/**
+ * 范围接口
+ */
+export interface Range {
+  /** 起始行 */
+  startRow: number;
+  /** 结束行 */
+  endRow: number;
+  /** 起始列 */
+  startCol: number;
+  /** 结束列 */
+  endCol: number;
+}
+
+/**
+ * 统一的 VTableSheet 事件类型枚举
+ * 包含所有工作表和电子表格级别的事件
+ *
+ * 命名规范：
+ * - 使用下划线命名法 (snake_case)
+ * - 按功能模块分组
+ * - 避免冗余前缀，保持简洁
+ */
+export enum VTableSheetEventType {
   // ===== 公式相关事件 =====
   /** 公式计算开始 */
-  FORMULA_CALCULATE_START = 'worksheet:formula_calculate_start',
+  FORMULA_CALCULATE_START = 'formula_calculate_start',
   /** 公式计算结束 */
-  FORMULA_CALCULATE_END = 'worksheet:formula_calculate_end',
+  FORMULA_CALCULATE_END = 'formula_calculate_end',
   /** 公式计算错误 */
-  FORMULA_ERROR = 'worksheet:formula_error',
+  FORMULA_ERROR = 'formula_error',
   /** 公式依赖关系改变 */
-  FORMULA_DEPENDENCY_CHANGED = 'worksheet:formula_dependency_changed',
+  FORMULA_DEPENDENCY_CHANGED = 'formula_dependency_changed',
   /** 单元格公式添加 */
-  FORMULA_ADDED = 'worksheet:formula_added',
+  FORMULA_ADDED = 'formula_added',
   /** 单元格公式移除 */
-  FORMULA_REMOVED = 'worksheet:formula_removed',
+  FORMULA_REMOVED = 'formula_removed',
 
   // ===== 数据操作事件 =====
   /** 数据加载完成 */
-  DATA_LOADED = 'worksheet:data_loaded',
-  /** 数据排序完成 */
-  DATA_SORTED = 'worksheet:data_sorted',
-  /** 数据筛选完成 */
-  DATA_FILTERED = 'worksheet:data_filtered',
-  /** 范围数据批量变更 */
-  RANGE_DATA_CHANGED = 'worksheet:range_data_changed'
-}
+  DATA_LOADED = 'data_loaded',
 
-/**
- * ============================================
- * SpreadSheet 层事件（待实现）
- * ============================================
- */
+  // ===== 工作表生命周期事件 =====
+  /** 工作表激活 */
+  ACTIVATED = 'activated',
 
-/**
- * SpreadSheet 层事件类型枚举
- * 电子表格应用级别的事件
- */
-export enum SpreadSheetEventType {
   // ===== 电子表格生命周期 =====
   /** 电子表格初始化完成 */
-  READY = 'spreadsheet:ready',
+  SPREADSHEET_READY = 'spreadsheet_ready',
   /** 电子表格销毁 */
-  DESTROYED = 'spreadsheet:destroyed',
+  SPREADSHEET_DESTROYED = 'spreadsheet_destroyed',
   /** 电子表格大小改变 */
-  RESIZED = 'spreadsheet:resized',
+  SPREADSHEET_RESIZED = 'spreadsheet_resized',
 
   // ===== Sheet 管理事件 =====
   /** 添加新 Sheet */
-  SHEET_ADDED = 'spreadsheet:sheet_added',
+  SHEET_ADDED = 'sheet_added',
   /** 删除 Sheet */
-  SHEET_REMOVED = 'spreadsheet:sheet_removed',
+  SHEET_REMOVED = 'sheet_removed',
   /** 重命名 Sheet */
-  SHEET_RENAMED = 'spreadsheet:sheet_renamed',
+  SHEET_RENAMED = 'sheet_renamed',
   /** 激活 Sheet（切换 Sheet） */
-  SHEET_ACTIVATED = 'spreadsheet:sheet_activated',
+  SHEET_ACTIVATED = 'sheet_activated',
+  /** Sheet 停用 */
+  SHEET_DEACTIVATED = 'sheet_deactivated',
   /** Sheet 顺序移动 */
-  SHEET_MOVED = 'spreadsheet:sheet_moved',
+  SHEET_MOVED = 'sheet_moved',
   /** Sheet 显示/隐藏 */
-  SHEET_VISIBILITY_CHANGED = 'spreadsheet:sheet_visibility_changed',
+  SHEET_VISIBILITY_CHANGED = 'sheet_visibility_changed',
 
   // ===== 导入导出事件 =====
   /** 开始导入 */
-  IMPORT_START = 'spreadsheet:import_start',
+  IMPORT_START = 'import_start',
   /** 导入完成 */
-  IMPORT_COMPLETED = 'spreadsheet:import_completed',
+  IMPORT_COMPLETED = 'import_completed',
   /** 导入失败 */
-  IMPORT_ERROR = 'spreadsheet:import_error',
+  IMPORT_ERROR = 'import_error',
   /** 开始导出 */
-  EXPORT_START = 'spreadsheet:export_start',
+  EXPORT_START = 'export_start',
   /** 导出完成 */
-  EXPORT_COMPLETED = 'spreadsheet:export_completed',
+  EXPORT_COMPLETED = 'export_completed',
   /** 导出失败 */
-  EXPORT_ERROR = 'spreadsheet:export_error',
+  EXPORT_ERROR = 'export_error',
 
   // ===== 跨 Sheet 操作事件 =====
   /** 跨 Sheet 引用更新 */
-  CROSS_SHEET_REFERENCE_UPDATED = 'spreadsheet:cross_sheet_reference_updated',
+  CROSS_SHEET_REFERENCE_UPDATED = 'cross_sheet_reference_updated',
   /** 跨 Sheet 公式计算开始 */
-  CROSS_SHEET_FORMULA_CALCULATE_START = 'spreadsheet:cross_sheet_formula_calculate_start',
+  CROSS_SHEET_FORMULA_CALCULATE_START = 'cross_sheet_formula_calculate_start',
   /** 跨 Sheet 公式计算结束 */
-  CROSS_SHEET_FORMULA_CALCULATE_END = 'spreadsheet:cross_sheet_formula_calculate_end'
+  CROSS_SHEET_FORMULA_CALCULATE_END = 'cross_sheet_formula_calculate_end'
 }
 
 /**
  * ============================================
- * WorkSheet 层事件数据接口
+ * 统一事件数据接口
  * ============================================
  */
 
 /** 工作表激活事件数据 */
-export interface WorkSheetActivatedEvent {
+export interface SheetActivatedEvent {
   /** Sheet Key */
   sheetKey: string;
   /** Sheet 标题 */
   sheetTitle: string;
+  /** 之前激活的 Sheet Key */
+  previousSheetKey?: string;
+  /** 之前激活的 Sheet 标题 */
+  previousSheetTitle?: string;
 }
 
 /** 工作表尺寸改变事件数据 */
-export interface WorkSheetResizedEvent {
+export interface SheetResizedEvent {
   /** Sheet Key */
   sheetKey: string;
   /** Sheet 标题 */
@@ -182,7 +207,7 @@ export interface DataSortedEvent {
   /** Sheet Key */
   sheetKey: string;
   /** 排序信息 */
-  sortInfo: any;
+  sortInfo: SortInfo;
 }
 
 /** 数据筛选事件数据 */
@@ -190,7 +215,7 @@ export interface DataFilteredEvent {
   /** Sheet Key */
   sheetKey: string;
   /** 筛选信息 */
-  filterInfo: any;
+  filterInfo: FilterInfo;
 }
 
 /** 数据加载事件数据 */
@@ -243,80 +268,7 @@ export interface SheetMovedEvent {
   toIndex: number;
 }
 
-/** 范围数据变更事件数据 */
-export interface RangeDataChangedEvent {
-  /** Sheet Key */
-  sheetKey: string;
-  /** 变更范围 */
-  range: CellRange;
-  /** 变更的单元格数据 */
-  changes: Array<{
-    row: number;
-    col: number;
-    oldValue: CellValue;
-    newValue: CellValue;
-  }>;
-}
-
-/**
- * ============================================
- * SpreadSheet 层事件数据接口
- * ============================================
- */
-
-/** Sheet 添加事件数据 */
-export interface SheetAddedEvent {
-  /** Sheet Key */
-  sheetKey: string;
-  /** Sheet 标题 */
-  sheetTitle: string;
-  /** Sheet 索引 */
-  index: number;
-}
-
-/** Sheet 移除事件数据 */
-export interface SheetRemovedEvent {
-  /** Sheet Key */
-  sheetKey: string;
-  /** Sheet 标题 */
-  sheetTitle: string;
-  /** 原 Sheet 索引 */
-  index: number;
-}
-
-/** Sheet 重命名事件数据 */
-export interface SheetRenamedEvent {
-  /** Sheet Key */
-  sheetKey: string;
-  /** 旧标题 */
-  oldTitle: string;
-  /** 新标题 */
-  newTitle: string;
-}
-
-/** Sheet 激活事件数据 */
-export interface SheetActivatedEvent {
-  /** 新激活的 Sheet Key */
-  sheetKey: string;
-  /** 新激活的 Sheet 标题 */
-  sheetTitle: string;
-  /** 之前激活的 Sheet Key */
-  previousSheetKey?: string;
-  /** 之前激活的 Sheet 标题 */
-  previousSheetTitle?: string;
-}
-
-/** Sheet 移动事件数据 */
-export interface SheetMovedEvent {
-  /** Sheet Key */
-  sheetKey: string;
-  /** 旧索引 */
-  fromIndex: number;
-  /** 新索引 */
-  toIndex: number;
-}
-
-/** Sheet 可见性改变事件数据 */
+/** 工作表可见性改变事件数据 */
 export interface SheetVisibilityChangedEvent {
   /** Sheet Key */
   sheetKey: string;
@@ -356,48 +308,78 @@ export interface CrossSheetReferenceEvent {
   affectedFormulaCount: number;
 }
 
-/**
- * ============================================
- * 事件映射表（待实现时使用）
- * ============================================
- */
-
-/** WorkSheet 层事件映射 */
-export interface WorkSheetEventMap {
-  [WorkSheetEventType.ACTIVATED]: WorkSheetActivatedEvent;
-  [WorkSheetEventType.DEACTIVATED]: WorkSheetActivatedEvent;
-  [WorkSheetEventType.READY]: WorkSheetActivatedEvent;
-  [WorkSheetEventType.RESIZED]: WorkSheetResizedEvent;
-  [WorkSheetEventType.FORMULA_CALCULATE_START]: FormulaCalculateEvent;
-  [WorkSheetEventType.FORMULA_CALCULATE_END]: FormulaCalculateEvent;
-  [WorkSheetEventType.FORMULA_ERROR]: FormulaErrorEvent;
-  [WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED]: FormulaDependencyChangedEvent;
-  [WorkSheetEventType.FORMULA_ADDED]: FormulaChangeEvent;
-  [WorkSheetEventType.FORMULA_REMOVED]: FormulaChangeEvent;
-  [WorkSheetEventType.DATA_LOADED]: DataLoadedEvent;
-  [WorkSheetEventType.DATA_SORTED]: DataSortedEvent;
-  [WorkSheetEventType.DATA_FILTERED]: DataFilteredEvent;
-  [WorkSheetEventType.RANGE_DATA_CHANGED]: RangeDataChangedEvent;
+/** 范围数据变更事件数据 */
+export interface RangeDataChangedEvent {
+  /** Sheet Key */
+  sheetKey: string;
+  /** 变更范围 */
+  range: CellRange;
+  /** 变更的单元格数据 */
+  changes: Array<{
+    row: number;
+    col: number;
+    oldValue: CellValue;
+    newValue: CellValue;
+  }>;
 }
 
-/** SpreadSheet 层事件映射 */
+/**
+ * SpreadSheet 事件映射
+ */
 export interface SpreadSheetEventMap {
-  [SpreadSheetEventType.READY]: void;
-  [SpreadSheetEventType.DESTROYED]: void;
-  [SpreadSheetEventType.RESIZED]: { width: number; height: number };
-  [SpreadSheetEventType.SHEET_ADDED]: SheetAddedEvent;
-  [SpreadSheetEventType.SHEET_REMOVED]: SheetRemovedEvent;
-  [SpreadSheetEventType.SHEET_RENAMED]: SheetRenamedEvent;
-  [SpreadSheetEventType.SHEET_ACTIVATED]: SheetActivatedEvent;
-  [SpreadSheetEventType.SHEET_MOVED]: SheetMovedEvent;
-  [SpreadSheetEventType.SHEET_VISIBILITY_CHANGED]: SheetVisibilityChangedEvent;
-  [SpreadSheetEventType.IMPORT_START]: ImportEvent;
-  [SpreadSheetEventType.IMPORT_COMPLETED]: ImportEvent;
-  [SpreadSheetEventType.IMPORT_ERROR]: ImportEvent;
-  [SpreadSheetEventType.EXPORT_START]: ExportEvent;
-  [SpreadSheetEventType.EXPORT_COMPLETED]: ExportEvent;
-  [SpreadSheetEventType.EXPORT_ERROR]: ExportEvent;
-  [SpreadSheetEventType.CROSS_SHEET_REFERENCE_UPDATED]: CrossSheetReferenceEvent;
-  [SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START]: void;
-  [SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END]: void;
+  spreadsheet_ready: undefined;
+  spreadsheet_destroyed: undefined;
+  spreadsheet_resized: { width: number; height: number };
+  sheet_added: SheetAddedEvent;
+  sheet_removed: SheetRemovedEvent;
+  sheet_renamed: SheetRenamedEvent;
+  sheet_activated: SheetActivatedEvent;
+  sheet_deactivated: SheetActivatedEvent;
+  sheet_moved: SheetMovedEvent;
+  sheet_visibility_changed: SheetVisibilityChangedEvent;
+  import_start: ImportEvent;
+  import_completed: ImportEvent;
+  import_error: ImportEvent;
+  export_start: ExportEvent;
+  export_completed: ExportEvent;
+  export_error: ExportEvent;
+  cross_sheet_reference_updated: CrossSheetReferenceEvent;
+  cross_sheet_formula_calculate_start: undefined;
+  cross_sheet_formula_calculate_end: undefined;
+}
+
+/**
+ * WorkSheet 事件映射
+ */
+export interface WorkSheetEventMap {
+  ready: SheetActivatedEvent;
+  destroyed: SheetActivatedEvent;
+  resized: SheetResizedEvent;
+  activated: SheetActivatedEvent;
+  formula_calculate_start: FormulaCalculateEvent;
+  formula_calculate_end: FormulaCalculateEvent;
+  formula_error: FormulaErrorEvent;
+  formula_dependency_changed: FormulaDependencyChangedEvent;
+  formula_added: FormulaChangeEvent;
+  formula_removed: FormulaChangeEvent;
+  data_loaded: DataLoadedEvent;
+  data_sorted: DataSortedEvent;
+  data_filtered: DataFilteredEvent;
+  range_data_changed: RangeDataChangedEvent;
+  sheet_added: SheetAddedEvent;
+  sheet_removed: SheetRemovedEvent;
+  sheet_renamed: SheetRenamedEvent;
+  sheet_moved: SheetMovedEvent;
+  sheet_activated: SheetActivatedEvent;
+  sheet_deactivated: SheetActivatedEvent;
+  sheet_visibility_changed: SheetVisibilityChangedEvent;
+  import_start: ImportEvent;
+  import_completed: ImportEvent;
+  import_error: ImportEvent;
+  export_start: ExportEvent;
+  export_completed: ExportEvent;
+  export_error: ExportEvent;
+  cross_sheet_reference_updated: CrossSheetReferenceEvent;
+  cross_sheet_formula_calculate_start: undefined;
+  cross_sheet_formula_calculate_end: undefined;
 }

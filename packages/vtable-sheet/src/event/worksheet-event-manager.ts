@@ -3,13 +3,11 @@
  * 管理工作表级别的状态和操作事件
  */
 
-import { EventEmitter } from '@visactor/vutils';
-import type { EventEmitter as EventEmitterType } from '@visactor/vutils';
 import {
-  WorkSheetEventType,
+  VTableSheetEventType,
   type WorkSheetEventMap,
-  type WorkSheetActivatedEvent,
-  type WorkSheetResizedEvent,
+  type SheetActivatedEvent,
+  type SheetResizedEvent,
   type FormulaCalculateEvent,
   type FormulaErrorEvent,
   type FormulaChangeEvent,
@@ -19,22 +17,42 @@ import {
   type DataFilteredEvent,
   type RangeDataChangedEvent
 } from '../ts-types/spreadsheet-events';
-import type { WorkSheet } from '../core/WorkSheet';
+import { BaseEventManager } from './base-event-manager';
+import type { IWorksheetEventSource } from './event-interfaces';
 
 /**
  * WorkSheet 事件管理器
  * 负责管理 WorkSheet 层的事件监听和触发
  */
-export class WorkSheetEventManager {
-  /** 事件总线 */
-  private eventBus: EventEmitterType;
-
+export class WorkSheetEventManager extends BaseEventManager<WorkSheetEventMap> {
   /** 关联的 WorkSheet 实例 */
-  private worksheet: WorkSheet;
+  private worksheet: IWorksheetEventSource;
 
-  constructor(worksheet: WorkSheet, eventBus: EventEmitterType) {
+  constructor(worksheet: IWorksheetEventSource) {
+    super(worksheet.getEventBus());
     this.worksheet = worksheet;
-    this.eventBus = eventBus;
+  }
+
+  /**
+   * 获取事件类型列表
+   */
+  protected getEventTypes(): string[] {
+    return [
+      'ready',
+      'destroyed',
+      'resized',
+      'activated',
+      'formula_calculate_start',
+      'formula_calculate_end',
+      'formula_error',
+      'formula_dependency_changed',
+      'formula_added',
+      'formula_removed',
+      'data_loaded',
+      'data_sorted',
+      'data_filtered',
+      'range_data_changed'
+    ];
   }
 
   /**
@@ -64,49 +82,27 @@ export class WorkSheetEventManager {
   }
 
   /**
-   * 触发工作表激活事件
-   */
-  emitActivated(): void {
-    const event: WorkSheetActivatedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      sheetTitle: this.worksheet.sheetTitle
-    };
-    this.emit(WorkSheetEventType.ACTIVATED, event);
-  }
-
-  /**
-   * 触发工作表停用事件
-   */
-  emitDeactivated(): void {
-    const event: WorkSheetActivatedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      sheetTitle: this.worksheet.sheetTitle
-    };
-    this.emit(WorkSheetEventType.DEACTIVATED, event);
-  }
-
-  /**
    * 触发工作表准备就绪事件
    */
   emitReady(): void {
-    const event: WorkSheetActivatedEvent = {
+    const event: SheetActivatedEvent = {
       sheetKey: this.worksheet.sheetKey,
       sheetTitle: this.worksheet.sheetTitle
     };
-    this.emit(WorkSheetEventType.READY, event);
+    this.emit('ready', event);
   }
 
   /**
    * 触发工作表尺寸改变事件
    */
   emitResized(width: number, height: number): void {
-    const event: WorkSheetResizedEvent = {
+    const event: SheetResizedEvent = {
       sheetKey: this.worksheet.sheetKey,
       sheetTitle: this.worksheet.sheetTitle,
       width,
       height
     };
-    this.emit(WorkSheetEventType.RESIZED, event);
+    this.emit('resized', event);
   }
 
   // 注意：工作表管理事件（SHEET_ADDED, SHEET_REMOVED, SHEET_RENAMED, SHEET_MOVED）
@@ -120,7 +116,7 @@ export class WorkSheetEventManager {
       sheetKey: this.worksheet.sheetKey,
       formulaCount
     };
-    this.emit(WorkSheetEventType.FORMULA_CALCULATE_START, event);
+    this.emit(VTableSheetEventType.FORMULA_CALCULATE_START, event);
   }
 
   /**
@@ -132,7 +128,7 @@ export class WorkSheetEventManager {
       formulaCount,
       duration
     };
-    this.emit(WorkSheetEventType.FORMULA_CALCULATE_END, event);
+    this.emit(VTableSheetEventType.FORMULA_CALCULATE_END, event);
   }
 
   /**
@@ -145,7 +141,7 @@ export class WorkSheetEventManager {
       formula,
       error
     };
-    this.emit(WorkSheetEventType.FORMULA_ERROR, event);
+    this.emit(VTableSheetEventType.FORMULA_ERROR, event);
   }
 
   /**
@@ -155,7 +151,7 @@ export class WorkSheetEventManager {
     const event: FormulaDependencyChangedEvent = {
       sheetKey: this.worksheet.sheetKey
     };
-    this.emit(WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED, event);
+    this.emit(VTableSheetEventType.FORMULA_DEPENDENCY_CHANGED, event);
   }
 
   /**
@@ -167,7 +163,7 @@ export class WorkSheetEventManager {
       cell,
       formula
     };
-    this.emit(WorkSheetEventType.FORMULA_ADDED, event);
+    this.emit(VTableSheetEventType.FORMULA_ADDED, event);
   }
 
   /**
@@ -179,7 +175,7 @@ export class WorkSheetEventManager {
       cell,
       formula
     };
-    this.emit(WorkSheetEventType.FORMULA_REMOVED, event);
+    this.emit(VTableSheetEventType.FORMULA_REMOVED, event);
   }
 
   /**
@@ -191,66 +187,6 @@ export class WorkSheetEventManager {
       rowCount,
       colCount
     };
-    this.emit(WorkSheetEventType.DATA_LOADED, event);
-  }
-
-  /**
-   * 触发数据排序完成事件
-   */
-  emitDataSorted(sortInfo: any): void {
-    const event: DataSortedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      sortInfo
-    };
-    this.emit(WorkSheetEventType.DATA_SORTED, event);
-  }
-
-  /**
-   * 触发数据筛选完成事件
-   */
-  emitDataFiltered(filterInfo: any): void {
-    const event: DataFilteredEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      filterInfo
-    };
-    this.emit(WorkSheetEventType.DATA_FILTERED, event);
-  }
-
-  /**
-   * 触发范围数据变更事件
-   */
-  emitRangeDataChanged(range: any, changes: any[]): void {
-    const event: RangeDataChangedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      range,
-      changes
-    };
-    this.emit(WorkSheetEventType.RANGE_DATA_CHANGED, event);
-  }
-
-  /**
-   * 清除所有事件监听器
-   */
-  clearAllListeners(): void {
-    // 获取所有 WorkSheet 事件类型
-    const eventTypes = Object.values(WorkSheetEventType);
-
-    // 移除每种类型的所有监听器
-    eventTypes.forEach(type => {
-      this.eventBus.off(type);
-    });
-  }
-
-  /**
-   * 获取事件监听器数量
-   */
-  getListenerCount(type?: WorkSheetEventType): number {
-    if (type) {
-      return this.eventBus.listenerCount(type);
-    }
-
-    // 返回所有 WorkSheet 事件的总监听器数量
-    const eventTypes = Object.values(WorkSheetEventType);
-    return eventTypes.reduce((total, type) => total + this.eventBus.listenerCount(type), 0);
+    this.emit(VTableSheetEventType.DATA_LOADED, event);
   }
 }

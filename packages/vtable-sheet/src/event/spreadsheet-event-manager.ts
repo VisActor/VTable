@@ -3,10 +3,8 @@
  * 管理电子表格应用级别的事件
  */
 
-import { EventEmitter } from '@visactor/vutils';
-import type { EventEmitter as EventEmitterType } from '@visactor/vutils';
 import {
-  SpreadSheetEventType,
+  VTableSheetEventType,
   type SpreadSheetEventMap,
   type SheetAddedEvent,
   type SheetRemovedEvent,
@@ -18,69 +16,68 @@ import {
   type ExportEvent,
   type CrossSheetReferenceEvent
 } from '../ts-types/spreadsheet-events';
-import type VTableSheet from '../components/vtable-sheet';
+import { BaseEventManager } from './base-event-manager';
+import type { IEventBus, ISpreadsheetEventSource } from './event-interfaces';
 
 /**
  * SpreadSheet 事件管理器
  * 负责管理电子表格应用级别的事件监听和触发
  */
-export class SpreadSheetEventManager {
-  /** 事件总线 */
-  private eventBus: EventEmitterType;
-
+export class SpreadSheetEventManager extends BaseEventManager<SpreadSheetEventMap> {
   /** 关联的 VTableSheet 实例 */
-  private spreadsheet: VTableSheet;
+  private spreadsheet: ISpreadsheetEventSource;
 
-  constructor(spreadsheet: VTableSheet) {
+  constructor(spreadsheet: ISpreadsheetEventSource) {
+    super(spreadsheet.getEventBus());
     this.spreadsheet = spreadsheet;
-    this.eventBus = new EventEmitter();
   }
 
   /**
-   * 注册 SpreadSheet 事件监听器
+   * 获取事件类型列表
    */
-  on<K extends keyof SpreadSheetEventMap>(type: K, callback: (event: SpreadSheetEventMap[K]) => void): void {
-    this.eventBus.on(type, callback);
-  }
-
-  /**
-   * 移除 SpreadSheet 事件监听器
-   */
-  off<K extends keyof SpreadSheetEventMap>(type: K, callback?: (event: SpreadSheetEventMap[K]) => void): void {
-    if (callback) {
-      this.eventBus.off(type, callback);
-    } else {
-      // 移除该类型的所有监听器
-      this.eventBus.off(type);
-    }
-  }
-
-  /**
-   * 触发 SpreadSheet 事件
-   */
-  emit<K extends keyof SpreadSheetEventMap>(type: K, event: SpreadSheetEventMap[K]): void {
-    this.eventBus.emit(type, event);
+  protected getEventTypes(): string[] {
+    return [
+      VTableSheetEventType.SPREADSHEET_READY,
+      VTableSheetEventType.SPREADSHEET_DESTROYED,
+      VTableSheetEventType.SPREADSHEET_RESIZED,
+      VTableSheetEventType.SHEET_ADDED,
+      VTableSheetEventType.SHEET_REMOVED,
+      VTableSheetEventType.SHEET_RENAMED,
+      VTableSheetEventType.SHEET_ACTIVATED,
+      VTableSheetEventType.SHEET_DEACTIVATED,
+      VTableSheetEventType.SHEET_MOVED,
+      VTableSheetEventType.SHEET_VISIBILITY_CHANGED,
+      VTableSheetEventType.IMPORT_START,
+      VTableSheetEventType.IMPORT_COMPLETED,
+      VTableSheetEventType.IMPORT_ERROR,
+      VTableSheetEventType.EXPORT_START,
+      VTableSheetEventType.EXPORT_COMPLETED,
+      VTableSheetEventType.EXPORT_ERROR,
+      VTableSheetEventType.CROSS_SHEET_REFERENCE_UPDATED,
+      VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START,
+      VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END
+    ];
   }
 
   /**
    * 触发电子表格准备就绪事件
    */
   emitReady(): void {
-    this.emit(SpreadSheetEventType.READY, undefined);
+    this.emit(VTableSheetEventType.SPREADSHEET_READY, undefined);
   }
 
   /**
    * 触发电子表格销毁事件
    */
   emitDestroyed(): void {
-    this.emit(SpreadSheetEventType.DESTROYED, undefined);
+    this.emit(VTableSheetEventType.SPREADSHEET_DESTROYED, undefined);
   }
 
   /**
    * 触发电子表格尺寸改变事件
    */
   emitResized(width: number, height: number): void {
-    this.emit(SpreadSheetEventType.RESIZED, { width, height });
+    this.emit(VTableSheetEventType.SPREADSHEET_RESIZED, { width, height });
   }
 
   /**
@@ -92,7 +89,7 @@ export class SpreadSheetEventManager {
       sheetTitle,
       index
     };
-    this.emit(SpreadSheetEventType.SHEET_ADDED, event);
+    this.emit(VTableSheetEventType.SHEET_ADDED, event);
   }
 
   /**
@@ -104,7 +101,7 @@ export class SpreadSheetEventManager {
       sheetTitle,
       index
     };
-    this.emit(SpreadSheetEventType.SHEET_REMOVED, event);
+    this.emit(VTableSheetEventType.SHEET_REMOVED, event);
   }
 
   /**
@@ -116,7 +113,7 @@ export class SpreadSheetEventManager {
       oldTitle,
       newTitle
     };
-    this.emit(SpreadSheetEventType.SHEET_RENAMED, event);
+    this.emit(VTableSheetEventType.SHEET_RENAMED, event);
   }
 
   /**
@@ -134,9 +131,15 @@ export class SpreadSheetEventManager {
       previousSheetKey,
       previousSheetTitle
     };
-    this.emit(SpreadSheetEventType.SHEET_ACTIVATED, event);
+    this.emit(VTableSheetEventType.SHEET_ACTIVATED, event);
   }
-
+  emitSheetDeactivated(sheetKey: string, sheetTitle: string): void {
+    const event: SheetActivatedEvent = {
+      sheetKey,
+      sheetTitle
+    };
+    this.emit(VTableSheetEventType.SHEET_DEACTIVATED, event);
+  }
   /**
    * 触发工作表移动事件
    */
@@ -146,7 +149,7 @@ export class SpreadSheetEventManager {
       fromIndex,
       toIndex
     };
-    this.emit(SpreadSheetEventType.SHEET_MOVED, event);
+    this.emit(VTableSheetEventType.SHEET_MOVED, event);
   }
 
   /**
@@ -157,7 +160,7 @@ export class SpreadSheetEventManager {
       sheetKey,
       visible
     };
-    this.emit(SpreadSheetEventType.SHEET_VISIBILITY_CHANGED, event);
+    this.emit(VTableSheetEventType.SHEET_VISIBILITY_CHANGED, event);
   }
 
   /**
@@ -167,7 +170,7 @@ export class SpreadSheetEventManager {
     const event: ImportEvent = {
       fileType
     };
-    this.emit(SpreadSheetEventType.IMPORT_START, event);
+    this.emit(VTableSheetEventType.IMPORT_START, event);
   }
 
   /**
@@ -178,7 +181,7 @@ export class SpreadSheetEventManager {
       fileType,
       sheetCount
     };
-    this.emit(SpreadSheetEventType.IMPORT_COMPLETED, event);
+    this.emit(VTableSheetEventType.IMPORT_COMPLETED, event);
   }
 
   /**
@@ -189,7 +192,7 @@ export class SpreadSheetEventManager {
       fileType,
       error
     };
-    this.emit(SpreadSheetEventType.IMPORT_ERROR, event);
+    this.emit(VTableSheetEventType.IMPORT_ERROR, event);
   }
 
   /**
@@ -200,7 +203,7 @@ export class SpreadSheetEventManager {
       fileType,
       allSheets
     };
-    this.emit(SpreadSheetEventType.EXPORT_START, event);
+    this.emit(VTableSheetEventType.EXPORT_START, event);
   }
 
   /**
@@ -212,7 +215,7 @@ export class SpreadSheetEventManager {
       allSheets,
       sheetCount
     };
-    this.emit(SpreadSheetEventType.EXPORT_COMPLETED, event);
+    this.emit(VTableSheetEventType.EXPORT_COMPLETED, event);
   }
 
   /**
@@ -224,7 +227,7 @@ export class SpreadSheetEventManager {
       allSheets,
       error
     };
-    this.emit(SpreadSheetEventType.EXPORT_ERROR, event);
+    this.emit(VTableSheetEventType.EXPORT_ERROR, event);
   }
 
   /**
@@ -240,46 +243,20 @@ export class SpreadSheetEventManager {
       targetSheetKeys,
       affectedFormulaCount
     };
-    this.emit(SpreadSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, event);
+    this.emit(VTableSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, event);
   }
 
   /**
    * 触发跨工作表公式计算开始事件
    */
   emitCrossSheetFormulaCalculateStart(): void {
-    this.emit(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, undefined);
+    this.emit(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, undefined);
   }
 
   /**
    * 触发跨工作表公式计算结束事件
    */
   emitCrossSheetFormulaCalculateEnd(): void {
-    this.emit(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, undefined);
-  }
-
-  /**
-   * 清除所有事件监听器
-   */
-  clearAllListeners(): void {
-    // 获取所有 SpreadSheet 事件类型
-    const eventTypes = Object.values(SpreadSheetEventType);
-
-    // 移除每种类型的所有监听器
-    eventTypes.forEach(type => {
-      this.eventBus.off(type);
-    });
-  }
-
-  /**
-   * 获取事件监听器数量
-   */
-  getListenerCount(type?: SpreadSheetEventType): number {
-    if (type) {
-      return this.eventBus.listenerCount(type);
-    }
-
-    // 返回所有 SpreadSheet 事件的总监听器数量
-    const eventTypes = Object.values(SpreadSheetEventType);
-    return eventTypes.reduce((total, type) => total + this.eventBus.listenerCount(type), 0);
+    this.emit(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, undefined);
   }
 }

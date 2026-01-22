@@ -1,6 +1,6 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import { isValid, EventEmitter, type EventEmitter as EventEmitterType } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
@@ -14,6 +14,8 @@ import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
 import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
 import { WorkSheetEventManager } from '../event/worksheet-event-manager';
+import type { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
+import type { IWorksheetEventSource } from '../event/event-interfaces';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -29,7 +31,7 @@ export type WorkSheetConstructorOptions = {
   sheetTitle: string;
 } & Omit<ListTableConstructorOptions, 'records'>;
 
-export class WorkSheet implements IWorkSheetAPI {
+export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
   options: IWorkSheetOptions;
   /** 容器 */
@@ -46,7 +48,7 @@ export class WorkSheet implements IWorkSheetAPI {
   private _sheetTitle: string;
 
   /** 事件总线 */
-  private eventBus: EventEmitterType;
+  private eventBus: VTableSheetEventBus;
 
   /** WorkSheet 事件管理器 */
   eventManager: WorkSheetEventManager;
@@ -60,6 +62,17 @@ export class WorkSheet implements IWorkSheetAPI {
    */
   get sheetKey(): string {
     return this._sheetKey;
+  }
+
+  /**
+   * 获取事件总线
+   */
+  getEventBus(): VTableSheetEventBus {
+    if (!this.eventBus) {
+      // If eventBus is not initialized yet, return the parent VTableSheet's event bus
+      return this.vtableSheet.getEventBus();
+    }
+    return this.eventBus;
   }
 
   /**
@@ -165,16 +178,11 @@ export class WorkSheet implements IWorkSheetAPI {
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
     this.element.classList.add('vtable-excel-cursor');
-    // 获取事件总线
-    this.eventBus = (this.tableInstance as any).eventBus;
-
-    // 确保 eventBus 存在，如果不存在则创建一个
-    if (!this.eventBus) {
-      this.eventBus = new EventEmitter();
-    }
+    // 使用统一事件总线
+    this.eventBus = this.vtableSheet.getEventBus();
 
     // 初始化 WorkSheet 事件管理器
-    this.eventManager = new WorkSheetEventManager(this, this.eventBus);
+    this.eventManager = new WorkSheetEventManager(this);
     // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
     (this.tableInstance as any).__vtableSheet = this.vtableSheet;
 
@@ -326,20 +334,6 @@ export class WorkSheet implements IWorkSheetAPI {
       // 监听单元格值变更事件
       this.tableInstance.on('change_cell_value', (event: any) => {
         this.handleCellValueChanged(event);
-      });
-
-      // 监听排序状态变更事件
-      this.tableInstance.on('after_sort' as any, (event: any) => {
-        if (this.eventManager) {
-          this.eventManager.emitDataSorted(event);
-        }
-      });
-
-      // 监听筛选状态变更事件
-      this.tableInstance.on('filter_menu_show' as any, (event: any) => {
-        if (this.eventManager) {
-          this.eventManager.emitDataFiltered(event);
-        }
       });
 
       // 监听数据记录变更事件 - 用于调整公式引用
@@ -756,21 +750,11 @@ export class WorkSheet implements IWorkSheetAPI {
   setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
-      // 获取旧值
-      const oldValue = this.getCellValue(col, row);
-
       data[row][col] = value;
 
       // 更新表格实例
       if (this.tableInstance) {
         this.tableInstance.changeCellValue(col, row, value);
-      }
-
-      // 触发范围数据变更事件
-      if (this.eventManager) {
-        this.eventManager.emitRangeDataChanged({ startRow: row, startCol: col, endRow: row, endCol: col }, [
-          { row, col, oldValue, newValue: value }
-        ]);
       }
     }
   }

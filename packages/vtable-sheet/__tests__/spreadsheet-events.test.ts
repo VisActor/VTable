@@ -4,14 +4,19 @@
  */
 
 import { SpreadSheetEventManager } from '../src/event/spreadsheet-event-manager';
-import { SpreadSheetEventType } from '../src/ts-types/spreadsheet-events';
+import { VTableSheetEventType } from '../src/ts-types/spreadsheet-events';
+import { VTableSheetEventBus } from '../src/event/vtable-sheet-event-bus';
 
 describe('SpreadSheetEventManager', () => {
   let eventManager: SpreadSheetEventManager;
   let mockSpreadSheet: any;
+  let eventBus: VTableSheetEventBus;
 
   beforeEach(() => {
-    mockSpreadSheet = {};
+    eventBus = new VTableSheetEventBus();
+    mockSpreadSheet = {
+      getEventBus: () => eventBus
+    };
     eventManager = new SpreadSheetEventManager(mockSpreadSheet);
   });
 
@@ -21,7 +26,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发电子表格准备就绪事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.READY, mockCallback);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, mockCallback);
 
     eventManager.emitReady();
 
@@ -31,7 +36,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发电子表格销毁事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.DESTROYED, mockCallback);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_DESTROYED, mockCallback);
 
     eventManager.emitDestroyed();
 
@@ -41,7 +46,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发电子表格尺寸改变事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.RESIZED, mockCallback);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_RESIZED, mockCallback);
 
     eventManager.emitResized(800, 600);
 
@@ -51,7 +56,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表添加事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_ADDED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_ADDED, mockCallback);
 
     eventManager.emitSheetAdded('sheet1', 'Sheet 1', 0);
 
@@ -65,7 +70,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表移除事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_REMOVED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_REMOVED, mockCallback);
 
     eventManager.emitSheetRemoved('sheet1', 'Sheet 1', 0);
 
@@ -79,7 +84,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表重命名事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_RENAMED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_RENAMED, mockCallback);
 
     eventManager.emitSheetRenamed('sheet1', 'Old Name', 'New Name');
 
@@ -93,7 +98,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表激活事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_ACTIVATED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_ACTIVATED, mockCallback);
 
     eventManager.emitSheetActivated('sheet2', 'Sheet 2', 'sheet1', 'Sheet 1');
 
@@ -108,7 +113,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表移动事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_MOVED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_MOVED, mockCallback);
 
     eventManager.emitSheetMoved('sheet1', 2, 0);
 
@@ -122,7 +127,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发工作表可见性改变事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.SHEET_VISIBILITY_CHANGED, mockCallback);
+    eventManager.on(VTableSheetEventType.SHEET_VISIBILITY_CHANGED, mockCallback);
 
     eventManager.emitSheetVisibilityChanged('sheet1', false);
 
@@ -135,7 +140,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导入开始事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.IMPORT_START, mockCallback);
+    eventManager.on(VTableSheetEventType.IMPORT_START, mockCallback);
 
     eventManager.emitImportStart('xlsx');
 
@@ -147,7 +152,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导入完成事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.IMPORT_COMPLETED, mockCallback);
+    eventManager.on(VTableSheetEventType.IMPORT_COMPLETED, mockCallback);
 
     eventManager.emitImportCompleted('xlsx', 3);
 
@@ -160,7 +165,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导入失败事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.IMPORT_ERROR, mockCallback);
+    eventManager.on(VTableSheetEventType.IMPORT_ERROR, mockCallback);
 
     const error = new Error('Import failed');
     eventManager.emitImportError('xlsx', error);
@@ -174,7 +179,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导出开始事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.EXPORT_START, mockCallback);
+    eventManager.on(VTableSheetEventType.EXPORT_START, mockCallback);
 
     eventManager.emitExportStart('xlsx', true);
 
@@ -187,7 +192,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导出完成事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.EXPORT_COMPLETED, mockCallback);
+    eventManager.on(VTableSheetEventType.EXPORT_COMPLETED, mockCallback);
 
     eventManager.emitExportCompleted('xlsx', true, 5);
 
@@ -201,7 +206,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发导出失败事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.EXPORT_ERROR, mockCallback);
+    eventManager.on(VTableSheetEventType.EXPORT_ERROR, mockCallback);
 
     const error = new Error('Export failed');
     eventManager.emitExportError('xlsx', true, error);
@@ -216,7 +221,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发跨工作表引用更新事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, mockCallback);
+    eventManager.on(VTableSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, mockCallback);
 
     eventManager.emitCrossSheetReferenceUpdated('sheet1', ['sheet2', 'sheet3'], 10);
 
@@ -230,7 +235,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发跨工作表公式计算开始事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, mockCallback);
+    eventManager.on(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, mockCallback);
 
     eventManager.emitCrossSheetFormulaCalculateStart();
 
@@ -240,7 +245,7 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能触发跨工作表公式计算结束事件', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, mockCallback);
+    eventManager.on(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, mockCallback);
 
     eventManager.emitCrossSheetFormulaCalculateEnd();
 
@@ -250,14 +255,14 @@ describe('SpreadSheetEventManager', () => {
 
   test('应该能正确移除事件监听器', () => {
     const mockCallback = jest.fn();
-    eventManager.on(SpreadSheetEventType.READY, mockCallback);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, mockCallback);
 
     // 触发事件
     eventManager.emitReady();
     expect(mockCallback).toHaveBeenCalledTimes(1);
 
     // 移除监听器
-    eventManager.off(SpreadSheetEventType.READY, mockCallback);
+    eventManager.off(VTableSheetEventType.SPREADSHEET_READY, mockCallback);
 
     // 再次触发事件
     eventManager.emitReady();
@@ -268,8 +273,8 @@ describe('SpreadSheetEventManager', () => {
     const mockCallback1 = jest.fn();
     const mockCallback2 = jest.fn();
 
-    eventManager.on(SpreadSheetEventType.READY, mockCallback1);
-    eventManager.on(SpreadSheetEventType.DESTROYED, mockCallback2);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, mockCallback1);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_DESTROYED, mockCallback2);
 
     // 触发事件
     eventManager.emitReady();
@@ -295,15 +300,15 @@ describe('SpreadSheetEventManager', () => {
 
     expect(eventManager.getListenerCount()).toBe(0);
 
-    eventManager.on(SpreadSheetEventType.READY, mockCallback1);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, mockCallback1);
     expect(eventManager.getListenerCount()).toBe(1);
 
-    eventManager.on(SpreadSheetEventType.DESTROYED, mockCallback2);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_DESTROYED, mockCallback2);
     expect(eventManager.getListenerCount()).toBe(2);
 
-    eventManager.on(SpreadSheetEventType.READY, () => {}); // 同一个事件类型再加一个
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, () => {}); // 同一个事件类型再加一个
     expect(eventManager.getListenerCount()).toBe(3);
-    expect(eventManager.getListenerCount(SpreadSheetEventType.READY)).toBe(2);
+    expect(eventManager.getListenerCount(VTableSheetEventType.SPREADSHEET_READY)).toBe(2);
   });
 
   test('应该能同时监听多个电子表格事件', () => {
@@ -313,10 +318,10 @@ describe('SpreadSheetEventManager', () => {
     const exportErrorCallback = jest.fn();
 
     // 注册各种事件监听器
-    eventManager.on(SpreadSheetEventType.READY, readyCallback);
-    eventManager.on(SpreadSheetEventType.SHEET_ADDED, sheetAddedCallback);
-    eventManager.on(SpreadSheetEventType.IMPORT_COMPLETED, importCompletedCallback);
-    eventManager.on(SpreadSheetEventType.EXPORT_ERROR, exportErrorCallback);
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, readyCallback);
+    eventManager.on(VTableSheetEventType.SHEET_ADDED, sheetAddedCallback);
+    eventManager.on(VTableSheetEventType.IMPORT_COMPLETED, importCompletedCallback);
+    eventManager.on(VTableSheetEventType.EXPORT_ERROR, exportErrorCallback);
 
     // 触发各种事件
     eventManager.emitReady();
@@ -334,39 +339,39 @@ describe('SpreadSheetEventManager', () => {
     const events: string[] = [];
 
     // 注册各种事件监听器，记录事件顺序
-    eventManager.on(SpreadSheetEventType.READY, () => {
+    eventManager.on(VTableSheetEventType.SPREADSHEET_READY, () => {
       events.push('READY');
     });
 
-    eventManager.on(SpreadSheetEventType.SHEET_ADDED, event => {
+    eventManager.on(VTableSheetEventType.SHEET_ADDED, event => {
       events.push(`ADDED:${event.sheetKey}`);
     });
 
-    eventManager.on(SpreadSheetEventType.SHEET_ACTIVATED, event => {
+    eventManager.on(VTableSheetEventType.SHEET_ACTIVATED, event => {
       events.push(`ACTIVATED:${event.sheetKey}`);
     });
 
-    eventManager.on(SpreadSheetEventType.SHEET_RENAMED, event => {
+    eventManager.on(VTableSheetEventType.SHEET_RENAMED, event => {
       events.push(`RENAMED:${event.sheetKey}:${event.oldTitle}->${event.newTitle}`);
     });
 
-    eventManager.on(SpreadSheetEventType.SHEET_MOVED, event => {
+    eventManager.on(VTableSheetEventType.SHEET_MOVED, event => {
       events.push(`MOVED:${event.sheetKey}:${event.fromIndex}->${event.toIndex}`);
     });
 
-    eventManager.on(SpreadSheetEventType.SHEET_REMOVED, event => {
+    eventManager.on(VTableSheetEventType.SHEET_REMOVED, event => {
       events.push(`REMOVED:${event.sheetKey}`);
     });
 
-    eventManager.on(SpreadSheetEventType.IMPORT_COMPLETED, event => {
+    eventManager.on(VTableSheetEventType.IMPORT_COMPLETED, event => {
       events.push(`IMPORT_COMPLETED:${event.fileType}:${event.sheetCount}`);
     });
 
-    eventManager.on(SpreadSheetEventType.EXPORT_COMPLETED, event => {
+    eventManager.on(VTableSheetEventType.EXPORT_COMPLETED, event => {
       events.push(`EXPORT_COMPLETED:${event.fileType}:${event.sheetCount}`);
     });
 
-    eventManager.on(SpreadSheetEventType.DESTROYED, () => {
+    eventManager.on(VTableSheetEventType.SPREADSHEET_DESTROYED, () => {
       events.push('DESTROYED');
     });
 

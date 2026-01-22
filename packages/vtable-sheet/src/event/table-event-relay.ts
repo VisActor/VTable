@@ -8,12 +8,14 @@
 
 import type { ListTable } from '@visactor/vtable';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
-import type VTableSheet from '../components/vtable-sheet';
+import type { ISpreadsheetEventSource } from './event-interfaces';
 
 type EventCallback = (...args: any[]) => void;
 
 interface EventHandler {
   callback: (event: any) => void;
+  /** 存储每个sheet的包装回调，避免内存泄漏 */
+  wrappedCallbacks: Map<string, EventCallback>;
 }
 
 /**
@@ -37,9 +39,15 @@ export class TableEventRelay {
   private _tableEventMap: Record<string, EventHandler[]> = {};
 
   /** VTableSheet 引用 */
-  private vtableSheet: VTableSheet;
+  private vtableSheet: ISpreadsheetEventSource;
 
-  constructor(vtableSheet: VTableSheet) {
+  /** 跟踪已绑定的sheet，防止重复绑定 */
+  private boundSheets: Set<string> = new Set();
+
+  /** 清理监听器，防止内存泄漏 */
+  private cleanupCallbacks: Map<string, () => void> = new Map();
+
+  constructor(vtableSheet: ISpreadsheetEventSource) {
     this.vtableSheet = vtableSheet;
   }
 
@@ -66,10 +74,19 @@ export class TableEventRelay {
       this._tableEventMap[type] = [];
     }
 
-    this._tableEventMap[type].push({ callback });
+    // 检查是否已经注册过该回调，避免重复注册
+    const existingCallbacks = this._tableEventMap[type];
+    const isAlreadyRegistered = existingCallbacks.some(item => item.callback === callback);
 
-    // 为所有已存在的 sheet 绑定事件
-    this.bindToAllSheets(type);
+    if (!isAlreadyRegistered) {
+      this._tableEventMap[type].push({
+        callback,
+        wrappedCallbacks: new Map<string, EventCallback>()
+      });
+
+      // 为所有已存在的 sheet 绑定事件
+      this.bindToAllSheets(type);
+    }
   }
 
   /**
@@ -85,6 +102,12 @@ export class TableEventRelay {
 
     if (!callback) {
       // 移除所有监听器
+      const handlers = this._tableEventMap[type];
+      // 先清理所有包装回调
+      handlers.forEach(handler => {
+        this.cleanupWrappedCallbacks(handler, type);
+      });
+
       delete this._tableEventMap[type];
       // 从所有 sheet 解绑
       this.unbindFromAllSheets(type);
@@ -92,6 +115,10 @@ export class TableEventRelay {
       // 移除特定监听器
       const index = this._tableEventMap[type].findIndex(h => h.callback === callback);
       if (index >= 0) {
+        const handler = this._tableEventMap[type][index];
+        // 清理该监听器的包装回调
+        this.cleanupWrappedCallbacks(handler, type);
+
         this._tableEventMap[type].splice(index, 1);
 
         if (this._tableEventMap[type].length === 0) {
@@ -104,6 +131,19 @@ export class TableEventRelay {
   }
 
   /**
+   * 清理包装回调，避免内存泄漏
+   */
+  private cleanupWrappedCallbacks(handler: EventHandler, eventType: string): void {
+    handler.wrappedCallbacks.forEach((wrappedCallback, sheetKey) => {
+      const worksheet = this.vtableSheet.workSheetInstances.get(sheetKey);
+      if (worksheet?.tableInstance) {
+        worksheet.tableInstance.off(eventType as any, wrappedCallback);
+      }
+    });
+    handler.wrappedCallbacks.clear();
+  }
+
+  /**
    * 为特定 sheet 绑定事件
    * 在 WorkSheet 初始化时调用
    *
@@ -112,10 +152,27 @@ export class TableEventRelay {
    * @internal
    */
   bindSheetEvents(sheetKey: string, tableInstance: ListTable): void {
+    // 防止重复绑定
+    if (this.boundSheets.has(sheetKey)) {
+      console.warn(`[TableEventRelay] Sheet ${sheetKey} 已经绑定过事件，跳过重复绑定`);
+      return;
+    }
+
     // 为这个 sheet 绑定所有已注册的事件
     for (const eventType in this._tableEventMap) {
       this.bindSheetEvent(sheetKey, tableInstance, eventType);
     }
+
+    this.boundSheets.add(sheetKey);
+
+    // 注册清理回调，当sheet销毁时自动清理
+    const cleanup = () => {
+      this.unbindSheetEvents(sheetKey, tableInstance);
+      this.boundSheets.delete(sheetKey);
+      this.cleanupCallbacks.delete(sheetKey);
+    };
+
+    this.cleanupCallbacks.set(sheetKey, cleanup);
   }
 
   /**
@@ -130,6 +187,13 @@ export class TableEventRelay {
     const handlers = this._tableEventMap[eventType] || [];
 
     handlers.forEach(handler => {
+      // 检查是否已经绑定过这个事件
+      if (handler.wrappedCallbacks.has(sheetKey)) {
+        // 如果已经绑定过，先解绑旧的
+        const oldCallback = handler.wrappedCallbacks.get(sheetKey)!;
+        tableInstance.off(eventType as any, oldCallback);
+      }
+
       // 创建包装函数，自动附带 sheetKey
       const wrappedCallback = (...args: any[]) => {
         // 增强事件对象，添加 sheetKey
@@ -143,7 +207,7 @@ export class TableEventRelay {
       };
 
       // 保存包装函数的引用，用于后续解绑
-      (handler as any)[`_wrapped_${sheetKey}`] = wrappedCallback;
+      handler.wrappedCallbacks.set(sheetKey, wrappedCallback);
 
       // 绑定到 tableInstance（VTable 的 on 方法不支持 query 参数）
       tableInstance.on(eventType as any, wrappedCallback);
@@ -179,10 +243,10 @@ export class TableEventRelay {
       const handlers = this._tableEventMap[eventType] || [];
 
       handlers.forEach(handler => {
-        const wrappedCallback = (handler as any)[`_wrapped_${sheetKey}`];
+        const wrappedCallback = handler.wrappedCallbacks.get(sheetKey);
         if (wrappedCallback) {
           tableInstance.off(eventType as any, wrappedCallback);
-          delete (handler as any)[`_wrapped_${sheetKey}`];
+          handler.wrappedCallbacks.delete(sheetKey);
         }
       });
     }
@@ -199,10 +263,10 @@ export class TableEventRelay {
       if (worksheet.tableInstance) {
         const handlers = this._tableEventMap[eventType] || [];
         handlers.forEach(handler => {
-          const wrappedCallback = (handler as any)[`_wrapped_${sheetKey}`];
+          const wrappedCallback = handler.wrappedCallbacks.get(sheetKey);
           if (wrappedCallback) {
             worksheet.tableInstance.off(eventType as any, wrappedCallback);
-            delete (handler as any)[`_wrapped_${sheetKey}`];
+            handler.wrappedCallbacks.delete(sheetKey);
           }
         });
       }
@@ -227,6 +291,11 @@ export class TableEventRelay {
    * 清除所有事件监听器
    */
   clearAllListeners(): void {
+    // 执行所有清理回调
+    for (const cleanup of this.cleanupCallbacks.values()) {
+      cleanup();
+    }
+
     // 从所有 sheet 解绑
     this.vtableSheet.workSheetInstances.forEach((worksheet, sheetKey) => {
       if (worksheet.tableInstance) {
@@ -234,6 +303,17 @@ export class TableEventRelay {
       }
     });
 
+    // 清空状态
     this._tableEventMap = {};
+    this.boundSheets.clear();
+    this.cleanupCallbacks.clear();
+  }
+
+  /**
+   * 销毁事件中转器
+   * 彻底清理所有资源，防止内存泄漏
+   */
+  destroy(): void {
+    this.clearAllListeners();
   }
 }

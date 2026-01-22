@@ -1,14 +1,13 @@
 import type { ISheetManager, IWorkSheetAPI } from '../ts-types/sheet';
 import type { ISheetDefine } from '../ts-types';
-import type { EventEmitter as EventEmitterType } from '@visactor/vutils';
-import { EventEmitter } from '@visactor/vutils';
-import { SpreadSheetEventType } from '../ts-types/spreadsheet-events';
+import { VTableSheetEventType } from '../ts-types/spreadsheet-events';
 import type {
   SheetAddedEvent,
   SheetRemovedEvent,
   SheetRenamedEvent,
   SheetMovedEvent
 } from '../ts-types/spreadsheet-events';
+import type { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
 
 export default class SheetManager implements ISheetManager {
   /** sheets集合 */
@@ -16,16 +15,16 @@ export default class SheetManager implements ISheetManager {
   /** 当前活动sheet的key */
   _activeSheetKey: string = '';
   /** 事件总线 */
-  private eventBus: EventEmitterType;
+  private eventBus: VTableSheetEventBus;
 
-  constructor() {
-    this.eventBus = new EventEmitter();
+  constructor(eventBus: VTableSheetEventBus) {
+    this.eventBus = eventBus;
   }
 
   /**
    * 获取事件总线
    */
-  getEventBus(): EventEmitterType {
+  getEventBus(): VTableSheetEventBus {
     return this.eventBus;
   }
 
@@ -86,7 +85,7 @@ export default class SheetManager implements ISheetManager {
       sheetTitle: sheet.sheetTitle,
       index
     };
-    this.eventBus.emit(SpreadSheetEventType.SHEET_ADDED, event);
+    this.eventBus.emit(VTableSheetEventType.SHEET_ADDED, event);
   }
 
   /**
@@ -137,7 +136,7 @@ export default class SheetManager implements ISheetManager {
       sheetTitle: sheetToRemove.sheetTitle,
       index
     };
-    this.eventBus.emit(SpreadSheetEventType.SHEET_REMOVED, event);
+    this.eventBus.emit(VTableSheetEventType.SHEET_REMOVED, event);
 
     return willReplaceSheetKey;
   }
@@ -166,7 +165,7 @@ export default class SheetManager implements ISheetManager {
       oldTitle,
       newTitle
     };
-    this.eventBus.emit(SpreadSheetEventType.SHEET_RENAMED, event);
+    this.eventBus.emit(VTableSheetEventType.SHEET_RENAMED, event);
   }
 
   /**
@@ -284,6 +283,6 @@ export default class SheetManager implements ISheetManager {
       fromIndex: sourceIndex,
       toIndex: insertIndex
     };
-    this.eventBus.emit(SpreadSheetEventType.SHEET_MOVED, event);
+    this.eventBus.emit(VTableSheetEventType.SHEET_MOVED, event);
   }
 }

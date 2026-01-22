@@ -1,8 +1,14 @@
-import { VTableSheet, TYPES } from '../../src/index';
+import { VTableSheet, TYPES, VTable } from '../../src/index';
 import * as VTablePlugins from '@visactor/vtable-plugins';
-import { SpreadSheetEventType, WorkSheetEventType } from '../../src/ts-types/spreadsheet-events';
+import { VTableSheetEventType } from '../../src/ts-types/spreadsheet-events';
 const CONTAINER_ID = 'vTable';
 export function createTable() {
+  // 清理之前的实例（如果存在）
+  if ((window as any).sheetInstance) {
+    (window as any).sheetInstance.release();
+    (window as any).sheetInstance = null;
+  }
+
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
     // showFormulaBar: false,
     showSheetTab: true,
@@ -806,91 +812,82 @@ export function createTable() {
     }
   });
   (window as any).sheetInstance = sheetInstance;
-  sheetInstance.onTableEvent('click_cell', event => {
+  sheetInstance.onTableEvent(VTable.TABLE_EVENT_TYPE.CLICK_CELL, event => {
     console.log('点击了单元格', event.sheetKey, event.row, event.col);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.RESIZED, event => {
-    console.log('工作表尺寸改变了', event.sheetKey, event.width, event.height);
-  });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.READY, event => {
-    console.log('工作表初始化完成了', event.sheetKey);
-  });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.ACTIVATED, event => {
-    console.log('工作表被激活了', event.sheetKey);
-  });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DEACTIVATED, event => {
-    console.log('工作表被停用了', event.sheetKey);
-  });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_CALCULATE_START, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_CALCULATE_START, event => {
     console.log('公式计算开始了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_CALCULATE_END, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_CALCULATE_END, event => {
     console.log('公式计算结束了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_ERROR, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_ERROR, event => {
     console.log('公式计算错误了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_DEPENDENCY_CHANGED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_DEPENDENCY_CHANGED, event => {
     console.log('公式依赖关系改变了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_ADDED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_ADDED, event => {
     console.log('公式添加了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.FORMULA_REMOVED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.FORMULA_REMOVED, event => {
     console.log('公式移除了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_LOADED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.DATA_LOADED, event => {
     console.log('数据加载完成了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_SORTED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.DATA_SORTED, event => {
     console.log('数据排序完成了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(WorkSheetEventType.DATA_FILTERED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.DATA_FILTERED, event => {
     console.log('数据筛选完成了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_ADDED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_ADDED, event => {
     console.log('工作表新增了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_MOVED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_MOVED, event => {
     console.log('工作表移动了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_RENAMED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_RENAMED, event => {
     console.log('工作表重命名了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_REMOVED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_REMOVED, event => {
     console.log('工作表删除了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_ACTIVATED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_ACTIVATED, event => {
     console.log('工作表激活了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.SHEET_VISIBILITY_CHANGED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_DEACTIVATED, event => {
+    console.log('工作表停用了', event.sheetKey);
+  });
+  sheetInstance.onSheetEvent(VTableSheetEventType.SHEET_VISIBILITY_CHANGED, event => {
     console.log('工作表显示状态改变了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_START, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.IMPORT_START, event => {
     console.log('导入开始了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_COMPLETED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.IMPORT_COMPLETED, event => {
     console.log('导入完成了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.IMPORT_ERROR, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.IMPORT_ERROR, event => {
     console.log('导入错误了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_START, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.EXPORT_START, event => {
     console.log('导出了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_COMPLETED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.EXPORT_COMPLETED, event => {
     console.log('导出完成了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.EXPORT_ERROR, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.EXPORT_ERROR, event => {
     console.log('导出错误了', event.fileType);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.CROSS_SHEET_REFERENCE_UPDATED, event => {
     console.log('跨工作表引用更新了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START, event => {
     console.log('跨工作表公式计算开始了', event.sheetKey);
   });
-  sheetInstance.onWorkSheetEvent(SpreadSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, event => {
+  sheetInstance.onSheetEvent(VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END, event => {
     console.log('跨工作表公式计算结束了', event.sheetKey);
   });
   // bindDebugTool(sheetInstance.activeWorkSheet.scenegraph.stage as any, {

@@ -5,6 +5,7 @@ import { MainMenuItemKey } from '../ts-types/base';
 export class MenuManager {
   private sheet: VTableSheet;
   private menuContainer: HTMLElement;
+  private clickOutsideHandler: (e: MouseEvent) => void;
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.createMainMenu();
@@ -71,11 +72,12 @@ export class MenuManager {
     });
 
     // 点击外部关闭菜单
-    document.addEventListener('click', e => {
+    this.clickOutsideHandler = (e: MouseEvent) => {
       if (!menu.contains(e.target as Node)) {
         menuContainer.classList.remove('active');
       }
-    });
+    };
+    document.addEventListener('click', this.clickOutsideHandler);
     this.menuContainer = menuContainer;
     return menu;
   }
@@ -235,6 +237,16 @@ export class MenuManager {
 
       default:
         break;
+    }
+  }
+
+  /**
+   * 清理菜单管理器，移除全局事件监听器
+   */
+  release(): void {
+    if (this.clickOutsideHandler) {
+      document.removeEventListener('click', this.clickOutsideHandler);
+      this.clickOutsideHandler = null;
     }
   }
 }
