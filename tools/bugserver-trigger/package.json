@@ -20,6 +20,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "typescript": "4.9.5",
+    "tslib": "^2.6.0",
     "@types/node-fetch": "2.6.4",
     "node-fetch": "2.6.7",
     "form-data": "~4.0.0",
