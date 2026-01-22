@@ -145,25 +145,6 @@ describe('WorkSheetEventManager', () => {
     });
   });
 
-  test('应该能触发范围数据变更事件', () => {
-    const mockCallback = jest.fn();
-    eventManager.on('range_data_changed', mockCallback);
-
-    const range = { startRow: 1, startCol: 1, endRow: 3, endCol: 3 };
-    const changes = [
-      { row: 1, col: 1, oldValue: 'A', newValue: 'B' },
-      { row: 2, col: 2, oldValue: 10, newValue: 20 }
-    ];
-
-    eventManager.emitRangeDataChanged(range, changes);
-
-    expect(mockCallback).toHaveBeenCalledWith({
-      sheetKey: 'test-sheet',
-      range: range,
-      changes: changes
-    });
-  });
-
   test('应该能正确移除事件监听器', () => {
     const mockCallback = jest.fn();
     eventManager.on('ready', mockCallback);

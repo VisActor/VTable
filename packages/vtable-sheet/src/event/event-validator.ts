@@ -45,9 +45,6 @@ export class EventValidator {
 
       // 数据相关事件必须包含 sheetKey
       case VTableSheetEventType.DATA_LOADED:
-      case VTableSheetEventType.DATA_SORTED:
-      case VTableSheetEventType.DATA_FILTERED:
-      case VTableSheetEventType.RANGE_DATA_CHANGED:
         return this.validateDataEvent(event);
 
       // 导入导出事件
