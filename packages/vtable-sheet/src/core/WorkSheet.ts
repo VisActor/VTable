@@ -191,7 +191,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
 
     // 触发工作表准备就绪事件
     if (this.eventManager) {
-      this.eventManager.emitReady();
+      // this.eventManager.emitReady();
       // 触发数据加载完成事件
       this.eventManager.emitDataLoaded(this.rowCount, this.colCount);
     }
@@ -765,10 +765,10 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
           this.tableInstance.resize();
         }
 
-        // 触发工作表尺寸改变事件
-        if (this.eventManager) {
-          this.eventManager.emitResized(width, height);
-        }
+        // // 触发工作表尺寸改变事件
+        // if (this.eventManager) {
+        //   this.eventManager.emitResized(width, height);
+        // }
       }
     } catch (error) {
       console.error('Error during resize:', error);

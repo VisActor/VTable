@@ -68,30 +68,6 @@ export class WorkSheetEventManager extends BaseEventManager<WorkSheetEventMap> {
     this.eventBus.emit(type, event);
   }
 
-  /**
-   * 触发工作表准备就绪事件
-   */
-  emitReady(): void {
-    const event: SheetActivatedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      sheetTitle: this.worksheet.sheetTitle
-    };
-    this.emit('ready', event);
-  }
-
-  /**
-   * 触发工作表尺寸改变事件
-   */
-  emitResized(width: number, height: number): void {
-    const event: SheetResizedEvent = {
-      sheetKey: this.worksheet.sheetKey,
-      sheetTitle: this.worksheet.sheetTitle,
-      width,
-      height
-    };
-    this.emit('resized', event);
-  }
-
   // 注意：工作表管理事件（SHEET_ADDED, SHEET_REMOVED, SHEET_RENAMED, SHEET_MOVED）
   // 现在只在 SpreadSheet 层级处理，不在 WorkSheet 层级重复定义
 
