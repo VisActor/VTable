@@ -135,148 +135,90 @@ Get the formula manager
   getFormulaManager: () => FormulaManager
 ```
 
+
 ## Events
 
-Sheet event list, you can listen to the required events according to the actual needs, to achieve customized business.
+The list of table events, you can listen to the events you need to implement the custom business according to actual needs.
 ### Usage
-Specific usage:
+VTableSheet provides a unified event system, supporting two types of event listening:
 
-```
-  import { WorkSheetEventType } from '@visactor/vtable-sheet';
-  
-  // Use WorkSheet instance to listen to events
-  worksheet.on(WorkSheetEventType.CELL_CLICK, (args) => {
-    console.log('Cell selected:', args);
-  });
- 
-```
+ 1. Listen to VTable table events
+Use the `onTableEvent` method to listen to the events of the underlying VTable instance.
 
-Supported event types:
+This method listens to the events of the VTable instance, the type and the VTable supported type are completely unified, and the sheetKey property is attached to the VTable event return parameters, which is convenient for business processing.:
 
-```
-export enum WorkSheetEventType {
-  // Cell event
-  CELL_CLICK = 'cell-click',
-  CELL_VALUE_CHANGED = 'cell-value-changed',
+```typescript
+import * as VTable from '@visactor/vtable';
 
-  // Selection range event
-  SELECTION_CHANGED = 'selection-changed',
-  SELECTION_END = 'selection-end'
-}
-```
-**If you want to listen to the events of the VTable component, you can get the instance of VTable through the interface, and then listen to the events through the instance**
-Specific usage:
-```
-  const tableInstance = sheetInstance.activeWorkSheet.tableInstance;// Get the instance of the active sheet
-  tableInstance.on('mousedown_cell', (args) => console.log(CLICK_CELL, args));
+// Listen to the cell click event
+sheetInstance.onTableEvent(VTable.TABLE_EVENT_TYPE.CLICK_CELL, (event) => {
+  console.log('The cell was clicked', event.sheetKey, event.row, event.col);
+});
+
+// Listen to the cell value change event
+sheetInstance.onTableEvent(VTable.TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, (event) => {
+  console.log('The cell value was changed:', event.value, 'Position:', event.row, event.col);
+});
 ```
 
-### CELL_CLICK
+ 2. Listen to the spreadsheet level events
+Use the `on` method to listen to the events of the spreadsheet level:
 
-Cell click event
+```typescript
+import { VTableSheetEventType } from '@visactor/vtable-sheet';
 
-Event return parameters:
+// Listen to the formula calculation event
+sheetInstance.on(VTableSheetEventType.FORMULA_ADDED, (event) => {
+  console.log('The formula was added', event.sheetKey);
+});
 
-```
-{
-  /** Row index */
-  row: number;
-  /** Column index */
-  col: number;
-  /** Cell content */
-  value?: CellValue;
-  /** Cell DOM element */
-  cellElement?: HTMLElement;
-  /** Original event object */
-  originalEvent?: MouseEvent | KeyboardEvent;
-}
+// Listen to the sheet switch event
+sheetInstance.on(VTableSheetEventType.SHEET_ACTIVATED, (event) => {
+  console.log('The sheet was activated', event.sheetKey, event.sheetTitle);
+});
 ```
 
-### CELL_VALUE_CHANGED
 
-Cell value change event
+### Complete event type enumeration
 
-Event return parameters:
+```typescript
+export enum VTableSheetEventType {
 
-```
-{
-  /** Row index */
-  row: number;
-  /** Column index */
-  col: number;
-  /** New value */
-  newValue: CellValue;
-  /** Old value */
-  oldValue: CellValue;
-  /** Cell DOM element */
-  cellElement?: HTMLElement;
-  /** Whether caused by user operation */
-  isUserAction?: boolean;
-  /** Whether caused by formula calculation */
-  isFormulaCalculation?: boolean;
-}
-```
+  // ===== 数据操作事件 =====
+  DATA_LOADED = 'data_loaded',
 
-### SELECTION_CHANGED
+  // ===== 工作表生命周期事件 =====
+  ACTIVATED = 'activated',
 
-Selection range change event
+  // ===== 电子表格生命周期 =====
+  SPREADSHEET_READY = 'spreadsheet_ready',
+  SPREADSHEET_DESTROYED = 'spreadsheet_destroyed',
+  SPREADSHEET_RESIZED = 'spreadsheet_resized',
 
-Event return parameters:
+  // ===== Sheet 管理事件 =====
+  SHEET_ADDED = 'sheet_added',
+  SHEET_REMOVED = 'sheet_removed',
+  SHEET_RENAMED = 'sheet_renamed',
+  SHEET_ACTIVATED = 'sheet_activated',
+  SHEET_DEACTIVATED = 'sheet_deactivated',
+  SHEET_MOVED = 'sheet_moved',
+  SHEET_VISIBILITY_CHANGED = 'sheet_visibility_changed',
 
-```
-{
-  /** Selection range */
-  ranges?: Array<{
-    start: {
-      row: number;
-      col: number;
-    };
-    end: {
-      row: number;
-      col: number;
-    };
-  }>;
-  /** Selected cell data */
-  cells?: Array<
-    Array<{
-      row: number;
-      col: number;
-      value?: CellValue;
-    }>
-  >;
-  /** Original event object */
-  originalEvent?: MouseEvent | KeyboardEvent;
-}
-```
+  // ===== 导入导出事件 =====
+  IMPORT_START = 'import_start',
+  IMPORT_COMPLETED = 'import_completed',
+  IMPORT_ERROR = 'import_error',
+  EXPORT_START = 'export_start',
+  EXPORT_COMPLETED = 'export_completed',
+  EXPORT_ERROR = 'export_error',
 
-### SELECTION_END
 
-Selection end event (triggered when drag selection is completed)
-
-  Event return parameters:
-
-```
-{
-  /** Selection range */
-  ranges?: Array<{
-    start: {
-      row: number;
-      col: number;
-    };
-    end: {
-      row: number;
-      col: number;
-    };
-  }>;
-  /** Selected cell data */
-  cells?: Array<
-    Array<{
-      row: number;
-      col: number;
-      value?: CellValue;
-    }>
-  >;
-  /** Original event object */
-  originalEvent?: MouseEvent | KeyboardEvent;
+  // ===== 公式相关事件 =====
+  FORMULA_CALCULATE_START = 'formula_calculate_start',
+  FORMULA_CALCULATE_END = 'formula_calculate_end',
+  FORMULA_ERROR = 'formula_error',
+  FORMULA_DEPENDENCY_CHANGED = 'formula_dependency_changed',
+  FORMULA_ADDED = 'formula_added',
+  FORMULA_REMOVED = 'formula_removed',
 }
 ```

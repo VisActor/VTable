@@ -5,6 +5,7 @@
 
 import {
   VTableSheetEventType,
+  WORKSHEET_EVENT_TYPES,
   type WorkSheetEventMap,
   type SheetActivatedEvent,
   type SheetResizedEvent,
@@ -35,24 +36,10 @@ export class WorkSheetEventManager extends BaseEventManager<WorkSheetEventMap> {
 
   /**
    * 获取事件类型列表
+   * 使用集中化的事件定义，新增事件只需要修改 spreadsheet-events.ts 文件
    */
   protected getEventTypes(): string[] {
-    return [
-      'ready',
-      'destroyed',
-      'resized',
-      'activated',
-      'formula_calculate_start',
-      'formula_calculate_end',
-      'formula_error',
-      'formula_dependency_changed',
-      'formula_added',
-      'formula_removed',
-      'data_loaded',
-      'data_sorted',
-      'data_filtered',
-      'range_data_changed'
-    ];
+    return Array.from(WORKSHEET_EVENT_TYPES);
   }
 
   /**

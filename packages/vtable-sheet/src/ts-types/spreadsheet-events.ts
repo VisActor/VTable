@@ -63,6 +63,8 @@ export interface Range {
  * - 使用下划线命名法 (snake_case)
  * - 按功能模块分组
  * - 避免冗余前缀，保持简洁
+ *
+ * 注意：新增事件时，请同步更新以下常量定义
  */
 export enum VTableSheetEventType {
   // ===== 公式相关事件 =====
@@ -82,10 +84,6 @@ export enum VTableSheetEventType {
   // ===== 数据操作事件 =====
   /** 数据加载完成 */
   DATA_LOADED = 'data_loaded',
-
-  // ===== 工作表生命周期事件 =====
-  /** 工作表激活 */
-  ACTIVATED = 'activated',
 
   // ===== 电子表格生命周期 =====
   /** 电子表格初始化完成 */
@@ -133,6 +131,57 @@ export enum VTableSheetEventType {
   /** 跨 Sheet 公式计算结束 */
   CROSS_SHEET_FORMULA_CALCULATE_END = 'cross_sheet_formula_calculate_end'
 }
+
+/**
+ * ============================================
+ * 事件定义集中化管理
+ * 新增事件时只需要修改这里
+ * ============================================
+ */
+
+/** WorkSheet 层支持的事件类型列表 */
+export const WORKSHEET_EVENT_TYPES = [
+  'formula_calculate_start',
+  'formula_calculate_end',
+  'formula_error',
+  'formula_dependency_changed',
+  'formula_added',
+  'formula_removed',
+  'data_loaded',
+  'data_sorted',
+  'data_filtered'
+] as const;
+
+/** SpreadSheet 层支持的事件类型列表 */
+export const SPREADSHEET_EVENT_TYPES = [
+  'spreadsheet_ready',
+  'spreadsheet_destroyed',
+  'spreadsheet_resized',
+  'sheet_added',
+  'sheet_removed',
+  'sheet_renamed',
+  'sheet_activated',
+  'sheet_deactivated',
+  'sheet_moved',
+  'sheet_visibility_changed',
+  'import_start',
+  'import_completed',
+  'import_error',
+  'export_start',
+  'export_completed',
+  'export_error',
+  'cross_sheet_reference_updated',
+  'cross_sheet_formula_calculate_start',
+  'cross_sheet_formula_calculate_end'
+] as const;
+
+// /** 所有支持的事件类型 */
+// export const ALL_EVENT_TYPES = [...WORKSHEET_EVENT_TYPES, ...SPREADSHEET_EVENT_TYPES] as const;
+
+// /** 事件类型类型定义 */
+// export type WorkSheetEventType = (typeof WORKSHEET_EVENT_TYPES)[number];
+// export type SpreadSheetEventType = (typeof SPREADSHEET_EVENT_TYPES)[number];
+// export type AllEventType = (typeof ALL_EVENT_TYPES)[number];
 
 /**
  * ============================================
@@ -352,10 +401,6 @@ export interface SpreadSheetEventMap {
  * WorkSheet 事件映射
  */
 export interface WorkSheetEventMap {
-  ready: SheetActivatedEvent;
-  destroyed: SheetActivatedEvent;
-  resized: SheetResizedEvent;
-  activated: SheetActivatedEvent;
   formula_calculate_start: FormulaCalculateEvent;
   formula_calculate_end: FormulaCalculateEvent;
   formula_error: FormulaErrorEvent;
@@ -363,9 +408,6 @@ export interface WorkSheetEventMap {
   formula_added: FormulaChangeEvent;
   formula_removed: FormulaChangeEvent;
   data_loaded: DataLoadedEvent;
-  data_sorted: DataSortedEvent;
-  data_filtered: DataFilteredEvent;
-  range_data_changed: RangeDataChangedEvent;
   sheet_added: SheetAddedEvent;
   sheet_removed: SheetRemovedEvent;
   sheet_renamed: SheetRenamedEvent;

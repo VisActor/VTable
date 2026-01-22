@@ -5,6 +5,7 @@
 
 import {
   VTableSheetEventType,
+  SPREADSHEET_EVENT_TYPES,
   type SpreadSheetEventMap,
   type SheetAddedEvent,
   type SheetRemovedEvent,
@@ -34,29 +35,10 @@ export class SpreadSheetEventManager extends BaseEventManager<SpreadSheetEventMa
 
   /**
    * 获取事件类型列表
+   * 使用集中化的事件定义，新增事件只需要修改 spreadsheet-events.ts 文件
    */
   protected getEventTypes(): string[] {
-    return [
-      VTableSheetEventType.SPREADSHEET_READY,
-      VTableSheetEventType.SPREADSHEET_DESTROYED,
-      VTableSheetEventType.SPREADSHEET_RESIZED,
-      VTableSheetEventType.SHEET_ADDED,
-      VTableSheetEventType.SHEET_REMOVED,
-      VTableSheetEventType.SHEET_RENAMED,
-      VTableSheetEventType.SHEET_ACTIVATED,
-      VTableSheetEventType.SHEET_DEACTIVATED,
-      VTableSheetEventType.SHEET_MOVED,
-      VTableSheetEventType.SHEET_VISIBILITY_CHANGED,
-      VTableSheetEventType.IMPORT_START,
-      VTableSheetEventType.IMPORT_COMPLETED,
-      VTableSheetEventType.IMPORT_ERROR,
-      VTableSheetEventType.EXPORT_START,
-      VTableSheetEventType.EXPORT_COMPLETED,
-      VTableSheetEventType.EXPORT_ERROR,
-      VTableSheetEventType.CROSS_SHEET_REFERENCE_UPDATED,
-      VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_START,
-      VTableSheetEventType.CROSS_SHEET_FORMULA_CALCULATE_END
-    ];
+    return Array.from(SPREADSHEET_EVENT_TYPES);
   }
 
   /**

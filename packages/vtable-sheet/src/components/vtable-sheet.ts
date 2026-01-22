@@ -753,22 +753,6 @@ export default class VTableSheet {
 
   /**
    * 注册 WorkSheet 事件监听器（在 VTableSheet 层）
-   *
-   * 会监听所有 sheet 的 WorkSheet 层事件，并在回调时自动附带 sheetKey
-   * 同时也会监听来自电子表格级别的事件（如工作表添加、移除、重命名、移动）
-   *
-   * @example
-   * ```typescript
-   * // 在 VTableSheet 层注册
-   * sheet.onWorkSheetEvent('worksheet:activated', (event) => {
-   *   console.log(`工作表 ${event.sheetKey} 被激活`);
-   * });
-   *
-   * // 监听工作表添加事件（电子表格级别）
-   * sheet.onWorkSheetEvent('spreadsheet:sheet_added', (event) => {
-   *   console.log(`新工作表添加: ${event.sheetTitle}`);
-   * });
-   * ```
    */
   onSheetEvent(type: string, callback: (event: any) => void): void {
     // 所有事件都通过 SpreadSheetEventManager 处理
