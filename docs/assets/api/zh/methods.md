@@ -1759,6 +1759,15 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
   completeEditCell: () => void;
 ```
 
+## cancelEditCell(Function)
+
+取消编辑，不保存任何更改
+
+```
+  /** 取消编辑 */
+  cancelEditCell: () => void;
+```
+
 ## records
 
 获取当前表格的全部数据
