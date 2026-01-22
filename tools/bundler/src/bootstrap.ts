@@ -161,10 +161,14 @@ async function bootstrap() {
     });
     return;
   }
-  taker.series(taskList)(err => {
-    if (err) {
-      throw err;
-    }
+  return new Promise<void>((resolve, reject) => {
+    taker.series(taskList)(err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
   });
 }
 

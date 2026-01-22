@@ -16,30 +16,36 @@ function packageNameToPath(name: string) {
   return name.replace('@', '').replace('/', '_');
 }
 export async function buildUmd(config: Config, projectRoot: string, rawPackageJson: RawPackageJson, minify: boolean) {
-  const babelPlugins = getBabelPlugins(rawPackageJson.name);
-  const entry = path.resolve(
-    projectRoot,
-    config.sourceDir,
-    typeof config.input === 'string' ? config.input : config.input.umd!
-  );
-  const rollupOptions = getRollupOptions(projectRoot, entry, rawPackageJson, babelPlugins, { ...config, minify });
-  DebugConfig('RollupOptions', JSON.stringify(rollupOptions));
-  const bundle = await rollup(rollupOptions);
+  let bundle: RollupBuild | null = null;
+  try {
+    const babelPlugins = getBabelPlugins(rawPackageJson.name);
+    const entry = path.resolve(
+      projectRoot,
+      config.sourceDir,
+      typeof config.input === 'string' ? config.input : config.input.umd!
+    );
+    const rollupOptions = getRollupOptions(projectRoot, entry, rawPackageJson, babelPlugins, { ...config, minify });
+    DebugConfig('RollupOptions', JSON.stringify(rollupOptions));
+    bundle = await rollup(rollupOptions);
 
-  const dest = path.resolve(projectRoot, config.outputDir.umd!);
-  await generateOutputs(bundle, [
-    {
-      format: 'umd',
-      name: config.name || packageNameToPath(rawPackageJson.name),
-      file: minify
-        ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.min.js`
-        : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.js`,
-      exports: 'named',
-      globals: { react: 'React', ...config.globals }
+    const dest = path.resolve(projectRoot, config.outputDir.umd!);
+    await generateOutputs(bundle, [
+      {
+        format: 'umd',
+        name: config.name || packageNameToPath(rawPackageJson.name),
+        file: minify
+          ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.min.js`
+          : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.js`,
+        exports: 'named',
+        globals: { react: 'React', ...config.globals },
+        sourcemap: config.sourcemap
+      }
+    ]);
+  } catch (error) {
+    throw error;
+  } finally {
+    if (bundle) {
+      await bundle.close();
     }
-  ]);
-
-  if (bundle) {
-    await bundle.close();
   }
 }
