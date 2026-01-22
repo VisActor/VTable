@@ -1736,7 +1736,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (hoverCell.col !== -1 && hoverCell.row !== -1) {
       const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
       const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.activeChartInstance?.disableTooltip(true);
+      chartNode?.activeChartInstance?.disableTooltip(true);
     }
     //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     disableTooltipToAllChartInstances(this.scenegraph);
@@ -1747,7 +1747,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (hoverCell.col !== -1 && hoverCell.row !== -1) {
       const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
       const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
-      chartNode.activeChartInstance?.disableTooltip(false);
+      chartNode?.activeChartInstance?.disableTooltip(false);
     }
     //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
     enableTooltipToAllChartInstances(this.scenegraph);
