@@ -142,7 +142,7 @@ export function createTable() {
       // frozenRowCount: 2,
       maintainedDataCount: 60,
       select: {
-        makeSelectCellVisible: false
+        // makeSelectCellVisible: false
       },
       // rowSeriesNumber: {}
       // select: {
