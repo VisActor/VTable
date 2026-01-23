@@ -549,7 +549,7 @@ export class Chart extends Rect {
       releaseAllChartInstance?: boolean;
     } = {}
   ) {
-    console.log('----deactivate chart instance 1', this.activeChartInstance?.id, this.parent.col, this.parent.row);
+    // console.log('----deactivate chart instance 1', this.activeChartInstance?.id, this.parent.col, this.parent.row);
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
@@ -574,7 +574,7 @@ export class Chart extends Rect {
           false,
           false
         );
-        console.log('----release chart instance 1', this.activeChartInstance.id, this.parent.col, this.parent.row);
+        // console.log('----release chart instance 1', this.activeChartInstance.id, this.parent.col, this.parent.row);
         this.activeChartInstance?.release();
 
         this.activeChartInstance = null;
