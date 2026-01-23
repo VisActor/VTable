@@ -2144,22 +2144,79 @@ export class Dataset {
     rowKey: string[] | string = [],
     colKey: string[] | string = [],
     indicator: string,
-    newValue: string | number
+    newValue: string | number,
+    indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ) {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
-
+    let rowDimensionKey: string | undefined;
+    if (indicatorPosition?.position === 'row') {
+      rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
+    } else {
+      const rowIndex = rowKey.length - 1;
+      rowDimensionKey = rowIndex >= 0 && rowIndex < this.rows.length ? this.rows[rowIndex] : undefined;
+    }
+    let colDimensionKey: string | undefined;
+    if (indicatorPosition?.position === 'col') {
+      colDimensionKey = colKey.length >= 2 ? this.columns[colKey.length - 2] : undefined;
+    } else {
+      const colIndex = colKey.length - 1;
+      colDimensionKey = colIndex >= 0 && colIndex < this.columns.length ? this.columns[colIndex] : undefined;
+    }
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
       flatRowKey = rowKey;
     } else {
-      flatRowKey = rowKey.join(this.stringJoinChar);
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      if (!indicatorPosition || indicatorPosition.position === 'row') {
+        rowKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            rowKey.splice(i, 1);
+          }
+        });
+      }
+      if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
+        // 如果是平铺树结构 小计需要处理补充到rowKey中
+        if (rowKey[0] === this.rowGrandTotalLabel) {
+        } else if (
+          ((this.totals?.row?.subTotalsDimensions &&
+            this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+            this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey)) ||
+            this.totals?.row?.showSubTotalsOnTreeNode) &&
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+        ) {
+          rowKey.push(this.rowSubTotalLabel);
+        }
+      }
+      // flatRowKey = rowKey.join(this.stringJoinChar);
+      flatRowKey = join(rowKey, this.stringJoinChar);
     }
 
     if (typeof colKey === 'string') {
       flatColKey = colKey;
     } else {
-      flatColKey = colKey.join(this.stringJoinChar);
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      if (!indicatorPosition || indicatorPosition.position === 'col') {
+        colKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            colKey.splice(i, 1);
+          }
+        });
+      }
+      if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
+        if (colKey[0] === this.colGrandTotalLabel) {
+        } else if (
+          ((this.totals?.column?.subTotalsDimensions &&
+            this.totals?.column?.subTotalsDimensions?.length >= 1 &&
+            this.totals.column.subTotalsDimensions.find((dimension: string) => dimension === colDimensionKey)) ||
+            this.totals?.column?.showSubTotalsOnTreeNode) &&
+          colKey[colKey.length - 1] !== this.colSubTotalLabel
+        ) {
+          colKey.push(this.colSubTotalLabel);
+        }
+      }
+      // flatColKey = colKey.join(this.stringJoinChar);
+      flatColKey = join(colKey, this.stringJoinChar);
     }
     //在newValue能转为数字的情况下 转为数字
     if (typeof newValue === 'string') {
