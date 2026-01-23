@@ -9,6 +9,7 @@ import type { Scenegraph } from '../scenegraph';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import { getQuadProps } from '../utils/padding';
 import { getProp } from '../utils/get-prop';
+import { getBrushingChartInstanceCellPos } from '../graphic/active-cell-chart-list';
 
 /** 供调整列宽后更新chart使用 */
 export function updateChartSizeForResizeColWidth(scenegraph: Scenegraph, col: number) {
@@ -304,10 +305,15 @@ export function updateChartSizeForResizeRowHeight(scenegraph: Scenegraph, row: n
 }
 /** 清理所有chart节点的 图表缓存图片 */
 export function clearChartCacheImage(scenegraph: Scenegraph) {
+  const brushingCellPos = getBrushingChartInstanceCellPos(scenegraph);
   // 将调整列宽的后面的面也都一起需要调整viewbox。  TODO：columnResizeType支持后需要根据变化的列去调整，范围可能变多或者变少
   for (let c = scenegraph.proxy.colStart; c <= scenegraph.proxy.colEnd; c++) {
     const columnGroup = scenegraph.getColGroup(c);
     columnGroup?.getChildren()?.forEach((cellNode: Group) => {
+      if (brushingCellPos && brushingCellPos.col === cellNode.col && brushingCellPos.row === cellNode.row) {
+        // brushing cell 不清理更新缓存图片 激活的chart实例仍然存在。这里主要为了修复个bug 这里清除后后续截图时chart绘制的范围可能会超出单元格范围（列最后一行才可能复现这个问题）
+        return;
+      }
       cellNode.children.forEach((node: Chart) => {
         if ((node as any).type === 'chart') {
           node.cacheCanvas = null;
@@ -365,9 +371,14 @@ export function updateChartData(scenegraph: Scenegraph) {
   updateTableAxes(scenegraph.bottomFrozenGroup, scenegraph.table);
 }
 /** 组织图表数据状态_selectedDataItemsInChart 更新选中的图表图元状态 */
-export function updateChartState(scenegraph: Scenegraph, datum: any) {
+export function updateChartState(
+  scenegraph: Scenegraph,
+  datum: any,
+  selectedDataMode: 'click' | 'brush' | 'multiple-select'
+) {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
+    (table as PivotChart)._selectedDataMode = selectedDataMode;
     const preSelectItemsCount = (table as PivotChart)._selectedDataItemsInChart.length;
     if (
       (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) &&
@@ -402,7 +413,17 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
       newSelectedDataItemsInChart.push(selectedState);
     }
     //避免无效的更新
-    if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
+    if (selectedDataMode === 'multiple-select') {
+      if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
+        (table as PivotChart)._selectedDataItemsInChart = [];
+      } else {
+        (table as PivotChart)._selectedDataItemsInChart.push(...newSelectedDataItemsInChart);
+      }
+      (table.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataStateToChartInstance();
+      // 清楚chart缓存图片
+      clearChartCacheImage(scenegraph);
+      table.scenegraph.updateNextFrame();
+    } else if (!isEqual((table as PivotChart)._selectedDataItemsInChart, newSelectedDataItemsInChart)) {
       (table as PivotChart)._selectedDataItemsInChart = newSelectedDataItemsInChart;
       (table.internalProps.layoutMap as PivotHeaderLayoutMap).updateDataStateToChartInstance();
       // 清楚chart缓存图片
