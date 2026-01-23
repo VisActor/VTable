@@ -194,6 +194,7 @@ columnWidthConfigForRowHeader": [
 
 ```
 export interface PivotChartConstructorOptions {
+  ...other options,
   chartDimensionLinkage?: {
     showTooltip?: boolean;
     heightLimitToShowTooltipForEdgeRow?: number;
@@ -204,6 +205,20 @@ export interface PivotChartConstructorOptions {
       right?: LineAxisAttributes['labelHoverOnAxis'];
       top?: LineAxisAttributes['labelHoverOnAxis'];
     };
+     /** 关联图表中点击图元的高亮状态的过滤函数 */
+    selectedStateFilter?: (datum: any) => boolean;
+    /** 关联图表中点击图元反选的高亮状态的过滤函数 */
+    selectedReverseStateFilter?: (datum: any) => boolean;
+    /** 关联图表中brush框选中状态的过滤函数 默认是严格框选的图元有inBrush的高亮状态 */
+    inBrushStateFilter?: (datum: any) => boolean;
+    /** 对应上面inBrushStateFilter，框选范围外的图元状态的过滤函数 */
+    outOfBrushStateFilter?: (datum: any) => boolean;
+    /** 是否监听brushChange事件，默认false 不监听 */
+    listenBrushChange?: boolean;
+    /** brushChange事件处理的延迟时间。节流防止频繁触发卡顿，默认100毫秒 */
+    brushChangeDelay?: number;
+    /** 清除图表状态的函数 */
+    clearChartState?: () => void;
   };
 }
 ```
@@ -212,6 +227,13 @@ export interface PivotChartConstructorOptions {
 - heightLimitToShowTooltipForEdgeRow: 针对条形图折线图等， 整列显示tooltip时，第一行及最后一行可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。
 - widthLimitToShowTooltipForEdgeColumn: 针对横向条形图，整行显示tooltip时，第一列及最后一列可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多宽 可允许显示tooltip。
 - labelHoverOnAxis: 鼠标hover到透视图上时，轴上悬浮label标签的相关配置。支持left、right、top、bottom四个方向的配置。
+- selectedStateFilter: 关联图表中点击图元的高亮状态的过滤函数
+- selectedReverseStateFilter: 关联图表中点击图元反选的高亮状态的过滤函数
+- inBrushStateFilter: 关联图表中brush框选中状态的过滤函数 默认是严格框选的图元有inBrush的高亮状态
+- outOfBrushStateFilter: 对应上面inBrushStateFilter，框选范围外的图元状态的过滤函数
+- listenBrushChange: 是否监听brushChange事件，默认false 不监听
+- brushChangeDelay: brushChange事件处理的延迟时间。节流防止频繁触发卡顿，默认100毫秒
+- clearChartState: 清除图表状态的函数
 
 举例配置：
 ```

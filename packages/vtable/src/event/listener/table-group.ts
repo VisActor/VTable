@@ -422,7 +422,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
     //处理当点击到的不是图表上时 更新图表的状态为空
     if (table.isPivotChart() && eventArgsSet?.eventArgs?.target.type !== 'chart') {
-      table.scenegraph.updateChartState(null);
+      table.scenegraph.updateChartState(null, undefined);
+      table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
     }
     // 处理menu
     if ((eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon) {
@@ -520,7 +521,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           ) {
             // eventManager.startColumnResize(e);
             // eventManager._resizing = true;
-            table.scenegraph.updateChartState(null);
+            table.scenegraph.updateChartState(null, undefined);
+            table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
             stateManager.updateInteractionState(InteractionState.grabing);
             return;
           }
@@ -868,7 +870,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       ) {
         // eventManager.startColumnResize(e);
         // eventManager._resizing = true;
-        table.scenegraph.updateChartState(null);
+        table.scenegraph.updateChartState(null, undefined);
+        table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
         stateManager.updateInteractionState(InteractionState.grabing);
 
         // 调整列宽最后一列有外扩了8px  需要将其考虑到table中 需要触发下MOUSEDOWN_TABLE事件
@@ -934,7 +937,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.endSelectCells(true, isHasSelected);
 
       stateManager.updateCursor();
-      table.scenegraph.updateChartState(null);
+      table.scenegraph.updateChartState(null, undefined);
+      // 如果有brush状态的图表，dealTableHover方法无法将其释放，所以需要强制释放
+      table.scenegraph.deactivateChart(-1, -1, true); // 释放brushingChartInstance
     } else if (table.eventManager.isDraging && stateManager.isSelecting()) {
       // 如果鼠标拖拽后是否 则结束选中
       stateManager.endSelectCells();
@@ -1181,6 +1186,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const legend: any = e.path.find(node => (node as any).name === 'legend');
     if (!legend) {
       table.editorManager?.completeEdit();
+      // 滚动后 选中图元的状态希望能保留 所以这里不更新chart状态
+      // table.scenegraph.updateChartState(null, undefined);
+      //#region 释放当前激活单元格的图表实例  本身会走到dealhover中的deactivateChart方法，但开发饼图联动时候，因为是整个可视区域的chart都被激活了，所以也需要全部释放。chart.ts文件中的deactivate方法需要区分这个scroll情况导致的全部释放。
+      const { cellPos } = table.stateManager.hover;
+      const prevHoverCellCol = cellPos.col;
+      const prevHoverCellRow = cellPos.row;
+      table.scenegraph.deactivateChart(prevHoverCellCol, prevHoverCellRow, true);
+      //#endregion
       if (table.eventManager._enableTableScroll) {
         handleWhell(e, stateManager);
       }

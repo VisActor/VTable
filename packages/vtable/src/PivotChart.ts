@@ -75,6 +75,10 @@ import {
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
 import { cacheStageCanvas, clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import {
+  disableTooltipToAllChartInstances,
+  enableTooltipToAllChartInstances
+} from './scenegraph/graphic/active-cell-chart-list';
 
 registerAxis();
 registerEmptyTip();
@@ -99,8 +103,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   pivotSortState: PivotSortState[];
 
   dataset?: Dataset; //数据处理对象  开启数据透视分析的表
-
+  //记录被点击选中图元
   _selectedDataItemsInChart: any[] = [];
+  _selectedDataMode: 'click' | 'brush' | 'multiple-select' = 'click';
+  //记录轴坐标被选中维度
   _selectedDimensionInChart: { key: string; value: string }[] = [];
   _chartEventMap: Record<string, { query?: any; callback: AnyFunction }[]> = {};
 
@@ -329,6 +335,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
     super.updateOption(options, updateConfig);
+    this.scenegraph.updateChartState(null, undefined);
+    this.scenegraph.deactivateChart(-1, -1, true);
     this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
@@ -1610,6 +1618,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
   setRecords(records: Array<any>): void {
     this.internalProps.layoutMap.release();
     clearChartRenderQueue();
+    this.scenegraph.updateChartState(null, undefined);
+    this.scenegraph.deactivateChart(-1, -1, true);
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     const options = this.options;
@@ -1719,5 +1729,27 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     const layoutMap = this.internalProps.layoutMap;
     const headerNodes = layoutMap.getCellHeaderPathsWithTreeNode(col, row);
     return headerNodes;
+  }
+  /** 暂时关闭透视图的联动效果中的tooltip的显示 */
+  disableTooltipToAllChartInstances() {
+    const hoverCell = this.stateManager.hover.cellPos;
+    if (hoverCell.col !== -1 && hoverCell.row !== -1) {
+      const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      chartNode?.activeChartInstance?.disableTooltip(true);
+    }
+    //将所有的图表实例调用一下disableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
+    disableTooltipToAllChartInstances(this.scenegraph);
+  }
+  /** 恢复透视图的联动效果中的tooltip的显示 */
+  enableTooltipToAllChartInstances() {
+    const hoverCell = this.stateManager.hover.cellPos;
+    if (hoverCell.col !== -1 && hoverCell.row !== -1) {
+      const cellGroup = this.scenegraph.getCell(hoverCell.col, hoverCell.row);
+      const chartNode: Chart = cellGroup?.getChildren()?.[0] as Chart;
+      chartNode?.activeChartInstance?.disableTooltip(false);
+    }
+    //将所有的图表实例调用一下enableDimensionHover  以防止在brush过程中显示tooltip。再用户清空brush状态时恢复
+    enableTooltipToAllChartInstances(this.scenegraph);
   }
 }
