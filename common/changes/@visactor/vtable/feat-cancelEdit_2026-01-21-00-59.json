@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add cancelEditCell method to ListTable and PivotTable APIs\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "1418591636@qq.com"
+}

@@ -62,7 +62,6 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
     const groupAttribute = getTheme(chart, params?.theme).group;
 
     const { dataId, data, spec } = chart.attribute;
-    const viewBox = chart.getViewBox();
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
     const { table } = chart.getRootNode() as any;
 
@@ -86,24 +85,35 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
           // return;
         }
       }
-
+      const lastViewBox = chart.activeChartInstanceLastViewBox; //getViewBox调用前获取上一次的viewBox，后面做判断是否变化
       const viewBox = chart.getViewBox();
-      activeChartInstance.updateViewBox(
-        // {
-        //   x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
-        //   x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
-        //   y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
-        //   y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
-        // },
-        {
-          x1: 0,
-          x2: viewBox.x2 - viewBox.x1,
-          y1: 0,
-          y2: viewBox.y2 - viewBox.y1
-        },
-        false,
-        false
-      );
+      if (
+        !(
+          lastViewBox &&
+          viewBox.x1 === lastViewBox.x1 &&
+          viewBox.x2 === lastViewBox.x2 &&
+          viewBox.y1 === lastViewBox.y1 &&
+          viewBox.y2 === lastViewBox.y2
+        )
+      ) {
+        // 调用updateViewBox会造成brush的drag选中框状态丢失  所以这里判断如果viewBox没有变化 则不调用updateViewBox
+        activeChartInstance.updateViewBox(
+          // {
+          //   x1: viewBox.x1 - (chart.getRootNode() as any).table.scrollLeft,
+          //   x2: viewBox.x2 - (chart.getRootNode() as any).table.scrollLeft,
+          //   y1: viewBox.y1 - (chart.getRootNode() as any).table.scrollTop,
+          //   y2: viewBox.y2 - (chart.getRootNode() as any).table.scrollTop
+          // },
+          {
+            x1: 0,
+            x2: viewBox.x2 - viewBox.x1,
+            y1: 0,
+            y2: viewBox.y2 - viewBox.y1
+          },
+          false,
+          false
+        );
+      }
       // console.log(viewBox);
 
       const chartStage = activeChartInstance.getStage();
