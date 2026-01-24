@@ -19,7 +19,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "importHelpers": false,
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
