@@ -31,7 +31,6 @@ export class EventValidator {
       case VTableSheetEventType.SHEET_RENAMED:
       case VTableSheetEventType.SHEET_MOVED:
       case VTableSheetEventType.SHEET_VISIBILITY_CHANGED:
-      case VTableSheetEventType.ACTIVATED:
         return this.validateSheetEvent(event);
 
       // 公式相关事件必须包含 sheetKey
