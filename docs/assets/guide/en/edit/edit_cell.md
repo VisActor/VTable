@@ -317,6 +317,8 @@ interface ListTableAPI {
   startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** End editing */
   completeEditCell: () => void;
+  /** Cancel editing */
+  cancelEditCell: () => void;
   // ...
 }
 ```

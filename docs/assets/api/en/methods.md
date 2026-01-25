@@ -1757,6 +1757,15 @@ End editing
   completeEditCell: () => void;
 ```
 
+## cancelEditCell(Function)
+
+Cancel editing without saving any changes
+
+```
+  /** Cancel editing */
+  cancelEditCell: () => void;
+```
+
 ## records
 
 Get all data of the current table

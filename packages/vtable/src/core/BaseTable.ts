@@ -3231,7 +3231,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param enableShiftSelectMode 是否按住 shift 键
    */
-  startDragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, enableShiftSelectMode?: boolean) {
+  startDragSelectCol(
+    colIndex: number,
+    enableCtrlSelectMode?: boolean,
+    enableShiftSelectMode?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = enableShiftSelectMode && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
     const startRow = 0;
@@ -3243,7 +3248,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3253,7 +3258,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3264,7 +3269,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param colIndex 列索引
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    */
-  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean) {
+  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
@@ -3276,7 +3281,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       false,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3297,7 +3302,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param isShift 是否按住 shift 键
    */
-  startDragSelectRow(rowIndex: number, enableCtrlSelectMode?: boolean, isShift?: boolean) {
+  startDragSelectRow(
+    rowIndex: number,
+    enableCtrlSelectMode?: boolean,
+    isShift?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
     const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
@@ -3309,7 +3319,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3319,7 +3329,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3330,21 +3340,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param rowIndex 行索引
    * @param isCtrl 是否按住 ctrl 键
    */
-  dragSelectRow(rowIndex: number, isCtrl?: boolean) {
+  dragSelectRow(rowIndex: number, isCtrl?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
       lastSelectRange.end.row = rowIndex;
     }
-    this.stateManager.updateSelectPos(
-      this.colCount - 1,
-      rowIndex,
-      false,
-      isCtrl,
-      false,
-      this.options.select?.makeSelectCellVisible ?? true,
-      true
-    );
+    this.stateManager.updateSelectPos(this.colCount - 1, rowIndex, false, isCtrl, false, makeSelectCellVisible, true);
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
     this.stateManager.select.selecting = false;
   }
