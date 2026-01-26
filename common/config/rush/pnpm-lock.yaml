@@ -307,10 +307,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vdataset': ~1.0.17
-      '@visactor/vrender-animate': ~1.0.36
-      '@visactor/vrender-components': ~1.0.36
-      '@visactor/vrender-core': ~1.0.36
-      '@visactor/vrender-kits': ~1.0.36
+      '@visactor/vrender-animate': ~1.0.39
+      '@visactor/vrender-components': ~1.0.39
+      '@visactor/vrender-core': ~1.0.39
+      '@visactor/vrender-kits': ~1.0.39
       '@visactor/vscale': ~1.0.17
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~1.0.17
@@ -357,10 +357,10 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 1.0.21
-      '@visactor/vrender-animate': 1.0.38
-      '@visactor/vrender-components': 1.0.38
-      '@visactor/vrender-core': 1.0.38
-      '@visactor/vrender-kits': 1.0.38
+      '@visactor/vrender-animate': 1.0.39
+      '@visactor/vrender-components': 1.0.39
+      '@visactor/vrender-core': 1.0.39
+      '@visactor/vrender-kits': 1.0.39
       '@visactor/vscale': 1.0.21
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 1.0.21
@@ -2951,7 +2951,7 @@ packages:
       jest-resolve: 26.6.2
       jest-resolve-dependencies: 26.6.3
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-snapshot: 26.6.2
       jest-util: 26.6.2
       jest-validate: 26.6.2
@@ -3112,7 +3112,7 @@ packages:
       graceful-fs: 4.2.11
       jest-haste-map: 26.6.2
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -4329,10 +4329,10 @@ packages:
       '@visactor/vrender-core': 1.0.37-alpha.1
       '@visactor/vutils': 1.0.21
 
-  /@visactor/vrender-animate/1.0.38:
-    resolution: {integrity: sha512-G3hvKBOxJKw3hE0Ka1j9DE/Um7/LfYN201zDmRc00hwCuEMxMFRXU0ZLJc82iw2UZVG+rMHZihiwXMa+/aAdNQ==}
+  /@visactor/vrender-animate/1.0.39:
+    resolution: {integrity: sha512-u8iNccWTlszdVoGFqHjLRXiVjHefZKcnQIGod0xrNx4/vaV/OCJZD/+7EvUUyoFYLZPCqafOcBtZh9jRr8cAYQ==}
     dependencies:
-      '@visactor/vrender-core': 1.0.38
+      '@visactor/vrender-core': 1.0.39
       '@visactor/vutils': 1.0.21
     dev: false
 
@@ -4345,12 +4345,12 @@ packages:
       '@visactor/vscale': 1.0.21
       '@visactor/vutils': 1.0.21
 
-  /@visactor/vrender-components/1.0.38:
-    resolution: {integrity: sha512-P+h1ynpKxaYorraejn3xfollBIRPlaaueQVBHbKjMVjMGJyOAWRwEL4LoVR63x5aOQUt1hddm1/qyFCWeA8M9g==}
+  /@visactor/vrender-components/1.0.39:
+    resolution: {integrity: sha512-i/j16Rf6/mPiA4LZvvXJi0PvDFBCbcI/gSEV2JX6QTZmMWhXOgRZ2mA4kyqQVD4rNIyyXJEmIeVKsgPM0+3Qlw==}
     dependencies:
-      '@visactor/vrender-animate': 1.0.38
-      '@visactor/vrender-core': 1.0.38
-      '@visactor/vrender-kits': 1.0.38
+      '@visactor/vrender-animate': 1.0.39
+      '@visactor/vrender-core': 1.0.39
+      '@visactor/vrender-kits': 1.0.39
       '@visactor/vscale': 1.0.21
       '@visactor/vutils': 1.0.21
     dev: false
@@ -4361,8 +4361,8 @@ packages:
       '@visactor/vutils': 1.0.21
       color-convert: 2.0.1
 
-  /@visactor/vrender-core/1.0.38:
-    resolution: {integrity: sha512-UAv5hQYfOe8XaT5jQ+exZDXsOJc1KHeBM0NN6gM92eCpo09OV54gUb/nkc+yHXSZlZAlr53VGR/m8IG2Hvomxw==}
+  /@visactor/vrender-core/1.0.39:
+    resolution: {integrity: sha512-+TrkiSt14qPzW2k8GlKt5gcNItFwfha+MnJa5TO7i6pu+rnzmjsStku5ZXyLEbEXzRLoUGGg13UoEznFqitawA==}
     dependencies:
       '@visactor/vutils': 1.0.21
       color-convert: 2.0.1
@@ -4378,11 +4378,11 @@ packages:
       lottie-web: 5.13.0
       roughjs: 4.6.6
 
-  /@visactor/vrender-kits/1.0.38:
-    resolution: {integrity: sha512-ZjsXBq4MvKDmtBprTIF1p97HNkl8csZAVsvaHe6HbUhsbK1VNqkmhR+6ZJK/V1TimgoM645+fiVricA6O2WGKA==}
+  /@visactor/vrender-kits/1.0.39:
+    resolution: {integrity: sha512-cF/4sC0xHYQhQklstp5EwH6Td0pd9cy2kpFzPXrTwDJTr2Eqk9sU5sq6gCpqPnL0fWDZfSyJmJ7tM9ffDmcxHQ==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.0.38
+      '@visactor/vrender-core': 1.0.39
       '@visactor/vutils': 1.0.21
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
@@ -9701,7 +9701,7 @@ packages:
       jest-leak-detector: 26.6.2
       jest-message-util: 26.6.2
       jest-resolve: 26.6.2
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-util: 26.6.2
       jest-worker: 26.6.2
       source-map-support: 0.5.21
@@ -9742,42 +9742,6 @@ packages:
       slash: 2.0.0
       strip-bom: 3.0.0
       yargs: 13.3.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /jest-runtime/26.6.3:
-    resolution: {integrity: sha512-lrzyR3N8sacTAMeonbqpnSka1dHNux2uk0qqDXVkMv2c/A3wYnvQ4EXuI013Y6+gSKSCxdaczvf4HF0mVXHRdw==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/environment': 26.6.2
-      '@jest/fake-timers': 26.6.2
-      '@jest/globals': 26.6.2
-      '@jest/source-map': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/transform': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/yargs': 15.0.20
-      chalk: 4.1.2
-      cjs-module-lexer: 0.6.0
-      collect-v8-coverage: 1.0.3
-      exit: 0.1.2
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-config: 26.6.3_ts-node@10.9.0
-      jest-haste-map: 26.6.2
-      jest-message-util: 26.6.2
-      jest-mock: 26.6.2
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      slash: 3.0.0
-      strip-bom: 4.0.0
-      yargs: 15.4.1
     transitivePeerDependencies:
       - supports-color
     dev: true
