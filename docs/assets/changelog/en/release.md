@@ -1,3 +1,27 @@
+# v1.22.12
+
+2026-01-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add cancelEditCell method to ListTable and PivotTable APIs
+- **@visactor/vtable**: add selectedStateFilter for pivotChart
+- **@visactor/vtable**: add clearChartState and disableTooltip api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: makeSelectCellVisible set false when click row series number [#4942](https://github.com/VisActor/VTable/issues/4942)
+- **@visactor/vtable**: fix last row dimension column width when row series number is enabled
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: optimize brush chart interaction
+
+
+
+[more detail about v1.22.12](https://github.com/VisActor/VTable/releases/tag/v1.22.12)
+
 # v1.22.11
 
 2026-01-20
