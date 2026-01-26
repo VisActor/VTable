@@ -76,7 +76,14 @@ export function createTable() {
             key: 'name',
             title: '名称',
             width: 100,
-            filter: false
+            filter: false,
+            columns: [
+              {
+                key: 'name-child',
+                title: '名称子级',
+                width: 100
+              }
+            ]
           },
           {
             key: 'name1',

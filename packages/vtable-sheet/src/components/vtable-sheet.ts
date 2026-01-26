@@ -432,34 +432,6 @@ export default class VTableSheet {
   }
 
   /**
-   * 选择 Excel 文件
-   * @returns Promise<File | null>
-   */
-  private _selectExcelFile(): Promise<File | null> {
-    return new Promise(resolve => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.xlsx,.xls';
-      input.style.display = 'none';
-      document.body.appendChild(input);
-
-      input.addEventListener('change', e => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        document.body.removeChild(input);
-        resolve(file || null);
-      });
-
-      // 如果用户取消选择
-      input.addEventListener('cancel', () => {
-        document.body.removeChild(input);
-        resolve(null);
-      });
-
-      input.click();
-    });
-  }
-
-  /**
    * 删除sheet
    * @param sheetKey 工作表key
    */

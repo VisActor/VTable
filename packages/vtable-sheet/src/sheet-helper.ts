@@ -84,3 +84,48 @@ export function recordsToData(records: any[], columns: any[]): any[][] {
 
   return data;
 }
+
+/**
+ * 若所选范围包含当前正在编辑的单元格，自动排除该单元格以避免 #CYCLE!
+ */
+export function excludeEditCellFromSelection(
+  range: { startRow: number; startCol: number; endRow: number; endCol: number },
+  editRow: number,
+  editCol: number
+) {
+  const r = { ...range };
+  const withinRow = r.startRow <= editRow && editRow <= r.endRow;
+  const withinCol = r.startCol <= editCol && editCol <= r.endCol;
+  if (!withinRow || !withinCol) {
+    return r;
+  }
+
+  const rowSpan = r.endRow - r.startRow;
+  const colSpan = r.endCol - r.startCol;
+
+  // 如果选择范围就是编辑单元格本身，返回空范围（表示无效选择）
+  if (rowSpan === 0 && colSpan === 0 && r.startRow === editRow && r.startCol === editCol) {
+    return { startRow: -1, startCol: -1, endRow: -1, endCol: -1 };
+  }
+
+  if (rowSpan >= colSpan) {
+    // 优先在行方向上排除编辑单元格
+    if (editRow === r.startRow && r.startRow < r.endRow) {
+      r.startRow += 1;
+    } else if (editRow === r.endRow && r.startRow < r.endRow) {
+      r.endRow -= 1;
+    } else if (r.startRow < r.endRow) {
+      r.startRow += 1;
+    } // 中间，默认从起点缩一格
+  } else {
+    // 优先在列方向上排除编辑单元格
+    if (editCol === r.startCol && r.startCol < r.endCol) {
+      r.startCol += 1;
+    } else if (editCol === r.endCol && r.startCol < r.endCol) {
+      r.endCol -= 1;
+    } else if (r.startCol < r.endCol) {
+      r.startCol += 1;
+    }
+  }
+  return r;
+}

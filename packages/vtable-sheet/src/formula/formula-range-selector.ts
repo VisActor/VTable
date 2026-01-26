@@ -8,6 +8,7 @@ import type { FormulaManager } from '../managers/formula-manager';
 import type { CellRange, FormulaCell } from '../ts-types';
 import { detectFunctionParameterPosition } from './formula-helper';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types';
+import { excludeEditCellFromSelection } from '../sheet-helper';
 
 export interface FunctionParamPosition {
   start: number;
@@ -502,13 +503,9 @@ export class FormulaRangeSelector {
     // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
     const editCell = formulaManager.formulaWorkingOnCell;
     // const safeSelections = selections
-    //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
+    //   .map(selection => excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
     //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
-    const safeSelections = this.formulaManager.sheet.excludeEditCellFromSelection(
-      todoSelection,
-      editCell?.row || 0,
-      editCell?.col || 0
-    );
+    const safeSelections = excludeEditCellFromSelection(todoSelection, editCell?.row || 0, editCell?.col || 0);
 
     this.handleSelectionChanged([safeSelections], formulaInput, isCtrlAddSelection, (col: number, row: number) =>
       activeWorkSheet!.addressFromCoord(col, row)

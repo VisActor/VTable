@@ -455,7 +455,11 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
         const { recordIndex, recordCount } = event;
         if (recordIndex !== undefined && recordCount > 0) {
           // 在指定位置插入行，需要调整该位置之后的公式引用
-          this.vtableSheet.formulaManager.addRows(sheetKey, recordIndex, recordCount);
+          this.vtableSheet.formulaManager.addRows(
+            sheetKey,
+            recordIndex + this.tableInstance.columnHeaderLevelCount,
+            recordCount
+          );
         } else {
           // 默认在末尾添加
           const currentRowCount = this.getRowCount();
