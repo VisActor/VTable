@@ -1,3 +1,27 @@
+# v1.22.12
+
+2026-01-26
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 cancelEditCell 方法到 ListTable 和 PivotTable APIs
+- **@visactor/vtable**: 新增 selectedStateFilter 方法到 pivotChart
+- **@visactor/vtable**: 新增 clearChartState 和 disableTooltip 方法
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当点击行系列号时 makeSelectCellVisible 设置为 false [#4942](https://github.com/VisActor/VTable/issues/4942)
+- **@visactor/vtable**: 修复当行系列号启用时最后一行维度列宽问题 [#4946](https://github.com/VisActor/VTable/issues/4946)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化图表交互
+
+
+
+[更多详情请查看 v1.22.12](https://github.com/VisActor/VTable/releases/tag/v1.22.12)
+
 # v1.22.11
 
 2026-01-20
