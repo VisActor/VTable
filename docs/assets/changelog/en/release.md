@@ -12,7 +12,7 @@
 **🐛 Bug fix**
 
 - **@visactor/vtable**: makeSelectCellVisible set false when click row series number [#4942](https://github.com/VisActor/VTable/issues/4942)
-- **@visactor/vtable**: fix last row dimension column width when row series number is enabled
+- **@visactor/vtable**: fix last row dimension column width when row series number is enabled [#4946](https://github.com/VisActor/VTable/issues/4946)
 
 **🔨 Refactor**
 

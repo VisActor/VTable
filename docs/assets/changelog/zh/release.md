@@ -5,18 +5,18 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add cancelEditCell method to ListTable and PivotTable APIs
-- **@visactor/vtable**: add selectedStateFilter for pivotChart
-- **@visactor/vtable**: add clearChartState and disableTooltip api
+- **@visactor/vtable**: 新增 cancelEditCell 方法到 ListTable 和 PivotTable APIs
+- **@visactor/vtable**: 新增 selectedStateFilter 方法到 pivotChart
+- **@visactor/vtable**: 新增 clearChartState 和 disableTooltip 方法
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: makeSelectCellVisible set false when click row series number [#4942](https://github.com/VisActor/VTable/issues/4942)
-- **@visactor/vtable**: fix last row dimension column width when row series number is enabled
+- **@visactor/vtable**: 修复当点击行系列号时 makeSelectCellVisible 设置为 false [#4942](https://github.com/VisActor/VTable/issues/4942)
+- **@visactor/vtable**: 修复当行系列号启用时最后一行维度列宽问题 [#4946](https://github.com/VisActor/VTable/issues/4946)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: optimize brush chart interaction
+- **@visactor/vtable**: 优化图表交互
 
 
 
