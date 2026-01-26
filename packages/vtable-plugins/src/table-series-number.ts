@@ -372,17 +372,17 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
       const rowIndex = seriesNumberCell.id;
 
       if (isDragSelect) {
-        this.table.dragSelectRow(rowIndex, enableCtrlSelectMode);
+        this.table.dragSelectRow(rowIndex, enableCtrlSelectMode, false);
       } else {
-        this.table.startDragSelectRow(rowIndex, enableCtrlSelectMode, enableShiftSelectMode);
+        this.table.startDragSelectRow(rowIndex, enableCtrlSelectMode, enableShiftSelectMode, false);
       }
     } else if (isCol) {
       this.table.stateManager.setSelectInline('col');
       const colIndex = seriesNumberCell.id;
       if (isDragSelect) {
-        this.table.dragSelectCol(colIndex, enableCtrlSelectMode);
+        this.table.dragSelectCol(colIndex, enableCtrlSelectMode, false);
       } else {
-        this.table.startDragSelectCol(colIndex, enableCtrlSelectMode, enableShiftSelectMode);
+        this.table.startDragSelectCol(colIndex, enableCtrlSelectMode, enableShiftSelectMode, false);
       }
     } else {
       this.table.eventManager.deelTableSelectAll();

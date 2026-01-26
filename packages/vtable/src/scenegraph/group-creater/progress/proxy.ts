@@ -659,7 +659,7 @@ export class SceneProxy {
     if (this.table.widthMode === 'autoWidth') {
       computeColsWidth(this.table, startCol, endCol, false);
     }
-    console.log('updateRightFrozenCellGroups', startCol, endCol);
+    // console.log('updateRightFrozenCellGroups', startCol, endCol);
     updateColContent(startCol, endCol, this);
 
     if (this.table.isAutoRowHeight(this.rowStart)) {
