@@ -37,6 +37,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-iframe'
+      },
+      {
+        path: 'list',
         name: 'list-highlightInRange'
       },
       {
@@ -406,6 +410,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-brushState1'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-iframe-brushState'
       },
       {
         path: 'pivot-chart',

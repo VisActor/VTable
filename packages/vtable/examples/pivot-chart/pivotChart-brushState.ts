@@ -9457,7 +9457,7 @@ export function createTable() {
   };
   const option: VTable.PivotChartConstructorOptions = {
     chartDimensionLinkage: {
-      // showTooltip:true,
+      showTooltip: true
       // listenBrushChange:true,
       // brushChangeDelay:100,
       // selectedStateFilter: (datum: any) => {
