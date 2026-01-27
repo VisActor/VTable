@@ -1,6 +1,6 @@
 import type { ColumnDefine } from '@visactor/vtable';
 import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
-import type { CellValue, IStyle, MainMenuItem } from './base';
+import type { CellValue, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
 import type { TableSeriesNumberOptions, ImportResult } from '@visactor/vtable-plugins';
 import type { SortState } from '@visactor/vtable/es/ts-types';

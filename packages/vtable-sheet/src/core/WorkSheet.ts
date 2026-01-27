@@ -282,7 +282,6 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     if (!this.options?.theme) {
       this.options.theme = VTableThemes.DEFAULT;
     }
-    this.options.theme = this.options.theme;
     if (this.options.theme.bodyStyle && !isPropertyWritable(this.options.theme, 'bodyStyle')) {
       //测试是否使用了主题 使用了主题配置项不可写。
       changedTheme = (this.options.theme as TYPES.VTableThemes.TableTheme).extends(
@@ -966,7 +965,10 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       rowNum = coordOrCol.row;
     } else {
       col = coordOrCol;
-      rowNum = row!;
+      if (row === undefined) {
+        throw new Error('row is required when coordOrCol is a number');
+      }
+      rowNum = row;
     }
 
     let colStr = '';

@@ -496,7 +496,8 @@ export class FormulaManager implements IFormulaManager {
         if (workSheetInstances && workSheetInstances.get) {
           worksheet = workSheetInstances.get(cell.sheet);
         }
-      } catch (e) {
+      } catch (_e) {
+        void _e;
         // If we can't access the worksheet, just return silently
         return;
       }
@@ -1018,7 +1019,8 @@ export class FormulaManager implements IFormulaManager {
     try {
       // 使用FormulaEngine的依赖排序功能
       return this.formulaEngine.sortFormulasByDependency(sheetKey, formulas);
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       // 如果排序失败，返回原始顺序
       return Object.entries(formulas);
     }
@@ -1244,7 +1246,8 @@ export class FormulaManager implements IFormulaManager {
       // 尝试验证公式语法
       const validationResult = this.validateFormula(formula);
       return validationResult.isValid;
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       // 如果验证抛出异常，则公式不完整
       return false;
     }

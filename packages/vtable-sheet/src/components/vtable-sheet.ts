@@ -302,7 +302,7 @@ export default class VTableSheet {
   /**
    * 创建tab栏标签项
    */
-  private createSheetTabItem(sheet: ISheetDefine, index: number): HTMLElement {
+  private createSheetTabItem(sheet: ISheetDefine, _index: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'vtable-sheet-tab';
     tab.dataset.key = sheet.sheetKey;
@@ -382,7 +382,10 @@ export default class VTableSheet {
 
     // 如果已经存在实例，则显示并激活对应tab和menu
     if (this.workSheetInstances.has(sheetKey)) {
-      const instance = this.workSheetInstances.get(sheetKey)!;
+      const instance = this.workSheetInstances.get(sheetKey);
+      if (!instance) {
+        throw new Error(`Worksheet instance for key "${sheetKey}" not found`);
+      }
       instance.getElement().style.display = 'block';
       this.activeWorkSheet = instance;
 
@@ -853,7 +856,7 @@ export default class VTableSheet {
           currentSortState = sortState.map(item => ({
             field: item.field,
             order: item.order,
-            ...(item.orderFn != null && { orderFn: item.orderFn })
+            ...(item.orderFn !== null && item.orderFn !== undefined && { orderFn: item.orderFn })
           }));
         }
 
@@ -1158,7 +1161,10 @@ export default class VTableSheet {
     this.initAllSheetInstances();
     const allDefines = this.sheetManager.getAllSheets();
     const tables = allDefines.map(def => {
-      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      const inst = this.workSheetInstances.get(def.sheetKey);
+      if (!inst) {
+        throw new Error(`Worksheet instance for key "${def.sheetKey}" not found during export`);
+      }
       return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
     });
     (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法
