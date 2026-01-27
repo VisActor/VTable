@@ -2235,7 +2235,6 @@ export class Dataset {
         newValue = parseFloat(newValue);
       }
     }
-
     if (this.changedTree[flatRowKey]?.[flatColKey]) {
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
     } else if (this.changedTree[flatRowKey]) {
@@ -2526,6 +2525,42 @@ export class Dataset {
         }
       }
 
+      //#region 更新 changedTree 中包含旧维度值的键
+      const newChangedTree: Record<string, Record<string, any[]>> = {};
+      for (const flatRowKey in this.changedTree) {
+        const rowKeyParts = flatRowKey.split(this.stringJoinChar);
+        let rowKeyUpdated = false;
+        const newRowKeyParts = rowKeyParts.map(part => {
+          if (part === String(oldValue)) {
+            rowKeyUpdated = true;
+            return String(value);
+          }
+          return part;
+        });
+        const newFlatRowKey = rowKeyUpdated ? join(newRowKeyParts, this.stringJoinChar) : flatRowKey;
+
+        const colKeysMap = this.changedTree[flatRowKey];
+        if (!newChangedTree[newFlatRowKey]) {
+          newChangedTree[newFlatRowKey] = {};
+        }
+
+        for (const flatColKey in colKeysMap) {
+          const colKeyParts = flatColKey.split(this.stringJoinChar);
+          let colKeyUpdated = false;
+          const newColKeyParts = colKeyParts.map(part => {
+            if (part === String(oldValue)) {
+              colKeyUpdated = true;
+              return String(value);
+            }
+            return part;
+          });
+          const newFlatColKey = colKeyUpdated ? join(newColKeyParts, this.stringJoinChar) : flatColKey;
+
+          newChangedTree[newFlatRowKey][newFlatColKey] = colKeysMap[flatColKey];
+        }
+      }
+      this.changedTree = newChangedTree;
+      //#endregion
       this.rowFlatKeys = {};
       this.colFlatKeys = {};
       this.tree = {};
