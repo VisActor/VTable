@@ -18,7 +18,7 @@ export function clearColHover(
   }
   // 更新body
   const cellGroup = scenegraph.getColGroup(col);
-  cellGroup?.addUpdateBoundTag();
+  (cellGroup as any)?.addUpdateBoundTag();
 
   return true;
 }
@@ -40,7 +40,7 @@ export function updateColHover(
   }
   // 更新body
   const cellGroup = scenegraph.getColGroup(col);
-  cellGroup?.addUpdateBoundTag();
+  (cellGroup as any)?.addUpdateBoundTag();
 
   return true;
 }

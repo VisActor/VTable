@@ -96,7 +96,11 @@ export function isCellHover(state: StateManager, col: number, row: number, cellG
       const define = table.getHeaderDefine(col, row);
       cellDisable = (define as ColumnDefine)?.disableHeaderHover;
 
-      if (cellGroup.firstChild && cellGroup.firstChild.name === 'axis' && table.options.hover?.disableAxisHover) {
+      if (
+        (cellGroup as any).firstChild &&
+        (cellGroup as any).firstChild.name === 'axis' &&
+        table.options.hover?.disableAxisHover
+      ) {
         cellDisable = true;
       }
     } else {
