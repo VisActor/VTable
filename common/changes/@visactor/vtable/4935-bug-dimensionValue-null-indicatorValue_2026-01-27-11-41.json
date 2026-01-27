@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when no columnTree to adjust columnWidthConfig #4935\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
