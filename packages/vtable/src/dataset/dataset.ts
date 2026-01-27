@@ -1135,6 +1135,8 @@ export class Dataset {
    * @param rowKey
    * @param colKey
    * @param indicator
+   * @param considerChangedValue
+   * @param indicatorPosition 指标在行或列中的位置 changeTreeNodeValue方法中也有该参数
    * @returns
    */
   getAggregator(
@@ -2139,7 +2141,14 @@ export class Dataset {
       }
     }
   }
-
+  /**
+   *
+   * @param rowKey
+   * @param colKey
+   * @param indicator
+   * @param newValue
+   * @param indicatorPosition
+   */
   changeTreeNodeValue(
     rowKey: string[] | string = [],
     colKey: string[] | string = [],
@@ -2148,6 +2157,7 @@ export class Dataset {
     indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ) {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
+    //#region 获取行和列的维度key,考虑到tree模式被折叠的情况 rowKey colKey会小于rows和columns的长度
     let rowDimensionKey: string | undefined;
     if (indicatorPosition?.position === 'row') {
       rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
@@ -2162,6 +2172,7 @@ export class Dataset {
       const colIndex = colKey.length - 1;
       colDimensionKey = colIndex >= 0 && colIndex < this.columns.length ? this.columns[colIndex] : undefined;
     }
+    //#endregion
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
@@ -2519,6 +2530,15 @@ export class Dataset {
       this.colFlatKeys = {};
       this.tree = {};
       this.processRecords();
+      this.processCollectedValuesWithSumBy();
+      this.processCollectedValuesWithSortBy();
+      this.totalStatistics();
+      if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
+        // 处理PivotChart双轴图0值对齐
+        // this.dealWithZeroAlign();
+        // 记录PivotChart维度对应的数据
+        this.cacheDeminsionCollectedValues();
+      }
     }
   }
   /** 主要是树形结构懒加载使用 */
