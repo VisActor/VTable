@@ -5,7 +5,7 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
+import type { IVTableSheetOptions, IVTableSheetUpdateOptions, ISheetDefine } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
@@ -22,6 +22,14 @@ import { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
+
+/**
+ * WorkSheet 增量更新配置项别名
+ *
+ * 复用 WorkSheet.updateSheetOption 的参数类型，避免在 VTableSheet 层重复定义。
+ */
+type WorkSheetUpdateOptions = Parameters<WorkSheet['updateSheetOption']>[0];
+
 export default class VTableSheet {
   /** DOM容器 */
   private container: HTMLElement;
@@ -294,7 +302,7 @@ export default class VTableSheet {
   /**
    * 创建tab栏标签项
    */
-  private createSheetTabItem(sheet: ISheetDefine, index: number): HTMLElement {
+  private createSheetTabItem(sheet: ISheetDefine, _index: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'vtable-sheet-tab';
     tab.dataset.key = sheet.sheetKey;
@@ -374,7 +382,10 @@ export default class VTableSheet {
 
     // 如果已经存在实例，则显示并激活对应tab和menu
     if (this.workSheetInstances.has(sheetKey)) {
-      const instance = this.workSheetInstances.get(sheetKey)!;
+      const instance = this.workSheetInstances.get(sheetKey);
+      if (!instance) {
+        throw new Error(`Worksheet instance for key "${sheetKey}" not found`);
+      }
       instance.getElement().style.display = 'block';
       this.activeWorkSheet = instance;
 
@@ -845,7 +856,7 @@ export default class VTableSheet {
           currentSortState = sortState.map(item => ({
             field: item.field,
             order: item.order,
-            ...(item.orderFn != null && { orderFn: item.orderFn })
+            ...(item.orderFn !== null && item.orderFn !== undefined && { orderFn: item.orderFn })
           }));
         }
 
@@ -895,6 +906,215 @@ export default class VTableSheet {
     };
   }
 
+  /**
+   * 更新电子表格配置
+   *
+   * - 当 options 中包含 sheets 时，视为“全量更新”，会对比新旧 sheets 列表并执行新增/删除/更新逻辑；
+   * - 当 options 中不包含 sheets 时，视为“增量更新”，仅对常用全局配置进行局部更新，并下发到受影响的 WorkSheet。
+   */
+  updateOption(options: IVTableSheetUpdateOptions): void {
+    if (!options) {
+      return;
+    }
+
+    // 先更新顶层 options（保持最新配置，用于后续新增 sheet 等场景）
+    this.options = {
+      ...this.options,
+      ...(options as IVTableSheetOptions)
+    };
+
+    // 如果包含 sheets，按全量更新处理
+    if (Array.isArray(options.sheets)) {
+      this.updateSheets(options);
+    } else {
+      // 仅做增量更新
+      this.updateGlobalOptions(options);
+    }
+  }
+
+  /**
+   * 全量更新 sheets：对比新旧列表，执行新增 / 删除 / 更新
+   *
+   * - 新增：创建 WorkSheet 实例并绑定事件、注册公式；
+   * - 删除：释放 WorkSheet 实例和底层表格、移除公式；
+   * - 更新：复用已存在的 WorkSheet 实例，调用 updateSheetOption 做增量更新。
+   *
+   * 完成结构变更后，通过 FormulaManager 重建公式依赖，确保跨表引用一致。
+   */
+  private updateSheets(options: IVTableSheetUpdateOptions): void {
+    const nextSheets = options.sheets || [];
+    const prevSheets = this.sheetManager.getAllSheets();
+
+    const prevMap = new Map<string, ISheetDefine>();
+    prevSheets.forEach(sheet => {
+      prevMap.set(sheet.sheetKey, sheet);
+    });
+
+    const added: ISheetDefine[] = [];
+    const updated: { prev: ISheetDefine; next: ISheetDefine }[] = [];
+
+    nextSheets.forEach(next => {
+      const prev = prevMap.get(next.sheetKey);
+      if (!prev) {
+        added.push(next);
+      } else {
+        updated.push({ prev, next });
+        prevMap.delete(next.sheetKey);
+      }
+    });
+
+    const removedKeys = Array.from(prevMap.keys());
+
+    // 先删除移除的 sheet
+    removedKeys.forEach(sheetKey => {
+      const instance = this.workSheetInstances.get(sheetKey);
+      if (instance) {
+        instance.release();
+        this.workSheetInstances.delete(sheetKey);
+      }
+      try {
+        this.sheetManager.removeSheet(sheetKey);
+        this.formulaManager.removeSheet(sheetKey);
+      } catch (error) {
+        console.warn(`Failed to remove sheet ${sheetKey}:`, error);
+      }
+    });
+
+    // 新增 sheet
+    added.forEach(sheetDefine => {
+      this.sheetManager.addSheet(sheetDefine);
+      const instance = this.createWorkSheetInstance(sheetDefine);
+      this.workSheetInstances.set(sheetDefine.sheetKey, instance);
+    });
+
+    // 更新已存在的 sheet：优先使用 WorkSheet.updateSheetOption 做增量更新
+    updated.forEach(({ prev, next }) => {
+      const instance = this.workSheetInstances.get(next.sheetKey);
+
+      // 将最新配置合并回 SheetManager 持有的定义对象，保证后续 getAllSheets 返回的是最新配置
+      Object.assign(prev, next);
+
+      if (!instance) {
+        const newInstance = this.createWorkSheetInstance(next);
+        this.workSheetInstances.set(next.sheetKey, newInstance);
+        return;
+      }
+
+      const sheetOption: WorkSheetUpdateOptions = {
+        showHeader: next.showHeader,
+        frozenRowCount: next.frozenRowCount,
+        frozenColCount: next.frozenColCount,
+        filter: next.filter,
+        filterState: next.filterState,
+        sortState: next.sortState,
+        theme: next.theme,
+        columnWidthConfig: next.columnWidthConfig,
+        rowHeightConfig: next.rowHeightConfig,
+        defaultRowHeight: this.options.defaultRowHeight,
+        defaultColWidth: this.options.defaultColWidth
+      };
+
+      instance.updateSheetOption(sheetOption);
+    });
+
+    // 结构变更完成后，重建所有公式与依赖
+    try {
+      this.formulaManager.rebuildFormulas(nextSheets);
+    } catch (error) {
+      console.error('Failed to rebuild formulas after sheets update:', error);
+    }
+
+    // 更新 sheet tab 和菜单
+    this.updateSheetTabs();
+    this.updateSheetMenu();
+
+    // 保持当前激活 sheet：优先使用新配置中的 active 标记，否则回退到第一个 sheet
+    const activeDefine = nextSheets.find(s => s.active) || nextSheets[0];
+    if (activeDefine) {
+      this.activateSheet(activeDefine.sheetKey);
+    }
+  }
+
+  /**
+   * 仅对常用的顶层配置做增量更新
+   *
+   * 当前主要支持：
+   * - theme：更新所有已存在 WorkSheet 的主题；
+   * - defaultRowHeight/defaultColWidth：保存默认值，并在需要时下发到 WorkSheet；
+   * - 其他与 UI 相关的轻量配置可在此扩展。
+   */
+  private updateGlobalOptions(options: IVTableSheetUpdateOptions): void {
+    const hasTheme = typeof options.theme !== 'undefined';
+    const hasDefaultRowHeight = typeof options.defaultRowHeight !== 'undefined';
+    const hasDefaultColWidth = typeof options.defaultColWidth !== 'undefined';
+    const hasShowHeader = typeof options.showHeader !== 'undefined';
+    const hasFrozenRowCount = typeof options.frozenRowCount !== 'undefined';
+    const hasFrozenColCount = typeof options.frozenColCount !== 'undefined';
+    const hasFilter = typeof options.filter !== 'undefined';
+    const hasFilterState = typeof options.filterState !== 'undefined';
+    const hasSortState = typeof options.sortState !== 'undefined';
+    const hasColumnWidthConfig = Array.isArray(options.columnWidthConfig);
+    const hasRowHeightConfig = Array.isArray(options.rowHeightConfig);
+
+    if (
+      !hasTheme &&
+      !hasDefaultRowHeight &&
+      !hasDefaultColWidth &&
+      !hasShowHeader &&
+      !hasFrozenRowCount &&
+      !hasFrozenColCount &&
+      !hasFilter &&
+      !hasFilterState &&
+      !hasSortState &&
+      !hasColumnWidthConfig &&
+      !hasRowHeightConfig
+    ) {
+      return;
+    }
+
+    this.workSheetInstances.forEach(instance => {
+      const patch: WorkSheetUpdateOptions = {};
+
+      if (hasTheme) {
+        patch.theme = options.theme;
+      }
+      if (hasDefaultRowHeight) {
+        patch.defaultRowHeight = options.defaultRowHeight;
+      }
+      if (hasDefaultColWidth) {
+        patch.defaultColWidth = options.defaultColWidth;
+      }
+      if (hasShowHeader) {
+        patch.showHeader = options.showHeader;
+      }
+      if (hasFrozenRowCount) {
+        patch.frozenRowCount = options.frozenRowCount;
+      }
+      if (hasFrozenColCount) {
+        patch.frozenColCount = options.frozenColCount;
+      }
+      if (hasFilter) {
+        patch.filter = options.filter;
+      }
+      if (hasFilterState) {
+        patch.filterState = options.filterState;
+      }
+      if (hasSortState) {
+        patch.sortState = options.sortState as any;
+      }
+      if (hasColumnWidthConfig) {
+        patch.columnWidthConfig = options.columnWidthConfig;
+      }
+      if (hasRowHeightConfig) {
+        patch.rowHeightConfig = options.rowHeightConfig;
+      }
+
+      if (Object.keys(patch).length > 0) {
+        instance.updateSheetOption(patch);
+      }
+    });
+  }
+
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     try {
@@ -941,7 +1161,10 @@ export default class VTableSheet {
     this.initAllSheetInstances();
     const allDefines = this.sheetManager.getAllSheets();
     const tables = allDefines.map(def => {
-      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      const inst = this.workSheetInstances.get(def.sheetKey);
+      if (!inst) {
+        throw new Error(`Worksheet instance for key "${def.sheetKey}" not found during export`);
+      }
       return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
     });
     (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法

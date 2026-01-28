@@ -2,7 +2,7 @@ import { FormulaEngine } from '../formula/formula-engine';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult, IFormulaManager } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
-import type { CellRange } from '../ts-types';
+import type { CellRange, ISheetDefine } from '../ts-types';
 import { CellHighlightManager } from '../formula';
 import type * as VTable from '@visactor/vtable';
 import { CrossSheetFormulaHandler } from '../formula/cross-sheet-formula-handler';
@@ -496,7 +496,8 @@ export class FormulaManager implements IFormulaManager {
         if (workSheetInstances && workSheetInstances.get) {
           worksheet = workSheetInstances.get(cell.sheet);
         }
-      } catch (e) {
+      } catch (_e) {
+        void _e;
         // If we can't access the worksheet, just return silently
         return;
       }
@@ -1018,7 +1019,8 @@ export class FormulaManager implements IFormulaManager {
     try {
       // 使用FormulaEngine的依赖排序功能
       return this.formulaEngine.sortFormulasByDependency(sheetKey, formulas);
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       // 如果排序失败，返回原始顺序
       return Object.entries(formulas);
     }
@@ -1244,7 +1246,8 @@ export class FormulaManager implements IFormulaManager {
       // 尝试验证公式语法
       const validationResult = this.validateFormula(formula);
       return validationResult.isValid;
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       // 如果验证抛出异常，则公式不完整
       return false;
     }
@@ -1294,6 +1297,69 @@ export class FormulaManager implements IFormulaManager {
       console.warn('resumeEvaluation operation not supported in MIT version');
     } catch (error) {
       console.error('Failed to resume evaluation:', error);
+    }
+  }
+
+  /**
+   * 基于当前 WorkSheet 实例重建所有公式引擎状态。
+   *
+   * 典型使用场景：
+   * - VTableSheet 在全量更新 sheets 列表后调用；
+   * - 先清空内部映射与 FormulaEngine，再根据传入的 sheets 重新注册工作表。
+   *
+   * 注意：公式内容本身（ISheetDefine.formulas）不在此方法中恢复，
+   * 由外层（例如 VTableSheet.loadFormulas）在重建完成后按需重新写入。
+   */
+  rebuildFormulas(sheets: ISheetDefine[]): void {
+    try {
+      // 释放旧的 FormulaEngine，但保留高亮管理等 UI 相关对象
+      if (this.formulaEngine) {
+        try {
+          this.formulaEngine.release();
+        } catch (error) {
+          console.error('Failed to release FormulaEngine before rebuild:', error);
+        }
+      }
+
+      // 重置内部状态映射
+      this.sheetMapping.clear();
+      this.reverseSheetMapping.clear();
+      this.nextSheetId = 0;
+
+      // 重新初始化公式引擎
+      this.initializeFormulaEngine();
+
+      // 重新创建跨 sheet 公式处理器，使其绑定新的 FormulaEngine 实例
+      if (this.crossSheetHandler) {
+        try {
+          this.crossSheetHandler.destroy();
+        } catch (error) {
+          console.error('Failed to destroy CrossSheetFormulaHandler before rebuild:', error);
+        }
+      }
+      this.crossSheetHandler = new CrossSheetFormulaHandler(
+        this.formulaEngine,
+        this.sheet.getSheetManager(),
+        this
+      );
+
+      // 基于传入的 sheets 重新注册所有工作表
+      sheets.forEach((sheetDefine: ISheetDefine) => {
+        const sheetKey = sheetDefine.sheetKey;
+        const worksheetInstance = this.sheet.workSheetInstances.get(sheetKey);
+        if (!worksheetInstance || !worksheetInstance.tableInstance) {
+          // 如果还没有对应的 WorkSheet 实例，跳过，后续按需再补充
+          return;
+        }
+
+        const normalizedData = this.normalizeSheetData(
+          worksheetInstance.getData(),
+          worksheetInstance.tableInstance
+        );
+        this.addSheet(sheetKey, normalizedData, sheetDefine.sheetTitle);
+      });
+    } catch (error) {
+      console.error('Failed to rebuild formulas from sheets:', error);
     }
   }
 
