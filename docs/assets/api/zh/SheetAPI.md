@@ -139,144 +139,82 @@ VTableSheet组件支持的方法如下：
 
 表格事件列表，可以根据实际需要，监听所需事件，实现自定义业务。
 ### 用法
-具体使用方式：
+VTableSheet 提供统一的事件系统，支持两类事件类型的监听：
 
-```
-  import { WorkSheetEventType } from '@visactor/vtable-sheet';
-  
-  // 使用WorkSheet实例监听事件
-  worksheet.on(WorkSheetEventType.CELL_CLICK, (args) => {
-    console.log('单元格被选中：', args);
-  });
- 
-```
+ 1. 监听 VTable 表格事件
+通过 `onTableEvent` 方法监听底层 VTable 实例的事件。
 
-支持的事件类型：
+此方法监听的是 VTable 实例的事件，淑慧类型和VTable支持的类型完全统一，在VTable事件回传参数基础上附带了 sheetKey 属性，方便业务处理。：
 
-```
-export enum WorkSheetEventType {
-  // 单元格事件
-  CELL_CLICK = 'cell-click',
-  CELL_VALUE_CHANGED = 'cell-value-changed',
+```typescript
+import * as VTable from '@visactor/vtable';
 
-  // 选择范围事件
-  SELECTION_CHANGED = 'selection-changed',
-  SELECTION_END = 'selection-end'
-}
-```
-**如果想要监听VTable组件的各个事件，可以通过接口获取到VTable的实例，然后通过实例监听事件**
-具体使用方式：
-```
-  const tableInstance = sheetInstance.activeWorkSheet.tableInstance;// 获取激活的工作表的实例
-  tableInstance.on('mousedown_cell', (args) => console.log(CLICK_CELL, args));
+// 监听单元格点击事件
+sheetInstance.onTableEvent(VTable.TABLE_EVENT_TYPE.CLICK_CELL, (event) => {
+  console.log('点击了单元格', event.sheetKey, event.row, event.col);
+});
+
+// 监听单元格值变更事件
+sheetInstance.onTableEvent(VTable.TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, (event) => {
+  console.log('单元格值变更:', event.value, '位置:', event.row, event.col);
+});
 ```
 
-### CELL_CLICK
+ 2. 监听电子表格级别事件
+通过 `on` 方法监听电子表格级别的事件：
 
-单元格点击事件
+```typescript
+import { VTableSheetEventType } from '@visactor/vtable-sheet';
 
-事件回传参数：
+// 监听公式计算事件
+sheetInstance.on(VTableSheetEventType.FORMULA_ADDED, (event) => {
+  console.log('公式添加了', event.sheetKey);
+});
 
-```
-{
-  /** 行索引 */
-  row: number;
-  /** 列索引 */
-  col: number;
-  /** 单元格内容 */
-  value?: CellValue;
-  /** 单元格DOM元素 */
-  cellElement?: HTMLElement;
-  /** 原始事件对象 */
-  originalEvent?: MouseEvent | KeyboardEvent;
-}
+// 监听工作表切换事件
+sheetInstance.on(VTableSheetEventType.SHEET_ACTIVATED, (event) => {
+  console.log('工作表激活了', event.sheetKey, event.sheetTitle);
+});
 ```
 
-### CELL_VALUE_CHANGED
 
-单元格值变更事件
+### 完整事件类型枚举
 
-事件回传参数：
+```typescript
+export enum VTableSheetEventType {
 
-```
-{
-  /** 行索引 */
-  row: number;
-  /** 列索引 */
-  col: number;
-  /** 新值 */
-  newValue: CellValue;
-  /** 旧值 */
-  oldValue: CellValue;
-  /** 单元格DOM元素 */
-  cellElement?: HTMLElement;
-  /** 是否由用户操作引起 */
-  isUserAction?: boolean;
-  /** 是否由公式计算引起 */
-  isFormulaCalculation?: boolean;
-}
-```
+  // ===== 数据操作事件 =====
+  DATA_LOADED = 'data_loaded',
 
-### SELECTION_CHANGED
+  // ===== 电子表格生命周期 =====
+  SPREADSHEET_READY = 'spreadsheet_ready',
+  SPREADSHEET_DESTROYED = 'spreadsheet_destroyed',
+  SPREADSHEET_RESIZED = 'spreadsheet_resized',
 
-选择范围变更事件
+  // ===== Sheet 管理事件 =====
+  SHEET_ADDED = 'sheet_added',
+  SHEET_REMOVED = 'sheet_removed',
+  SHEET_RENAMED = 'sheet_renamed',
+  SHEET_ACTIVATED = 'sheet_activated',
+  SHEET_DEACTIVATED = 'sheet_deactivated',
+  SHEET_MOVED = 'sheet_moved',
+  SHEET_VISIBILITY_CHANGED = 'sheet_visibility_changed',
 
-事件回传参数：
+  // ===== 导入导出事件 =====
+  IMPORT_START = 'import_start',
+  IMPORT_COMPLETED = 'import_completed',
+  IMPORT_ERROR = 'import_error',
+  EXPORT_START = 'export_start',
+  EXPORT_COMPLETED = 'export_completed',
+  EXPORT_ERROR = 'export_error',
 
-```
-{
-  /** 选择区域 */
-  ranges?: Array<{
-    start: {
-      row: number;
-      col: number;
-    };
-    end: {
-      row: number;
-      col: number;
-    };
-  }>;
-  /** 选择的单元格数据 */
-  cells?: Array<
-    Array<{
-      row: number;
-      col: number;
-      value?: CellValue;
-    }>
-  >;
-  /** 原始事件对象 */
-  originalEvent?: MouseEvent | KeyboardEvent;
-}
-```
 
-### SELECTION_END
-
-选择结束事件（拖拽选择完成时触发）
-
-事件回传参数：
-
-```
-{
-  /** 选择区域 */
-  ranges?: Array<{
-    start: {
-      row: number;
-      col: number;
-    };
-    end: {
-      row: number;
-      col: number;
-    };
-  }>;
-  /** 选择的单元格数据 */
-  cells?: Array<
-    Array<{
-      row: number;
-      col: number;
-      value?: CellValue;
-    }>
-  >;
-  /** 原始事件对象 */
-  originalEvent?: MouseEvent | KeyboardEvent;
+  // ===== 公式相关事件 =====
+  FORMULA_CALCULATE_START = 'formula_calculate_start',
+  FORMULA_CALCULATE_END = 'formula_calculate_end',
+  FORMULA_ERROR = 'formula_error',
+  FORMULA_DEPENDENCY_CHANGED = 'formula_dependency_changed',
+  FORMULA_ADDED = 'formula_added',
+  FORMULA_REMOVED = 'formula_removed',
 }
 ```
