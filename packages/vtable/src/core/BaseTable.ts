@@ -680,12 +680,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   resize() {
     this._updateSize();
-    this.internalProps.legends?.forEach(legend => {
-      legend?.resize();
+    // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          legend?.resize();
+        });
+      } else if (component === 'title') {
+        this.internalProps.title?.resize();
+      }
     });
-    if (this.internalProps.title) {
-      this.internalProps.title.resize();
-    }
     if (this.internalProps.emptyTip) {
       this.internalProps.emptyTip.resize();
     }

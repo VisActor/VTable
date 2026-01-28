@@ -259,6 +259,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         if (this.isReleased) {
           return;
         }
+        // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
         this.resize();
         this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
       }, 0);
