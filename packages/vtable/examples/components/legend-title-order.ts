@@ -35,7 +35,7 @@ export function createTable() {
     legends: {
       type: 'discrete',
       orient: 'top',
-      position: 'middle',
+      position: 'start',
       data: [
         {
           label: 'A',

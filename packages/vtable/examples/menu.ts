@@ -1073,6 +1073,10 @@ export const menus = [
       {
         path: 'components',
         name: 'size'
+      },
+      {
+        path: 'components',
+        name: 'legend-title-order'
       }
     ]
   },

@@ -83,19 +83,19 @@ export class DiscreteTableLegend {
     let x = 0;
     let y = 0;
     if (this.orient === 'left') {
-      x = padding[3];
-      y = 0;
+      x = padding[3] + this.table.tableX;
+      y = 0 + this.table.tableY;
       width += padding[1] + padding[3];
     } else if (this.orient === 'top') {
-      x = 0;
-      y = padding[0];
+      x = 0 + this.table.tableX;
+      y = padding[0] + this.table.tableY;
       height += padding[0] + padding[2];
     } else if (this.orient === 'right') {
       x = rectWidth - width - padding[1];
-      y = 0;
+      y = 0 + this.table.tableY;
       width += padding[1] + padding[3];
     } else if (this.orient === 'bottom') {
-      x = 0;
+      x = 0 + this.table.tableX;
       y = rectHeight - height - padding[2];
       height += padding[0] + padding[2];
     }
