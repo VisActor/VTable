@@ -2026,25 +2026,39 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             newValue
           );
       } else {
+        let indicatorPosition: { position: 'col' | 'row'; index?: number };
         const colKeys = cellDimensionPath.colHeaderPaths
           ?.filter((path: any) => {
             return !path.virtual;
           })
-          .map((colPath: any) => {
+          .map((colPath: any, index: number) => {
+            if (colPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'col',
+                index
+              };
+            }
             return colPath.indicatorKey ?? colPath.value;
           });
         const rowKeys = cellDimensionPath.rowHeaderPaths
           ?.filter((path: any) => {
             return !path.virtual;
           })
-          .map((rowPath: any) => {
+          .map((rowPath: any, index: number) => {
+            if (rowPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'row',
+                index
+              };
+            }
             return rowPath.indicatorKey ?? rowPath.value;
           });
         this.dataset.changeTreeNodeValue(
-          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          rowKeys,
+          colKeys,
           (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
-          newValue
+          newValue,
+          indicatorPosition
         );
       }
     } else if (this.flatDataToObjects) {
