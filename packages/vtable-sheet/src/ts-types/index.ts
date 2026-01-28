@@ -1,6 +1,6 @@
 import type { ColumnDefine } from '@visactor/vtable';
 import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
-import type { CellValue, IStyle, MainMenuItem } from './base';
+import type { CellValue, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
 import type { TableSeriesNumberOptions, ImportResult } from '@visactor/vtable-plugins';
 import type { SortState } from '@visactor/vtable/es/ts-types';
@@ -117,6 +117,47 @@ export interface IVTableSheetOptions {
     enableDragRowOrder?: boolean;
   };
 }
+
+/**
+ * VTableSheet 更新配置
+ *
+ * 用于 VTableSheet.updateOption 的增量更新场景。
+ * - 所有字段均为可选；
+ * - 未显式声明的字段不会被修改；
+ * - 部分字段在调用时会被广播到所有已存在的 WorkSheet。
+ */
+export interface IVTableSheetUpdateOptions extends Partial<IVTableSheetOptions> {
+  /**
+   * 全局表头显示开关。
+   *
+   * 在调用 VTableSheet.updateOption 时：
+   * - 会同步到所有 ISheetDefine.showHeader；
+   * - 并调用对应 WorkSheet.updateSheetOption 进行局部刷新。
+   */
+  showHeader?: boolean;
+
+  /** 全局冻结行数（作用于所有工作表） */
+  frozenRowCount?: number;
+
+  /** 全局冻结列数（作用于所有工作表） */
+  frozenColCount?: number;
+
+  /** 全局筛选开关（作用于所有工作表的筛选配置） */
+  filter?: boolean | IFilterConfig;
+
+  /** 全局筛选状态（会通过 Filter 插件的 setFilterState 应用到各个表格） */
+  filterState?: IFilterState;
+
+  /** 全局排序状态 */
+  sortState?: SortState[] | SortState | null;
+
+  /** 全局列宽配置（按列索引或字段 key 应用到各个表格） */
+  columnWidthConfig?: ISheetDefine['columnWidthConfig'];
+
+  /** 全局行高配置（按行索引应用到各个表格） */
+  rowHeightConfig?: ISheetDefine['rowHeightConfig'];
+}
+
 export * from './base';
 export * from './formula';
 export * from './filter';
