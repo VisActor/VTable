@@ -248,9 +248,12 @@ export class FormulaEngine {
     // 更新单元格值
     sheet[cell.row][cell.col] = processedValue;
 
-    // 如果是公式，更新依赖关系
+    // 处理公式相关逻辑
+    const cellKey = this.getCellKey(cell);
+    const hasExistingFormula = this.formulaCells.has(cellKey);
+
     if (typeof processedValue === 'string' && processedValue.startsWith('=')) {
-      const cellKey = this.getCellKey(cell);
+      // 如果是公式，更新依赖关系
       // 自动纠正公式大小写
       const correctedFormula = this.correctFormulaCase(processedValue);
       this.formulaCells.set(cellKey, correctedFormula);
@@ -258,6 +261,12 @@ export class FormulaEngine {
       // 更新单元格值为纠正后的公式
       sheet[cell.row][cell.col] = correctedFormula;
       // console.log(`Set formula ${cellKey}: ${correctedFormula}`);
+    } else if (hasExistingFormula) {
+      // 如果原来有公式，现在不是公式了，需要清除
+      this.formulaCells.delete(cellKey);
+      // 使用空公式字符串来清除依赖关系
+      this.updateDependencies(cellKey, '');
+      // console.log(`Removed formula ${cellKey}`);
     }
 
     // 重新计算受影响的单元格
@@ -3252,8 +3261,5 @@ export class FormulaEngine {
 }
 
 class FormulaError {
-  constructor(
-    public message: string,
-    public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE'
-  ) {}
+  constructor(public message: string, public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE') {}
 }
