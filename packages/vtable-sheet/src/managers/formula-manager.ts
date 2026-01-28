@@ -201,10 +201,10 @@ export class FormulaManager implements IFormulaManager {
     }
 
     try {
-      // 不能删除最后一个sheet
-      if (this.sheetMapping.size <= 1) {
-        throw new Error('Cannot remove the last sheet');
-      }
+      // // 不能删除最后一个sheet
+      // if (this.sheetMapping.size <= 1) {
+      //   throw new Error('Cannot remove the last sheet');
+      // }
 
       this.formulaEngine.removeSheet(sheetKey);
       this.sheetMapping.delete(sheetKey);
@@ -1337,11 +1337,7 @@ export class FormulaManager implements IFormulaManager {
           console.error('Failed to destroy CrossSheetFormulaHandler before rebuild:', error);
         }
       }
-      this.crossSheetHandler = new CrossSheetFormulaHandler(
-        this.formulaEngine,
-        this.sheet.getSheetManager(),
-        this
-      );
+      this.crossSheetHandler = new CrossSheetFormulaHandler(this.formulaEngine, this.sheet.getSheetManager(), this);
 
       // 基于传入的 sheets 重新注册所有工作表
       sheets.forEach((sheetDefine: ISheetDefine) => {
@@ -1352,10 +1348,7 @@ export class FormulaManager implements IFormulaManager {
           return;
         }
 
-        const normalizedData = this.normalizeSheetData(
-          worksheetInstance.getData(),
-          worksheetInstance.tableInstance
-        );
+        const normalizedData = this.normalizeSheetData(worksheetInstance.getData(), worksheetInstance.tableInstance);
         this.addSheet(sheetKey, normalizedData, sheetDefine.sheetTitle);
       });
     } catch (error) {

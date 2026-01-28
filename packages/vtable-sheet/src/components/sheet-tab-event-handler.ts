@@ -295,6 +295,9 @@ export class SheetTabEventHandler {
    * 激活sheet菜单项并滚动到可见区域
    */
   activeSheetMenuItem(): void {
+    if (this.vTableSheet.getOptions()?.showSheetTab === false) {
+      return;
+    }
     const menuItems = this.vTableSheet
       .getSheetTabElement()
       ?.querySelectorAll('.vtable-sheet-main-menu-item') as NodeListOf<HTMLElement>;

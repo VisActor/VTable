@@ -276,6 +276,9 @@ export default class VTableSheet {
    * 激活sheet标签并滚动到可见区域
    */
   private _activeSheetTab(): void {
+    if (this.options.showSheetTab === false) {
+      return;
+    }
     this.sheetTabEventHandler.activeSheetTab();
   }
   /**
@@ -322,6 +325,9 @@ export default class VTableSheet {
    * 更新sheet列表
    */
   updateSheetMenu(): void {
+    if (this.options.showSheetTab === false) {
+      return;
+    }
     this.sheetTabEventHandler.updateSheetMenu();
   }
 
@@ -519,7 +525,9 @@ export default class VTableSheet {
 
     // 在公式管理器中添加这个sheet
     try {
-      const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
+      const normalizedData = sheetDefine.data
+        ? this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance)
+        : [];
       this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData, sheetDefine.sheetTitle);
       // 加载保存的公式数据（如果有）
       if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {

@@ -11,9 +11,9 @@ import type {
   IThemeDefine,
   IFilterConfig,
   IFilterState,
-  ISheetDefine,
-  SortState
+  ISheetDefine
 } from '../ts-types';
+import type { SortState } from '@visactor/vtable/es/ts-types';
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
