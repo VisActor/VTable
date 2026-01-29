@@ -1,5 +1,8 @@
 export function join(strArr: string[], joinChar: string) {
   // return strArr.join(joinChar);
+  if (strArr.length === 0) {
+    return undefined;
+  }
   let str = '';
   for (let i = 0; i < strArr.length; i++) {
     str += strArr[i];
