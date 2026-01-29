@@ -120,7 +120,7 @@ const generatePersons = count => {
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
 
-
+  
 ```
 
 
