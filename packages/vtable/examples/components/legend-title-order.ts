@@ -32,34 +32,64 @@ export function createTable() {
       orient: 'top',
       align: 'center'
     },
-    legends: {
-      type: 'discrete',
-      orient: 'top',
-      position: 'start',
-      data: [
-        {
-          label: 'A',
-          shape: {
-            fill: '#1664FF',
-            symbolType: 'circle'
+    legends: [
+      {
+        type: 'discrete',
+        orient: 'top',
+        position: 'start',
+        data: [
+          {
+            label: 'A',
+            shape: {
+              fill: '#1664FF',
+              symbolType: 'circle'
+            }
+          },
+          {
+            label: 'B',
+            shape: {
+              fill: '#1AC6FF',
+              symbolType: 'square'
+            }
+          },
+          {
+            label: 'C',
+            shape: {
+              fill: '#FFCC00',
+              symbolType: 'triangle'
+            }
           }
-        },
-        {
-          label: 'B',
-          shape: {
-            fill: '#1AC6FF',
-            symbolType: 'square'
+        ]
+      },
+      {
+        type: 'discrete',
+        orient: 'top',
+        position: 'start',
+        data: [
+          {
+            label: 'A11',
+            shape: {
+              fill: '#1664FF',
+              symbolType: 'circle'
+            }
+          },
+          {
+            label: 'B',
+            shape: {
+              fill: '#1AC6FF',
+              symbolType: 'square'
+            }
+          },
+          {
+            label: 'C',
+            shape: {
+              fill: '#FFCC00',
+              symbolType: 'triangle'
+            }
           }
-        },
-        {
-          label: 'C',
-          shape: {
-            fill: '#FFCC00',
-            symbolType: 'triangle'
-          }
-        }
-      ]
-    },
+        ]
+      }
+    ],
     // ensure title is laid out before legend so legend appears under the title
     componentLayoutOrder: ['title', 'legend']
   };
