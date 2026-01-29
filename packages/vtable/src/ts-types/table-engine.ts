@@ -451,6 +451,8 @@ export interface ListTableAPI extends BaseTableAPI {
   startEditCell: (col?: number, row?: number, value?: string | number) => void;
   /** 结束编辑 */
   completeEditCell: () => void;
+  /** 取消编辑 */
+  cancelEditCell: () => void;
   //#endregion
   addRecord: (record: any, recordIndex?: number | number[], triggerEvent?: boolean) => void;
   addRecords: (records: any[], recordIndex?: number | number[], triggerEvent?: boolean) => void;
@@ -664,6 +666,20 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
       top?: LineAxisAttributes['labelHoverOnAxis'];
       bottom?: LineAxisAttributes['labelHoverOnAxis'];
     };
+    /** 关联图表中点击图元的高亮状态的过滤函数 */
+    selectedStateFilter?: (datum: any) => boolean;
+    /** 关联图表中点击图元反选的高亮状态的过滤函数 */
+    selectedReverseStateFilter?: (datum: any) => boolean;
+    /** 关联图表中brush框选中状态的过滤函数 默认是严格框选的图元有inBrush的高亮状态 */
+    inBrushStateFilter?: (datum: any) => boolean;
+    /** 对应上面inBrushStateFilter，框选范围外的图元状态的过滤函数 */
+    outOfBrushStateFilter?: (datum: any) => boolean;
+    /** 是否监听brushChange事件，默认false 不监听 */
+    listenBrushChange?: boolean;
+    /** brushChange事件处理的延迟时间。节流防止频繁触发卡顿，默认100毫秒 */
+    brushChangeDelay?: number;
+    /** 清除图表状态的函数 */
+    clearChartState?: () => void;
   };
 }
 export interface PivotTableAPI extends BaseTableAPI {

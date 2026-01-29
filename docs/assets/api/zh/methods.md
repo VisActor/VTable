@@ -1759,6 +1759,15 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
   completeEditCell: () => void;
 ```
 
+## cancelEditCell(Function)
+
+取消编辑，不保存任何更改
+
+```
+  /** 取消编辑 */
+  cancelEditCell: () => void;
+```
+
 ## records
 
 获取当前表格的全部数据
@@ -2325,4 +2334,36 @@ tableInstance.expandAllForColumnTree();
 ```ts
 // 折叠列表头树的所有节点
 tableInstance.collapseAllForColumnTree();
+```
+## updateCellContent(Function)
+
+更新某个单元格内容. 这个接口仅是刷新场景树节点内容而非渲染。重新渲染接口render()不会主动更新场景树节点内容。
+
+```ts
+  /**
+   * 更新某个单元格内容
+   */
+  updateCellContent: (col: number, row: number) => void;
+```
+
+## updateCellContentRange(Function)
+
+更新某个区域单元格内容. 这个接口仅是刷新场景树节点内容而非渲染。重新渲染接口render()不会主动更新场景树节点内容。
+
+```ts
+  /**
+   * 更新某个区域单元格内容
+   */
+  updateCellContentRange: (startCol: number, startRow: number, endCol: number, endRow: number) => void;
+```
+
+## updateCellContentRanges(Function)
+
+更新某个区域单元格内容. 这个接口仅是刷新场景树节点内容而非渲染。重新渲染接口render()不会主动更新场景树节点内容。
+
+```ts
+  /**
+   * 更新某个区域单元格内容
+   */
+  updateCellContentRanges: (ranges: CellRange[]) => void;
 ```

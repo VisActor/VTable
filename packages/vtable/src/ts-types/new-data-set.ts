@@ -39,6 +39,8 @@ export interface Total {
   showGrandTotals: boolean;
   /** 是否显示小计;  如果配置了total对象，showSubTotals默认为true */
   showSubTotals: boolean;
+  /** 是否在树节点上显示聚合数据; 不需要开启showSubTotals小计就能折叠后显示聚合数据 */
+  showSubTotalsOnTreeNode?: boolean;
 
   // // 计算总计方法
   // calcGrandTotals?: CalcTotals;

@@ -3231,7 +3231,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param enableShiftSelectMode 是否按住 shift 键
    */
-  startDragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, enableShiftSelectMode?: boolean) {
+  startDragSelectCol(
+    colIndex: number,
+    enableCtrlSelectMode?: boolean,
+    enableShiftSelectMode?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = enableShiftSelectMode && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
     const startRow = 0;
@@ -3243,7 +3248,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3253,16 +3258,18 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
    * @param colIndex 列索引
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    */
-  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean) {
+  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
@@ -3274,16 +3281,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       false,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 结束拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来结束拖拽选择整列或者整行
    */
   endDragSelect() {
     this.stateManager.updateInteractionState(InteractionState.default);
-    this.stateManager.endSelectCells(false, false);
+    //上面方法dragSelectCol和startDragSelectCol方法中已经设置了select.selecting = false，所以这里不需要再调用endSelectCells方法
+    // this.stateManager.endSelectCells(false, false);
   }
 
   /**
@@ -3292,7 +3302,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param isShift 是否按住 shift 键
    */
-  startDragSelectRow(rowIndex: number, enableCtrlSelectMode?: boolean, isShift?: boolean) {
+  startDragSelectRow(
+    rowIndex: number,
+    enableCtrlSelectMode?: boolean,
+    isShift?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
     const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
@@ -3304,7 +3319,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3314,30 +3329,26 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
   /**
    * 拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整行
    * @param rowIndex 行索引
    * @param isCtrl 是否按住 ctrl 键
    */
-  dragSelectRow(rowIndex: number, isCtrl?: boolean) {
+  dragSelectRow(rowIndex: number, isCtrl?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
       lastSelectRange.end.row = rowIndex;
     }
-    this.stateManager.updateSelectPos(
-      this.colCount - 1,
-      rowIndex,
-      false,
-      isCtrl,
-      false,
-      this.options.select?.makeSelectCellVisible ?? true,
-      true
-    );
+    this.stateManager.updateSelectPos(this.colCount - 1, rowIndex, false, isCtrl, false, makeSelectCellVisible, true);
+    //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
+    this.stateManager.select.selecting = false;
   }
 
   abstract isListTable(): boolean;
@@ -5027,5 +5038,27 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     return false;
+  }
+  /** 更新某个单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContent(col: number, row: number) {
+    this.scenegraph.updateCellContent(col, row);
+  }
+
+  /** 更新某个区域单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContentRange(startCol: number, startRow: number, endCol: number, endRow: number) {
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+  }
+
+  /** 更新某个区域单元格内容 ,重新渲染不会更新。 这个接口也仅是更新而非渲染*/
+  updateCellContentRanges(ranges: CellRange[]) {
+    //ranges中每个range都调用updateCellContent
+    for (let i = 0; i < ranges.length; i++) {
+      const range = ranges[i];
+      this.updateCellContentRange(range.start.col, range.start.row, range.end.col, range.end.row);
+    }
   }
 }

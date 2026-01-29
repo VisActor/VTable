@@ -471,6 +471,55 @@ export class FormulaManager implements IFormulaManager {
   }
 
   /**
+   * 触发公式相关事件
+   * @param cell 单元格
+   * @param eventType 事件类型
+   * @param formula 公式内容
+   * @param error 错误信息（可选）
+   */
+  private emitFormulaEvent(
+    cell: FormulaCell,
+    eventType: 'added' | 'removed' | 'error',
+    formula?: string,
+    error?: any
+  ): void {
+    // Safely get the worksheet instance
+    let worksheet: any = null;
+
+    // Try to get worksheet using the public method if available
+    if (this.sheet && typeof this.sheet.getWorkSheetByKey === 'function') {
+      worksheet = this.sheet.getWorkSheetByKey(cell.sheet);
+    } else {
+      // Fallback: try to access the private property directly (for backwards compatibility in tests)
+      try {
+        const workSheetInstances = (this.sheet as any).workSheetInstances;
+        if (workSheetInstances && workSheetInstances.get) {
+          worksheet = workSheetInstances.get(cell.sheet);
+        }
+      } catch (e) {
+        // If we can't access the worksheet, just return silently
+        return;
+      }
+    }
+
+    if (!worksheet || !worksheet.eventManager) {
+      return;
+    }
+
+    switch (eventType) {
+      case 'added':
+        worksheet.eventManager.emitFormulaAdded({ row: cell.row, col: cell.col }, formula);
+        break;
+      case 'removed':
+        worksheet.eventManager.emitFormulaRemoved({ row: cell.row, col: cell.col }, formula);
+        break;
+      case 'error':
+        worksheet.eventManager.emitFormulaError(cell, formula || '', error);
+        break;
+    }
+  }
+
+  /**
    * 获取工作表ID
    * @param sheetKey 工作表键
    * @returns 工作表ID
@@ -515,8 +564,12 @@ export class FormulaManager implements IFormulaManager {
     }
 
     try {
+      // 检查是否为公式
+      const isFormula = typeof value === 'string' && value.startsWith('=');
+      const oldFormula = this.getCellFormula(cell);
+
       // 检查是否为跨sheet公式
-      if (typeof value === 'string' && value.startsWith('=') && this.hasCrossSheetReference(value)) {
+      if (isFormula && this.hasCrossSheetReference(value)) {
         // 使用跨sheet公式处理器处理
         // 注意：setCrossSheetFormula 是异步的，但这里没有等待
         // 由于 setCrossSheetFormula 内部会同步调用 formulaEngine.setCellContent，
@@ -526,8 +579,24 @@ export class FormulaManager implements IFormulaManager {
         // 使用FormulaEngine设置单元格内容
         this.formulaEngine.setCellContent(cell, value);
       }
+
+      // 在操作成功后触发相应的事件
+      const newFormula = this.getCellFormula(cell);
+      if (newFormula && newFormula !== oldFormula) {
+        // 公式添加或更新
+        this.emitFormulaEvent(cell, 'added', newFormula);
+      } else if (!newFormula && oldFormula) {
+        // 公式被移除
+        this.emitFormulaEvent(cell, 'removed', oldFormula);
+      }
     } catch (error) {
       console.error('Failed to set cell content:', error);
+
+      // 触发公式错误事件
+      if (typeof value === 'string' && value.startsWith('=')) {
+        this.emitFormulaEvent(cell, 'error', value, error);
+      }
+
       // 提供更详细的错误信息
       if (error instanceof Error) {
         throw new Error(`Failed to set cell content at ${cell.sheet}:${cell.row}:${cell.col}. ${error.message}`);

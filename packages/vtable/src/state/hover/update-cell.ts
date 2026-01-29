@@ -18,10 +18,10 @@ export function updateCell(scenegraph: Scenegraph, col: number, row: number) {
         if (mergeCell.role !== 'cell') {
           continue;
         }
-        mergeCell.addUpdateBoundTag();
+        (mergeCell as any).addUpdateBoundTag();
       }
     }
   } else {
-    cellGroup.addUpdateBoundTag();
+    (cellGroup as any).addUpdateBoundTag();
   }
 }

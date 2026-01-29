@@ -338,7 +338,13 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = true;
 
     const target = e.target as HTMLElement;
-    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
+    if (
+      !table.getElement().contains(target) &&
+      !table.internalProps.menuHandler.containElement(target) &&
+      (!table.options.customConfig?.shouldTreatAsClickOnTable ||
+        (table.options.customConfig?.shouldTreatAsClickOnTable &&
+          !table.options.customConfig?.shouldTreatAsClickOnTable(e)))
+    ) {
       // 如果点击到表格外部的dom
       const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
       getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
@@ -353,6 +359,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
           stateManager.endSelectCells(true, isHasSelected);
         }
       });
+      table.scenegraph.updateChartState(null, undefined);
+      table.scenegraph.deactivateChart(-1, -1, true);
     }
   };
   eventManager.globalEventListeners.push({

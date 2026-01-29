@@ -2,6 +2,66 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.12",
+      "tag": "@visactor/vtable_v1.22.12",
+      "date": "Mon, 26 Jan 2026 02:59:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: makeSelectCellVisible set false when click row series number #4942\n\n"
+          },
+          {
+            "comment": "feat: add cancelEditCell method to ListTable and PivotTable APIs\n\n"
+          },
+          {
+            "comment": "feat: add selectedStateFilter for pivotChart\n\n"
+          },
+          {
+            "comment": "feat: add clearChartState and disableTooltip api\n\n"
+          },
+          {
+            "comment": "refactor: optimize brush chart interaction\n\n"
+          },
+          {
+            "comment": "fix: fix last row dimension column width when row series number is enabled\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.22.11",
+      "tag": "@visactor/vtable_v1.22.11",
+      "date": "Mon, 19 Jan 2026 11:52:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: when has merge cells to delete column #4848\n\n"
+          },
+          {
+            "comment": "refactor: update cell merge delete records logic #4848\n\n"
+          },
+          {
+            "comment": "fix: prepareEdit occor error #4871\n\n"
+          },
+          {
+            "comment": "fix: paste to table performance when has prepared edit cell #4912\n\n"
+          },
+          {
+            "comment": "fix: distinguish null and empty string values in column dimensions\n\n"
+          },
+          {
+            "comment": "fix(scenegraph): reset proxy row status when start exceeds end"
+          },
+          {
+            "comment": "fix: time unit computeCountToTimeScale month exactitude #4909\n\n"
+          },
+          {
+            "comment": "fix: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.10",
       "tag": "@visactor/vtable_v1.22.10",
       "date": "Mon, 05 Jan 2026 03:31:14 GMT",

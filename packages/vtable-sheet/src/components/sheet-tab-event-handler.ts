@@ -86,6 +86,7 @@ export class SheetTabEventHandler {
       showSnackbar('工作表名称已存在，请重新输入', 1300);
       return false;
     }
+
     this.vTableSheet.getSheetManager().renameSheet(sheetKey, newTitle);
     this.vTableSheet.workSheetInstances.get(sheetKey)?.setTitle(newTitle);
 
@@ -273,8 +274,8 @@ export class SheetTabEventHandler {
         '<path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg>';
       div.addEventListener('click', e => {
-        e.stopPropagation();
         this.vTableSheet.removeSheet(sheet.sheetKey);
+        e.stopPropagation();
       });
       li.addEventListener('click', () => this.vTableSheet.activateSheet(sheet.sheetKey));
       li.appendChild(div);

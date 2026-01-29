@@ -1757,6 +1757,15 @@ End editing
   completeEditCell: () => void;
 ```
 
+## cancelEditCell(Function)
+
+Cancel editing without saving any changes
+
+```
+  /** Cancel editing */
+  cancelEditCell: () => void;
+```
+
 ## records
 
 Get all data of the current table
@@ -2323,4 +2332,36 @@ Usage:
 ```ts
 // Collapse all column header tree nodes
 tableInstance.collapseAllForColumnTree();
+```
+
+## updateCellContent(Function)
+
+Update the content of a single cell. This interface only refreshes the content of the scenegraph node, not rendering. The render() interface will not actively update the content of the scenegraph node.
+
+```ts
+  /**
+   * Update the content of a single cell
+   */
+  updateCellContent: (col: number, row: number) => void;
+```
+## updateCellContentRange(Function)
+
+Update the content of a range of cells. This interface only refreshes the content of the scenegraph node, not rendering. The render() interface will not actively update the content of the scenegraph node.
+
+```ts
+  /**
+   * Update the content of a range of cells
+   */
+  updateCellContentRange: (startCol: number, startRow: number, endCol: number, endRow: number) => void;
+```
+
+## updateCellContentRanges(Function)
+
+Update the content of a range of cells. This interface only refreshes the content of the scenegraph node, not rendering. The render() interface will not actively update the content of the scenegraph node.
+
+```ts
+  /**
+   * Update the content of a range of cells
+   */
+  updateCellContentRanges: (ranges: CellRange[]) => void;
 ```

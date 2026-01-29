@@ -9,7 +9,7 @@ global.__VERSION__ = 'none';
 // 模拟依赖
 jest.mock('@visactor/vtable');
 jest.mock('../src/managers/sheet-manager');
-jest.mock('../src/event/event-manager');
+jest.mock('../src/event/dom-event-manager');
 jest.mock('../src/formula/formula-ui-manager');
 jest.mock('../src/managers/menu-manager');
 jest.mock('../src/managers/tab-drag-manager');

@@ -1,24 +1,21 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import { isValid, type EventEmitter } from '@visactor/vutils';
-import { EventTarget } from '../event/event-target';
+import { isValid } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
   CellCoord,
   CellRange,
   CellValue,
-  CellValueChangedEvent,
-  CellClickEvent,
-  SelectionChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
-import { WorkSheetEventType } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
-import { detectFunctionParameterPosition } from '../formula/formula-helper';
 import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
+import { WorkSheetEventManager } from '../event/worksheet-event-manager';
+import type { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
+import type { IWorksheetEventSource } from '../event/event-interfaces';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -34,7 +31,7 @@ export type WorkSheetConstructorOptions = {
   sheetTitle: string;
 } & Omit<ListTableConstructorOptions, 'records'>;
 
-export class WorkSheet extends EventTarget implements IWorkSheetAPI {
+export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
   options: IWorkSheetOptions;
   /** 容器 */
@@ -46,25 +43,59 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   /** 选择范围 */
   private selection: CellRange | null = null;
   /** Sheet 唯一标识 */
-  private sheetKey: string;
+  private _sheetKey: string;
   /** Sheet 标题 */
-  private sheetTitle: string;
+  private _sheetTitle: string;
 
   /** 事件总线 */
-  private eventBus: EventEmitter;
+  private eventBus: VTableSheetEventBus;
+
+  /** WorkSheet 事件管理器 */
+  eventManager: WorkSheetEventManager;
 
   private vtableSheet: VTableSheet;
 
   editingCell: { sheet: string; row: number; col: number } | null = null;
 
+  /**
+   * 获取 Sheet Key
+   */
+  get sheetKey(): string {
+    return this._sheetKey;
+  }
+
+  /**
+   * 获取事件总线
+   */
+  getEventBus(): VTableSheetEventBus {
+    if (!this.eventBus) {
+      // If eventBus is not initialized yet, return the parent VTableSheet's event bus
+      return this.vtableSheet.getEventBus();
+    }
+    return this.eventBus;
+  }
+
+  /**
+   * 获取 Sheet 标题
+   */
+  get sheetTitle(): string {
+    return this._sheetTitle;
+  }
+
+  /**
+   * 设置 Sheet 标题
+   */
+  set sheetTitle(title: string) {
+    this._sheetTitle = title;
+  }
+
   constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
-    super();
     this.options = options;
     this.container = options.container;
 
     // 初始化基本属性
-    this.sheetKey = options.sheetKey;
-    this.sheetTitle = options.sheetTitle;
+    this._sheetKey = options.sheetKey;
+    this._sheetTitle = options.sheetTitle;
     this.vtableSheet = sheet;
 
     // 创建表格元素
@@ -82,16 +113,14 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 获取行数
    */
   get rowCount(): number {
-    const data = this.getData();
-    return data ? data.length : 0;
+    return this.getRowCount();
   }
 
   /**
    * 获取列数
    */
   get colCount(): number {
-    const data = this.getData();
-    return data && data.length > 0 ? data[0].length : 0;
+    return this.getColumnCount();
   }
 
   /**
@@ -149,10 +178,23 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
     this.element.classList.add('vtable-excel-cursor');
-    // 获取事件总线
-    this.eventBus = (this.tableInstance as any).eventBus;
+    // 使用统一事件总线
+    this.eventBus = this.vtableSheet.getEventBus();
+
+    // 初始化 WorkSheet 事件管理器
+    this.eventManager = new WorkSheetEventManager(this);
     // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
     (this.tableInstance as any).__vtableSheet = this.vtableSheet;
+
+    // 通知 VTableSheet 的事件中转器绑定这个 sheet 的事件
+    (this.vtableSheet as any).tableEventRelay.bindSheetEvents(this.sheetKey, this.tableInstance);
+
+    // 触发工作表准备就绪事件
+    if (this.eventManager) {
+      // this.eventManager.emitReady();
+      // 触发数据加载完成事件
+      this.eventManager.emitDataLoaded(this.rowCount, this.colCount);
+    }
   }
 
   /**
@@ -337,16 +379,16 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endRow: event.row,
       endCol: event.col
     };
+    // 如果在公式编辑状态，不处理
+    if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+      return;
+    }
 
-    // 使用事件类型枚举触发事件给父组件
-    const cellSelectedEvent: CellClickEvent = {
-      row: event.row,
-      col: event.col,
-      value: event.value,
-      cellElement: event.cellElement,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.CELL_CLICK, cellSelectedEvent);
+    // 重置公式栏显示标志，让公式栏显示选中单元格的值
+    const formulaUIManager = this.vtableSheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
   }
 
   /**
@@ -363,15 +405,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: r.end.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionChangedEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_CHANGED, selectionChangedEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -390,15 +424,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: last.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionEndEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_END, selectionEndEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -406,13 +432,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param event 值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    const cellValueChangedEvent: CellValueChangedEvent = {
-      row: event.row,
-      col: event.col,
-      oldValue: event.rawValue,
-      newValue: event.changedValue
-    };
-    this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
   }
 
   /**
@@ -435,7 +455,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         const { recordIndex, recordCount } = event;
         if (recordIndex !== undefined && recordCount > 0) {
           // 在指定位置插入行，需要调整该位置之后的公式引用
-          this.vtableSheet.formulaManager.addRows(sheetKey, recordIndex, recordCount);
+          this.vtableSheet.formulaManager.addRows(
+            sheetKey,
+            recordIndex + this.tableInstance.columnHeaderLevelCount,
+            recordCount
+          );
         } else {
           // 默认在末尾添加
           const currentRowCount = this.getRowCount();
@@ -448,6 +472,76 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           // 为了简化，我们假设删除的是连续的行，从最小的索引开始
           const minIndex = Math.min(...rowIndexs.flat());
           this.vtableSheet.formulaManager.removeRows(sheetKey, minIndex, deletedCount);
+          // 删除行后，需要更新合并单元格状态
+          // 完全在删除范围内：删除合并单元格
+          // 与删除范围有重叠（startRow <= deleteEndIndex && endRow >= minIndex）：
+          // 起始行在删除范围内：移到 minIndex
+          // 起始行在删除范围之前：保持不变
+          // 结束行在删除范围内：移到 minIndex - 1
+          // 结束行在删除范围之后：减去 deletedCount
+          // 完全在删除范围之后（startRow > deleteEndIndex）：起始行和结束行都减去 deletedCount
+          if (Array.isArray(this.tableInstance.options.customMergeCell)) {
+            const mergeCellsToRemove: number[] = [];
+            const deleteEndIndex = minIndex + deletedCount - 1;
+            const customMergeCellArray = this.tableInstance.options.customMergeCell;
+            // 需要clone一份mergeCellArray，因为后续会修改mergeCellArray
+            const cloneMergeCellArray = customMergeCellArray.map(mergeCell => ({
+              ...mergeCell,
+              range: {
+                start: { ...mergeCell.range.start },
+                end: { ...mergeCell.range.end }
+              }
+            }));
+            customMergeCellArray.forEach((mergeCell, index) => {
+              const startRow = mergeCell.range.start.row;
+              const endRow = mergeCell.range.end.row;
+
+              // 如果合并单元格完全在删除范围内，标记为删除
+              if (startRow >= minIndex && endRow <= deleteEndIndex) {
+                mergeCellsToRemove.push(index);
+                return;
+              }
+
+              // 如果合并单元格与删除范围有重叠
+              if (startRow <= deleteEndIndex && endRow >= minIndex) {
+                // 如果起始行在删除范围内，将起始行移到删除范围的起始位置（删除后这个位置不存在，所以移到 minIndex）
+                if (startRow >= minIndex) {
+                  mergeCell.range.start.row = minIndex;
+                }
+                // 如果起始行在删除范围之前，不需要调整（保持不变）
+
+                // 如果结束行在删除范围内，将结束行移到删除范围之前
+                if (endRow <= deleteEndIndex) {
+                  mergeCell.range.end.row = minIndex - 1;
+                } else {
+                  // 结束行在删除范围之后，需要减去删除的行数
+                  mergeCell.range.end.row -= deletedCount;
+                }
+
+                // 如果调整后起始行大于结束行，标记为删除
+                if (mergeCell.range.start.row > mergeCell.range.end.row) {
+                  mergeCellsToRemove.push(index);
+                }
+              }
+              // 如果合并单元格完全在删除范围之后，只需要向前移动行索引
+              else if (startRow > deleteEndIndex) {
+                mergeCell.range.start.row -= deletedCount;
+                mergeCell.range.end.row -= deletedCount;
+              }
+            });
+
+            // 从后往前删除，避免索引变化影响
+            mergeCellsToRemove
+              .sort((a, b) => b - a)
+              .forEach(index => {
+                customMergeCellArray.splice(index, 1);
+              });
+            const updateRanges = cloneMergeCellArray.map(mergeCell => ({
+              start: { ...mergeCell.range.start },
+              end: { ...mergeCell.range.end }
+            }));
+            (this.tableInstance as any).updateCellContentRange(updateRanges);
+          }
         }
       }
       // update 事件不需要调整引用，因为只是数据内容变更
@@ -489,6 +583,77 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           const minIndex = Math.min(...deleteColIndexs.flat());
           const deletedCount = deleteColIndexs.length;
           this.vtableSheet.formulaManager.removeColumns(sheetKey, minIndex, deletedCount);
+          // 删除列后，需要更新合并单元格状态
+          // 完全在删除范围内：删除合并单元格
+          // 与删除范围有重叠（startCol <= deleteEndIndex && endCol >= minIndex）：
+          // 起始列在删除范围内：移到 minIndex
+          // 起始列在删除范围之前：保持不变
+          // 结束列在删除范围内：移到 minIndex - 1
+          // 结束列在删除范围之后：减去 deletedCount
+          // 完全在删除范围之后（startCol > deleteEndIndex）：起始列和结束列都减去 deletedCount
+          if (Array.isArray(this.tableInstance.options.customMergeCell)) {
+            const mergeCellsToRemove: number[] = [];
+            const deleteEndIndex = minIndex + deletedCount - 1;
+            const customMergeCellArray = this.tableInstance.options.customMergeCell;
+            // 需要clone一份mergeCellArray，因为后续会修改mergeCellArray
+            const cloneMergeCellArray = customMergeCellArray.map(mergeCell => ({
+              ...mergeCell,
+              range: {
+                start: { ...mergeCell.range.start },
+                end: { ...mergeCell.range.end }
+              }
+            }));
+            customMergeCellArray.forEach((mergeCell, index) => {
+              const startCol = mergeCell.range.start.col;
+              const endCol = mergeCell.range.end.col;
+
+              // 如果合并单元格完全在删除范围内，标记为删除
+              if (startCol >= minIndex && endCol <= deleteEndIndex) {
+                mergeCellsToRemove.push(index);
+                return;
+              }
+
+              // 如果合并单元格与删除范围有重叠
+              if (startCol <= deleteEndIndex && endCol >= minIndex) {
+                // 如果起始列在删除范围内，将起始列移到删除范围的起始位置（删除后这个位置不存在，所以移到 minIndex）
+                if (startCol >= minIndex) {
+                  mergeCell.range.start.col = minIndex;
+                }
+                // 如果起始列在删除范围之前，不需要调整（保持不变）
+
+                // 如果结束列在删除范围内，将结束列移到删除范围之前
+                if (endCol <= deleteEndIndex) {
+                  mergeCell.range.end.col = minIndex - 1;
+                } else {
+                  // 结束列在删除范围之后，需要减去删除的列数
+                  mergeCell.range.end.col -= deletedCount;
+                }
+
+                // 如果调整后起始列大于结束列，标记为删除
+                if (mergeCell.range.start.col > mergeCell.range.end.col) {
+                  mergeCellsToRemove.push(index);
+                }
+              }
+              // 如果合并单元格完全在删除范围之后，只需要向前移动列索引
+              else if (startCol > deleteEndIndex) {
+                mergeCell.range.start.col -= deletedCount;
+                mergeCell.range.end.col -= deletedCount;
+              }
+            });
+
+            // 从后往前删除，避免索引变化影响
+            mergeCellsToRemove
+              .sort((a, b) => b - a)
+              .forEach(index => {
+                customMergeCellArray.splice(index, 1);
+              });
+
+            const updateRanges = cloneMergeCellArray.map(mergeCell => ({
+              start: { ...mergeCell.range.start },
+              end: { ...mergeCell.range.end }
+            }));
+            (this.tableInstance as any).updateCellContentRange(updateRanges);
+          }
         }
       }
       // update 事件不需要调整引用，因为只是数据内容变更
@@ -516,8 +681,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     console.log('handleChangeColumnHeaderPosition', event);
     // 注意：tableInstance.options.columns 中的顺序并未更新（和其他操作如delete/add等操作不同）需要注意后续是否有什么问题
     const { source, target } = event;
-    const { col: sourceCol, row: sourceRow } = source;
-    const { col: targetCol, row: targetRow } = target;
+    const { col: sourceCol } = source;
+    const { col: targetCol } = target;
     const sheetKey = this.getKey();
     //#region 处理数据变化后，公式引擎中的数据也需要更新
     const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
@@ -548,24 +713,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     //#endregion
     // 在指定位置插入行，需要调整该位置之后的公式引用
     this.vtableSheet.formulaManager.changeRowHeaderPosition(sheetKey, sourceRow, targetRow);
-  }
-
-  /**
-   * 触发事件
-   * @param eventName 事件名称
-   * @param eventData 事件数据
-   */
-  protected fireEvent(eventName: string, eventData: any): void {
-    this.fire(eventName, eventData);
-  }
-
-  /**
-   * 监听事件
-   * @param eventName 事件名称
-   * @param handler 事件处理函数
-   */
-  on(eventName: string, handler: (...args: any[]) => void): this {
-    return super.on(eventName, handler);
   }
 
   // 用于防止短时间内多次调用resize的节流变量
@@ -621,6 +768,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           // 触发VTable的resize
           this.tableInstance.resize();
         }
+
+        // // 触发工作表尺寸改变事件
+        // if (this.eventManager) {
+        //   this.eventManager.emitResized(width, height);
+        // }
       }
     } catch (error) {
       console.error('Error during resize:', error);
@@ -743,23 +895,12 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
-      const oldValue = data[row][col];
       data[row][col] = value;
 
       // 更新表格实例
       if (this.tableInstance) {
         this.tableInstance.changeCellValue(col, row, value);
       }
-
-      // 触发事件
-      const event: CellValueChangedEvent = {
-        row,
-        col,
-        oldValue,
-        newValue: value
-      };
-
-      this.fire('cellValueChanged', event);
     }
   }
 
@@ -898,9 +1039,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   processFormulaPaste(
     formulas: string[][],
     sourceStartCol: number,
-    sourceStartRow: number,
+    _sourceStartRow: number,
     targetStartCol: number,
-    targetStartRow: number
+    _targetStartRow: number
   ): string[][] {
     if (!formulas || formulas.length === 0) {
       return formulas;
@@ -908,7 +1049,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
     // 计算整个范围的相对位移
     const colOffset = targetStartCol - sourceStartCol;
-    const rowOffset = targetStartRow - sourceStartRow;
+    const rowOffset = _targetStartRow - _sourceStartRow;
 
     // 使用计算出的位移来调整公式
     return FormulaPasteProcessor.adjustFormulasForPasteWithOffset(formulas, colOffset, rowOffset);
@@ -1026,6 +1167,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         },
         formula
       );
+
+      // 事件触发移到 formula-manager 中处理，这里不再触发
+      // 这样可以确保事件在正确的时机触发，并且只在操作成功时触发
     }
   }
 
@@ -1034,6 +1178,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    */
   release(): void {
     // 清理事件监听器
+    if (this.tableInstance) {
+      (this.vtableSheet as any).tableEventRelay.unbindSheetEvents(this.sheetKey, this.tableInstance);
+    }
 
     // 释放表格实例
     if (this.tableInstance) {

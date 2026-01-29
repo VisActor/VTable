@@ -546,6 +546,7 @@ export interface BaseTableConstructorOptions {
 
   canvas?: HTMLCanvasElement;
   viewBox?: IBoundsLike;
+  /** 具体同 VChart 的 Option 配置。会与表格中标准的 chart Option 配置进行合并，后在图表中使用。 */
   chartOption?: any;
   disableInteraction?: boolean;
 
@@ -612,6 +613,10 @@ export interface BaseTableConstructorOptions {
 
     /** 当编辑器没有退出情况时，可继续选中其他单元格，比如在vtable-sheet中，当编辑器没有退出情况时，可继续选中其他单元格 */
     selectCellWhenCellEditorNotExists?: boolean;
+
+    /**当点击到非表格dom上时，正常会退出编辑或者取消选中或者释放图表的交互状态，
+     * 如果需要继续保留这些状态，不想被取消，不想退出编辑或者取消选中或者释放图表的交互状态，可以配置这个钩子返回true */
+    shouldTreatAsClickOnTable?: (e: MouseEvent) => boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -1072,6 +1077,9 @@ export interface BaseTableAPI {
   _getComputedFrozenColCount: (frozenColCount: number) => number;
   isColumnSelected: (col: number) => boolean;
   isRowSelected: (row: number) => boolean;
+  updateCellContentRanges: (ranges: CellRange[]) => void;
+  updateCellContent: (col: number, row: number) => void;
+  updateCellContentRange: (startCol: number, startRow: number, endCol: number, endRow: number) => void;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

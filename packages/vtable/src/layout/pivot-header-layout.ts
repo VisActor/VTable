@@ -63,6 +63,10 @@ import type { ITableAxisOption } from '../ts-types/component/axis';
 import { getQuadProps } from '../scenegraph/utils/padding';
 import type { GetAxisConfigInPivotChart } from './chart-helper/get-axis-config';
 import { Factory } from '../core/factory';
+import {
+  clearAllChartInstanceList,
+  clearAndReleaseBrushingChartInstance
+} from '../scenegraph/graphic/active-cell-chart-list';
 
 // export const sharedVar = { seqId: 0 };
 // let colIndex = 0;
@@ -2349,7 +2353,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       } = {};
       colHeaderPath.dimensionKey = colHeader.dimensionKey;
       colHeaderPath.indicatorKey = colHeader.indicatorKey;
-      colHeaderPath.value = colHeader.value ?? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? '';
+      // 如果value为null且没有indicatorKey时保持value为null（区分null和空字符串，防止单元格数据匹配不对）
+      colHeaderPath.value =
+        colHeader.value ??
+        (colHeader.indicatorKey
+          ? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? ''
+          : colHeader.value);
       colHeaderPath.virtual = colHeader.virtual;
       colHeaderPath.role = colHeader.role;
       headerPaths.colHeaderPaths!.push(colHeaderPath);
@@ -3509,8 +3518,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.rowDimensionKeys.indexOf(this.indicatorDimensionKey) >= 0 && path.indicatorKey)
       );
     } else {
-      colHeaderPaths = dimensionPaths.colHeaderPaths;
-      rowHeaderPaths = dimensionPaths.rowHeaderPaths;
+      colHeaderPaths = dimensionPaths?.colHeaderPaths;
+      rowHeaderPaths = dimensionPaths?.rowHeaderPaths;
       if (dimensionPaths?.cellLocation === 'body' && this._table.isPivotTable()) {
         forceBody = true;
       }
@@ -3874,6 +3883,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._indicators?.forEach(indicatorObject => {
       indicatorObject.chartInstance?.release();
     });
+    clearAllChartInstanceList(this._table, true);
+    clearAndReleaseBrushingChartInstance(this._table.scenegraph);
   }
 
   getHeadNode(col: number, row: number) {
@@ -4042,53 +4053,100 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
   /** 将_selectedDataItemsInChart保存的数据状态同步到各个图表实例中 */
   _generateChartState() {
+    const select_filter = (datum: any) => {
+      if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+        const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
+          for (const itemKey in item) {
+            if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+              return false;
+            }
+          }
+          return true;
+        });
+        return !!match;
+      } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
+        // 判断维度点击
+        const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+          if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+            return false;
+          }
+          return true;
+        });
+        return !!match;
+      }
+      return false;
+    };
+    const selected_reverse = (datum: any) => {
+      if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
+        const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
+          for (const itemKey in item) {
+            if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
+              return false;
+            }
+          }
+          return true;
+        });
+        return !match;
+      } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
+        // 判断维度点击
+        const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
+          if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
+            return false;
+          }
+          return true;
+        });
+        return !match;
+      }
+      return false;
+    };
     const state = {
       vtable_selected: {
         filter: (datum: any) => {
-          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
-            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
-              for (const itemKey in item) {
-                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
-                  return false;
-                }
-              }
-              return true;
-            });
-            return !!match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
-            // 判断维度点击
-            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
-                return false;
-              }
-              return true;
-            });
-            return !!match;
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.selectedStateFilter(datum);
+          }
+          if (
+            (this._table as PivotChart)._selectedDataMode === 'click' ||
+            (this._table as PivotChart)._selectedDataMode === 'multiple-select'
+          ) {
+            return select_filter(datum);
           }
           return false;
         }
       },
       vtable_selected_reverse: {
         filter: (datum: any) => {
-          if ((this._table as PivotChart)._selectedDataItemsInChart.length >= 1) {
-            const match = (this._table as PivotChart)._selectedDataItemsInChart.find(item => {
-              for (const itemKey in item) {
-                if (typeof item[itemKey] !== 'object' && item[itemKey] !== datum[itemKey]) {
-                  return false;
-                }
-              }
-              return true;
-            });
-            return !match;
-          } else if ((this._table as PivotChart)._selectedDimensionInChart?.length) {
-            // 判断维度点击
-            const match = (this._table as PivotChart)._selectedDimensionInChart.every(item => {
-              if (typeof item.value !== 'object' && datum[item.key] !== item.value) {
-                return false;
-              }
-              return true;
-            });
-            return !match;
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.selectedReverseStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.selectedReverseStateFilter(datum);
+          }
+          if (
+            (this._table as PivotChart)._selectedDataMode === 'click' ||
+            (this._table as PivotChart)._selectedDataMode === 'multiple-select'
+          ) {
+            return selected_reverse(datum);
+          }
+          return false;
+        }
+      },
+
+      inBrush: {
+        filter: (datum: any) => {
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.inBrushStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.inBrushStateFilter(datum);
+          }
+          if ((this._table as PivotChart)._selectedDataMode === 'brush') {
+            return select_filter(datum);
+          }
+          return false;
+        }
+      },
+      outOfBrush: {
+        filter: (datum: any) => {
+          if ((this._table as PivotChart).options.chartDimensionLinkage?.outOfBrushStateFilter) {
+            return (this._table as PivotChart).options.chartDimensionLinkage.outOfBrushStateFilter(datum);
+          }
+          if ((this._table as PivotChart)._selectedDataMode === 'brush') {
+            return selected_reverse(datum);
           }
           return false;
         }
@@ -4097,14 +4155,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return state;
   }
   updateDataStateToChartInstance(activeChartInstance?: any): void {
-    if (activeChartInstance?.getSpec().select?.enable !== false) {
+    if (
+      activeChartInstance?.getSpec().select?.enable !== false ||
+      activeChartInstance?.getSpec().interactions?.find((interaction: any) => interaction.type === 'element-select')
+    ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
       }
       const state = this._generateChartState();
       this._indicators.forEach((_indicatorObject: IndicatorData) => {
         const chartInstance = _indicatorObject.chartInstance;
-        if (_indicatorObject.chartSpec.select?.enable !== false) {
+        if (
+          _indicatorObject.chartSpec.select?.enable !== false ||
+          _indicatorObject.chartSpec.interactions?.find((interaction: any) => interaction.type === 'element-select')
+        ) {
           chartInstance.updateState(state);
         }
       });
@@ -4112,7 +4176,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
   }
   updateDataStateToActiveChartInstance(activeChartInstance?: any): void {
-    if (activeChartInstance?.getSpec().select?.enable !== false) {
+    if (
+      activeChartInstance?.getSpec().select?.enable !== false ||
+      activeChartInstance?.getSpec().interactions?.find((interaction: any) => interaction.type === 'element-select')
+    ) {
       if (!activeChartInstance) {
         activeChartInstance = (this._table as PivotChart)._getActiveChartInstance();
       }

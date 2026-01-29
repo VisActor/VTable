@@ -1,6 +1,58 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 05 Jan 2026 03:31:14 GMT and should not be manually modified.
+This log was last generated on Mon, 26 Jan 2026 02:59:13 GMT and should not be manually modified.
+
+## 1.22.12
+Mon, 26 Jan 2026 02:59:13 GMT
+
+### Updates
+
+- fix: makeSelectCellVisible set false when click row series number #4942
+
+
+- feat: add cancelEditCell method to ListTable and PivotTable APIs
+
+
+- feat: add selectedStateFilter for pivotChart
+
+
+- feat: add clearChartState and disableTooltip api
+
+
+- refactor: optimize brush chart interaction
+
+
+- fix: fix last row dimension column width when row series number is enabled
+
+
+
+## 1.22.11
+Mon, 19 Jan 2026 11:52:45 GMT
+
+### Updates
+
+- refactor: when has merge cells to delete column #4848
+
+
+- refactor: update cell merge delete records logic #4848
+
+
+- fix: prepareEdit occor error #4871
+
+
+- fix: paste to table performance when has prepared edit cell #4912
+
+
+- fix: distinguish null and empty string values in column dimensions
+
+
+- fix(scenegraph): reset proxy row status when start exceeds end
+- fix: time unit computeCountToTimeScale month exactitude #4909
+
+
+- fix: 修复theme配置theme.headerStyle.textStickBaseOnAlign不生效问题
+
+
 
 ## 1.22.10
 Mon, 05 Jan 2026 03:31:14 GMT

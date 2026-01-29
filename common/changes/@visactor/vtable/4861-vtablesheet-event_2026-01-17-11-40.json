@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add worksheet event\n\n",
+      "type": "minor",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
