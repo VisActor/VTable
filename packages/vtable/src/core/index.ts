@@ -1,6 +1,6 @@
 export {
   listTableChangeCellValue,
   listTableChangeCellValues,
-  listTableChangeCellValuesByIds,
+  listTableChangeCellValuesByRanges,
   listTableDeleteRecords
 } from './record-helper';

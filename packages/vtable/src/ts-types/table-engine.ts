@@ -366,18 +366,18 @@ export interface ListTableAPI extends BaseTableAPI {
     value: string | number | null,
     workOnEditableCell?: boolean,
     triggerEvent?: boolean,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) => void;
   /**
    * 批量更新多个单元格的数据(根据col, row坐标, 支持离散数据)
    * @param changeValues
    */
-  changeCellValuesByIds: (
+  changeCellValuesByRanges: (
     ranges: CellRange[],
     value: string | number | null,
     workOnEditableCell?: boolean,
     triggerEvent?: boolean,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) => void;
   /**
    * 批量更新多个单元格的数据
@@ -392,18 +392,26 @@ export interface ListTableAPI extends BaseTableAPI {
     values: (string | number)[][],
     workOnEditableCell?: boolean,
     triggerEvent?: boolean,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) => Promise<boolean[][]> | boolean[][];
+  /**
+   * 根据源数据 records 的 index + field 修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
   changeCellValueByRecord: (
     recordIndex: number | number[],
     field: FieldDef,
     value: string | number | null,
     options?: {
       triggerEvent?: boolean;
-      silentChangeCellValuesEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
       autoRefresh?: boolean;
     }
   ) => void;
+  /**
+   * 根据源数据 records 的 index + field 批量修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
   changeCellValuesByRecords: (
     changeValues: {
       recordIndex: number | number[];
@@ -412,17 +420,25 @@ export interface ListTableAPI extends BaseTableAPI {
     }[],
     options?: {
       triggerEvent?: boolean;
-      silentChangeCellValuesEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
       autoRefresh?: boolean;
     }
   ) => void;
+  /**
+   * 根据源数据 records 的 index + field 修改值（别名）。
+   * 与 changeCellValueByRecord 一致，但参数拆分为位置参数。
+   */
   changeCellValueBySource: (
     recordIndex: number | number[],
     field: FieldDef,
     value: string | number | null,
     triggerEvent?: boolean,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) => void;
+  /**
+   * 根据源数据 records 的 index + field 批量修改值（别名）。
+   * 与 changeCellValuesByRecords 一致，但参数拆分为位置参数。
+   */
   changeCellValuesBySource: (
     changeValues: {
       recordIndex: number | number[];
@@ -430,8 +446,12 @@ export interface ListTableAPI extends BaseTableAPI {
       value: string | number | null;
     }[],
     triggerEvent?: boolean,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) => void;
+  /**
+   * 当你直接修改了源数据（例如 changeCellValueByRecord/changeCellValuesByRecords），
+   * 可按需重新应用筛选/排序并刷新场景树。
+   */
   refreshAfterSourceChange: (options?: {
     reapplyFilter?: boolean;
     reapplySort?: boolean;

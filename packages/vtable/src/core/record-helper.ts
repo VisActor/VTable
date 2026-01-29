@@ -24,7 +24,7 @@ export function listTableChangeCellValue(
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
-  silentChangeCellValuesEvent?: boolean
+  noTriggerChangeCellValuesEvent?: boolean
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
     const recordShowIndex = table.getRecordShowIndexByCell(col, row);
@@ -107,7 +107,7 @@ export function listTableChangeCellValue(
         changedValue
       };
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
-      if (!silentChangeCellValuesEvent) {
+      if (!noTriggerChangeCellValuesEvent) {
         table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
       }
     }
@@ -129,7 +129,7 @@ export async function listTableChangeCellValues(
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
-  silentChangeCellValuesEvent?: boolean
+  noTriggerChangeCellValuesEvent?: boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -243,7 +243,7 @@ export async function listTableChangeCellValues(
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
   }
-  if (!silentChangeCellValuesEvent) {
+  if (!noTriggerChangeCellValuesEvent) {
     table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
   }
 
@@ -342,13 +342,17 @@ export async function listTableChangeCellValues(
   return changedCellResults;
 }
 
-export async function listTableChangeCellValuesByIds(
+/**
+ * 批量更新多个离散选区内的单元格数据。
+ * 当前仅支持将所有选区内的单元格统一修改为同一个 value。
+ */
+export async function listTableChangeCellValuesByRanges(
   ranges: CellRange[],
   value: string | number | null,
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
-  silentChangeCellValuesEvent?: boolean
+  noTriggerChangeCellValuesEvent?: boolean
 ) {
   const resultChangeValues: {
     col: number;
@@ -433,7 +437,7 @@ export async function listTableChangeCellValuesByIds(
     }
   }
 
-  if (!silentChangeCellValuesEvent && triggerEvent) {
+  if (!noTriggerChangeCellValuesEvent && triggerEvent) {
     table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
   }
 }

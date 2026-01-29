@@ -302,7 +302,25 @@ At the same time, when pasting cell data, the validation function `validateValue
 ```ts
 interface ListTableAPI {
   /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * Batch update data of multiple selected ranges.
+   * Currently it only supports setting all cells in the ranges to the same value.
+   */
+  changeCellValuesByRanges: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
   /**
    * Batch update data of multiple cells
    * @param col The starting column number of pasted data
@@ -310,7 +328,14 @@ interface ListTableAPI {
    * @param values Data array of multiple cells
    * @param workOnEditableCell just can change editable cells
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
+  changeCellValues: (
+    startCol: number,
+    startRow: number,
+    values: string[][],
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
   /** Get the editor of cell configuration */
   getEditor: (col: number, row: number) => IEditor;
   /** Enable cell editing */

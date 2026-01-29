@@ -505,7 +505,7 @@ syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
       ],
       {
         triggerEvent: true,
-        silentChangeCellValuesEvent: false,
+        noTriggerChangeCellValuesEvent: false,
         autoRefresh: true
       }
     );
@@ -532,7 +532,7 @@ syncRecordOpsToSourceRecordsForTest=${syncRecordOpsToSourceRecordsForTest}`;
       ],
       {
         triggerEvent: true,
-        silentChangeCellValuesEvent: false,
+        noTriggerChangeCellValuesEvent: false,
         autoRefresh: true
       }
     );
@@ -628,7 +628,7 @@ after deleteRecords([0]) calls=${fifthCalls} expect=4003`;
       })),
       {
         triggerEvent: true,
-        silentChangeCellValuesEvent: false,
+        noTriggerChangeCellValuesEvent: false,
         autoRefresh: true
       }
     );
@@ -651,7 +651,7 @@ after deleteRecords([0]) calls=${fifthCalls} expect=4003`;
       })),
       {
         triggerEvent: true,
-        silentChangeCellValuesEvent: false,
+        noTriggerChangeCellValuesEvent: false,
         autoRefresh: true
       }
     );

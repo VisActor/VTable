@@ -301,7 +301,25 @@ interface ListTableConstructorOptions {
 ```ts
 interface ListTableAPI {
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * 批量更新多个离散选区内的单元格数据。
+   * 当前仅支持将所有选区内的单元格统一修改为同一个 value。
+   */
+  changeCellValuesByRanges: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
@@ -311,7 +329,14 @@ interface ListTableAPI {
    * @param 
    gerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => Promise<boolean[][]>;
+  changeCellValues: (
+    startCol: number,
+    startRow: number,
+    values: string[][],
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => Promise<boolean[][]>;
   /** 获取单元格配置的编辑器 */
   getEditor: (col: number, row: number) => IEditor;
   /** 开启单元格编辑 */

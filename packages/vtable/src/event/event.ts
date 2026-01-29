@@ -1129,7 +1129,7 @@ export class EventManager {
         return;
       }
 
-      table.changeCellValuesByIds(ranges, '');
+      table.changeCellValuesByRanges(ranges, '');
     } catch (error) {
       console.error('清空单元格内容失败', error);
     }

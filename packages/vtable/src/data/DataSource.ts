@@ -968,6 +968,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     rawRecords.splice(rawInsertIndex, 0, record);
     if (syncToOriginalRecords && this._hasFilterInEffect()) {
+      // 配合 syncRecordOperationsToSourceRecords：筛选中新增“草稿行”即使不满足筛选条件也要暂时可见，
+      // 直到下一次主动 updateFilterRules 触发重新筛选。
       this.markForceVisibleRecord(record);
     }
     this.beforeChangedRecordsMap.clear();
@@ -1035,6 +1037,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     rawRecords.splice(rawInsertIndex, 0, ...recordArr);
     if (syncToOriginalRecords && this._hasFilterInEffect()) {
       for (let i = 0; i < recordArr.length; i++) {
+        // 同上：筛选态下批量新增的草稿行需要临时保留在视图中，便于用户继续编辑。
         this.markForceVisibleRecord(recordArr[i]);
       }
     }
@@ -1422,6 +1425,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   setSortedIndexMap(field: FieldDef, filedMap: ISortedMapItem) {
     this.sortedIndexMap.set(field, filedMap);
   }
+  // 仅用于 syncRecordOperationsToSourceRecords 场景：筛选态新增的记录可能暂时不满足筛选条件，
+  // 但仍希望在当前筛选视图中可见，直到下一次主动 updateFilterRules 生效。
   markForceVisibleRecord(record: any) {
     if (!record || (typeof record !== 'object' && typeof record !== 'function')) {
       return;
@@ -1429,6 +1434,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._forceVisibleRecords ||= new WeakSet<object>();
     this._forceVisibleRecords.add(record as object);
   }
+  // 配合 markForceVisibleRecord：当用户主动调用 updateFilterRules 时清空，保证筛选结果可预期。
   clearForceVisibleRecords() {
     this._forceVisibleRecords = undefined;
   }

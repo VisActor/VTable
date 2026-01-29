@@ -594,6 +594,31 @@ Parameter types of event callback function:
 { col: number; row: number; rawValue: string | number; currentValue: string | number; changedValue: string | number };
 ```
 
+## CHANGE_CELL_VALUES
+
+Batch cell value change event (aggregated).
+
+Parameter types of event callback function:
+
+```
+{
+  values: Array<{
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: string | number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }>;
+};
+```
+
+**Notes:**
+
+- This event may be suppressed by the `noTriggerChangeCellValuesEvent` parameter in relevant APIs.
+- When multiple cells are updated in batch, the event will be fired once with an aggregated `values` list.
+
 ## CHECKBOX_STATE_CHANGE
 
 Change the checkbox state. **ListTable table exclusive event**

@@ -21,8 +21,11 @@ export type IExcelEditCellKeyboardPluginOptions = {
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
   /** 删除能力是否只应用到可编辑单元格 */
   deleteWorkOnEditableCell?: boolean;
+  /** 删除范围时通过批量接口聚合成一次 change_cell_values 事件 */
+  batchCallChangeCellValuesApi?: boolean;
 };
 ```
+`batchCallChangeCellValuesApi` 用于控制选中多个范围时的删除行为：开启后插件会通过 `changeCellValuesByRanges` 进行一次批量更新，从而让 `change_cell_values` 以一次聚合事件形式触发，而不是逐单元格触发。
 其中`responseKeyboard`配置项用于配置该插件响应的键盘事件列表，值类型为`ExcelEditCellKeyboardResponse`，具体定义如下：
 ```ts
 export enum ExcelEditCellKeyboardResponse {

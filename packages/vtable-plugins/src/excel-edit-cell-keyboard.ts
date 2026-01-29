@@ -20,8 +20,8 @@ export type IExcelEditCellKeyboardPluginOptions = {
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
   /** 删除能力是否只应用到可编辑单元格 */
   deleteWorkOnEditableCell?: boolean;
-  /** 删除范围时聚合成一次 change_cell_values 事件 */
-  aggregateDeleteToOneChangeCellValuesEvent?: boolean;
+  /** 删除范围时通过 changeCellValuesByRanges 批量更新，从而聚合成一次 change_cell_values 事件 */
+  batchCallChangeCellValuesApi?: boolean;
   // keyDown_before?: (event: KeyboardEvent) => void;
   // keyDown_after?: (event: KeyboardEvent) => void;
 };
@@ -33,7 +33,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
   table: ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
   responseKeyboard: ExcelEditCellKeyboardResponse[];
-  aggregateDeleteToOneChangeCellValuesEvent: boolean;
+  batchCallChangeCellValuesApi: boolean;
   constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
@@ -48,7 +48,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
       ExcelEditCellKeyboardResponse.BACKSPACE
     ];
 
-    this.aggregateDeleteToOneChangeCellValuesEvent = pluginOptions?.aggregateDeleteToOneChangeCellValuesEvent ?? false;
+    this.batchCallChangeCellValuesApi = pluginOptions?.batchCallChangeCellValuesApi ?? false;
 
     this.bindEvent();
   }
@@ -142,7 +142,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
               selectCells,
               this.table,
               this.pluginOptions?.deleteWorkOnEditableCell ?? true,
-              this.aggregateDeleteToOneChangeCellValuesEvent
+              this.batchCallChangeCellValuesApi
             );
             // 阻止事件传播和默认行为
             event.stopPropagation();
@@ -175,12 +175,12 @@ function deleteSelectRange(
   selectCells: TYPES.CellInfo[][],
   tableInstance: ListTable,
   workOnEditableCell: boolean = false,
-  aggregateToOneChangeCellValuesEvent: boolean = false
+  batchCallChangeCellValuesApi: boolean = false
 ) {
-  if (aggregateToOneChangeCellValuesEvent) {
+  if (batchCallChangeCellValuesApi) {
     const ranges = tableInstance.stateManager.select.ranges;
     if (ranges?.length) {
-      tableInstance.changeCellValuesByIds(ranges, '', workOnEditableCell, true);
+      tableInstance.changeCellValuesByRanges(ranges, '', workOnEditableCell, true);
     }
     return;
   }

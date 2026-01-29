@@ -50,7 +50,7 @@ import {
   listTableAddRecords,
   listTableChangeCellValue,
   listTableChangeCellValues,
-  listTableChangeCellValuesByIds,
+  listTableChangeCellValuesByRanges,
   listTableDeleteRecords,
   listTableUpdateRecords,
   sortRecords
@@ -1311,6 +1311,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
+    // 配合 syncRecordOperationsToSourceRecords：筛选态新增的“草稿行”会被临时强制保留在筛选视图中；
+    // 当用户主动 updateFilterRules 时清空，保证本次筛选结果严格由 filterRules 决定。
     (this.dataSource as any).clearForceVisibleRecords?.();
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
@@ -1602,7 +1604,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     value: string | number | null,
     workOnEditableCell = false,
     triggerEvent = true,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
     return listTableChangeCellValue(
       col,
@@ -1611,7 +1613,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       workOnEditableCell,
       triggerEvent,
       this,
-      silentChangeCellValuesEvent
+      noTriggerChangeCellValuesEvent
     );
   }
   /**
@@ -1628,7 +1630,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     values: (string | number)[][],
     workOnEditableCell = false,
     triggerEvent = true,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
     return listTableChangeCellValues(
       startCol,
@@ -1637,28 +1639,40 @@ export class ListTable extends BaseTable implements ListTableAPI {
       workOnEditableCell,
       triggerEvent,
       this,
-      silentChangeCellValuesEvent
+      noTriggerChangeCellValuesEvent
     );
   }
 
-  changeCellValuesByIds(
+  /**
+   * 批量更新多个离散选区内的单元格数据。
+   * 当前仅支持将所有选区内的单元格统一修改为同一个 value。
+   * @param ranges 选区范围（支持多个）
+   * @param value 要设置的统一值
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否触发 CHANGE_CELL_VALUE / CHANGE_CELL_VALUES 事件
+   * @param noTriggerChangeCellValuesEvent 是否不触发 CHANGE_CELL_VALUES 聚合事件
+   */
+  changeCellValuesByRanges(
     ranges: CellRange[],
     value: string | number | null,
     workOnEditableCell = false,
     triggerEvent = true,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
-    // @ts-ignore
-    return listTableChangeCellValuesByIds(
+    return listTableChangeCellValuesByRanges(
       ranges,
       value,
       workOnEditableCell,
       triggerEvent,
       this,
-      silentChangeCellValuesEvent
+      noTriggerChangeCellValuesEvent
     );
   }
 
+  /**
+   * 直接修改源数据 records 上的字段值，并在值变化时触发变更事件。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
   changeSourceCellValue(recordIndex: number | number[], field: FieldDef, value: string | number | null) {
     const tableIndex = this.getTableIndexByRecordIndex(recordIndex);
     const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
@@ -1684,18 +1698,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
+  /**
+   * 根据源数据 records 的 index + field 修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   * 该接口会修改源数据并可选择性刷新筛选/排序后的视图状态。
+   */
   changeCellValueByRecord(
     recordIndex: number | number[],
     field: FieldDef,
     value: string | number | null,
     options?: {
       triggerEvent?: boolean;
-      silentChangeCellValuesEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
       autoRefresh?: boolean;
     }
   ) {
     const triggerEvent = options?.triggerEvent ?? true;
-    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const noTriggerChangeCellValuesEvent = options?.noTriggerChangeCellValuesEvent;
     const autoRefresh = options?.autoRefresh ?? true;
 
     const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
@@ -1727,7 +1746,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         changedValue
       };
       this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
-      if (!silentChangeCellValuesEvent) {
+      if (!noTriggerChangeCellValuesEvent) {
         this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
       }
     }
@@ -1737,20 +1756,28 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
+  /**
+   * changeCellValueByRecord 的别名形式（位置参数）。
+   */
   changeCellValueBySource(
     recordIndex: number | number[],
     field: FieldDef,
     value: string | number | null,
     triggerEvent = true,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
     return this.changeCellValueByRecord(recordIndex, field, value, {
       triggerEvent,
-      silentChangeCellValuesEvent,
+      noTriggerChangeCellValuesEvent,
       autoRefresh: true
     });
   }
 
+  /**
+   * 根据源数据 records 的 index + field 批量修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   * 会在批处理完成后可选择性触发一次 CHANGE_CELL_VALUES 聚合事件。
+   */
   changeCellValuesByRecords(
     changeValues: {
       recordIndex: number | number[];
@@ -1759,12 +1786,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }[],
     options?: {
       triggerEvent?: boolean;
-      silentChangeCellValuesEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
       autoRefresh?: boolean;
     }
   ) {
     const triggerEvent = options?.triggerEvent ?? true;
-    const silentChangeCellValuesEvent = options?.silentChangeCellValuesEvent;
+    const noTriggerChangeCellValuesEvent = options?.noTriggerChangeCellValuesEvent;
     const autoRefresh = options?.autoRefresh ?? true;
 
     const resultChangeValues: {
@@ -1809,7 +1836,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
 
-    if (!silentChangeCellValuesEvent && resultChangeValues.length && triggerEvent) {
+    if (!noTriggerChangeCellValuesEvent && resultChangeValues.length && triggerEvent) {
       this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
     }
 
@@ -1818,6 +1845,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
+  /**
+   * changeCellValuesByRecords 的别名形式（位置参数）。
+   */
   changeCellValuesBySource(
     changeValues: {
       recordIndex: number | number[];
@@ -1825,15 +1855,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
       value: string | number | null;
     }[],
     triggerEvent = true,
-    silentChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
     return this.changeCellValuesByRecords(changeValues, {
       triggerEvent,
-      silentChangeCellValuesEvent,
+      noTriggerChangeCellValuesEvent,
       autoRefresh: true
     });
   }
 
+  /**
+   * 源数据发生修改后的刷新入口，可控制是否重新应用筛选/排序并重建场景树。
+   * @param reapplyFilter 是否重新应用筛选（默认 true）
+   * @param reapplySort 是否重新应用排序（默认 true）
+   * @param clearRowHeightCache 是否清理行高缓存（默认 true）
+   */
   refreshAfterSourceChange(options?: {
     reapplyFilter?: boolean;
     reapplySort?: boolean;
