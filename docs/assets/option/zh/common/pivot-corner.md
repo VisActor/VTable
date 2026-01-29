@@ -33,3 +33,6 @@ ${prefix} headerStyle(TODO)
 - headerType 为'text'，对应[headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
 - headerType 为'link'，对应[headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
 - headerType 为'image'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+
+ ${prefix} forceShowHeader(boolean)
+ 强制显示角头。当row或者column方向上没有维度的时候 本身是不会显示角表头的 但是某些场景下仍然需显示维度名称在角头，请配置这个字段。

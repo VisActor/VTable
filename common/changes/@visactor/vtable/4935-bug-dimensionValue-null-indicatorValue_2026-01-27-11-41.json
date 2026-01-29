@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "feat: add worksheet event\n\n",
-      "type": "minor",
+      "comment": "fix: when no columnTree to adjust columnWidthConfig #4935\n\n",
+      "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],

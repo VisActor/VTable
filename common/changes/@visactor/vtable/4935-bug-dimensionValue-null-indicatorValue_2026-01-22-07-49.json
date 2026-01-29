@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "feat: add worksheet event\n\n",
-      "type": "minor",
+      "comment": "fix: when dimension value is empty string should different from no dimension value #4935\n\n",
+      "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
