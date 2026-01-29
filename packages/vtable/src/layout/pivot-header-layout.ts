@@ -3518,8 +3518,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (this.rowDimensionKeys.indexOf(this.indicatorDimensionKey) >= 0 && path.indicatorKey)
       );
     } else {
-      colHeaderPaths = dimensionPaths.colHeaderPaths;
-      rowHeaderPaths = dimensionPaths.rowHeaderPaths;
+      colHeaderPaths = dimensionPaths?.colHeaderPaths;
+      rowHeaderPaths = dimensionPaths?.rowHeaderPaths;
       if (dimensionPaths?.cellLocation === 'body' && this._table.isPivotTable()) {
         forceBody = true;
       }
