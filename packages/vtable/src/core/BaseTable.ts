@@ -178,6 +178,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   tableNoFrameHeight: number;
   tableX: number;
   tableY: number;
+  _tableBorderWidth_left: number = 0;
+  _tableBorderWidth_right: number = 0;
+  _tableBorderWidth_top: number = 0;
+  _tableBorderWidth_bottom: number = 0;
   _widthMode: WidthModeDef;
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
@@ -1256,25 +1260,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       //考虑表格整体边框的问题
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+      this._tableBorderWidth_left = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+      this._tableBorderWidth_right = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
+      this._tableBorderWidth_top = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+      this._tableBorderWidth_bottom = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
       if (this.theme.frameStyle?.innerBorder) {
         this.tableX += this.contentOffsetX;
         this.tableY += this.contentOffsetY;
         this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.contentOffsetX;
         this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.contentOffsetY;
       } else {
-        this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-        this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
-        const rightBorder = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
+        this.tableX += this._tableBorderWidth_left;
+        this.tableY += this._tableBorderWidth_top;
+        const rightBorder = this._tableBorderWidth_right;
         this.tableNoFrameWidth =
           width -
           (rightBorder > vScrollBarWidth ? rightBorder - vScrollBarWidth : 0) -
-          ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
+          this._tableBorderWidth_left -
           this.contentOffsetX;
-        const bottomBorder = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
+        const bottomBorder = this._tableBorderWidth_bottom;
         this.tableNoFrameHeight =
           height -
           (bottomBorder > hScrollBarWidth ? bottomBorder - hScrollBarWidth : 0) -
-          ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
+          this._tableBorderWidth_top -
           this.contentOffsetY;
       }
     }
