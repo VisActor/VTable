@@ -1,3 +1,29 @@
+# v1.23.0
+
+2026-01-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: add event system for vtable sheet [#4861](https://github.com/VisActor/VTable/issues/4861)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: when dimension value is empty string should different from no dimension value [#4935](https://github.com/VisActor/VTable/issues/4935)
+- **@visactor/vtable**: when no columnTree to adjust columnWidthConfig [#4935](https://github.com/VisActor/VTable/issues/4935)
+- **@visactor/vtable**: change dimension value to recalculate totalTree [#4953](https://github.com/VisActor/VTable/issues/4953)
+- **@visactor/vtable**: when change dimenison value should update cached changedTree value
+- **@visactor/vtable**: to update formula after add records
+- **@visactor/vtable**: react type define
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: pivotTable have to distinguishing no dimension and dimension value is null character string
+
+
+
+[更多详情请查看 v1.23.0](https://github.com/VisActor/VTable/releases/tag/v1.23.0)
+
 # v1.22.12
 
 2026-01-26
