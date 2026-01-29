@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add worksheet event\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
