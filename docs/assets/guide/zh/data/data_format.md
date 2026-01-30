@@ -362,6 +362,8 @@ const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID
 
 或者可以修改某一个数据字段利用`changeCellValue`或者`changeCellValues`接口来实现。
 
+如果希望在筛选/排序状态下调用 `addRecord/addRecords/deleteRecords/updateRecords` 时也能同步修改到原始 `records`（例如清除筛选后新增行不丢失），可以在初始化配置中开启 `syncRecordOperationsToSourceRecords`。该配置也用于支持“筛选态新增草稿空行先保持可见，直到下一次 updateFilterRules 主动应用筛选才重新生效”的交互诉求。
+
 ### 树形结构数据更新
 
 在普通的列表中，数据更新是传入的`recordIndex`为一个数值，代表改行数据在表格body中的索引。例如当`recordIndex`为`0`时，代表列表中的第一行数据。

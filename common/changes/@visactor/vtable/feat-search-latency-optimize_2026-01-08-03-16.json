@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: optimize search latency\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "liuhualin@bytedance.com"
+}

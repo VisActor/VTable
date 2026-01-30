@@ -339,6 +339,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
   columnWidthConfig?: { key: string | number; width: number }[];
   rowHeightConfig?: { key: number; height: number }[];
+  syncRecordOperationsToSourceRecords?: boolean;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -359,7 +360,25 @@ export interface ListTableAPI extends BaseTableAPI {
   isListTable: () => true;
   isPivotTable: () => false;
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell?: boolean) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * 批量更新多个单元格的数据(根据col, row坐标, 支持离散数据)
+   * @param changeValues
+   */
+  changeCellValuesByRanges: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
   /**
    * 批量更新多个单元格的数据
    * @param col 粘贴数据的起始列号
@@ -371,8 +390,73 @@ export interface ListTableAPI extends BaseTableAPI {
     col: number,
     row: number,
     values: (string | number)[][],
-    workOnEditableCell?: boolean
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
   ) => Promise<boolean[][]> | boolean[][];
+  /**
+   * 根据源数据 records 的 index + field 修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
+  changeCellValueByRecord: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  /**
+   * 根据源数据 records 的 index + field 批量修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
+  changeCellValuesByRecords: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+  /**
+   * 根据源数据 records 的 index + field 修改值（别名）。
+   * 与 changeCellValueByRecord 一致，但参数拆分为位置参数。
+   */
+  changeCellValueBySource: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * 根据源数据 records 的 index + field 批量修改值（别名）。
+   * 与 changeCellValuesByRecords 一致，但参数拆分为位置参数。
+   */
+  changeCellValuesBySource: (
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+  /**
+   * 当你直接修改了源数据（例如 changeCellValueByRecord/changeCellValuesByRecords），
+   * 可按需重新应用筛选/排序并刷新场景树。
+   */
+  refreshAfterSourceChange: (options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
@@ -390,10 +474,10 @@ export interface ListTableAPI extends BaseTableAPI {
   /** 取消编辑 */
   cancelEditCell: () => void;
   //#endregion
-  addRecord: (record: any, recordIndex?: number) => void;
-  addRecords: (records: any[], recordIndex?: number) => void;
-  deleteRecords: (recordIndexs: number[]) => void;
-  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
+  addRecord: (record: any, recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  addRecords: (records: any[], recordIndex?: number | number[], triggerEvent?: boolean) => void;
+  deleteRecords: (recordIndexs: number[] | number[][], triggerEvent?: boolean) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[], triggerEvent?: boolean) => void;
   updateFilterRules: (filterRules: FilterRules, options: { clearRowHeightCache?: boolean }) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;

@@ -120,7 +120,7 @@ export class EditManager {
             // 如果这里不加延时，会导致鼠标抬起pointerup的时候将table.getElement()元素设置成焦点，从而导致编辑器失去焦点（因为prepareEdit只是将editor的element设置pointerEvents为none）
             if (editor && this.editingEditor !== editor) {
               // 判断当前编辑器如果是当前需要准备的编辑器，则不进行准备编辑。这个是为了container-dom文件moveEditCellOnArrowKeys前后逻辑问题，前面有个selectCell会触发这个事件，后面有startEdit了，所以这个prepare就没必要了，触发的话反而有问题
-              (editor as any).prepareEdit?.({
+              editor.prepareEdit?.({
                 referencePosition,
                 container: this.table.getElement(),
                 table: this.table,
