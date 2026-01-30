@@ -3,8 +3,10 @@ import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
 import type { CellValue, IStyle, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
 import type { TableSeriesNumberOptions, ImportResult } from '@visactor/vtable-plugins';
-import type { SortState } from '@visactor/vtable/es/ts-types';
+import type { SortState, TableKeyboardOptions } from '@visactor/vtable/es/ts-types';
+
 export { VTableThemes, VTableTypes, ImportResult };
+
 /** 筛选配置 */
 export interface IFilterConfig {
   /** 指定筛选器支持的筛选模式（按值、按条件、或两者） */
@@ -66,7 +68,21 @@ export interface ISheetDefine {
     enableDragColumnOrder?: boolean;
     enableDragRowOrder?: boolean;
   };
+  /**
+   * sheet 级编辑能力开关：
+   * - 未配置：继承 IVTableSheetOptions.editable；
+   * - false：本 sheet 只读；
+   * - true：仅在全局 editable 未关闭时生效。
+   */
+  editable?: boolean;
+  /**
+   * sheet 级快捷键策略：
+   * - 未配置：继承 IVTableSheetOptions.keyboardShortcutPolicy；
+   * - 已配置：对全局策略逐字段覆盖。
+   */
+  keyboardShortcutPolicy?: SheetKeyboardShortcutPolicy;
 }
+
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
   colSeriesNumberCellStyle?: TableSeriesNumberOptions['colSeriesNumberCellStyle'];
@@ -80,6 +96,28 @@ export interface IThemeDefine {
   };
   tableTheme: VTableThemes.ITableThemeDefine;
 }
+
+/**
+ * VTableSheet 层的快捷键策略：
+ * - 仅暴露与编辑 / 剪切 / 粘贴 / 全选等直接相关的字段；
+ * - 其他复杂键盘配置仍通过底层 keyboardOptions 高级用法处理（不在本次 API 范围）。
+ */
+export type SheetKeyboardShortcutPolicy = Pick<
+  TableKeyboardOptions,
+  | 'moveFocusCellOnTab'
+  | 'editCellOnEnter'
+  | 'moveFocusCellOnEnter'
+  | 'moveEditCellOnArrowKeys'
+  | 'cutSelected'
+  | 'copySelected'
+  | 'pasteValueToCell'
+  | 'showCopyCellBorder'
+  | 'selectAllOnCtrlA'
+> & {
+  /** 是否允许 Delete / Backspace 清空选中区域，默认：编辑模式下 true，只读模式下 false */
+  deleteRange?: boolean;
+};
+
 /** VTableSheet配置 */
 export interface IVTableSheetOptions {
   /** Sheet列表 */
@@ -116,7 +154,23 @@ export interface IVTableSheetOptions {
     enableDragColumnOrder?: boolean;
     enableDragRowOrder?: boolean;
   };
+
+  /**
+   * 全局编辑能力开关，默认值为 true（保持当前行为）：
+   * - true 或未配置：默认可编辑；
+   * - false：所有 sheet 进入只读模式，禁止通过 UI 修改数据或结构。
+   */
+  editable?: boolean;
+
+  /**
+   * 全局快捷键策略：
+   * - 控制剪切 / 复制 / 粘贴等快捷键行为；
+   * - 单个 sheet 可通过 ISheetDefine.keyboardShortcutPolicy 覆盖；
+   * - 当 editable === false（只读模式）时，策略仍可用于控制只读场景下是否允许复制 / 全选等非修改性操作。
+   */
+  keyboardShortcutPolicy?: SheetKeyboardShortcutPolicy;
 }
+
 export * from './base';
 export * from './formula';
 export * from './filter';

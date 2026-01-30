@@ -1,6 +1,7 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { isValid } from '@visactor/vutils';
+import type { TableKeyboardOptions } from '@visactor/vtable/es/ts-types';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
@@ -230,17 +231,76 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       isShowTableHeader = true;
     }
 
-    const keyboardOptions = {
-      ...this.options.keyboardOptions,
-      copySelected: true,
-      getCopyCellValue: {
-        html: this.getCellValueConsiderFormula.bind(this)
-      },
-      processFormulaBeforePaste: this.processFormulaPaste.bind(this),
-      pasteValueToCell: true,
-      showCopyCellBorder: true,
-      cutSelected: true
+    const editable = this.options.editable !== false;
+    const policy = this.options.keyboardShortcutPolicy;
+
+    const keyboardOptionsBase = this.options.keyboardOptions ?? {};
+
+    let keyboardOptions: TableKeyboardOptions = {
+      ...keyboardOptionsBase
     };
+
+    if (editable) {
+      keyboardOptions = {
+        ...keyboardOptions,
+        copySelected: keyboardOptions.copySelected ?? true,
+        pasteValueToCell: keyboardOptions.pasteValueToCell ?? true,
+        showCopyCellBorder: keyboardOptions.showCopyCellBorder ?? true,
+        cutSelected: keyboardOptions.cutSelected ?? true
+      };
+    }
+
+    keyboardOptions.getCopyCellValue = {
+      ...keyboardOptions.getCopyCellValue,
+      html: this.getCellValueConsiderFormula.bind(this)
+    };
+    keyboardOptions.processFormulaBeforePaste = this.processFormulaPaste.bind(this);
+
+    if (policy) {
+      if (policy.moveFocusCellOnTab !== undefined) {
+        keyboardOptions.moveFocusCellOnTab = policy.moveFocusCellOnTab;
+      }
+      if (policy.moveFocusCellOnEnter !== undefined) {
+        keyboardOptions.moveFocusCellOnEnter = policy.moveFocusCellOnEnter;
+      }
+      if (policy.editCellOnEnter !== undefined) {
+        keyboardOptions.editCellOnEnter = policy.editCellOnEnter;
+      }
+      if (policy.moveEditCellOnArrowKeys !== undefined) {
+        keyboardOptions.moveEditCellOnArrowKeys = policy.moveEditCellOnArrowKeys;
+      }
+      if (policy.selectAllOnCtrlA !== undefined) {
+        keyboardOptions.selectAllOnCtrlA = policy.selectAllOnCtrlA;
+      }
+
+      if (editable) {
+        if (policy.copySelected !== undefined) {
+          keyboardOptions.copySelected = policy.copySelected;
+        }
+        if (policy.cutSelected !== undefined) {
+          keyboardOptions.cutSelected = policy.cutSelected;
+        }
+        if (policy.pasteValueToCell !== undefined) {
+          keyboardOptions.pasteValueToCell = policy.pasteValueToCell;
+        }
+        if (policy.showCopyCellBorder !== undefined) {
+          keyboardOptions.showCopyCellBorder = policy.showCopyCellBorder;
+        }
+      }
+    }
+
+    if (!editable) {
+      keyboardOptions = {
+        ...keyboardOptions,
+        // 禁止通过键盘触发编辑
+        editCellOnEnter: false,
+        moveFocusCellOnEnter: false,
+        moveEditCellOnArrowKeys: false,
+        // 禁止剪切 / 粘贴等修改性快捷键
+        cutSelected: false,
+        pasteValueToCell: false
+      };
+    }
 
     //更改theme 的frameStyle
     let changedTheme: TYPES.VTableThemes.ITableThemeDefine;
