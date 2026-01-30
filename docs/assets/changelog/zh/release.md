@@ -5,22 +5,19 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-sheet**: add event system for vtable sheet [#4861](https://github.com/VisActor/VTable/issues/4861)
+- **@visactor/vtable-sheet**:vtable-sheet 新增事件系统 [#4861](https://github.com/VisActor/VTable/issues/4861)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when dimension value is empty string should different from no dimension value [#4935](https://github.com/VisActor/VTable/issues/4935)
-- **@visactor/vtable**: when no columnTree to adjust columnWidthConfig [#4935](https://github.com/VisActor/VTable/issues/4935)
-- **@visactor/vtable**: change dimension value to recalculate totalTree [#4953](https://github.com/VisActor/VTable/issues/4953)
-- **@visactor/vtable**: when change dimenison value should update cached changedTree value
-- **@visactor/vtable**: to update formula after add records
-- **@visactor/vtable**: react type define
+- **@visactor/vtable**: 修复 columnWidthConfig 计算逻辑 [#4935](https://github.com/VisActor/VTable/issues/4935)
+- **@visactor/vtable**: 维度值变化时重新计算 totalTree [#4953](https://github.com/VisActor/VTable/issues/4953)
+- **@visactor/vtable**: 维度值变化时更新 cached changedTree 值
+- **@visactor/vtable-sheet**: 新增记录后更新公式
+- **@visactor/vtable**: 修复 react 类型定义
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: pivotTable have to distinguishing no dimension and dimension value is null character string
-
-
+- **@visactor/vtable**: 修复 pivotTable 区分无维度值和维度值为空字符串的问题
 
 [更多详情请查看 v1.23.0](https://github.com/VisActor/VTable/releases/tag/v1.23.0)
 
