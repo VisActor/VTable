@@ -521,7 +521,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
-      this.scenegraph.resize();
+      // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
@@ -533,6 +533,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
       }
     }
     setTimeout(() => {
+      // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      this.resize();
       this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
     }, 0);
     return new Promise(resolve => {
@@ -1658,11 +1660,31 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
-    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    // if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    //   this._updateSize();
+    //   this.internalProps.title.resize();
+    //   this.scenegraph.resize();
+    // }
+    let isHasComponent = false;
+    if (this.internalProps.title || this.internalProps.legends) {
       this._updateSize();
-      this.internalProps.title.resize();
+      isHasComponent = true;
+    }
+    // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          legend?.resize();
+        });
+      } else if (component === 'title') {
+        this.internalProps.title?.resize();
+      }
+    });
+    if (isHasComponent) {
       this.scenegraph.resize();
     }
+
     this.eventManager.updateEventBinder();
   }
 
