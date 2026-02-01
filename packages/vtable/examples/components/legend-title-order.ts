@@ -6,6 +6,21 @@ export function createTable() {
   const records = [
     { category: 'A', value: 120 },
     { category: 'B', value: 90 },
+    { category: 'C', value: 60 },
+    { category: 'A', value: 120 },
+    { category: 'B', value: 90 },
+    { category: 'C', value: 60 },
+    { category: 'A', value: 120 },
+    { category: 'B', value: 90 },
+    { category: 'C', value: 60 },
+    { category: 'A', value: 120 },
+    { category: 'B', value: 90 },
+    { category: 'C', value: 60 },
+    { category: 'A', value: 120 },
+    { category: 'B', value: 90 },
+    { category: 'C', value: 60 },
+    { category: 'A', value: 120 },
+    { category: 'B', value: 90 },
     { category: 'C', value: 60 }
   ];
 
@@ -89,11 +104,84 @@ export function createTable() {
           }
         ]
       }
-    ],
+    ]
     // ensure title is laid out before legend so legend appears under the title
-    componentLayoutOrder: ['title', 'legend']
+    // componentLayoutOrder: ['title', 'legend']
   };
 
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+  setTimeout(() => {
+    tableInstance.updateOption({
+      container: document.getElementById(CONTAINER_ID),
+      records,
+      columns,
+      // place title and legend both at the top
+      title: {
+        text: 'Title above legend (componentLayoutOrder)',
+        orient: 'top',
+        align: 'center'
+      },
+      legends: [
+        {
+          type: 'discrete',
+          orient: 'top',
+          position: 'start',
+          data: [
+            {
+              label: 'A',
+              shape: {
+                fill: '#1664FF',
+                symbolType: 'circle'
+              }
+            },
+            {
+              label: 'B',
+              shape: {
+                fill: '#1AC6FF',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'C',
+              shape: {
+                fill: '#FFCC00',
+                symbolType: 'triangle'
+              }
+            }
+          ]
+        },
+        {
+          type: 'discrete',
+          orient: 'top',
+          position: 'start',
+          data: [
+            {
+              label: 'A11',
+              shape: {
+                fill: '#1664FF',
+                symbolType: 'circle'
+              }
+            },
+            {
+              label: 'B',
+              shape: {
+                fill: '#1AC6FF',
+                symbolType: 'square'
+              }
+            },
+            {
+              label: 'C',
+              shape: {
+                fill: '#FFCC00',
+                symbolType: 'triangle'
+              }
+            }
+          ]
+        }
+      ],
+      // ensure title is laid out before legend so legend appears under the title
+      componentLayoutOrder: ['title', 'legend']
+    });
+  }, 4000);
 }
