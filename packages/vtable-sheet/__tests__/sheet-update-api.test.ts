@@ -461,7 +461,9 @@ describe('WorkSheet.updateSheetOption - 单 sheet 增量更新', () => {
     workSheet.updateSheetOption({
       theme: newTheme as any
     });
-    expect(table.options.theme).toBe(newTheme.tableTheme);
+    // table.options.theme 可能是包装对象 { frameStyle, tableTheme }，需兼容两种结构
+    const resolvedTheme = (table.options.theme as any)?.tableTheme ?? table.options.theme;
+    expect(resolvedTheme).toBe(newTheme.tableTheme);
 
     // 场景7: 批量更新多个配置
     workSheet.updateSheetOption({
