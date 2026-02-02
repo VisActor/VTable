@@ -12,7 +12,7 @@ export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
     // showFormulaBar: false,
     showSheetTab: true,
-    // defaultRowHeight: 25,
+    defaultRowHeight: 25,
     // defaultColWidth: 100,
     sheets: [
       {
@@ -821,6 +821,7 @@ export function createTable() {
   (window as any).sheetInstance = sheetInstance;
   setTimeout(() => {
     sheetInstance.updateOption({
+      defaultRowHeight: 50,
       mainMenu: {
         show: true
       },

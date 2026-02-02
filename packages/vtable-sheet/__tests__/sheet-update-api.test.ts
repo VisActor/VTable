@@ -644,7 +644,8 @@ describe('WorkSheet.updateSheetOption - 单 sheet 增量更新', () => {
     expect(table.getColWidth(3)).toBe(120);
     expect(table.getColWidth(4)).toBe(100);
 
-    expect(table.getRowHeight(0)).toBe(35); // 修正期望值
+    // rowHeightConfig 对第 0 行指定了 height: 45，覆盖 defaultRowHeight: 35
+    expect(table.getRowHeight(0)).toBe(45);
   });
 
   test('应处理并发更新和快速切换', () => {
@@ -687,7 +688,8 @@ describe('WorkSheet.updateSheetOption - 单 sheet 增量更新', () => {
     expect(table.options.defaultRowHeight).toBe(30);
     expect(table.options.defaultColWidth).toBe(120);
     expect(table.getColWidth(0)).toBe(200);
-    expect(table.getRowHeight(0)).toBe(30); // 修正期望值
+    // rowHeightConfig 在第 4 次更新中指定了第 0 行 height: 40，覆盖 defaultRowHeight: 30
+    expect(table.getRowHeight(0)).toBe(40);
     expect(table.options.filter).toBe(true);
   });
 
