@@ -10,7 +10,7 @@ VTableSheet组件支持的方法如下：
 
 更新表格配置项，调用后会自动重绘。
 ```
-  updateOption: (options: IVTableSheetOptions) => void
+  updateOption: (options: Partial<IVTableSheetOptions>) => void
 ```
 
 该接口支持全量更新和增量更新，全量更新会重新布局和渲染整个表格，增量更新只会更新配置项，不会重新布整个表格。
