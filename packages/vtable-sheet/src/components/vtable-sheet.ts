@@ -305,6 +305,12 @@ export default class VTableSheet {
 
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
+    //sheets按配置option中的sheets顺序排序
+    sheets.sort((a, b) => {
+      const aIndex = this.options.sheets.findIndex(s => s.sheetKey === a.sheetKey);
+      const bIndex = this.options.sheets.findIndex(s => s.sheetKey === b.sheetKey);
+      return aIndex - bIndex;
+    });
     sheets.forEach((sheet, index) => {
       tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
     });
@@ -1053,7 +1059,12 @@ export default class VTableSheet {
         },
         editCellTrigger: ['api', 'keydown', 'doubleclick'],
         customMergeCell: next_sheetDefine.cellMerge,
-        theme: next_sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
+        theme: next_sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme,
+        data: next_sheetDefine.data,
+        columns: next_sheetDefine.columns
+        // // 传入 data/columns 以便 updateOption 能正确更新表格数据；显式传 columns: undefined 时也要透传，以便恢复为无表头
+        // ...('data' in next_sheetDefine && { data: next_sheetDefine.data }),
+        // ...('columns' in next_sheetDefine && { columns: next_sheetDefine.columns })
       };
 
       instance.updateSheetOption(sheetOption);

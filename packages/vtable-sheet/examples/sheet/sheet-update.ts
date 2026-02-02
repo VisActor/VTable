@@ -827,8 +827,35 @@ export function createTable() {
       },
       sheets: [
         {
+          sheetKey: 'sheet13333',
+          sheetTitle: 'sheet13333',
+          columns: [
+            {
+              title: 'sheet13333-A',
+              width: 100
+            },
+            {
+              title: 'sheet13333-B',
+              width: 100
+            }
+          ],
+          data: [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+          ]
+        },
+        {
           sheetKey: 'sheet1',
-          sheetTitle: 'sheet1'
+          sheetTitle: 'sheet1',
+          active: true,
+          data: [[2, 3, 1111]]
+        },
+        {
+          sheetKey: 'sheet2',
+          sheetTitle: 'sheet2',
+          firstRowAsHeader: true,
+          data: [['sheet2-A', 'sheet2-B', 'sheet2-C']]
         }
       ]
     });
