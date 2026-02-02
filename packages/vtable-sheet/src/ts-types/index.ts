@@ -75,12 +75,6 @@ export interface ISheetDefine {
    * - true：仅在全局 editable 未关闭时生效。
    */
   editable?: boolean;
-  /**
-   * sheet 级快捷键策略：
-   * - 未配置：继承 IVTableSheetOptions.keyboardShortcutPolicy；
-   * - 已配置：对全局策略逐字段覆盖。
-   */
-  keyboardShortcutPolicy?: SheetKeyboardShortcutPolicy;
 }
 
 export interface IThemeDefine {
@@ -96,27 +90,6 @@ export interface IThemeDefine {
   };
   tableTheme: VTableThemes.ITableThemeDefine;
 }
-
-/**
- * VTableSheet 层的快捷键策略：
- * - 仅暴露与编辑 / 剪切 / 粘贴 / 全选等直接相关的字段；
- * - 其他复杂键盘配置仍通过底层 keyboardOptions 高级用法处理（不在本次 API 范围）。
- */
-export type SheetKeyboardShortcutPolicy = Pick<
-  TableKeyboardOptions,
-  | 'moveFocusCellOnTab'
-  | 'editCellOnEnter'
-  | 'moveFocusCellOnEnter'
-  | 'moveEditCellOnArrowKeys'
-  | 'cutSelected'
-  | 'copySelected'
-  | 'pasteValueToCell'
-  | 'showCopyCellBorder'
-  | 'selectAllOnCtrlA'
-> & {
-  /** 是否允许 Delete / Backspace 清空选中区域，默认：编辑模式下 true，只读模式下 false */
-  deleteRange?: boolean;
-};
 
 /** VTableSheet配置 */
 export interface IVTableSheetOptions {
@@ -161,14 +134,6 @@ export interface IVTableSheetOptions {
    * - false：所有 sheet 进入只读模式，禁止通过 UI 修改数据或结构。
    */
   editable?: boolean;
-
-  /**
-   * 全局快捷键策略：
-   * - 控制剪切 / 复制 / 粘贴等快捷键行为；
-   * - 单个 sheet 可通过 ISheetDefine.keyboardShortcutPolicy 覆盖；
-   * - 当 editable === false（只读模式）时，策略仍可用于控制只读场景下是否允许复制 / 全选等非修改性操作。
-   */
-  keyboardShortcutPolicy?: SheetKeyboardShortcutPolicy;
 }
 
 export * from './base';

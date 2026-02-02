@@ -232,7 +232,6 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     }
 
     const editable = this.options.editable !== false;
-    const policy = this.options.keyboardShortcutPolicy;
 
     const keyboardOptionsBase = this.options.keyboardOptions ?? {};
 
@@ -255,39 +254,6 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       html: this.getCellValueConsiderFormula.bind(this)
     };
     keyboardOptions.processFormulaBeforePaste = this.processFormulaPaste.bind(this);
-
-    if (policy) {
-      if (policy.moveFocusCellOnTab !== undefined) {
-        keyboardOptions.moveFocusCellOnTab = policy.moveFocusCellOnTab;
-      }
-      if (policy.moveFocusCellOnEnter !== undefined) {
-        keyboardOptions.moveFocusCellOnEnter = policy.moveFocusCellOnEnter;
-      }
-      if (policy.editCellOnEnter !== undefined) {
-        keyboardOptions.editCellOnEnter = policy.editCellOnEnter;
-      }
-      if (policy.moveEditCellOnArrowKeys !== undefined) {
-        keyboardOptions.moveEditCellOnArrowKeys = policy.moveEditCellOnArrowKeys;
-      }
-      if (policy.selectAllOnCtrlA !== undefined) {
-        keyboardOptions.selectAllOnCtrlA = policy.selectAllOnCtrlA;
-      }
-
-      if (editable) {
-        if (policy.copySelected !== undefined) {
-          keyboardOptions.copySelected = policy.copySelected;
-        }
-        if (policy.cutSelected !== undefined) {
-          keyboardOptions.cutSelected = policy.cutSelected;
-        }
-        if (policy.pasteValueToCell !== undefined) {
-          keyboardOptions.pasteValueToCell = policy.pasteValueToCell;
-        }
-        if (policy.showCopyCellBorder !== undefined) {
-          keyboardOptions.showCopyCellBorder = policy.showCopyCellBorder;
-        }
-      }
-    }
 
     if (!editable) {
       keyboardOptions = {

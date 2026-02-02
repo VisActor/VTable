@@ -5,6 +5,10 @@ export const menus = [
   },
   {
     path: 'sheet',
+    name: 'sheet-editable'
+  },
+  {
+    path: 'sheet',
     name: 'filter'
   },
   {

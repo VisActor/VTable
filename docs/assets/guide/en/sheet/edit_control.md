@@ -19,17 +19,7 @@ VTableSheet provides flexible configuration options to control the editing capab
     - The Delete/Backspace key will not clear cell content (unless configured otherwise).
   - **Priority**: The configuration on a specific sheet (`ISheetDefine.editable`) takes precedence over the global configuration (`IVTableSheetOptions.editable`).
 
-### keyboardShortcutPolicy
 
-- **Type**: `SheetKeyboardShortcutPolicy`
-- **Description**: Defines the policy for keyboard shortcuts, allowing fine-grained control over specific actions.
-- **Properties**:
-  - `copySelected` (boolean): Enable copy shortcut (Ctrl+C). Default `true`.
-  - `cutSelected` (boolean): Enable cut shortcut (Ctrl+X). Default `true` (disabled in Read-Only mode).
-  - `pasteValueToCell` (boolean): Enable paste shortcut (Ctrl+V). Default `true` (disabled in Read-Only mode).
-  - `selectAllOnCtrlA` (boolean): Enable select all shortcut (Ctrl+A). Default `true`.
-  - `deleteRange` (boolean): Enable clearing cell content with Delete/Backspace. Default `true` (disabled in Read-Only mode).
-  - ... (other navigation shortcuts like `moveFocusCellOnTab`, `editCellOnEnter`, etc.)
 
 ## Usage Examples
 
@@ -74,35 +64,6 @@ const sheet = new VTableSheet(container, {
       sheetTitle: 'Editable',
       data: data2,
       editable: true // Override global setting
-    }
-  ]
-});
-```
-
-### 3. Custom Keyboard Shortcut Policy
-
-You can customize the keyboard behavior. For example, disable Cut and Paste but allow Copy, or disable clearing content with the Delete key.
-
-```typescript
-const sheet = new VTableSheet(container, {
-  // Global policy: Allow copy, disable cut/paste
-  keyboardShortcutPolicy: {
-    copySelected: true,
-    cutSelected: false,
-    pasteValueToCell: false
-  },
-  sheets: [
-    {
-      sheetKey: 'sheet1',
-      data: data1
-    },
-    {
-      sheetKey: 'sheet2',
-      data: data2,
-      // Sheet-level policy: Allow delete range
-      keyboardShortcutPolicy: {
-        deleteRange: true
-      }
     }
   ]
 });

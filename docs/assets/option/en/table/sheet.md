@@ -44,6 +44,13 @@ Table data in two-dimensional array format.
 
 Whether this is the currently active worksheet.
 
+### editable(boolean)
+
+Whether to allow editing this worksheet.
+- `true`: Allow editing (default).
+- `false`: Read-only mode.
+**Priority**: This configuration takes precedence over the global `IVTableSheetOptions.editable`.
+
 ### cellMerge(CustomMergeCellArray)
 
 Cell merge configuration, in the format:

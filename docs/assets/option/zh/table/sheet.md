@@ -51,11 +51,6 @@
 - `false`: 只读模式。
 **优先级**：此配置优先级高于全局 `IVTableSheetOptions.editable`。
 
-### keyboardShortcutPolicy(SheetKeyboardShortcutPolicy)
-
-该工作表的快捷键策略配置。可用于覆盖全局的快捷键策略。
-具体配置项参考全局配置中的 `keyboardShortcutPolicy`。
-
 ### cellMerge(CustomMergeCellArray)
 
 单元格合并配置，格式为：
@@ -207,15 +202,6 @@ rowHeightConfig: {
 - Delete/Backspace 无法清空单元格。
 - 右键菜单中的修改项被隐藏。
 
-## keyboardShortcutPolicy(SheetKeyboardShortcutPolicy)
-
-全局快捷键策略配置。定义了允许或禁用的快捷键行为。
-常用属性：
-- `copySelected` (boolean): 是否允许复制 (Ctrl+C)。默认 true。
-- `cutSelected` (boolean): 是否允许剪切 (Ctrl+X)。只读模式下强制 false。
-- `pasteValueToCell` (boolean): 是否允许粘贴 (Ctrl+V)。只读模式下强制 false。
-- `selectAllOnCtrlA` (boolean): 是否允许全选 (Ctrl+A)。默认 true。
-- `deleteRange` (boolean): 是否允许 Delete/Backspace 清空选区。只读模式下强制 false。
 
 ## dragOrder(Object)
 

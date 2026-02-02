@@ -21,7 +21,7 @@ import type {
   IHighlightHeaderWhenSelectCellPluginOptions,
   ContextMenuOptions
 } from '@visactor/vtable-plugins';
-import type { ISheetDefine, IColumnDefine, IVTableSheetOptions, SheetKeyboardShortcutPolicy } from '../ts-types';
+import type { ISheetDefine, IColumnDefine, IVTableSheetOptions } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 
 /**
@@ -43,15 +43,7 @@ export function getTablePlugins(
 
   const globalEditable = options?.editable;
   const sheetEditable = sheetDefine?.editable;
-  const effectiveEditable = sheetEditable ?? (globalEditable ?? true);
-
-  let effectiveKeyboardPolicy: SheetKeyboardShortcutPolicy | undefined;
-  if (options?.keyboardShortcutPolicy || sheetDefine?.keyboardShortcutPolicy) {
-    effectiveKeyboardPolicy = {
-      ...(options?.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy),
-      ...(sheetDefine?.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy)
-    };
-  }
+  const effectiveEditable = sheetEditable ?? globalEditable ?? true;
   if (!disabledPluginsUserSetted?.some(module => module.module === FilterPlugin)) {
     const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === FilterPlugin)
       ?.moduleOptions as FilterOptions;
@@ -134,8 +126,7 @@ export function getTablePlugins(
       const contextMenuPlugin = createContextMenuItems(
         sheetDefine,
         userPluginOptions as ContextMenuOptions,
-        effectiveEditable,
-        effectiveKeyboardPolicy
+        effectiveEditable
       );
       plugins.push(contextMenuPlugin);
     }
@@ -250,8 +241,7 @@ function createColumnFilterChecker(sheetDefine: ISheetDefine) {
 function createContextMenuItems(
   sheetDefine: ISheetDefine,
   userPluginOptions?: ContextMenuOptions,
-  effectiveEditable?: boolean,
-  policy?: SheetKeyboardShortcutPolicy
+  effectiveEditable?: boolean
 ) {
   return new ContextMenuPlugin({
     headerCellMenuItems: [
@@ -376,25 +366,9 @@ function createContextMenuItems(
           }
           return true;
         });
-      } else if (policy) {
-        menuItems = menuItems.map(item => {
-          if (typeof item === 'string') {
-            return item;
-          }
-          if (item.menuKey === 'copy' && policy.copySelected === false) {
-            return { ...item, disabled: true };
-          }
-          if (item.menuKey === 'cut' && policy.cutSelected === false) {
-            return { ...item, disabled: true };
-          }
-          if (item.menuKey === 'paste' && policy.pasteValueToCell === false) {
-            return { ...item, disabled: true };
-          }
-          return item;
-        });
       }
-      if(menuItems.length===1&&menuItems[0]==='---'){
-        menuItems=[];
+      if (menuItems.length === 1 && menuItems[0] === '---') {
+        menuItems = [];
       }
       return menuItems;
     },

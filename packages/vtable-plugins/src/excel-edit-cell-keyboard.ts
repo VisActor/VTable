@@ -79,13 +79,11 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
 
       const vtableSheet = (this.table as any).__vtableSheet;
       const activeSheet = vtableSheet?.getActiveSheet?.();
-      const sheetOptions = activeSheet?.options as
-        | { editable?: boolean; keyboardShortcutPolicy?: { deleteRange?: boolean } }
-        | undefined;
+      const sheetOptions = activeSheet?.options as { editable?: boolean } | undefined;
 
       if (sheetOptions) {
         editable = sheetOptions.editable !== false;
-        deleteRangeEnabled = sheetOptions.keyboardShortcutPolicy?.deleteRange ?? true;
+        deleteRangeEnabled = true;
       }
 
       const isDeleteKey =

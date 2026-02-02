@@ -5,7 +5,7 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine, SheetKeyboardShortcutPolicy } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
@@ -481,14 +481,7 @@ export default class VTableSheet {
 
     const globalEditable = this.options.editable;
     const sheetEditable = sheetDefine.editable;
-    const effectiveEditable = sheetEditable ?? (globalEditable ?? true);
-
-    const effectiveKeyboardPolicy =
-      (this.options.keyboardShortcutPolicy || sheetDefine.keyboardShortcutPolicy) &&
-      {
-        ...(this.options.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy),
-        ...(sheetDefine.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy)
-      };
+    const effectiveEditable = sheetEditable ?? globalEditable ?? true;
 
     // 创建sheet实例
     const sheet = new WorkSheet(this, {
@@ -518,8 +511,7 @@ export default class VTableSheet {
       editCellTrigger: effectiveEditable ? ['api', 'keydown', 'doubleclick'] : ['api'],
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme,
-      editable: effectiveEditable,
-      keyboardShortcutPolicy: effectiveKeyboardPolicy as SheetKeyboardShortcutPolicy | undefined
+      editable: effectiveEditable
     } as any);
 
     // 事件系统现在通过 TableEventRelay 自动处理，不再需要手动绑定
