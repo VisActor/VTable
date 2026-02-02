@@ -11,7 +11,8 @@ import type {
   IThemeDefine,
   IFilterConfig,
   IFilterState,
-  ISheetDefine
+  ISheetDefine,
+  IVTableSheetUpdateOptions
 } from '../ts-types';
 import type { SortState } from '@visactor/vtable/es/ts-types';
 import type { TYPES, VTableSheet } from '..';
@@ -41,30 +42,12 @@ export type WorkSheetConstructorOptions = {
  *
  * 仅涵盖与布局和交互相关的常用配置，不包含 records/columns 等结构性配置。
  */
-interface WorkSheetUpdateOptions {
-  /** 是否显示表头 */
-  showHeader?: boolean;
-  /** 冻结行数 */
-  frozenRowCount?: number;
-  /** 冻结列数 */
-  frozenColCount?: number;
-  /** 筛选开关（列级 filter 仍由 table-plugins 控制） */
-  filter?: boolean | IFilterConfig;
-  /** 筛选状态 */
-  filterState?: IFilterState;
-  /** 排序状态 */
-  sortState?: SortState[] | SortState | null;
-  /** 主题（仅使用 tableTheme 部分更新 VTable 主题） */
-  theme?: IThemeDefine;
-  /** 列宽配置 */
-  columnWidthConfig?: ISheetDefine['columnWidthConfig'];
-  /** 行高配置 */
-  rowHeightConfig?: ISheetDefine['rowHeightConfig'];
-  /** 默认行高（影响新行及部分布局计算） */
-  defaultRowHeight?: number;
-  /** 默认列宽（影响新列及部分布局计算） */
-  defaultColWidth?: number;
-}
+type WorkSheetUpdateOptions = Pick<
+  IVTableSheetUpdateOptions,
+  'defaultRowHeight' | 'defaultColWidth' | 'dragOrder' | 'VTablePluginModules'
+> & {
+  theme?: TYPES.VTableThemes.ITableThemeDefine;
+};
 
 export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
@@ -276,11 +259,37 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       showCopyCellBorder: true,
       cutSelected: true
     };
+    return {
+      ...(this.options as any),
+      dragOrder: {
+        maintainArrayDataOrder: true
+      },
+      addRecordRule: 'Array',
+      defaultCursor: 'cell',
+      records: this.options.data,
+      sortState: this.options.sortState,
+      container: this.element,
+      showHeader: isShowTableHeader,
+      keyboardOptions,
+      theme: this._adjustTheme(this.options.theme),
+      excelOptions: {
+        fillHandle: true
+      },
+      customConfig: {
+        selectCellWhenCellEditorNotExists: true
+      }
+      // maintainedColumnCount: 120
+      // 其他特定配置
+    };
+  }
 
+  _adjustTheme(theme: TYPES.VTableThemes.ITableThemeDefine): TYPES.VTableThemes.ITableThemeDefine {
     //更改theme 的frameStyle
     let changedTheme: TYPES.VTableThemes.ITableThemeDefine;
-    if (!this.options?.theme) {
+    if (!theme) {
       this.options.theme = VTableThemes.DEFAULT;
+    } else {
+      this.options.theme = theme;
     }
     if (this.options.theme.bodyStyle && !isPropertyWritable(this.options.theme, 'bodyStyle')) {
       //测试是否使用了主题 使用了主题配置项不可写。
@@ -307,30 +316,8 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
         });
       }
     }
-    return {
-      ...(this.options as any),
-      dragOrder: {
-        maintainArrayDataOrder: true
-      },
-      addRecordRule: 'Array',
-      defaultCursor: 'cell',
-      records: this.options.data,
-      sortState: this.options.sortState,
-      container: this.element,
-      showHeader: isShowTableHeader,
-      keyboardOptions,
-      theme: changedTheme,
-      excelOptions: {
-        fillHandle: true
-      },
-      customConfig: {
-        selectCellWhenCellEditorNotExists: true
-      }
-      // maintainedColumnCount: 120
-      // 其他特定配置
-    };
+    return changedTheme;
   }
-
   /**
    * 设置事件监听
    */
@@ -1057,130 +1044,53 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       }
     }
     data.shift();
+    // Sheet 的 dragOrder 与 VTable ListTableConstructorOptions 的 dragOrder 类型不兼容，此处显式传入 VTable 所需格式
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 仅用于从展开中排除，不传入 updateOption
+    const { dragOrder: _omitSheetDragOrder, ...optionsRest } = this.options;
     this.tableInstance.updateOption({
-      ...this.options,
+      ...optionsRest,
+      dragOrder: { maintainArrayDataOrder: true },
       columns: this.options.columns as any as ColumnsDefine,
       showHeader: true,
       records: data
     });
   }
-
+  updateSheetOption(sheetOption: IWorkSheetOptions): void {
+    this.options = {
+      ...this.options,
+      ...sheetOption
+    };
+    const tableOptions = this._generateTableOptions();
+    this.tableInstance.updateOption(tableOptions);
+  }
   /**
    * 增量更新当前工作表配置，并映射到底层 VTable 的细粒度 API。
    *
-   * 该方法只负责布局/交互相关的常用配置，不处理 records/columns 等结构性变更。
+   * 该方法只负责从全局配置提取需要更新到工作表的配置，不是sheets中的sheetDefine的配置更新的情况。
    */
-  updateSheetOption(option: WorkSheetUpdateOptions): void {
+  updateGlobalOptionToSheet(option: WorkSheetUpdateOptions): void {
     if (!this.tableInstance || !option) {
       return;
     }
 
     const table = this.tableInstance;
     const nextOptionPatch: Partial<ListTableConstructorOptions> = {};
-    let needRenderWithRecreateCells = false;
-
-    // 显示表头
-    if (option.showHeader !== undefined) {
-      this.options.showHeader = option.showHeader;
-      (nextOptionPatch as any).showHeader = option.showHeader;
-    }
-
-    // 冻结设置
-    if (option.frozenRowCount !== undefined) {
-      table.frozenRowCount = option.frozenRowCount;
-      needRenderWithRecreateCells = true;
-    }
-    if (option.frozenColCount !== undefined) {
-      table.setFrozenColCount(option.frozenColCount);
-      needRenderWithRecreateCells = true;
-    }
-
-    // 筛选开关（会影响列头图标等，需要通过 updateOption 让插件重新计算）
-    if (option.filter !== undefined) {
-      (this.options as any).filter = option.filter;
-      (nextOptionPatch as any).filter = option.filter;
-    }
-
-    // 排序状态（优先使用 VTable 内部 API）
-    if (option.sortState !== undefined) {
-      (this.options as any).sortState = option.sortState as any;
-      // 使用内部 updateSortState，避免全量 updateOption
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (table as any).updateSortState?.(option.sortState as any, true);
-    }
-
     // 主题（优先使用 updateTheme，而不是全量 updateOption）
     if (option.theme) {
-      const tableTheme = option.theme.tableTheme;
+      const tableTheme = option.theme;
       if (tableTheme) {
-        (this.options as any).theme = tableTheme;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((table as any).updateTheme) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (table as any).updateTheme(tableTheme);
-        } else {
-          (nextOptionPatch as any).theme = tableTheme;
-        }
+        this.options.theme = tableTheme;
+        nextOptionPatch.theme = this._adjustTheme(tableTheme);
       }
     }
 
     // 默认行高/列宽（通过属性设置，并在最后触发一次重建渲染）
     if (option.defaultRowHeight !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (table as any).defaultRowHeight = option.defaultRowHeight as any;
-      needRenderWithRecreateCells = true;
+      nextOptionPatch.defaultRowHeight = option.defaultRowHeight;
     }
     if (option.defaultColWidth !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (table as any).defaultColWidth = option.defaultColWidth as any;
-      needRenderWithRecreateCells = true;
+      nextOptionPatch.defaultColWidth = option.defaultColWidth;
     }
-
-    // 列宽配置 -> setColWidth
-    if (option.columnWidthConfig && option.columnWidthConfig.length > 0) {
-      option.columnWidthConfig.forEach(config => {
-        const key = config.key;
-        const width = config.width;
-        let colIndex: number | null = null;
-
-        if (typeof key === 'number') {
-          colIndex = key;
-        } else {
-          const columns = this.getColumns();
-          colIndex = columns.findIndex(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (col: any) => col.field === key || col.key === key
-          );
-        }
-
-        if (colIndex !== null && colIndex >= 0 && colIndex < table.colCount) {
-          table.setColWidth(colIndex, width);
-        }
-      });
-    }
-
-    // 行高配置 -> setRowHeight
-    if (option.rowHeightConfig && option.rowHeightConfig.length > 0) {
-      option.rowHeightConfig.forEach(config => {
-        const rowIndex = config.key;
-        const height = config.height;
-        if (rowIndex >= 0 && rowIndex < table.rowCount) {
-          table.setRowHeight(rowIndex, height);
-        }
-      });
-    }
-
-    // 筛选状态 -> Filter 插件
-    if (option.filterState !== undefined) {
-      const filterPlugin = table.pluginManager?.getPluginByName('Filter') as any;
-      if (filterPlugin && typeof filterPlugin.setFilterState === 'function') {
-        filterPlugin.setFilterState(option.filterState);
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn('Filter plugin is not available or does not support setFilterState');
-      }
-    }
-
     // 如果需要通过 updateOption 合并部分配置（如 showHeader / filter / theme 等）
     if (Object.keys(nextOptionPatch).length > 0) {
       const mergedOptions: ListTableConstructorOptions = {
@@ -1188,15 +1098,9 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
         ...nextOptionPatch
       };
       table.updateOption(mergedOptions, {
-        clearColWidthCache: false,
-        clearRowHeightCache: false
+        // clearColWidthCache: false,
+        // clearRowHeightCache: false
       });
-    }
-
-    // 当默认行高/列宽或冻结设置发生变化时，重新创建单元格并刷新渲染
-    if (needRenderWithRecreateCells && (table as any).renderWithRecreateCells) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (table as any).renderWithRecreateCells();
     }
   }
 

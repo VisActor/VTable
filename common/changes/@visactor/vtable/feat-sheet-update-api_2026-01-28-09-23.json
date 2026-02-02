@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: add updateOption api\n\n",
-      "type": "none",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],

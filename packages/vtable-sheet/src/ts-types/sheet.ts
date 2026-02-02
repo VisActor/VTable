@@ -1,15 +1,17 @@
-import type { IColumnDefine, IFilterConfig, ISheetDefine } from './index';
+import type { IColumnDefine, IFilterConfig, IFilterState, ISheetDefine } from './index';
 import type { CellCoord, CellRange, CellValue } from './base';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /** Sheet构造选项 */
-export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 'records' | 'columns'> {
+export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 'records' | 'columns' | 'dragOrder'> {
   /** Sheet的唯一标识 */
   sheetKey: string;
   /** Sheet的标题 */
   sheetTitle: string;
   /** 容器元素 */
-  container: HTMLElement;
+  container?: HTMLElement;
+  width?: number;
+  height?: number;
   /** 数据 */
   data?: any[][];
   /** 是否显示表头 */
@@ -17,9 +19,15 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
   /** 是否将第一行作为表头 */
   firstRowAsHeader?: boolean;
   /** 筛选配置 */
-  filter?: boolean;
+  filter?: boolean | IFilterConfig;
+
+  filterState?: IFilterState;
   /** 列定义 */
-  columns?: (IColumnDefine & { field: string | number })[];
+  columns?: IColumnDefine[];
+  dragOrder?: {
+    enableDragColumnOrder?: boolean;
+    enableDragRowOrder?: boolean;
+  };
 }
 
 /** Sheet API 接口 */

@@ -11,8 +11,10 @@ export interface IFilterConfig {
   filterModes?: ('byValue' | 'byCondition')[];
 }
 
-/** 扩展的列定义，添加筛选相关配置 */
+/** 扩展的列定义，添加筛选相关配置；field 可选，构建 ListTable 时由 WorkSheet 按列索引填充 */
 export interface IColumnDefine extends Omit<ColumnDefine, 'field'> {
+  /** 列字段，可选；未指定时由 WorkSheet 按列索引填充 */
+  field?: string | number;
   /** 是否启用筛选功能 */
   filter?: boolean;
 }
@@ -84,8 +86,6 @@ export interface IThemeDefine {
 export interface IVTableSheetOptions {
   /** Sheet列表 */
   sheets: ISheetDefine[];
-  /** 是否显示工具栏 */
-  showToolbar?: boolean;
   /** 是否显示公式栏 */
   showFormulaBar?: boolean;
   /** 是否显示sheet切换栏 */
@@ -126,37 +126,7 @@ export interface IVTableSheetOptions {
  * - 未显式声明的字段不会被修改；
  * - 部分字段在调用时会被广播到所有已存在的 WorkSheet。
  */
-export interface IVTableSheetUpdateOptions extends Partial<IVTableSheetOptions> {
-  /**
-   * 全局表头显示开关。
-   *
-   * 在调用 VTableSheet.updateOption 时：
-   * - 会同步到所有 ISheetDefine.showHeader；
-   * - 并调用对应 WorkSheet.updateSheetOption 进行局部刷新。
-   */
-  showHeader?: boolean;
-
-  /** 全局冻结行数（作用于所有工作表） */
-  frozenRowCount?: number;
-
-  /** 全局冻结列数（作用于所有工作表） */
-  frozenColCount?: number;
-
-  /** 全局筛选开关（作用于所有工作表的筛选配置） */
-  filter?: boolean | IFilterConfig;
-
-  /** 全局筛选状态（会通过 Filter 插件的 setFilterState 应用到各个表格） */
-  filterState?: IFilterState;
-
-  /** 全局排序状态 */
-  sortState?: SortState[] | SortState | null;
-
-  /** 全局列宽配置（按列索引或字段 key 应用到各个表格） */
-  columnWidthConfig?: ISheetDefine['columnWidthConfig'];
-
-  /** 全局行高配置（按行索引应用到各个表格） */
-  rowHeightConfig?: ISheetDefine['rowHeightConfig'];
-}
+export type IVTableSheetUpdateOptions = Partial<IVTableSheetOptions>;
 
 export * from './base';
 export * from './formula';

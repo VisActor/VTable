@@ -231,7 +231,7 @@ export class TableEventRelay {
 
   /**
    * 从特定 sheet 解绑事件
-   * 在 WorkSheet 销毁时调用
+   * 在 WorkSheet 销毁时或 activateSheet 切换时调用
    *
    * @param sheetKey sheet 的 key
    * @param tableInstance VTable 的 ListTable 实例
@@ -250,6 +250,11 @@ export class TableEventRelay {
         }
       });
     }
+
+    // 清除 boundSheets 和 cleanupCallbacks，以便后续 bindSheetEvents 能重新绑定
+    // 否则 activateSheet 在 unbind 后调用 bindSheetEvents 时会因 boundSheets.has(sheetKey) 而跳过，导致事件失效
+    this.boundSheets.delete(sheetKey);
+    this.cleanupCallbacks.delete(sheetKey);
   }
 
   /**

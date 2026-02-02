@@ -1,3 +1,5 @@
+import type { IVTableSheetOptions } from '.';
+
 /**
  * Convert A1 notation to column index (0-based)
  * @param colStr Column string (e.g., 'A', 'B', 'AA')
@@ -128,4 +130,39 @@ export function excludeEditCellFromSelection(
     }
   }
   return r;
+}
+
+export function pluginIsChanged(
+  prevPlugins: IVTableSheetOptions['VTablePluginModules'] | undefined,
+  newPlugins: IVTableSheetOptions['VTablePluginModules'] | undefined
+): boolean {
+  if (!prevPlugins && !newPlugins) {
+    return false;
+  }
+  if (!prevPlugins && newPlugins) {
+    return true;
+  }
+  if (prevPlugins && !newPlugins) {
+    return true;
+  }
+  return prevPlugins.some((prevPlugin, index) => {
+    const newPlugin = newPlugins[index];
+    return (
+      newPlugin.module !== prevPlugin.module ||
+      pluginOptionsIsChanged(newPlugin.moduleOptions, prevPlugin.moduleOptions)
+    );
+  });
+}
+
+function pluginOptionsIsChanged(prevPluginOptions: any | undefined, newPluginOptions: any | undefined): boolean {
+  if (!prevPluginOptions && !newPluginOptions) {
+    return false;
+  }
+  if (!prevPluginOptions && newPluginOptions) {
+    return true;
+  }
+  if (prevPluginOptions && !newPluginOptions) {
+    return true;
+  }
+  return JSON.stringify(prevPluginOptions) !== JSON.stringify(newPluginOptions);
 }

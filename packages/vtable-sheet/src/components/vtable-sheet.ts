@@ -5,7 +5,13 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, IVTableSheetUpdateOptions, ISheetDefine } from '../ts-types';
+import type {
+  IVTableSheetOptions,
+  IVTableSheetUpdateOptions,
+  ISheetDefine,
+  IWorkSheetOptions,
+  IColumnDefine
+} from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
@@ -19,6 +25,9 @@ import { TableEventRelay } from '../event/table-event-relay';
 import type { VTableSheetEventType } from '../ts-types/spreadsheet-events';
 import { SpreadSheetEventManager } from '../event/spreadsheet-event-manager';
 import { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
+import { pluginIsChanged } from '../sheet-helper';
+import type { ITableThemeDefine } from '@visactor/vtable/es/themes';
+import { tableThemeIsChanged } from '@visactor/vtable/es/themes';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -510,16 +519,16 @@ export default class VTableSheet {
       select: {
         makeSelectCellVisible: false
       },
-      style: {
-        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8'],
-        borderLineWidth: [1, 1, 1, 1],
-        borderLineDash: [null, null, null, null],
-        padding: [8, 8, 8, 8]
-      },
+      // style: {
+      //   borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8'],
+      //   borderLineWidth: [1, 1, 1, 1],
+      //   borderLineDash: [null, null, null, null],
+      //   padding: [8, 8, 8, 8]
+      // },
       editCellTrigger: ['api', 'keydown', 'doubleclick'],
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
-    } as any);
+    });
 
     // 事件系统现在通过 TableEventRelay 自动处理，不再需要手动绑定
 
@@ -891,7 +900,7 @@ export default class VTableSheet {
         sheets.push({
           ...sheetDefine,
           data,
-          columns,
+          columns: columns as IColumnDefine[],
           cellMerge: instance.tableInstance.options.customMergeCell as TYPES.CustomMergeCellArray,
           showHeader: instance.tableInstance.options.showHeader,
           frozenRowCount: instance.tableInstance.frozenRowCount,
@@ -913,7 +922,10 @@ export default class VTableSheet {
       sheets
     };
   }
-
+  updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
+    this.options.mainMenu = mainMenu;
+    this.menuManager.updateMainMenu(mainMenu);
+  }
   /**
    * 更新电子表格配置
    *
@@ -924,6 +936,17 @@ export default class VTableSheet {
     if (!options) {
       return;
     }
+    const hasMainMenu = typeof options.mainMenu !== 'undefined';
+    if (hasMainMenu) {
+      this.updateMainMenu(options.mainMenu);
+    }
+    const pluginModulesChanged = pluginIsChanged(this.options.VTablePluginModules, options.VTablePluginModules);
+    const tableThemeChanged = tableThemeIsChanged(this.options.theme?.tableTheme, options.theme?.tableTheme);
+    //对options中非sheets的配置项逐项进行分析
+    const { sheets, ...rest } = options;
+    // if (Object.keys(rest).length > 0) {
+    //   this.updateGlobalOptions(rest);
+    // }
 
     // 先更新顶层 options（保持最新配置，用于后续新增 sheet 等场景）
     this.options = {
@@ -932,11 +955,11 @@ export default class VTableSheet {
     };
 
     // 如果包含 sheets，按全量更新处理
-    if (Array.isArray(options.sheets)) {
+    if (Array.isArray(options.sheets) || pluginModulesChanged || tableThemeChanged) {
       this.updateSheets(options);
     } else {
       // 仅做增量更新
-      this.updateGlobalOptions(options);
+      // this.updateGlobalOptions(options);
     }
   }
 
@@ -996,30 +1019,41 @@ export default class VTableSheet {
     });
 
     // 更新已存在的 sheet：优先使用 WorkSheet.updateSheetOption 做增量更新
-    updated.forEach(({ prev, next }) => {
-      const instance = this.workSheetInstances.get(next.sheetKey);
+    updated.forEach(({ prev, next: next_sheetDefine }) => {
+      const instance = this.workSheetInstances.get(next_sheetDefine.sheetKey);
 
       // 将最新配置合并回 SheetManager 持有的定义对象，保证后续 getAllSheets 返回的是最新配置
-      Object.assign(prev, next);
+      Object.assign(prev, next_sheetDefine);
 
       if (!instance) {
-        const newInstance = this.createWorkSheetInstance(next);
-        this.workSheetInstances.set(next.sheetKey, newInstance);
+        const newInstance = this.createWorkSheetInstance(next_sheetDefine);
+        this.workSheetInstances.set(next_sheetDefine.sheetKey, newInstance);
         return;
       }
 
-      const sheetOption: WorkSheetUpdateOptions = {
-        showHeader: next.showHeader,
-        frozenRowCount: next.frozenRowCount,
-        frozenColCount: next.frozenColCount,
-        filter: next.filter,
-        filterState: next.filterState,
-        sortState: next.sortState,
-        theme: next.theme,
-        columnWidthConfig: next.columnWidthConfig,
-        rowHeightConfig: next.rowHeightConfig,
+      const sheetOption: IWorkSheetOptions = {
+        sheetTitle: next_sheetDefine.sheetTitle,
+        sheetKey: next_sheetDefine.sheetKey,
+        showHeader: next_sheetDefine.showHeader,
+        frozenRowCount: next_sheetDefine.frozenRowCount,
+        frozenColCount: next_sheetDefine.frozenColCount,
+        filter: next_sheetDefine.filter,
+        filterState: next_sheetDefine.filterState,
+        sortState: next_sheetDefine.sortState,
+        columnWidthConfig: next_sheetDefine.columnWidthConfig,
+        rowHeightConfig: next_sheetDefine.rowHeightConfig,
         defaultRowHeight: this.options.defaultRowHeight,
-        defaultColWidth: this.options.defaultColWidth
+        defaultColWidth: this.options.defaultColWidth,
+        dragOrder: next_sheetDefine.dragOrder,
+        plugins: getTablePlugins(next_sheetDefine, this.options, this),
+        headerEditor: 'formula',
+        editor: 'formula',
+        select: {
+          makeSelectCellVisible: false
+        },
+        editCellTrigger: ['api', 'keydown', 'doubleclick'],
+        customMergeCell: next_sheetDefine.cellMerge,
+        theme: next_sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
       };
 
       instance.updateSheetOption(sheetOption);
@@ -1051,77 +1085,55 @@ export default class VTableSheet {
    * - defaultRowHeight/defaultColWidth：保存默认值，并在需要时下发到 WorkSheet；
    * - 其他与 UI 相关的轻量配置可在此扩展。
    */
-  private updateGlobalOptions(options: IVTableSheetUpdateOptions): void {
-    const hasTheme = typeof options.theme !== 'undefined';
-    const hasDefaultRowHeight = typeof options.defaultRowHeight !== 'undefined';
-    const hasDefaultColWidth = typeof options.defaultColWidth !== 'undefined';
-    const hasShowHeader = typeof options.showHeader !== 'undefined';
-    const hasFrozenRowCount = typeof options.frozenRowCount !== 'undefined';
-    const hasFrozenColCount = typeof options.frozenColCount !== 'undefined';
-    const hasFilter = typeof options.filter !== 'undefined';
-    const hasFilterState = typeof options.filterState !== 'undefined';
-    const hasSortState = typeof options.sortState !== 'undefined';
-    const hasColumnWidthConfig = Array.isArray(options.columnWidthConfig);
-    const hasRowHeightConfig = Array.isArray(options.rowHeightConfig);
+  // private updateGlobalOptions(options: IVTableSheetUpdateOptions): void {
+  //   const hasTheme = typeof options.theme !== 'undefined';
+  //   const hasDefaultRowHeight = typeof options.defaultRowHeight !== 'undefined';
+  //   const hasDefaultColWidth = typeof options.defaultColWidth !== 'undefined';
+  //   const hasMainMenu = typeof options.mainMenu !== 'undefined';
+  //   const hasShowSheetTab = typeof options.showSheetTab !== 'undefined';
+  //   const hasShowFormulaBar = typeof options.showFormulaBar !== 'undefined';
+  //   const hasVTablePluginModules = Array.isArray(options.VTablePluginModules);
+  //   const hasDragOrder = typeof options.dragOrder !== 'undefined';
+  //   // const hasShowHeader = typeof options.showHeader !== 'undefined';
+  //   // const hasFrozenRowCount = typeof options.frozenRowCount !== 'undefined';
+  //   // const hasFrozenColCount = typeof options.frozenColCount !== 'undefined';
+  //   // const hasFilter = typeof options.filter !== 'undefined';
+  //   // const hasFilterState = typeof options.filterState !== 'undefined';
+  //   // const hasSortState = typeof options.sortState !== 'undefined';
+  //   // const hasColumnWidthConfig = Array.isArray(options.columnWidthConfig);
+  //   // const hasRowHeightConfig = Array.isArray(options.rowHeightConfig);
 
-    if (
-      !hasTheme &&
-      !hasDefaultRowHeight &&
-      !hasDefaultColWidth &&
-      !hasShowHeader &&
-      !hasFrozenRowCount &&
-      !hasFrozenColCount &&
-      !hasFilter &&
-      !hasFilterState &&
-      !hasSortState &&
-      !hasColumnWidthConfig &&
-      !hasRowHeightConfig
-    ) {
-      return;
-    }
+  //   if (
+  //     !hasTheme &&
+  //     !hasDefaultRowHeight &&
+  //     !hasDefaultColWidth &&
+  //     !hasMainMenu &&
+  //     !hasShowSheetTab &&
+  //     !hasShowFormulaBar &&
+  //     !hasVTablePluginModules &&
+  //     !hasDragOrder
+  //   ) {
+  //     return;
+  //   }
 
-    this.workSheetInstances.forEach(instance => {
-      const patch: WorkSheetUpdateOptions = {};
+  //   this.workSheetInstances.forEach(instance => {
+  //     const patch: WorkSheetUpdateOptions = {};
 
-      if (hasTheme) {
-        patch.theme = options.theme;
-      }
-      if (hasDefaultRowHeight) {
-        patch.defaultRowHeight = options.defaultRowHeight;
-      }
-      if (hasDefaultColWidth) {
-        patch.defaultColWidth = options.defaultColWidth;
-      }
-      if (hasShowHeader) {
-        patch.showHeader = options.showHeader;
-      }
-      if (hasFrozenRowCount) {
-        patch.frozenRowCount = options.frozenRowCount;
-      }
-      if (hasFrozenColCount) {
-        patch.frozenColCount = options.frozenColCount;
-      }
-      if (hasFilter) {
-        patch.filter = options.filter;
-      }
-      if (hasFilterState) {
-        patch.filterState = options.filterState;
-      }
-      if (hasSortState) {
-        patch.sortState = options.sortState as any;
-      }
-      if (hasColumnWidthConfig) {
-        patch.columnWidthConfig = options.columnWidthConfig;
-      }
-      if (hasRowHeightConfig) {
-        patch.rowHeightConfig = options.rowHeightConfig;
-      }
+  //     if (hasTheme) {
+  //       patch.theme = options.theme.tableTheme;
+  //     }
+  //     if (hasDefaultRowHeight) {
+  //       patch.defaultRowHeight = options.defaultRowHeight;
+  //     }
+  //     if (hasDefaultColWidth) {
+  //       patch.defaultColWidth = options.defaultColWidth;
+  //     }
 
-      if (Object.keys(patch).length > 0) {
-        instance.updateSheetOption(patch);
-      }
-    });
-  }
+  //     if (Object.keys(patch).length > 0) {
+  //       instance.updateGlobalOptionToSheet(patch);
+  //     }
+  //   });
+  // }
 
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
