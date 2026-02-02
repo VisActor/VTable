@@ -77,7 +77,7 @@ function getCopyCellValue(
   }
 
   let value = cellValue;
-  if (option?.escape) {
+  if (option?.escape !== false) {
     value = escapeForCSV(value);
   } else if (typeof value === 'string') {
     value = '"' + value + '"';

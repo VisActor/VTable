@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix(csv): handle escape option correctly for CSV export",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
