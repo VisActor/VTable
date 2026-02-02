@@ -73,7 +73,30 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
     // this.pluginOptions?.keyDown_before?.(event);
     if (this.table?.editorManager && this.isExcelShortcutKey(event)) {
       const eventKey = event.key.toLowerCase() as ExcelEditCellKeyboardResponse;
-      //判断是键盘触发编辑单元格的情况下，那么在编辑状态中切换方向需要选中下一个继续编辑
+
+      let editable = true;
+      let deleteRangeEnabled = true;
+
+      const vtableSheet = (this.table as any).__vtableSheet;
+      const activeSheet = vtableSheet?.getActiveSheet?.();
+      const sheetOptions = activeSheet?.options as
+        | { editable?: boolean; keyboardShortcutPolicy?: { deleteRange?: boolean } }
+        | undefined;
+
+      if (sheetOptions) {
+        editable = sheetOptions.editable !== false;
+        deleteRangeEnabled = sheetOptions.keyboardShortcutPolicy?.deleteRange ?? true;
+      }
+
+      const isDeleteKey =
+        eventKey === ExcelEditCellKeyboardResponse.DELETE || eventKey === ExcelEditCellKeyboardResponse.BACKSPACE;
+
+      if (isDeleteKey && (!editable || !deleteRangeEnabled)) {
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+      }
+
       if (this.table.editorManager.editingEditor && this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
         const { col, row } = this.table.editorManager.editCell;
         if (eventKey !== ExcelEditCellKeyboardResponse.BACKSPACE && eventKey !== ExcelEditCellKeyboardResponse.DELETE) {
@@ -122,6 +145,9 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
           !this.table.editorManager.editingEditor &&
           (eventKey === ExcelEditCellKeyboardResponse.DELETE || eventKey === ExcelEditCellKeyboardResponse.BACKSPACE)
         ) {
+          if (!deleteRangeEnabled) {
+            return;
+          }
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
           if (

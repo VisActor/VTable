@@ -5,7 +5,7 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine, SheetKeyboardShortcutPolicy } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
@@ -478,6 +478,18 @@ export default class VTableSheet {
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
     sheetDefine.dragOrder = sheetDefine.dragOrder ?? this.options.dragOrder;
+
+    const globalEditable = this.options.editable;
+    const sheetEditable = sheetDefine.editable;
+    const effectiveEditable = sheetEditable ?? (globalEditable ?? true);
+
+    const effectiveKeyboardPolicy =
+      (this.options.keyboardShortcutPolicy || sheetDefine.keyboardShortcutPolicy) &&
+      {
+        ...(this.options.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy),
+        ...(sheetDefine.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy)
+      };
+
     // 创建sheet实例
     const sheet = new WorkSheet(this, {
       ...sheetDefine,
@@ -488,8 +500,12 @@ export default class VTableSheet {
       defaultColWidth: this.options.defaultColWidth,
       dragOrder: sheetDefine.dragOrder,
       plugins: getTablePlugins(sheetDefine, this.options, this),
-      headerEditor: 'formula',
-      editor: 'formula',
+      ...(effectiveEditable
+        ? {
+            headerEditor: 'formula',
+            editor: 'formula'
+          }
+        : {}),
       select: {
         makeSelectCellVisible: false
       },
@@ -499,9 +515,11 @@ export default class VTableSheet {
         borderLineDash: [null, null, null, null],
         padding: [8, 8, 8, 8]
       },
-      editCellTrigger: ['api', 'keydown', 'doubleclick'],
+      editCellTrigger: effectiveEditable ? ['api', 'keydown', 'doubleclick'] : ['api'],
       customMergeCell: sheetDefine.cellMerge,
-      theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
+      theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme,
+      editable: effectiveEditable,
+      keyboardShortcutPolicy: effectiveKeyboardPolicy as SheetKeyboardShortcutPolicy | undefined
     } as any);
 
     // 事件系统现在通过 TableEventRelay 自动处理，不再需要手动绑定

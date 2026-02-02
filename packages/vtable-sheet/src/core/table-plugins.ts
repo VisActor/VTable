@@ -6,6 +6,7 @@ import {
   HighlightHeaderWhenSelectCellPlugin,
   ContextMenuPlugin,
   ExcelEditCellKeyboardPlugin,
+  ExcelEditCellKeyboardResponse,
   AutoFillPlugin,
   DEFAULT_HEADER_MENU_ITEMS,
   DEFAULT_BODY_MENU_ITEMS,
@@ -20,7 +21,7 @@ import type {
   IHighlightHeaderWhenSelectCellPluginOptions,
   ContextMenuOptions
 } from '@visactor/vtable-plugins';
-import type { ISheetDefine, IColumnDefine, IVTableSheetOptions } from '../ts-types';
+import type { ISheetDefine, IColumnDefine, IVTableSheetOptions, SheetKeyboardShortcutPolicy } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 
 /**
@@ -39,6 +40,18 @@ export function getTablePlugins(
   // 结合options.VTablePluginModules，来判断是否禁用插件
   const disabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => module.disabled);
   let enabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => !module.disabled);
+
+  const globalEditable = options?.editable;
+  const sheetEditable = sheetDefine?.editable;
+  const effectiveEditable = sheetEditable ?? (globalEditable ?? true);
+
+  let effectiveKeyboardPolicy: SheetKeyboardShortcutPolicy | undefined;
+  if (options?.keyboardShortcutPolicy || sheetDefine?.keyboardShortcutPolicy) {
+    effectiveKeyboardPolicy = {
+      ...(options?.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy),
+      ...(sheetDefine?.keyboardShortcutPolicy as SheetKeyboardShortcutPolicy)
+    };
+  }
   if (!disabledPluginsUserSetted?.some(module => module.module === FilterPlugin)) {
     const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === FilterPlugin)
       ?.moduleOptions as FilterOptions;
@@ -118,7 +131,12 @@ export function getTablePlugins(
     if (!ContextMenuPlugin) {
       console.warn('ContextMenuPlugin is not available in @visactor/vtable-plugins');
     } else {
-      const contextMenuPlugin = createContextMenuItems(sheetDefine, userPluginOptions);
+      const contextMenuPlugin = createContextMenuItems(
+        sheetDefine,
+        userPluginOptions as ContextMenuOptions,
+        effectiveEditable,
+        effectiveKeyboardPolicy
+      );
       plugins.push(contextMenuPlugin);
     }
     //已经初始化过的插件，从enabledPluginsUserSetted中移除
@@ -132,29 +150,6 @@ export function getTablePlugins(
     if (!ExcelEditCellKeyboardPlugin) {
       console.warn('ExcelEditCellKeyboardPlugin is not available in @visactor/vtable-plugins');
     } else {
-      // let currentState_editingEditor: IEditor | null = null; //需要在keyDownBeforeCallback中保存下来，因为插件处理事件中会影响这个值（调用了completeEdit）
-      // const keyDownBeforeCallback = function (this: ExcelEditCellKeyboardPlugin, event: KeyboardEvent) {
-      //   currentState_editingEditor = sheet.getActiveSheet()?.tableInstance?.editorManager.editingEditor;
-      // };
-      // // 注意：这里使用普通函数而不是箭头函数，这样才能通过 apply 正确绑定 this 为插件实例
-      // const keyDownAfterCallback = function (this: ExcelEditCellKeyboardPlugin, event: KeyboardEvent) {
-      //   const eventKey = event.key.toLowerCase() as ExcelEditCellKeyboardResponse;
-      //   if (this.responseKeyboard.includes(eventKey)) {
-      //     if (
-      //       (currentState_editingEditor &&
-      //         eventKey !== ExcelEditCellKeyboardResponse.DELETE &&
-      //         eventKey !== ExcelEditCellKeyboardResponse.BACKSPACE) ||
-      //       (!currentState_editingEditor &&
-      //         (eventKey === ExcelEditCellKeyboardResponse.DELETE ||
-      //           eventKey === ExcelEditCellKeyboardResponse.BACKSPACE)) ||
-      //       sheet.formulaManager._formulaWorkingOnCell
-      //     ) {
-      //       event.stopPropagation();
-      //       event.preventDefault();
-      //     }
-      //   }
-      // };
-      // 创建插件时包含回调
       const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin(userPluginOptions);
       plugins.push(excelEditCellKeyboardPlugin);
     }
@@ -252,7 +247,12 @@ function createColumnFilterChecker(sheetDefine: ISheetDefine) {
   };
 }
 
-function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: ContextMenuOptions) {
+function createContextMenuItems(
+  sheetDefine: ISheetDefine,
+  userPluginOptions?: ContextMenuOptions,
+  effectiveEditable?: boolean,
+  policy?: SheetKeyboardShortcutPolicy
+) {
   return new ContextMenuPlugin({
     headerCellMenuItems: [
       ...DEFAULT_HEADER_MENU_ITEMS,
@@ -342,6 +342,59 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: C
             item => typeof item === 'string' || item.menuKey !== 'disable_first_row_as_header'
           );
         }
+      }
+      if (effectiveEditable === false) {
+        const editKeys = new Set([
+          'copy',
+          'cut',
+          'paste',
+          'delete',
+          'insert',
+          'insert_row_above',
+          'insert_row_below',
+          'delete_row',
+          'insert_column_left',
+          'insert_column_right',
+          'delete_column',
+          'merge_cells',
+          'unmerge_cells'
+        ]);
+        menuItems = menuItems.filter(item => {
+          if (typeof item === 'string') {
+            return true;
+          }
+          if (editKeys.has(item.menuKey as string) || editKeys.has(item.iconName as string)) {
+            return false;
+          }
+          if (Array.isArray(item.children) && item.children.length) {
+            item.children = item.children.filter(child => {
+              if (typeof child === 'string') {
+                return true;
+              }
+              return !editKeys.has(child.menuKey as string);
+            });
+          }
+          return true;
+        });
+      } else if (policy) {
+        menuItems = menuItems.map(item => {
+          if (typeof item === 'string') {
+            return item;
+          }
+          if (item.menuKey === 'copy' && policy.copySelected === false) {
+            return { ...item, disabled: true };
+          }
+          if (item.menuKey === 'cut' && policy.cutSelected === false) {
+            return { ...item, disabled: true };
+          }
+          if (item.menuKey === 'paste' && policy.pasteValueToCell === false) {
+            return { ...item, disabled: true };
+          }
+          return item;
+        });
+      }
+      if(menuItems.length===1&&menuItems[0]==='---'){
+        menuItems=[];
       }
       return menuItems;
     },

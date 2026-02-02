@@ -1,4 +1,4 @@
-import type { IColumnDefine, IFilterConfig, ISheetDefine } from './index';
+import type { IColumnDefine, IFilterConfig, ISheetDefine, SheetKeyboardShortcutPolicy } from './index';
 import type { CellCoord, CellRange, CellValue } from './base';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
@@ -20,6 +20,10 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
   filter?: boolean;
   /** 列定义 */
   columns?: (IColumnDefine & { field: string | number })[];
+  /** 该 sheet 的最终编辑能力开关（由全局 editable + sheetDefine.editable 合并得出） */
+  editable?: boolean;
+  /** 该 sheet 的最终快捷键策略（由全局 + sheet 级策略合并后下发） */
+  keyboardShortcutPolicy?: SheetKeyboardShortcutPolicy;
 }
 
 /** Sheet API 接口 */

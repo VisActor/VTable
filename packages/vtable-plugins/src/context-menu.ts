@@ -143,9 +143,10 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       if (this.pluginOptions.beforeShowAdjustMenuItems) {
         menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, col, row);
       }
-
-      // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, col, row);
+      if (menuItems.length > 0) {
+        // 显示右键菜单
+        this.showContextMenu(menuItems, mouseX, mouseY, col, row);
+      }
     }
   };
 
@@ -175,9 +176,10 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       if (this.pluginOptions.beforeShowAdjustMenuItems) {
         menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, colIndex, rowIndex);
       }
-
-      // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
+      if (menuItems.length > 0) {
+        // 显示右键菜单
+        this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
+      }
     }
   };
 
