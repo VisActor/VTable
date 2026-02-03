@@ -298,12 +298,7 @@ export default class VTableSheet {
 
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
-    //sheets按配置option中的sheets顺序排序
-    sheets.sort((a, b) => {
-      const aIndex = this.options.sheets.findIndex(s => s.sheetKey === a.sheetKey);
-      const bIndex = this.options.sheets.findIndex(s => s.sheetKey === b.sheetKey);
-      return aIndex - bIndex;
-    });
+
     sheets.forEach((sheet, index) => {
       tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
     });
@@ -1069,7 +1064,7 @@ export default class VTableSheet {
     } catch (error) {
       console.error('Failed to rebuild formulas after sheets update:', error);
     }
-
+    this.sheetManager.sortSheets(this.options.sheets);
     // 更新 sheet tab 和菜单
     this.updateSheetTabs();
     this.updateSheetMenu();
