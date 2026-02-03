@@ -33,3 +33,6 @@ Header cell style, the configuration items vary slightly depending on the header
 - For headerType 'text', refer to [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
 - For headerType 'link', refer to [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
 - For headerType 'image', refer to [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+
+ ${prefix} forceShowHeader(boolean)
+ Force display of corner header. When there are no dimensions in the row or column direction, the corner header will not be displayed by default. However, in some scenarios, it is still necessary to display the dimension name in the corner header, please configure this field.

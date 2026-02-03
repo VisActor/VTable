@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: set white background for media overlay image",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

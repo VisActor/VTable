@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: add event system for vtable sheet #4861\n\n",
+      "comment": "refactor: legend and title component position calculation logic #4965\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

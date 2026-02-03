@@ -1,6 +1,39 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 26 Jan 2026 02:59:13 GMT and should not be manually modified.
+This log was last generated on Thu, 29 Jan 2026 06:40:22 GMT and should not be manually modified.
+
+## 1.23.0
+Thu, 29 Jan 2026 06:40:22 GMT
+
+### Minor changes
+
+- feat: add worksheet event
+
+
+
+### Updates
+
+- feat: add event system for vtable sheet #4861
+
+
+- fix: when dimension value is empty string should different from no dimension value #4935
+
+
+- fix: when no columnTree to adjust columnWidthConfig #4935
+
+
+- fix: change dimension value to recalculate totalTree #4953
+
+
+- fix: when change dimenison value should update cached changedTree value
+
+
+- fix: add records update formula
+
+
+- fix: react type define
+
+
 
 ## 1.22.12
 Mon, 26 Jan 2026 02:59:13 GMT

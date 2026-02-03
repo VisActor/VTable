@@ -41,7 +41,7 @@ export type ExportVTableToExcelOptions = {
 
 export type ExportVTableToCsvOptions = {
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
-  escape?: boolean;
+  escape?: boolean; // Whether to escape special symbols in strings to avoid interfering with CSV parsing, default true
   exportAllData?: boolean;
   downloadFile?: boolean;
   fileName?: string;

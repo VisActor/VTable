@@ -1135,6 +1135,8 @@ export class Dataset {
    * @param rowKey
    * @param colKey
    * @param indicator
+   * @param considerChangedValue
+   * @param indicatorPosition 指标在行或列中的位置 changeTreeNodeValue方法中也有该参数
    * @returns
    */
   getAggregator(
@@ -2139,27 +2141,93 @@ export class Dataset {
       }
     }
   }
-
+  /**
+   *
+   * @param rowKey
+   * @param colKey
+   * @param indicator
+   * @param newValue
+   * @param indicatorPosition
+   */
   changeTreeNodeValue(
     rowKey: string[] | string = [],
     colKey: string[] | string = [],
     indicator: string,
-    newValue: string | number
+    newValue: string | number,
+    indicatorPosition?: { position: 'col' | 'row'; index?: number }
   ) {
     const indicatorIndex = this.indicatorKeys.indexOf(indicator);
-
+    //#region 获取行和列的维度key,考虑到tree模式被折叠的情况 rowKey colKey会小于rows和columns的长度
+    let rowDimensionKey: string | undefined;
+    if (indicatorPosition?.position === 'row') {
+      rowDimensionKey = rowKey.length >= 2 ? this.rows[rowKey.length - 2] : undefined;
+    } else {
+      const rowIndex = rowKey.length - 1;
+      rowDimensionKey = rowIndex >= 0 && rowIndex < this.rows.length ? this.rows[rowIndex] : undefined;
+    }
+    let colDimensionKey: string | undefined;
+    if (indicatorPosition?.position === 'col') {
+      colDimensionKey = colKey.length >= 2 ? this.columns[colKey.length - 2] : undefined;
+    } else {
+      const colIndex = colKey.length - 1;
+      colDimensionKey = colIndex >= 0 && colIndex < this.columns.length ? this.columns[colIndex] : undefined;
+    }
+    //#endregion
     let flatRowKey;
     let flatColKey;
     if (typeof rowKey === 'string') {
       flatRowKey = rowKey;
     } else {
-      flatRowKey = rowKey.join(this.stringJoinChar);
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      if (!indicatorPosition || indicatorPosition.position === 'row') {
+        rowKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            rowKey.splice(i, 1);
+          }
+        });
+      }
+      if (rowKey.length < this.rows.length && this.rowHierarchyType === 'grid-tree') {
+        // 如果是平铺树结构 小计需要处理补充到rowKey中
+        if (rowKey[0] === this.rowGrandTotalLabel) {
+        } else if (
+          ((this.totals?.row?.subTotalsDimensions &&
+            this.totals?.row?.subTotalsDimensions?.length >= 1 &&
+            this.totals.row.subTotalsDimensions.find((dimension: string) => dimension === rowDimensionKey)) ||
+            this.totals?.row?.showSubTotalsOnTreeNode) &&
+          rowKey[rowKey.length - 1] !== this.rowSubTotalLabel
+        ) {
+          rowKey.push(this.rowSubTotalLabel);
+        }
+      }
+      // flatRowKey = rowKey.join(this.stringJoinChar);
+      flatRowKey = join(rowKey, this.stringJoinChar);
     }
 
     if (typeof colKey === 'string') {
       flatColKey = colKey;
     } else {
-      flatColKey = colKey.join(this.stringJoinChar);
+      //考虑 指标key有可能在数组中间位置或者前面的可能 将其删除再添加到尾部
+      if (!indicatorPosition || indicatorPosition.position === 'col') {
+        colKey.map((key, i) => {
+          if (key === indicator && (!isValid(indicatorPosition?.index) || i === indicatorPosition.index)) {
+            colKey.splice(i, 1);
+          }
+        });
+      }
+      if (colKey.length < this.columns.length && this.columnHierarchyType === 'grid-tree') {
+        if (colKey[0] === this.colGrandTotalLabel) {
+        } else if (
+          ((this.totals?.column?.subTotalsDimensions &&
+            this.totals?.column?.subTotalsDimensions?.length >= 1 &&
+            this.totals.column.subTotalsDimensions.find((dimension: string) => dimension === colDimensionKey)) ||
+            this.totals?.column?.showSubTotalsOnTreeNode) &&
+          colKey[colKey.length - 1] !== this.colSubTotalLabel
+        ) {
+          colKey.push(this.colSubTotalLabel);
+        }
+      }
+      // flatColKey = colKey.join(this.stringJoinChar);
+      flatColKey = join(colKey, this.stringJoinChar);
     }
     //在newValue能转为数字的情况下 转为数字
     if (typeof newValue === 'string') {
@@ -2167,7 +2235,6 @@ export class Dataset {
         newValue = parseFloat(newValue);
       }
     }
-
     if (this.changedTree[flatRowKey]?.[flatColKey]) {
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
     } else if (this.changedTree[flatRowKey]) {
@@ -2458,10 +2525,55 @@ export class Dataset {
         }
       }
 
+      //#region 更新 changedTree 中包含旧维度值的键
+      const newChangedTree: Record<string, Record<string, any[]>> = {};
+      for (const flatRowKey in this.changedTree) {
+        const rowKeyParts = flatRowKey.split(this.stringJoinChar);
+        let rowKeyUpdated = false;
+        const newRowKeyParts = rowKeyParts.map(part => {
+          if (part === String(oldValue)) {
+            rowKeyUpdated = true;
+            return String(value);
+          }
+          return part;
+        });
+        const newFlatRowKey = rowKeyUpdated ? join(newRowKeyParts, this.stringJoinChar) : flatRowKey;
+
+        const colKeysMap = this.changedTree[flatRowKey];
+        if (!newChangedTree[newFlatRowKey]) {
+          newChangedTree[newFlatRowKey] = {};
+        }
+
+        for (const flatColKey in colKeysMap) {
+          const colKeyParts = flatColKey.split(this.stringJoinChar);
+          let colKeyUpdated = false;
+          const newColKeyParts = colKeyParts.map(part => {
+            if (part === String(oldValue)) {
+              colKeyUpdated = true;
+              return String(value);
+            }
+            return part;
+          });
+          const newFlatColKey = colKeyUpdated ? join(newColKeyParts, this.stringJoinChar) : flatColKey;
+
+          newChangedTree[newFlatRowKey][newFlatColKey] = colKeysMap[flatColKey];
+        }
+      }
+      this.changedTree = newChangedTree;
+      //#endregion
       this.rowFlatKeys = {};
       this.colFlatKeys = {};
       this.tree = {};
       this.processRecords();
+      this.processCollectedValuesWithSumBy();
+      this.processCollectedValuesWithSortBy();
+      this.totalStatistics();
+      if ((this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
+        // 处理PivotChart双轴图0值对齐
+        // this.dealWithZeroAlign();
+        // 记录PivotChart维度对应的数据
+        this.cacheDeminsionCollectedValues();
+      }
     }
   }
   /** 主要是树形结构懒加载使用 */

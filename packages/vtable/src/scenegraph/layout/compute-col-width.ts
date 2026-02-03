@@ -872,6 +872,14 @@ function _parseColumnWidthConfigForPivotTable(
         table._setColWidth(cell.col, width);
         table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
       }
+    } else if (
+      (!dimensions || dimensions.length === 0) &&
+      (table.internalProps.layoutMap.columnTree?.length ?? 0) === 0
+    ) {
+      if (!table.internalProps._widthResizedColMap.has(table.rowHeaderLevelCount)) {
+        table._setColWidth(table.rowHeaderLevelCount, width);
+        table.internalProps._widthResizedColMap.add(table.rowHeaderLevelCount); // add resize tag
+      }
     }
   }
 }

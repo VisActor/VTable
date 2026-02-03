@@ -165,16 +165,34 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
 });
 ```
 
+## 禁用内置插件
+
+如果想要禁用内置插件，可以通过VTablePluginModules配置插件，来禁用内置插件。
+如禁用表格右键插件：
+
+```javascript 
+VTablePluginModules: [
+  {
+    module: VTablePlugins.ContextMenuPlugin,
+    disabled: true
+  }
+]
+```
+
 ## 插件与菜单的组合使用
 
 插件与菜单的组合使用，具体菜单的配置可以参考[菜单配置](./menu.md)。
 
 这里主要介绍说明菜单中增加导入导出的功能，在配置VTablePluginModules中需要明确配置所需的`ExcelImportPlugin`及`TableExportPlugin`插件。
 
-下面示例中配置了mainMenu，UI左上角将出现主菜单按钮，点击主菜单按钮将出现导入导出功能，如果：
+下面示例中配置了mainMenu，UI左上角将出现主菜单按钮，点击主菜单按钮将出现导入导出功能，如图所示：
+
 <div style="display: flex; justify-content: center;  width: 50%;">
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/mainMenu.png"  style="width: 100%; object-fit: contain; padding: 10px;">
 </div>
+
+具体demo如：
+
 ```javascript livedemo template=vtable
 // 引入所需插件包 需要确保版本和VTableSheet中引用的版本一致
 // import * as VTablePlugins from '@visactor/vtable-plugins';
@@ -228,7 +246,7 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
     items: [
       {
         name: '导入',
-        menuKey: VTableSheet.TYPES.MenuKey.IMPORT,
+        menuKey: 'import',
         description: '导入数据替换到当前sheet'
       },
       {
@@ -236,17 +254,17 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
         items: [
           {
             name: '导出CSV',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_CURRENT_SHEET_CSV,
+            menuKey: 'export-current-sheet-csv',
             description: '导出当前sheet数据到csv'
           },
           {
             name: '导出XLSX',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_CURRENT_SHEET_XLSX,
+            menuKey: 'export-current-sheet-xlsx',
             description: '导出当前sheet数据到xlsx'
           },
           {
             name: '导出所有表格',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_ALL_SHEETS_XLSX,
+            menuKey: 'export-all-sheets-xlsx',
             description: '导出所有表格页到xlsx'
           }
         ]
@@ -258,8 +276,8 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
     enableDragRowOrder: true
   }
 });
-window.sheetInstance = sheetInstance;
 ```
+
 
 示例中的MenuKey是VTableSheet内部定义的菜单键值。
 
