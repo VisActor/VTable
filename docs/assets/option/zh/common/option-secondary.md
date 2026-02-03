@@ -751,3 +751,11 @@ validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 ```
 defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
 ```
+
+#${prefix} componentLayoutOrder(Array)
+
+组件布局顺序，默认为 ['legend', 'title']。
+
+```
+componentLayoutOrder?: ('legend' | 'title')[];
+```

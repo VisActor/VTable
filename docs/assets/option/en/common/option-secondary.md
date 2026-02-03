@@ -755,3 +755,11 @@ Default cursor style.
 ```
 defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
 ```
+
+#${prefix} componentLayoutOrder(Array)
+
+Component layout order, default is ['legend', 'title'].
+
+```
+componentLayoutOrder?: ('legend' | 'title')[];
+```
