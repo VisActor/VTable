@@ -99,8 +99,12 @@ export function createTable() {
         ],
         data: [
           [3, 4, 6],
-          ['s', 'd', 'f']
+          ['s', 'd', 'f'],
+          [null, null, 7]
         ],
+        formulas: {
+          C5: '=sum(A3:B3)'
+        },
         filter: false,
         active: false
       },
@@ -849,7 +853,13 @@ export function createTable() {
           sheetKey: 'sheet1',
           sheetTitle: 'sheet1',
           active: true,
-          data: [[2, 3, 1111]]
+          data: [
+            [2, 3, 1111],
+            [null, null, 5]
+          ],
+          formulas: {
+            C2: '=A1+B1'
+          }
         },
         {
           sheetKey: 'sheet2',

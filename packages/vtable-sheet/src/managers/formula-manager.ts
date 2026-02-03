@@ -384,6 +384,9 @@ export class FormulaManager implements IFormulaManager {
     }
   }
 
+  // 用于防止死循环的标记
+  private creatingSheets = new Set<string>();
+
   /**
    * 确保sheet已在formulaEngine中注册
    * @param sheetKey 工作表键
@@ -392,12 +395,26 @@ export class FormulaManager implements IFormulaManager {
     if (this.sheet.workSheetInstances.has(sheetKey)) {
       return;
     }
+
+    // 如果正在创建这个 sheet，直接返回避免死循环
+    if (this.creatingSheets.has(sheetKey)) {
+      return;
+    }
+
     const sheetDefine = this.sheet.getSheetManager().getSheet(sheetKey);
     if (!sheetDefine) {
       return;
     }
-    const instance = this.sheet.createWorkSheetInstance(sheetDefine);
-    this.sheet.workSheetInstances.set(sheetKey, instance);
+
+    try {
+      // 标记正在创建
+      this.creatingSheets.add(sheetKey);
+      const instance = this.sheet.createWorkSheetInstance(sheetDefine);
+      this.sheet.workSheetInstances.set(sheetKey, instance);
+    } finally {
+      // 创建完成后移除标记
+      this.creatingSheets.delete(sheetKey);
+    }
   }
 
   /**
@@ -565,6 +582,9 @@ export class FormulaManager implements IFormulaManager {
     }
 
     try {
+      // 公式计算应以当前单元格所属 sheet 为上下文
+      this.formulaEngine.setActiveSheet(cell.sheet);
+
       // 检查是否为公式
       const isFormula = typeof value === 'string' && value.startsWith('=');
       const oldFormula = this.getCellFormula(cell);
@@ -627,6 +647,9 @@ export class FormulaManager implements IFormulaManager {
 
       // 检查sheet是否已在formulaEngine中注册，如果没有则尝试注册
       this.ensureSheetRegistered(cell.sheet);
+
+      // 以当前单元格所属 sheet 作为计算上下文
+      this.formulaEngine.setActiveSheet(cell.sheet);
 
       // 使用FormulaEngine获取单元格值
       return this.formulaEngine.getCellValue(cell);

@@ -563,9 +563,6 @@ export default class VTableSheet {
         // 设置单元格公式
         this.formulaManager.setCellContent({ sheet: sheetKey, row, col }, formula);
       }
-
-      // 刷新计算
-      this.formulaManager.rebuildAndRecalculate();
     } catch (error) {
       console.error(`Failed to load formulas for sheet ${sheetKey}:`, error);
     }
@@ -1061,6 +1058,43 @@ export default class VTableSheet {
     // 结构变更完成后，重建所有公式与依赖
     try {
       this.formulaManager.rebuildFormulas(nextSheets);
+      // 重建后同步每个 sheet 的数据并重新加载公式
+      nextSheets.forEach(sheetDefine => {
+        const worksheetInstance = this.workSheetInstances.get(sheetDefine.sheetKey);
+        if (!worksheetInstance || !worksheetInstance.tableInstance) {
+          return;
+        }
+        const dataToUse = sheetDefine.data || worksheetInstance.getData();
+        const normalizedData = this.formulaManager.normalizeSheetData(dataToUse, worksheetInstance.tableInstance);
+        this.formulaManager.formulaEngine.updateSheetData(sheetDefine.sheetKey, normalizedData);
+        if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
+          this.loadFormulas(sheetDefine.sheetKey, sheetDefine.formulas);
+        }
+      });
+      // 对于原来有公式但更新后移除的 sheet，显式清除公式状态
+      updated.forEach(({ prev, next: next_sheetDefine }) => {
+        const hadFormulas = prev.formulas && Object.keys(prev.formulas).length > 0;
+        const hasFormulas = next_sheetDefine.formulas && Object.keys(next_sheetDefine.formulas).length > 0;
+        if (!hadFormulas || hasFormulas) {
+          return;
+        }
+        const worksheetInstance = this.workSheetInstances.get(next_sheetDefine.sheetKey);
+        if (!worksheetInstance) {
+          return;
+        }
+        const data = next_sheetDefine.data || worksheetInstance.getData();
+        Object.keys(prev.formulas).forEach(cellRef => {
+          try {
+            const { row, col } = this.parseCellKey(cellRef);
+            const cellValue = data?.[row]?.[col];
+            if (typeof cellValue !== 'undefined') {
+              this.formulaManager.setCellContent({ sheet: next_sheetDefine.sheetKey, row, col }, cellValue);
+            }
+          } catch (error) {
+            console.warn(`Failed to clear formula for ${next_sheetDefine.sheetKey}!${cellRef}:`, error);
+          }
+        });
+      });
     } catch (error) {
       console.error('Failed to rebuild formulas after sheets update:', error);
     }

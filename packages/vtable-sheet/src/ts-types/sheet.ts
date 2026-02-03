@@ -16,7 +16,7 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
   data?: any[][];
   /** 是否显示表头 */
   showHeader?: boolean;
-  /** 是否将第一行作为表头 */
+  /** 是否将data中第一行作为表头。如果设置为true，则获取到的getData()将不包含data中的第一行 */
   firstRowAsHeader?: boolean;
   /** 筛选配置 */
   filter?: boolean | IFilterConfig;
