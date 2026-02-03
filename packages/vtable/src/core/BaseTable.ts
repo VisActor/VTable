@@ -686,13 +686,38 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._updateSize();
     // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
     const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    //先布局orient为bottom或right的组件
     layoutOrder.forEach(component => {
       if (component === 'legend') {
         this.internalProps.legends?.forEach(legend => {
-          legend?.resize();
+          if (legend.orient === 'bottom' || legend.orient === 'right') {
+            legend?.resize();
+          }
         });
       } else if (component === 'title') {
-        this.internalProps.title?.resize();
+        if (
+          this.internalProps.title?._titleOption.orient === 'bottom' ||
+          this.internalProps.title?._titleOption.orient === 'right'
+        ) {
+          this.internalProps.title?.resize();
+        }
+      }
+    });
+    //后布局orient为top或left的组件
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          if (legend.orient === 'top' || legend.orient === 'left') {
+            legend?.resize();
+          }
+        });
+      } else if (component === 'title') {
+        if (
+          this.internalProps.title?._titleOption.orient === 'top' ||
+          this.internalProps.title?._titleOption.orient === 'left'
+        ) {
+          this.internalProps.title?.resize();
+        }
       }
     });
     if (this.internalProps.emptyTip) {

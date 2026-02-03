@@ -187,7 +187,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return;
       }
       // // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
-      // this.resize();
+      // this.resize(); 注释掉这里为解决有组件的情况下 异步导致的布局抖动问题,所以把resize提到了setTimeout之前。但是原先在setTimeout中可能是为了scrollBar布局，但提到前面测试了下好像没有什么问题！后续看观察scrollBar
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
     }, 0);
   }
