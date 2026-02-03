@@ -723,7 +723,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
         }
 
         const disableSelectOnContextMenu = table.options.select?.disableSelectOnContextMenu;
-        if (!cellInRange && !disableSelectOnContextMenu) {
+
+        if (!cellInRange && !disableSelectOnContextMenu && eventArgsSet?.eventArgs?.target.type !== 'chart') {
           table.selectCell(col, row);
         }
 
