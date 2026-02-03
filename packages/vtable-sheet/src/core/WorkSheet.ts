@@ -1063,46 +1063,46 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     const tableOptions = this._generateTableOptions();
     this.tableInstance.updateOption(tableOptions);
   }
-  /**
-   * 增量更新当前工作表配置，并映射到底层 VTable 的细粒度 API。
-   *
-   * 该方法只负责从全局配置提取需要更新到工作表的配置，不是sheets中的sheetDefine的配置更新的情况。
-   */
-  updateGlobalOptionToSheet(option: WorkSheetUpdateOptions): void {
-    if (!this.tableInstance || !option) {
-      return;
-    }
+  // /**
+  //  * 增量更新当前工作表配置，并映射到底层 VTable 的细粒度 API。
+  //  *
+  //  * 该方法只负责从全局配置提取需要更新到工作表的配置，不是sheets中的sheetDefine的配置更新的情况。
+  //  */
+  // updateGlobalOptionToSheet(option: WorkSheetUpdateOptions): void {
+  //   if (!this.tableInstance || !option) {
+  //     return;
+  //   }
 
-    const table = this.tableInstance;
-    const nextOptionPatch: Partial<ListTableConstructorOptions> = {};
-    // 主题（优先使用 updateTheme，而不是全量 updateOption）
-    if (option.theme) {
-      const tableTheme = option.theme;
-      if (tableTheme) {
-        this.options.theme = tableTheme;
-        nextOptionPatch.theme = this._adjustTheme(tableTheme);
-      }
-    }
+  //   const table = this.tableInstance;
+  //   const nextOptionPatch: Partial<ListTableConstructorOptions> = {};
+  //   // 主题（优先使用 updateTheme，而不是全量 updateOption）
+  //   if (option.theme) {
+  //     const tableTheme = option.theme;
+  //     if (tableTheme) {
+  //       this.options.theme = tableTheme;
+  //       nextOptionPatch.theme = this._adjustTheme(tableTheme);
+  //     }
+  //   }
 
-    // 默认行高/列宽（通过属性设置，并在最后触发一次重建渲染）
-    if (option.defaultRowHeight !== undefined) {
-      nextOptionPatch.defaultRowHeight = option.defaultRowHeight;
-    }
-    if (option.defaultColWidth !== undefined) {
-      nextOptionPatch.defaultColWidth = option.defaultColWidth;
-    }
-    // 如果需要通过 updateOption 合并部分配置（如 showHeader / filter / theme 等）
-    if (Object.keys(nextOptionPatch).length > 0) {
-      const mergedOptions: ListTableConstructorOptions = {
-        ...(table.options as ListTableConstructorOptions),
-        ...nextOptionPatch
-      };
-      table.updateOption(mergedOptions, {
-        // clearColWidthCache: false,
-        // clearRowHeightCache: false
-      });
-    }
-  }
+  //   // 默认行高/列宽（通过属性设置，并在最后触发一次重建渲染）
+  //   if (option.defaultRowHeight !== undefined) {
+  //     nextOptionPatch.defaultRowHeight = option.defaultRowHeight;
+  //   }
+  //   if (option.defaultColWidth !== undefined) {
+  //     nextOptionPatch.defaultColWidth = option.defaultColWidth;
+  //   }
+  //   // 如果需要通过 updateOption 合并部分配置（如 showHeader / filter / theme 等）
+  //   if (Object.keys(nextOptionPatch).length > 0) {
+  //     const mergedOptions: ListTableConstructorOptions = {
+  //       ...(table.options as ListTableConstructorOptions),
+  //       ...nextOptionPatch
+  //     };
+  //     table.updateOption(mergedOptions, {
+  //       // clearColWidthCache: false,
+  //       // clearRowHeightCache: false
+  //     });
+  //   }
+  // }
 
   /**
    * 处理公式粘贴 - 调整公式中的单元格引用

@@ -32,13 +32,6 @@ import { tableThemeIsChanged } from '@visactor/vtable/es/themes';
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
 
-/**
- * WorkSheet 增量更新配置项别名
- *
- * 复用 WorkSheet.updateSheetOption 的参数类型，避免在 VTableSheet 层重复定义。
- */
-type WorkSheetUpdateOptions = Parameters<WorkSheet['updateSheetOption']>[0];
-
 export default class VTableSheet {
   /** DOM容器 */
   private container: HTMLElement;
@@ -1087,65 +1080,6 @@ export default class VTableSheet {
       this.activateSheet(activeDefine.sheetKey);
     }
   }
-
-  /**
-   * 仅对常用的顶层配置做增量更新
-   *
-   * 当前主要支持：
-   * - theme：更新所有已存在 WorkSheet 的主题；
-   * - defaultRowHeight/defaultColWidth：保存默认值，并在需要时下发到 WorkSheet；
-   * - 其他与 UI 相关的轻量配置可在此扩展。
-   */
-  // private updateGlobalOptions(options: IVTableSheetUpdateOptions): void {
-  //   const hasTheme = typeof options.theme !== 'undefined';
-  //   const hasDefaultRowHeight = typeof options.defaultRowHeight !== 'undefined';
-  //   const hasDefaultColWidth = typeof options.defaultColWidth !== 'undefined';
-  //   const hasMainMenu = typeof options.mainMenu !== 'undefined';
-  //   const hasShowSheetTab = typeof options.showSheetTab !== 'undefined';
-  //   const hasShowFormulaBar = typeof options.showFormulaBar !== 'undefined';
-  //   const hasVTablePluginModules = Array.isArray(options.VTablePluginModules);
-  //   const hasDragOrder = typeof options.dragOrder !== 'undefined';
-  //   // const hasShowHeader = typeof options.showHeader !== 'undefined';
-  //   // const hasFrozenRowCount = typeof options.frozenRowCount !== 'undefined';
-  //   // const hasFrozenColCount = typeof options.frozenColCount !== 'undefined';
-  //   // const hasFilter = typeof options.filter !== 'undefined';
-  //   // const hasFilterState = typeof options.filterState !== 'undefined';
-  //   // const hasSortState = typeof options.sortState !== 'undefined';
-  //   // const hasColumnWidthConfig = Array.isArray(options.columnWidthConfig);
-  //   // const hasRowHeightConfig = Array.isArray(options.rowHeightConfig);
-
-  //   if (
-  //     !hasTheme &&
-  //     !hasDefaultRowHeight &&
-  //     !hasDefaultColWidth &&
-  //     !hasMainMenu &&
-  //     !hasShowSheetTab &&
-  //     !hasShowFormulaBar &&
-  //     !hasVTablePluginModules &&
-  //     !hasDragOrder
-  //   ) {
-  //     return;
-  //   }
-
-  //   this.workSheetInstances.forEach(instance => {
-  //     const patch: WorkSheetUpdateOptions = {};
-
-  //     if (hasTheme) {
-  //       patch.theme = options.theme.tableTheme;
-  //     }
-  //     if (hasDefaultRowHeight) {
-  //       patch.defaultRowHeight = options.defaultRowHeight;
-  //     }
-  //     if (hasDefaultColWidth) {
-  //       patch.defaultColWidth = options.defaultColWidth;
-  //     }
-
-  //     if (Object.keys(patch).length > 0) {
-  //       instance.updateGlobalOptionToSheet(patch);
-  //     }
-  //   });
-  // }
-
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     try {
