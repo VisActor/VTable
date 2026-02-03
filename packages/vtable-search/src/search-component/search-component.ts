@@ -234,7 +234,7 @@ export class SearchComponent {
    * @param {string} customStyleId 自定义样式ID
    */
   arrangeCustomCellStyle(
-    resultItem: (typeof this.queryResult)[number],
+    resultItem: typeof this.queryResult[number],
     highlight: boolean = true,
     customStyleId: string = HighlightStyleId
   ) {
@@ -252,9 +252,14 @@ export class SearchComponent {
 
   updateCellStyle(highlight: boolean = true) {
     if (!highlight) {
+      // (this.queryResult || []).forEach(resultItem => {
+      //   this.arrangeCustomCellStyle(resultItem, highlight);
+      // });
+      this.table.customCellStylePlugin.clearCustomCellStyleArrangement();
       (this.queryResult || []).forEach(resultItem => {
-        this.arrangeCustomCellStyle(resultItem, highlight);
+        this.table.scenegraph.updateCellContent(resultItem.col, resultItem.row);
       });
+      this.table.scenegraph.updateNextFrame();
       return;
     }
     if (!this.queryResult) {
@@ -288,9 +293,20 @@ export class SearchComponent {
         FocusHighlightStyleId
       );
     } else {
+      // for (let i = 0; i < this.queryResult.length; i++) {
+      //   this.arrangeCustomCellStyle(this.queryResult[i], highlight);
+      // }
       for (let i = 0; i < this.queryResult.length; i++) {
-        this.arrangeCustomCellStyle(this.queryResult[i], highlight);
+        this.table.customCellStylePlugin.addCustomCellStyleArrangement(
+          {
+            col: this.queryResult[i].col,
+            row: this.queryResult[i].row
+          },
+          HighlightStyleId
+        );
+        this.table.scenegraph.updateCellContent(this.queryResult[i].col, this.queryResult[i].row, true);
       }
+      this.table.scenegraph.updateNextFrame();
     }
   }
 

@@ -20,6 +20,8 @@ export type IExcelEditCellKeyboardPluginOptions = {
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
   /** 删除能力是否只应用到可编辑单元格 */
   deleteWorkOnEditableCell?: boolean;
+  /** 删除范围时通过 changeCellValuesByRanges 批量更新，从而聚合成一次 change_cell_values 事件 */
+  batchCallChangeCellValuesApi?: boolean;
   // keyDown_before?: (event: KeyboardEvent) => void;
   // keyDown_after?: (event: KeyboardEvent) => void;
 };
@@ -31,6 +33,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
   table: ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
   responseKeyboard: ExcelEditCellKeyboardResponse[];
+  batchCallChangeCellValuesApi: boolean;
   constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
@@ -44,6 +47,8 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
       ExcelEditCellKeyboardResponse.DELETE,
       ExcelEditCellKeyboardResponse.BACKSPACE
     ];
+
+    this.batchCallChangeCellValuesApi = pluginOptions?.batchCallChangeCellValuesApi ?? false;
 
     this.bindEvent();
   }
@@ -133,7 +138,12 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
               ))
           ) {
             // 如果选中的是范围，则删除范围内的所有单元格
-            deleteSelectRange(selectCells, this.table, this.pluginOptions?.deleteWorkOnEditableCell ?? true);
+            deleteSelectRange(
+              selectCells,
+              this.table,
+              this.pluginOptions?.deleteWorkOnEditableCell ?? true,
+              this.batchCallChangeCellValuesApi
+            );
             // 阻止事件传播和默认行为
             event.stopPropagation();
             event.preventDefault();
@@ -164,8 +174,17 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
 function deleteSelectRange(
   selectCells: TYPES.CellInfo[][],
   tableInstance: ListTable,
-  workOnEditableCell: boolean = false
+  workOnEditableCell: boolean = false,
+  batchCallChangeCellValuesApi: boolean = false
 ) {
+  if (batchCallChangeCellValuesApi) {
+    const ranges = tableInstance.stateManager.select.ranges;
+    if (ranges?.length) {
+      tableInstance.changeCellValuesByRanges(ranges, '', workOnEditableCell, true);
+    }
+    return;
+  }
+
   for (let i = 0; i < selectCells.length; i++) {
     for (let j = 0; j < selectCells[i].length; j++) {
       tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '', workOnEditableCell);

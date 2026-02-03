@@ -280,9 +280,22 @@ export interface TableEventHandlersEventArgumentMap {
   change_cell_value: {
     col: number;
     row: number;
+    recordIndex?: number | number[];
+    field?: FieldDef;
     rawValue: string | number;
     currentValue: string | number;
     changedValue: string | number;
+  };
+  change_cell_values: {
+    values: {
+      col: number;
+      row: number;
+      recordIndex?: number | number[];
+      field?: FieldDef;
+      rawValue: string | number;
+      currentValue: string | number;
+      changedValue: string | number;
+    }[];
   };
 
   mousedown_fill_handle: {};
@@ -318,6 +331,7 @@ export interface TableEventHandlersEventArgumentMap {
 
   delete_record: {
     recordIndexs: number[] | number[][];
+    records: any[];
     rowIndexs: number[];
     deletedCount: number;
   };
@@ -426,6 +440,7 @@ export interface TableEventHandlersReturnMap {
 
   after_update_select_border_height: void;
   change_cell_value: void;
+  change_cell_values: void;
   mousedown_fill_handle: void;
   drag_fill_handle_end: void;
   dblclick_fill_handle: void;

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat(table): 新增基于记录索引的单元格值修改方法及优化范围删除性能\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zhanghao.gino@bytedance.com"
+}

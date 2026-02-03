@@ -1710,8 +1710,43 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
    * @param value 更改后的值
    * @param workOnEditableCell 是否仅更改可编辑单元格
    * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
+   * @param noTriggerChangeCellValuesEvent 是否不触发 change_cell_values 聚合事件
    */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## changeCellValuesByRanges(Function)
+
+批量更新多个离散选区内的单元格数据。
+
+当前仅支持将所有选区内的单元格统一修改为同一个 value。
+
+**ListTable 专有**
+
+```
+  /**
+   * 批量更新多个离散选区内的单元格数据。
+   * 当前仅支持将所有选区内的单元格统一修改为同一个 value。
+   * @param ranges 选区范围（支持多个）
+   * @param value 要设置的统一值
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否触发 change_cell_value/change_cell_values 事件
+   * @param noTriggerChangeCellValuesEvent 是否不触发 change_cell_values 聚合事件
+   */
+  changeCellValuesByRanges: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
 ```
 
 ## changeCellValues(Function)
@@ -1726,8 +1761,108 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
    * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
+   * @param noTriggerChangeCellValuesEvent 是否不触发 change_cell_values 聚合事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => Promise<boolean[][]>;
+  changeCellValues: (
+    startCol: number,
+    startRow: number,
+    values: string[][],
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => Promise<boolean[][]>;
+```
+
+## changeCellValueByRecord(Function)
+
+根据 recordIndex（源数据 records 的索引）+ field 修改值。
+
+**ListTable 专有**
+
+```
+  /**
+   * 根据 recordIndex（源数据 records 的索引）+ field 修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
+  changeCellValueByRecord: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+```
+
+## changeCellValuesByRecords(Function)
+
+根据 recordIndex（源数据 records 的索引）+ field 批量修改值。
+
+**ListTable 专有**
+
+```
+  changeCellValuesByRecords: (
+    changeValues: Array<{
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }>,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+```
+
+## changeCellValueBySource(Function)
+
+changeCellValueByRecord 的别名形式（位置参数）。
+
+**ListTable 专有**
+
+```
+  changeCellValueBySource: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## changeCellValuesBySource(Function)
+
+changeCellValuesByRecords 的别名形式（位置参数）。
+
+**ListTable 专有**
+
+```
+  changeCellValuesBySource: (
+    changeValues: Array<{
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }>,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## refreshAfterSourceChange(Function)
+
+源数据修改后刷新表格（可控制是否重新应用筛选/排序）。
+
+**ListTable 专有**
+
+```
+  refreshAfterSourceChange: (options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) => void;
 ```
 
 ## getEditor(Function)
@@ -1793,6 +1928,10 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
   addRecords(records: any[], recordIndex?: number|number[])
 ```
 
+**说明：**
+
+- 若开启 `syncRecordOperationsToSourceRecords`，则在筛选/排序状态下的新增操作也会同步修改到原始 `records`（源数据）。
+
 ## addRecord(Function)
 
 添加数据，单条数据
@@ -1809,6 +1948,10 @@ const rowImage = tableInstance.exportCellRangeImg(rowRange);
    */
   addRecord(record: any, recordIndex?: number|number[])
 ```
+
+**说明：**
+
+- 若开启 `syncRecordOperationsToSourceRecords`，则在筛选/排序状态下的新增操作也会同步修改到原始 `records`（源数据）。
 
 ## deleteRecords(Function)
 
