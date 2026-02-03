@@ -41,7 +41,7 @@ export type ExportVTableToExcelOptions = {
 
 export type ExportVTableToCsvOptions = {
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
-  escape?: boolean;
+  escape?: boolean; // 是否需要将字符串中的特殊符号进行转义，以避免干扰CSV解析，默认为true
   exportAllData?: boolean;
   downloadFile?: boolean;
   fileName?: string;
