@@ -364,6 +364,8 @@ Table data can be modified using `updateRecords`. Please check the api documenta
 
 Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
 
+If you need data operations such as `addRecord/addRecords/deleteRecords/updateRecords` to also synchronize to the original `records` while the table is in filter/sort state, you can enable `syncRecordOperationsToSourceRecords` in the table options. This is useful when you expect newly added rows to still exist after clearing the filter, and when you want draft rows to stay visible in the current filter view until the next `updateFilterRules` is applied.
+
 ### Tree structure data update
 
 In the tree (group) structure, the data update is passed in `recordIndex` as an array, representing the index of the data in the table body. In addition, in the case of sorting, `recordIndex` is the original data structure, and it may not be consistent with the hierarchical order displayed in the table. Therefore, in the tree (group) structure table, please use the `getRecordIndexByCell` interface to get the correct `recordIndex`, and then use the `updateRecords` interface to update the data.

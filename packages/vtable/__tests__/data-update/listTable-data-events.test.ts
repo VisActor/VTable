@@ -167,4 +167,179 @@ describe('listTable data events test', () => {
     expect(addEventData.records).toEqual([validRecord]);
     expect(addEventData.recordCount).toBe(1);
   });
+
+  test('updateFilterRules should include newly added record', () => {
+    table.release();
+    const records = [
+      { name: 'Alice', age: 25 },
+      { name: 'Bob', age: 30 },
+      { name: 'Charlie', age: 35 },
+      { name: 'Dan', age: 36 }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns,
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    let filterCalls = 0;
+    const rules = [
+      {
+        filterFunc: () => {
+          filterCalls++;
+          return true;
+        }
+      }
+    ];
+
+    table.updateFilterRules(rules);
+    expect(filterCalls).toBe(4);
+
+    table.addRecord({ name: 'Eve', age: 45 });
+
+    filterCalls = 0;
+    table.updateFilterRules(rules);
+    expect(filterCalls).toBe(5);
+  });
+
+  test('addRecord under filter should keep relative position after clearing filter', () => {
+    table.release();
+    const records = [
+      { name: '小明1', sex: 'boy' },
+      { name: '小明2', sex: 'girl' },
+      { name: '小明3', sex: 'boy' },
+      { name: '小明4', sex: 'girl' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'name', title: 'name' },
+        { field: 'sex', title: 'sex' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    } as any);
+
+    table.updateFilterRules([
+      {
+        filterKey: 'sex',
+        filteredValues: ['boy']
+      } as any
+    ]);
+
+    table.addRecord({ name: '新增', sex: 'boy' }, 1);
+    table.updateFilterRules([] as any);
+
+    const all = table.records as any[];
+    expect(all.map(r => r.name)).toEqual(['小明1', '新增', '小明2', '小明3', '小明4']);
+  });
+
+  test('addRecord below last filtered row should insert after its source position', () => {
+    table.release();
+    const records = [
+      { name: '小明1', sex: 'girl' },
+      { name: '小明2', sex: 'boy' },
+      { name: '小明3', sex: 'girl' },
+      { name: '小明4', sex: 'boy' },
+      { name: '小明5', sex: 'girl' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'name', title: 'name' },
+        { field: 'sex', title: 'sex' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    } as any);
+
+    table.updateFilterRules([
+      {
+        filterKey: 'sex',
+        filteredValues: ['boy']
+      } as any
+    ]);
+
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明4']);
+
+    table.addRecord({ name: '新增', sex: 'boy' }, 2);
+    table.updateFilterRules([] as any);
+
+    const all = table.records as any[];
+    expect(all.map(r => r.name)).toEqual(['小明1', '小明2', '小明3', '小明4', '新增', '小明5']);
+  });
+
+  test('addRecord before first filtered row should insert before its source position', () => {
+    table.release();
+    const records = [
+      { name: '小明1', sex: 'girl' },
+      { name: '小明2', sex: 'boy' },
+      { name: '小明3', sex: 'girl' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'name', title: 'name' },
+        { field: 'sex', title: 'sex' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    } as any);
+
+    table.updateFilterRules([
+      {
+        filterKey: 'sex',
+        filteredValues: ['boy']
+      } as any
+    ]);
+
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2']);
+
+    table.addRecord({ name: '新增', sex: 'boy' }, 0);
+    table.updateFilterRules([] as any);
+
+    const all = table.records as any[];
+    expect(all.map(r => r.name)).toEqual(['小明1', '新增', '小明2', '小明3']);
+  });
+
+  test('draft record can stay visible under filter until next updateFilterRules', () => {
+    table.release();
+    const records = [
+      { name: '小明1', sex: 'girl' },
+      { name: '小明2', sex: 'boy' },
+      { name: '小明3', sex: 'boy' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'name', title: 'name' },
+        { field: 'sex', title: 'sex' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    } as any);
+
+    table.updateFilterRules([
+      {
+        filterKey: 'sex',
+        filteredValues: ['boy']
+      } as any
+    ]);
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3']);
+
+    table.addRecord({ name: '新增', sex: undefined } as any, 2);
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3', '新增']);
+
+    table.changeCellValueByRecord(3, 'name', '新名字', { triggerEvent: false, autoRefresh: true } as any);
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3', '新名字']);
+
+    table.updateFilterRules(table.dataSource.dataConfig.filterRules as any);
+    expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3']);
+  });
 });

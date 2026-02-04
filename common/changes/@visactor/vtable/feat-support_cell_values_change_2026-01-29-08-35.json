@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: 新增批量修改单元格值接口及优化筛选态数据同步\n\nrefactor: 重命名 changeCellValuesByIds 为 changeCellValuesByRanges\nfeat: 新增批量修改离散选区单元格值的接口 changeCellValuesByRanges\nfeat: 增加 syncRecordOperationsToSourceRecords 配置支持筛选态数据同步\nfeat: 新增 CHANGE_CELL_VALUES 聚合事件及相关文档\ndocs: 更新接口文档和指南说明新增功能\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "zhanghao.gino@bytedance.com"
+}

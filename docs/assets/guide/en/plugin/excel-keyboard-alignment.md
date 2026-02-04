@@ -21,8 +21,11 @@ export type IExcelEditCellKeyboardPluginOptions = {
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
   /** Whether the delete ability only applies to editable cells */
   deleteWorkOnEditableCell?: boolean;
+  /** When deleting a range, call the batch API to aggregate into one change_cell_values event */
+  batchCallChangeCellValuesApi?: boolean;
 };
 ```
+The `batchCallChangeCellValuesApi` option is used to control the deletion behavior for multiple selected ranges. When enabled, the plugin will call `changeCellValuesByRanges` once to update the selected ranges, so that `change_cell_values` is fired as a single aggregated event instead of being triggered per-cell.
   The `responseKeyboard` configuration item is used to configure the list of keyboard events that the plugin responds to, the value type of which is `ExcelEditCellKeyboardResponse`, as follows:
 ```ts
 export enum ExcelEditCellKeyboardResponse {

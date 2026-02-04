@@ -1708,8 +1708,43 @@ Change the value of the cell:
    * @param value Changed value
    * @param workOnEditableCell Whether to only change editable cells
    * @param triggerEvent Whether to trigger change_cell_value event when the value changes
+   * @param noTriggerChangeCellValuesEvent Whether to suppress the aggregated change_cell_values event
    */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
+  changeCellValue: (
+    col: number,
+    row: number,
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## changeCellValuesByRanges(Function)
+
+Batch update data within multiple selected ranges.
+
+Currently it only supports setting all cells in the ranges to the same value.
+
+**ListTable specific**
+
+```
+  /**
+   * Batch update data within multiple selected ranges.
+   * Currently it only supports setting all cells in the ranges to the same value.
+   * @param ranges Selected ranges
+   * @param value The unified value to set
+   * @param workOnEditableCell Whether to only change editable cells
+   * @param triggerEvent Whether to trigger change_cell_value/change_cell_values events
+   * @param noTriggerChangeCellValuesEvent Whether to suppress the aggregated change_cell_values event
+   */
+  changeCellValuesByRanges: (
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
 ```
 
 ## changeCellValues(Function)
@@ -1724,8 +1759,111 @@ Batch change the values of cells:
    * @param values Data array for multiple cells
    * @param workOnEditableCell Whether to only change editable cells
    * @param triggerEvent Whether to trigger change_cell_value event when values change
+   * @param noTriggerChangeCellValuesEvent Whether to suppress the aggregated change_cell_values event
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => Promise<boolean[][]>;
+  changeCellValues: (
+    startCol: number,
+    startRow: number,
+    values: string[][],
+    workOnEditableCell?: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => Promise<boolean[][]>;
+```
+
+## changeCellValueByRecord(Function)
+
+Change cell value by `recordIndex` (source records index) and `field`.
+
+**ListTable specific**
+
+```
+  /**
+   * Change cell value by recordIndex (source records index) and field.
+   * recordIndex is the index in the original source records: number for normal tables; number[] for tree tables.
+   */
+  changeCellValueByRecord: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+```
+
+## changeCellValuesByRecords(Function)
+
+Batch change cell values by `recordIndex` (source records index) and `field`.
+
+**ListTable specific**
+
+```
+  /**
+   * Batch change cell values by recordIndex (source records index) and field.
+   */
+  changeCellValuesByRecords: (
+    changeValues: Array<{
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }>,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) => void;
+```
+
+## changeCellValueBySource(Function)
+
+Alias of `changeCellValueByRecord` with positional parameters.
+
+**ListTable specific**
+
+```
+  changeCellValueBySource: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## changeCellValuesBySource(Function)
+
+Alias of `changeCellValuesByRecords` with positional parameters.
+
+**ListTable specific**
+
+```
+  changeCellValuesBySource: (
+    changeValues: Array<{
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }>,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) => void;
+```
+
+## refreshAfterSourceChange(Function)
+
+Refresh the table after directly changing source records (optionally reapply filter/sort).
+
+**ListTable specific**
+
+```
+  refreshAfterSourceChange: (options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) => void;
 ```
 
 ## getEditor(Function)
@@ -1791,6 +1929,10 @@ Add data, supports multiple data items
   addRecords(records: any[], recordIndex?: number|number[])
 ```
 
+**Notes:**
+
+- If `syncRecordOperationsToSourceRecords` is enabled, add operations in filter/sort state will also sync to the original `records` (source records).
+
 ## addRecord(Function)
 
 Add data, single data item
@@ -1807,6 +1949,10 @@ Add data, single data item
    */
   addRecord(record: any, recordIndex?: number|number[])
 ```
+
+**Notes:**
+
+- If `syncRecordOperationsToSourceRecords` is enabled, add operations in filter/sort state will also sync to the original `records` (source records).
 
 ## deleteRecords(Function)
 

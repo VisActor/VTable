@@ -629,6 +629,31 @@ MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
 
 ```
 
+## CHANGE_CELL_VALUES
+
+批量更改单元格值的聚合事件。
+
+事件回调函数的参数类型:
+
+```
+{
+  values: Array<{
+    col: number;
+    row: number;
+    recordIndex?: number | number[];
+    field?: string | number;
+    rawValue: string | number;
+    currentValue: string | number;
+    changedValue: string | number;
+  }>;
+};
+```
+
+**说明：**
+
+- 相关接口参数 `noTriggerChangeCellValuesEvent` 可用于抑制该聚合事件。
+- 批量更新多个单元格时通常只触发一次该事件，`values` 中包含所有变更项。
+
 ## CHECKBOX_STATE_CHANGE
 
 更改 checkbox 复选框状态。**ListTable 表格专有事件**
