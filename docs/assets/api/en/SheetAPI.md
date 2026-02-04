@@ -6,6 +6,14 @@
 
 VTableSheet instance supports the following methods:
 
+### updateOption(Function)
+
+Update table configuration options, automatically redraws after calling.
+```
+  updateOption: (options: Partial<IVTableSheetOptions>) => void
+```
+This interface supports full update and incremental update. Full update will relayout and render the entire table, incremental update will only update the configuration items, not relayout and render the entire table.
+
 ### activateSheet(Function)
 
 Activate the specified sheet

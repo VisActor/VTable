@@ -1,4 +1,5 @@
 import type VTableSheet from '../components/vtable-sheet';
+import type { IVTableSheetOptions } from '../ts-types';
 import type { MainMenuItem } from '../ts-types/base';
 import { MainMenuItemKey } from '../ts-types/base';
 
@@ -248,5 +249,9 @@ export class MenuManager {
       document.removeEventListener('click', this.clickOutsideHandler);
       this.clickOutsideHandler = null;
     }
+  }
+  updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
+    this.release();
+    this.createMainMenu();
   }
 }

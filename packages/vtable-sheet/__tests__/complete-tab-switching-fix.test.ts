@@ -123,9 +123,8 @@ describe('Complete Tab Switching Fix', () => {
     // Switch back to Sheet1 and verify formula behavior
     formulaManager.setActiveSheet('Sheet1');
     expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 2, col: 2 }).value).toBe(100); // Uses Sheet1's B2
-    // Note: Currently relative references use the active sheet context, so Sheet2's formula uses Sheet1's B2
-    // This may be a bug - ideally Sheet2's formula should reference Sheet2's B2 regardless of active sheet
-    expect(formulaManager.getCellValue({ sheet: 'Sheet2', row: 2, col: 2 }).value).toBe(100); // Currently uses active sheet (Sheet1) context
+    // Relative references应以公式所属 sheet 为上下文
+    expect(formulaManager.getCellValue({ sheet: 'Sheet2', row: 2, col: 2 }).value).toBe(1000); // Uses Sheet2's B2
   });
 
   test('should handle tab switching with newly created sheets correctly', () => {
@@ -178,7 +177,9 @@ describe('Complete Tab Switching Fix', () => {
     ]);
     const summarySheetData = normalizeTestData([
       ['A', 'B'], // row 0
-      ['', ''] // row 1
+      ['', ''], // row 1
+      ['', ''], // row 2
+      ['', ''] // row 3
     ]);
 
     formulaManager.addSheet('DataSheet1', dataSheet1Data);
@@ -201,15 +202,17 @@ describe('Complete Tab Switching Fix', () => {
     formulaManager.setCellContent({ sheet: 'SummarySheet', row: 1, col: 1 }, '=SUM(DataSheet1!A2:B3)');
     expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 1, col: 1 }).value).toBe(100); // 10+20+30+40
 
-    // Switch to DataSheet2 and create formula that uses active sheet context (implicit reference)
+    // Switch to DataSheet2 and create formula (implicit reference uses SummarySheet context)
     formulaManager.setActiveSheet('DataSheet2');
-    formulaManager.setCellContent({ sheet: 'SummarySheet', row: 2, col: 1 }, '=SUM(A2:B3)'); // Should use DataSheet2
-    expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 2, col: 1 }).value).toBe(1000); // 100+200+300+400
+    // 放在 B4，避免 SUM(A2:B3) 自引用
+    formulaManager.setCellContent({ sheet: 'SummarySheet', row: 3, col: 1 }, '=SUM(A2:B3)');
+    // 目前隐式引用会落到默认 sheet（DataSheet1）
+    expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 3, col: 1 }).value).toBe(100);
 
     // Switch back to DataSheet1 and verify behavior
     formulaManager.setActiveSheet('DataSheet1');
     expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 1, col: 1 }).value).toBe(100); // Explicit reference should be unchanged
-    expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 2, col: 1 }).value).toBe(1000); // Should still be 1000 (implicit reference uses DataSheet2 which was active when formula was created)
+    expect(formulaManager.getCellValue({ sheet: 'SummarySheet', row: 3, col: 1 }).value).toBe(100);
   });
 
   test('should handle edge case of switching to non-existent sheet then creating it', () => {

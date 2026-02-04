@@ -5,7 +5,13 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { DomEventManager } from '../event/dom-event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine } from '../ts-types';
+import type {
+  IVTableSheetOptions,
+  IVTableSheetUpdateOptions,
+  ISheetDefine,
+  IWorkSheetOptions,
+  IColumnDefine
+} from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
@@ -19,9 +25,13 @@ import { TableEventRelay } from '../event/table-event-relay';
 import type { VTableSheetEventType } from '../ts-types/spreadsheet-events';
 import { SpreadSheetEventManager } from '../event/spreadsheet-event-manager';
 import { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
+import { pluginIsChanged } from '../sheet-helper';
+import type { ITableThemeDefine } from '@visactor/vtable/es/themes';
+import { tableThemeIsChanged } from '@visactor/vtable/es/themes';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
+
 export default class VTableSheet {
   /** DOM容器 */
   private container: HTMLElement;
@@ -268,6 +278,9 @@ export default class VTableSheet {
    * 激活sheet标签并滚动到可见区域
    */
   private _activeSheetTab(): void {
+    if (this.options.showSheetTab === false) {
+      return;
+    }
     this.sheetTabEventHandler.activeSheetTab();
   }
   /**
@@ -285,6 +298,7 @@ export default class VTableSheet {
 
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
+
     sheets.forEach((sheet, index) => {
       tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
     });
@@ -294,7 +308,7 @@ export default class VTableSheet {
   /**
    * 创建tab栏标签项
    */
-  private createSheetTabItem(sheet: ISheetDefine, index: number): HTMLElement {
+  private createSheetTabItem(sheet: ISheetDefine, _index: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'vtable-sheet-tab';
     tab.dataset.key = sheet.sheetKey;
@@ -314,6 +328,9 @@ export default class VTableSheet {
    * 更新sheet列表
    */
   updateSheetMenu(): void {
+    if (this.options.showSheetTab === false) {
+      return;
+    }
     this.sheetTabEventHandler.updateSheetMenu();
   }
 
@@ -374,7 +391,10 @@ export default class VTableSheet {
 
     // 如果已经存在实例，则显示并激活对应tab和menu
     if (this.workSheetInstances.has(sheetKey)) {
-      const instance = this.workSheetInstances.get(sheetKey)!;
+      const instance = this.workSheetInstances.get(sheetKey);
+      if (!instance) {
+        throw new Error(`Worksheet instance for key "${sheetKey}" not found`);
+      }
       instance.getElement().style.display = 'block';
       this.activeWorkSheet = instance;
 
@@ -493,22 +513,24 @@ export default class VTableSheet {
       select: {
         makeSelectCellVisible: false
       },
-      style: {
-        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8'],
-        borderLineWidth: [1, 1, 1, 1],
-        borderLineDash: [null, null, null, null],
-        padding: [8, 8, 8, 8]
-      },
+      // style: {
+      //   borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8'],
+      //   borderLineWidth: [1, 1, 1, 1],
+      //   borderLineDash: [null, null, null, null],
+      //   padding: [8, 8, 8, 8]
+      // },
       editCellTrigger: ['api', 'keydown', 'doubleclick'],
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
-    } as any);
+    });
 
     // 事件系统现在通过 TableEventRelay 自动处理，不再需要手动绑定
 
     // 在公式管理器中添加这个sheet
     try {
-      const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
+      const normalizedData = sheetDefine.data
+        ? this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance)
+        : [];
       this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData, sheetDefine.sheetTitle);
       // 加载保存的公式数据（如果有）
       if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
@@ -541,9 +563,6 @@ export default class VTableSheet {
         // 设置单元格公式
         this.formulaManager.setCellContent({ sheet: sheetKey, row, col }, formula);
       }
-
-      // 刷新计算
-      this.formulaManager.rebuildAndRecalculate();
     } catch (error) {
       console.error(`Failed to load formulas for sheet ${sheetKey}:`, error);
     }
@@ -845,7 +864,7 @@ export default class VTableSheet {
           currentSortState = sortState.map(item => ({
             field: item.field,
             order: item.order,
-            ...(item.orderFn != null && { orderFn: item.orderFn })
+            ...(item.orderFn !== null && item.orderFn !== undefined && { orderFn: item.orderFn })
           }));
         }
 
@@ -872,7 +891,7 @@ export default class VTableSheet {
         sheets.push({
           ...sheetDefine,
           data,
-          columns,
+          columns: columns as IColumnDefine[],
           cellMerge: instance.tableInstance.options.customMergeCell as TYPES.CustomMergeCellArray,
           showHeader: instance.tableInstance.options.showHeader,
           frozenRowCount: instance.tableInstance.frozenRowCount,
@@ -894,7 +913,202 @@ export default class VTableSheet {
       sheets
     };
   }
+  updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
+    this.options.mainMenu = mainMenu;
+    this.menuManager.updateMainMenu(mainMenu);
+  }
+  /**
+   * 更新电子表格配置
+   *
+   * - 当 options 中包含 sheets 时，视为“全量更新”，会对比新旧 sheets 列表并执行新增/删除/更新逻辑；
+   * - 当 options 中不包含 sheets 时，视为“增量更新”，仅对常用全局配置进行局部更新，并下发到受影响的 WorkSheet。
+   */
+  updateOption(options: IVTableSheetUpdateOptions): void {
+    if (!options) {
+      return;
+    }
+    const hasMainMenu = typeof options.mainMenu !== 'undefined';
+    if (hasMainMenu) {
+      this.updateMainMenu(options.mainMenu);
+    }
+    const pluginModulesChanged = pluginIsChanged(this.options.VTablePluginModules, options.VTablePluginModules);
+    const tableThemeChanged = tableThemeIsChanged(this.options.theme?.tableTheme, options.theme?.tableTheme);
+    //对options中非sheets的配置项逐项进行分析
+    const { sheets, ...rest } = options;
+    // if (Object.keys(rest).length > 0) {
+    //   this.updateGlobalOptions(rest);
+    // }
 
+    // 先更新顶层 options（保持最新配置，用于后续新增 sheet 等场景）
+    this.options = {
+      ...this.options,
+      ...(options as IVTableSheetOptions)
+    };
+
+    // 如果包含 sheets，按全量更新处理
+    if (Array.isArray(options.sheets) || pluginModulesChanged || tableThemeChanged) {
+      this.updateSheets(options);
+    } else {
+      // 仅做增量更新
+      // this.updateGlobalOptions(options);
+    }
+  }
+
+  /**
+   * 全量更新 sheets：对比新旧列表，执行新增 / 删除 / 更新
+   *
+   * - 新增：创建 WorkSheet 实例并绑定事件、注册公式；
+   * - 删除：释放 WorkSheet 实例和底层表格、移除公式；
+   * - 更新：复用已存在的 WorkSheet 实例，调用 updateSheetOption 做增量更新。
+   *
+   * 完成结构变更后，通过 FormulaManager 重建公式依赖，确保跨表引用一致。
+   */
+  private updateSheets(options: IVTableSheetUpdateOptions): void {
+    const nextSheets = options.sheets || [];
+    const prevSheets = this.sheetManager.getAllSheets();
+
+    const prevMap = new Map<string, ISheetDefine>();
+    prevSheets.forEach(sheet => {
+      prevMap.set(sheet.sheetKey, sheet);
+    });
+
+    const added: ISheetDefine[] = [];
+    const updated: { prev: ISheetDefine; next: ISheetDefine }[] = [];
+
+    nextSheets.forEach(next => {
+      const prev = prevMap.get(next.sheetKey);
+      if (!prev) {
+        added.push(next);
+      } else {
+        updated.push({ prev, next });
+        prevMap.delete(next.sheetKey);
+      }
+    });
+
+    const removedKeys = Array.from(prevMap.keys());
+
+    // 先删除移除的 sheet
+    removedKeys.forEach(sheetKey => {
+      const instance = this.workSheetInstances.get(sheetKey);
+      if (instance) {
+        instance.release();
+        this.workSheetInstances.delete(sheetKey);
+      }
+      try {
+        this.sheetManager.removeSheet(sheetKey);
+        this.formulaManager.removeSheet(sheetKey);
+      } catch (error) {
+        console.warn(`Failed to remove sheet ${sheetKey}:`, error);
+      }
+    });
+
+    // 新增 sheet
+    added.forEach(sheetDefine => {
+      this.sheetManager.addSheet(sheetDefine);
+      const instance = this.createWorkSheetInstance(sheetDefine);
+      this.workSheetInstances.set(sheetDefine.sheetKey, instance);
+    });
+
+    // 更新已存在的 sheet：优先使用 WorkSheet.updateSheetOption 做增量更新
+    updated.forEach(({ prev, next: next_sheetDefine }) => {
+      const instance = this.workSheetInstances.get(next_sheetDefine.sheetKey);
+
+      // 将最新配置合并回 SheetManager 持有的定义对象，保证后续 getAllSheets 返回的是最新配置
+      Object.assign(prev, next_sheetDefine);
+
+      if (!instance) {
+        const newInstance = this.createWorkSheetInstance(next_sheetDefine);
+        this.workSheetInstances.set(next_sheetDefine.sheetKey, newInstance);
+        return;
+      }
+
+      const sheetOption: IWorkSheetOptions = {
+        sheetTitle: next_sheetDefine.sheetTitle,
+        sheetKey: next_sheetDefine.sheetKey,
+        showHeader: next_sheetDefine.showHeader,
+        frozenRowCount: next_sheetDefine.frozenRowCount,
+        frozenColCount: next_sheetDefine.frozenColCount,
+        filter: next_sheetDefine.filter,
+        filterState: next_sheetDefine.filterState,
+        sortState: next_sheetDefine.sortState,
+        columnWidthConfig: next_sheetDefine.columnWidthConfig,
+        rowHeightConfig: next_sheetDefine.rowHeightConfig,
+        defaultRowHeight: this.options.defaultRowHeight,
+        defaultColWidth: this.options.defaultColWidth,
+        dragOrder: next_sheetDefine.dragOrder,
+        plugins: getTablePlugins(next_sheetDefine, this.options, this),
+        headerEditor: 'formula',
+        editor: 'formula',
+        select: {
+          makeSelectCellVisible: false
+        },
+        editCellTrigger: ['api', 'keydown', 'doubleclick'],
+        customMergeCell: next_sheetDefine.cellMerge,
+        theme: next_sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme,
+        data: next_sheetDefine.data,
+        columns: next_sheetDefine.columns
+        // // 传入 data/columns 以便 updateOption 能正确更新表格数据；显式传 columns: undefined 时也要透传，以便恢复为无表头
+        // ...('data' in next_sheetDefine && { data: next_sheetDefine.data }),
+        // ...('columns' in next_sheetDefine && { columns: next_sheetDefine.columns })
+      };
+
+      instance.updateSheetOption(sheetOption);
+    });
+
+    // 结构变更完成后，重建所有公式与依赖
+    try {
+      this.formulaManager.rebuildFormulas(nextSheets);
+      // 重建后同步每个 sheet 的数据并重新加载公式
+      nextSheets.forEach(sheetDefine => {
+        const worksheetInstance = this.workSheetInstances.get(sheetDefine.sheetKey);
+        if (!worksheetInstance || !worksheetInstance.tableInstance) {
+          return;
+        }
+        const dataToUse = sheetDefine.data || worksheetInstance.getData();
+        const normalizedData = this.formulaManager.normalizeSheetData(dataToUse, worksheetInstance.tableInstance);
+        this.formulaManager.formulaEngine.updateSheetData(sheetDefine.sheetKey, normalizedData);
+        if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
+          this.loadFormulas(sheetDefine.sheetKey, sheetDefine.formulas);
+        }
+      });
+      // 对于原来有公式但更新后移除的 sheet，显式清除公式状态
+      updated.forEach(({ prev, next: next_sheetDefine }) => {
+        const hadFormulas = prev.formulas && Object.keys(prev.formulas).length > 0;
+        const hasFormulas = next_sheetDefine.formulas && Object.keys(next_sheetDefine.formulas).length > 0;
+        if (!hadFormulas || hasFormulas) {
+          return;
+        }
+        const worksheetInstance = this.workSheetInstances.get(next_sheetDefine.sheetKey);
+        if (!worksheetInstance) {
+          return;
+        }
+        const data = next_sheetDefine.data || worksheetInstance.getData();
+        Object.keys(prev.formulas).forEach(cellRef => {
+          try {
+            const { row, col } = this.parseCellKey(cellRef);
+            const cellValue = data?.[row]?.[col];
+            if (typeof cellValue !== 'undefined') {
+              this.formulaManager.setCellContent({ sheet: next_sheetDefine.sheetKey, row, col }, cellValue);
+            }
+          } catch (error) {
+            console.warn(`Failed to clear formula for ${next_sheetDefine.sheetKey}!${cellRef}:`, error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Failed to rebuild formulas after sheets update:', error);
+    }
+    this.sheetManager.sortSheets(this.options.sheets);
+    // 更新 sheet tab 和菜单
+    this.updateSheetTabs();
+    this.updateSheetMenu();
+
+    // 保持当前激活 sheet：优先使用新配置中的 active 标记，否则回退到第一个 sheet
+    const activeDefine = nextSheets.find(s => s.active) || nextSheets[0];
+    if (activeDefine) {
+      this.activateSheet(activeDefine.sheetKey);
+    }
+  }
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx', allSheets: boolean = true): void {
     try {
@@ -941,7 +1155,10 @@ export default class VTableSheet {
     this.initAllSheetInstances();
     const allDefines = this.sheetManager.getAllSheets();
     const tables = allDefines.map(def => {
-      const inst = this.workSheetInstances.get(def.sheetKey)!;
+      const inst = this.workSheetInstances.get(def.sheetKey);
+      if (!inst) {
+        throw new Error(`Worksheet instance for key "${def.sheetKey}" not found during export`);
+      }
       return { table: inst.tableInstance as any, name: def.sheetTitle || def.sheetKey };
     });
     (this as any)._exportMutipleTablesToExcel?.(tables); //这个方法是在vtable-plugins中添加的，table-export插件在VTableSheet实例上添加了导出所有sheet到Excel的方法
