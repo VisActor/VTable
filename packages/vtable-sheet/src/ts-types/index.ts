@@ -1,6 +1,6 @@
 import type { ColumnDefine } from '@visactor/vtable';
 import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
-import type { CellValue, IStyle, MainMenuItem } from './base';
+import type { CellValue, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
 import type { TableSeriesNumberOptions, ImportResult } from '@visactor/vtable-plugins';
 import type { SortState } from '@visactor/vtable/es/ts-types';
@@ -11,8 +11,10 @@ export interface IFilterConfig {
   filterModes?: ('byValue' | 'byCondition')[];
 }
 
-/** 扩展的列定义，添加筛选相关配置 */
+/** 扩展的列定义，添加筛选相关配置；field 可选，构建 ListTable 时由 WorkSheet 按列索引填充 */
 export interface IColumnDefine extends Omit<ColumnDefine, 'field'> {
+  /** 列字段，可选；未指定时由 WorkSheet 按列索引填充 */
+  field?: string | number;
   /** 是否启用筛选功能 */
   filter?: boolean;
 }
@@ -84,8 +86,6 @@ export interface IThemeDefine {
 export interface IVTableSheetOptions {
   /** Sheet列表 */
   sheets: ISheetDefine[];
-  /** 是否显示工具栏 */
-  showToolbar?: boolean;
   /** 是否显示公式栏 */
   showFormulaBar?: boolean;
   /** 是否显示sheet切换栏 */
@@ -117,6 +117,17 @@ export interface IVTableSheetOptions {
     enableDragRowOrder?: boolean;
   };
 }
+
+/**
+ * VTableSheet 更新配置
+ *
+ * 用于 VTableSheet.updateOption 的增量更新场景。
+ * - 所有字段均为可选；
+ * - 未显式声明的字段不会被修改；
+ * - 部分字段在调用时会被广播到所有已存在的 WorkSheet。
+ */
+export type IVTableSheetUpdateOptions = Partial<IVTableSheetOptions>;
+
 export * from './base';
 export * from './formula';
 export * from './filter';

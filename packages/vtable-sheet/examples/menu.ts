@@ -10,5 +10,9 @@ export const menus = [
   {
     path: 'sheet',
     name: 'persistence'
+  },
+  {
+    path: 'sheet',
+    name: 'sheet-update'
   }
 ];

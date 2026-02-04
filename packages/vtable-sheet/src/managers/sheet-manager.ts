@@ -175,6 +175,25 @@ export default class SheetManager implements ISheetManager {
   getAllSheets(): ISheetDefine[] {
     return Array.from(this._sheets.values());
   }
+  /**
+   * 根据配置中的sheets顺序排序sheet
+   * @param sheets 要排序的sheet
+   */
+  sortSheets(sheets: ISheetDefine[]) {
+    // 将 Map 转换为数组并排序
+    const sheetsArray = Array.from(this._sheets.entries());
+    sheetsArray.sort(([keyA], [keyB]) => {
+      const aIndex = sheets.findIndex(s => s.sheetKey === keyA);
+      const bIndex = sheets.findIndex(s => s.sheetKey === keyB);
+      return aIndex - bIndex;
+    });
+
+    // 清空并重新构建 Map
+    this._sheets.clear();
+    sheetsArray.forEach(([key, sheet]) => {
+      this._sheets.set(key, sheet);
+    });
+  }
 
   /**
    * 获取指定sheet

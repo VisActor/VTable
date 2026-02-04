@@ -118,10 +118,30 @@ const option = {
   widthMode:'standard'
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+```
 
+## Component Layout Priority
 
+The `componentLayoutOrder` option allows you to control the layout priority of `title` and `legend`. This affects the order in which they occupy space in the drawing area. By default, the order is `['legend', 'title']`.
 
+To place the title above the legend, you can configure it as follows:
 
+```javascript
+const option = {
+  // ...other options
+  title: {
+    text: 'Sales Analysis',
+    orient: 'top',
+    align: 'center'
+  },
+  legends: {
+    orient: 'top',
+    // ...other legend options
+  },
+  componentLayoutOrder: ['title', 'legend']
+};
+
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 ```
 
 ##

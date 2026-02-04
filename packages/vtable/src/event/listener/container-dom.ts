@@ -35,6 +35,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         selectedRanges[0].start.row === selectedRanges[0].end.row;
       const editor =
         justOneCellSelected &&
+        (table as ListTableAPI).getEditor &&
         (table as ListTableAPI).getEditor(table.stateManager.select.cellPos.col, table.stateManager.select.cellPos.row);
       const editorInput = editor?.getInputElement?.();
       if (editorInput === relatedTarget) {
