@@ -1,3 +1,34 @@
+# v1.23.1
+
+2026-02-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add componentLayoutOrder api [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: optimize search latency
+- **@visactor/vtable**: 新增基于记录索引的单元格值修改方法及优化范围删除性能
+- **@visactor/vtable**: 添加syncRecordOperationsToSourceRecords选项支持同步操作到源数据
+- **@visactor/vtable**: 新增批量修改单元格值接口及优化筛选态数据同步
+- **@visactor/vtable-sheet**: add updateOption api for vtable-sheet
+- **@visactor/vtable-sheet**: add editable  for vtable-sheet
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix prepareEdit occor error [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: updateOption run resize logic [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: 修复过滤状态下新增记录位置错误问题
+- **@visactor/vtable**: handle escape option correctly for CSV export
+- **@visactor/vtable**: set white background for media overlay image
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: legend and title component position calculation logic [#4965](https://github.com/VisActor/VTable/issues/4965)
+
+
+
+[更多详情请查看 v1.23.1](https://github.com/VisActor/VTable/releases/tag/v1.23.1)
+
 # v1.23.0
 
 2026-01-29
