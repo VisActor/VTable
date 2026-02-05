@@ -7,17 +7,16 @@
 
 - **@visactor/vtable**: add componentLayoutOrder api [#4965](https://github.com/VisActor/VTable/issues/4965)
 - **@visactor/vtable**: optimize search latency
-- **@visactor/vtable**: 新增基于记录索引的单元格值修改方法及优化范围删除性能
-- **@visactor/vtable**: 添加syncRecordOperationsToSourceRecords选项支持同步操作到源数据
-- **@visactor/vtable**: 新增批量修改单元格值接口及优化筛选态数据同步
-- **@visactor/vtable-sheet**: add updateOption api for vtable-sheet
-- **@visactor/vtable-sheet**: add editable  for vtable-sheet
+- **@visactor/vtable**: add batch update cell value api and optimize filter state data sync
+- **@visactor/vtable**: add syncRecordOperationsToSourceRecords option to support sync operations to source data
+- **@visactor/vtable-sheet**: add updateOption api and optimize formula calculation
+- **@visactor/vtable-sheet**: add editable option to support edit cell
 
 **🐛 Bug fix**
 
 - **@visactor/vtable**: fix prepareEdit occor error [#4871](https://github.com/VisActor/VTable/issues/4871)
 - **@visactor/vtable**: updateOption run resize logic [#4965](https://github.com/VisActor/VTable/issues/4965)
-- **@visactor/vtable**: 修复过滤状态下新增记录位置错误问题
+- **@visactor/vtable**: fix add record position error in filter state
 - **@visactor/vtable**: handle escape option correctly for CSV export
 - **@visactor/vtable**: set white background for media overlay image
 
