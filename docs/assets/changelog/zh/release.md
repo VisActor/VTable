@@ -1,3 +1,34 @@
+# v1.23.1
+
+2026-02-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 componentLayoutOrder 接口 [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: 优化搜索性能
+- **@visactor/vtable**: 新增基于记录索引的单元格值修改方法及优化范围删除性能
+- **@visactor/vtable**: 新增 syncRecordOperationsToSourceRecords 选项支持同步操作到源数据
+- **@visactor/vtable**: 新增批量修改单元格值接口及优化筛选态数据同步
+- **@visactor/vtable-sheet**: 新增 updateOption 接口 及优化公式计算
+- **@visactor/vtable-sheet**: 新增 editable 选项支持编辑单元格
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 prepareEdit 方法执行错误问题 [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: 修复 updateOption 方法执行时触发 resize 逻辑问题 [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: 修复过滤状态下新增记录位置错误问题
+- **@visactor/vtable**: 修复 CSV 导出时 escape 选项处理错误问题
+- **@visactor/vtable**: 修复媒体覆盖图片背景设置为白色问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化图例和标题组件位置计算逻辑 [#4965](https://github.com/VisActor/VTable/issues/4965)
+
+
+
+[更多详情请查看 v1.23.1](https://github.com/VisActor/VTable/releases/tag/v1.23.1)
+
 # v1.23.0
 
 2026-01-29
