@@ -6,7 +6,8 @@
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
-    "paths": {}
+    "paths": {
+    }
   },
   "ts-node": {
     "transpileOnly": true,

@@ -514,6 +514,12 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
+  /**
+   * 标题与图例的布局计算顺序，仅影响两者的布局与可用绘制区域的缩减顺序。
+   *
+   * 默认不配置时等价于 ['legend', 'title']，与现有行为保持一致。
+   */
+  componentLayoutOrder?: ('legend' | 'title')[];
   emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
@@ -546,6 +552,7 @@ export interface BaseTableConstructorOptions {
 
   canvas?: HTMLCanvasElement;
   viewBox?: IBoundsLike;
+  /** 具体同 VChart 的 Option 配置。会与表格中标准的 chart Option 配置进行合并，后在图表中使用。 */
   chartOption?: any;
   disableInteraction?: boolean;
 
@@ -612,6 +619,10 @@ export interface BaseTableConstructorOptions {
 
     /** 当编辑器没有退出情况时，可继续选中其他单元格，比如在vtable-sheet中，当编辑器没有退出情况时，可继续选中其他单元格 */
     selectCellWhenCellEditorNotExists?: boolean;
+
+    /**当点击到非表格dom上时，正常会退出编辑或者取消选中或者释放图表的交互状态，
+     * 如果需要继续保留这些状态，不想被取消，不想退出编辑或者取消选中或者释放图表的交互状态，可以配置这个钩子返回true */
+    shouldTreatAsClickOnTable?: (e: MouseEvent) => boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -717,6 +728,14 @@ export interface BaseTableAPI {
   tableX: number;
   /** 表格偏移像素值 垂直方向 */
   tableY: number;
+  /** 表格左边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_left: number;
+  /** 表格右边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_right: number;
+  /** 表格上边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_top: number;
+  /** 表格下边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_bottom: number;
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
   /** 表格宽度模式 */
@@ -860,7 +879,7 @@ export interface BaseTableAPI {
    * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
    */
-  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  getTableIndexByRecordIndex: (recordIndex: number | number[]) => number;
   /**
    * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
@@ -872,7 +891,7 @@ export interface BaseTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number | number[]) => CellAddress;
   getRecordShowIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 

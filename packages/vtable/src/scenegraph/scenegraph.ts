@@ -43,6 +43,7 @@ import { computeRowHeight, computeRowsHeight } from './layout/compute-row-height
 import { emptyGroup } from './utils/empty-group';
 import { dealBottomFrozen, dealFrozen, dealRightFrozen, resetFrozen, resetRowFrozen } from './layout/frozen';
 import {
+  clearCellChartCacheImage,
   updateChartSizeForResizeColWidth,
   updateChartSizeForResizeRowHeight,
   updateChartState
@@ -84,6 +85,11 @@ import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
 import type { Chart } from './graphic/chart';
+import {
+  clearAndReleaseBrushingChartInstance,
+  getBrushingChartInstance,
+  getBrushingChartInstanceCellPos
+} from './graphic/active-cell-chart-list';
 
 registerForVrender();
 
@@ -140,11 +146,39 @@ export class Scenegraph {
   _dealAutoFillHeightOriginRowsHeight: number; // hack 缓存一个值 用于处理autoFillHeight的逻辑判断 在某些情况下是需要更新此值的 如增删数据 但目前没有做这个
 
   _needUpdateContainer: boolean = false;
+
+  // 图表实例管理相关属性（从全局变量迁移过来）
+  /** 存储当前被执行brush框选操作的图表实例。目的是希望在鼠标离开框选的单元格 不希望chart实例马上释放掉。 实例需要保留住，这样brush框才会不消失 */
+  brushingChartInstance: any;
+  /** brush操作对应的单元格位置 */
+  brushingChartInstanceCellPos: { col: number; row: number };
+  /** 存储可视区域内鼠标hover到的该列的图表实例，key为列号做个缓存 */
+  chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>>;
+  /** 存储可视区域内鼠标hover到的该行的图表实例，key为行号做个缓存 */
+  chartInstanceListRowByRowDirection: Record<number, Record<number, any>>;
+  /** 列方向延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForColumnDirection: any[];
+  /** 行方向延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForRowDirection: any[];
+  /** 视图范围延迟执行的定时器数组 */
+  delayRunDimensionHoverTimerForViewRange: any[];
+  /** 是否禁用所有图表实例的tooltip */
+  disabledTooltipToAllChartInstances: boolean;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
     this.mergeMap = new Map();
+
+    // 初始化图表实例管理相关属性
+    this.brushingChartInstance = undefined;
+    this.brushingChartInstanceCellPos = { col: -1, row: -1 };
+    this.chartInstanceListColumnByColumnDirection = {};
+    this.chartInstanceListRowByRowDirection = {};
+    this.delayRunDimensionHoverTimerForColumnDirection = [];
+    this.delayRunDimensionHoverTimerForRowDirection = [];
+    this.delayRunDimensionHoverTimerForViewRange = [];
+    this.disabledTooltipToAllChartInstances = false;
 
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
@@ -710,21 +744,43 @@ export class Scenegraph {
    * @param row
    * @returns
    */
-  deactivateChart(col: number, row: number) {
+  deactivateChart(col: number, row: number, forceRelease: boolean = false) {
+    if (forceRelease) {
+      // 处理场景：brush操作后，鼠标直接移动到空白区域进行滚动，希望释放掉brush操作的图表实例
+      const brushingChartInstanceCellPos = getBrushingChartInstanceCellPos(this);
+      const brushingChartInstance = getBrushingChartInstance(this);
+      if (brushingChartInstanceCellPos && brushingChartInstance) {
+        clearAndReleaseBrushingChartInstance(this);
+        //单独清理brush操作的单元格的chart缓存图片  因为updateChartState逻辑走到的clearChartCacheImage方法清理时排除了brushing cell的chart缓存图片(有绘制图片的那个共享图表实例覆盖到activechart实例上问题)
+        clearCellChartCacheImage(brushingChartInstanceCellPos.col, brushingChartInstanceCellPos.row, this);
+      }
+    }
     if (col === -1 || row === -1) {
       return;
     }
     const cellGroup = this.getCell(col, row);
     if ((cellGroup?.firstChild as any)?.deactivate) {
+      if (forceRelease) {
+        (cellGroup?.firstChild as any)?.deactivate?.(this.table, {
+          forceRelease: true,
+          releaseChartInstance: true,
+          releaseColumnChartInstance: true,
+          releaseRowChartInstance: true,
+          releaseAllChartInstance: true
+        });
+        return;
+      }
       const chartNode = cellGroup?.firstChild as Chart;
       const chartType = chartNode.attribute.spec.type;
 
       (cellGroup?.firstChild as any)?.deactivate?.(
         this.table,
-        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip
           ? {
               releaseChartInstance:
-                chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
+                chartType === 'pie'
+                  ? false
+                  : chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
                   ? (col !== this.table.stateManager.hover.cellPos.col &&
                       row !== this.table.stateManager.hover.cellPos.row) ||
                     this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
@@ -741,13 +797,18 @@ export class Scenegraph {
                     this.table.stateManager.hover.cellPos.row >
                       this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
               releaseColumnChartInstance:
-                col !== this.table.stateManager.hover.cellPos.col ||
-                this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
-                this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+                chartType === 'pie'
+                  ? false
+                  : col !== this.table.stateManager.hover.cellPos.col ||
+                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                    this.table.stateManager.hover.cellPos.row >
+                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
               releaseRowChartInstance:
-                row !== this.table.stateManager.hover.cellPos.row ||
-                this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
-                this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+                chartType === 'pie'
+                  ? false
+                  : row !== this.table.stateManager.hover.cellPos.row ||
+                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
             }
           : undefined
       );
@@ -845,9 +906,18 @@ export class Scenegraph {
   updateChartSizeForResizeRowHeight(row: number) {
     updateChartSizeForResizeRowHeight(this, row);
   }
-  /** 更新图表的高亮状态 */
-  updateChartState(datum: any) {
-    this.table.isPivotChart() && updateChartState(this, datum);
+  /** 更新图表的高亮状态 点击图元或者框选brush选中图元 一般有高亮状态*/
+  updateChartState(datum: any, selectedDataMode: 'click' | 'brush' | 'multiple-select') {
+    if (this.table.isPivotChart()) {
+      if (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) {
+        const brushingChartInstance = getBrushingChartInstance(this);
+        if (brushingChartInstance) {
+          brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
+        }
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage?.clearChartState?.();
+      }
+      updateChartState(this, datum, selectedDataMode);
+    }
   }
 
   updateCheckboxCellState(col: number, row: number, checked: boolean | 'indeterminate') {

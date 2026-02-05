@@ -72,7 +72,7 @@ export class ValueFilter {
     while (stack.length > 0) {
       const item = stack.pop();
 
-      if (item.vtableMerge && Array.isArray(item.children)) {
+      if (item?.vtableMerge && Array.isArray(item?.children)) {
         for (let i = item.children.length - 1; i >= 0; i--) {
           stack.push(item.children[i]);
         }

@@ -1,3 +1,77 @@
+# v1.23.0
+
+2026-01-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**:vtable-sheet 新增事件系统 [#4861](https://github.com/VisActor/VTable/issues/4861)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 columnWidthConfig 计算逻辑 [#4935](https://github.com/VisActor/VTable/issues/4935)
+- **@visactor/vtable**: 维度值变化时重新计算 totalTree [#4953](https://github.com/VisActor/VTable/issues/4953)
+- **@visactor/vtable**: 维度值变化时更新 cached changedTree 值
+- **@visactor/vtable-sheet**: 新增记录后更新公式
+- **@visactor/vtable**: 修复 react 类型定义
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 修复 pivotTable 区分无维度值和维度值为空字符串的问题
+
+[更多详情请查看 v1.23.0](https://github.com/VisActor/VTable/releases/tag/v1.23.0)
+
+# v1.22.12
+
+2026-01-26
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 cancelEditCell 方法到 ListTable 和 PivotTable APIs
+- **@visactor/vtable**: 新增 selectedStateFilter 方法到 pivotChart
+- **@visactor/vtable**: 新增 clearChartState 和 disableTooltip 方法
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当点击行系列号时 makeSelectCellVisible 设置为 false [#4942](https://github.com/VisActor/VTable/issues/4942)
+- **@visactor/vtable**: 修复当行系列号启用时最后一行维度列宽问题 [#4946](https://github.com/VisActor/VTable/issues/4946)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化图表交互
+
+
+
+[更多详情请查看 v1.22.12](https://github.com/VisActor/VTable/releases/tag/v1.22.12)
+
+# v1.22.11
+
+2026-01-20
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复prepareEdit 代码运行报错问题 [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: 修复粘贴到表格时性能问题 [#4912](https://github.com/VisActor/VTable/issues/4912)
+- **@visactor/vtable**: 修复透视图列维度中区分空值和空字符串值问题
+- **scenegraph**: 修复开始超出结束时重置代理行状态问题
+- **@visactor/vtable**: 修复时间单位computeCountToTimeScale月精确度问题 [#4909](https://github.com/VisActor/VTable/issues/4909)
+- **@visactor/vtable**: 修复主题配置theme.headerStyle.textStickBaseOnAlign不生效问题
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增showSubTotalsOnTreeNode 到 dataConfig配置 [#4850](https://github.com/VisActor/VTable/issues/4850)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 修复当有合并单元格时删除列的问题 [#4848](https://github.com/VisActor/VTable/issues/4848)
+- **@visactor/vtable**: 修复单元格合并删除记录逻辑问题 [#4848](https://github.com/VisActor/VTable/issues/4848)
+
+
+
+[更多详情请查看 v1.22.11](https://github.com/VisActor/VTable/releases/tag/v1.22.11)
+
 # v1.22.10
 
 2026-01-05

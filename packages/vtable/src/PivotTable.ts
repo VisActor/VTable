@@ -254,12 +254,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.internalProps.emptyTip?.resetVisible();
         }
       }
+      // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      this.resize();
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
       setTimeout(() => {
         if (this.isReleased) {
           return;
         }
-        this.resize();
+        // // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+        // this.resize(); 注释掉这里为解决有组件的情况下 异步导致的布局抖动问题,所以把resize提到了setTimeout之前。但是原先在setTimeout中可能是为了scrollBar布局，但提到前面测试了下好像没有什么问题！后续看观察scrollBar
         this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
       }, 0);
     }
@@ -500,7 +503,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
-      this.scenegraph.resize();
+      // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
@@ -511,7 +514,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+    this.resize();
     setTimeout(() => {
+      // // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      // this.resize();
       this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
     }, 0);
     // this.render();
@@ -1720,9 +1727,28 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
-    if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    // if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    //   this._updateSize();
+    //   this.internalProps.title.resize();
+    //   this.scenegraph.resize();
+    // }
+    let isHasComponent = false;
+    if (this.internalProps.title || this.internalProps.legends) {
       this._updateSize();
-      this.internalProps.title.resize();
+      isHasComponent = true;
+    }
+    // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          legend?.resize();
+        });
+      } else if (component === 'title') {
+        this.internalProps.title?.resize();
+      }
+    });
+    if (isHasComponent) {
       this.scenegraph.resize();
     }
     this.eventManager.updateEventBinder();
@@ -1752,6 +1778,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 结束编辑 */
   completeEditCell() {
     this.editorManager.completeEdit();
+  }
+  /** 取消编辑 */
+  cancelEditCell() {
+    this.editorManager.cancelEdit();
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
@@ -2022,25 +2052,39 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             newValue
           );
       } else {
+        let indicatorPosition: { position: 'col' | 'row'; index?: number };
         const colKeys = cellDimensionPath.colHeaderPaths
           ?.filter((path: any) => {
             return !path.virtual;
           })
-          .map((colPath: any) => {
+          .map((colPath: any, index: number) => {
+            if (colPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'col',
+                index
+              };
+            }
             return colPath.indicatorKey ?? colPath.value;
           });
         const rowKeys = cellDimensionPath.rowHeaderPaths
           ?.filter((path: any) => {
             return !path.virtual;
           })
-          .map((rowPath: any) => {
+          .map((rowPath: any, index: number) => {
+            if (rowPath.indicatorKey) {
+              indicatorPosition = {
+                position: 'row',
+                index
+              };
+            }
             return rowPath.indicatorKey ?? rowPath.value;
           });
         this.dataset.changeTreeNodeValue(
-          !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
-          this.internalProps.layoutMap.indicatorsAsCol ? colKeys.slice(0, -1) : colKeys,
+          rowKeys,
+          colKeys,
           (this.internalProps.layoutMap as PivotHeaderLayoutMap).getIndicatorKey(col, row),
-          newValue
+          newValue,
+          indicatorPosition
         );
       }
     } else if (this.flatDataToObjects) {

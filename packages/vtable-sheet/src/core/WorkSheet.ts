@@ -1,24 +1,26 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import { isValid, type EventEmitter } from '@visactor/vutils';
-import { EventTarget } from '../event/event-target';
+import { isValid } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
   IWorkSheetAPI,
   CellCoord,
   CellRange,
   CellValue,
-  CellValueChangedEvent,
-  CellClickEvent,
-  SelectionChangedEvent,
-  IFormulaManagerOptions
+  IFormulaManagerOptions,
+  IThemeDefine,
+  IFilterConfig,
+  IFilterState,
+  ISheetDefine,
+  IVTableSheetUpdateOptions
 } from '../ts-types';
-import { WorkSheetEventType } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
-import { detectFunctionParameterPosition } from '../formula/formula-helper';
 import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
+import { WorkSheetEventManager } from '../event/worksheet-event-manager';
+import type { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
+import type { IWorksheetEventSource } from '../event/event-interfaces';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -34,7 +36,19 @@ export type WorkSheetConstructorOptions = {
   sheetTitle: string;
 } & Omit<ListTableConstructorOptions, 'records'>;
 
-export class WorkSheet extends EventTarget implements IWorkSheetAPI {
+/**
+ * WorkSheet 增量更新配置项
+ *
+ * 仅涵盖与布局和交互相关的常用配置，不包含 records/columns 等结构性配置。
+ */
+type WorkSheetUpdateOptions = Pick<
+  IVTableSheetUpdateOptions,
+  'defaultRowHeight' | 'defaultColWidth' | 'dragOrder' | 'VTablePluginModules'
+> & {
+  theme?: TYPES.VTableThemes.ITableThemeDefine;
+};
+
+export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
   options: IWorkSheetOptions;
   /** 容器 */
@@ -46,25 +60,59 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   /** 选择范围 */
   private selection: CellRange | null = null;
   /** Sheet 唯一标识 */
-  private sheetKey: string;
+  private _sheetKey: string;
   /** Sheet 标题 */
-  private sheetTitle: string;
+  private _sheetTitle: string;
 
   /** 事件总线 */
-  private eventBus: EventEmitter;
+  private eventBus: VTableSheetEventBus;
+
+  /** WorkSheet 事件管理器 */
+  eventManager: WorkSheetEventManager;
 
   private vtableSheet: VTableSheet;
 
   editingCell: { sheet: string; row: number; col: number } | null = null;
 
+  /**
+   * 获取 Sheet Key
+   */
+  get sheetKey(): string {
+    return this._sheetKey;
+  }
+
+  /**
+   * 获取事件总线
+   */
+  getEventBus(): VTableSheetEventBus {
+    if (!this.eventBus) {
+      // If eventBus is not initialized yet, return the parent VTableSheet's event bus
+      return this.vtableSheet.getEventBus();
+    }
+    return this.eventBus;
+  }
+
+  /**
+   * 获取 Sheet 标题
+   */
+  get sheetTitle(): string {
+    return this._sheetTitle;
+  }
+
+  /**
+   * 设置 Sheet 标题
+   */
+  set sheetTitle(title: string) {
+    this._sheetTitle = title;
+  }
+
   constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
-    super();
     this.options = options;
     this.container = options.container;
 
     // 初始化基本属性
-    this.sheetKey = options.sheetKey;
-    this.sheetTitle = options.sheetTitle;
+    this._sheetKey = options.sheetKey;
+    this._sheetTitle = options.sheetTitle;
     this.vtableSheet = sheet;
 
     // 创建表格元素
@@ -82,16 +130,14 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 获取行数
    */
   get rowCount(): number {
-    const data = this.getData();
-    return data ? data.length : 0;
+    return this.getRowCount();
   }
 
   /**
    * 获取列数
    */
   get colCount(): number {
-    const data = this.getData();
-    return data && data.length > 0 ? data[0].length : 0;
+    return this.getColumnCount();
   }
 
   /**
@@ -149,10 +195,23 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
     this.element.classList.add('vtable-excel-cursor');
-    // 获取事件总线
-    this.eventBus = (this.tableInstance as any).eventBus;
+    // 使用统一事件总线
+    this.eventBus = this.vtableSheet.getEventBus();
+
+    // 初始化 WorkSheet 事件管理器
+    this.eventManager = new WorkSheetEventManager(this);
     // 在 tableInstance 上设置 VTableSheet 引用，方便插件访问
     (this.tableInstance as any).__vtableSheet = this.vtableSheet;
+
+    // 通知 VTableSheet 的事件中转器绑定这个 sheet 的事件
+    (this.vtableSheet as any).tableEventRelay.bindSheetEvents(this.sheetKey, this.tableInstance);
+
+    // 触发工作表准备就绪事件
+    if (this.eventManager) {
+      // this.eventManager.emitReady();
+      // 触发数据加载完成事件
+      this.eventManager.emitDataLoaded(this.rowCount, this.colCount);
+    }
   }
 
   /**
@@ -199,13 +258,38 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       showCopyCellBorder: true,
       cutSelected: true
     };
+    return {
+      ...(this.options as any),
+      dragOrder: {
+        maintainArrayDataOrder: true
+      },
+      addRecordRule: 'Array',
+      defaultCursor: 'cell',
+      records: this.options.data,
+      sortState: this.options.sortState,
+      container: this.element,
+      showHeader: isShowTableHeader,
+      keyboardOptions,
+      theme: this._adjustTheme(this.options.theme),
+      excelOptions: {
+        fillHandle: true
+      },
+      customConfig: {
+        selectCellWhenCellEditorNotExists: true
+      }
+      // maintainedColumnCount: 120
+      // 其他特定配置
+    };
+  }
 
+  _adjustTheme(theme: TYPES.VTableThemes.ITableThemeDefine): TYPES.VTableThemes.ITableThemeDefine {
     //更改theme 的frameStyle
     let changedTheme: TYPES.VTableThemes.ITableThemeDefine;
-    if (!this.options?.theme) {
+    if (!theme) {
       this.options.theme = VTableThemes.DEFAULT;
+    } else {
+      this.options.theme = theme;
     }
-    this.options.theme = this.options.theme;
     if (this.options.theme.bodyStyle && !isPropertyWritable(this.options.theme, 'bodyStyle')) {
       //测试是否使用了主题 使用了主题配置项不可写。
       changedTheme = (this.options.theme as TYPES.VTableThemes.TableTheme).extends(
@@ -231,30 +315,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         });
       }
     }
-    return {
-      ...(this.options as any),
-      dragOrder: {
-        maintainArrayDataOrder: true
-      },
-      addRecordRule: 'Array',
-      defaultCursor: 'cell',
-      records: this.options.data,
-      sortState: this.options.sortState,
-      container: this.element,
-      showHeader: isShowTableHeader,
-      keyboardOptions,
-      theme: changedTheme,
-      excelOptions: {
-        fillHandle: true
-      },
-      customConfig: {
-        selectCellWhenCellEditorNotExists: true
-      }
-      // maintainedColumnCount: 120
-      // 其他特定配置
-    };
+    return changedTheme;
   }
-
   /**
    * 设置事件监听
    */
@@ -337,16 +399,16 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endRow: event.row,
       endCol: event.col
     };
+    // 如果在公式编辑状态，不处理
+    if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+      return;
+    }
 
-    // 使用事件类型枚举触发事件给父组件
-    const cellSelectedEvent: CellClickEvent = {
-      row: event.row,
-      col: event.col,
-      value: event.value,
-      cellElement: event.cellElement,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.CELL_CLICK, cellSelectedEvent);
+    // 重置公式栏显示标志，让公式栏显示选中单元格的值
+    const formulaUIManager = this.vtableSheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
   }
 
   /**
@@ -363,15 +425,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: r.end.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionChangedEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_CHANGED, selectionChangedEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -390,15 +444,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: last.col
       };
     }
-    // 保持原始事件结构，同时确保类型符合定义
-    const selectionEndEvent: SelectionChangedEvent = {
-      row: event.row,
-      col: event.col,
-      ranges: event.ranges,
-      cells: event.cells,
-      originalEvent: event.originalEvent
-    };
-    this.fire(WorkSheetEventType.SELECTION_END, selectionEndEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode();
   }
 
   /**
@@ -406,13 +452,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param event 值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    const cellValueChangedEvent: CellValueChangedEvent = {
-      row: event.row,
-      col: event.col,
-      oldValue: event.rawValue,
-      newValue: event.changedValue
-    };
-    this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
+    this.vtableSheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
   }
 
   /**
@@ -435,7 +475,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         const { recordIndex, recordCount } = event;
         if (recordIndex !== undefined && recordCount > 0) {
           // 在指定位置插入行，需要调整该位置之后的公式引用
-          this.vtableSheet.formulaManager.addRows(sheetKey, recordIndex, recordCount);
+          this.vtableSheet.formulaManager.addRows(
+            sheetKey,
+            recordIndex + this.tableInstance.columnHeaderLevelCount,
+            recordCount
+          );
         } else {
           // 默认在末尾添加
           const currentRowCount = this.getRowCount();
@@ -657,8 +701,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     console.log('handleChangeColumnHeaderPosition', event);
     // 注意：tableInstance.options.columns 中的顺序并未更新（和其他操作如delete/add等操作不同）需要注意后续是否有什么问题
     const { source, target } = event;
-    const { col: sourceCol, row: sourceRow } = source;
-    const { col: targetCol, row: targetRow } = target;
+    const { col: sourceCol } = source;
+    const { col: targetCol } = target;
     const sheetKey = this.getKey();
     //#region 处理数据变化后，公式引擎中的数据也需要更新
     const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
@@ -689,24 +733,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     //#endregion
     // 在指定位置插入行，需要调整该位置之后的公式引用
     this.vtableSheet.formulaManager.changeRowHeaderPosition(sheetKey, sourceRow, targetRow);
-  }
-
-  /**
-   * 触发事件
-   * @param eventName 事件名称
-   * @param eventData 事件数据
-   */
-  protected fireEvent(eventName: string, eventData: any): void {
-    this.fire(eventName, eventData);
-  }
-
-  /**
-   * 监听事件
-   * @param eventName 事件名称
-   * @param handler 事件处理函数
-   */
-  on(eventName: string, handler: (...args: any[]) => void): this {
-    return super.on(eventName, handler);
   }
 
   // 用于防止短时间内多次调用resize的节流变量
@@ -762,6 +788,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           // 触发VTable的resize
           this.tableInstance.resize();
         }
+
+        // // 触发工作表尺寸改变事件
+        // if (this.eventManager) {
+        //   this.eventManager.emitResized(width, height);
+        // }
       }
     } catch (error) {
       console.error('Error during resize:', error);
@@ -884,23 +915,12 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
-      const oldValue = data[row][col];
       data[row][col] = value;
 
       // 更新表格实例
       if (this.tableInstance) {
         this.tableInstance.changeCellValue(col, row, value);
       }
-
-      // 触发事件
-      const event: CellValueChangedEvent = {
-        row,
-        col,
-        oldValue,
-        newValue: value
-      };
-
-      this.fire('cellValueChanged', event);
     }
   }
 
@@ -931,7 +951,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       rowNum = coordOrCol.row;
     } else {
       col = coordOrCol;
-      rowNum = row!;
+      if (row === undefined) {
+        throw new Error('row is required when coordOrCol is a number');
+      }
+      rowNum = row;
     }
 
     let colStr = '';
@@ -1020,13 +1043,65 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       }
     }
     data.shift();
+    // Sheet 的 dragOrder 与 VTable ListTableConstructorOptions 的 dragOrder 类型不兼容，此处显式传入 VTable 所需格式
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 仅用于从展开中排除，不传入 updateOption
+    const { dragOrder: _omitSheetDragOrder, ...optionsRest } = this.options;
     this.tableInstance.updateOption({
-      ...this.options,
+      ...optionsRest,
+      dragOrder: { maintainArrayDataOrder: true },
       columns: this.options.columns as any as ColumnsDefine,
       showHeader: true,
       records: data
     });
   }
+  updateSheetOption(sheetOption: IWorkSheetOptions): void {
+    this.options = {
+      ...this.options,
+      ...sheetOption
+    };
+    const tableOptions = this._generateTableOptions();
+    this.tableInstance.updateOption(tableOptions);
+  }
+  // /**
+  //  * 增量更新当前工作表配置，并映射到底层 VTable 的细粒度 API。
+  //  *
+  //  * 该方法只负责从全局配置提取需要更新到工作表的配置，不是sheets中的sheetDefine的配置更新的情况。
+  //  */
+  // updateGlobalOptionToSheet(option: WorkSheetUpdateOptions): void {
+  //   if (!this.tableInstance || !option) {
+  //     return;
+  //   }
+
+  //   const table = this.tableInstance;
+  //   const nextOptionPatch: Partial<ListTableConstructorOptions> = {};
+  //   // 主题（优先使用 updateTheme，而不是全量 updateOption）
+  //   if (option.theme) {
+  //     const tableTheme = option.theme;
+  //     if (tableTheme) {
+  //       this.options.theme = tableTheme;
+  //       nextOptionPatch.theme = this._adjustTheme(tableTheme);
+  //     }
+  //   }
+
+  //   // 默认行高/列宽（通过属性设置，并在最后触发一次重建渲染）
+  //   if (option.defaultRowHeight !== undefined) {
+  //     nextOptionPatch.defaultRowHeight = option.defaultRowHeight;
+  //   }
+  //   if (option.defaultColWidth !== undefined) {
+  //     nextOptionPatch.defaultColWidth = option.defaultColWidth;
+  //   }
+  //   // 如果需要通过 updateOption 合并部分配置（如 showHeader / filter / theme 等）
+  //   if (Object.keys(nextOptionPatch).length > 0) {
+  //     const mergedOptions: ListTableConstructorOptions = {
+  //       ...(table.options as ListTableConstructorOptions),
+  //       ...nextOptionPatch
+  //     };
+  //     table.updateOption(mergedOptions, {
+  //       // clearColWidthCache: false,
+  //       // clearRowHeightCache: false
+  //     });
+  //   }
+  // }
 
   /**
    * 处理公式粘贴 - 调整公式中的单元格引用
@@ -1039,9 +1114,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   processFormulaPaste(
     formulas: string[][],
     sourceStartCol: number,
-    sourceStartRow: number,
+    _sourceStartRow: number,
     targetStartCol: number,
-    targetStartRow: number
+    _targetStartRow: number
   ): string[][] {
     if (!formulas || formulas.length === 0) {
       return formulas;
@@ -1049,7 +1124,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
     // 计算整个范围的相对位移
     const colOffset = targetStartCol - sourceStartCol;
-    const rowOffset = targetStartRow - sourceStartRow;
+    const rowOffset = _targetStartRow - _sourceStartRow;
 
     // 使用计算出的位移来调整公式
     return FormulaPasteProcessor.adjustFormulasForPasteWithOffset(formulas, colOffset, rowOffset);
@@ -1167,6 +1242,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         },
         formula
       );
+
+      // 事件触发移到 formula-manager 中处理，这里不再触发
+      // 这样可以确保事件在正确的时机触发，并且只在操作成功时触发
     }
   }
 
@@ -1175,6 +1253,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    */
   release(): void {
     // 清理事件监听器
+    if (this.tableInstance) {
+      (this.vtableSheet as any).tableEventRelay.unbindSheetEvents(this.sheetKey, this.tableInstance);
+    }
 
     // 释放表格实例
     if (this.tableInstance) {

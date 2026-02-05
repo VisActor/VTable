@@ -44,11 +44,13 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
 import { DataSource, type CachedDataSource } from './data';
+import { getValueFromDeepArray } from './data/DataSource';
 import {
   listTableAddRecord,
   listTableAddRecords,
   listTableChangeCellValue,
   listTableChangeCellValues,
+  listTableChangeCellValuesByRanges,
   listTableDeleteRecords,
   listTableUpdateRecords,
   sortRecords
@@ -179,12 +181,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
+    // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+    this.resize();
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
       if (this.isReleased) {
         return;
       }
-      this.resize();
+      // // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      // this.resize(); 注释掉这里为解决有组件的情况下 异步导致的布局抖动问题,所以把resize提到了setTimeout之前。但是原先在setTimeout中可能是为了scrollBar布局，但提到前面测试了下好像没有什么问题！后续看观察scrollBar
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
     }, 0);
   }
@@ -573,7 +578,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number): CellAddress {
+  getCellAddrByFieldRecord(field: FieldDef, recordIndex: number | number[]): CellAddress {
     if (this.transpose) {
       return { col: this.getTableIndexByRecordIndex(recordIndex), row: this.getTableIndexByField(field) };
     }
@@ -708,7 +713,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
-      this.scenegraph.resize();
+      // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
@@ -720,7 +725,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.pluginManager.updatePlugins(options.plugins);
+    // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+    this.resize();
     setTimeout(() => {
+      // // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      // this.resize();
       this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
     }, 0);
     return new Promise(resolve => {
@@ -1309,6 +1318,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
+    // 配合 syncRecordOperationsToSourceRecords：筛选态新增的“草稿行”会被临时强制保留在筛选视图中；
+    // 当用户主动 updateFilterRules 时清空，保证本次筛选结果严格由 filterRules 决定。
+    (this.dataSource as any).clearForceVisibleRecords?.();
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);
@@ -1476,9 +1488,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
 
     this._updateSize();
-    if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      this.internalProps.title.resize();
-    }
+    // if (this.internalProps.title && !this.internalProps.title.isReleased) {
+    //   this.internalProps.title.resize();
+    // }
+    // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          legend?.resize();
+        });
+      } else if (component === 'title') {
+        this.internalProps.title?.resize();
+      }
+    });
+
     this.scenegraph.resize();
 
     if (this.options.emptyTip) {
@@ -1529,6 +1553,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /** 结束编辑 */
   completeEditCell() {
     this.editorManager.completeEdit();
+  }
+  /** 取消编辑 */
+  cancelEditCell() {
+    this.editorManager.cancelEdit();
   }
   /** 获取单元格对应的编辑器 */
   getEditor(col: number, row: number) {
@@ -1594,9 +1622,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
     row: number,
     value: string | number | null,
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValue(col, row, value, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValue(
+      col,
+      row,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      noTriggerChangeCellValuesEvent
+    );
   }
   /**
    * 批量更新多个单元格的数据
@@ -1611,9 +1648,301 @@ export class ListTable extends BaseTable implements ListTableAPI {
     startRow: number,
     values: (string | number)[][],
     workOnEditableCell = false,
-    triggerEvent = true
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
   ) {
-    return listTableChangeCellValues(startCol, startRow, values, workOnEditableCell, triggerEvent, this);
+    return listTableChangeCellValues(
+      startCol,
+      startRow,
+      values,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      noTriggerChangeCellValuesEvent
+    );
+  }
+
+  /**
+   * 批量更新多个离散选区内的单元格数据。
+   * 当前仅支持将所有选区内的单元格统一修改为同一个 value。
+   * @param ranges 选区范围（支持多个）
+   * @param value 要设置的统一值
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   * @param triggerEvent 是否触发 CHANGE_CELL_VALUE / CHANGE_CELL_VALUES 事件
+   * @param noTriggerChangeCellValuesEvent 是否不触发 CHANGE_CELL_VALUES 聚合事件
+   */
+  changeCellValuesByRanges(
+    ranges: CellRange[],
+    value: string | number | null,
+    workOnEditableCell = false,
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) {
+    return listTableChangeCellValuesByRanges(
+      ranges,
+      value,
+      workOnEditableCell,
+      triggerEvent,
+      this,
+      noTriggerChangeCellValuesEvent
+    );
+  }
+
+  /**
+   * 直接修改源数据 records 上的字段值，并在值变化时触发变更事件。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
+  changeSourceCellValue(recordIndex: number | number[], field: FieldDef, value: string | number | null) {
+    const tableIndex = this.getTableIndexByRecordIndex(recordIndex);
+    const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+    if (tableIndex < 0 || cellAddr.col < 0 || cellAddr.row < 0) {
+      return;
+    }
+    this.dataSource.changeFieldValue(value, tableIndex, field, cellAddr.col, cellAddr.row, this);
+    const beforeChangeValue = this.getCellRawValue(cellAddr.col, cellAddr.row);
+    const oldValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    const changedValue = this.getCellOriginValue(cellAddr.col, cellAddr.row);
+    if (oldValue !== changedValue) {
+      const changeValue = {
+        col: cellAddr.col,
+        row: cellAddr.row,
+        recordIndex,
+        field,
+        rawValue: beforeChangeValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+    }
+  }
+
+  /**
+   * 根据源数据 records 的 index + field 修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   * 该接口会修改源数据并可选择性刷新筛选/排序后的视图状态。
+   */
+  changeCellValueByRecord(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const noTriggerChangeCellValuesEvent = options?.noTriggerChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+    let record: any;
+    let oldValue: any;
+    if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+      record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+      oldValue = record?.[field as any];
+    }
+
+    this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+    if (!triggerEvent) {
+      return;
+    }
+
+    const changedValue =
+      record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+
+    if (oldValue !== changedValue) {
+      const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
+      const changeValue = {
+        col: cellAddr?.col ?? -1,
+        row: cellAddr?.row ?? -1,
+        recordIndex,
+        field,
+        rawValue: oldValue,
+        currentValue: oldValue,
+        changedValue
+      };
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+      if (!noTriggerChangeCellValuesEvent) {
+        this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: [changeValue] });
+      }
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  /**
+   * changeCellValueByRecord 的别名形式（位置参数）。
+   */
+  changeCellValueBySource(
+    recordIndex: number | number[],
+    field: FieldDef,
+    value: string | number | null,
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValueByRecord(recordIndex, field, value, {
+      triggerEvent,
+      noTriggerChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  /**
+   * 根据源数据 records 的 index + field 批量修改值。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   * 会在批处理完成后可选择性触发一次 CHANGE_CELL_VALUES 聚合事件。
+   */
+  changeCellValuesByRecords(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    options?: {
+      triggerEvent?: boolean;
+      noTriggerChangeCellValuesEvent?: boolean;
+      autoRefresh?: boolean;
+    }
+  ) {
+    const triggerEvent = options?.triggerEvent ?? true;
+    const noTriggerChangeCellValuesEvent = options?.noTriggerChangeCellValuesEvent;
+    const autoRefresh = options?.autoRefresh ?? true;
+
+    const resultChangeValues: {
+      col: number;
+      row: number;
+      recordIndex?: number | number[];
+      field?: any;
+      rawValue: string | number;
+      currentValue: string | number;
+      changedValue: string | number;
+    }[] = [];
+
+    for (let i = 0; i < changeValues.length; i++) {
+      const { recordIndex, field, value } = changeValues[i];
+
+      const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
+      let record: any;
+      let oldValue: any;
+      if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+        record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
+        oldValue = record?.[field as any];
+      }
+
+      this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
+
+      if (triggerEvent) {
+        const changedValue =
+          record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+        if (oldValue !== changedValue) {
+          const changeValue = {
+            col: (this.getCellAddrByFieldRecord(field, recordIndex)?.col ?? -1) as number,
+            row: (this.getCellAddrByFieldRecord(field, recordIndex)?.row ?? -1) as number,
+            recordIndex,
+            field,
+            rawValue: oldValue,
+            currentValue: oldValue,
+            changedValue
+          };
+          this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, changeValue);
+          resultChangeValues.push(changeValue);
+        }
+      }
+    }
+
+    if (!noTriggerChangeCellValuesEvent && resultChangeValues.length && triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUES, { values: resultChangeValues });
+    }
+
+    if (autoRefresh) {
+      this.refreshAfterSourceChange();
+    }
+  }
+
+  /**
+   * changeCellValuesByRecords 的别名形式（位置参数）。
+   */
+  changeCellValuesBySource(
+    changeValues: {
+      recordIndex: number | number[];
+      field: FieldDef;
+      value: string | number | null;
+    }[],
+    triggerEvent = true,
+    noTriggerChangeCellValuesEvent?: boolean
+  ) {
+    return this.changeCellValuesByRecords(changeValues, {
+      triggerEvent,
+      noTriggerChangeCellValuesEvent,
+      autoRefresh: true
+    });
+  }
+
+  /**
+   * 源数据发生修改后的刷新入口，可控制是否重新应用筛选/排序并重建场景树。
+   * @param reapplyFilter 是否重新应用筛选（默认 true）
+   * @param reapplySort 是否重新应用排序（默认 true）
+   * @param clearRowHeightCache 是否清理行高缓存（默认 true）
+   */
+  refreshAfterSourceChange(options?: {
+    reapplyFilter?: boolean;
+    reapplySort?: boolean;
+    clearRowHeightCache?: boolean;
+  }) {
+    const reapplyFilter = options?.reapplyFilter ?? true;
+    const reapplySort = options?.reapplySort ?? true;
+    const clearRowHeightCache = options?.clearRowHeightCache ?? true;
+
+    this.scenegraph.clearCells();
+
+    if (this.sortState && reapplySort) {
+      (this.dataSource as any).clearSortedIndexMap?.();
+      (this.dataSource as any).sortedIndexMap?.clear?.();
+    }
+
+    if (reapplyFilter) {
+      if (this.sortState && reapplySort) {
+        this.dataSource.updateFilterRulesForSorted(this.dataSource.dataConfig?.filterRules);
+        sortRecords(this);
+      } else {
+        this.dataSource.updateFilterRules(this.dataSource.dataConfig?.filterRules);
+      }
+    } else if (this.sortState && reapplySort) {
+      sortRecords(this);
+    }
+
+    const traverseColumns = (columns: ColumnsDefine) => {
+      for (let i = 0; i < (columns?.length ?? 0); i++) {
+        const column: any = columns[i];
+        const aggregators = column?.vtable_aggregator;
+        if (aggregators) {
+          if (Array.isArray(aggregators)) {
+            for (let j = 0; j < aggregators.length; j++) {
+              aggregators[j]?.recalculate?.();
+            }
+          } else {
+            aggregators?.recalculate?.();
+          }
+        }
+        if (column?.columns) {
+          traverseColumns(column.columns);
+        }
+      }
+    };
+    traverseColumns(this.internalProps.columns);
+
+    this.refreshRowColCount();
+    this.internalProps.layoutMap.clearCellRangeMap();
+    this.internalProps.useOneRowHeightFillAll = false;
+    this.stateManager.initCheckedState(this.records);
+    this.scenegraph.createSceneGraph(!clearRowHeightCache);
+    this.internalProps.emptyTip?.resetVisible();
+    this.resize();
   }
   /**
    * 添加数据 单条数据
@@ -1622,12 +1951,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecord(record: any, recordIndex?: number | number[]) {
+  addRecord(record: any, recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecord(record, recordIndex, this);
     adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, [record]);
     this.internalProps.emptyTip?.resetVisible();
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records: [record],
         recordIndex,
@@ -1643,7 +1972,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
-  addRecords(records: any[], recordIndex?: number | number[]) {
+  addRecords(records: any[], recordIndex?: number | number[], triggerEvent = true) {
     const success = listTableAddRecords(records, recordIndex, this);
     //_heightResizedRowMap修正，里面的行号需要修正，保证添加数据后 其他行号做对应调整
     if (typeof recordIndex === 'number') {
@@ -1652,7 +1981,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.emptyTip?.resetVisible();
 
     // 只在成功添加时触发事件
-    if (success) {
+    if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
         records,
         recordIndex,
@@ -1665,7 +1994,23 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除数据 支持多条数据
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
-  deleteRecords(recordIndexs: number[] | number[][]) {
+  deleteRecords(recordIndexs: number[] | number[][], triggerEvent = true) {
+    const deletedRecords: any[] = [];
+    // 收集被删除的记录
+    if (recordIndexs?.length > 0) {
+      recordIndexs.forEach(index => {
+        let record = null;
+        if (typeof index === 'number') {
+          record = this.dataSource.get(index);
+        } else {
+          // 目前无法正确处理嵌套情况
+          record = [];
+        }
+
+        deletedRecords.push(record);
+      });
+    }
+
     listTableDeleteRecords(recordIndexs, this);
     adjustHeightResizedRowMapWithDeleteRecordIndex(this as ListTable, recordIndexs as number[]);
     this.internalProps.emptyTip?.resetVisible();
@@ -1674,13 +2019,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
       rowIndexs.push(this.getBodyRowIndexByRecordIndex(recordIndexs[i]) + this.columnHeaderLevelCount);
     }
     // 触发删除数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
-      recordIndexs,
-      rowIndexs,
-      deletedCount: Array.isArray(recordIndexs[0])
-        ? (recordIndexs as number[][]).length
-        : (recordIndexs as number[]).length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
+        recordIndexs,
+        records: deletedRecords,
+        rowIndexs,
+        deletedCount: Array.isArray(recordIndexs[0])
+          ? (recordIndexs as number[][]).length
+          : (recordIndexs as number[]).length
+      });
+    }
   }
 
   /**
@@ -1690,15 +2038,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[]) {
+  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
     listTableUpdateRecords(records, recordIndexs, this);
 
     // 触发更新数据记录事件 - 假设操作成功
-    this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
-      records,
-      recordIndexs,
-      updateCount: records.length
-    });
+    if (triggerEvent) {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
+        records,
+        recordIndexs,
+        updateCount: records.length
+      });
+    }
   }
 
   _hasCustomRenderOrLayout() {

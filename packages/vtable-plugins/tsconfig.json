@@ -17,7 +17,7 @@
     ],
     "strict": false,
     "paths": {
-      "@src/*": ["./src/*"],
+      "@src/*": ["./src/*"]
     }
   },
   "ts-node": {

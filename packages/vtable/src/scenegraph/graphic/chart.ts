@@ -5,13 +5,21 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
 import {
+  setBrushingChartInstance,
+  clearAllChartInstanceList,
   clearChartInstanceListByColumnDirection,
   clearChartInstanceListByRowDirection,
   generateChartInstanceListByColumnDirection,
-  generateChartInstanceListByRowDirection
+  generateChartInstanceListByRowDirection,
+  generateChartInstanceListByViewRange,
+  getBrushingChartInstance,
+  isDisabledTooltipToAllChartInstances,
+  clearAndReleaseBrushingChartInstance,
+  clearBrushingChartInstance
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
+import { cancellableThrottle } from '../../tools/util';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -44,6 +52,7 @@ export class Chart extends Rect {
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
   activeChartInstance: any;
+  activeChartInstanceLastViewBox: { x1: number; y1: number; x2: number; y2: number } = null;
   activeChartInstanceHoverOnMark: any = null;
   justShowMarkTooltip: boolean = undefined;
   justShowMarkTooltipTimer: number = Date.now();
@@ -118,7 +127,9 @@ export class Chart extends Rect {
       y1: y1 - table.scrollTop,
       y2: y2 - table.scrollTop
     });
-    this.activeChartInstance?.release();
+    // this.chartInstance?.release();
+    // this.chartInstance = null;
+    // 是否全局显示唯一tooltip。如果置为 true， 当某个图表触发 tooltip时，同一页面的所有其他图表的 tooltip 将自动消失。
     this.attribute.ClassType.globalConfig.uniqueTooltip = false;
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
@@ -165,6 +176,13 @@ export class Chart extends Rect {
           ctx.setTransformForCurrent(true); // 替代原有的chart viewBox
           ctx.beginPath();
           ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
+          // console.log(
+          //   'beforeRender clip',
+          //   clipBound.x1,
+          //   clipBound.y1,
+          //   clipBound.x2 - clipBound.x1,
+          //   clipBound.y2 - clipBound.y1
+          // );
           ctx.clip();
           ctx.clearMatrix();
 
@@ -195,7 +213,7 @@ export class Chart extends Rect {
           }
         },
         componentShowContent:
-          (table.options as PivotChartConstructorOptions).chartDimensionLinkage &&
+          (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip &&
           this.attribute.spec.type !== 'scatter'
             ? {
                 tooltip: {
@@ -221,28 +239,90 @@ export class Chart extends Rect {
 
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(this.activeChartInstance);
     this.activeChartInstance.on('click', (params: any) => {
-      if (this.attribute.spec.select?.enable === false) {
-        table.scenegraph.updateChartState(null);
-      } else if (Chart.temp) {
-        table.scenegraph.updateChartState(params?.datum);
+      if (Chart.temp) {
+        if (this.attribute.spec.select?.enable === false) {
+          if (
+            this.attribute.spec.interactions?.find(
+              (interaction: any) => interaction.type === 'element-select' && interaction.isMultiple
+            )
+          ) {
+            table.scenegraph.updateChartState(params?.datum, 'multiple-select');
+          } else {
+            table.scenegraph.updateChartState(null, undefined);
+          }
+        } else if (this.attribute.spec.select?.enable === true && this.attribute.spec.select?.mode === 'multiple') {
+          table.scenegraph.updateChartState(params?.datum, 'multiple-select');
+        } else {
+          // const brushingChartInstance = getBrushingChartInstance();
+          // if (brushingChartInstance && brushingChartInstance !== this.activeChartInstance) {
+          table.scenegraph.updateChartState(null, 'brush');
+          // }
+          table.scenegraph.updateChartState(params?.datum, 'click');
+        }
+        clearBrushingChartInstance(table.scenegraph);
+      }
+    });
+    let brushChangeThrottle: any;
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.listenBrushChange) {
+      // 创建可取消的节流函数，用于 brushChange 事件
+      brushChangeThrottle = cancellableThrottle(
+        table.scenegraph.updateChartState.bind(table.scenegraph),
+        (table.options as PivotChartConstructorOptions).chartDimensionLinkage?.brushChangeDelay ?? 100
+      );
+
+      this.activeChartInstance.on('brushChange', (params: any) => {
+        brushChangeThrottle.throttled(params?.value?.inBrushData, 'brush');
+      });
+    }
+    this.activeChartInstance.on('brushStart', (params: any) => {
+      const brushingChartInstance = getBrushingChartInstance(table.scenegraph);
+      if (brushingChartInstance !== this.activeChartInstance) {
+        if (brushingChartInstance) {
+          // brush框选完一个图表，马上去框选另一个单元格的图表，释放掉前一个图表的实例，如果有联动情况下这个释放可能会影响，但是在dimensionhover事件中会马上新建个实例的
+          clearAndReleaseBrushingChartInstance(table.scenegraph);
+          // brushingChartInstance.getChart()?.getComponentsByKey('brush')[0].clearBrushStateAndMask();
+        }
+        setBrushingChartInstance(this.activeChartInstance, col, row, table.scenegraph);
       }
     });
     this.activeChartInstance.on('brushEnd', (params: any) => {
-      table.scenegraph.updateChartState(params?.value?.inBrushData);
+      // 取消 brushChange 中可能还在等待的节流执行
+      brushChangeThrottle?.cancel();
+
+      // 立即执行 updateChartState，确保 brushEnd 的调用能及时执行
+      table.scenegraph.updateChartState(params?.value?.inBrushData, 'brush');
       Chart.temp = 0;
       setTimeout(() => {
         Chart.temp = 1;
       }, 0);
     });
-    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage) {
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage?.showTooltip) {
+      if (this.attribute.spec.type === 'pie') {
+        this.activeChartInstance.on('pointerover', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+
+          generateChartInstanceListByViewRange(datum, table, false);
+        });
+        this.activeChartInstance.on('pointerout', { markName: 'pie' }, (params: any) => {
+          const categoryField = this.attribute.spec.categoryField;
+          const datum = { [categoryField]: params?.datum?.[categoryField] };
+          generateChartInstanceListByViewRange(datum, table, true);
+        });
+      }
       this.activeChartInstance.on('dimensionHover', (params: any) => {
+        if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
+          return;
+        }
+        //和下面调用disableTooltip做对应，一个关闭，一个打开。如果这里不加这句话可能导致这个实例没有tooltip的情况（如这个实例没有机会被加入到chartInstanceListColumnByColumnDirection或chartInstanceListRowByRowDirection中）
+        this.activeChartInstance.disableTooltip(false);
+
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
         const viewport = params?.event?.viewport;
         if (viewport) {
           const xValue = dimensionInfo.data[0].series.positionToDataX(viewport.x);
           const yValue = dimensionInfo.data[0].series.positionToDataY(viewport.y);
-
           if (this.attribute.spec.type === 'scatter') {
             // console.log('receive scatter dimensionHover', params.action);
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, false, true);
@@ -299,12 +379,10 @@ export class Chart extends Rect {
               }
             } else if (prev_justShowMarkTooltip === false && justShowMarkTooltip === true) {
               delayRunDimensionHover = false;
-              clearTimeout(this.delayRunDimensionHoverTimer);
-              this.delayRunDimensionHoverTimer = undefined;
+              this.clearDelayRunDimensionHoverTimer();
             } else if (prev_justShowMarkTooltip === true && justShowMarkTooltip === true) {
               delayRunDimensionHover = false;
-              clearTimeout(this.delayRunDimensionHoverTimer); //及时清除之前的定时器
-              this.delayRunDimensionHoverTimer = undefined;
+              this.clearDelayRunDimensionHoverTimer(); //及时清除之前的定时器
             }
             //#endregion
 
@@ -340,9 +418,13 @@ export class Chart extends Rect {
                   );
                 }
               } else {
-                clearTimeout(this.delayRunDimensionHoverTimer);
+                this.clearDelayRunDimensionHoverTimer();
                 //还是需要有个延迟出现的时间，否则从mark切换到dimension时，tooltip不会出现了（ preMark !== this.activeChartInstanceHoverOnMark总是为false）
                 this.delayRunDimensionHoverTimer = setTimeout(() => {
+                  if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
+                    // 如果当前是禁止显示tooltip的状态，这里的逻辑不会执行。否则这个延时会导致显示tooltip
+                    return;
+                  }
                   if (indicatorsAsCol) {
                     generateChartInstanceListByRowDirection(
                       row,
@@ -435,8 +517,18 @@ export class Chart extends Rect {
       });
     }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
+
+    if (isDisabledTooltipToAllChartInstances(table.scenegraph)) {
+      // 如果所有图表实例都禁用了dimensionHover，新建图表实例时，禁用当前图表实例的tooltip。避免在brush过程中显示tooltip
+      this.activeChartInstance.disableTooltip(true);
+    }
   }
   static temp: number = 1;
+
+  clearDelayRunDimensionHoverTimer() {
+    clearTimeout(this.delayRunDimensionHoverTimer);
+    this.delayRunDimensionHoverTimer = undefined;
+  }
   /**
    * 图表失去焦点
    * @param table
@@ -444,32 +536,50 @@ export class Chart extends Rect {
   deactivate(
     table: BaseTableAPI,
     {
+      forceRelease = false,
       releaseChartInstance = true,
       releaseColumnChartInstance = true,
-      releaseRowChartInstance = true
-    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
+      releaseRowChartInstance = true,
+      releaseAllChartInstance = false
+    }: {
+      forceRelease?: boolean;
+      releaseChartInstance?: boolean;
+      releaseColumnChartInstance?: boolean;
+      releaseRowChartInstance?: boolean;
+      releaseAllChartInstance?: boolean;
+    } = {}
   ) {
-    // console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
+    // console.log('----deactivate chart instance 1', this.activeChartInstance?.id, this.parent.col, this.parent.row);
     this.activeChartInstanceHoverOnMark = null;
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
-    clearTimeout(this.delayRunDimensionHoverTimer);
-    this.delayRunDimensionHoverTimer = undefined;
+    this.clearDelayRunDimensionHoverTimer();
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd
-      this.activeChartInstance?.updateViewBox(
-        {
-          x1: -1000,
-          x2: -800,
-          y1: -1000,
-          y2: -800
-        },
-        false,
-        false
-      );
-      this.activeChartInstance?.release();
-      this.activeChartInstance = null;
+
+      if (
+        this.activeChartInstance &&
+        (forceRelease ||
+          !getBrushingChartInstance(table.scenegraph) ||
+          getBrushingChartInstance(table.scenegraph) !== this.activeChartInstance)
+      ) {
+        this.activeChartInstance?.updateViewBox(
+          {
+            x1: -1000,
+            x2: -800,
+            y1: -1000,
+            y2: -800
+          },
+          false,
+          false
+        );
+        // console.log('----release chart instance 1', this.activeChartInstance.id, this.parent.col, this.parent.row);
+        this.activeChartInstance?.release();
+
+        this.activeChartInstance = null;
+      }
+
       const { col, row } = this.parent;
       // 隐藏左侧纵向crosshair的labelHoverOnAxis
       table.internalProps.layoutMap.isAxisCell(table.rowHeaderLevelCount - 1, row) &&
@@ -492,19 +602,25 @@ export class Chart extends Rect {
           table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild?.hideLabelHoverOnAxis?.();
       }
     }
-    if (releaseColumnChartInstance) {
-      clearChartInstanceListByColumnDirection(
-        this.parent.col,
-        this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
-        table
-      );
-    }
-    if (releaseRowChartInstance) {
-      clearChartInstanceListByRowDirection(
-        this.parent.row,
-        this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
-        table
-      );
+    if (releaseAllChartInstance) {
+      clearAllChartInstanceList(table, forceRelease);
+    } else {
+      if (releaseColumnChartInstance) {
+        clearChartInstanceListByColumnDirection(
+          this.parent.col,
+          this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
+          table,
+          forceRelease
+        );
+      }
+      if (releaseRowChartInstance) {
+        clearChartInstanceListByRowDirection(
+          this.parent.row,
+          this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
+          table,
+          forceRelease
+        );
+      }
     }
   }
   /** 更新图表对应数据 */
@@ -524,12 +640,19 @@ export class Chart extends Rect {
 
     const { x1, y1, x2, y2 } = cellGroup.globalAABBBounds;
 
-    return {
+    const viewBox = {
       x1: Math.ceil(x1 + padding[3] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       x2: Math.ceil(x1 + cellGroup.attribute.width - padding[1] + table.scrollLeft + (table.options.viewBox?.x1 ?? 0)),
       y1: Math.ceil(y1 + padding[0] + table.scrollTop + (table.options.viewBox?.y1 ?? 0)),
       y2: Math.ceil(y1 + cellGroup.attribute.height - padding[2] + table.scrollTop + (table.options.viewBox?.y1 ?? 0))
     };
+
+    if (this.activeChartInstance) {
+      this.activeChartInstanceLastViewBox = viewBox;
+    } else {
+      this.activeChartInstanceLastViewBox = null;
+    }
+    return viewBox;
   }
 }
 

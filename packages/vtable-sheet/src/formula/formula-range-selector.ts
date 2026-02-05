@@ -5,8 +5,10 @@
 
 import { FormulaThrottle } from './formula-throttle';
 import type { FormulaManager } from '../managers/formula-manager';
-import type { CellRange, CellValueChangedEvent, FormulaCell } from '../ts-types';
+import type { CellRange, FormulaCell } from '../ts-types';
 import { detectFunctionParameterPosition } from './formula-helper';
+import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types';
+import { excludeEditCellFromSelection } from '../sheet-helper';
 
 export interface FunctionParamPosition {
   start: number;
@@ -334,7 +336,7 @@ export class FormulaRangeSelector {
    * 处理单元格值变更事件
    * @param event 事件
    */
-  handleCellValueChanged(event: CellValueChangedEvent): void {
+  handleCellValueChanged(event: TableEventHandlersEventArgumentMap['change_cell_value']): void {
     const activeWorkSheet = this.formulaManager.sheet.getActiveSheet();
     const formulaManager = this.formulaManager.sheet.formulaManager;
 
@@ -344,7 +346,7 @@ export class FormulaRangeSelector {
 
     try {
       // 检查新输入的值是否为公式
-      const newValue = event.newValue;
+      const newValue = event.changedValue;
       if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
         try {
           // 检查是否包含循环引用
@@ -454,7 +456,7 @@ export class FormulaRangeSelector {
   /**
    * 处理范围选择模式下的单元格选中事件
    */
-  handleSelectionChangedForRangeMode(event: any): void {
+  handleSelectionChangedForRangeMode(): void {
     const activeWorkSheet = this.formulaManager.sheet.getActiveSheet();
     const formulaWorkingOnCell = this.formulaManager.formulaWorkingOnCell;
     const formulaManager = this.formulaManager.sheet.formulaManager;
@@ -501,13 +503,9 @@ export class FormulaRangeSelector {
     // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
     const editCell = formulaManager.formulaWorkingOnCell;
     // const safeSelections = selections
-    //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
+    //   .map(selection => excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
     //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
-    const safeSelections = this.formulaManager.sheet.excludeEditCellFromSelection(
-      todoSelection,
-      editCell?.row || 0,
-      editCell?.col || 0
-    );
+    const safeSelections = excludeEditCellFromSelection(todoSelection, editCell?.row || 0, editCell?.col || 0);
 
     this.handleSelectionChanged([safeSelections], formulaInput, isCtrlAddSelection, (col: number, row: number) =>
       activeWorkSheet!.addressFromCoord(col, row)

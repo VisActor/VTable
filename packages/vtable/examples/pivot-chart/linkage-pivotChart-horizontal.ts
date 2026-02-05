@@ -50,16 +50,16 @@ export function createTable() {
         data: {
           id: 'data'
         },
-        // brush: {
-        //   brushType: 'rect',
-        //   brushLinkSeriesIndex: [1, 2],
-        //   inBrush: {
-        //     colorAlpha: 1
-        //   },
-        //   outOfBrush: {
-        //     colorAlpha: 0.2
-        //   }
-        // },
+        brush: {
+          brushType: 'rect',
+          brushLinkSeriesIndex: [1, 2],
+          inBrush: {
+            colorAlpha: 1
+          },
+          outOfBrush: {
+            colorAlpha: 0.2
+          }
+        },
         direction: 'horizontal',
         xField: '230417171050011',
         yField: '230417170554008',

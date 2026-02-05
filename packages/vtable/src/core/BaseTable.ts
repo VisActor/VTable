@@ -178,6 +178,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   tableNoFrameHeight: number;
   tableX: number;
   tableY: number;
+  _tableBorderWidth_left: number = 0;
+  _tableBorderWidth_right: number = 0;
+  _tableBorderWidth_top: number = 0;
+  _tableBorderWidth_bottom: number = 0;
   _widthMode: WidthModeDef;
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
@@ -680,12 +684,42 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   resize() {
     this._updateSize();
-    this.internalProps.legends?.forEach(legend => {
-      legend?.resize();
+    // 组件布局优先级仅影响 title/legend 的布局与可用绘制区域缩减顺序
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    //先布局orient为bottom或right的组件
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          if (legend.orient === 'bottom' || legend.orient === 'right') {
+            legend?.resize();
+          }
+        });
+      } else if (component === 'title') {
+        if (
+          this.internalProps.title?._titleOption.orient === 'bottom' ||
+          this.internalProps.title?._titleOption.orient === 'right'
+        ) {
+          this.internalProps.title?.resize();
+        }
+      }
     });
-    if (this.internalProps.title) {
-      this.internalProps.title.resize();
-    }
+    //后布局orient为top或left的组件
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          if (legend.orient === 'top' || legend.orient === 'left') {
+            legend?.resize();
+          }
+        });
+      } else if (component === 'title') {
+        if (
+          this.internalProps.title?._titleOption.orient === 'top' ||
+          this.internalProps.title?._titleOption.orient === 'left'
+        ) {
+          this.internalProps.title?.resize();
+        }
+      }
+    });
     if (this.internalProps.emptyTip) {
       this.internalProps.emptyTip.resize();
     }
@@ -1251,25 +1285,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       //考虑表格整体边框的问题
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+      this._tableBorderWidth_left = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+      this._tableBorderWidth_right = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
+      this._tableBorderWidth_top = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+      this._tableBorderWidth_bottom = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
       if (this.theme.frameStyle?.innerBorder) {
         this.tableX += this.contentOffsetX;
         this.tableY += this.contentOffsetY;
         this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.contentOffsetX;
         this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.contentOffsetY;
       } else {
-        this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-        this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
-        const rightBorder = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
+        this.tableX += this._tableBorderWidth_left;
+        this.tableY += this._tableBorderWidth_top;
+        const rightBorder = this._tableBorderWidth_right;
         this.tableNoFrameWidth =
           width -
           (rightBorder > vScrollBarWidth ? rightBorder - vScrollBarWidth : 0) -
-          ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
+          this._tableBorderWidth_left -
           this.contentOffsetX;
-        const bottomBorder = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
+        const bottomBorder = this._tableBorderWidth_bottom;
         this.tableNoFrameHeight =
           height -
           (bottomBorder > hScrollBarWidth ? bottomBorder - hScrollBarWidth : 0) -
-          ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
+          this._tableBorderWidth_top -
           this.contentOffsetY;
       }
     }
@@ -3231,7 +3269,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param enableShiftSelectMode 是否按住 shift 键
    */
-  startDragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, enableShiftSelectMode?: boolean) {
+  startDragSelectCol(
+    colIndex: number,
+    enableCtrlSelectMode?: boolean,
+    enableShiftSelectMode?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = enableShiftSelectMode && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
     const startRow = 0;
@@ -3243,7 +3286,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3253,7 +3296,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       enableShiftSelectMode,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3264,7 +3307,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param colIndex 列索引
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    */
-  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean) {
+  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
@@ -3276,7 +3319,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       false,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3297,7 +3340,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param isShift 是否按住 shift 键
    */
-  startDragSelectRow(rowIndex: number, enableCtrlSelectMode?: boolean, isShift?: boolean) {
+  startDragSelectRow(
+    rowIndex: number,
+    enableCtrlSelectMode?: boolean,
+    isShift?: boolean,
+    makeSelectCellVisible?: boolean
+  ) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
     const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
@@ -3309,7 +3357,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     this.stateManager.updateInteractionState(InteractionState.grabing);
@@ -3319,7 +3367,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       isShift,
       enableCtrlSelectMode,
       false,
-      this.options.select?.makeSelectCellVisible ?? true,
+      makeSelectCellVisible,
       true
     );
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
@@ -3330,21 +3378,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param rowIndex 行索引
    * @param isCtrl 是否按住 ctrl 键
    */
-  dragSelectRow(rowIndex: number, isCtrl?: boolean) {
+  dragSelectRow(rowIndex: number, isCtrl?: boolean, makeSelectCellVisible?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
       lastSelectRange.end.row = rowIndex;
     }
-    this.stateManager.updateSelectPos(
-      this.colCount - 1,
-      rowIndex,
-      false,
-      isCtrl,
-      false,
-      this.options.select?.makeSelectCellVisible ?? true,
-      true
-    );
+    this.stateManager.updateSelectPos(this.colCount - 1, rowIndex, false, isCtrl, false, makeSelectCellVisible, true);
     //防止触发到pointertap事件执行endSelectCells方法 会导致select.ranges被合并扩大范围
     this.stateManager.select.selecting = false;
   }

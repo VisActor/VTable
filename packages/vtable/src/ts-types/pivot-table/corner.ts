@@ -3,7 +3,7 @@ import type { IImageStyleOption, ITextStyleOption, IStyleOption } from '../colum
 import type { ShowColumnRowType } from '../table-engine';
 import type { BaseCellInfo } from '../common';
 import type { BaseTableAPI } from '../base-table';
-import type { ICustomLayout, ICustomRender } from '@src/ts-types';
+import type { ICustomLayout, ICustomRender } from '../index';
 
 interface IBasicCornerDefine {
   titleOnDimension?: ShowColumnRowType; //角头标题是否显示列维度名称  否则显示行维度名称

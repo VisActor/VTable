@@ -56,7 +56,25 @@ export function createTable() {
                 domain: ['Consumer-Quantity', 'Corporate-Quantity', 'Home Office-Quantity'],
                 range: ['#2E62F1', '#4DC36A', '#FF8406']
               }
-            ]
+            ],
+            pie: {
+              state: {
+                // hover 状态：悬浮扇区放大
+                hover: {
+                  outerRadius: 0.9, // 悬浮时外半径增大（如从 0.8 → 0.9）
+                  innerRadius: 0, // 环形图内半径保持不变（或按需调整）
+                  // 可选：添加边框和透明度增强视觉效果
+                  stroke: '#00FFFF', // 边框颜色
+                  lineWidth: 2, // 边框粗细
+                  fillOpacity: 1 // 填充透明度
+                },
+                // （可选）hover_reverse：未悬浮扇区缩小
+                hover_reverse: {
+                  outerRadius: 0.7, // 未悬浮时外半径缩小
+                  innerRadius: 0 // 内半径保持不变
+                }
+              }
+            }
           },
           style: {
             padding: 1
@@ -64,6 +82,11 @@ export function createTable() {
         }
       ];
       const option = {
+        chartDimensionLinkage: {
+          showTooltip: true,
+          heightLimitToShowTooltipForEdgeRow: 180,
+          widthLimitToShowTooltipForEdgeColumn: 180
+        },
         hideIndicatorName: true,
         rows,
         columns,

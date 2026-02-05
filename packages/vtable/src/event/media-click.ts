@@ -136,6 +136,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         image.src = cellValue;
         image.style.maxWidth = '80%';
         image.style.maxHeight = '80%';
+        image.style.backgroundColor = '#FFF';
         overlay.appendChild(image);
 
         document.body.appendChild(overlay);

@@ -164,6 +164,21 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
 });
 ```
 
+## Disable Built-in Plugins
+
+If you want to disable built-in plugins, you can configure the plugins through VTablePluginModules to disable built-in plugins.
+
+For example, to disable the context menu plugin:
+
+```javascript 
+VTablePluginModules: [
+  {
+    module: VTablePlugins.ContextMenuPlugin,
+    disabled: true
+  }
+]
+```
+
 ## Combined Use of Plugins and Menus
 
 For combined use of plugins and menus, refer to [Menu Configuration](./menu.md) for specific menu configuration.
@@ -228,7 +243,7 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
     items: [
       {
         name: 'Import',
-        menuKey: VTableSheet.TYPES.MenuKey.IMPORT,
+        menuKey: 'import',
         description: 'Import data to replace current sheet'
       },
       {
@@ -236,17 +251,17 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
         items: [
           {
             name: 'Export CSV',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_CURRENT_SHEET_CSV,
+            menuKey: 'export-current-sheet-csv',
             description: 'Export current sheet data to csv'
           },
           {
             name: 'Export XLSX',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_CURRENT_SHEET_XLSX,
+            menuKey: 'export-current-sheet-xlsx',
             description: 'Export current sheet data to xlsx'
           },
           {
             name: 'Export All Sheets',
-            menuKey: VTableSheet.TYPES.MenuKey.EXPORT_ALL_SHEETS_XLSX,
+            menuKey: 'export-all-sheets-xlsx',
             description: 'Export all sheets to xlsx'
           }
         ]

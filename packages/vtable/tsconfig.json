@@ -17,6 +17,7 @@
     ],
     "strict": false,
     "paths": {
+      "@src/vrender": ["./src/vrender"],
       "@src/*": ["./src/*"],
       "@vutils-extension": ["./src/vutil-extension-temp"]
     },
