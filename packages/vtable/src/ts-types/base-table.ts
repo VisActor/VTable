@@ -514,6 +514,12 @@ export interface BaseTableConstructorOptions {
 
   legends?: ITableLegendOption | ITableLegendOption[];
   title?: ITitle;
+  /**
+   * 标题与图例的布局计算顺序，仅影响两者的布局与可用绘制区域的缩减顺序。
+   *
+   * 默认不配置时等价于 ['legend', 'title']，与现有行为保持一致。
+   */
+  componentLayoutOrder?: ('legend' | 'title')[];
   emptyTip?: true | IEmptyTip;
   /** 是否开启图表异步渲染 */
   renderChartAsync?: boolean;
@@ -722,6 +728,14 @@ export interface BaseTableAPI {
   tableX: number;
   /** 表格偏移像素值 垂直方向 */
   tableY: number;
+  /** 表格左边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_left: number;
+  /** 表格右边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_right: number;
+  /** 表格上边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_top: number;
+  /** 表格下边框宽度 包括lineWidth和shadowBlur*/
+  _tableBorderWidth_bottom: number;
   /** 表格宽度模式 */
   widthMode: WidthModeDef;
   /** 表格宽度模式 */
@@ -865,7 +879,7 @@ export interface BaseTableAPI {
    * 根据数据源的index 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
    */
-  getTableIndexByRecordIndex: (recordIndex: number) => number;
+  getTableIndexByRecordIndex: (recordIndex: number | number[]) => number;
   /**
    * 根据数据源的field 获取显示到表格中的index 行号或者列号（与转置相关）。注：ListTable特有接口
    * @param recordIndex
@@ -877,7 +891,7 @@ export interface BaseTableAPI {
    * @param recordIndex
    * @returns
    */
-  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number) => CellAddress;
+  getCellAddrByFieldRecord: (field: FieldDef, recordIndex: number | number[]) => CellAddress;
   getRecordShowIndexByCell: (col: number, row: number) => number;
   getRecordStartRowByRecordIndex: (index: number) => number;
 

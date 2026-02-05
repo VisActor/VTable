@@ -51,8 +51,10 @@ module.exports = {
     'd3-hexbin': path.resolve(__dirname, '../../common/temp/node_modules/.pnpm/d3-hexbin@0.2.2/node_modules/d3-hexbin/build/d3-hexbin.min.js'),
     'd3-hierarchy': path.resolve(__dirname, '../../common/temp/node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'),
     '@visactor/vtable-editors': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
-    '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
+    // 子路径映射需放在 @visactor/vtable 之前，确保精确匹配优先生效
+    '@visactor/vtable/es/themes': path.resolve(__dirname, '../vtable/src/themes.ts'),
     '@visactor/vtable/es/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts'),
+    '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
     '@src/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts'),
     '@vutils-extension': path.resolve(__dirname, './src/vutil-extension-temp/index.ts')
   },

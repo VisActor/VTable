@@ -81,7 +81,8 @@ function getCopyCellValue(
   }
 
   let value = cellValue;
-  if (option?.escape) {
+  if (option?.escape !== false) {
+    //escape默认逻辑改为true，进行转义
     value = escapeForCSV(value);
   } else if (typeof value === 'string') {
     value = '"' + value + '"';

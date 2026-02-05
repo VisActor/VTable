@@ -5,7 +5,7 @@ import brightTheme from './themes/BRIGHT';
 import arcoTheme from './themes/ARCO';
 import defaultTheme from './themes/DEFAULT';
 import materialDesignTheme from './themes/SIMPLIFY';
-import { themes as plugins } from './themes/themes';
+import { themes as plugins, tableThemeIsChanged } from './themes/themes';
 import { TableTheme } from './themes/theme-define';
 import type { ITableThemeDefine } from './ts-types';
 export const DARK = new TableTheme(darkTheme, darkTheme);
@@ -46,6 +46,7 @@ export function of(value: ITableThemeDefine | string | undefined | null): TableT
 export function get(): { [key: string]: TableTheme } {
   return extend(builtin, plugins);
 }
+export { tableThemeIsChanged };
 export { ITableThemeDefine, TableTheme };
 export default {
   DARK,

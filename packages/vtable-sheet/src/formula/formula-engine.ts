@@ -1815,10 +1815,10 @@ export class FormulaEngine {
       return;
     }
 
-    // 不能删除最后一个sheet
-    if (this.sheets.size <= 1) {
-      throw new Error('Cannot remove the last sheet');
-    }
+    // // 不能删除最后一个sheet
+    // if (this.sheets.size <= 1) {
+    //   throw new Error('Cannot remove the last sheet');
+    // }
 
     // 删除工作表数据
     this.sheetData.delete(sheetId);

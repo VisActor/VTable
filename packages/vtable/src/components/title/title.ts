@@ -63,12 +63,14 @@ export class Title {
     this._titleComponent.setAttributes({
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'
-          ? this.table.tableX + Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width)
-          : this.table.tableX,
+          ? this.table.tableX +
+            Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) -
+            this.table._tableBorderWidth_left
+          : this.table.tableX - this.table._tableBorderWidth_left,
       y:
         this._titleOption.y ?? this._titleOption.orient === 'bottom'
-          ? this.table.tableY + this.table.tableNoFrameHeight
-          : this.table.tableY,
+          ? this.table.tableY + this.table.tableNoFrameHeight - this.table._tableBorderWidth_top
+          : this.table.tableY - this.table._tableBorderWidth_top,
       // width: realWidth,
       width:
         this._titleOption.orient === 'top' || this._titleOption.orient === 'bottom'
@@ -162,12 +164,14 @@ export class Title {
       subtext: this._titleOption.subtext ?? '',
       x:
         this._titleOption.x ?? this._titleOption.orient === 'right'
-          ? this.table.tableX + Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width)
-          : this.table.tableX,
+          ? this.table.tableX +
+            Math.min(this.table.tableNoFrameWidth, this.table.getDrawRange().width) -
+            this.table._tableBorderWidth_left
+          : this.table.tableX - this.table._tableBorderWidth_left,
       y:
         this._titleOption.y ?? this._titleOption.orient === 'bottom'
-          ? this.table.tableY + this.table.tableNoFrameHeight
-          : this.table.tableY,
+          ? this.table.tableY + this.table.tableNoFrameHeight - this.table._tableBorderWidth_top
+          : this.table.tableY - this.table._tableBorderWidth_top,
       width:
         this._titleOption.orient === 'top' || this._titleOption.orient === 'bottom'
           ? realWidth
