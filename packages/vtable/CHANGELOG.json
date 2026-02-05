@@ -2,6 +2,56 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.23.1",
+      "tag": "@visactor/vtable_v1.23.1",
+      "date": "Wed, 04 Feb 2026 11:50:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: prepareEdit occor error #4871\n\n"
+          },
+          {
+            "comment": "feat: add componentLayoutOrder api #4965\n\n"
+          },
+          {
+            "comment": "refactor: legend and title component position calculation logic #4965\n\n"
+          },
+          {
+            "comment": "fix: updateOption run resize logic #4965\n\n"
+          },
+          {
+            "comment": "feat: optimize search latency\n\n"
+          },
+          {
+            "comment": "feat: add updateOption api for vtable-sheet\n\n"
+          },
+          {
+            "comment": "feat(table): 新增基于记录索引的单元格值修改方法及优化范围删除性能\n\n"
+          },
+          {
+            "comment": "feat(数据操作): 添加syncRecordOperationsToSourceRecords选项支持同步操作到源数据\n\n添加syncRecordOperationsToSourceRecords配置选项，当设置为true时，表格的增删改操作会同步到原始records数组\n修改DataSource类实现源数据同步逻辑，包括添加、删除和更新记录时对原始数据的处理\n添加相关测试用例验证同步功能\n在示例中添加同步选项的UI控制\n\n"
+          },
+          {
+            "comment": "fix(vtable): 修复过滤状态下新增记录位置错误问题\n\n"
+          },
+          {
+            "comment": "feat: 新增批量修改单元格值接口及优化筛选态数据同步\n\nrefactor: 重命名 changeCellValuesByIds 为 changeCellValuesByRanges\nfeat: 新增批量修改离散选区单元格值的接口 changeCellValuesByRanges\nfeat: 增加 syncRecordOperationsToSourceRecords 配置支持筛选态数据同步\nfeat: 新增 CHANGE_CELL_VALUES 聚合事件及相关文档\ndocs: 更新接口文档和指南说明新增功能\n\n"
+          },
+          {
+            "comment": "fix(csv): handle escape option correctly for CSV export"
+          },
+          {
+            "comment": "fix: set white background for media overlay image"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add updateOption api\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.23.0",
       "tag": "@visactor/vtable_v1.23.0",
       "date": "Thu, 29 Jan 2026 06:40:22 GMT",

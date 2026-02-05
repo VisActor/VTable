@@ -1,6 +1,61 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 29 Jan 2026 06:40:22 GMT and should not be manually modified.
+This log was last generated on Wed, 04 Feb 2026 11:50:19 GMT and should not be manually modified.
+
+## 1.23.1
+Wed, 04 Feb 2026 11:50:19 GMT
+
+### Minor changes
+
+- feat: add updateOption api
+
+
+
+### Updates
+
+- fix: prepareEdit occor error #4871
+
+
+- feat: add componentLayoutOrder api #4965
+
+
+- refactor: legend and title component position calculation logic #4965
+
+
+- fix: updateOption run resize logic #4965
+
+
+- feat: optimize search latency
+
+
+- feat: add updateOption api for vtable-sheet
+
+
+- feat(table): 新增基于记录索引的单元格值修改方法及优化范围删除性能
+
+
+- feat(数据操作): 添加syncRecordOperationsToSourceRecords选项支持同步操作到源数据
+
+添加syncRecordOperationsToSourceRecords配置选项，当设置为true时，表格的增删改操作会同步到原始records数组
+修改DataSource类实现源数据同步逻辑，包括添加、删除和更新记录时对原始数据的处理
+添加相关测试用例验证同步功能
+在示例中添加同步选项的UI控制
+
+
+- fix(vtable): 修复过滤状态下新增记录位置错误问题
+
+
+- feat: 新增批量修改单元格值接口及优化筛选态数据同步
+
+refactor: 重命名 changeCellValuesByIds 为 changeCellValuesByRanges
+feat: 新增批量修改离散选区单元格值的接口 changeCellValuesByRanges
+feat: 增加 syncRecordOperationsToSourceRecords 配置支持筛选态数据同步
+feat: 新增 CHANGE_CELL_VALUES 聚合事件及相关文档
+docs: 更新接口文档和指南说明新增功能
+
+
+- fix(csv): handle escape option correctly for CSV export
+- fix: set white background for media overlay image
 
 ## 1.23.0
 Thu, 29 Jan 2026 06:40:22 GMT
