@@ -62,7 +62,7 @@ export class TextAreaEditor implements IEditor {
   }
 
   getValue() {
-    return this.element.value;
+    return this.element?.value;
   }
 
   onStart({ value, referencePosition, container, endEdit }: EditContext<string>) {
