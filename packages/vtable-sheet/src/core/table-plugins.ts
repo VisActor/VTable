@@ -435,7 +435,20 @@ function handleDisableFirstRowAsHeader(table: VTable.ListTable): void {
 /**
  * 创建公式检测选项，使用vtable-sheet的公式引擎
  */
-function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVTableSheetOptions, vtableSheet?: any) {
+export function createFormulaDetectionOptions(
+  sheetDefine?: ISheetDefine,
+  options?: IVTableSheetOptions,
+  vtableSheet?: any
+) {
+  const getActiveSheetKey = (): string => {
+    return (
+      vtableSheet?.getActiveSheet?.()?.getKey?.() ||
+      vtableSheet?.sheetManager?.getActiveSheet?.()?.sheetKey ||
+      sheetDefine?.sheetKey ||
+      'Sheet1'
+    );
+  };
+
   return {
     /**
      * 自定义公式检测函数 - 使用vtable-sheet的公式引擎判断是否为公式
@@ -444,7 +457,7 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
       // 首先尝试使用vtable-sheet的公式管理器
       if (vtableSheet?.formulaManager) {
         try {
-          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          const sheetName = getActiveSheetKey();
           return vtableSheet.formulaManager.isCellFormula({
             sheet: sheetName,
             row: row,
@@ -472,7 +485,7 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
       // 首先尝试使用vtable-sheet的公式管理器
       if (vtableSheet?.formulaManager) {
         try {
-          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          const sheetName = getActiveSheetKey();
           return vtableSheet.formulaManager.getCellFormula({
             sheet: sheetName,
             row: row,
@@ -499,7 +512,7 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
       // 首先尝试使用vtable-sheet的公式管理器
       if (vtableSheet?.formulaManager) {
         try {
-          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          const sheetName = getActiveSheetKey();
           vtableSheet.formulaManager.setCellContent(
             {
               sheet: sheetName,
