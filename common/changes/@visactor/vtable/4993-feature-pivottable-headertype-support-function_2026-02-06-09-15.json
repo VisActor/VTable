@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: pivot table headerType support cellType funcitonal #4993\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
