@@ -246,6 +246,7 @@ export function createVideoCellGroup(
     table.scenegraph.updateNextFrame();
   });
   video.onerror = (): void => {
+    const regedIcons = icons.get();
     // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
     (image as any).image = (regedIcons.damage_pic as any).svg;
   };
