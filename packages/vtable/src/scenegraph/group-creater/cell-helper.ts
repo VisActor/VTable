@@ -790,12 +790,7 @@ export function updateCell(
     return undefined;
   }
 
-  const type =
-    isVtableMerge || isCustomMerge
-      ? 'text'
-      : table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-      : table.getBodyColumnType(col, row) ?? 'text';
+  const type = isVtableMerge || isCustomMerge ? 'text' : table.getCellType(col, row);
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

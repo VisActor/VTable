@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import type { CellInfo } from '../../src/ts-types';
 const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
 export function createTable(el: any, v: any) {
@@ -374,7 +375,7 @@ export function createTable(el: any, v: any) {
       ]
     }
   ];
-  const rows = [
+  const rows: VTable.IDimension[] = [
     {
       dimensionKey: '地区',
       title: '地区',
@@ -383,6 +384,8 @@ export function createTable(el: any, v: any) {
         color: 'red',
         bgColor: 'yellow'
       },
+      // headerType: 'text',
+
       width: 'auto',
       showSort: false
     },
@@ -391,6 +394,19 @@ export function createTable(el: any, v: any) {
       title: '省/自治区',
       width: 'auto',
       showSort: false,
+      headerType: (args: CellInfo) => {
+        const { row, col } = args;
+        if (row % 2 === 0) {
+          return 'text';
+        }
+        if (row % 3 === 0) {
+          return 'link';
+        }
+        return 'image';
+      },
+      linkJump: true,
+      linkDetect: false,
+      templateLink: 'https://www.google.com.hk/search?q={value}',
       headerStyle: {
         textStick: true,
         color: 'red',

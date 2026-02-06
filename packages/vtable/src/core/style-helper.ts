@@ -4,7 +4,7 @@ import { isFunction } from '@visactor/vutils';
 import * as headerStyleContents from '../header-helper/style';
 import * as columnStyleContents from '../body-helper/style';
 import type { BaseTableAPI, HeaderData, PivotTableProtected } from '../ts-types/base-table';
-import type { ColorPropertyDefine, FullExtendStyle, MappingRule } from '../ts-types';
+import type { ColorPropertyDefine, FullExtendStyle, HeaderTypeOption, MappingRule } from '../ts-types';
 import { mergeStyle } from '../plugins/custom-cell-style';
 
 const EMPTY_STYLE = {};
@@ -76,7 +76,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
       return EMPTY_STYLE;
     }
 
-    const styleClass = table.internalProps.headerHelper.getStyleClass((hd as HeaderData)?.headerType || 'text');
+    const styleClass = table.internalProps.headerHelper.getStyleClass(table.getCellType(col, row) as HeaderTypeOption);
     if (layoutMap.isBottomFrozenRow(col, row) && table.theme.bottomFrozenStyle) {
       cacheStyle = <FullExtendStyle>headerStyleContents.of(
         paddingForAxis ? { padding: paddingForAxis } : {},

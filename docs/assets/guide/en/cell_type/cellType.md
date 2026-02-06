@@ -254,6 +254,8 @@ The following shows an example of `cellType: ()=>{}`: (Please refer to [Example]
   }
 ```
 
+The headerType in the rows and columns of the pivot table, and the cellType in the indicators also support the function form.
+
 ## Extension: Custom Column Types (TypeScript)
 
 In real-world applications, in addition to VTable’s built-in `cellType` values (such as `text`, `link`, `image`, `video`, `progressbar`, `sparkline`, and `chart`), it is often necessary to attach **business-specific configurations** to column definitions, for example:
