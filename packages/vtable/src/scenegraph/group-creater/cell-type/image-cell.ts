@@ -7,7 +7,7 @@ import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { calcStartPosition } from '../../utils/cell-pos';
 import type { Scenegraph } from '../../scenegraph';
 import { getProp, getFunctionalProp } from '../../utils/get-prop';
-import { isValid } from '@visactor/vutils';
+import { isBase64, isValid, isValidUrl } from '@visactor/vutils';
 import { getQuadProps } from '../../utils/padding';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -213,11 +213,19 @@ export function createImageCellGroup(
       };
     }
   }
+
   (image as any).failCallback = () => {
     const regedIcons = icons.get();
     // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
     (image as any).image = (regedIcons.damage_pic as any).svg;
   };
+  if (!(isValidUrl(value) || value.includes('/') || isBase64(value))) {
+    //vrender-core 中的graphic文件中有这个判断 导致无法进入failCallback，所以这里暂时这样处理了
+    //按fail情况处理
+    const regedIcons = icons.get();
+    // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
+    (image as any).image = (regedIcons.damage_pic as any).svg;
+  }
   cellGroup.appendChild(image);
 
   return cellGroup;

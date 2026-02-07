@@ -791,6 +791,10 @@ export const menus = [
       },
       {
         path: 'icon',
+        name: 'image-loadFail'
+      },
+      {
+        path: 'icon',
         name: 'icon-shape'
       },
       {
