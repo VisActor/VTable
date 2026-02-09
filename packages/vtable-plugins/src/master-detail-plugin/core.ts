@@ -8,11 +8,11 @@ import { EventManager } from './events';
 import { SubTableManager } from './subtable';
 import { TableAPIExtensions } from './table-api-extensions';
 import { bindMasterDetailCheckboxChange } from './checkbox';
-
+import type { pluginsDefinition } from '@visactor/vtable';
 /**
  * 主从表插件核心类
  */
-export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
+export class MasterDetailPlugin implements pluginsDefinition.IVTablePlugin {
   id = `Master Detail Plugin`;
   name = 'Master Detail Plugin';
   runTime = [
@@ -564,17 +564,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 设置记录的子数据并展开
    */
   setRecordChildren(children: unknown[], col: number, row: number): void {
-    // 获取原始记录数据
-    const recordIndex = this.table.getRecordIndexByCell(col, row);
-    if (recordIndex === undefined || recordIndex === null) {
-      console.warn('Invalid row, cannot get record index');
-      return;
-    }
-
-    const realRecordIndex = typeof recordIndex === 'number' ? recordIndex : recordIndex[0];
-    const record = this.table.dataSource.get(realRecordIndex);
+    // Fix
+    const record = this.table.getCellOriginRecord(col, row);
     if (!record) {
-      console.warn('Cannot find record for index:', realRecordIndex);
+      console.warn('Cannot find record for cell:', col, row);
       return;
     }
 
