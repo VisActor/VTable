@@ -157,7 +157,7 @@ export function createImageCellGroup(
     y: padding[0],
     width: width - padding[1] - padding[3] - iconWidth,
     height: height - padding[0] - padding[2],
-    image: value, //?? (regedIcons.damage_pic as any).svg,
+    image: value,
     cursor: 'pointer' as Cursor
   });
   image.name = 'image';
@@ -216,15 +216,20 @@ export function createImageCellGroup(
 
   (image as any).failCallback = () => {
     const regedIcons = icons.get();
-    // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
-    (image as any).image = (regedIcons.damage_pic as any).svg;
+    (image as any).image = regedIcons.image_damage_pic
+      ? (regedIcons.image_damage_pic as any).svg
+      : (regedIcons.damage_pic as any).svg;
   };
-  if (!(isValidUrl(value) || value.includes('/') || isBase64(value))) {
-    //vrender-core 中的graphic文件中有这个判断 导致无法进入failCallback，所以这里暂时这样处理了
-    //按fail情况处理
-    const regedIcons = icons.get();
-    // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
-    (image as any).image = (regedIcons.damage_pic as any).svg;
+
+  if (typeof value === 'string') {
+    if (!(value.startsWith('<svg') || isValidUrl(value) || value.includes('/') || isBase64(value))) {
+      //vrender-core 中的graphic.ts文件中有这个判断 导致无法进入failCallback，所以这里暂时这样处理了
+      //按fail情况处理
+      const regedIcons = icons.get();
+      (image as any).image = regedIcons.image_damage_pic
+        ? (regedIcons.image_damage_pic as any).svg
+        : (regedIcons.damage_pic as any).svg;
+    }
   }
   cellGroup.appendChild(image);
 
@@ -506,7 +511,7 @@ export function updateImageDxDy(
   }
 }
 
-function updateAutoSizingAndKeepAspectRatio(
+export function updateAutoSizingAndKeepAspectRatio(
   imageAutoSizing: boolean,
   keepAspectRatio: boolean,
   padding: [number, number, number, number],
@@ -579,7 +584,11 @@ function updateAutoSizingAndKeepAspectRatio(
   }
 }
 
-function isDamagePic(image: IImage) {
+export function isDamagePic(image: IImage) {
   const regedIcons = icons.get();
-  return image.attribute.image === (regedIcons.damage_pic as any).svg;
+  return (
+    image.attribute.image === (regedIcons.damage_pic as any).svg ||
+    (regedIcons.image_damage_pic && image.attribute.image === (regedIcons.image_damage_pic as any).svg) ||
+    (regedIcons.video_damage_pic && image.attribute.image === (regedIcons.video_damage_pic as any).svg)
+  );
 }

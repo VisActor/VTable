@@ -6,7 +6,13 @@ import { Group } from '../../graphic/group';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { Icon } from '../../graphic/icon';
 import { calcStartPosition } from '../../utils/cell-pos';
-import { _adjustWidthHeight, getCellRange, updateImageDxDy } from './image-cell';
+import {
+  _adjustWidthHeight,
+  getCellRange,
+  isDamagePic,
+  updateAutoSizingAndKeepAspectRatio,
+  updateImageDxDy
+} from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -247,8 +253,9 @@ export function createVideoCellGroup(
   });
   video.onerror = (): void => {
     const regedIcons = icons.get();
-    // image.setAttribute('image', (regedIcons.damage_pic as any).svg);
-    (image as any).image = (regedIcons.damage_pic as any).svg;
+    (image as any).image = regedIcons.video_damage_pic
+      ? (regedIcons.video_damage_pic as any).svg
+      : (regedIcons.damage_pic as any).svg;
   };
   video.src = value;
   video.setAttribute('preload', 'auto');
@@ -266,7 +273,24 @@ export function createVideoCellGroup(
   image.textAlign = textAlign;
   image.textBaseline = textBaseline;
   cellGroup.appendChild(image);
-
+  image.successCallback = () => {
+    //补丁处理，上面loadeddata已经有一些尺寸处理，对应image-cell中updateAutoSizingAndKeepAspectRatio处理，
+    //image重新赋值为损坏的图片的资源地址后，successCallback回调处理
+    //仿照image-cell.ts中的处理方法updateAutoSizingAndKeepAspectRatio
+    if (isDamagePic(image)) {
+      updateAutoSizingAndKeepAspectRatio(
+        imageAutoSizing,
+        keepAspectRatio,
+        padding,
+        textAlign,
+        textBaseline,
+        image,
+        cellGroup,
+        table
+      );
+      table.scenegraph.updateNextFrame();
+    }
+  };
   return cellGroup;
 }
 

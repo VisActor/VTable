@@ -7,13 +7,13 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 export function createTable() {
   // register icon
   VTable.register.clearAll?.();
-  VTable.register.icon('sort_normal', {
+  VTable.register.icon('image_damage_pic', {
     type: 'svg',
     svg: `<svg t="1669210412838" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5700" width="200" height="200"><path d="M420.559974 72.98601l-54.855 0 0 774.336c-52.455014-69.163008-121.619046-123.762995-201.120051-157.052006l0 61.968c85.838029 41.401958 156.537958 111.337984 201.120051 198.221005l0 0.208 54.855 0 0-13.047c0.005018-0.00297 0.010035-0.005018 0.01495-0.007987-0.005018-0.010035-0.010035-0.019968-0.01495-0.030003L420.559974 72.986zM658.264986 73.385984l0-0.4L603.41 72.985984l0 877.68 54.855 0L658.265 176.524c52.457984 69.178982 121.632051 123.790029 201.149952 157.078016l0-61.961C773.560013 230.238003 702.853018 160.287027 658.264986 73.385984z" p-id="5701"></path></svg>`,
     width: 20, //其实指定的是svg图片绘制多大，实际占位是box，margin也是相对阴影范围指定的
     height: 20,
     funcType: VTable.TYPES.IconFuncTypeEnum.sort,
-    name: 'sort_normal',
+    name: 'image_damage_pic',
     positionType: VTable.TYPES.IconPosition.inlineFront,
     marginLeft: 0,
     marginRight: 0,
@@ -24,7 +24,7 @@ export function createTable() {
     },
     cursor: 'pointer'
   });
-  VTable.register.icon('damage_pic', {
+  VTable.register.icon('video_damage_pic', {
     type: 'svg',
     svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M17.4004 3C19.1675 3.00021 20.5996 4.43301 20.5996 6.2002V9.99805H19V8.2002C16 8.20019 5.99961 8.2002 4.59961 8.2002V17.4004C4.59982 18.2839 5.31667 19 6.2002 19H10.0752V20.5996H6.2002C4.43301 20.5996 3.00021 19.1675 3 17.4004V6.2002C3 4.43288 4.43288 3 6.2002 3H17.4004Z" fill="#89909D"/>
@@ -38,7 +38,7 @@ export function createTable() {
 `,
     width: 22,
     height: 22,
-    name: 'damage_pic',
+    name: 'video_damage_pic',
     positionType: VTable.TYPES.IconPosition.right,
     marginRight: 0,
     funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
