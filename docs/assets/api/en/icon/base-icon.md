@@ -65,6 +65,8 @@ enum IconFuncTypeEnum {
   dropDownState = 'dropDownState',
   play = 'play',
   damagePic = 'damagePic',
+  imageDamagePic = 'imageDamagePic',
+  videoDamagePic = 'videoDamagePic',
   expand = 'expand',
   collapse = 'collapse',
   drillDown = 'drillDown',
