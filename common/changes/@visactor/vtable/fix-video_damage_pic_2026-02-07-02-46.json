@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: image url not pass should call failCallback\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
