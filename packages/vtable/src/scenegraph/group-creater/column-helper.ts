@@ -199,13 +199,7 @@ export function createComplexColumn(
       }
     }
 
-    const type =
-      isVtableMerge || isCustomMerge
-        ? 'text'
-        : (table.isHeader(col, row)
-            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-            : table.getBodyColumnType(col, row)) ?? 'text';
-
+    const type = isVtableMerge || isCustomMerge ? 'text' : table.getCellType(col, row);
     // deal with promise data
     if (isPromise(value)) {
       createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);

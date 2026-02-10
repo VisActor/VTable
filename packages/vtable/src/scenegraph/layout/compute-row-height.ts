@@ -447,9 +447,8 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     ) {
       continue;
     }
-    const cellType = table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
-      : table.getBodyColumnType(col, row);
+
+    const cellType = table.getCellType(col, row);
     // if ( isValid(cellType) && cellType !== 'text' && cellType !== 'link' && cellType !== 'progressbar' && cellType !== 'checkbox') {
     //   // text&link&progressbar测量文字宽度
     //   // image&video&sparkline使用默认宽度

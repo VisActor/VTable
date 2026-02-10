@@ -1999,11 +1999,8 @@ export class Scenegraph {
 
   updateCellContentWhileResize(col: number, row: number) {
     const isVtableMerge = this.table.getCellRawRecord(col, row)?.vtableMerge;
-    const type = isVtableMerge
-      ? 'text'
-      : this.table.isHeader(col, row)
-      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : this.table.getBodyColumnType(col, row);
+
+    const type = isVtableMerge ? 'text' : this.table.getCellType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);

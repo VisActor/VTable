@@ -19,14 +19,8 @@ export function bindMediaClick(table: BaseTableAPI): void {
         // click icon
         return;
       }
-      let cellType;
-      if (table.internalProps.layoutMap.isHeader(col, row)) {
-        cellType = table.isPivotTable()
-          ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-          : (table.getHeaderDefine(col, row) as HeaderData).headerType;
-      } else {
-        cellType = table.getBodyColumnType(col, row);
-      }
+
+      const cellType = table.getCellType(col, row);
       const columnDefine = table.isHeader(col, row)
         ? table.getHeaderDefine(col, row)
         : table.getBodyColumnDefine(col, row);
@@ -68,7 +62,9 @@ export function bindMediaClick(table: BaseTableAPI): void {
           const data = Object.assign(
             {
               __value: cellValue,
-              __dataValue: cellOriginValue
+              __dataValue: cellOriginValue,
+              value: cellValue,
+              dataValue: cellOriginValue
             },
             rowData
           );

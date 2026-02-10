@@ -4,7 +4,6 @@
 import type { ColumnIconOption, ImageIcon, ITableThemeDefine, SvgIcon } from './ts-types';
 import { IconPosition, IconFuncTypeEnum } from './ts-types';
 import { extend } from './tools/helper';
-import { icons as plugins } from './icons';
 import { DrillDown, DrillUp } from './tools/global';
 let sort_color: string;
 let sort_color_opacity: string;
@@ -397,5 +396,5 @@ const builtins = {
 };
 export const icons: { [key: string]: ColumnIconOption } = {};
 export function get(): { [key: string]: ColumnIconOption } {
-  return extend(builtins, plugins);
+  return extend(builtins, icons);
 }
