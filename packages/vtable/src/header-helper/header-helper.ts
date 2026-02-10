@@ -2,6 +2,7 @@ import type {
   ColumnDefine,
   ColumnIconOption,
   ColumnsDefine,
+  HeaderTypeOption,
   ListTableAPI,
   PivotTableAPI,
   RectProps,
@@ -451,7 +452,7 @@ export class HeaderHelper {
     return false;
   }
 
-  getStyleClass(headerType: 'text' | 'image' | 'video' | 'link' | 'checkbox') {
+  getStyleClass(headerType: HeaderTypeOption) {
     switch (headerType) {
       case 'text':
         return TextHeaderStyle;

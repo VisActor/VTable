@@ -130,12 +130,7 @@ export function updateCellHeight(
   const isVtableMerge = scene.table.getCellRawRecord(col, row)?.vtableMerge;
   const isCustomMerge = !!scene.table.getCustomMerge(col, row);
   // 更新单元格布局
-  const type =
-    isVtableMerge || isCustomMerge
-      ? 'text'
-      : scene.table.isHeader(col, row)
-      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-      : scene.table.getBodyColumnType(col, row) ?? 'text';
+  const type = isVtableMerge || isCustomMerge ? 'text' : scene.table.getCellType(col, row);
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
     const columnDefine = scene.table.getBodyColumnDefine(col, row) as IProgressbarColumnBodyDefine;
