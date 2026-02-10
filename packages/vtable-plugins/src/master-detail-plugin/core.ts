@@ -564,7 +564,7 @@ export class MasterDetailPlugin implements pluginsDefinition.IVTablePlugin {
    * 设置记录的子数据并展开
    */
   setRecordChildren(children: unknown[], col: number, row: number): void {
-    // Fix
+    // 获取当前单元格对应的源数据记录，避免排序后索引不一致 #4986
     const record = this.table.getCellOriginRecord(col, row);
     if (!record) {
       console.warn('Cannot find record for cell:', col, row);
