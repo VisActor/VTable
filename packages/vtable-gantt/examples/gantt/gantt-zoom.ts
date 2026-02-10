@@ -1502,10 +1502,27 @@ function createZoomControls(ganttInstance: Gantt) {
 
       radio.onchange = () => {
         if (radio.checked) {
-          // 切换到对应级别的中间状态
+          // 🎯 以视图中心为缩放中心
+          // 1. 获取当前视图中心对应的时间点
+          const scrollLeft = ganttInstance.stateManager.scrollLeft;
+          const viewportWidth = ganttInstance.tableNoFrameWidth;
+          const centerScrollPos = scrollLeft + viewportWidth / 2;
+
+          const currentMsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
+          const centerTime = ganttInstance.parsedOptions._minDateTime + centerScrollPos * currentMsPerPixel;
+
+          // 2. 切换到对应级别
           ganttInstance.zoomScaleManager?.setZoomPosition({
             levelNum: index
           });
+
+          // 3. 调整滚动位置，使中心时间点保持在视图中心
+          const newMsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
+          const newCenterScrollPos = (centerTime - ganttInstance.parsedOptions._minDateTime) / newMsPerPixel;
+          const newScrollLeft = newCenterScrollPos - viewportWidth / 2;
+
+          ganttInstance.stateManager.setScrollLeft(Math.max(0, newScrollLeft));
+
           updateStatusDisplay();
         }
       };

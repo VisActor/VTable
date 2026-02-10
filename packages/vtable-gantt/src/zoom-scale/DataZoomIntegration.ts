@@ -39,6 +39,7 @@ export class DataZoomIntegration {
   private isUpdatingFromDataZoom = false;
   private isUpdatingFromGantt = false;
   private lastDataZoomState = { start: 0.2, end: 0.5 };
+  private lastSpanLimits: { minSpan: number; maxSpan: number } | null = null;
   private cleanupCallbacks: (() => void)[] = [];
   private resizeTimeout: NodeJS.Timeout | null = null;
   private isInitializing = true;
@@ -47,7 +48,33 @@ export class DataZoomIntegration {
     this.gantt = gantt;
     this.initializeDataZoom(config);
     this.setupEventListeners();
-    this.updateDataZoomLimits();
+
+    // 延迟初始化 limits 和同步位置，等待 Gantt 完全就绪
+    setTimeout(() => {
+      this.updateDataZoomLimits();
+      this.syncDataZoomToGanttView();
+    }, 0);
+  }
+
+  /**
+   * 同步 DataZoom 位置到 Gantt 当前视图
+   * 根据 Gantt 的实际滚动位置和视口大小，计算并设置 DataZoom 的 start/end
+   */
+  private syncDataZoomToGanttView(): void {
+    try {
+      const scrollLeft = this.gantt.stateManager?.scrollLeft || 0;
+      const totalWidth = this.gantt.getAllDateColsWidth?.() || 0;
+      const viewportWidth = this.gantt.tableNoFrameWidth || 0;
+
+      if (totalWidth > 0 && viewportWidth > 0) {
+        const start = Math.max(0, Math.min(1, scrollLeft / totalWidth));
+        const end = Math.max(0, Math.min(1, (scrollLeft + viewportWidth) / totalWidth));
+
+        this.dataZoomAxis.setStartAndEnd(start, end);
+      }
+    } catch (error) {
+      console.warn('⚠️ 无法同步 DataZoom 位置:', error);
+    }
   }
 
   /**
@@ -236,15 +263,14 @@ export class DataZoomIntegration {
       if (start !== undefined && end !== undefined && !isNaN(start) && !isNaN(end)) {
         this.applyDataZoomRangeToGantt(start, end);
       }
-
-      setTimeout(() => {
-        this.isUpdatingFromDataZoom = false;
-      }, 50);
+      this.updateDataZoomLimits();
+      this.isUpdatingFromDataZoom = false;
     };
 
-    this.dataZoomAxis.addEventListener('change', dataZoomChangeHandler);
+    this.dataZoomAxis.addEventListener('dataZoomChange', dataZoomChangeHandler);
+
     this.cleanupCallbacks.push(() => {
-      this.dataZoomAxis.removeEventListener('change', dataZoomChangeHandler);
+      this.dataZoomAxis.removeEventListener('dataZoomChange', dataZoomChangeHandler);
     });
 
     // Gantt 滚动时同步到 DataZoom
@@ -262,10 +288,8 @@ export class DataZoomIntegration {
 
       this.stage.render();
 
-      setTimeout(() => {
-        this.dataZoomAxis.setAttribute('disableTriggerEvent', false);
-        this.isUpdatingFromGantt = false;
-      }, 10);
+      this.dataZoomAxis.setAttribute('disableTriggerEvent', false);
+      this.isUpdatingFromGantt = false;
     };
 
     this.gantt.addEventListener('scroll', ganttScrollHandler);
@@ -277,9 +301,9 @@ export class DataZoomIntegration {
     const windowResizeHandler = () => {
       clearTimeout(this.resizeTimeout);
       this.resizeTimeout = setTimeout(() => {
-        this.updateResponsive();
         this.updateDataZoomLimits();
-      }, 50);
+        this.updateResponsive();
+      }, 70);
     };
 
     window.addEventListener('resize', windowResizeHandler);
@@ -292,13 +316,20 @@ export class DataZoomIntegration {
 
     // 监听 Gantt 的缩放事件，重新计算限制并同步 DataZoom 位置
     const ganttZoomHandler = () => {
-      setTimeout(() => {
-        this.updateDataZoomLimits();
-        // 同步 DataZoom 位置到当前 Gantt 视图
-        if (!this.isUpdatingFromDataZoom) {
-          this.syncToDataZoom();
-        }
-      }, 50);
+      if (this.isUpdatingFromDataZoom) {
+        return;
+      }
+
+      this.isUpdatingFromGantt = true;
+
+      this.updateDataZoomLimits();
+
+      // 同步 DataZoom 位置到当前 Gantt 视图
+      if (!this.isUpdatingFromDataZoom) {
+        this.syncToDataZoom();
+      }
+
+      this.isUpdatingFromGantt = false;
     };
 
     this.gantt.addEventListener('zoom', ganttZoomHandler);
@@ -353,10 +384,31 @@ export class DataZoomIntegration {
   private updateDataZoomLimits(): void {
     const limits = this.calculateDataZoomLimits();
 
+    // 只在值改变时才更新，避免无效的 setAttributes 调用
+    const hasChanged =
+      !this.lastSpanLimits ||
+      limits.minRangeRatio !== this.lastSpanLimits.minSpan ||
+      limits.maxRangeRatio !== this.lastSpanLimits.maxSpan;
+
+    if (!hasChanged) {
+      return;
+    }
+    // 使用 lastDataZoomState 记录的当前位置
+    const start = this.lastDataZoomState.start;
+    const end = this.lastDataZoomState.end;
+
     this.dataZoomAxis.setAttributes({
       minSpan: limits.minRangeRatio,
-      maxSpan: limits.maxRangeRatio
+      maxSpan: limits.maxRangeRatio,
+      start,
+      end
     });
+
+    // 更新缓存
+    this.lastSpanLimits = {
+      minSpan: limits.minRangeRatio,
+      maxSpan: limits.maxRangeRatio
+    };
 
     this.stage.render();
   }
@@ -536,9 +588,7 @@ export class DataZoomIntegration {
     this.updatePosition(defaultX, 0);
 
     // 重新同步 DataZoom 状态，因为视图宽度变化会影响时间范围的显示比例
-    setTimeout(() => {
-      this.syncToDataZoom();
-    }, 10);
+    this.syncToDataZoom();
   }
 
   /**

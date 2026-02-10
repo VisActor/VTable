@@ -891,10 +891,27 @@ function createZoomControls(ganttInstance) {
 
       radio.onchange = () => {
         if (radio.checked) {
-          // Switch to middle state of corresponding level
+          // 🎯 Zoom with view center as anchor point
+          // 1. Get the time point corresponding to the current view center
+          const scrollLeft = ganttInstance.stateManager.scrollLeft;
+          const viewportWidth = ganttInstance.tableNoFrameWidth;
+          const centerScrollPos = scrollLeft + viewportWidth / 2;
+          
+          const currentMsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
+          const centerTime = ganttInstance.parsedOptions._minDateTime + centerScrollPos * currentMsPerPixel;
+          
+          // 2. Switch to corresponding level
           ganttInstance.zoomScaleManager?.setZoomPosition({
             levelNum: index
           });
+          
+          // 3. Adjust scroll position to keep center time point at view center
+          const newMsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
+          const newCenterScrollPos = (centerTime - ganttInstance.parsedOptions._minDateTime) / newMsPerPixel;
+          const newScrollLeft = newCenterScrollPos - viewportWidth / 2;
+          
+          ganttInstance.stateManager.setScrollLeft(Math.max(0, newScrollLeft));
+          
           updateStatusDisplay();
         }
       };
