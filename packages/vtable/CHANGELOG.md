@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 04 Feb 2026 11:50:19 GMT and should not be manually modified.
+This log was last generated on Wed, 11 Feb 2026 07:00:11 GMT and should not be manually modified.
+
+## 1.23.2
+Wed, 11 Feb 2026 07:00:11 GMT
+
+### Updates
+
+- feat: pivot table headerType support cellType funcitonal #4993
+
+
+- fix: fix datazoom version update
+
+
+- fix: cell formula cache error after delete row record
+
+
+- fix: masterSubTable plugin setRecordChildren fetches wrong record after sorting
+
+
+- fix: video load fail damage icon
+
+
+- fix: image url not pass should call failCallback
+
+
+- feat: add image_damage_pic and video_damage_pic type icons register & fix video damage icon ratio
+
+
 
 ## 1.23.1
 Wed, 04 Feb 2026 11:50:19 GMT
