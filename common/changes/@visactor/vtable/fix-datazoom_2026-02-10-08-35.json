@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix datazoom version update\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "laijingkang@kuaishou.com"
+}
