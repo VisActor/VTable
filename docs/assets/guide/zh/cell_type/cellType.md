@@ -255,6 +255,9 @@ VTable 所支持的数据类型共有 7 种，分别为：
     keepAspectRatio:true,
   }
 ```
+
+透视表的rows和columns中的headerType，indicators的cellType也同样支持函数形式。
+
 ## 扩展：自定义列类型（TypeScript）
 
 在实际业务中，除了 VTable 内置的 `cellType`（text/link/image/video/progressbar/sparkline/chart 等），我们常常还需要在列定义里附加一些 **业务侧专用配置**，例如：

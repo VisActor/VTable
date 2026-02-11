@@ -211,6 +211,9 @@ VTable.register.icon('frozenCurrent', {
 | 固定列               | VTable.TYPES.IconFuncTypeEnum.frozen      | "frozen"         | 固定列功能图标 已固定状态                 |
 | 固定列               | VTable.TYPES.IconFuncTypeEnum.frozen      | "frozenCurrent"  | 固定列功能图标 被冻结当列                 |
 | 图片 or 视频地址失效 | VTable.TYPES.IconFuncTypeEnum.damagePic   | "damage_pic"     | 多媒体资源解析失败                        |
+| 加载中               | VTable.TYPES.IconFuncTypeEnum.loading_pic   | "loading_pic"   | 加载中状态                             |
+|图片image类型解析失败 |VTable.TYPES.IconFuncTypeEnum.imageDamagePic   | "image_damage_pic"     | 图片资源解析失败                        |
+|视频video类型解析失败 |VTable.TYPES.IconFuncTypeEnum.videoDamagePic   | "video_damage_pic"     | 视频资源解析失败                        |
 | 树形结构折叠         | VTable.TYPES.IconFuncTypeEnum.collapse    | "collapse"       | 树形结构折叠状态                          |
 | 树形结构展开         | VTable.TYPES.IconFuncTypeEnum.expand      | "expand"         | 树形结构展开状态                          |
 | 树形结构折叠         | VTable.TYPES.IconFuncTypeEnum.collapse    | "collapse"       | 树形结构折叠状态                          |

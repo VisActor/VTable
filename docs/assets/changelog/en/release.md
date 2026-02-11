@@ -1,3 +1,33 @@
+# v1.23.1
+
+2026-02-05
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add componentLayoutOrder api [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: optimize search latency
+- **@visactor/vtable**: add batch update cell value api and optimize filter state data sync
+- **@visactor/vtable**: add syncRecordOperationsToSourceRecords option to support sync operations to source data
+- **@visactor/vtable-sheet**: add updateOption api and optimize formula calculation
+- **@visactor/vtable-sheet**: add editable option to support edit cell
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix prepareEdit occor error [#4871](https://github.com/VisActor/VTable/issues/4871)
+- **@visactor/vtable**: updateOption run resize logic [#4965](https://github.com/VisActor/VTable/issues/4965)
+- **@visactor/vtable**: fix add record position error in filter state
+- **@visactor/vtable**: handle escape option correctly for CSV export
+- **@visactor/vtable**: set white background for media overlay image
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: legend and title component position calculation logic [#4965](https://github.com/VisActor/VTable/issues/4965)
+
+
+
+[more detail about v1.23.1](https://github.com/VisActor/VTable/releases/tag/v1.23.1)
+
 # v1.23.0
 
 2026-01-29

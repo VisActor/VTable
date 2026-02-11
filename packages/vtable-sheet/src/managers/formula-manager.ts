@@ -784,7 +784,7 @@ export class FormulaManager implements IFormulaManager {
         });
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       });
     } catch (error) {
       console.error('Failed to add rows:', error);
@@ -828,7 +828,7 @@ export class FormulaManager implements IFormulaManager {
         });
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       });
     } catch (error) {
       console.error('Failed to remove rows:', error);
@@ -870,7 +870,7 @@ export class FormulaManager implements IFormulaManager {
         });
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       });
     } catch (error) {
       console.error('Failed to add columns:', error);
@@ -913,7 +913,7 @@ export class FormulaManager implements IFormulaManager {
         });
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       });
     } catch (error) {
       console.error('Failed to remove columns:', error);
@@ -955,7 +955,7 @@ export class FormulaManager implements IFormulaManager {
         const result = this.getCellValue(cell);
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       }
 
       // Log completion info
@@ -999,7 +999,7 @@ export class FormulaManager implements IFormulaManager {
         const result = this.getCellValue(cell);
         this.sheet
           .getActiveSheet()
-          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value, false, false);
       }
 
       // Log completion info

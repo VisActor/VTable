@@ -14,5 +14,9 @@ export const menus = [
   {
     path: 'sheet',
     name: 'sheet-update'
+  },
+  {
+    path: 'sheet',
+    name: 'sheet-deleteRecord'
   }
 ];

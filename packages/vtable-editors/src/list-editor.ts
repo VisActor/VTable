@@ -65,7 +65,7 @@ export class ListEditor implements IEditor {
   }
 
   getValue() {
-    return this.element.value;
+    return this.element?.value;
   }
 
   onStart({ container, value, referencePosition, endEdit }: EditContext) {

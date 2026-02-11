@@ -320,10 +320,7 @@ function computeAutoColWidth(
       maxWidth = Math.max(indicatorWidth, maxWidth);
       continue;
     }
-
-    const cellType = table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData)?.headerType
-      : table.getBodyColumnType(col, row);
+    const cellType = table.getCellType(col, row);
     if (
       isValid(cellType) &&
       cellType !== 'text' &&

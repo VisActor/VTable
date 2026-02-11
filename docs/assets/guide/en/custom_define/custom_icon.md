@@ -211,6 +211,9 @@ The list of resettable internal icons is as follows:
 | Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozen"         | Fixed Columns Function Icon, Fixed Status                           |
 | Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozenCurrent"  | Fixed Columns Function Icon, Frozen When Columns                    |
 | Image or video address invalid | VTable. TYPES. IconFuncTypeEnum.damagePic | "damage_pic"     | Multimedia resource parsing failed                                  |
+| Loading                        | VTable. TYPES. IconFuncTypeEnum.loading_pic | "loading_pic"   | Loading status                                                        |
+| Image image type parsing failed | VTable. TYPES. IconFuncTypeEnum.imageDamagePic | "image_damage_pic" | Image resource parsing failed |
+| Video video type parsing failed | VTable. TYPES. IconFuncTypeEnum.videoDamagePic | "video_damage_pic" | Video resource parsing failed |
 | Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |
 | Tree Structure Expand          | VTable. TYPES. IconFuncTypeEnum.expand    | "expand"         | Tree Structure Expand State                                         |
 | Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |

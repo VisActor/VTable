@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.23.2",
+      "tag": "@visactor/vtable_v1.23.2",
+      "date": "Wed, 11 Feb 2026 07:00:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pivot table headerType support cellType funcitonal #4993\n\n"
+          },
+          {
+            "comment": "fix: fix datazoom version update\n\n"
+          },
+          {
+            "comment": "fix: cell formula cache error after delete row record\n\n"
+          },
+          {
+            "comment": "fix: masterSubTable plugin setRecordChildren fetches wrong record after sorting\n\n"
+          },
+          {
+            "comment": "fix: video load fail damage icon\n\n"
+          },
+          {
+            "comment": "fix: image url not pass should call failCallback\n\n"
+          },
+          {
+            "comment": "feat: add image_damage_pic and video_damage_pic type icons register & fix video damage icon ratio\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.23.1",
       "tag": "@visactor/vtable_v1.23.1",
       "date": "Wed, 04 Feb 2026 11:50:19 GMT",

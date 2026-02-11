@@ -103,7 +103,7 @@ export class InputEditor implements IEditor {
   }
 
   getValue() {
-    return this.element.value;
+    return this.element?.value;
   }
   /**
    * 如果表格编辑时机配置editCellTrigger为keydown，则需要调用prepareEdit来准备编辑环境，否则中文输入法第一个字符会被当做英文字符
