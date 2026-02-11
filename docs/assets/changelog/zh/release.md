@@ -5,18 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivot table headerType support cellType funcitonal [#4993](https://github.com/VisActor/VTable/issues/4993)
-- **@visactor/vtable**: add image_damage_pic and video_damage_pic type icons register & fix video damage icon ratio
+- **@visactor/vtable**: 透视表表头类型 headerType 支持函数自定义配置 [#4993](https://github.com/VisActor/VTable/issues/4993)
+- **@visactor/vtable**: 新增 image_damage_pic 和 video_damage_pic 类型图标注册 & 修复视频损坏图标比例问题
 
 **🐛 功能修复**
 
-- **@visactor/vtable-gantt**: fix datazoom component event update
-- **@visactor/vtable**: cell formula cache error after delete row record
-- **@visactor/vtable-plugins**: masterSubTable plugin setRecordChildren fetches wrong record after sorting
-- **@visactor/vtable**: video load fail damage icon
-- **@visactor/vtable**: image url not pass should call failCallback
-
-
+- **@visactor/vtable-gantt**: 甘特图数据缩放组件事件更新修复
+- **@visactor/vtable**: 修复当删除行记录后单元格公式缓存错误问题
+- **@visactor/vtable-plugins**: 修复主从表插件 setRecordChildren 排序后获取错误记录问题
+- **@visactor/vtable**: 修复视频加载失败损坏图标问题
+- **@visactor/vtable**: 修复图片 url 未传递应调用 failCallback问题
 
 [更多详情请查看 v1.23.2](https://github.com/VisActor/VTable/releases/tag/v1.23.2)
 
