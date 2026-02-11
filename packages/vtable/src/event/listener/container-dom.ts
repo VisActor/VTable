@@ -356,7 +356,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
         //点击到表格外部不需要取消选中状态
         if (table.options.select?.outsideClickDeselect) {
           const isHasSelected = !!stateManager.select.ranges?.length;
-          eventManager.dealTableSelect();
+          // eventManager.dealTableSelect();
+          stateManager.updateSelectPos(-1, -1);
           stateManager.endSelectCells(true, isHasSelected);
         }
       });
