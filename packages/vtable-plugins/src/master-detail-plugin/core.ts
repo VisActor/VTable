@@ -69,7 +69,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private initializeManagers(): void {
     this.configManager = new ConfigManager(this.pluginOptions, this.table);
-    this.eventManager = new EventManager(this.table);
+    this.eventManager = new EventManager(this.table, this.configManager.getChildrenKey());
     const enableCheckboxCascade = this.pluginOptions.enableCheckboxCascade ?? true;
     this.subTableManager = new SubTableManager(this.table, enableCheckboxCascade);
 
@@ -255,7 +255,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
     const height = detailConfig?.style?.height || 300;
 
-    const childrenData = Array.isArray(record.children) ? record.children : [];
+    const childrenKey = this.configManager.getChildrenKey();
+    const childrenData = Array.isArray((record as Record<string, unknown>)[childrenKey])
+      ? ((record as Record<string, unknown>)[childrenKey] as unknown[])
+      : [];
 
     // 处理初始高度：如果是auto，先用默认值300展开
     const isAutoHeight = height === 'auto';
@@ -578,8 +581,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       return;
     }
 
-    // 直接修改原始记录的 children 属性
-    (record as Record<string, unknown>).children = children;
+    // 直接修改原始记录的子数据属性
+    const childrenKey = this.configManager.getChildrenKey();
+    (record as Record<string, unknown>)[childrenKey] = children;
     this.expandRow(row, col);
     this.table.scenegraph.updateCellContent(col, row);
   }

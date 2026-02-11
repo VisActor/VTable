@@ -15,6 +15,8 @@ export interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 export interface MasterDetailPluginOptions {
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
+  /** 子表数据的字段名 - 用于指定记录中子表数据所在的属性名，默认为 'children' */
+  childrenKey?: string;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
