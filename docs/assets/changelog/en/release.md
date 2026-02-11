@@ -1,3 +1,25 @@
+# v1.23.2
+
+2026-02-11
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: pivot table headerType support cellType funcitonal [#4993](https://github.com/VisActor/VTable/issues/4993)
+- **@visactor/vtable**: add image_damage_pic and video_damage_pic type icons register & fix video damage icon ratio
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-gantt**: fix datazoom component event update
+- **@visactor/vtable**: cell formula cache error after delete row record
+- **@visactor/vtable-plugins**: masterSubTable plugin setRecordChildren fetches wrong record after sorting
+- **@visactor/vtable**: video load fail damage icon
+- **@visactor/vtable**: image url not pass should call failCallback
+
+
+
+[more detail about v1.23.2](https://github.com/VisActor/VTable/releases/tag/v1.23.2)
+
 # v1.23.1
 
 2026-02-05
