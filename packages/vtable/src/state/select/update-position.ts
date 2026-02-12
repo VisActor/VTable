@@ -163,7 +163,7 @@ export function updateSelectPosition(
     } else {
       let extendSelectRange = isValid(skipBodyMerge) ? !skipBodyMerge : true;
       // 单选或多选开始
-      if (cellPos.col !== -1 && cellPos.row !== -1 && !enableCtrlSelectMode) {
+      if (state.select.ranges.length > 0 && !enableCtrlSelectMode) {
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }

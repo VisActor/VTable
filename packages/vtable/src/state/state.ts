@@ -670,6 +670,31 @@ export class StateManager {
     }
   }
 
+  /**
+   * 强制清空选中状态（不依赖当前 cellPos）
+   */
+  clearSelectState(fireSelectedChanged: boolean = true) {
+    const hadSelected = !!this.select.ranges?.length;
+
+    this.select.cellPos.col = -1;
+    this.select.cellPos.row = -1;
+    this.select.ranges = [];
+    this.select.selecting = false;
+    this.select.isSelectAll = false;
+
+    this.table.scenegraph.deleteAllSelectBorder();
+
+    if (fireSelectedChanged && hadSelected && this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED)) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+        ranges: [],
+        col: -1,
+        row: -1
+      });
+    }
+
+    return hadSelected;
+  }
+
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
     return checkMultiCellInSelect(
       cellPosStart,
