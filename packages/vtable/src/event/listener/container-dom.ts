@@ -44,7 +44,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     }
 
     eventManager.dealTableHover();
-    // eventManager.dealTableSelect();
   });
 
   // 监听键盘事件
