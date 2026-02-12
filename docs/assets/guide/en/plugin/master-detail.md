@@ -14,6 +14,8 @@ MasterDetailPlugin follows TypeScript interface specifications to ensure type sa
 interface MasterDetailPluginOptions {
   /** Whether to enable checkbox cascade functionality - controls checkbox linkage between master and detail tables, default is true */
   enableCheckboxCascade?: boolean;
+  /** Field name of sub-table data - This is used to specify the attribute name where the sub-table data is located in the record. The default value is 'children'. */
+  childrenKey?: string;
   /** Detail table configuration - can be static configuration object or dynamic configuration function */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
