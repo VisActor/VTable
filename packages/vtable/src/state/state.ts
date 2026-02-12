@@ -683,6 +683,9 @@ export class StateManager {
     this.select.isSelectAll = false;
 
     this.table.scenegraph.deleteAllSelectBorder();
+    if (hadSelected) {
+      this.table.scenegraph.updateNextFrame();
+    }
 
     if (fireSelectedChanged && hadSelected && this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED)) {
       this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
