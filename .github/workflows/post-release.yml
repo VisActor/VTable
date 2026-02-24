@@ -1,0 +1,158 @@
+name: Post release after develop synced
+
+on:
+  repository_dispatch:
+    types: [develop-synced]
+
+jobs:
+  post_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Read version from repository_dispatch payload
+        id: meta
+        env:
+          PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PAYLOAD_VERSION}" ]; then
+            echo "No version in client_payload, skip post-release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Using version from payload: ${PAYLOAD_VERSION}"
+          echo "version=${PAYLOAD_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout main
+        if: steps.meta.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Rebind origin to PAT remote
+        if: steps.meta.outputs.skip != 'true'
+        env:
+          GH_PAT: ${{ secrets.CREATE_TAG_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_PAT}" ]; then
+            echo "CREATE_TAG_RELEASE_TOKEN is not configured."
+            exit 1
+          fi
+          git remote set-url origin "https://x-access-token:${GH_PAT}@github.com/${GITHUB_REPOSITORY}.git"
+
+      - name: Fetch tags
+        if: steps.meta.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+
+      - name: Check existing tag and release
+        id: exist
+        if: steps.meta.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GH_TOKEN: ${{ secrets.CREATE_TAG_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          if git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists, skip post-release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists, skip post-release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch develop changelog
+        if: steps.meta.outputs.skip != 'true' && steps.exist.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          git fetch origin develop:refs/remotes/origin/develop --depth=1
+          git show origin/develop:docs/assets/changelog/en/release.md > release-develop.md
+
+      - name: Extract release body from develop changelog
+        id: body
+        if: steps.meta.outputs.skip != 'true' && steps.exist.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "release-develop.md" ]; then
+            echo "develop changelog file not found, skip post-release."
+            echo "has_body=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if node <<'NODE'
+          const fs = require('fs');
+          const version = process.env.VERSION;
+          const content = fs.readFileSync('release-develop.md', 'utf8');
+          function escapeRegExp(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          }
+          const headerPattern = new RegExp('^#\\s*v?' + escapeRegExp(version) + '\\b', 'm');
+          const match = headerPattern.exec(content);
+          if (!match) {
+            console.log('No changelog block for version', version, 'found in develop.');
+            process.exit(1);
+          }
+          const startIndex = match.index;
+          const rest = content.slice(startIndex);
+          const nextHeaderPattern = /^#\s*v?\d+\.\d+\.\d+[^\n]*$/gm;
+          let nextIndex = rest.length;
+          let m;
+          if ((m = nextHeaderPattern.exec(rest)) !== null && m.index !== 0) {
+            nextIndex = m.index;
+          }
+          const block = rest.slice(0, nextIndex).trimEnd() + '\n';
+          fs.writeFileSync('release-body.md', block, 'utf8');
+          NODE
+          then
+            echo "has_body=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_body=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify GitHub identity
+        if: steps.meta.outputs.skip != 'true' && steps.exist.outputs.skip != 'true' && steps.body.outputs.has_body == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CREATE_TAG_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh api user -q '.login'
+
+      - name: Create tag
+        if: steps.meta.outputs.skip != 'true' && steps.exist.outputs.skip != 'true' && steps.body.outputs.has_body == 'true'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          git fetch origin main:refs/remotes/origin/main --depth=1
+          MAIN_SHA="$(git rev-parse origin/main)"
+          echo "Creating tag ${TAG} at ${MAIN_SHA}"
+          git tag "${TAG}" "${MAIN_SHA}"
+          git push origin "${TAG}"
+
+      - name: Create GitHub Release
+        if: steps.meta.outputs.skip != 'true' && steps.exist.outputs.skip != 'true' && steps.body.outputs.has_body == 'true'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          GH_TOKEN: ${{ secrets.CREATE_TAG_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          echo "Creating GitHub Release ${TAG}"
+          gh release create "${TAG}" \
+            --target "main" \
+            --title "${TAG}" \
+            --notes-file "release-body.md"
