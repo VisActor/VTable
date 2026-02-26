@@ -37,7 +37,7 @@ references/
 | 属性、property                      | `references/knowledge/06-api-properties.md`                                                                                         |
 | 事件、on、监听、click、scroll       | `references/knowledge/07-events.md` → `references/type/event-types.md`                                                              |
 | 维度、dimension、指标、indicator    | `references/knowledge/08-pivot-dimensions.md` → `references/type/pivot-types.md`                                                    |
-| 数据、records、dataSource           | `references/knowledge/09-data-binding.md`                                                                                           |
+| 数据、records、dataSource           | `references/knowledge/09-data-bindingd.md`                                                                                          |
 | 交互、选择、hover、编辑、拖拽、排序 | `references/knowledge/10-interaction.md`                                                                                            |
 | 最佳实践、模式、怎么做              | `references/knowledge/11-common-patterns.md` → `references/examples/`                                                               |
 
@@ -51,3 +51,36 @@ references/
 6. **销毁表格必须调用 `tableInstance.release()`**
 7. 透视表数据分析需要配置 `dataConfig` 中的 `aggregationRules`
 8. 自定义布局优先推荐 JSX 方案（`customLayout`），低级需求用 `customRender`
+
+## 脚本生成强制规则
+
+- 所有输出必须通过脚本生成 HTML，不允许手写 HTML 或仅输出片段
+- 诊断场景使用 `scripts/generate_diagnosis_html.py`
+- 生成/编辑场景使用 `scripts/generate_demo_html.py`
+- 输出必须包含脚本命令与生成文件路径，确保可复现
+- 未输出脚本命令与文件路径时，必须补齐后再回答
+- 输入代码不得包含 `import` / `export`，需先移除再写入 spec.js 或 config.js
+- 禁止创建或覆盖 `scripts/` 下脚本文件，必须直接调用已有脚本
+
+**绝对路径调用示例**：
+
+```bash
+python3 scripts/generate_demo_html.py --spec-file spec.js --output output/demo.html
+```
+
+**环境无关调用说明**：
+
+- 在任意目录运行脚本时，脚本会基于自身位置定位模板
+- 不需要使用绝对路径
+
+**示例（诊断）**：
+
+```bash
+python3 scripts/generate_diagnosis_html.py --config-file config.js --output output/diagnosis.html
+```
+
+**示例（生成/编辑）**：
+
+```bash
+python3 scripts/generate_demo_html.py --spec-file spec.js --output output/demo.html
+```

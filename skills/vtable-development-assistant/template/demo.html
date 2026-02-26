@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VTable Demo</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@visactor/vtable/dist/vtable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@visactor/vchart/build/index.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <script>
+      require.config({
+        paths: {
+          vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs'
+        }
+      });
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+        background: #f8fafc;
+        padding: 24px;
+      }
+      .page {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      header h1 {
+        font-size: 28px;
+        color: #1e293b;
+        margin-bottom: 8px;
+      }
+      header p {
+        color: #64748b;
+        font-size: 14px;
+      }
+      .info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+      }
+      .card h3 {
+        font-size: 14px;
+        color: #0f172a;
+        margin-bottom: 6px;
+      }
+      .card p {
+        font-size: 13px;
+        color: #475569;
+        line-height: 1.6;
+      }
+      .main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        min-height: 600px;
+      }
+      .panel {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .panel-header {
+        padding: 12px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .code {
+        background: #0f172a;
+        color: #94a3b8;
+      }
+      .preview {
+        background: #f8fafc;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .editor {
+        flex: 1;
+        min-height: 560px;
+        height: 560px;
+        max-height: 560px;
+      }
+      .table {
+        flex: 1;
+        padding: 16px;
+        overflow: auto;
+        min-height: 560px;
+        height: 560px;
+        max-height: 560px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      @media (max-width: 1000px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>📊 {{REPORT_TITLE}}</h1>
+        <p>{{REPORT_DESC}}</p>
+      </header>
+      <div class="info">
+        <div class="card">
+          <h3>主要功能说明</h3>
+          <p>{{FEATURE_DESC}}</p>
+        </div>
+        <div class="card">
+          <h3>编辑提示</h3>
+          <p>{{EDIT_TIPS}}</p>
+        </div>
+      </div>
+      <div class="main">
+        <div class="panel">
+          <div class="panel-header code">VTable 配置</div>
+          <div id="editor" class="editor"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header preview">效果预览</div>
+          <div id="table" class="table"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const DEFAULT_TABLE_HEIGHT = 560;
+      const DEFAULT_TABLE_WIDTH = 640;
+
+      function showLoadError(msg) {
+        document.body.innerHTML = `<div style="padding:40px;text-align:center;color:#ef4444;font-size:15px;">${msg}</div>`;
+      }
+      function initApp() {
+        const initialCode = `{{INITIAL_CODE}}`;
+        let tableInstance = null;
+        function sanitizeCode(codeStr) {
+          return codeStr
+            .replace(/^\s*import[\s\S]*?;?\s*$/gm, '')
+            .replace(/^\s*export\s+/gm, '')
+            .trim();
+        }
+        /* 方案 1：直接执行完整代码，拦截 VTable 构造器捕获实例 */
+        function executeCode(codeStr, container) {
+          const safeCode = sanitizeCode(codeStr);
+          let capturedInstance = null;
+          const ctorNames = ['ListTable', 'PivotTable', 'PivotChart'];
+          const origCtors = {};
+          ctorNames.forEach(name => {
+            if (VTable[name]) {
+              origCtors[name] = VTable[name];
+              VTable[name] = function (options) {
+                if (options && typeof options === 'object') {
+                  options.container = container;
+                  if (options.height == null) options.height = DEFAULT_TABLE_HEIGHT;
+                  if (options.width == null) options.width = container.clientWidth || DEFAULT_TABLE_WIDTH;
+                }
+                const inst = new origCtors[name](options);
+                capturedInstance = inst;
+                return inst;
+              };
+              Object.keys(origCtors[name]).forEach(k => {
+                VTable[name][k] = origCtors[name][k];
+              });
+              VTable[name].prototype = origCtors[name].prototype;
+            }
+          });
+          try {
+            new Function(safeCode)();
+          } finally {
+            ctorNames.forEach(name => {
+              if (origCtors[name]) VTable[name] = origCtors[name];
+            });
+          }
+          return capturedInstance;
+        }
+        /* 方案 2：正则提取配置对象（简单场景后备） */
+        function parseConfig(codeStr) {
+          const safeCode = sanitizeCode(codeStr);
+          const patterns = [
+            /new\s+VTable\.\w+\s*\(\s*({[\s\S]*})\s*\)[\s;]*$/,
+            /(?:const|let|var)\s+\w+\s*=\s*new\s+VTable\.\w+\s*\(\s*({[\s\S]*})\s*\)[\s;]*$/,
+            /(?:const|let|var)\s+\w+\s*=\s*({[\s\S]*});?\s*$/
+          ];
+          for (const pattern of patterns) {
+            const match = safeCode.match(pattern);
+            if (match) {
+              return new Function(`return ${match[1]}`)();
+            }
+          }
+          throw new Error('无法解析表格配置');
+        }
+        function renderTable(code) {
+          const container = document.getElementById('table');
+          try {
+            if (tableInstance) {
+              tableInstance.release();
+              tableInstance = null;
+            }
+            container.innerHTML = '';
+            /* 优先尝试直接执行完整代码 */
+            let execError = null;
+            try {
+              tableInstance = executeCode(code, container);
+              if (tableInstance) return;
+            } catch (e) {
+              execError = e;
+            }
+            /* 回退到正则提取配置 */
+            try {
+              const config = parseConfig(code);
+              config.container = container;
+              if (config.height == null) config.height = DEFAULT_TABLE_HEIGHT;
+              if (config.width == null) config.width = container.clientWidth || DEFAULT_TABLE_WIDTH;
+              let TableClass = VTable.ListTable;
+              if (code.includes('VTable.PivotTable')) TableClass = VTable.PivotTable;
+              if (code.includes('VTable.PivotChart')) TableClass = VTable.PivotChart;
+              tableInstance = new TableClass(config);
+            } catch (e2) {
+              throw execError || e2;
+            }
+          } catch (e) {
+            container.innerHTML = `<div style="color:#ef4444;font-size:13px;line-height:1.6;">${e.message}</div>`;
+          }
+        }
+        require(['vs/editor/editor.main'], function () {
+          const editor = monaco.editor.create(document.getElementById('editor'), {
+            value: initialCode,
+            language: 'javascript',
+            theme: 'vs-dark',
+            fontSize: 13,
+            lineNumbers: 'on',
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 2,
+            wordWrap: 'on'
+          });
+          renderTable(initialCode);
+          let timer = null;
+          editor.onDidChangeModelContent(() => {
+            clearTimeout(timer);
+            timer = setTimeout(() => renderTable(editor.getValue()), 600);
+          });
+        });
+      }
+
+      window.onload = function () {
+        if (!window.VTable) {
+          showLoadError('VTable 脚本未成功加载（CDN 被拦截或网络异常），暂无法渲染示例表格。');
+          return;
+        }
+        /* 若代码涉及 PivotChart + VChart，自动注册 chartModule */
+        if (window.VChart && VTable.register && typeof VTable.register.chartModule === 'function') {
+          VTable.register.chartModule('vchart', VChart);
+        }
+        initApp();
+      };
+    </script>
+  </body>
+</html>
