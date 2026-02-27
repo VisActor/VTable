@@ -9,8 +9,11 @@ export class EventManager {
   private eventHandlers: Array<{ type: string; handler: (...args: unknown[]) => unknown }> = [];
   private allExpandedRowsBeforeMove: Set<number> = new Set();
   private isCleanedUp = false;
+  private childrenKey: string;
 
-  constructor(private table: VTable.ListTable) {}
+  constructor(private table: VTable.ListTable, childrenKey: string = 'children') {
+    this.childrenKey = childrenKey;
+  }
 
   /**
    * 绑定事件处理器
@@ -301,7 +304,12 @@ export class EventManager {
         row: number;
       };
       const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
-      if (record && typeof record === 'object' && 'children' in record && record.children === true) {
+      if (
+        record &&
+        typeof record === 'object' &&
+        this.childrenKey in record &&
+        (record as Record<string, unknown>)[this.childrenKey] === true
+      ) {
         return;
       }
       this.onToggleRowExpand?.(row, col);

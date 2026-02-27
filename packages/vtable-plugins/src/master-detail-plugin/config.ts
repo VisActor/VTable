@@ -6,8 +6,18 @@ import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
  */
 export class ConfigManager {
   private expandRowCallback?: (rowIndex: number) => void;
+  private childrenKey: string;
 
-  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
+  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {
+    this.childrenKey = pluginOptions.childrenKey || 'children';
+  }
+
+  /**
+   * 获取子数据字段名
+   */
+  getChildrenKey(): string {
+    return this.childrenKey;
+  }
 
   /**
    * 设置展开行的回调函数
@@ -17,11 +27,40 @@ export class ConfigManager {
   }
 
   /**
+   * 创建 children 属性的 getter/setter，让 VTable 内部硬编码的 record.children
+   * 用来确保本来VTable中对于children的硬编码起作用
+   */
+  ensureChildrenAlias(record: unknown): void {
+    if (this.childrenKey === 'children') {
+      return; // 不需要别名
+    }
+    if (record && typeof record === 'object') {
+      const recordObj = record as Record<string, unknown>;
+      const key = this.childrenKey;
+      const descriptor = Object.getOwnPropertyDescriptor(recordObj, 'children');
+      if (descriptor && descriptor.get) {
+        return; // 已经设置过 getter，跳过
+      }
+      Object.defineProperty(recordObj, 'children', {
+        get() {
+          return this[key];
+        },
+        set(value: unknown) {
+          this[key] = value;
+        },
+        enumerable: false,
+        configurable: true
+      });
+    }
+  }
+
+  /**
    * 检查记录是否有子数据
    */
-  private hasChildren(record: unknown): boolean {
-    if (record && typeof record === 'object' && 'children' in record) {
-      const children = record.children;
+  hasChildren(record: unknown): boolean {
+    const key = this.childrenKey;
+    if (record && typeof record === 'object' && key in record) {
+      const children = (record as Record<string, unknown>)[key];
       return Array.isArray(children) && children.length > 0;
     }
     return false;
@@ -130,8 +169,10 @@ export class ConfigManager {
       recordList.forEach(record => {
         if (record && typeof record === 'object') {
           const recordObj = record as Record<string, unknown>;
+          // 让 VTable 内部的 getHierarchyState / toggleHierarchyState 能正确检测
+          this.ensureChildrenAlias(record);
           // 处理有子数据的记录
-          if (this.hasChildren(record) || recordObj.children === true) {
+          if (this.hasChildren(record) || recordObj[this.childrenKey] === true) {
             // 优先级：records 中的 hierarchyState > hierarchyExpandLevel
             if (recordObj.hierarchyState === 'expand') {
               // 明确设置为展开
@@ -199,7 +240,7 @@ export class ConfigManager {
         const recordObj = record as Record<string, unknown>;
         // 检查是否需要展开
         if (
-          (this.hasChildren(record) || recordObj.children === true) &&
+          (this.hasChildren(record) || recordObj[this.childrenKey] === true) &&
           recordObj.hierarchyState === HierarchyState.expand
         ) {
           // 将记录索引添加到 expandedRecordIndices 中
