@@ -163,11 +163,8 @@
         document.body.innerHTML = `<div style="padding:40px;text-align:center;color:#ef4444;font-size:15px;">${msg}</div>`;
       }
       function initApp() {
-        {
-          {
-            CONFIG_BLOCK;
-          }
-        }
+        // prettier-ignore
+        {{CONFIG_BLOCK}}
         const app = document.getElementById('app');
         function buildEditorBlock(id) {
           return `
