@@ -25,6 +25,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'scroll'
+      },
+      {
+        path: 'debug',
+        name: 'mem'
       }
     ]
   },
