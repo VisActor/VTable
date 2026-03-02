@@ -2610,6 +2610,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {void}
    */
   release(): void {
+    // for memory leak of VRender Event
+    this.scenegraph?.component?.vScrollBar?.release();
+    this.scenegraph?.component?.hScrollBar?.release();
+    this.animationManager.clear();
+    this.animationManager.ticker.release();
+    this.scenegraph?.stage?.ticker?.release();
+
     const internalProps = this.internalProps;
     if (this.isReleased) {
       return;
