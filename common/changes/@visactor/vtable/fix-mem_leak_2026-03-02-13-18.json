@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix(core): prevent memory leaks in table cleanup",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
