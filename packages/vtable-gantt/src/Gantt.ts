@@ -636,7 +636,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return (record.children?.length || 1) * this.parsedOptions.rowHeight;
         }
-        return this.parsedOptions.rowHeight;
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -647,7 +647,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
         }
-        return this.parsedOptions.rowHeight;
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -658,7 +658,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
         }
-        return this.parsedOptions.rowHeight;
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -981,7 +981,12 @@ export class Gantt extends EventTarget {
     const baselineStartDateField = this.parsedOptions.baselineStartDateField;
     const baselineEndDateField = this.parsedOptions.baselineEndDateField;
 
-    if (!taskRecord?.[baselineStartDateField] || !taskRecord?.[baselineEndDateField]) {
+    if (
+      !baselineStartDateField ||
+      !baselineEndDateField ||
+      !taskRecord?.[baselineStartDateField] ||
+      !taskRecord?.[baselineEndDateField]
+    ) {
       return {
         baselineStartDate: null,
         baselineEndDate: null,
