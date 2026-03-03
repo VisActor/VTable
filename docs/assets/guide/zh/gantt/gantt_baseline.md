@@ -13,6 +13,10 @@
 ```
 { barColor: '#d3d3d3', completedBarColor: '#a9a9a9', width: 20, cornerRadius: 3, borderWidth: 0 }
 ```
+## 定位建议 
+
+- 若希望主任务条与基线条分层展示，设置 `baselinePosition` 为 `top` 或 `bottom` ，重叠请设置 `baselinePosition: 'overlap'`，任务条和基线条会垂直居中进行展示；
+- 如果要自定义任务条位置，可以通过调整`baselineStyle`中的`paddingTop`,及`barStyle`中的`paddingTop`来实现。
 
 ## API：读取基线信息
 
@@ -70,7 +74,4 @@ const option = {
 const ganttInstance = new Gantt(document.getElementById('vTable'), option);
 ```
 
-## 使用建议
 
-- 若希望主任务条与基线条分层展示，设置 `baselinePosition` 为 `top` 或 `bottom` 。
-- 若希望对比更紧凑，设置 `baselinePosition: 'overlap'` 以居中重叠绘制。

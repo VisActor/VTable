@@ -14,6 +14,11 @@ Default baseline style:
 { barColor: '#d3d3d3', completedBarColor: '#a9a9a9', width: 20, cornerRadius: 3, borderWidth: 0 }
 ```
 
+## Positioning Suggestions 
+
+- If you want the task bar and baseline bar to be layered, set `baselinePosition` to `'top'` or `'bottom'`; if you want them to overlap, set `baselinePosition: 'overlap'`, and the task bar and baseline bar will be centered vertically.
+- If you want to customize the position of the task bar, you can adjust `paddingTop` in `baselineStyle` and `barStyle` to achieve it.
+
 ## API: Read baseline info
 
 Use `getBaselineInfoByTaskListIndex(index, subIndex?)` to get baseline start/end dates and days:
@@ -70,7 +75,3 @@ const option = {
 const ganttInstance = new Gantt(document.getElementById('vTable'), option);
 ```
 
-## Tips
-
-- For layered display, use `baselinePosition` as `top` or `bottom`.
-- For compact comparison, set `baselinePosition: 'overlap'` to draw centered and overlapped.
