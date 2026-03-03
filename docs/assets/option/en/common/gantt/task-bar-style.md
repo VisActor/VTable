@@ -16,7 +16,9 @@ export interface ITaskBarStyle {
   borderLineWidth?: number;
   /** The border color of the task bar */
   borderColor?: string;
-  / ** The minimum size of the task bar, when the width of the task bar is calculated to be too small, it can ensure that the task bar can be displayed normally */
+  /** The minimum size of the task bar, when the width of the task bar is calculated to be too small, it can ensure that the task bar can be displayed normally */
   minSize?: number;
+  /** The distance from the task bar to the top of the row (useful for customizing vertical position) */
+  paddingTop?: number;
 }
 ```
