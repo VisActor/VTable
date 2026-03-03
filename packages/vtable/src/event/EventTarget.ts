@@ -38,6 +38,9 @@ export class EventTarget {
     type: TYPE,
     listener: TableEventListener<TYPE>
   ): EventListenerId {
+    if (!this.listenersData) {
+      return undefined;
+    }
     const list: TableEventListener<TYPE>[] =
       this.listenersData.listeners[type] || (this.listenersData.listeners[type] = []);
     list.push(listener);
@@ -47,10 +50,13 @@ export class EventTarget {
       type,
       listener,
       remove: (): void => {
+        if (!this.listenersData) {
+          return;
+        }
         delete this.listenersData.listenerData[id];
         const index = list.indexOf(listener);
         list.splice(index, 1);
-        if (!this.listenersData.listeners[type].length) {
+        if (this.listenersData.listeners[type] && !this.listenersData.listeners[type].length) {
           delete this.listenersData.listeners[type];
         }
       }
