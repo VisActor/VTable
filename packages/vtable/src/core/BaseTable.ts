@@ -5009,7 +5009,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   private _scheduleScrollToRowCorrect(row: number, delay: number = 0) {
-    this.clearCorrectTimer();
     this._scrollToRowCorrectTimer = setTimeout(() => {
       this.clearCorrectTimer();
       const targetScrollTop = this.getTargetScrollTop(row);
@@ -5027,6 +5026,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   // anmiation
   scrollToRow(row: number, animationOption?: ITableAnimationOption | boolean) {
     const targetRow = Math.min(Math.max(Math.floor(row), 0), this.rowCount - 1);
+    this.clearCorrectTimer();
     if (!animationOption) {
       this.scrollToCell({ row: targetRow });
       this._scheduleScrollToRowCorrect(targetRow);
