@@ -440,6 +440,14 @@
             "en": "Gantt DataZoomAxis Scrollbar"
           }
         }
+        ,
+        {
+          "path": "gantt-baseline",
+          "title": {
+            "zh": "甘特图基线任务条",
+            "en": "Gantt Baseline Bar"
+          }
+        }
       ]
     },
     {

@@ -142,15 +142,21 @@ export class TaskBar {
         const record = this._scene._gantt.getRecordByIndex(i);
         if (record.children?.length > 0) {
           for (let j = 0; j < record.children?.length; j++) {
-            const barGroup = this.initBar(i, j, record.children.length);
-            if (barGroup) {
-              this.barContainer.appendChild(barGroup);
+            const { barGroupBox, baselineBar } = this.initBar(i, j, record.children.length);
+            if (baselineBar) {
+              this.barContainer.appendChild(baselineBar);
+            }
+            if (barGroupBox) {
+              this.barContainer.appendChild(barGroupBox);
             }
           }
         } else {
-          const barGroup = this.initBar(i);
-          if (barGroup) {
-            this.barContainer.appendChild(barGroup);
+          const { barGroupBox, baselineBar } = this.initBar(i);
+          if (baselineBar) {
+            this.barContainer.appendChild(baselineBar);
+          }
+          if (barGroupBox) {
+            this.barContainer.appendChild(barGroupBox);
           }
         }
         continue;
@@ -167,9 +173,12 @@ export class TaskBar {
               for (let j = 0; j < record.children?.length; j++) {
                 const child_record = record.children[j];
                 if (child_record.type !== TaskType.PROJECT) {
-                  const barGroup = this.initBar(i, [...sub_task_indexs, j], record.children.length);
-                  if (barGroup) {
-                    this.barContainer.appendChild(barGroup);
+                  const { barGroupBox, baselineBar } = this.initBar(i, [...sub_task_indexs, j], record.children.length);
+                  if (baselineBar) {
+                    this.barContainer.appendChild(baselineBar);
+                  }
+                  if (barGroupBox) {
+                    this.barContainer.appendChild(barGroupBox);
                   }
                 } else {
                   //如果是project类型的子任务，需要递归调用 只将类型不是project的子任务添加到barContainer中
@@ -181,16 +190,22 @@ export class TaskBar {
           callInitBar(record, sub_task_indexs);
         } else {
           // For non-project tasks, use the default Tasks_Separate mode
-          const barGroup = this.initBar(i);
-          if (barGroup) {
-            this.barContainer.appendChild(barGroup);
+          const { barGroupBox, baselineBar } = this.initBar(i);
+          if (baselineBar) {
+            this.barContainer.appendChild(baselineBar);
+          }
+          if (barGroupBox) {
+            this.barContainer.appendChild(barGroupBox);
           }
         }
         continue;
       } else {
-        const barGroup = this.initBar(i);
-        if (barGroup) {
-          this.barContainer.appendChild(barGroup);
+        const { barGroupBox, baselineBar } = this.initBar(i);
+        if (baselineBar) {
+          this.barContainer.appendChild(baselineBar);
+        }
+        if (barGroupBox) {
+          this.barContainer.appendChild(barGroupBox);
         }
       }
     }
@@ -212,7 +227,7 @@ export class TaskBar {
       (isMilestone && !startDate) ||
       (!isMilestone && (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()))
     ) {
-      return null;
+      return { barGroupBox: null, baselineBar: null };
     }
     const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let taskBarSize =
@@ -223,36 +238,115 @@ export class TaskBar {
     if (isValid(taskBarStyle.minSize)) {
       taskBarSize = Math.max(taskBarSize, taskBarStyle.minSize);
     }
-    // const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
-    // const subTaskShowRowCount =
-    //   this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
-    //     ? childrenLength || 1
-    //     : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-    //     ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
-    //     : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-    //     ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
-    //     : 1;
-    const oneTaskHeigth = this._scene._gantt.parsedOptions.rowHeight; // this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
+    const oneTaskHeigth = this._scene._gantt.parsedOptions.rowHeight;
     const milestoneTaskBarHeight = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
     const x =
       computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
         this._scene._gantt.parsedOptions.timelineColWidth -
       (isMilestone ? milestoneTaskBarHeight / 2 : 0);
-    const y =
+    let y =
       this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
       (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
         ? ((childIndex as number) ?? 0) * oneTaskHeigth
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
-        : 0) +
-      (oneTaskHeigth - (isMilestone ? milestoneTaskBarHeight : taskbarHeight)) / 2;
+        : 0);
+
+    const baselineInfo = this._scene._gantt.getBaselineInfoByTaskListIndex(index, childIndex);
+    const hasBaseline = baselineInfo.baselineStartDate && baselineInfo.baselineEndDate && baselineInfo.baselineDays > 0;
+    const baselinePosition = this._scene._gantt.parsedOptions.baselinePosition;
+
+    let baselineBar: any = null;
+    let taskBarYOffset = 0;
+
+    if (hasBaseline && !isMilestone) {
+      const baselineStyle = this._scene._gantt.getBaselineStyle(index, childIndex);
+      const baselineX =
+        computeCountToTimeScale(baselineInfo.baselineStartDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
+        this._scene._gantt.parsedOptions.timelineColWidth;
+      const baselineWidth =
+        computeCountToTimeScale(baselineInfo.baselineEndDate, baselineInfo.baselineStartDate, unit, step, 1) *
+        this._scene._gantt.parsedOptions.timelineColWidth;
+
+      let baselineY: number;
+      const taskBarPaddingTop = taskBarStyle.paddingTop ?? undefined;
+      const baselinePaddingTop = baselineStyle.paddingTop ?? undefined;
+
+      if (baselinePosition === 'overlap') {
+        if (taskBarPaddingTop !== undefined) {
+          baselineY = y + taskBarPaddingTop;
+        } else {
+          baselineY = y + (oneTaskHeigth - baselineStyle.width) / 2;
+        }
+      } else if (baselinePosition === 'top') {
+        const gap = 4;
+        if (baselinePaddingTop !== undefined && taskBarPaddingTop !== undefined) {
+          baselineY = y + baselinePaddingTop;
+          taskBarYOffset = taskBarPaddingTop;
+        } else if (baselinePaddingTop !== undefined) {
+          baselineY = y + baselinePaddingTop;
+          taskBarYOffset = baselinePaddingTop + baselineStyle.width + gap;
+        } else if (taskBarPaddingTop !== undefined) {
+          const totalHeight = baselineStyle.width + gap + taskbarHeight;
+          const startY = (oneTaskHeigth - totalHeight) / 2;
+          baselineY = y + startY;
+          taskBarYOffset = taskBarPaddingTop;
+        } else {
+          const totalHeight = baselineStyle.width + gap + taskbarHeight;
+          const startY = (oneTaskHeigth - totalHeight) / 2;
+          baselineY = y + startY;
+          taskBarYOffset = startY + baselineStyle.width + gap;
+        }
+      } else {
+        const gap = 4;
+        if (taskBarPaddingTop !== undefined && baselinePaddingTop !== undefined) {
+          taskBarYOffset = taskBarPaddingTop;
+          baselineY = y + baselinePaddingTop;
+        } else if (taskBarPaddingTop !== undefined) {
+          taskBarYOffset = taskBarPaddingTop;
+          baselineY = y + taskBarPaddingTop + taskbarHeight + gap;
+        } else if (baselinePaddingTop !== undefined) {
+          const totalHeight = taskbarHeight + gap + baselineStyle.width;
+          const startY = (oneTaskHeigth - totalHeight) / 2;
+          taskBarYOffset = startY;
+          baselineY = y + baselinePaddingTop;
+        } else {
+          const totalHeight = taskbarHeight + gap + baselineStyle.width;
+          const startY = (oneTaskHeigth - totalHeight) / 2;
+          taskBarYOffset = startY;
+          baselineY = y + startY + taskbarHeight + gap;
+        }
+      }
+
+      baselineBar = createRect({
+        x: baselineX,
+        y: baselineY,
+        width: Math.max(baselineWidth, baselineStyle.minSize || 0),
+        height: baselineStyle.width,
+        fill: baselineStyle.barColor,
+        cornerRadius: baselineStyle.cornerRadius,
+        lineWidth: (baselineStyle.borderLineWidth ?? baselineStyle.borderWidth) * 2,
+        stroke: baselineStyle.borderColor,
+        pickable: false
+      });
+      baselineBar.name = 'baseline-bar';
+    }
+
+    const taskBarPaddingTop = taskBarStyle.paddingTop ?? undefined;
+    if (hasBaseline && !isMilestone && baselinePosition !== 'overlap') {
+      y = y + taskBarYOffset;
+    } else if (taskBarPaddingTop !== undefined) {
+      y = y + taskBarPaddingTop;
+    } else {
+      y += (oneTaskHeigth - (isMilestone ? milestoneTaskBarHeight : taskbarHeight)) / 2 + taskBarYOffset;
+    }
+
     const barGroupBox = new GanttTaskBarNode({
       x,
       y,
       width: isMilestone ? milestoneTaskBarHeight : taskBarSize,
-      // height: this._scene._gantt.parsedOptions.rowHeight,
       height: isMilestone ? milestoneTaskBarHeight : taskbarHeight,
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
@@ -265,12 +359,9 @@ export class TaskBar {
         : taskBarStyle.borderColor,
       angle: isMilestone ? (45 / 180) * Math.PI : 0,
       anchor: isMilestone ? [x + milestoneTaskBarHeight / 2, y + milestoneTaskBarHeight / 2] : undefined
-      // clip: true
     });
     barGroupBox.name = 'task-bar';
-    //如果TaskShowMode是tasks_separate模式 这里的task_index其实是table中的bodyIndex；如果TaskShowMode是sub_tasks_***模式 task_index也是对应父节点任务条在table中的bodyIndex（但不会渲染父节点，只是渲染子节点）
     barGroupBox.task_index = index;
-    //如果TaskShowMode是tasks_separate模式，不会赋值sub_task_index；如果TaskShowMode是sub_tasks_***模式 这里的sub_task_index是父节点下子元素的index
     barGroupBox.sub_task_index = childIndex as any;
     barGroupBox.record = taskRecord;
 
@@ -310,9 +401,6 @@ export class TaskBar {
         customLayoutObj = taskBarCustomLayout;
       }
       if (customLayoutObj) {
-        // if (customLayoutObj.rootContainer) {
-        //   customLayoutObj.rootContainer = decodeReactDom(customLayoutObj.rootContainer);
-        // }
         rootContainer = customLayoutObj.rootContainer;
         renderDefaultBar = customLayoutObj.renderDefaultBar ?? false;
         renderDefaultText = customLayoutObj.renderDefaultText ?? false;
@@ -321,10 +409,9 @@ export class TaskBar {
     }
 
     if (renderDefaultBar) {
-      // 创建整个任务条rect
       const rect = createRect({
         x: 0,
-        y: 0, //this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+        y: 0,
         width: barGroupBox.attribute.width,
         height: barGroupBox.attribute.height,
         fill: isMilestone ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.fillColor : taskBarStyle.barColor,
@@ -334,10 +421,9 @@ export class TaskBar {
       barGroup.appendChild(rect);
       barGroupBox.barRect = rect;
       if (taskRecord.type !== TaskType.MILESTONE) {
-        // 创建已完成部分任务条rect
         const progress_rect = createRect({
           x: 0,
-          y: 0, //(this._scene._gantt.parsedOptions.rowHeight - taskbarHeight) / 2,
+          y: 0,
           width: (taskBarSize * progress) / 100,
           height: taskbarHeight,
           fill: taskBarStyle.completedBarColor,
@@ -430,17 +516,20 @@ export class TaskBar {
       barGroupBox.milestoneTextLabel = milestoneLabel;
       barGroupBox.milestoneTextContainer = textContainer;
     }
-    return barGroupBox;
+    return { barGroupBox, baselineBar };
   }
   updateTaskBarNode(index: number, sub_task_index?: number) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
       this.barContainer.removeChild(taskbarGroup);
     }
-    const barGroup = this.initBar(index, sub_task_index);
-    if (barGroup) {
-      this.barContainer.insertInto(barGroup, index); //TODO
-      barGroup.updateTextPosition();
+    const { barGroupBox, baselineBar } = this.initBar(index, sub_task_index);
+    if (barGroupBox) {
+      this.barContainer.insertInto(barGroupBox, index); //TODO
+      barGroupBox.updateTextPosition();
+    }
+    if (baselineBar) {
+      this.barContainer.insertBefore(baselineBar, barGroupBox);
     }
   }
   initHoverBarIcons() {
