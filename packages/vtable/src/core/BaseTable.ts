@@ -2606,6 +2606,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   private dispose() {
     this.release();
   }
+
+  clearCorrectTimer() {
+    if (this._scrollToRowCorrectTimer) {
+      clearTimeout(this._scrollToRowCorrectTimer);
+      this._scrollToRowCorrectTimer = null;
+    }
+  }
+
   /**
    * Dispose the table instance.
    * @returns {void}
@@ -2615,10 +2623,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isReleased) {
       return;
     }
-    if (this._scrollToRowCorrectTimer) {
-      clearTimeout(this._scrollToRowCorrectTimer);
-      this._scrollToRowCorrectTimer = null;
-    }
+    this.clearCorrectTimer();
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
 
@@ -4994,25 +4999,33 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return undefined;
   }
 
-  private _scheduleScrollToRowCorrect(row: number, delay = 0) {
+  getTargetScrollTop(row: number) {
+    const drawRange = this.getDrawRange();
+    const frozenHeight = this.getFrozenRowsHeight();
+    return Math.max(
+      0,
+      Math.min(this.getRowsHeight(0, row - 1) - frozenHeight, this.getAllRowsHeight() - drawRange.height)
+    );
+  }
+
+  private _scheduleScrollToRowCorrect(row: number, delay: number = 0) {
+    this.clearCorrectTimer();
     this._scrollToRowCorrectTimer = setTimeout(() => {
-      const drawRange = this.getDrawRange();
-      const frozenHeight = this.getFrozenRowsHeight();
-      const targetScrollTop = Math.max(
-        0,
-        Math.min(this.getRowsHeight(0, row - 1) - frozenHeight, this.getAllRowsHeight() - drawRange.height)
-      );
+      this.clearCorrectTimer();
+      const targetScrollTop = this.getTargetScrollTop(row);
       if (targetScrollTop !== this.scrollTop) {
         this.scrollTop = targetScrollTop;
+        // 设置scrollTop后bodyRowStart/bodyRowEnd可能变化，导致scrollTop值不准确, 因此在设置一次scrollTop
+        const correctedTargetScrollTop = this.getTargetScrollTop(row);
+        if (correctedTargetScrollTop !== this.scrollTop) {
+          this.scrollTop = correctedTargetScrollTop;
+        }
       }
     }, delay);
   }
 
   // anmiation
   scrollToRow(row: number, animationOption?: ITableAnimationOption | boolean) {
-    if (!isNumber(row) || this.rowCount <= 0) {
-      return;
-    }
     const targetRow = Math.min(Math.max(Math.floor(row), 0), this.rowCount - 1);
     if (!animationOption) {
       this.scrollToCell({ row: targetRow });
