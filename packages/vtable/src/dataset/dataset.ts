@@ -483,6 +483,27 @@ export class Dataset {
             ).negativeMin = negativeMin;
           }
         }
+      } else if (typeof this.collectValuesBy[field]?.extendRange === 'number') {
+        for (const byKeys in this.collectedValues[field]) {
+          let max = (
+            this.collectedValues[field][byKeys] as {
+              max: number;
+              min: number;
+              positiveMax?: number;
+              negativeMin?: number;
+            }
+          ).max;
+          max = Math.max(max, this.collectValuesBy[field]?.extendRange as number);
+
+          (
+            this.collectedValues[field][byKeys] as {
+              max: number;
+              min: number;
+              positiveMax?: number;
+              negativeMin?: number;
+            }
+          ).max = max;
+        }
       }
     }
   }
