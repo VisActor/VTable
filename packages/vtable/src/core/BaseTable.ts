@@ -171,6 +171,7 @@ importStyle();
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
+  _scrollToRowCorrectTimer: ReturnType<typeof setTimeout> | null = null;
   padding: { top: number; left: number; right: number; bottom: number };
   globalDropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
@@ -2614,6 +2615,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isReleased) {
       return;
     }
+    if (this._scrollToRowCorrectTimer) {
+      clearTimeout(this._scrollToRowCorrectTimer);
+      this._scrollToRowCorrectTimer = null;
+    }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
 
@@ -4989,13 +4994,36 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return undefined;
   }
 
+  private _scheduleScrollToRowCorrect(row: number, delay = 0) {
+    this._scrollToRowCorrectTimer = setTimeout(() => {
+      const drawRange = this.getDrawRange();
+      const frozenHeight = this.getFrozenRowsHeight();
+      const targetScrollTop = Math.max(
+        0,
+        Math.min(this.getRowsHeight(0, row - 1) - frozenHeight, this.getAllRowsHeight() - drawRange.height)
+      );
+      if (targetScrollTop !== this.scrollTop) {
+        this.scrollTop = targetScrollTop;
+      }
+    }, delay);
+  }
+
   // anmiation
   scrollToRow(row: number, animationOption?: ITableAnimationOption | boolean) {
-    if (!animationOption) {
-      this.scrollToCell({ row });
+    if (!isNumber(row) || this.rowCount <= 0) {
       return;
     }
-    this.animationManager.scrollTo({ row }, animationOption);
+    const targetRow = Math.min(Math.max(Math.floor(row), 0), this.rowCount - 1);
+    if (!animationOption) {
+      this.scrollToCell({ row: targetRow });
+      this._scheduleScrollToRowCorrect(targetRow);
+      return;
+    }
+    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : 3000;
+    this.animationManager.scrollTo({ row: targetRow }, animationOption);
+    this._scrollToRowCorrectTimer = setTimeout(() => {
+      this.scrollToRow(targetRow, false);
+    }, duration);
   }
   scrollToCol(col: number, animationOption?: ITableAnimationOption | boolean) {
     if (!animationOption) {
