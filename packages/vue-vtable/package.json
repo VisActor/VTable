@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.19.10-alpha.6",
+  "version": "1.19.10-alpha.7",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
@@ -57,7 +57,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.19.10-alpha.6",
+    "@visactor/vtable": "workspace:1.19.10-alpha.7",
     "@visactor/vutils": "~0.19.1"
   },
   "devDependencies": {
