@@ -102,7 +102,23 @@ export class TextAreaEditor implements IEditor {
 
   onEnd() {
     // do nothing
-    this.container.removeChild(this.element);
+    // this.container.removeChild(this.element);
+    // 防御性处理：element 可能尚未创建或已经被移除
+    if (!this.element) {
+      return;
+    }
+    const element = this.element;
+    const parentNode = element.parentNode;
+    if (parentNode) {
+      try {
+        parentNode.removeChild(element);
+      } catch (error) {
+        // 如果元素已经被移除或移动，忽略 NotFoundError，保持与 InputEditor 一致的容错行为
+        if (!(error instanceof Error) || error.name !== 'NotFoundError') {
+          throw error;
+        }
+      }
+    }
     this.element = undefined;
   }
 
