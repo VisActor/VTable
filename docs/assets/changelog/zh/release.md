@@ -5,13 +5,13 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivotchart handle with markline value to axis range
--  **@visactor/vtable-gantt**:  develop gantt baseline feature
+- **@visactor/vtable**: 透视图的轴范围考虑图表配置中的markLine范围 [#4994](https://github.com/VisActor/VTable/issues/4994)
+-  **@visactor/vtable-gantt**:  开发甘特图基线功能
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: editor element occor error [#5003](https://github.com/VisActor/VTable/issues/5003)
-- **core**: prevent memory leaks in table cleanup
+- **@visactor/vtable**: 修复编辑单元格报错问题 [#5003](https://github.com/VisActor/VTable/issues/5003)
+- **core**: 处理内存泄漏点
 
 
 
