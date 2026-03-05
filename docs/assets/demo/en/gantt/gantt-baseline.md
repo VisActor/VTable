@@ -9,7 +9,7 @@ option: Gantt#taskBar.baselineStartDateField
 
 # Gantt Baseline Bar
 
-This example shows how to configure baselines for tasks and control drawing via `baselinePosition`, and `baselineStyle`. See guide: [Gantt Baseline](../../guide/en/gantt/gantt_baseline).
+This example shows how to configure baselines for tasks and control drawing via `baselinePosition`, and `baselineStyle`. See guide: [Gantt Baseline](../../guide/gantt/gantt_baseline).
 
 ## Key Options
 
