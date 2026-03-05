@@ -89,12 +89,12 @@ let ganttInstance;
     {
       field: 'title',
       title: '任务名称',
-      width: 180
+      width: 80
     },
     {
       field: 'developer',
       title: '负责人',
-      width: 120
+      width: 80
     },
     {
       field: 'progress',
@@ -109,7 +109,7 @@ let ganttInstance;
     taskListTable: {
       columns: columns,
       tableWidth: 'auto',
-      minTableWidth: 300,
+      minTableWidth: 100,
       maxTableWidth: 500
     },
     headerRowHeight: 50,
