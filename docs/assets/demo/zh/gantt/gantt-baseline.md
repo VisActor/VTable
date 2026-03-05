@@ -9,7 +9,7 @@ option: Gantt#taskBar.baselineStartDateField
 
 # 甘特图基线任务条
 
-该示例展示了如何为任务配置基线，并通过 `baselinePosition` 与 `baselineStyle` 控制基线与主任务条的绘制关系。教程详见：[基线任务条](../../guide/zh/gantt/gantt_baseline).
+该示例展示了如何为任务配置基线，并通过 `baselinePosition` 与 `baselineStyle` 控制基线与主任务条的绘制关系。教程详见：[基线任务条](../../guide/gantt/gantt_baseline).
 
 ## 关键配置
 
