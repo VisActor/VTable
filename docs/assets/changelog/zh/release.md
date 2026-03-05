@@ -1,3 +1,22 @@
+# v1.23.3
+
+2026-03-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: pivotchart handle with markline value to axis range
+-  **@visactor/vtable-gantt**:  develop gantt baseline feature
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: editor element occor error [#5003](https://github.com/VisActor/VTable/issues/5003)
+- **core**: prevent memory leaks in table cleanup
+
+
+
+[更多详情请查看 v1.23.3](https://github.com/VisActor/VTable/releases/tag/v1.23.3)
+
 # v1.23.2
 
 2026-02-11
