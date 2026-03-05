@@ -2,6 +2,24 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.23.3",
+      "tag": "@visactor/vtable_v1.23.3",
+      "date": "Wed, 04 Mar 2026 07:23:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: editor element occor error #5003\n\n"
+          },
+          {
+            "comment": "feat: pivotchart handle with markline value to axis range\n\n"
+          },
+          {
+            "comment": "fix(core): prevent memory leaks in table cleanup"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.23.2",
       "tag": "@visactor/vtable_v1.23.2",
       "date": "Wed, 11 Feb 2026 07:00:11 GMT",
