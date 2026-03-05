@@ -242,3 +242,35 @@ ${prefix} clip(boolean)
 是否裁剪掉溢出 taskBar 的部分，默认为 true
 
 非必填
+
+${prefix} baselineStartDateField(string)
+
+任务基线开始日期对应的数据字段名。用于绘制“基线任务条”的起始位置。默认不设置；设置后需与数据中的字段匹配，如 `baselineStartDate`。
+
+非必填
+
+${prefix} baselineEndDateField(string)
+
+任务基线结束日期对应的数据字段名。用于绘制“基线任务条”的结束位置。默认不设置；设置后需与数据中的字段匹配，如 `baselineEndDate`。
+
+非必填
+
+${prefix} baselineStyle(ITaskBarStyle | Function)
+
+基线任务条样式，支持与 `barStyle` 相同的样式字段，并可配置函数按任务返回不同样式。默认样式为：`{ barColor: '#d3d3d3', completedBarColor: '#a9a9a9', width: 20, cornerRadius: 3, borderWidth: 0 }`。
+
+```
+baselineStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
+```
+
+非必填
+
+${prefix} baselinePosition('top' | 'bottom' | 'overlap') = 'bottom'
+
+基线任务条相对于主任务条的垂直位置：
+- `top`：基线在主任务条上方；
+- `bottom`：基线在主任务条下方；
+- `overlap`：基线与主任务条重叠居中。
+
+非必填
+

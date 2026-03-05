@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 11 Feb 2026 07:00:11 GMT and should not be manually modified.
+This log was last generated on Wed, 04 Mar 2026 07:23:19 GMT and should not be manually modified.
+
+## 1.23.3
+Wed, 04 Mar 2026 07:23:19 GMT
+
+### Updates
+
+- fix: editor element occor error #5003
+
+
+- feat: pivotchart handle with markline value to axis range
+
+
+- fix(core): prevent memory leaks in table cleanup
 
 ## 1.23.2
 Wed, 11 Feb 2026 07:00:11 GMT

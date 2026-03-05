@@ -24,3 +24,6 @@ shrinkwrap.json
 # Build outputs
 dist
 lib
+
+# Skill templates (contain placeholder syntax that formatters break)
+skills/vtable-development-assistant/template/

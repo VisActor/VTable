@@ -90,6 +90,28 @@ ITimelineScale的类型参考[配置文档]:https://visactor.com/vtable/option/G
   updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
 ```
 
+### getBaselineInfoByTaskListIndex(Function)
+
+获取指定任务在列表中的基线信息（基线开始/结束日期与基线天数）。当任务未配置基线或超出当前日期范围时，返回的日期为 `null`，天数为 `0`。
+
+```
+getBaselineInfoByTaskListIndex(
+  taskShowIndex: number,
+  sub_task_index?: number | number[]
+): {
+  baselineStartDate: Date | null;
+  baselineEndDate: Date | null;
+  baselineDays: number;
+}
+```
+
+示例：
+
+```
+const info = ganttInstance.getBaselineInfoByTaskListIndex(0);
+// info.baselineStartDate / info.baselineEndDate / info.baselineDays
+```
+
 ### release(Function)
 
 释放 Gantt 实例

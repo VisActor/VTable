@@ -13,9 +13,13 @@ module.exports = {
       diagnostics: {
         exclude: ['**']
       },
-      tsconfig: {
+     tsconfig: {
         resolveJsonModule: true,
-        esModuleInterop: true
+        esModuleInterop: true,
+        paths: {
+          '@src/vrender': ['../vtable/src/vrender.ts'],
+          '@src/*': ['../vtable/src/*']
+        }
       }
     },
     __DEV__: true
@@ -47,10 +51,12 @@ module.exports = {
     'd3-dsv': path.resolve(__dirname, './node_modules/d3-dsv/dist/d3-dsv.min.js'),
     'd3-hexbin': path.resolve(__dirname, './node_modules/d3-hexbin/build/d3-hexbin.min.js'),
     'd3-hierarchy': path.resolve(__dirname, './node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'),
-    '@visactor/vtable-editors': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
-    '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
-    '@visactor/vtable/es/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts'),
-    '@vutils-extension': path.resolve(__dirname, './src/vutil-extension-temp/index.ts')
+    '^@visactor/vtable-editors$': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
+    '^@visactor/vtable/es/themes$': path.resolve(__dirname, '../vtable/src/themes.ts'),
+    '^@visactor/vtable/es/vrender$': path.resolve(__dirname, '../vtable/src/vrender.ts'),
+    '^@visactor/vtable$': path.resolve(__dirname, '../vtable/src/index.ts'),
+    '^@src/vrender$': path.resolve(__dirname, '../vtable/src/vrender.ts'),
+    '^@vutils-extension$': path.resolve(__dirname, './src/vutil-extension-temp/index.ts')
   },
   setupFiles: ['./setup-mock.js']
 };

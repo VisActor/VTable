@@ -35,6 +35,14 @@ export const defaultTaskBarStyle = {
   fontFamily: 'Arial',
   fontSize: 14
 };
+
+export const defaultBaselineStyle = {
+  barColor: '#d3d3d3',
+  completedBarColor: '#a9a9a9',
+  width: 20,
+  cornerRadius: 3,
+  borderWidth: 0
+};
 function setWidthToDefaultTaskBarStyle(width: number) {
   defaultTaskBarStyle.width = width;
 }
@@ -127,6 +135,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
+  gantt.parsedOptions.baselineStartDateField = options.taskBar?.baselineStartDateField;
+  gantt.parsedOptions.baselineEndDateField = options.taskBar?.baselineEndDateField;
+  gantt.parsedOptions.baselinePosition = options.taskBar?.baselinePosition ?? 'bottom';
   gantt.parsedOptions.taskBarClip = options?.taskBar?.clip ?? true;
   gantt.parsedOptions.projectSubTasksExpandable = options?.projectSubTasksExpandable ?? true;
   // gantt.parsedOptions.minDate = options?.minDate
@@ -219,6 +230,10 @@ export function initOptions(gantt: Gantt) {
       : options?.taskBar?.projectStyle
       ? Object.assign({}, defaultTaskBarStyle, options?.taskBar?.projectStyle)
       : gantt.parsedOptions.taskBarStyle;
+  gantt.parsedOptions.baselineStyle =
+    options?.taskBar?.baselineStyle && typeof options?.taskBar?.baselineStyle === 'function'
+      ? options.taskBar.baselineStyle
+      : Object.assign({}, defaultBaselineStyle, options?.taskBar?.baselineStyle);
   const defaultMilestoneStyle = {
     labelTextStyle: {
       fontSize: 16,

@@ -57,7 +57,7 @@ export function createTable() {
       status: '已完成',
       date: '2024-01-15',
       // 静态子表数据
-      children: [
+      items: [
         { productName: '笔记本电脑', quantity: 2, price: 5000, total: 10000 },
         { productName: '鼠标', quantity: 5, price: 100, total: 500 }
       ]
@@ -69,7 +69,7 @@ export function createTable() {
       amount: 25000,
       status: '处理中',
       date: '2024-01-16',
-      children: true // 懒加载标识 - 需要异步加载数据
+      items: true // 懒加载标识 - 需要异步加载数据
     },
     {
       id: 3,
@@ -78,7 +78,7 @@ export function createTable() {
       amount: 35000,
       status: '已完成',
       date: '2024-01-17',
-      children: true // 懒加载标识 - 需要异步加载数据
+      items: true // 懒加载标识 - 需要异步加载数据
     },
     {
       id: 4,
@@ -87,12 +87,12 @@ export function createTable() {
       amount: 18000,
       status: '待发货',
       date: '2024-01-18'
-      // 没有children属性，表示没有子数据，不显示展开图标
     }
   ];
 
   // 创建主从表插件
   const plugin = new MasterDetailPlugin({
+    childrenKey: 'items',
     enableCheckboxCascade: true,
     detailTableOptions: params => {
       const { data } = params;
@@ -116,7 +116,7 @@ export function createTable() {
   // 主表配置
   const tableOptions: VTable.ListTableConstructorOptions = {
     columns: [
-      { field: 'orderNo', title: '订单号', width: 120 },
+      { field: 'orderNo', title: '订单号', width: 120, sort: true },
       { field: 'customer', title: '客户名称', width: 150 },
       { field: 'amount', title: '订单金额', width: 120 },
       { field: 'status', title: '状态', width: 100 },

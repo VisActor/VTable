@@ -136,6 +136,7 @@ export class Gantt extends EventTarget {
     taskBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     taskBarMilestoneStyle: IMilestoneStyle;
     projectBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
+    baselineStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;
@@ -169,6 +170,9 @@ export class Gantt extends EventTarget {
     startDateField: string;
     endDateField: string;
     progressField: string;
+    baselineStartDateField: string;
+    baselineEndDateField: string;
+    baselinePosition: 'top' | 'bottom' | 'overlap';
     minDate: Date;
     maxDate: Date;
     _minDateTime: number;
@@ -632,6 +636,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return (record.children?.length || 1) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -642,6 +647,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -652,6 +658,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
       listTable_options.customConfig = { forceComputeAllRowHeight: true };
@@ -959,6 +966,81 @@ export class Gantt extends EventTarget {
       startDate,
       endDate,
       progress
+    };
+  }
+
+  getBaselineInfoByTaskListIndex(
+    taskShowIndex: number,
+    sub_task_index?: number | number[]
+  ): {
+    baselineStartDate: Date | null;
+    baselineEndDate: Date | null;
+    baselineDays: number;
+  } {
+    const taskRecord = this.getRecordByIndex(taskShowIndex, sub_task_index);
+    const baselineStartDateField = this.parsedOptions.baselineStartDateField;
+    const baselineEndDateField = this.parsedOptions.baselineEndDateField;
+
+    if (
+      !baselineStartDateField ||
+      !baselineEndDateField ||
+      !taskRecord?.[baselineStartDateField] ||
+      !taskRecord?.[baselineEndDateField]
+    ) {
+      return {
+        baselineStartDate: null,
+        baselineEndDate: null,
+        baselineDays: 0
+      };
+    }
+
+    const rawBaselineStartDateTime = createDateAtMidnight(taskRecord?.[baselineStartDateField]).getTime();
+    const rawBaselineEndDateTime = createDateAtMidnight(taskRecord?.[baselineEndDateField]).getTime();
+
+    if (
+      rawBaselineEndDateTime < this.parsedOptions._minDateTime ||
+      rawBaselineStartDateTime > this.parsedOptions._maxDateTime
+    ) {
+      return {
+        baselineStartDate: null,
+        baselineEndDate: null,
+        baselineDays: 0
+      };
+    }
+
+    let baselineStartDate;
+    let baselineEndDate;
+    if (this.parsedOptions.timeScaleIncludeHour) {
+      baselineStartDate = createDateAtMidnight(
+        Math.min(Math.max(this.parsedOptions._minDateTime, rawBaselineStartDateTime), this.parsedOptions._maxDateTime)
+      );
+      const rawEnd = taskRecord?.[baselineEndDateField];
+      let hasMillisecondProvided = false;
+      if (typeof rawEnd === 'string') {
+        hasMillisecondProvided = /:\d{2}\.\d+/.test(rawEnd);
+      }
+      const shouldForceMillisecond = !hasMillisecondProvided;
+      baselineEndDate = createDateAtLastMillisecond(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawBaselineEndDateTime), this.parsedOptions._minDateTime),
+        shouldForceMillisecond
+      );
+    } else {
+      baselineStartDate = createDateAtMidnight(
+        Math.min(Math.max(this.parsedOptions._minDateTime, rawBaselineStartDateTime), this.parsedOptions._maxDateTime),
+        true
+      );
+      baselineEndDate = createDateAtLastHour(
+        Math.max(Math.min(this.parsedOptions._maxDateTime, rawBaselineEndDateTime), this.parsedOptions._minDateTime),
+        true
+      );
+    }
+
+    const baselineDays = (baselineEndDate.getTime() - baselineStartDate.getTime() + 1) / (1000 * 60 * 60 * 24);
+
+    return {
+      baselineStartDate,
+      baselineEndDate,
+      baselineDays
     };
   }
 
@@ -1436,6 +1518,22 @@ export class Gantt extends EventTarget {
     } else {
       style = this.parsedOptions.taskBarStyle;
     }
+    if (typeof style === 'function') {
+      const args = {
+        index: task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this
+      };
+      return style(args);
+    }
+    return style;
+  }
+
+  getBaselineStyle(task_index: number, sub_task_index?: number | number[]) {
+    const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
+    const style = this.parsedOptions.baselineStyle;
     if (typeof style === 'function') {
       const args = {
         index: task_index,

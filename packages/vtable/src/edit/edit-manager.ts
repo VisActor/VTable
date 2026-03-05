@@ -328,6 +328,9 @@ export class EditManager {
       this.editingEditor.onEnd?.();
       this.editingEditor = null;
     }
+    // 清理缓存的编辑器实例，避免在后续 getEditor 调用中对已结束或未启动的编辑器重复调用 onEnd
+    Object.values(this.cacheLastSelectedCellEditor).forEach((editor: IEditor) => editor?.onEnd?.());
+    this.cacheLastSelectedCellEditor = {};
   }
 
   release() {

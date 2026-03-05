@@ -93,6 +93,14 @@ export interface GanttConstructorOptions {
     endDateField?: string;
     /** 任务进度对应的数据字段名 */
     progressField?: string;
+    /** 基线开始日期对应的数据字段名 默认按'baselineStartDate' */
+    baselineStartDateField?: string;
+    /** 基线结束日期对应的数据字段名 默认按'baselineEndDate' */
+    baselineEndDateField?: string;
+    /** 基线样式 */
+    baselineStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
+    /** 基线相对于任务条的位置：'top'|'bottom'|'overlap'，默认'bottom' */
+    baselinePosition?: 'top' | 'bottom' | 'overlap';
     /** 任务条展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
     labelText?: ITaskBarLabelText;
     /** 任务条文字样式 */
@@ -288,6 +296,8 @@ export interface ITaskBarStyle {
 
   /** 任务条的最小尺寸 */
   minSize?: number;
+  /** 任务条距离行顶部的距离 */
+  paddingTop?: number;
 }
 export interface IMilestoneStyle {
   /** 里程碑边框颜色 */
