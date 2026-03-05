@@ -1,3 +1,22 @@
+# v1.23.3
+
+2026-03-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视图的轴范围考虑图表配置中的markLine范围 [#4994](https://github.com/VisActor/VTable/issues/4994)
+-  **@visactor/vtable-gantt**:  开发甘特图基线功能
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复编辑单元格报错问题 [#5003](https://github.com/VisActor/VTable/issues/5003)
+- **core**: 处理内存泄漏点
+
+
+
+[更多详情请查看 v1.23.3](https://github.com/VisActor/VTable/releases/tag/v1.23.3)
+
 # v1.23.2
 
 2026-02-11
