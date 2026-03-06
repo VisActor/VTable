@@ -1,6 +1,6 @@
 ---
-name: VTable Development Assistant
-description: 帮助用户使用 @visactor/vtable 进行高性能表格组件开发，涵盖 ListTable、PivotTable、PivotChart 三种表格类型、13 种单元格类型、样式主题、自定义渲染、事件系统和完整 API。
+name: vtable-development-assistant
+description: 面向 @visactor/vtable 的开发助手。用户提到 VTable/ListTable/PivotTable/PivotChart、columns/rows/indicators、cellType、style/theme、自定义渲染(customRender)/自定义布局(customLayout/JSX)、事件(table.on)、records/dataSource、交互(选择/hover/编辑/排序/拖拽/滚动)或 API 用法与排错时，按路由加载 references/knowledge 与 references/type，输出可运行的 TypeScript 示例与可直接替换的配置片段，必要时给出性能与资源释放(table.release)建议。
 ---
 
 # VTable Development Assistant Skill
@@ -22,6 +22,11 @@ references/
 
 根据用户问题，查询对应知识模块：
 
+使用规则：
+1. 先用关键词命中路由表，按顺序加载对应文件（优先 knowledge，再补 type）
+2. 只加载解决当前问题必需的 1-3 个文件，不要一次性加载全部 references
+3. 若用户要“可运行 demo/完整配置”，再补充加载 `references/examples/` 中最接近的示例
+
 | 用户意图关键词                      | 查询文件                                                                                                                            |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 创建表格、初始化、入门              | `references/knowledge/00-overview.md` → `references/knowledge/01-table-types.md`                                                    |
@@ -37,7 +42,7 @@ references/
 | 属性、property                      | `references/knowledge/06-api-properties.md`                                                                                         |
 | 事件、on、监听、click、scroll       | `references/knowledge/07-events.md` → `references/type/event-types.md`                                                              |
 | 维度、dimension、指标、indicator    | `references/knowledge/08-pivot-dimensions.md` → `references/type/pivot-types.md`                                                    |
-| 数据、records、dataSource           | `references/knowledge/09-data-bindingd.md`                                                                                          |
+| 数据、records、dataSource           | `references/knowledge/09-data-binding.md`                                                                                          |
 | 交互、选择、hover、编辑、拖拽、排序 | `references/knowledge/10-interaction.md`                                                                                            |
 | 最佳实践、模式、怎么做              | `references/knowledge/11-common-patterns.md` → `references/examples/`                                                               |
 
@@ -84,3 +89,8 @@ python3 scripts/generate_diagnosis_html.py --config-file config.js --output outp
 ```bash
 python3 scripts/generate_demo_html.py --spec-file spec.js --output output/demo.html
 ```
+## 反模式（必须避免）
+
+1. 不要在同一个 container 上重复 new 表格实例而不 release（会导致内存与事件泄漏）
+2. 不要在 `style` 回调或 `customRender` 等函数中做重计算/创建大量对象（会拖慢滚动与交互）
+3. 不要在事件回调里递归触发布局/重绘类 API（容易造成卡顿或连锁更新）
