@@ -1,4 +1,4 @@
-import { computeCountToTimeScale, createDateAtMidnight } from '../tools/util';
+import { createDateAtMidnight } from '../tools/util';
 import { DayTimes } from '../gantt-helper';
 //import type { IMarkLine } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
@@ -58,20 +58,18 @@ export class MarkLine {
         const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
           ? createDateAtMidnight(line.date)
           : createDateAtMidnight(line.date, true);
-        const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
-        const unitCount = computeCountToTimeScale(date, minDate, unit, step);
-        let positionOffset = 0;
-        if (line.position === 'right') {
-          positionOffset = 1;
+        const dateTime = date.getTime();
+        const cellIndex = this._scene._gantt.getDateIndexByTime(dateTime);
+        const cellStartX = cellIndex >= 1 ? this._scene._gantt.getDateColsWidth(0, cellIndex - 1) : 0;
+        const cellWidth = this._scene._gantt.getDateColWidth(cellIndex);
+        let dateX = cellStartX;
+        if (line.position === 'date') {
+          dateX = this._scene._gantt.getXByTime(dateTime);
+        } else if (line.position === 'right') {
+          dateX = cellStartX + cellWidth;
         } else if (line.position === 'middle') {
-          positionOffset = 0.5;
-        } else if (line.position === 'date') {
-          const date = createDateAtMidnight(line.date);
-          const unitCount = computeCountToTimeScale(date, minDate, unit, step);
-          const cellIndex = Math.floor(unitCount);
-          positionOffset = unitCount - cellIndex;
+          dateX = cellStartX + cellWidth / 2;
         }
-        const dateX = this._scene._gantt.parsedOptions.timelineColWidth * (Math.floor(unitCount) + positionOffset);
         const markLineGroup = new Group({
           pickable: false,
           x: dateX - this.markLineContainerWidth / 2,
@@ -94,7 +92,7 @@ export class MarkLine {
         });
         markLineGroup.appendChild(lineObj);
         if (line.content) {
-          const textMaxLineWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+          const textMaxLineWidth = Math.max(this._scene._gantt.getDateColWidth(cellIndex), 1);
           const textContainerHeight = contentStyle.lineHeight || 18;
           // 创建内容区
           const textGroup = new Group({

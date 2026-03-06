@@ -49,10 +49,7 @@ function setWidthToDefaultTaskBarStyle(width: number) {
 const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 export const DayTimes = 1000 * 60 * 60 * 24;
 export function getDateIndexByX(x: number, gantt: Gantt) {
-  const totalX = x + gantt.stateManager.scroll.horizontalBarPos;
-  const firstDateColWidth = gantt.getDateColWidth(0);
-  const dateIndex = Math.floor((totalX - firstDateColWidth) / gantt.parsedOptions.timelineColWidth) + 1;
-  return dateIndex;
+  return gantt.getDateIndexByX(x);
 }
 
 export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): IMarkLine[] {

@@ -2,7 +2,7 @@ import type { Line } from '@visactor/vtable/es/vrender';
 import { Group, createLine, createRect, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { computeCountToTimeScale, createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
+import { createDateAtMidnight, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
@@ -328,8 +328,7 @@ export function generateLinkLinePoints(
   linkedToTaskIsMilestone: boolean,
   gantt: Gantt
 ) {
-  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
-  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
+  const { rowHeight } = gantt.parsedOptions;
   const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
   const distanceToTaskBar: number = gantt.parsedOptions.dependencyLinkDistanceToTaskBar ?? 20;
   const arrowWidth: number = 10;
@@ -338,16 +337,16 @@ export function generateLinkLinePoints(
   let endDate;
   let linePoints: { x: number; y: number }[] = [];
   let arrowPoints: { x: number; y: number }[] = [];
+  const getStartX = (d: Date) => gantt.getXByTime(d.getTime());
+  const getEndX = (d: Date) => gantt.getXByTime(d.getTime() + 1);
   if (type === DependencyType.FinishToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    let linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    let linkFromPointX = getEndX(linkedFromTaskEndDate);
     if (linkedFromTaskIsMilestone) {
-      linkFromPointX =
-        computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-        taskBarMilestoneHypotenuse / 2;
+      linkFromPointX = getStartX(linkedFromTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
-    let linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    let linkToPointX = getStartX(linkedToTaskStartDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX -= taskBarMilestoneHypotenuse / 2;
     }
@@ -409,15 +408,13 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.StartToFinish) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    let linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    let linkFromPointX = getStartX(linkedFromTaskStartDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX -= taskBarMilestoneHypotenuse / 2;
     }
-    let linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    let linkToPointX = getEndX(linkedToTaskEndDate);
     if (linkedToTaskIsMilestone) {
-      linkToPointX =
-        computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-        taskBarMilestoneHypotenuse / 2;
+      linkToPointX = getStartX(linkedToTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     linePoints = [
       {
@@ -477,11 +474,11 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.StartToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    let linkFromPointX = computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+    let linkFromPointX = getStartX(linkedFromTaskStartDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX -= taskBarMilestoneHypotenuse / 2;
     }
-    let linkToPointX = computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+    let linkToPointX = getStartX(linkedToTaskStartDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX -= taskBarMilestoneHypotenuse / 2;
     }
@@ -546,17 +543,13 @@ export function generateLinkLinePoints(
   } else if (type === DependencyType.FinishToFinish) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
-    let linkFromPointX = computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    let linkFromPointX = getEndX(linkedFromTaskEndDate);
     if (linkedFromTaskIsMilestone) {
-      linkFromPointX =
-        computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-        taskBarMilestoneHypotenuse / 2;
+      linkFromPointX = getStartX(linkedFromTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
-    let linkToPointX = computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+    let linkToPointX = getEndX(linkedToTaskEndDate);
     if (linkedToTaskIsMilestone) {
-      linkToPointX =
-        computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-        taskBarMilestoneHypotenuse / 2;
+      linkToPointX = getStartX(linkedToTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     linePoints = [
       {
@@ -652,8 +645,7 @@ export function updateLinkLinePoints(
   toNodeDiffY: number,
   gantt: Gantt
 ) {
-  const { unit, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
-  const { minDate, rowHeight, timelineColWidth } = gantt.parsedOptions;
+  const { rowHeight } = gantt.parsedOptions;
   const taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneHypotenuse;
   const milestoneTaskbarHeight = gantt.parsedOptions.taskBarMilestoneStyle.width;
   const distanceToTaskBar: number = gantt.parsedOptions.dependencyLinkDistanceToTaskBar ?? 20;
@@ -663,23 +655,24 @@ export function updateLinkLinePoints(
   let endDate;
   let linePoints: { x: number; y: number }[] = [];
   let arrowPoints: { x: number; y: number }[] = [];
+  const getStartX = (d: Date) => gantt.getXByTime(d.getTime());
+  const getEndX = (d: Date) => gantt.getXByTime(d.getTime() + 1);
   if (type === DependencyType.FinishToStart) {
     startDate = linkedFromTaskStartDate;
     endDate = linkedToTaskStartDate;
     let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+      : getEndX(linkedFromTaskEndDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX = linkedFromMovedTaskBarNode
         ? linkedFromMovedTaskBarNode.attribute.x +
           linkedFromMovedTaskBarNode.attribute.width +
           (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
-        : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-          taskBarMilestoneHypotenuse / 2;
+        : getStartX(linkedFromTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+      : getStartX(linkedToTaskStartDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
@@ -746,20 +739,19 @@ export function updateLinkLinePoints(
 
     let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+      : getStartX(linkedFromTaskStartDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+      : getEndX(linkedToTaskEndDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX = linkedToMovedTaskBarNode
         ? linkedToMovedTaskBarNode.attribute.x +
           linkedToMovedTaskBarNode.attribute.width +
           (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
-        : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-          taskBarMilestoneHypotenuse / 2;
+        : getStartX(linkedToTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     linePoints = [
       {
@@ -823,13 +815,13 @@ export function updateLinkLinePoints(
     endDate = linkedToTaskStartDate;
     let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x
-      : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step) * timelineColWidth;
+      : getStartX(linkedFromTaskStartDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x
-      : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step) * timelineColWidth;
+      : getStartX(linkedToTaskStartDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX -= (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2;
     }
@@ -898,25 +890,23 @@ export function updateLinkLinePoints(
     endDate = linkedToTaskStartDate;
     let linkFromPointX = linkedFromMovedTaskBarNode
       ? linkedFromMovedTaskBarNode.attribute.x + linkedFromMovedTaskBarNode.attribute.width
-      : computeCountToTimeScale(linkedFromTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+      : getEndX(linkedFromTaskEndDate);
     if (linkedFromTaskIsMilestone) {
       linkFromPointX = linkedFromMovedTaskBarNode
         ? linkedFromMovedTaskBarNode.attribute.x +
           linkedFromMovedTaskBarNode.attribute.width +
           (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
-        : computeCountToTimeScale(linkedFromTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-          taskBarMilestoneHypotenuse / 2;
+        : getStartX(linkedFromTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     let linkToPointX = linkedToMovedTaskBarNode
       ? linkedToMovedTaskBarNode.attribute.x + linkedToMovedTaskBarNode.attribute.width
-      : computeCountToTimeScale(linkedToTaskEndDate, minDate, unit, step, 1) * timelineColWidth;
+      : getEndX(linkedToTaskEndDate);
     if (linkedToTaskIsMilestone) {
       linkToPointX = linkedToMovedTaskBarNode
         ? linkedToMovedTaskBarNode.attribute.x +
           linkedToMovedTaskBarNode.attribute.width +
           (taskBarMilestoneHypotenuse - milestoneTaskbarHeight) / 2
-        : computeCountToTimeScale(linkedToTaskStartDate, minDate, unit, step, 1) * timelineColWidth +
-          taskBarMilestoneHypotenuse / 2;
+        : getStartX(linkedToTaskStartDate) + taskBarMilestoneHypotenuse / 2;
     }
     linePoints = [
       {

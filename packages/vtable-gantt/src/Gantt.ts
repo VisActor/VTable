@@ -54,7 +54,6 @@ import {
 } from './gantt-helper';
 import { EventTarget } from './event/EventTarget';
 import {
-  computeCountToTimeScale,
   createDateAtLastHour,
   createDateAtLastMillisecond,
   createDateAtLastMinute,
@@ -220,6 +219,10 @@ export class Gantt extends EventTarget {
   //  时间缩放基准 - 每像素代表多少毫秒
   private millisecondsPerPixel: number;
   zoomScaleManager?: ZoomScaleManager;
+  private _timelineColWidths: number[] = [];
+  private _timelineColX: number[] = [];
+  private _timelineColStartTimes: number[] = [];
+  private _timelineColEndTimes: number[] = [];
 
   /**
    * 重新计算时间相关的尺寸参数
@@ -749,6 +752,156 @@ export class Gantt extends EventTarget {
         );
       }
     }
+    this._rebuildTimelineColXMap();
+  }
+
+  private _rebuildTimelineColXMap() {
+    const minScale = this.parsedOptions.reverseSortedTimelineScales?.[0];
+    const timelineDates = minScale?.timelineDates ?? [];
+    const baseWidth = this.parsedOptions.timelineColWidth ?? 0;
+
+    const hideWeekend = this.options?.timelineHeader?.hideWeekend === true;
+    const weekendColWidth = this.options?.timelineHeader?.weekendColWidth;
+    const enableWeekendWidth =
+      minScale?.unit === 'day' && minScale?.step === 1 && (hideWeekend || weekendColWidth !== undefined);
+
+    this._timelineColWidths = new Array(timelineDates.length);
+    this._timelineColX = new Array(timelineDates.length + 1);
+    this._timelineColStartTimes = new Array(timelineDates.length);
+    this._timelineColEndTimes = new Array(timelineDates.length);
+    this._timelineColX[0] = 0;
+
+    let sumX = 0;
+    for (let i = 0; i < timelineDates.length; i++) {
+      const d = timelineDates[i];
+      const startTime = d.startDate?.getTime?.() ?? 0;
+      const endTime = d.endDate?.getTime?.() ?? startTime;
+      this._timelineColStartTimes[i] = startTime;
+      this._timelineColEndTimes[i] = endTime;
+
+      let w = baseWidth;
+      if (enableWeekendWidth) {
+        const day = d.startDate.getDay();
+        const isWeekend = day === 0 || day === 6;
+        if (isWeekend) {
+          if (hideWeekend) {
+            w = 0;
+          } else if (typeof weekendColWidth === 'number') {
+            w = weekendColWidth;
+          } else if (typeof weekendColWidth === 'function') {
+            w = weekendColWidth(baseWidth);
+          }
+        }
+      }
+
+      w = Math.max(0, Number.isFinite(w) ? w : baseWidth);
+      this._timelineColWidths[i] = w;
+      sumX += w;
+      this._timelineColX[i + 1] = sumX;
+    }
+  }
+
+  getXByTime(time: number) {
+    const startTimes = this._timelineColStartTimes;
+    const endTimes = this._timelineColEndTimes;
+    const widths = this._timelineColWidths;
+    const xPrefix = this._timelineColX;
+    if (!startTimes?.length || !endTimes?.length || !widths?.length || !xPrefix?.length) {
+      return 0;
+    }
+    if (time <= startTimes[0]) {
+      return 0;
+    }
+    const lastIndex = endTimes.length - 1;
+    if (time > endTimes[lastIndex]) {
+      return xPrefix[lastIndex + 1] ?? 0;
+    }
+
+    let low = 0;
+    let high = lastIndex;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      const st = startTimes[mid];
+      const et = endTimes[mid];
+      if (time < st) {
+        high = mid - 1;
+      } else if (time > et) {
+        low = mid + 1;
+      } else {
+        const duration = Math.max(1, et - st + 1);
+        const offset = (time - st) / duration;
+        return (xPrefix[mid] ?? 0) + (widths[mid] ?? 0) * offset;
+      }
+    }
+
+    const idx = Math.max(0, Math.min(lastIndex, high));
+    const st = startTimes[idx];
+    const et = endTimes[idx];
+    const duration = Math.max(1, et - st + 1);
+    const offset = Math.max(0, Math.min(1, (time - st) / duration));
+    return (xPrefix[idx] ?? 0) + (widths[idx] ?? 0) * offset;
+  }
+
+  getDateIndexByTime(time: number) {
+    const startTimes = this._timelineColStartTimes;
+    const endTimes = this._timelineColEndTimes;
+    if (!startTimes?.length || !endTimes?.length) {
+      return 0;
+    }
+    if (time <= startTimes[0]) {
+      return 0;
+    }
+    const lastIndex = endTimes.length - 1;
+    if (time > endTimes[lastIndex]) {
+      return lastIndex;
+    }
+    let low = 0;
+    let high = lastIndex;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      const st = startTimes[mid];
+      const et = endTimes[mid];
+      if (time < st) {
+        high = mid - 1;
+      } else if (time > et) {
+        low = mid + 1;
+      } else {
+        return mid;
+      }
+    }
+    return Math.max(0, Math.min(lastIndex, high));
+  }
+
+  getDateIndexByX(x: number) {
+    const totalX = x + this.stateManager.scroll.horizontalBarPos;
+    const xPrefix = this._timelineColX;
+    if (!xPrefix?.length) {
+      return 0;
+    }
+    if (totalX <= 0) {
+      return 0;
+    }
+    const lastIndex = xPrefix.length - 2;
+    const totalWidth = xPrefix[lastIndex + 1] ?? 0;
+    if (totalX >= totalWidth) {
+      return Math.max(0, lastIndex);
+    }
+
+    let low = 0;
+    let high = lastIndex;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      const left = xPrefix[mid] ?? 0;
+      const right = xPrefix[mid + 1] ?? left;
+      if (totalX < left) {
+        high = mid - 1;
+      } else if (totalX >= right) {
+        low = mid + 1;
+      } else {
+        return mid;
+      }
+    }
+    return Math.max(0, Math.min(lastIndex, low));
   }
   getRowHeightByIndex(index: number) {
     if (this.taskListTableInstance) {
@@ -783,6 +936,10 @@ export class Gantt extends EventTarget {
     // return (this.parsedOptions.timeLineHeaderRowHeights as number) * this.timeLineHeaderLevel;
   }
   getAllDateColsWidth() {
+    const xPrefix = this._timelineColX;
+    if (xPrefix?.length) {
+      return xPrefix[xPrefix.length - 1] ?? 0;
+    }
     return (
       this.parsedOptions.timelineColWidth *
       (this.parsedOptions.reverseSortedTimelineScales[0].timelineDates?.length ?? 0)
@@ -1389,10 +1546,7 @@ export class Gantt extends EventTarget {
   /** 滚动到scrollToMarkLineDate所指向的日期 */
   _scrollToMarkLine() {
     if (this.parsedOptions.scrollToMarkLineDate && this.parsedOptions.minDate) {
-      const minDate = this.parsedOptions.minDate;
-      const { unit, step } = this.parsedOptions.reverseSortedTimelineScales[0];
-      const count = computeCountToTimeScale(this.parsedOptions.scrollToMarkLineDate, minDate, unit, step);
-      const targetDayDistance = count * this.parsedOptions.timelineColWidth;
+      const targetDayDistance = this.getXByTime(this.parsedOptions.scrollToMarkLineDate.getTime());
       const left = targetDayDistance - this.tableNoFrameWidth / 2;
       this.stateManager.setScrollLeft(left);
     }
@@ -1402,10 +1556,7 @@ export class Gantt extends EventTarget {
     if (!date || !this.parsedOptions.minDate) {
       return;
     }
-    const minDate = this.parsedOptions.minDate;
-    const { unit, step } = this.parsedOptions.reverseSortedTimelineScales[0];
-    const count = computeCountToTimeScale(date, minDate, unit, step);
-    const targetDayDistance = count * this.parsedOptions.timelineColWidth;
+    const targetDayDistance = this.getXByTime(date.getTime());
     const left = targetDayDistance - this.tableNoFrameWidth / 2;
     this.stateManager.setScrollLeft(left);
   }
@@ -1487,9 +1638,22 @@ export class Gantt extends EventTarget {
   // }
 
   getDateColWidth(dateIndex: number) {
+    const widths = this._timelineColWidths;
+    if (widths?.length && dateIndex >= 0 && dateIndex < widths.length) {
+      return widths[dateIndex] ?? 0;
+    }
     return this.parsedOptions.timelineColWidth;
   }
   getDateColsWidth(startDateIndex: number, endDateIndex: number) {
+    const xPrefix = this._timelineColX;
+    if (xPrefix?.length) {
+      const start = Math.max(0, Math.min(startDateIndex, xPrefix.length - 1));
+      const end = Math.max(0, Math.min(endDateIndex + 1, xPrefix.length - 1));
+      if (end <= start) {
+        return 0;
+      }
+      return (xPrefix[end] ?? 0) - (xPrefix[start] ?? 0);
+    }
     return (endDateIndex - startDateIndex + 1) * this.parsedOptions.timelineColWidth;
   }
 
