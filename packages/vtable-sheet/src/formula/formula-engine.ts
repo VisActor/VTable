@@ -1496,8 +1496,13 @@ export class FormulaEngine {
 
       const values: unknown[] = [];
 
-      for (let row = startCell.row; row <= endCell.row; row++) {
-        for (let col = startCell.col; col <= endCell.col; col++) {
+      const minRow = Math.min(startCell.row, endCell.row);
+      const maxRow = Math.max(startCell.row, endCell.row);
+      const minCol = Math.min(startCell.col, endCell.col);
+      const maxCol = Math.max(startCell.col, endCell.col);
+
+      for (let row = minRow; row <= maxRow; row++) {
+        for (let col = minCol; col <= maxCol; col++) {
           const cell: FormulaCell = { sheet: sheetKey, row, col };
           values.push(this.getCellValue(cell).value);
         }

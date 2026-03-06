@@ -353,6 +353,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   deleteColumns(deleteColIndexs: number[], isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
     deleteColIndexs.sort((a, b) => b - a);
+    const deletedColumns = deleteColIndexs.map(idx => cloneDeepSpec(columns[idx], ['children']));
+    let deletedRecordValues: any[][] | undefined;
+    if (isMaintainArrayData && Array.isArray(this.records) && this.records.length) {
+      deletedRecordValues = this.records.map(record => {
+        if (Array.isArray(record)) {
+          return deleteColIndexs.map(idx => record[idx]);
+        }
+        return [];
+      });
+      if (deletedRecordValues.every(v => v.length === 0)) {
+        deletedRecordValues = undefined;
+      }
+    }
     for (let i = 0; i < deleteColIndexs.length; i++) {
       columns.splice(deleteColIndexs[i], 1);
       //#region 修正colWidthsMap中的列宽缓存
@@ -392,7 +405,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.updateColumns(columns, { clearRowHeightCache: false });
     this.fireListeners(TABLE_EVENT_TYPE.DELETE_COLUMN, {
       deleteColIndexs: deleteColIndexs,
-      columns
+      columns,
+      deletedColumns,
+      deletedRecordValues
     });
   }
 
