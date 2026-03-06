@@ -350,6 +350,8 @@ export interface TableEventHandlersEventArgumentMap {
     // deleteBeforeColumns: ColumnsDefine;
     deleteColIndexs: number[];
     columns: ColumnsDefine;
+    deletedColumns?: ColumnsDefine;
+    deletedRecordValues?: any[][];
   };
 }
 export interface DrillMenuEventInfo {

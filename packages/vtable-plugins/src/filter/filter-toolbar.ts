@@ -302,7 +302,7 @@ export class FilterToolbar {
     // 确保在事件冒泡完成后才设置 isVisible 为 true
     setTimeout(() => {
       this.isVisible = true;
-      this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
+      (this.table as any).fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
         col: col,
         row: row
       });
@@ -312,7 +312,7 @@ export class FilterToolbar {
   hide = (currentCol?: number, currentRow?: number): void => {
     this.filterMenu.style.display = 'none';
     this.isVisible = false;
-    this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
+    (this.table as any).fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
       col: currentCol ?? this.currentCol,
       row: currentRow ?? this.currentRow
     });
