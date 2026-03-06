@@ -37,6 +37,10 @@ export const menus = [
     children: [
       {
         path: 'list',
+        name: 'groupBy-oneCol'
+      },
+      {
+        path: 'list',
         name: 'list'
       },
       {
