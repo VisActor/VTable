@@ -1,7 +1,7 @@
 import { Group, createText, createRect, Image, Circle, Line, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import { computeCountToTimeScale, parseStringTemplate, toBoxArray } from '../tools/util';
+import { parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
 import { defaultTaskBarStyle, getTextPos } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
@@ -229,9 +229,8 @@ export class TaskBar {
     ) {
       return { barGroupBox: null, baselineBar: null };
     }
-    const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let taskBarSize =
-      computeCountToTimeScale(endDate, startDate, unit, step, 1) * this._scene._gantt.parsedOptions.timelineColWidth;
+      this._scene._gantt.getXByTime(endDate.getTime() + 1) - this._scene._gantt.getXByTime(startDate.getTime());
 
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(index, childIndex);
     const taskbarHeight = taskBarStyle.width;
@@ -241,10 +240,7 @@ export class TaskBar {
 
     const oneTaskHeigth = this._scene._gantt.parsedOptions.rowHeight;
     const milestoneTaskBarHeight = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
-    const x =
-      computeCountToTimeScale(startDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
-        this._scene._gantt.parsedOptions.timelineColWidth -
-      (isMilestone ? milestoneTaskBarHeight / 2 : 0);
+    const x = this._scene._gantt.getXByTime(startDate.getTime()) - (isMilestone ? milestoneTaskBarHeight / 2 : 0);
     let y =
       this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
       (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
@@ -263,12 +259,10 @@ export class TaskBar {
 
     if (hasBaseline && !isMilestone) {
       const baselineStyle = this._scene._gantt.getBaselineStyle(index, childIndex);
-      const baselineX =
-        computeCountToTimeScale(baselineInfo.baselineStartDate, this._scene._gantt.parsedOptions.minDate, unit, step) *
-        this._scene._gantt.parsedOptions.timelineColWidth;
+      const baselineX = this._scene._gantt.getXByTime(baselineInfo.baselineStartDate.getTime());
       const baselineWidth =
-        computeCountToTimeScale(baselineInfo.baselineEndDate, baselineInfo.baselineStartDate, unit, step, 1) *
-        this._scene._gantt.parsedOptions.timelineColWidth;
+        this._scene._gantt.getXByTime(baselineInfo.baselineEndDate.getTime() + 1) -
+        this._scene._gantt.getXByTime(baselineInfo.baselineStartDate.getTime());
 
       let baselineY: number;
       const taskBarPaddingTop = taskBarStyle.paddingTop ?? undefined;
