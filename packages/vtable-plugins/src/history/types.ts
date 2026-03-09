@@ -10,6 +10,7 @@ export interface HistoryPluginOptions {
 export type HistoryCommandType =
   | 'cell'
   | 'cells'
+  | 'merge_cells'
   | 'add_record'
   | 'delete_record'
   | 'update_record'
@@ -36,6 +37,16 @@ export interface CellCommand extends BaseCommand {
   cells: CellChange[];
 }
 
+export interface MergeCellsCommand extends BaseCommand {
+  type: 'merge_cells';
+  startCol: number;
+  startRow: number;
+  endCol: number;
+  endRow: number;
+  oldCustomMergeCell: any;
+  newCustomMergeCell: any;
+}
+
 export interface AddRecordCommand extends BaseCommand {
   type: 'add_record';
   records: any[];
@@ -47,6 +58,9 @@ export interface DeleteRecordCommand extends BaseCommand {
   type: 'delete_record';
   records: any[];
   recordIndexs: (number | number[])[];
+  deletedRowHeights?: Record<number, number>;
+  oldCustomMergeCell?: any;
+  newCustomMergeCell?: any;
 }
 
 export interface UpdateRecordCommand extends BaseCommand {
@@ -71,6 +85,7 @@ export interface DeleteColumnCommand extends BaseCommand {
   deletedRecordValues?: any[][];
   // vtable-sheet 场景需要：恢复被删除列上的公式关系（A1 -> formula）。
   deletedFormulas?: Record<string, string>;
+  deletedColWidths?: Record<number, number>;
 }
 
 export interface ChangeHeaderPositionCommand extends BaseCommand {
@@ -96,6 +111,7 @@ export interface ResizeColumnCommand extends BaseCommand {
 
 export type HistoryCommand =
   | CellCommand
+  | MergeCellsCommand
   | AddRecordCommand
   | DeleteRecordCommand
   | UpdateRecordCommand

@@ -16,6 +16,7 @@ import type {
   HistoryCommand,
   HistoryPluginOptions,
   HistoryTransaction,
+  MergeCellsCommand,
   ResizeColumnCommand,
   ResizeRowCommand,
   UpdateRecordCommand
@@ -26,10 +27,13 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
   name = 'History';
 
   runTime: any[] = [
+    TABLE_EVENT_TYPE.INITIALIZED,
     TABLE_EVENT_TYPE.BEFORE_KEYDOWN,
     TABLE_EVENT_TYPE.CHANGE_CELL_VALUE,
     TABLE_EVENT_TYPE.CHANGE_CELL_VALUES,
     TABLE_EVENT_TYPE.PASTED_DATA,
+    TABLE_EVENT_TYPE.MERGE_CELLS,
+    TABLE_EVENT_TYPE.UNMERGE_CELLS,
     TABLE_EVENT_TYPE.ADD_RECORD,
     TABLE_EVENT_TYPE.DELETE_RECORD,
     TABLE_EVENT_TYPE.UPDATE_RECORD,
@@ -58,6 +62,8 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
   private prevMergeSnapshot: TYPES.CustomMergeCellArray | undefined;
   private prevRecordsSnapshot: any[] | null = null;
   private prevFormulasSnapshot: Record<string, string> | null = null;
+  private prevResizedRowHeightsSnapshot: Record<number, number> | null = null;
+  private prevResizedColWidthsSnapshot: Record<number, number> | null = null;
 
   private cellPreChangeContent: Map<string, any> = new Map();
   private formulaCache: Map<string, string | undefined> = new Map();
@@ -79,6 +85,9 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     const runtime = args[1] as any;
     const table = args[2] as ListTable;
 
+    if (!table) {
+      return;
+    }
     if (!this.table) {
       this.table = table;
       this.vtableSheet = (table as any).__vtableSheet;
@@ -98,6 +107,8 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     switch (runtime) {
+      case TABLE_EVENT_TYPE.INITIALIZED:
+        break;
       case TABLE_EVENT_TYPE.BEFORE_KEYDOWN:
         this.handleBeforeKeydown(eventArgs);
         break;
@@ -108,6 +119,12 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
         this.handleChangeCellValues(eventArgs);
         break;
       case TABLE_EVENT_TYPE.PASTED_DATA:
+        break;
+      case TABLE_EVENT_TYPE.MERGE_CELLS:
+        this.handleMergeCells(eventArgs);
+        break;
+      case TABLE_EVENT_TYPE.UNMERGE_CELLS:
+        this.handleUnmergeCells(eventArgs);
         break;
       case TABLE_EVENT_TYPE.ADD_RECORD:
         this.handleAddRecord(eventArgs);
@@ -184,6 +201,15 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       this.isReplaying = false;
     }
     this.redoStack.push(transaction);
+    if (this.table) {
+      const state = this.getSnapshotState();
+      const sheetKey = this.getSheetKey();
+      captureSnapshot(this.table, state, {
+        formulaManager: this.vtableSheet?.formulaManager,
+        sheetKey
+      });
+      this.setSnapshotState(state);
+    }
   }
 
   redo(): void {
@@ -200,6 +226,15 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       this.isReplaying = false;
     }
     this.undoStack.push(transaction);
+    if (this.table) {
+      const state = this.getSnapshotState();
+      const sheetKey = this.getSheetKey();
+      captureSnapshot(this.table, state, {
+        formulaManager: this.vtableSheet?.formulaManager,
+        sheetKey
+      });
+      this.setSnapshotState(state);
+    }
   }
 
   clear(): void {
@@ -220,6 +255,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
 
   release(): void {
     this.clear();
+    this.unbindFormulaEvents();
     this.table = null;
     this.vtableSheet = null;
     this.resolvedSheetKey = undefined;
@@ -227,9 +263,10 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     this.prevMergeSnapshot = undefined;
     this.prevRecordsSnapshot = null;
     this.prevFormulasSnapshot = null;
+    this.prevResizedRowHeightsSnapshot = null;
+    this.prevResizedColWidthsSnapshot = null;
     this.cellPreChangeContent.clear();
     this.formulaCache.clear();
-    this.unbindFormulaEvents();
     this.resizeRowStartHeight.clear();
     this.resizeColStartWidth.clear();
   }
@@ -249,7 +286,9 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       prevColumnsSnapshot: this.prevColumnsSnapshot,
       prevMergeSnapshot: this.prevMergeSnapshot,
       prevRecordsSnapshot: this.prevRecordsSnapshot,
-      prevFormulasSnapshot: this.prevFormulasSnapshot
+      prevFormulasSnapshot: this.prevFormulasSnapshot,
+      prevResizedRowHeightsSnapshot: this.prevResizedRowHeightsSnapshot,
+      prevResizedColWidthsSnapshot: this.prevResizedColWidthsSnapshot
     };
   }
 
@@ -258,11 +297,15 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     prevMergeSnapshot: any;
     prevRecordsSnapshot: any;
     prevFormulasSnapshot?: any;
+    prevResizedRowHeightsSnapshot?: any;
+    prevResizedColWidthsSnapshot?: any;
   }) {
     this.prevColumnsSnapshot = next.prevColumnsSnapshot;
     this.prevMergeSnapshot = next.prevMergeSnapshot;
     this.prevRecordsSnapshot = next.prevRecordsSnapshot;
     this.prevFormulasSnapshot = next.prevFormulasSnapshot ?? null;
+    this.prevResizedRowHeightsSnapshot = next.prevResizedRowHeightsSnapshot ?? null;
+    this.prevResizedColWidthsSnapshot = next.prevResizedColWidthsSnapshot ?? null;
   }
 
   private pushTransaction(tx: HistoryTransaction): void {
@@ -369,9 +412,14 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
           fallbackOldContent: v.currentValue,
           store: this.cellPreChangeContent
         });
-        return { row: v.row, col: v.col, oldContent, newContent: v.changedValue };
+        const normalizedOld = oldContent == null ? '' : oldContent;
+        const normalizedNew = v.changedValue == null ? '' : v.changedValue;
+        return { row: v.row, col: v.col, oldContent: normalizedOld, newContent: normalizedNew };
       })
       .filter(c => {
+        if (c.oldContent === c.newContent) {
+          return false;
+        }
         if (!sheetKey || !formulaManager?.getCellFormula || !formulaManager?.getCellValue) {
           return true;
         }
@@ -480,6 +528,89 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     }
   }
 
+  private cloneMergeConfig(input: any): any {
+    if (Array.isArray(input)) {
+      return input.map(i => cloneDeep(i));
+    }
+    return input;
+  }
+
+  private isSameMergeConfig(a: any, b: any): boolean {
+    const normalize = (v: any) => {
+      if (v == null) {
+        return [];
+      }
+      if (Array.isArray(v)) {
+        return v;
+      }
+      return v;
+    };
+    const aa = normalize(a);
+    const bb = normalize(b);
+    if (aa === bb) {
+      return true;
+    }
+    if (Array.isArray(aa) && Array.isArray(bb)) {
+      if (aa.length !== bb.length) {
+        return false;
+      }
+      for (let i = 0; i < aa.length; i++) {
+        const ra = aa[i]?.range;
+        const rb = bb[i]?.range;
+        if (
+          !ra ||
+          !rb ||
+          ra.start?.col !== rb.start?.col ||
+          ra.start?.row !== rb.start?.row ||
+          ra.end?.col !== rb.end?.col ||
+          ra.end?.row !== rb.end?.row ||
+          aa[i]?.text !== bb[i]?.text
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private handleMergeCells(eventArgs: TableEventHandlersEventArgumentMap['merge_cells']): void {
+    this.handleMergeConfigChanged(eventArgs);
+  }
+
+  private handleUnmergeCells(eventArgs: TableEventHandlersEventArgumentMap['unmerge_cells']): void {
+    this.handleMergeConfigChanged(eventArgs);
+  }
+
+  private handleMergeConfigChanged(eventArgs: {
+    startCol: number;
+    startRow: number;
+    endCol: number;
+    endRow: number;
+  }): void {
+    if (!this.table) {
+      return;
+    }
+    const { startCol, startRow, endCol, endRow } = eventArgs;
+    const before = this.cloneMergeConfig(this.prevMergeSnapshot);
+    const after = this.cloneMergeConfig((this.table as any).options?.customMergeCell);
+    if (this.isSameMergeConfig(before, after)) {
+      return;
+    }
+
+    const cmd: MergeCellsCommand = {
+      type: 'merge_cells',
+      sheetKey: this.getSheetKey(),
+      startCol,
+      startRow,
+      endCol,
+      endRow,
+      oldCustomMergeCell: before,
+      newCustomMergeCell: after
+    };
+    this.pushCommand(cmd);
+  }
+
   private handleAddRecord(eventArgs: TableEventHandlersEventArgumentMap['add_record']): void {
     const sheetKey = this.getSheetKey();
     const cmd: AddRecordCommand = {
@@ -498,11 +629,37 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       ? ((eventArgs.recordIndexs as (number | number[])[]).slice() as (number | number[])[])
       : [eventArgs.recordIndexs as any];
 
+    let deletedRowHeights: Record<number, number> | undefined;
+    if (this.table && this.prevResizedRowHeightsSnapshot) {
+      const headerCount = (this.table as any).transpose
+        ? (this.table as any).rowHeaderLevelCount
+        : (this.table as any).columnHeaderLevelCount;
+      recordIndexs.forEach(idx => {
+        if (typeof idx !== 'number') {
+          return;
+        }
+        const rowIndex = idx + (headerCount ?? 0);
+        const height = this.prevResizedRowHeightsSnapshot?.[rowIndex];
+        if (typeof height === 'number') {
+          if (!deletedRowHeights) {
+            deletedRowHeights = {};
+          }
+          deletedRowHeights[idx] = height;
+        }
+      });
+    }
+
+    const oldCustomMergeCell = this.cloneMergeConfig(this.prevMergeSnapshot);
+    const newCustomMergeCell = this.cloneMergeConfig((this.table as any)?.options?.customMergeCell);
+
     const cmd: DeleteRecordCommand = {
       type: 'delete_record',
       sheetKey,
       records: Array.isArray(eventArgs.records) ? eventArgs.records.slice() : [],
-      recordIndexs
+      recordIndexs,
+      deletedRowHeights,
+      oldCustomMergeCell,
+      newCustomMergeCell
     };
     this.pushCommand(cmd);
   }
@@ -595,13 +752,27 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       });
     }
 
+    let deletedColWidths: Record<number, number> | undefined;
+    if (this.prevResizedColWidthsSnapshot && deleteColIndexs.length) {
+      deleteColIndexs.forEach(idx => {
+        const w = this.prevResizedColWidthsSnapshot?.[idx];
+        if (typeof w === 'number') {
+          if (!deletedColWidths) {
+            deletedColWidths = {};
+          }
+          deletedColWidths[idx] = w;
+        }
+      });
+    }
+
     const cmd: DeleteColumnCommand = {
       type: 'delete_column',
       sheetKey,
       deleteColIndexs,
       columns: deletedColumns,
       deletedRecordValues,
-      deletedFormulas
+      deletedFormulas,
+      deletedColWidths
     };
     this.pushCommand(cmd);
   }
@@ -645,6 +816,9 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     const oldHeight = this.resizeRowStartHeight.get(row) ?? newHeight;
     this.resizeRowStartHeight.delete(row);
 
+    if (typeof oldHeight === 'number' && typeof newHeight === 'number' && oldHeight === newHeight) {
+      return;
+    }
     const cmd: ResizeRowCommand = { type: 'resize_row', sheetKey, row, oldHeight, newHeight };
     this.pushCommand(cmd);
   }
@@ -673,6 +847,9 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     const oldWidth = this.resizeColStartWidth.get(col) ?? newWidth;
     this.resizeColStartWidth.delete(col);
 
+    if (typeof oldWidth === 'number' && typeof newWidth === 'number' && oldWidth === newWidth) {
+      return;
+    }
     const cmd: ResizeColumnCommand = { type: 'resize_column', sheetKey, col, oldWidth, newWidth };
     this.pushCommand(cmd);
   }

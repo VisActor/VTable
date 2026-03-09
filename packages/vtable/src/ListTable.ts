@@ -304,6 +304,50 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addColumns(toAddColumns: ColumnDefine[], colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
+    if (Array.isArray(this.options.customMergeCell) && toAddColumns?.length) {
+      const axis: 'row' | 'col' = this.transpose ? 'row' : 'col';
+      let insertIndex = colIndex;
+      if (insertIndex === undefined) {
+        insertIndex = columns.length;
+      } else if (insertIndex < 0) {
+        insertIndex = 0;
+      } else if (insertIndex > columns.length) {
+        insertIndex = columns.length;
+      }
+      const toAddCount = toAddColumns.length;
+      const merges = (this.options.customMergeCell as any[]).map(m => ({
+        ...m,
+        range: { start: { ...m.range.start }, end: { ...m.range.end } }
+      }));
+      for (let i = 0; i < merges.length; i++) {
+        const r = merges[i]?.range;
+        if (!r?.start || !r?.end) {
+          continue;
+        }
+        const start = r.start[axis];
+        const end = r.end[axis];
+        if (end < insertIndex) {
+          continue;
+        }
+        if (start > insertIndex) {
+          r.start[axis] = start + toAddCount;
+          r.end[axis] = end + toAddCount;
+        } else {
+          r.end[axis] = end + toAddCount;
+        }
+      }
+      this.options.customMergeCell = merges.filter((m: any) => {
+        const r = m?.range;
+        if (!r?.start || !r?.end) {
+          return false;
+        }
+        if (r.end.row < r.start.row || r.end.col < r.start.col) {
+          return false;
+        }
+        return !(r.start.row === r.end.row && r.start.col === r.end.col);
+      });
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    }
     if (colIndex === undefined) {
       colIndex = columns.length;
       columns.push(...toAddColumns);
@@ -340,6 +384,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.updateColumns(columns, { clearRowHeightCache: false });
+    if (Array.isArray(this.options.customMergeCell)) {
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+      (this.options.customMergeCell as any[]).forEach(m => {
+        const r = m?.range;
+        if (!r?.start) {
+          return;
+        }
+        for (let col = r.start.col; col <= r.end.col; col++) {
+          for (let row = r.start.row; row <= r.end.row; row++) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
+      });
+      this.scenegraph.updateNextFrame();
+    }
     this.fireListeners(TABLE_EVENT_TYPE.ADD_COLUMN, {
       columnIndex: colIndex,
       columnCount: toAddColumns.length,
@@ -355,6 +414,51 @@ export class ListTable extends BaseTable implements ListTableAPI {
     deleteColIndexs.sort((a, b) => b - a);
     const deletedColumns = deleteColIndexs.map(idx => cloneDeepSpec(columns[idx], ['children']));
     let deletedRecordValues: any[][] | undefined;
+    if (Array.isArray(this.options.customMergeCell) && deleteColIndexs?.length) {
+      const axis: 'row' | 'col' = this.transpose ? 'row' : 'col';
+      const deleteIndexNums = deleteColIndexs
+        .slice()
+        .sort((a, b) => a - b)
+        .map((idx, i) => idx - i);
+      const merges = (this.options.customMergeCell as any[]).map(m => ({
+        ...m,
+        range: {
+          start: { ...m.range.start },
+          end: { ...m.range.end }
+        }
+      }));
+      for (let i = 0; i < deleteIndexNums.length; i++) {
+        const deleteIndex = deleteIndexNums[i];
+        for (let j = 0; j < merges.length; j++) {
+          const r = merges[j]?.range;
+          if (!r?.start || !r?.end) {
+            continue;
+          }
+          const start = r.start[axis];
+          const end = r.end[axis];
+          if (end < deleteIndex) {
+            continue;
+          }
+          if (start > deleteIndex) {
+            r.start[axis] = start - 1;
+            r.end[axis] = end - 1;
+          } else {
+            r.end[axis] = end - 1;
+          }
+        }
+      }
+      this.options.customMergeCell = merges.filter((m: any) => {
+        const r = m?.range;
+        if (!r?.start || !r?.end) {
+          return false;
+        }
+        if (r.end.row < r.start.row || r.end.col < r.start.col) {
+          return false;
+        }
+        return !(r.start.row === r.end.row && r.start.col === r.end.col);
+      });
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    }
     if (isMaintainArrayData && Array.isArray(this.records) && this.records.length) {
       deletedRecordValues = this.records.map(record => {
         if (Array.isArray(record)) {
@@ -1967,9 +2071,68 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecord(record: any, recordIndex?: number | number[], triggerEvent = true) {
+    if (Array.isArray(this.options.customMergeCell) && typeof recordIndex === 'number') {
+      const axis: 'row' | 'col' = this.transpose ? 'col' : 'row';
+      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
+      const topAggregationCount = this.internalProps.layoutMap.hasAggregationOnTopCount;
+      let insertIndex = recordIndex;
+      if (insertIndex === undefined || insertIndex > this.dataSource.sourceLength) {
+        insertIndex = this.dataSource.sourceLength;
+      } else if (insertIndex < 0) {
+        insertIndex = 0;
+      }
+      const insertIndexNum = insertIndex + headerCount + topAggregationCount;
+      const merges = (this.options.customMergeCell as any[]).map(m => ({
+        ...m,
+        range: { start: { ...m.range.start }, end: { ...m.range.end } }
+      }));
+      for (let i = 0; i < merges.length; i++) {
+        const r = merges[i]?.range;
+        if (!r?.start || !r?.end) {
+          continue;
+        }
+        const start = r.start[axis];
+        const end = r.end[axis];
+        if (end < insertIndexNum) {
+          continue;
+        }
+        if (start > insertIndexNum) {
+          r.start[axis] = start + 1;
+          r.end[axis] = end + 1;
+        } else {
+          r.end[axis] = end + 1;
+        }
+      }
+      this.options.customMergeCell = merges.filter((m: any) => {
+        const r = m?.range;
+        if (!r?.start || !r?.end) {
+          return false;
+        }
+        if (r.end.row < r.start.row || r.end.col < r.start.col) {
+          return false;
+        }
+        return !(r.start.row === r.end.row && r.start.col === r.end.col);
+      });
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    }
     const success = listTableAddRecord(record, recordIndex, this);
     adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, [record]);
     this.internalProps.emptyTip?.resetVisible();
+    if (success && Array.isArray(this.options.customMergeCell)) {
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+      (this.options.customMergeCell as any[]).forEach(m => {
+        const r = m?.range;
+        if (!r?.start) {
+          return;
+        }
+        for (let col = r.start.col; col <= r.end.col; col++) {
+          for (let row = r.start.row; row <= r.end.row; row++) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
+      });
+      this.scenegraph.updateNextFrame();
+    }
     // 只在成功添加时触发事件
     if (triggerEvent && success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
@@ -1988,12 +2151,72 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecords(records: any[], recordIndex?: number | number[], triggerEvent = true) {
+    if (Array.isArray(this.options.customMergeCell) && typeof recordIndex === 'number' && records?.length) {
+      const axis: 'row' | 'col' = this.transpose ? 'col' : 'row';
+      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
+      const topAggregationCount = this.internalProps.layoutMap.hasAggregationOnTopCount;
+      let insertIndex = recordIndex;
+      if (insertIndex === undefined || insertIndex > this.dataSource.sourceLength) {
+        insertIndex = this.dataSource.sourceLength;
+      } else if (insertIndex < 0) {
+        insertIndex = 0;
+      }
+      const insertIndexNum = insertIndex + headerCount + topAggregationCount;
+      const toAddCount = records.length;
+      const merges = (this.options.customMergeCell as any[]).map(m => ({
+        ...m,
+        range: { start: { ...m.range.start }, end: { ...m.range.end } }
+      }));
+      for (let i = 0; i < merges.length; i++) {
+        const r = merges[i]?.range;
+        if (!r?.start || !r?.end) {
+          continue;
+        }
+        const start = r.start[axis];
+        const end = r.end[axis];
+        if (end < insertIndexNum) {
+          continue;
+        }
+        if (start > insertIndexNum) {
+          r.start[axis] = start + toAddCount;
+          r.end[axis] = end + toAddCount;
+        } else {
+          r.end[axis] = end + toAddCount;
+        }
+      }
+      this.options.customMergeCell = merges.filter((m: any) => {
+        const r = m?.range;
+        if (!r?.start || !r?.end) {
+          return false;
+        }
+        if (r.end.row < r.start.row || r.end.col < r.start.col) {
+          return false;
+        }
+        return !(r.start.row === r.end.row && r.start.col === r.end.col);
+      });
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    }
     const success = listTableAddRecords(records, recordIndex, this);
     //_heightResizedRowMap修正，里面的行号需要修正，保证添加数据后 其他行号做对应调整
     if (typeof recordIndex === 'number') {
       adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, records);
     }
     this.internalProps.emptyTip?.resetVisible();
+    if (success && Array.isArray(this.options.customMergeCell)) {
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+      (this.options.customMergeCell as any[]).forEach(m => {
+        const r = m?.range;
+        if (!r?.start) {
+          return;
+        }
+        for (let col = r.start.col; col <= r.end.col; col++) {
+          for (let row = r.start.row; row <= r.end.row; row++) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
+      });
+      this.scenegraph.updateNextFrame();
+    }
 
     // 只在成功添加时触发事件
     if (triggerEvent && success) {
@@ -2010,6 +2233,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param recordIndexs 要删除数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）
    */
   deleteRecords(recordIndexs: number[] | number[][], triggerEvent = true) {
+    // 背景：删除行后 options.customMergeCell 已更新，但场景树中旧合并范围的 cell 仍保留旧的 mergeStart/End。
+    // 逻辑：保存删除前的合并范围，删除完成后用“旧范围 + 新范围”的并集刷新，确保退出合并的 cell 也被重算。
+    const prevMergeRanges = Array.isArray(this.options.customMergeCell)
+      ? (this.options.customMergeCell as any[])
+          .map(m => m?.range)
+          .filter(Boolean)
+          .map((r: any) => ({
+            start: { ...r.start },
+            end: { ...r.end }
+          }))
+      : [];
     const deletedRecords: any[] = [];
     // 收集被删除的记录
     if (recordIndexs?.length > 0) {
@@ -2023,6 +2257,47 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
 
         deletedRecords.push(record);
+      });
+    }
+
+    if (Array.isArray(this.options.customMergeCell) && recordIndexs?.length && typeof recordIndexs[0] === 'number') {
+      const axis: 'row' | 'col' = this.transpose ? 'col' : 'row';
+      const headerCount = this.transpose ? this.rowHeaderLevelCount : this.columnHeaderLevelCount;
+      const topAggregationCount = this.internalProps.layoutMap.hasAggregationOnTopCount;
+      const deleteIndexNums = (recordIndexs as number[])
+        .slice()
+        .sort((a, b) => a - b)
+        .map((index, i) => index + headerCount + topAggregationCount - i);
+      const merges = this.options.customMergeCell as any[];
+      for (let i = 0; i < deleteIndexNums.length; i++) {
+        const deleteIndex = deleteIndexNums[i];
+        for (let j = 0; j < merges.length; j++) {
+          const r = merges[j]?.range;
+          if (!r?.start || !r?.end) {
+            continue;
+          }
+          const start = r.start[axis];
+          const end = r.end[axis];
+          if (end < deleteIndex) {
+            continue;
+          }
+          if (start > deleteIndex) {
+            r.start[axis] = start - 1;
+            r.end[axis] = end - 1;
+          } else {
+            r.end[axis] = end - 1;
+          }
+        }
+      }
+      this.options.customMergeCell = merges.filter((m: any) => {
+        const r = m?.range;
+        if (!r?.start || !r?.end) {
+          return false;
+        }
+        if (r.end.row < r.start.row || r.end.col < r.start.col) {
+          return false;
+        }
+        return !(r.start.row === r.end.row && r.start.col === r.end.col);
       });
     }
 
@@ -2043,6 +2318,50 @@ export class ListTable extends BaseTable implements ListTableAPI {
           ? (recordIndexs as number[][]).length
           : (recordIndexs as number[]).length
       });
+    }
+    if (Array.isArray(this.options.customMergeCell)) {
+      // 背景：customMergeCell 可能被替换为新数组，需重新生成内部查询函数。
+      // 逻辑：先刷新新范围内所有 cell，再在下一帧补刷旧范围，保证 mergeStart/End 一致。
+      this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+      (this.options.customMergeCell as any[]).forEach(m => {
+        const r = m?.range;
+        if (!r?.start) {
+          return;
+        }
+        for (let col = r.start.col; col <= r.end.col; col++) {
+          for (let row = r.start.row; row <= r.end.row; row++) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
+      });
+      this.scenegraph.updateNextFrame();
+      setTimeout(() => {
+        if (!this.internalProps || !this.options || !this.scenegraph) {
+          return;
+        }
+        if (Array.isArray(this.options.customMergeCell)) {
+          this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+        }
+        // 背景：删除行会让原合并范围变短，旧范围末端的 cell 仍可能残留旧 mergeStart/End。
+        // 逻辑：合并旧范围与新范围并逐格刷新，确保所有相关 cellGroup 被重算。
+        const refreshRanges = [
+          ...prevMergeRanges,
+          ...(Array.isArray(this.options.customMergeCell)
+            ? (this.options.customMergeCell as any[]).map(m => m?.range)
+            : [])
+        ].filter(Boolean);
+        refreshRanges.forEach(r => {
+          if (!r?.start) {
+            return;
+          }
+          for (let col = r.start.col; col <= r.end.col; col++) {
+            for (let row = r.start.row; row <= r.end.row; row++) {
+              this.scenegraph.updateCellContent(col, row);
+            }
+          }
+        });
+        this.scenegraph.updateNextFrame();
+      }, 0);
     }
   }
 
@@ -2265,6 +2584,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.scenegraph.updateNextFrame();
+    this.fireListeners(TABLE_EVENT_TYPE.MERGE_CELLS, { startCol, startRow, endCol, endRow });
   }
   /** 取消合并单元格 对外接口 。会自动刷新渲染节点
    * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
@@ -2286,5 +2606,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.scenegraph.updateNextFrame();
+    this.fireListeners(TABLE_EVENT_TYPE.UNMERGE_CELLS, { startCol, startRow, endCol, endRow });
   }
 }

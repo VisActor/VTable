@@ -134,3 +134,32 @@ test('replayCommand delete_column undo restores array record values when provide
     ['Bob', 30, 'Shanghai']
   ]);
 });
+
+test('replayCommand merge_cells falls back to renderWithRecreateCells when scenegraph missing', () => {
+  const renderWithRecreateCells = jest.fn();
+  const table: any = {
+    options: {},
+    internalProps: {},
+    renderWithRecreateCells
+  };
+  const vtableSheet: any = { formulaManager: undefined };
+
+  replayCommand({
+    table,
+    vtableSheet,
+    direction: 'redo',
+    deleteRecordsByReference: jest.fn(),
+    cmd: {
+      type: 'merge_cells',
+      sheetKey: 'sheet1',
+      startCol: 0,
+      startRow: 1,
+      endCol: 1,
+      endRow: 2,
+      oldCustomMergeCell: undefined,
+      newCustomMergeCell: []
+    } as any
+  });
+
+  expect(renderWithRecreateCells).toHaveBeenCalled();
+});

@@ -5,6 +5,8 @@ export interface SnapshotState {
   prevMergeSnapshot: TYPES.CustomMergeCellArray | undefined;
   prevRecordsSnapshot: any[] | null;
   prevFormulasSnapshot?: Record<string, string> | null;
+  prevResizedRowHeightsSnapshot?: Record<number, number> | null;
+  prevResizedColWidthsSnapshot?: Record<number, number> | null;
 }
 
 // 轻量深拷贝：用于把 VTable 的 columns 配置快照化，避免撤销时被后续原地修改污染。
@@ -75,6 +77,48 @@ export function captureSnapshot(
     state.prevRecordsSnapshot = records.map(r => cloneRecord(r));
   } else {
     state.prevRecordsSnapshot = null;
+  }
+
+  try {
+    const resizedRowIndexs = Array.from((table as any).internalProps?._heightResizedRowMap?.keys?.() ?? []);
+    if (resizedRowIndexs.length && typeof (table as any).getRowHeight === 'function') {
+      const map: Record<number, number> = {};
+      resizedRowIndexs.forEach((rowIndex: any) => {
+        if (typeof rowIndex !== 'number') {
+          return;
+        }
+        const h = (table as any).getRowHeight(rowIndex);
+        if (typeof h === 'number') {
+          map[rowIndex] = h;
+        }
+      });
+      state.prevResizedRowHeightsSnapshot = map;
+    } else {
+      state.prevResizedRowHeightsSnapshot = null;
+    }
+  } catch {
+    state.prevResizedRowHeightsSnapshot = null;
+  }
+
+  try {
+    const resizedColIndexs = Array.from((table as any).internalProps?._widthResizedColMap?.keys?.() ?? []);
+    if (resizedColIndexs.length && typeof (table as any).getColWidth === 'function') {
+      const map: Record<number, number> = {};
+      resizedColIndexs.forEach((colIndex: any) => {
+        if (typeof colIndex !== 'number') {
+          return;
+        }
+        const w = (table as any).getColWidth(colIndex);
+        if (typeof w === 'number') {
+          map[colIndex] = w;
+        }
+      });
+      state.prevResizedColWidthsSnapshot = map;
+    } else {
+      state.prevResizedColWidthsSnapshot = null;
+    }
+  } catch {
+    state.prevResizedColWidthsSnapshot = null;
   }
 
   // 仅在 vtable-sheet 场景下可用：用于删除列撤销时恢复公式关系。

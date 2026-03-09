@@ -8,10 +8,53 @@ import type {
   DeleteColumnCommand,
   DeleteRecordCommand,
   HistoryCommand,
+  MergeCellsCommand,
   ResizeColumnCommand,
   ResizeRowCommand,
   UpdateRecordCommand
 } from './types';
+
+function cloneMergeConfig(input: any): any {
+  if (Array.isArray(input)) {
+    return input.map(i => ({
+      ...i,
+      range: i?.range
+        ? {
+            start: { ...i.range.start },
+            end: { ...i.range.end }
+          }
+        : i?.range
+    }));
+  }
+  return input;
+}
+
+function getCustomMergeCellFunc(customMergeCell?: any) {
+  if (typeof customMergeCell === 'function') {
+    return customMergeCell;
+  }
+  if (Array.isArray(customMergeCell)) {
+    return (col: number, row: number) => {
+      return customMergeCell.find(item => {
+        return (
+          item.range.start.col <= col &&
+          item.range.end.col >= col &&
+          item.range.start.row <= row &&
+          item.range.end.row >= row
+        );
+      });
+    };
+  }
+  return undefined;
+}
+
+function applyMergeConfig(table: any, customMergeCell: any): void {
+  if (!table?.options || !table?.internalProps) {
+    return;
+  }
+  table.options.customMergeCell = cloneMergeConfig(customMergeCell);
+  table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+}
 
 export function replayCommand(args: {
   table: ListTable;
@@ -39,6 +82,23 @@ export function replayCommand(args: {
           formulaManager: vtableSheet?.formulaManager
         });
       });
+      break;
+    }
+    case 'merge_cells': {
+      const c = cmd as MergeCellsCommand;
+      const next = direction === 'undo' ? c.oldCustomMergeCell : c.newCustomMergeCell;
+      applyMergeConfig(table as any, next);
+      const sg = (table as any).scenegraph;
+      if (sg?.updateCellContent) {
+        for (let i = c.startCol; i <= c.endCol; i++) {
+          for (let j = c.startRow; j <= c.endRow; j++) {
+            sg.updateCellContent(i, j);
+          }
+        }
+        sg.updateNextFrame?.();
+      } else if (typeof (table as any).renderWithRecreateCells === 'function') {
+        (table as any).renderWithRecreateCells();
+      }
       break;
     }
     case 'add_record': {
@@ -77,9 +137,52 @@ export function replayCommand(args: {
             (table as any).addRecord(p.record, p.idx);
           }
         }
+        if (c.deletedRowHeights && typeof (table as any).setRowHeight === 'function') {
+          const headerCount = (table as any).transpose
+            ? (table as any).rowHeaderLevelCount
+            : (table as any).columnHeaderLevelCount;
+          Object.keys(c.deletedRowHeights).forEach(k => {
+            const idx = Number(k);
+            const height = (c.deletedRowHeights as any)[k];
+            if (!Number.isFinite(idx) || typeof height !== 'number') {
+              return;
+            }
+            (table as any).setRowHeight(idx + (headerCount ?? 0), height);
+          });
+        }
       } else {
         if ((table as any).deleteRecords) {
           (table as any).deleteRecords(c.recordIndexs as any);
+        }
+      }
+
+      const hasMergeSnapshot = 'oldCustomMergeCell' in c || 'newCustomMergeCell' in c;
+      if (hasMergeSnapshot) {
+        const target = direction === 'undo' ? (c as any).oldCustomMergeCell : (c as any).newCustomMergeCell;
+        applyMergeConfig(table as any, target);
+
+        const sg = (table as any).scenegraph;
+        if (sg?.updateCellContent) {
+          const prevRanges = Array.isArray((c as any).oldCustomMergeCell)
+            ? ((c as any).oldCustomMergeCell as any[]).map(i => i?.range).filter(Boolean)
+            : [];
+          const nextRanges = Array.isArray((c as any).newCustomMergeCell)
+            ? ((c as any).newCustomMergeCell as any[]).map(i => i?.range).filter(Boolean)
+            : [];
+          const refreshRanges = [...prevRanges, ...nextRanges];
+          refreshRanges.forEach(r => {
+            if (!r?.start) {
+              return;
+            }
+            for (let col = r.start.col; col <= r.end.col; col++) {
+              for (let row = r.start.row; row <= r.end.row; row++) {
+                sg.updateCellContent(col, row);
+              }
+            }
+          });
+          sg.updateNextFrame?.();
+        } else if (typeof (table as any).renderWithRecreateCells === 'function') {
+          (table as any).renderWithRecreateCells();
         }
       }
       break;
@@ -111,11 +214,22 @@ export function replayCommand(args: {
     case 'delete_column': {
       const c = cmd as DeleteColumnCommand;
       if (direction === 'undo') {
-        // 先恢复列定义，再恢复二维数组 records 中被 splice 掉的列值，最后同步公式引擎并恢复该列上的公式。
         const items = c.deleteColIndexs.map((idx, i) => ({ idx, column: c.columns[i] })).sort((a, b) => a.idx - b.idx);
+
         items.forEach(item => {
           (table as any).addColumns?.([item.column], item.idx, true);
         });
+
+        if (c.deletedColWidths && typeof (table as any).setColWidth === 'function') {
+          Object.entries(c.deletedColWidths).forEach(([k, width]) => {
+            const idx = Number(k);
+            if (!Number.isFinite(idx) || typeof width !== 'number') {
+              return;
+            }
+            (table as any).setColWidth(idx, width);
+          });
+        }
+
         if (Array.isArray(c.deletedRecordValues) && c.deletedRecordValues.length) {
           const records = (table as any).records as any[] | undefined;
           if (Array.isArray(records) && records.length) {

@@ -8,6 +8,28 @@ import { defaultOrderFn } from '../tools/util';
 import type { CellRange, ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 import { isNumber } from '@visactor/vutils';
+import { getCustomMergeCellFunc } from './utils/get-custom-merge-cell-func';
+
+function refreshCustomMergeCellGroups(table: ListTable) {
+  // 背景：删除行后 customMergeCell 已更新，但场景树 cellGroup 可能仍保留旧 mergeStart/End。
+  // 逻辑：重建内部 merge 查询函数，并对合并范围内所有 cell 逐格触发更新。
+  if (!Array.isArray(table.options.customMergeCell)) {
+    return;
+  }
+  table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+  const merges = table.options.customMergeCell as any[];
+  for (let i = 0; i < merges.length; i++) {
+    const r = merges[i]?.range;
+    if (!r?.start) {
+      continue;
+    }
+    for (let col = r.start.col; col <= r.end.col; col++) {
+      for (let row = r.start.row; row <= r.end.row; row++) {
+        table.scenegraph.updateCellContent(col, row);
+      }
+    }
+  }
+}
 
 /**
  * 更改单元格数据 会触发change_cell_value事件
@@ -853,6 +875,11 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       if (deletedRecordIndexs.length === 0) {
         return;
       }
+
+      if (Array.isArray(table.options.customMergeCell)) {
+        table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+      }
+
       // Fix: Adjust checkbox/switch state map when deleting regular records
       for (let index = 0; index < deletedRecordIndexs.length; index++) {
         adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
@@ -923,6 +950,7 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
               ? table.scenegraph.updateCol(delRows, [], updateRows)
               : table.scenegraph.updateRow(delRows, [], updateRows);
             table.reactCustomLayout?.updateAllCustomCell();
+            refreshCustomMergeCellGroups(table);
           }
         }
       } else {
@@ -940,6 +968,49 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
           }
         }
         const updateRows = [];
+        if (table.internalProps.customMergeCell) {
+          // 背景：deleteRecords 走增量更新时，只有 updateRows 会触发 updateCell 重算 merge 信息。
+          // 逻辑：根据删除位置与合并范围推导受影响的行/列区间，限制在 proxy 可视范围内更新。
+          const proxy = table.scenegraph.proxy;
+          const minRecordIndex = recordIndexsMinToMax[0];
+          const deletedIndexNums = recordIndexsMinToMax.map(
+            recordIndex => recordIndex + headerCount + topAggregationCount
+          );
+          const minIndexNum = deletedIndexNums[0];
+          let updateMin = minIndexNum;
+          let updateMax = minIndexNum;
+          if (Array.isArray((table.options as any).customMergeCell)) {
+            const merges = (table.options as any).customMergeCell as any[];
+            const axis: 'row' | 'col' = table.transpose ? 'col' : 'row';
+            merges.forEach(m => {
+              const r = m?.range;
+              if (!r?.start || !r?.end) {
+                return;
+              }
+              for (let i = 0; i < deletedIndexNums.length; i++) {
+                const deleteIndex = deletedIndexNums[i];
+                if (r.end[axis] >= deleteIndex - 1) {
+                  updateMin = Math.min(updateMin, r.start[axis]);
+                  updateMax = Math.max(updateMax, r.end[axis]);
+                  break;
+                }
+              }
+            });
+          }
+          if (table.transpose) {
+            const start = Math.max(updateMin, proxy?.colStart ?? updateMin);
+            const end = Math.min(updateMax, proxy?.colEnd ?? updateMax);
+            for (let col = start; col <= end; col++) {
+              updateRows.push({ col, row: 0 });
+            }
+          } else {
+            const start = Math.max(updateMin, proxy?.rowStart ?? updateMin);
+            const end = Math.min(updateMax, proxy?.rowEnd ?? updateMax);
+            for (let row = start; row <= end; row++) {
+              updateRows.push({ col: 0, row });
+            }
+          }
+        }
         for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
           if (table.transpose) {
             updateRows.push({ col: row, row: 0 });
@@ -964,6 +1035,7 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
           ? table.scenegraph.updateCol(delRows, [], updateRows)
           : table.scenegraph.updateRow(delRows, [], updateRows);
         table.reactCustomLayout?.updateAllCustomCell();
+        refreshCustomMergeCellGroups(table);
       }
     }
     // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });

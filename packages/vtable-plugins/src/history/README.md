@@ -27,6 +27,8 @@
 - `UPDATE_RECORD`：`update_record`
 - `ADD_COLUMN`：`add_column`
 - `DELETE_COLUMN`：`delete_column`
+- `MERGE_CELLS`：`merge_cells`
+- `UNMERGE_CELLS`：`merge_cells`
 - `CHANGE_HEADER_POSITION`：`change_header_position`
 - `RESIZE_ROW_END`：`resize_row`
 - `RESIZE_COLUMN_END`：`resize_column`
@@ -106,4 +108,3 @@ VTable 在处理列/行结构变更时，可能会复用对象或进行原地修
 - 入栈：关注 `HistoryPlugin.pushCommand/pushTransaction` 与 `formula_added` 是否重复触发
 - 撤销回放：关注 `replayCommand` 的分支与是否触发了 `isReplaying` 防回流
 - 公式为 0：优先检查 formula engine 的 sheetData 是否在结构变更后同步（尤其是 `updateRecords(..., false)` 场景）
-

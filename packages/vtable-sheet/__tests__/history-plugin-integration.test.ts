@@ -150,3 +150,80 @@ test('range selection insertion does not emit formula events', async () => {
     removeDom(container);
   }
 });
+
+test('merge range restored after deleteRecords undo', async () => {
+  const container = createDiv() as HTMLDivElement;
+  container.style.position = 'relative';
+  container.style.width = '1000px';
+  container.style.height = '800px';
+
+  const data = [
+    ['A', 'B', 'C', 'D', 'E'],
+    [0, 10, 20, 30, 40],
+    [1, 11, 21, 31, 41],
+    [2, 12, 22, 32, 42],
+    [3, 13, 23, 33, 43],
+    [4, 14, 24, 34, 44],
+    [5, 15, 25, 35, 45],
+    [6, 16, 26, 36, 46],
+    [7, 17, 27, 37, 47],
+    [8, 18, 28, 38, 48],
+    [9, 19, 29, 39, 49]
+  ];
+
+  const sheet = new VTableSheet(container, {
+    showFormulaBar: false,
+    showSheetTab: false,
+    defaultRowHeight: 25,
+    defaultColWidth: 80,
+    VTablePluginModules: [
+      {
+        module: VTablePlugins.HistoryPlugin,
+        moduleOptions: {
+          maxHistory: 100,
+          enableCompression: true
+        },
+        disabled: false
+      }
+    ],
+    sheets: [
+      {
+        sheetKey: 'sheet1',
+        sheetTitle: 'History Merge Undo',
+        data,
+        active: true,
+        firstRowAsHeader: true
+      }
+    ]
+  });
+
+  try {
+    const ws = sheet.getActiveSheet();
+    const table = ws.tableInstance;
+    const history = await waitForHistoryPlugin(table);
+    expect(history).toBeTruthy();
+
+    table.mergeCells(1, 2, 3, 5);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    table.deleteRecords([4, 3, 2, 1]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    history.undo();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(Array.isArray(table.options.customMergeCell)).toBe(true);
+    expect(table.options.customMergeCell.length).toBe(1);
+    expect(table.options.customMergeCell[0].range.start).toEqual({ col: 1, row: 2 });
+    expect(table.options.customMergeCell[0].range.end).toEqual({ col: 3, row: 5 });
+
+    const mergedCell = table.scenegraph.getCell(1, 2, true);
+    expect(mergedCell.mergeStartRow).toBe(2);
+    expect(mergedCell.mergeEndRow).toBe(5);
+    expect(mergedCell.mergeStartCol).toBe(1);
+    expect(mergedCell.mergeEndCol).toBe(3);
+  } finally {
+    sheet.release();
+    removeDom(container);
+  }
+});

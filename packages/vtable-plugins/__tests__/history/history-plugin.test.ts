@@ -13,13 +13,19 @@ const RESIZE_ROW = 'resize_row';
 const RESIZE_ROW_END = 'resize_row_end';
 const RESIZE_COLUMN = 'resize_column';
 const RESIZE_COLUMN_END = 'resize_column_end';
+const INITIALIZED = 'initialized';
+const MERGE_CELLS = 'merge_cells';
+const UNMERGE_CELLS = 'unmerge_cells';
 
 jest.mock('@visactor/vtable', () => ({
   TABLE_EVENT_TYPE: {
+    INITIALIZED,
     BEFORE_KEYDOWN,
     CHANGE_CELL_VALUE,
     CHANGE_CELL_VALUES,
     PASTED_DATA: 'pasted_data',
+    MERGE_CELLS,
+    UNMERGE_CELLS,
     ADD_RECORD,
     DELETE_RECORD,
     UPDATE_RECORD,
@@ -112,31 +118,139 @@ function createTableStub(env: any) {
   const changeCellValueCalls: any[] = [];
   const rowHeights = new Map<number, number>();
   const colWidths = new Map<number, number>();
+  const updateCellContentCalls: any[] = [];
+
+  const getCustomMergeCellFunc = (customMergeCell: any) => {
+    if (typeof customMergeCell === 'function') {
+      return customMergeCell;
+    }
+    if (Array.isArray(customMergeCell)) {
+      return (col: number, row: number) => {
+        return customMergeCell.find(item => {
+          return (
+            item.range.start.col <= col &&
+            item.range.end.col >= col &&
+            item.range.start.row <= row &&
+            item.range.end.row >= row
+          );
+        });
+      };
+    }
+    return undefined;
+  };
+
+  const shiftRowHeightsOnInsert = (rowIndex: number, count: number) => {
+    const next = new Map<number, number>();
+    rowHeights.forEach((h, k) => {
+      next.set(k >= rowIndex ? k + count : k, h);
+    });
+    rowHeights.clear();
+    next.forEach((v, k) => rowHeights.set(k, v));
+  };
+
+  const shiftRowHeightsOnDelete = (rowIndex: number, count: number) => {
+    const sorted = Array.from({ length: count }, (_, i) => rowIndex + i).sort((a, b) => b - a);
+    sorted.forEach(ri => {
+      const next = new Map<number, number>();
+      rowHeights.forEach((h, k) => {
+        if (k === ri) {
+          return;
+        }
+        next.set(k > ri ? k - 1 : k, h);
+      });
+      rowHeights.clear();
+      next.forEach((v, k) => rowHeights.set(k, v));
+    });
+  };
 
   const table: any = {
     __vtableSheet: env.vtableSheet,
     options: { columns: [] as any[] },
     records: [] as any[],
+    transpose: false,
+    columnHeaderLevelCount: 1,
+    rowHeaderLevelCount: 1,
+    internalProps: {
+      _heightResizedRowMap: new Set<number>(),
+      _widthResizedColMap: new Set<number>(),
+      customMergeCell: undefined
+    },
+    scenegraph: {
+      updateCellContent: (col: number, row: number) => updateCellContentCalls.push([col, row]),
+      updateNextFrame: jest.fn()
+    },
     editorManager: { editingEditor: null },
     changeCellValue: (...args: any[]) => changeCellValueCalls.push(args),
     getCellOriginValue: (_col: number, _row: number): any => undefined,
+    getCellValue: (col: number, row: number) => `${col},${row}`,
     getRowHeight: (row: number) => rowHeights.get(row) ?? 20,
-    setRowHeight: (row: number, height: number) => rowHeights.set(row, height),
+    setRowHeight: (row: number, height: number) => {
+      rowHeights.set(row, height);
+      table.internalProps._heightResizedRowMap.add(row);
+    },
     getColWidth: (col: number) => colWidths.get(col) ?? 80,
-    setColWidth: (col: number, width: number) => colWidths.set(col, width),
+    setColWidth: (col: number, width: number) => {
+      colWidths.set(col, width);
+      table.internalProps._widthResizedColMap.add(col);
+    },
+    mergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => {
+      if (!table.options.customMergeCell) {
+        table.options.customMergeCell = [];
+      } else if (typeof table.options.customMergeCell === 'function') {
+        table.options.customMergeCell = [];
+      }
+      table.options.customMergeCell.push({
+        text: table.getCellValue(startCol, startRow),
+        range: {
+          start: { col: startCol, row: startRow },
+          end: { col: endCol, row: endRow }
+        }
+      });
+      table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+      for (let i = startCol; i <= endCol; i++) {
+        for (let j = startRow; j <= endRow; j++) {
+          table.scenegraph.updateCellContent(i, j);
+        }
+      }
+      table.scenegraph.updateNextFrame();
+    },
+    unmergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => {
+      if (!table.options.customMergeCell) {
+        table.options.customMergeCell = [];
+      } else if (typeof table.options.customMergeCell === 'function') {
+        table.options.customMergeCell = [];
+      }
+      table.options.customMergeCell = table.options.customMergeCell.filter((item: any) => {
+        const { start, end } = item.range;
+        return !(start.col === startCol && start.row === startRow && end.col === endCol && end.row === endRow);
+      });
+      table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+      for (let i = startCol; i <= endCol; i++) {
+        for (let j = startRow; j <= endRow; j++) {
+          table.scenegraph.updateCellContent(i, j);
+        }
+      }
+      table.scenegraph.updateNextFrame();
+    },
     addRecords: (records: any[], index?: number) => {
       if (typeof index === 'number') {
+        shiftRowHeightsOnInsert(index + table.columnHeaderLevelCount, records.length);
         table.records.splice(index, 0, ...records);
       } else {
         table.records.push(...records);
       }
     },
     addRecord: (record: any, index: number) => {
+      shiftRowHeightsOnInsert(index + table.columnHeaderLevelCount, 1);
       table.records.splice(index, 0, record);
     },
     deleteRecords: (indexs: number[]) => {
       const sorted = indexs.slice().sort((a, b) => b - a);
-      sorted.forEach(i => table.records.splice(i, 1));
+      sorted.forEach(i => {
+        shiftRowHeightsOnDelete(i + table.columnHeaderLevelCount, 1);
+        table.internalProps._heightResizedRowMap.delete(i + table.columnHeaderLevelCount);
+        table.records.splice(i, 1);
+      });
     },
     updateRecords: (records: any[], indexs: number[]) => {
       indexs.forEach((idx, i) => {
@@ -149,7 +263,7 @@ function createTableStub(env: any) {
   };
 
   env.worksheet.tableInstance = table;
-  return { table, changeCellValueCalls, rowHeights, colWidths };
+  return { table, changeCellValueCalls, rowHeights, colWidths, updateCellContentCalls };
 }
 
 function initPlugin(plugin: any, table: any) {
@@ -205,6 +319,153 @@ test('cell compression keeps latest newContent for same cell', () => {
   expect(changeCellValueCalls[changeCellValueCalls.length - 1][2]).toBe('');
   plugin.redo();
   expect(changeCellValueCalls[changeCellValueCalls.length - 1][2]).toBe('B');
+});
+
+test('change_cell_values does not push when content unchanged or empty cleared', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  plugin.run({ row: 9, col: 5, currentValue: undefined } as any, CHANGE_CELL_VALUE, table);
+  plugin.run(
+    { values: [{ row: 9, col: 5, currentValue: undefined, changedValue: '' }] } as any,
+    CHANGE_CELL_VALUES,
+    table
+  );
+
+  expect((plugin as any).undoStack.length).toBe(0);
+});
+
+test('resize_row_end does not push when height unchanged', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  plugin.run({ row: 2 } as any, RESIZE_ROW, table);
+  plugin.run({ row: 2, rowHeight: 20 } as any, RESIZE_ROW_END, table);
+
+  expect((plugin as any).undoStack.length).toBe(0);
+});
+
+test('resize_column_end does not push when width unchanged', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  plugin.run({ col: 2 } as any, RESIZE_COLUMN, table);
+  plugin.run({ col: 2, colWidths: [80, 80, 80] } as any, RESIZE_COLUMN_END, table);
+
+  expect((plugin as any).undoStack.length).toBe(0);
+});
+
+test('merge_cells pushes command and undo/redo restores merge config', () => {
+  const env = createVTableSheetEnv();
+  const { table, updateCellContentCalls } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  table.mergeCells(0, 1, 1, 2);
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  expect((plugin as any).undoStack.length).toBe(1);
+  expect(table.options.customMergeCell.length).toBe(1);
+
+  plugin.undo();
+  expect(table.options.customMergeCell).toBeUndefined();
+  expect(updateCellContentCalls.length).toBeGreaterThan(0);
+
+  plugin.redo();
+  expect(Array.isArray(table.options.customMergeCell)).toBe(true);
+  expect(table.options.customMergeCell.length).toBe(1);
+});
+
+test('unmerge_cells pushes command and undo restores previous merge', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  table.mergeCells(0, 1, 1, 2);
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  table.unmergeCells(0, 1, 1, 2);
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, UNMERGE_CELLS, table);
+  expect((plugin as any).undoStack.length).toBe(2);
+  expect(table.options.customMergeCell.length).toBe(0);
+
+  plugin.undo();
+  expect(table.options.customMergeCell.length).toBe(1);
+});
+
+test('merge_cells does not push when merge config unchanged', () => {
+  const env = createVTableSheetEnv();
+  const table: any = {
+    __vtableSheet: env.vtableSheet,
+    options: { columns: [] as any[] },
+    internalProps: {},
+    mergeCells: () => {},
+    unmergeCells: () => {},
+    editorManager: { editingEditor: null }
+  };
+  env.worksheet.tableInstance = table;
+
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  expect((plugin as any).undoStack.length).toBe(0);
+});
+
+test('merge_cells does not push when customMergeCell function unchanged', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+
+  const fn = (_col: number, _row: number): any => undefined;
+  table.options.customMergeCell = fn;
+  table.internalProps.customMergeCell = fn;
+  initPlugin(plugin, table);
+
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  expect((plugin as any).undoStack.length).toBe(0);
+});
+
+test('merge_cells pushes when merge config differs in range structure', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+
+  initPlugin(plugin, table);
+  (plugin as any).prevMergeSnapshot = [{ text: 'x' }];
+
+  table.options.customMergeCell = [
+    {
+      text: 'x',
+      range: { start: { col: 0, row: 1 }, end: { col: 1, row: 2 } }
+    }
+  ];
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  expect((plugin as any).undoStack.length).toBe(1);
+});
+
+test('merge_cells restores old customMergeCell function on undo', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+
+  const fn = (_col: number, _row: number): any => undefined;
+  table.options.customMergeCell = fn;
+  table.internalProps.customMergeCell = fn;
+  initPlugin(plugin, table);
+
+  table.mergeCells(0, 1, 1, 2);
+  plugin.run({ startCol: 0, startRow: 1, endCol: 1, endRow: 2 } as any, MERGE_CELLS, table);
+  expect(Array.isArray(table.options.customMergeCell)).toBe(true);
+
+  plugin.undo();
+  expect(table.options.customMergeCell).toBe(fn);
+  expect(table.internalProps.customMergeCell).toBe(fn);
 });
 
 test('before_keydown triggers undo/redo with ctrl+z / ctrl+y', () => {
@@ -311,6 +572,51 @@ test('delete_record undo restores correct order when deleting multiple rows', ()
 
   plugin.undo();
   expect(table.records.map((r: any) => r.name)).toEqual(['Alice', 'Bob', 'Carol', 'David', 'Eve']);
+});
+
+test('delete_record undo restores resized row height', () => {
+  const env = createVTableSheetEnv();
+  const { table } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+  initPlugin(plugin, table);
+
+  table.records = [{ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }];
+
+  plugin.run({ row: 3 } as any, RESIZE_ROW, table);
+  table.setRowHeight(3, 50);
+  plugin.run({ row: 3, rowHeight: 50 } as any, RESIZE_ROW_END, table);
+
+  plugin.run({ recordIndexs: [2], records: [{ a: 3 }], rowIndexs: [3], deletedCount: 1 } as any, DELETE_RECORD, table);
+  table.deleteRecords([2]);
+  expect(table.getRowHeight(3)).toBe(20);
+
+  plugin.undo();
+  expect(table.getRowHeight(3)).toBe(50);
+});
+
+test('delete_column undo restores resized col width', () => {
+  const env = createVTableSheetEnv();
+  const { table, colWidths } = createTableStub(env);
+  const plugin = new HistoryPlugin();
+
+  table.options.columns = [{ field: 'a' }, { field: 'b' }, { field: 'c' }];
+  initPlugin(plugin, table);
+
+  plugin.run({ col: 1 } as any, RESIZE_COLUMN, table);
+  table.setColWidth(1, 120);
+  plugin.run({ col: 1, colWidths: [80, 120, 80] } as any, RESIZE_COLUMN_END, table);
+
+  table.internalProps._widthResizedColMap.delete(1);
+  colWidths.delete(1);
+
+  plugin.run(
+    { deleteColIndexs: [1], columns: table.options.columns, deletedColumns: [table.options.columns[1]] } as any,
+    DELETE_COLUMN,
+    table
+  );
+  plugin.undo();
+
+  expect(table.getColWidth(1)).toBe(120);
 });
 
 test('update_record undo restores previous snapshot values', () => {

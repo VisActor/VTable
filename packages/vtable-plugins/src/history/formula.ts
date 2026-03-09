@@ -51,7 +51,7 @@ export function captureCellPreChangeContent(args: {
     }
   }
 
-  store.set(cellKey, currentValue);
+  store.set(cellKey, currentValue == null ? '' : currentValue);
 }
 
 export function popCellPreChangeContent(args: {

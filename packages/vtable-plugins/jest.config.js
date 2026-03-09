@@ -1,3 +1,5 @@
+const isCI = process.env.CI === 'true' || process.env.CI === '1';
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
@@ -21,14 +23,16 @@ module.exports = {
   collectCoverageFrom: [
     '<rootDir>/src/history/**/*.ts'
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80
-    }
-  },
+  coverageThreshold: isCI
+    ? {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80
+        }
+      }
+    : undefined,
   moduleNameMapper: {},
   setupFiles: ['./setup-mock.js']
 };
