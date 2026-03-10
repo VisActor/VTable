@@ -1126,13 +1126,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.dataset.updateSortRules(sortRules);
     this._changePivotSortStateBySortRules();
     // 排序后dataset重新生成了树结构，需要重新过滤hide指标节点
-    const options = this.options;
-    if (options.indicatorsAsCol !== false && options.indicators && this.dataset.colHeaderTree) {
-      deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
-    }
-    if (options.indicatorsAsCol === false && this.dataset.rowHeaderTree && options.indicators) {
-      deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
-    }
+    this._filterHideIndicatorNode();
     const { layoutMap } = this.internalProps;
     layoutMap.resetHeaderTree();
     // 清空单元格内容
@@ -1199,6 +1193,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         order: SortType[sortType]
       });
       // }
+    }
+  }
+
+  // 重新过滤hide指标节点
+  _filterHideIndicatorNode() {
+    const options = this.options;
+    if (options.indicatorsAsCol !== false && options.indicators && this.dataset.colHeaderTree) {
+      deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
+    }
+    if (options.indicatorsAsCol === false && this.dataset.rowHeaderTree && options.indicators) {
+      deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
     }
   }
 
@@ -2219,13 +2224,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       // 由于筛选数据可能导致行列变化，所以需要重置树结构
       this.dataset.updateFilterRules(filterRules, true);
       // 筛选后dataset重新生成了树结构，需要重新过滤hide指标节点
-      const options = this.options;
-      if (options.indicatorsAsCol !== false && options.indicators && this.dataset.colHeaderTree) {
-        deleteHideIndicatorNode(this.dataset.colHeaderTree, options.indicators, false, this);
-      }
-      if (options.indicatorsAsCol === false && this.dataset.rowHeaderTree && options.indicators) {
-        deleteHideIndicatorNode(this.dataset.rowHeaderTree, options.indicators, false, this);
-      }
+      this._filterHideIndicatorNode();
       this.internalProps.layoutMap.resetHeaderTree();
     } else {
       this.dataset.updateFilterRules(filterRules);
