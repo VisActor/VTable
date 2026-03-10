@@ -597,7 +597,7 @@ export class StateManager {
           this.moveTaskBar.target.task_index,
           this.moveTaskBar.target.sub_task_index
         );
-        gantt.scrollLeft = gantt.parsedOptions.timelineColWidth - 1;
+        gantt.scrollLeft = Math.max(0, gantt.getDateColWidth(0) - 1);
         gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
         if (target.record?.type === 'milestone') {
           moveTaskBar(target, gantt.scrollLeft - target.attribute.x, 0, this);
@@ -605,7 +605,9 @@ export class StateManager {
           target.setAttribute('x', gantt.scrollLeft);
         }
       } else {
-        this.moveTaskBar.moveTaskBarXSpeed = -gantt.parsedOptions.timelineColWidth / 100;
+        const colCount = gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates?.length ?? 0;
+        const avgColWidth = gantt.getAllDateColsWidth() / Math.max(1, colCount);
+        this.moveTaskBar.moveTaskBarXSpeed = -avgColWidth / 100;
 
         this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
         this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
@@ -657,7 +659,9 @@ export class StateManager {
         }
       } else {
         // 处理向右拖拽任务条时，整体向右滚动
-        this.moveTaskBar.moveTaskBarXSpeed = gantt.parsedOptions.timelineColWidth / 100;
+        const colCount = gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates?.length ?? 0;
+        const avgColWidth = gantt.getAllDateColsWidth() / Math.max(1, colCount);
+        this.moveTaskBar.moveTaskBarXSpeed = avgColWidth / 100;
 
         this.moveTaskBar.moveTaskBarXInertia.startInertia(this.moveTaskBar.moveTaskBarXSpeed, 0, 1);
         this.moveTaskBar.moveTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
