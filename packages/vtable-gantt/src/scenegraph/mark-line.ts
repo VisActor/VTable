@@ -59,6 +59,12 @@ export class MarkLine {
           ? createDateAtMidnight(line.date)
           : createDateAtMidnight(line.date, true);
         const dateTime = date.getTime();
+        if (
+          dateTime < this._scene._gantt.parsedOptions._minDateTime ||
+          dateTime > this._scene._gantt.parsedOptions._maxDateTime
+        ) {
+          return;
+        }
         const cellIndex = this._scene._gantt.getDateIndexByTime(dateTime);
         const cellStartX = cellIndex >= 1 ? this._scene._gantt.getDateColsWidth(0, cellIndex - 1) : 0;
         const cellWidth = this._scene._gantt.getDateColWidth(cellIndex);
