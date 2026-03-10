@@ -7,6 +7,7 @@ import type {
   ChangeHeaderPositionCommand,
   DeleteColumnCommand,
   DeleteRecordCommand,
+  FilterCommand,
   HistoryCommand,
   MergeCellsCommand,
   ResizeColumnCommand,
@@ -98,6 +99,21 @@ export function replayCommand(args: {
         sg.updateNextFrame?.();
       } else if (typeof (table as any).renderWithRecreateCells === 'function') {
         (table as any).renderWithRecreateCells();
+      }
+      break;
+    }
+    case 'filter': {
+      const c = cmd as FilterCommand;
+      const pluginId = (c as any).pluginId;
+      const snapshot = direction === 'undo' ? (c as any).oldSnapshot : (c as any).newSnapshot;
+      const pm = (table as any).pluginManager;
+      const filterPlugin =
+        pm?.getPlugin?.(pluginId) ??
+        pm?.getPluginByName?.('Filter') ??
+        pm?.getPlugin?.('filter') ??
+        pm?.getPluginByName?.('filter');
+      if (filterPlugin?.applyFilterSnapshot) {
+        filterPlugin.applyFilterSnapshot(snapshot);
       }
       break;
     }

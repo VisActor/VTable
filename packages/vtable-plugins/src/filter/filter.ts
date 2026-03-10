@@ -2,7 +2,7 @@ import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { FilterEngine } from './filter-engine';
 import { FilterStateManager } from './filter-state-manager';
 import { FilterToolbar } from './filter-toolbar';
-import type { FilterOptions, FilterConfig, FilterState, FilterAction } from './types';
+import type { FilterOptions, FilterConfig, FilterState, FilterAction, FilterStateSnapshot } from './types';
 import { FilterActionType } from './types';
 import type {
   ListTableConstructorOptions,
@@ -31,7 +31,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     TABLE_EVENT_TYPE.CHANGE_CELL_VALUE,
     TABLE_EVENT_TYPE.UPDATE_RECORD,
     TABLE_EVENT_TYPE.ADD_RECORD,
-    TABLE_EVENT_TYPE.DELETE_RECORD
+    TABLE_EVENT_TYPE.DELETE_RECORD,
+    TABLE_EVENT_TYPE.ADD_COLUMN,
+    TABLE_EVENT_TYPE.DELETE_COLUMN
   ];
 
   pluginOptions: FilterOptions;
@@ -138,9 +140,33 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     } else if (runtime === TABLE_EVENT_TYPE.UPDATE_RECORD) {
       this.syncFilterWithTableData();
     } else if (runtime === TABLE_EVENT_TYPE.ADD_RECORD) {
+      // #region 为了解决“ 已处于筛选状态时插入新行（尤其是空数组 [] 这种草稿行），后续再点一次筛选确认/切换其他列筛选后，这条新行会莫名其妙消失，甚至导致看起来全被过滤掉 ”的问题。
+      // 解决思路：
+      // 当触发 ADD_RECORD 事件且当前已经有激活筛选时
+      // 把这次新增的 record(s) 逐个 markForceVisibleRecord
+      // 让它们在后续 updateFilterRules 重新筛选时不会立刻被刷掉，从而“草稿行可见、可继续编辑”
+      const hasActiveFilter = this.filterStateManager?.getActiveFilterFields?.().length > 0;
+      if (hasActiveFilter && Array.isArray(eventArgs?.records)) {
+        const ds: any = (this.table as any).dataSource;
+        eventArgs.records.forEach((r: any) => ds?.markForceVisibleRecord?.(r));
+      }
+      // #endregion
       this.syncFilterWithTableData();
     } else if (runtime === TABLE_EVENT_TYPE.DELETE_RECORD) {
       this.syncFilterWithTableData();
+    } else if (runtime === TABLE_EVENT_TYPE.ADD_COLUMN) {
+      const columnIndex = eventArgs?.columnIndex;
+      const columnCount = eventArgs?.columnCount;
+      if (typeof columnIndex === 'number' && typeof columnCount === 'number' && columnCount > 0) {
+        this.filterStateManager?.shiftFieldsOnAddColumns?.(columnIndex, columnCount);
+      }
+      this.reapplyActiveFilters();
+    } else if (runtime === TABLE_EVENT_TYPE.DELETE_COLUMN) {
+      const deleteColIndexs = eventArgs?.deleteColIndexs;
+      if (Array.isArray(deleteColIndexs) && deleteColIndexs.length > 0) {
+        this.filterStateManager?.shiftFieldsOnDeleteColumns?.(deleteColIndexs);
+      }
+      this.reapplyActiveFilters();
     }
   }
 
@@ -153,6 +179,14 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     (this.table as ListTable).updateColumns(this.columns, {
       clearRowHeightCache: false
     });
+  }
+
+  getFilterSnapshot(): FilterStateSnapshot {
+    return this.filterStateManager?.getSnapshot?.() ?? { filters: [] };
+  }
+
+  applyFilterSnapshot(snapshot: FilterStateSnapshot): void {
+    this.filterStateManager?.applySnapshot?.(snapshot, FilterActionType.APPLY_FILTERS);
   }
 
   // 当用户的配置项更新时调用

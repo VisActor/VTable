@@ -19,6 +19,18 @@ async function waitForHistoryPlugin(table: any) {
   return undefined;
 }
 
+async function waitForFilterPlugin(table: any) {
+  for (let i = 0; i < 20; i++) {
+    const fromManager =
+      table?.pluginManager?.getPlugin?.('filter') ?? table?.pluginManager?.getPluginByName?.('Filter');
+    if (fromManager) {
+      return fromManager;
+    }
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+  return undefined;
+}
+
 function createSheet() {
   const container = createDiv() as HTMLDivElement;
   container.style.position = 'relative';
@@ -222,6 +234,99 @@ test('merge range restored after deleteRecords undo', async () => {
     expect(mergedCell.mergeEndRow).toBe(5);
     expect(mergedCell.mergeStartCol).toBe(1);
     expect(mergedCell.mergeEndCol).toBe(3);
+  } finally {
+    sheet.release();
+    removeDom(container);
+  }
+});
+
+test('FilterPlugin apply/clear is undoable via HistoryPlugin', async () => {
+  const container = createDiv() as HTMLDivElement;
+  container.style.position = 'relative';
+  container.style.width = '1000px';
+  container.style.height = '800px';
+
+  const data = [
+    ['A', 'B', 'C'],
+    [0, 10, 20],
+    [1, 11, 21],
+    [2, 12, 22],
+    [3, 13, 23]
+  ];
+
+  const sheet = new VTableSheet(container, {
+    showFormulaBar: false,
+    showSheetTab: false,
+    defaultRowHeight: 25,
+    defaultColWidth: 80,
+    VTablePluginModules: [
+      {
+        module: VTablePlugins.HistoryPlugin,
+        moduleOptions: {
+          maxHistory: 100,
+          enableCompression: true
+        },
+        disabled: false
+      },
+      {
+        module: (VTablePlugins as any).FilterPlugin,
+        moduleOptions: {},
+        disabled: false
+      }
+    ],
+    sheets: [
+      {
+        sheetKey: 'sheet1',
+        sheetTitle: 'History Filter Undo',
+        data,
+        active: true,
+        firstRowAsHeader: true
+      }
+    ]
+  });
+
+  try {
+    const ws = sheet.getActiveSheet();
+    const table = ws.tableInstance;
+    const history = await waitForHistoryPlugin(table);
+    expect(history).toBeTruthy();
+    const filter = await waitForFilterPlugin(table);
+    expect(filter).toBeTruthy();
+
+    const beforeCount = table.getFilteredRecords().length;
+
+    filter.filterToolbar.show(0, 0, ['byValue']);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const checkboxes = Array.from(
+      document.querySelectorAll('.vtable-filter-menu input[type="checkbox"]')
+    ) as HTMLInputElement[];
+    expect(checkboxes.length > 1).toBe(true);
+    const selectAll = checkboxes[0];
+    selectAll.checked = false;
+    selectAll.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const firstOption = checkboxes[1];
+    firstOption.checked = true;
+    firstOption.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const applyBtn = Array.from(document.querySelectorAll('.vtable-filter-menu button')).find(
+      b => (b as HTMLButtonElement).innerText === '确认'
+    ) as HTMLButtonElement | undefined;
+    expect(applyBtn).toBeTruthy();
+    applyBtn!.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const filteredCount = table.getFilteredRecords().length;
+    expect(filteredCount).toBeLessThan(beforeCount);
+
+    history.undo();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(table.getFilteredRecords().length).toBe(beforeCount);
+
+    history.redo();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(table.getFilteredRecords().length).toBe(filteredCount);
   } finally {
     sheet.release();
     removeDom(container);

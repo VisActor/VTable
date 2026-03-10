@@ -16,6 +16,7 @@ export function createTable() {
     showSheetTab: true,
     defaultRowHeight: 25,
     defaultColWidth: 80,
+
     VTablePluginModules: [
       {
         module: VTablePlugins.HistoryPlugin,
@@ -32,6 +33,7 @@ export function createTable() {
         sheetTitle: 'History Demo',
         rowCount: 20,
         columnCount: 10,
+        filter: true,
         data: [
           ['Name', 'Age', 'City', 'tel', 'email'],
           ['Alice', 24, 'Beijing', '13800000000', 'alice@example.com'],

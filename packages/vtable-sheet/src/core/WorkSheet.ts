@@ -264,6 +264,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
         maintainArrayDataOrder: true
       },
       addRecordRule: 'Array',
+      syncRecordOperationsToSourceRecords: true,
       defaultCursor: 'cell',
       records: this.options.data,
       sortState: this.options.sortState,

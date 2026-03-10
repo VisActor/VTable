@@ -1433,13 +1433,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     filterRules: FilterRules,
     options: {
       clearRowHeightCache?: boolean;
+      clearForceVisibleRecords?: boolean;
       onFilterRecordsEnd?: (records: any[]) => any[];
     } = { clearRowHeightCache: true }
   ) {
     this.scenegraph.clearCells();
     // 配合 syncRecordOperationsToSourceRecords：筛选态新增的“草稿行”会被临时强制保留在筛选视图中；
     // 当用户主动 updateFilterRules 时清空，保证本次筛选结果严格由 filterRules 决定。
-    (this.dataSource as any).clearForceVisibleRecords?.();
+    if (options?.clearForceVisibleRecords !== false) {
+      (this.dataSource as any).clearForceVisibleRecords?.();
+    }
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
       sortRecords(this);

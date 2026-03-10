@@ -332,6 +332,13 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     this.pushTransaction({ commands: [cmd] });
   }
 
+  recordExternalCommand(cmd: HistoryCommand): void {
+    if (this.isReplaying) {
+      return;
+    }
+    this.pushCommand(cmd);
+  }
+
   private tryCompressCellChange(change: CellChange, sheetKey?: string): boolean {
     if (!this.enableCompression) {
       return false;

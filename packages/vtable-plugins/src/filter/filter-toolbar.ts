@@ -30,6 +30,7 @@ export class FilterToolbar {
   private clearFilterOptionLink: HTMLAnchorElement;
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
+  private pluginId: string;
 
   constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
@@ -37,6 +38,7 @@ export class FilterToolbar {
     this.valueFilter = new ValueFilter(this.table, this.filterStateManager, pluginOptions);
     this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions, this.hide);
     this.pluginOptions = pluginOptions;
+    this.pluginId = pluginOptions?.id ?? 'filter';
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 
@@ -91,6 +93,26 @@ export class FilterToolbar {
       this.conditionFilter.clearFilter(field);
     }
     this.hide();
+  }
+
+  private recordHistory(before: any, after: any): void {
+    const beforeKey = JSON.stringify(before);
+    const afterKey = JSON.stringify(after);
+    if (beforeKey === afterKey) {
+      return;
+    }
+    const pm: any = (this.table as any).pluginManager;
+    const history =
+      pm?.getPlugin?.('history-plugin') ??
+      pm?.getPluginByName?.('History') ??
+      pm?.getPlugin?.('history') ??
+      pm?.getPluginByName?.('history');
+    history?.recordExternalCommand?.({
+      type: 'filter',
+      pluginId: this.pluginId,
+      oldSnapshot: before,
+      newSnapshot: after
+    });
   }
 
   /**
@@ -198,11 +220,17 @@ export class FilterToolbar {
 
     this.clearFilterOptionLink.addEventListener('click', e => {
       e.preventDefault();
+      const before = this.filterStateManager.getSnapshot();
       this.clearFilter(this.selectedField);
+      const after = this.filterStateManager.getSnapshot();
+      this.recordHistory(before, after);
     });
 
     this.applyFilterButton.addEventListener('click', () => {
+      const before = this.filterStateManager.getSnapshot();
       this.applyFilter(this.selectedField);
+      const after = this.filterStateManager.getSnapshot();
+      this.recordHistory(before, after);
     });
 
     // 点击空白处整个筛选菜单可消失

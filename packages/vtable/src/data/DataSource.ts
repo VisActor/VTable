@@ -1441,6 +1441,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
+    delete record.filteredChildren;
     for (let i = 0; i < (record.children?.length ?? 0); i++) {
       this.clearFilteredChildren(record.children[i]);
     }

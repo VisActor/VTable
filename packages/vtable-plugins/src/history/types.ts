@@ -11,6 +11,7 @@ export type HistoryCommandType =
   | 'cell'
   | 'cells'
   | 'merge_cells'
+  | 'filter'
   | 'add_record'
   | 'delete_record'
   | 'update_record'
@@ -45,6 +46,13 @@ export interface MergeCellsCommand extends BaseCommand {
   endRow: number;
   oldCustomMergeCell: any;
   newCustomMergeCell: any;
+}
+
+export interface FilterCommand extends BaseCommand {
+  type: 'filter';
+  pluginId: string;
+  oldSnapshot: any;
+  newSnapshot: any;
 }
 
 export interface AddRecordCommand extends BaseCommand {
@@ -112,6 +120,7 @@ export interface ResizeColumnCommand extends BaseCommand {
 export type HistoryCommand =
   | CellCommand
   | MergeCellsCommand
+  | FilterCommand
   | AddRecordCommand
   | DeleteRecordCommand
   | UpdateRecordCommand
