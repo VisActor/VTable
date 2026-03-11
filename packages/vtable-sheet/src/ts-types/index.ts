@@ -68,6 +68,8 @@ export interface ISheetDefine {
     enableDragColumnOrder?: boolean;
     enableDragRowOrder?: boolean;
   };
+  /** 是否启用多列排序 */
+  multipleSort?: boolean;
 }
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];

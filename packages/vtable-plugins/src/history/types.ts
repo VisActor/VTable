@@ -12,6 +12,7 @@ export type HistoryCommandType =
   | 'cells'
   | 'merge_cells'
   | 'filter'
+  | 'sort'
   | 'add_record'
   | 'delete_record'
   | 'update_record'
@@ -53,6 +54,12 @@ export interface FilterCommand extends BaseCommand {
   pluginId: string;
   oldSnapshot: any;
   newSnapshot: any;
+}
+
+export interface SortCommand extends BaseCommand {
+  type: 'sort';
+  oldSortState: TYPES.SortState | TYPES.SortState[] | null;
+  newSortState: TYPES.SortState | TYPES.SortState[] | null;
 }
 
 export interface AddRecordCommand extends BaseCommand {
@@ -121,6 +128,7 @@ export type HistoryCommand =
   | CellCommand
   | MergeCellsCommand
   | FilterCommand
+  | SortCommand
   | AddRecordCommand
   | DeleteRecordCommand
   | UpdateRecordCommand

@@ -12,6 +12,7 @@ import type {
   MergeCellsCommand,
   ResizeColumnCommand,
   ResizeRowCommand,
+  SortCommand,
   UpdateRecordCommand
 } from './types';
 
@@ -55,6 +56,22 @@ function applyMergeConfig(table: any, customMergeCell: any): void {
   }
   table.options.customMergeCell = cloneMergeConfig(customMergeCell);
   table.internalProps.customMergeCell = getCustomMergeCellFunc(table.options.customMergeCell);
+}
+
+function cloneSortState(input: any): any {
+  if (!input) {
+    return null;
+  }
+  if (Array.isArray(input)) {
+    return input.filter(Boolean).map((s: any) => ({
+      field: s.field,
+      order: s.order
+    }));
+  }
+  return {
+    field: (input as any).field,
+    order: (input as any).order
+  };
 }
 
 export function replayCommand(args: {
@@ -115,6 +132,12 @@ export function replayCommand(args: {
       if (filterPlugin?.applyFilterSnapshot) {
         filterPlugin.applyFilterSnapshot(snapshot);
       }
+      break;
+    }
+    case 'sort': {
+      const c = cmd as SortCommand;
+      const next = direction === 'undo' ? c.oldSortState : c.newSortState;
+      (table as any).updateSortState?.(cloneSortState(next) ?? null, true);
       break;
     }
     case 'add_record': {

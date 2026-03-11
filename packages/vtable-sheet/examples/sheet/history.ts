@@ -29,19 +29,56 @@ export function createTable() {
     ],
     sheets: [
       {
+        multipleSort: true,
         sheetKey: 'sheet1',
         sheetTitle: 'History Demo',
         rowCount: 20,
         columnCount: 10,
         filter: true,
+        columns: [
+          {
+            title: 'Name',
+            width: 100
+          },
+          {
+            title: 'Age',
+            width: 80,
+            sort: true
+          },
+          {
+            title: 'City',
+            width: 100,
+            sort: true
+          },
+          {
+            title: 'tel',
+            width: 120,
+            sort: true
+          },
+          {
+            title: 'email',
+            width: 200,
+            sort: true
+          }
+        ],
         data: [
-          ['Name', 'Age', 'City', 'tel', 'email'],
-          ['Alice', 24, 'Beijing', '13800000000', 'alice@example.com'],
+          ['Alice', 26, 'Beijing', '13800000000', 'alice@example.com'],
           ['Bob', 30, 'Shanghai', '13900000000', 'bob@example.com'],
           ['Carol', 28, 'Shenzhen', '13700000000', 'carol@example.com'],
           ['David', 32, 'Guangzhou', '13600000000', 'david@example.com'],
+
+          ['Frank', 34, 'Chongqing', '13400000000', 'frank@example.com'],
+          ['Grace', 29, 'Nanjing', '13300000000', 'grace@example.com'],
+          ['Heidi', 31, 'Foshan', '13200000000', 'heidi@example.com'],
+          ['Ivy', 26, 'Hangzhou', '13100000000', 'ivy@example.com'],
           ['Eve', 26, 'Chengdu', '13500000000', 'eve@example.com'],
-          ['Frank', 34, 'Chongqing', '13400000000', 'frank@example.com']
+          ['Judy', 29, 'Suzhou', '13000000000', 'judy@example.com'],
+          ['Karen', 28, 'Wuhan', '12900000000', 'karen@example.com'],
+          ['Liam', 32, 'Chengdu', '12800000000', 'liam@example.com'],
+          ['Mia', 26, 'Shenzhen', '12700000000', 'mia@example.com'],
+          ['Noah', 34, 'Shanghai', '12600000000', 'noah@example.com'],
+          ['Olivia', 29, 'Beijing', '12500000000', 'olivia@example.com'],
+          ['Peter', 31, 'Hangzhou', '12400000000', 'peter@example.com']
         ],
         firstRowAsHeader: true,
         active: true

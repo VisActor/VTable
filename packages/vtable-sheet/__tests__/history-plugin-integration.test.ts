@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import { VTableSheet } from '../src/index';
 import { createDiv, removeDom } from './dom';
 import * as VTablePlugins from '../src/test-shims/vtable-plugins';
@@ -327,6 +328,85 @@ test('FilterPlugin apply/clear is undoable via HistoryPlugin', async () => {
     history.redo();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(table.getFilteredRecords().length).toBe(filteredCount);
+  } finally {
+    sheet.release();
+    removeDom(container);
+  }
+});
+
+test('Sort is undoable via HistoryPlugin', async () => {
+  const container = createDiv() as HTMLDivElement;
+  container.style.position = 'relative';
+  container.style.width = '1000px';
+  container.style.height = '800px';
+
+  const data = [['A'], [3], [1], [2]];
+
+  const sheet = new VTableSheet(container, {
+    showFormulaBar: false,
+    showSheetTab: false,
+    defaultRowHeight: 25,
+    defaultColWidth: 80,
+    VTablePluginModules: [
+      {
+        module: VTablePlugins.HistoryPlugin,
+        moduleOptions: {
+          maxHistory: 100,
+          enableCompression: true
+        },
+        disabled: false
+      }
+    ],
+    sheets: [
+      {
+        sheetKey: 'sheet1',
+        sheetTitle: 'History Sort Undo',
+        data,
+        active: true,
+        firstRowAsHeader: true,
+        columns: [{ title: 'A', sort: true }]
+      }
+    ]
+  });
+
+  try {
+    const ws = sheet.getActiveSheet();
+    const table: any = ws.tableInstance;
+    const history: any = await waitForHistoryPlugin(table);
+    expect(history).toBeTruthy();
+
+    expect(table.getCellValue(0, 1)).toBe(3);
+    expect(table.getCellValue(0, 2)).toBe(1);
+    expect(table.getCellValue(0, 3)).toBe(2);
+
+    table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, {
+      field: 0,
+      order: 'asc',
+      event: new Event('click')
+    });
+    table.updateSortState({ field: 0, order: 'asc' }, true);
+    table.fireListeners(TABLE_EVENT_TYPE.AFTER_SORT, {
+      field: 0,
+      order: 'asc',
+      event: new Event('click')
+    });
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(table.getCellValue(0, 1)).toBe(1);
+    expect(table.getCellValue(0, 2)).toBe(2);
+    expect(table.getCellValue(0, 3)).toBe(3);
+
+    history.undo();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(table.getCellValue(0, 1)).toBe(3);
+    expect(table.getCellValue(0, 2)).toBe(1);
+    expect(table.getCellValue(0, 3)).toBe(2);
+
+    history.redo();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(table.getCellValue(0, 1)).toBe(1);
+    expect(table.getCellValue(0, 2)).toBe(2);
+    expect(table.getCellValue(0, 3)).toBe(3);
   } finally {
     sheet.release();
     removeDom(container);
