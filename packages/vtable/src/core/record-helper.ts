@@ -563,10 +563,15 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
       (table.dataSource as any).addRecord(record, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
       if (syncToOriginalRecords) {
+        if (!table.transpose) {
+          const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+          const insertRowIndex = recordIndex + headerCount + topAggregationCount;
+          table.rowHeightsMap.insert(insertRowIndex);
+        }
         table.refreshRowColCount();
         table.internalProps.layoutMap.clearCellRangeMap();
         table.scenegraph.clearCells();
-        table.scenegraph.createSceneGraph();
+        table.scenegraph.createSceneGraph(true);
         return true;
       }
       const oldRowCount = table.rowCount;
@@ -715,10 +720,17 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
       (table.dataSource as any).addRecords(records, recordIndex, syncToOriginalRecords);
       adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
       if (syncToOriginalRecords) {
+        if (!table.transpose) {
+          const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+          const insertRowIndex = recordIndex + headerCount + topAggregationCount;
+          for (let i = 0; i < records.length; i++) {
+            table.rowHeightsMap.insert(insertRowIndex);
+          }
+        }
         table.refreshRowColCount();
         table.internalProps.layoutMap.clearCellRangeMap();
         table.scenegraph.clearCells();
-        table.scenegraph.createSceneGraph();
+        table.scenegraph.createSceneGraph(true);
         return true;
       }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
@@ -885,10 +897,18 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
         adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
       }
       if (syncToOriginalRecords) {
+        if (!table.transpose) {
+          const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+          const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+          const sorted = [...deletedRecordIndexs].sort((a, b) => b - a);
+          for (let i = 0; i < sorted.length; i++) {
+            table.rowHeightsMap.delete(sorted[i] + headerCount + topAggregationCount);
+          }
+        }
         table.refreshRowColCount();
         table.internalProps.layoutMap.clearCellRangeMap();
         table.scenegraph.clearCells();
-        table.scenegraph.createSceneGraph();
+        table.scenegraph.createSceneGraph(true);
         return;
       }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
@@ -1087,7 +1107,7 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
         table.refreshRowColCount();
         table.internalProps.layoutMap.clearCellRangeMap();
         table.scenegraph.clearCells();
-        table.scenegraph.createSceneGraph();
+        table.scenegraph.createSceneGraph(true);
         return;
       }
       const bodyRowIndex = (updateRecordIndexs as (number | number[])[]).map((index: number | number[]) =>

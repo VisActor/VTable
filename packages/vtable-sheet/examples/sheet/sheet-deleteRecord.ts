@@ -23,21 +23,23 @@ export function createTable() {
         columns: [
           {
             title: '名称',
-            sort: true,
+
             width: 100
           }
         ],
-        data: [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], ['放到', '个', '哦'], [], [null, null, 30]],
-        formulas: {
-          C8: '=sum(C2:C5)'
-        },
+        data: [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          ['放到', '个', '哦']
+        ],
         active: true
       }
     ]
   });
   window.sheetInstance = sheetInstance;
   //删除第3行数据
-  sheetInstance.getActiveSheet().tableInstance?.deleteRecords([2]);
+  // sheetInstance.getActiveSheet().tableInstance?.deleteRecords([2]);
   // const tableInstance = sheetInstance.getActiveSheet().tableInstance;
 
   // sheetInstance.formulaManager.setCellContent({ sheet: 'sheet1', row: 7, col: 3 }, '=SUM(C2:C5)');
