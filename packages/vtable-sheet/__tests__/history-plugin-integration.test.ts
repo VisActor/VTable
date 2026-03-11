@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import { VTableSheet } from '../src/index';
 import { createDiv, removeDom } from './dom';
 import * as VTablePlugins from '../src/test-shims/vtable-plugins';
@@ -340,7 +339,7 @@ test('Sort is undoable via HistoryPlugin', async () => {
   container.style.width = '1000px';
   container.style.height = '800px';
 
-  const data = [['A'], [3], [1], [2]];
+  const data = [[3], [1], [2]];
 
   const sheet = new VTableSheet(container, {
     showFormulaBar: false,
@@ -363,7 +362,6 @@ test('Sort is undoable via HistoryPlugin', async () => {
         sheetTitle: 'History Sort Undo',
         data,
         active: true,
-        firstRowAsHeader: true,
         columns: [{ title: 'A', sort: true }]
       }
     ]
@@ -379,17 +377,8 @@ test('Sort is undoable via HistoryPlugin', async () => {
     expect(table.getCellValue(0, 2)).toBe(1);
     expect(table.getCellValue(0, 3)).toBe(2);
 
-    table.fireListeners(TABLE_EVENT_TYPE.SORT_CLICK, {
-      field: 0,
-      order: 'asc',
-      event: new Event('click')
-    });
-    table.updateSortState({ field: 0, order: 'asc' }, true);
-    table.fireListeners(TABLE_EVENT_TYPE.AFTER_SORT, {
-      field: 0,
-      order: 'asc',
-      event: new Event('click')
-    });
+    const addr = table.internalProps.layoutMap.getHeaderCellAddressByField(0);
+    table.stateManager.triggerSort(addr.col, addr.row, null, new Event('click'));
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(table.getCellValue(0, 1)).toBe(1);

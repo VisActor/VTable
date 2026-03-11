@@ -1384,50 +1384,53 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param executeSort 是否执行内部排序逻辑，设置false将只更新图标状态
    */
   updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true) {
-    if (!sortState) {
-      // 解除排序状态
-      if (this.internalProps.sortState) {
-        if (Array.isArray(this.internalProps.sortState)) {
-          for (let i = 0; i < (<SortState[]>this.internalProps.sortState).length; i++) {
-            sortState = this.internalProps.sortState?.[i];
-            sortState && (sortState.order = 'normal');
-          }
-        } else {
-          (<SortState>this.internalProps.sortState).order = 'normal';
-          sortState = this.internalProps.sortState;
-        }
-      }
-    } else {
+    const nextSortState = Array.isArray(sortState) ? sortState : sortState ? [sortState] : [];
+    const normalizedSortState = nextSortState.filter(Boolean) as SortState[];
+
+    if (normalizedSortState.length) {
       this.internalProps.sortState = sortState;
-      // 这里的sortState需要有field属性
-      // this.stateManager.setSortState(sortState as SortState);
+    } else {
+      this.internalProps.sortState = null;
     }
 
-    sortState = Array.isArray(sortState) ? sortState : [sortState];
+    if (executeSort) {
+      if (normalizedSortState.length) {
+        if (this.internalProps.layoutMap.headerObjects.some(item => item.define.sort !== false)) {
+          this.dataSource.sort(
+            normalizedSortState.map((item: any) => {
+              const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, item.field);
+              const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
+              return {
+                field: item.field,
+                order: item.order,
+                orderFn: sortFunc ?? defaultOrderFn
+              };
+            })
+          );
 
-    if (sortState.some((item: any) => item.field) && executeSort) {
-      if (this.internalProps.layoutMap.headerObjects.some(item => item.define.sort !== false)) {
-        this.dataSource.sort(
-          sortState.map((item: any) => {
-            const sortFunc = this._getSortFuncFromHeaderOption(this.internalProps.columns, item.field);
-            const hd = this.internalProps.layoutMap.headerObjects.find((col: any) => col && col.field === item.field);
-            return {
-              field: item.field,
-              order: item.order,
-              orderFn: sortFunc ?? defaultOrderFn
-            };
-          })
-        );
+          this.internalProps.layoutMap.clearCellRangeMap();
+          this.internalProps.useOneRowHeightFillAll = false;
+          this.scenegraph.sortCell();
+        }
+      } else {
+        const ds: any = this.dataSource as any;
+        const sourceLength = ds?.sourceLength ?? ds?._sourceLength ?? ds?.length ?? 0;
+        if (ds?.sortedIndexMap?.clear) {
+          ds.sortedIndexMap.clear();
+        }
+        if (typeof ds.currentIndexedData !== 'undefined') {
+          ds.currentIndexedData = Array.from({ length: sourceLength }, (_: any, i: number) => i);
+        }
+        ds.lastSortStates = [];
+        ds.updatePagination?.(ds.pagination);
 
-        // clear cell range cache
         this.internalProps.layoutMap.clearCellRangeMap();
         this.internalProps.useOneRowHeightFillAll = false;
         this.scenegraph.sortCell();
       }
     }
-    if (sortState.length) {
-      this.stateManager.updateSortState(sortState);
-    }
+
+    this.stateManager.updateSortState(normalizedSortState);
   }
   updateFilterRules(
     filterRules: FilterRules,
