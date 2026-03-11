@@ -378,7 +378,27 @@ test('Sort is undoable via HistoryPlugin', async () => {
     expect(table.getCellValue(0, 3)).toBe(2);
 
     const addr = table.internalProps.layoutMap.getHeaderCellAddressByField(0);
-    table.stateManager.triggerSort(addr.col, addr.row, null, new Event('click'));
+    const headerCell = table.scenegraph.getCell(addr.col, addr.row);
+    const findSortIcon = (node: any): any => {
+      if (!node) {
+        return undefined;
+      }
+      if (node.attribute?.funcType === 'sort') {
+        return node;
+      }
+      const children = node.children;
+      if (Array.isArray(children)) {
+        for (let i = 0; i < children.length; i++) {
+          const found = findSortIcon(children[i]);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      return undefined;
+    };
+    const sortIcon = findSortIcon(headerCell);
+    table.stateManager.triggerSort(addr.col, addr.row, sortIcon, new Event('click'));
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(table.getCellValue(0, 1)).toBe(1);

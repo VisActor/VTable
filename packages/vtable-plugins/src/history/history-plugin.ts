@@ -409,6 +409,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
   updateOptions(options: Partial<HistoryPluginOptions>): void {
     if (options.maxHistory != null) {
       this.maxHistory = options.maxHistory;
+      this.trimHistory();
     }
     if (options.enableCompression != null) {
       this.enableCompression = options.enableCompression;
