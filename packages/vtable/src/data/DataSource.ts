@@ -1681,6 +1681,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return this.dataSourceObj.canChangeOrder(sourceIndex, targetIndex);
     }
 
+    if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
+      return false;
+    }
+
     if (this.hasHierarchyStateExpand) {
       let sourceIndexs = this.currentPagerIndexedData[sourceIndex] as number[];
       let targetIndexs = this.currentPagerIndexedData[targetIndex] as number[];

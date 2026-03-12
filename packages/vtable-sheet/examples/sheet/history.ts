@@ -83,7 +83,12 @@ export function createTable() {
         firstRowAsHeader: true,
         active: true
       }
-    ]
+    ],
+    /** 拖拽列顺序和行顺序配置 如果sheets中单独配置过，这个配置会被忽略*/
+    dragOrder: {
+      enableDragColumnOrder: true,
+      enableDragRowOrder: true
+    }
   };
 
   const sheet = new VTableSheet(container, options);
