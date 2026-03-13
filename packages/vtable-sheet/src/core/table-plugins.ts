@@ -46,14 +46,18 @@ export function getTablePlugins(
     !enabledPluginsUserSetted?.some(module => module.module === HistoryPlugin)
   ) {
     const workbookHistory = vtableSheet.getWorkbookHistoryManager();
-    plugins.push(
-      new HistoryPlugin({
-        enableCompression: false,
-        onTransactionPushed: (args: any) => {
-          workbookHistory.recordTableTransaction({ sheetKey: args?.sheetKey, tx: args?.tx });
-        }
-      })
-    );
+    if (typeof HistoryPlugin !== 'function') {
+      console.warn('HistoryPlugin is not available in @visactor/vtable-plugins');
+    } else {
+      plugins.push(
+        new HistoryPlugin({
+          enableCompression: false,
+          onTransactionPushed: (args: any) => {
+            workbookHistory.recordTableTransaction({ sheetKey: args?.sheetKey, tx: args?.tx });
+          }
+        })
+      );
+    }
   }
   if (!disabledPluginsUserSetted?.some(module => module.module === FilterPlugin)) {
     const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === FilterPlugin)
