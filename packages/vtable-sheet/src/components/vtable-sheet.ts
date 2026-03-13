@@ -65,6 +65,7 @@ export default class VTableSheet {
   private formulaBarElement: HTMLElement | null = null;
   private sheetTabElement: HTMLElement | null = null;
   private mainMenuElement: HTMLElement | null = null;
+  private undoRedoElement: HTMLElement | null = null;
   private contentElement: HTMLElement;
 
   // tab拖拽管理器
@@ -91,11 +92,11 @@ export default class VTableSheet {
     this.tableEventRelay = new TableEventRelay(this); // ⚠️ 必须在 EventManager 之前初始化
     this.eventManager = new DomEventManager(this); // EventManager 构造函数会调用 this.onTableEvent()
     this.dragManager = new SheetTabDragManager(this);
-    this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
     this.sheetTabEventHandler = new SheetTabEventHandler(this);
     this.spreadsheetEventManager = new SpreadSheetEventManager(this);
     this.workbookHistoryManager = new WorkbookHistoryManager(this);
+    this.menuManager = new MenuManager(this);
 
     // 初始化UI
     this.initUI();
@@ -151,11 +152,7 @@ export default class VTableSheet {
     topContainer.className = 'vtable-sheet-top-container';
     this.rootElement.appendChild(topContainer);
 
-    // 创建主菜单
-    if (this.options.mainMenu?.show) {
-      this.mainMenuElement = this.menuManager.createMainMenu();
-      topContainer.appendChild(this.mainMenuElement);
-    }
+    this.renderTopLeftControls(topContainer);
     // 创建公式栏
     if (this.options.showFormulaBar) {
       this.formulaBarElement = this.formulaUIManager.createFormulaBar();
@@ -173,6 +170,30 @@ export default class VTableSheet {
     if (this.options.showSheetTab) {
       this.sheetTabElement = this.createSheetTab();
       this.rootElement.appendChild(this.sheetTabElement);
+    }
+  }
+
+  private renderTopLeftControls(topContainer: HTMLElement): void {
+    if (this.mainMenuElement?.parentElement) {
+      this.mainMenuElement.parentElement.removeChild(this.mainMenuElement);
+      this.mainMenuElement = null;
+    }
+    if (this.undoRedoElement?.parentElement) {
+      this.undoRedoElement.parentElement.removeChild(this.undoRedoElement);
+      this.undoRedoElement = null;
+    }
+    this.menuManager.release();
+
+    const showMainMenu = !!this.options.mainMenu?.show;
+    const showUndoRedo = this.options.undoRedo?.show ?? true;
+    if (showMainMenu) {
+      this.mainMenuElement = this.menuManager.createMainMenu();
+      topContainer.appendChild(this.mainMenuElement);
+      return;
+    }
+    if (showUndoRedo) {
+      this.undoRedoElement = this.menuManager.createUndoRedoOnly();
+      topContainer.appendChild(this.undoRedoElement);
     }
   }
 
@@ -927,7 +948,11 @@ export default class VTableSheet {
   }
   updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
     this.options.mainMenu = mainMenu;
-    this.menuManager.updateMainMenu(mainMenu);
+    const topContainer = this.rootElement.querySelector('.vtable-sheet-top-container') as HTMLElement | null;
+    if (!topContainer) {
+      return;
+    }
+    this.renderTopLeftControls(topContainer);
   }
   /**
    * 更新电子表格配置
@@ -940,9 +965,7 @@ export default class VTableSheet {
       return;
     }
     const hasMainMenu = typeof options.mainMenu !== 'undefined';
-    if (hasMainMenu) {
-      this.updateMainMenu(options.mainMenu);
-    }
+    const hasUndoRedo = typeof (options as any).undoRedo !== 'undefined';
     const pluginModulesChanged = pluginIsChanged(this.options.VTablePluginModules, options.VTablePluginModules);
     const tableThemeChanged = tableThemeIsChanged(this.options.theme?.tableTheme, options.theme?.tableTheme);
     //对options中非sheets的配置项逐项进行分析
@@ -956,6 +979,13 @@ export default class VTableSheet {
       ...this.options,
       ...(options as IVTableSheetOptions)
     };
+
+    if (hasMainMenu || hasUndoRedo) {
+      const topContainer = this.rootElement.querySelector('.vtable-sheet-top-container') as HTMLElement | null;
+      if (topContainer) {
+        this.renderTopLeftControls(topContainer);
+      }
+    }
 
     // 如果包含 sheets，按全量更新处理
     if (Array.isArray(options.sheets) || pluginModulesChanged || tableThemeChanged) {

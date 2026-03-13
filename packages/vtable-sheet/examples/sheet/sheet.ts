@@ -779,6 +779,9 @@ export function createTable() {
         }
       }
     ],
+    undoRedo: {
+      show: true
+    },
     mainMenu: {
       show: true,
       items: [

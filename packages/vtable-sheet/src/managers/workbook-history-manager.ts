@@ -63,10 +63,34 @@ export class WorkbookHistoryManager {
   private maxHistory: number;
   private enabled = true;
   isReplaying = false;
+  private changeListeners: Set<() => void> = new Set();
 
   constructor(sheet: VTableSheet, options?: { maxHistory?: number }) {
     this.sheet = sheet;
     this.maxHistory = options?.maxHistory ?? 100;
+  }
+
+  canUndo(): boolean {
+    return this.undoStack.length > 0;
+  }
+
+  canRedo(): boolean {
+    return this.redoStack.length > 0;
+  }
+
+  onChange(listener: () => void): () => void {
+    this.changeListeners.add(listener);
+    return () => {
+      this.changeListeners.delete(listener);
+    };
+  }
+
+  private emitChange(): void {
+    this.changeListeners.forEach(fn => {
+      try {
+        fn();
+      } catch {}
+    });
   }
 
   suspend(): void {
@@ -97,12 +121,14 @@ export class WorkbookHistoryManager {
     this.undoStack = [];
     this.redoStack = [];
     this.currentTransaction = null;
+    this.emitChange();
   }
 
   updateOptions(options: { maxHistory?: number }): void {
     if (options.maxHistory != null) {
       this.maxHistory = options.maxHistory;
       this.trimHistory();
+      this.emitChange();
     }
   }
 
@@ -123,6 +149,7 @@ export class WorkbookHistoryManager {
       (this.sheet as any).__workbookHistoryReplaying = false;
     }
     this.redoStack.push(tx);
+    this.emitChange();
   }
 
   redo(): void {
@@ -141,6 +168,7 @@ export class WorkbookHistoryManager {
       (this.sheet as any).__workbookHistoryReplaying = false;
     }
     this.undoStack.push(tx);
+    this.emitChange();
   }
 
   recordTableTransaction(args: { sheetKey?: string; tx: HistoryTransaction }): void {
@@ -263,6 +291,7 @@ export class WorkbookHistoryManager {
     this.undoStack.push(tx);
     this.redoStack = [];
     this.trimHistory();
+    this.emitChange();
   }
 
   private pushCommand(cmd: WorkbookHistoryCommand): void {

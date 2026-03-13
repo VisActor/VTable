@@ -40,6 +40,21 @@ export function getTablePlugins(
   // 结合options.VTablePluginModules，来判断是否禁用插件
   const disabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => module.disabled);
   let enabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => !module.disabled);
+  if (
+    vtableSheet?.getWorkbookHistoryManager &&
+    !disabledPluginsUserSetted?.some(module => module.module === HistoryPlugin) &&
+    !enabledPluginsUserSetted?.some(module => module.module === HistoryPlugin)
+  ) {
+    const workbookHistory = vtableSheet.getWorkbookHistoryManager();
+    plugins.push(
+      new HistoryPlugin({
+        enableCompression: false,
+        onTransactionPushed: (args: any) => {
+          workbookHistory.recordTableTransaction({ sheetKey: args?.sheetKey, tx: args?.tx });
+        }
+      })
+    );
+  }
   if (!disabledPluginsUserSetted?.some(module => module.module === FilterPlugin)) {
     const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === FilterPlugin)
       ?.moduleOptions as FilterOptions;

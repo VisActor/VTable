@@ -107,6 +107,10 @@ export interface IVTableSheetOptions {
     /** 菜单项 */
     items?: MainMenuItem[];
   };
+  undoRedo?: {
+    /** 是否显示撤销/重做按钮 */
+    show?: boolean;
+  };
   /** 主题 */
   theme?: IThemeDefine;
   /** 默认行高 */

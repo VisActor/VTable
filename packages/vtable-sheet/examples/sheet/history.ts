@@ -16,7 +16,10 @@ export function createTable() {
     showSheetTab: true,
     defaultRowHeight: 25,
     defaultColWidth: 80,
-
+    undoRedo: {
+      /** 是否显示撤销/重做按钮 */
+      show: true
+    },
     VTablePluginModules: [
       {
         module: VTablePlugins.HistoryPlugin,

@@ -6,10 +6,19 @@ import { MainMenuItemKey } from '../ts-types/base';
 export class MenuManager {
   private sheet: VTableSheet;
   private menuContainer: HTMLElement;
+  private undoButton: HTMLButtonElement | null = null;
+  private redoButton: HTMLButtonElement | null = null;
   private clickOutsideHandler: (e: MouseEvent) => void;
+  private historyUnsubscribe: (() => void) | null = null;
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
-    this.createMainMenu();
+  }
+
+  createUndoRedoOnly(): HTMLElement {
+    const wrap = document.createElement('div');
+    wrap.className = 'vtable-sheet-undo-redo';
+    this.mountUndoRedoActions(wrap);
+    return wrap;
   }
 
   createMainMenu(): HTMLElement {
@@ -24,6 +33,8 @@ export class MenuManager {
     menuButton.className = 'vtable-sheet-main-menu-button';
     menuButton.innerHTML = menuIcon;
     menu.appendChild(menuButton);
+
+    this.mountUndoRedoActions(menu);
 
     // 菜单项容器（直接作为 menu 的子元素）
     const menuContainer = document.createElement('div');
@@ -81,6 +92,62 @@ export class MenuManager {
     document.addEventListener('click', this.clickOutsideHandler);
     this.menuContainer = menuContainer;
     return menu;
+  }
+
+  private mountUndoRedoActions(container: HTMLElement): void {
+    const showUndoRedo = this.sheet.getOptions().undoRedo?.show ?? true;
+    if (!showUndoRedo) {
+      this.undoButton = null;
+      this.redoButton = null;
+      this.historyUnsubscribe?.();
+      this.historyUnsubscribe = null;
+      return;
+    }
+
+    const undoIcon = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-icon="UndoOutlined"><path d="M8.707 2.293a1 1 0 0 1 0 1.414L5.414 7H14.5a7.5 7.5 0 0 1 0 15H11a1 1 0 1 1 0-2h3.5a5.5 5.5 0 1 0 0-11H5.414l3.293 3.293a1 1 0 1 1-1.414 1.414l-5-5a1 1 0 0 1 0-1.414l5-5a1 1 0 0 1 1.414 0Z" fill="currentColor"></path></svg>`;
+    const redoIcon = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-icon="RedoOutlined"><path d="M15.293 2.293a1 1 0 0 0 0 1.414L18.586 7H9.5a7.5 7.5 0 0 0 0 15H13a1 1 0 1 0 0-2H9.5a5.5 5.5 0 1 1 0-11h9.086l-3.293 3.293a1 1 0 0 0 1.414 1.414l5-5a1 1 0 0 0 0-1.414l-5-5a1 1 0 0 0-1.414 0Z" fill="currentColor"></path></svg>`;
+
+    const actions = document.createElement('div');
+    actions.className = 'vtable-sheet-main-menu-actions';
+    container.appendChild(actions);
+
+    this.undoButton = document.createElement('button');
+    this.undoButton.className = 'vtable-sheet-main-menu-action';
+    this.undoButton.type = 'button';
+    this.undoButton.title = '撤销';
+    this.undoButton.innerHTML = undoIcon;
+    this.undoButton.addEventListener('click', e => {
+      e.stopPropagation();
+      this.sheet.undo();
+    });
+    actions.appendChild(this.undoButton);
+
+    this.redoButton = document.createElement('button');
+    this.redoButton.className = 'vtable-sheet-main-menu-action';
+    this.redoButton.type = 'button';
+    this.redoButton.title = '重做';
+    this.redoButton.innerHTML = redoIcon;
+    this.redoButton.addEventListener('click', e => {
+      e.stopPropagation();
+      this.sheet.redo();
+    });
+    actions.appendChild(this.redoButton);
+
+    this.historyUnsubscribe?.();
+    this.historyUnsubscribe = this.sheet.getWorkbookHistoryManager().onChange(() => {
+      this.updateUndoRedoState();
+    });
+    this.updateUndoRedoState();
+  }
+
+  private updateUndoRedoState(): void {
+    const history = this.sheet.getWorkbookHistoryManager();
+    if (this.undoButton) {
+      this.undoButton.disabled = !history.canUndo();
+    }
+    if (this.redoButton) {
+      this.redoButton.disabled = !history.canRedo();
+    }
   }
   //TODO 需要重新逻辑，需要支持多级菜单
   private createSubMenu(items: MainMenuItem[]): HTMLElement {
@@ -249,9 +316,11 @@ export class MenuManager {
       document.removeEventListener('click', this.clickOutsideHandler);
       this.clickOutsideHandler = null;
     }
+    this.historyUnsubscribe?.();
+    this.historyUnsubscribe = null;
   }
-  updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
+  updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): HTMLElement {
     this.release();
-    this.createMainMenu();
+    return this.createMainMenu();
   }
 }
