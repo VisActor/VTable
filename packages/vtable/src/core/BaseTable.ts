@@ -3833,6 +3833,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             col: Math.min(customMerge.range.end.col, this.colCount - 1),
             row: Math.min(customMerge.range.end.row, this.rowCount - 1)
           },
+          // 标记为 custom merge range：编辑、history 等逻辑可据此区分“自定义合并”与 layoutMap 合并。
           isCustom: true
         };
         return range;
@@ -3850,8 +3851,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
       if (
         customMerge &&
-        customMerge.range &&
-        (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
+        customMerge.range
+        // (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
       ) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');

@@ -11,6 +11,7 @@ import {
   DEFAULT_BODY_MENU_ITEMS,
   DEFAULT_COLUMN_SERIES_MENU_ITEMS
 } from '@visactor/vtable-plugins';
+import { HistoryPlugin } from '@visactor/vtable-plugins';
 import type {
   FilterOptions,
   MenuItemOrSeparator,
@@ -190,8 +191,21 @@ export function getTablePlugins(
         disabled: boolean;
       }) => {
         if (typeof module?.module === 'function') {
-          // 检查是否为构造函数
-          plugins.push(new module.module(module.moduleOptions));
+          let moduleOptions = module.moduleOptions as any;
+          if (module.module === HistoryPlugin && vtableSheet?.getWorkbookHistoryManager) {
+            const workbookHistory = vtableSheet.getWorkbookHistoryManager();
+            const prev = moduleOptions?.onTransactionPushed;
+            moduleOptions = {
+              ...(moduleOptions ?? {}),
+              // vtable-sheet 以工作簿历史栈为准，默认关闭 HistoryPlugin 的压缩，保证连续编辑同一单元格也能逐步撤销。
+              enableCompression: moduleOptions?.enableCompression ?? false,
+              onTransactionPushed: (args: any) => {
+                prev?.(args);
+                workbookHistory.recordTableTransaction({ sheetKey: args?.sheetKey, tx: args?.tx });
+              }
+            };
+          }
+          plugins.push(new module.module(moduleOptions));
         } else {
           console.error(`Invalid plugin: ${module.module}`);
         }

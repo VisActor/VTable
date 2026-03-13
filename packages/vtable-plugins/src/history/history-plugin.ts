@@ -112,6 +112,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
    * 是否启用命令压缩（比如连续编辑同一单元格合并为一条命令）。
    */
   private enableCompression: boolean;
+  private onTransactionPushed?: HistoryPluginOptions['onTransactionPushed'];
 
   /**
    * 上一次快照的 columns（用于计算 add/delete column 的差异与回放）。
@@ -199,7 +200,8 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
   constructor(options?: HistoryPluginOptions) {
     this.id = options?.id ?? this.id;
     this.maxHistory = options?.maxHistory ?? 100;
-    this.enableCompression = options?.enableCompression ?? true;
+    this.enableCompression = options?.enableCompression ?? false;
+    this.onTransactionPushed = options?.onTransactionPushed;
   }
 
   /**
@@ -241,7 +243,8 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     this.ensureFormulaEventBindings();
     this.ensureSortEventBindings();
 
-    if (this.isReplaying) {
+    const workbookReplaying = (this.table as any)?.__vtableSheet?.__workbookHistoryReplaying;
+    if (this.isReplaying || workbookReplaying) {
       return;
     }
 
@@ -414,6 +417,9 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     if (options.enableCompression != null) {
       this.enableCompression = options.enableCompression;
     }
+    if (options.onTransactionPushed) {
+      this.onTransactionPushed = options.onTransactionPushed;
+    }
   }
 
   /**
@@ -494,13 +500,19 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
    * 压入一个事务到 undoStack（并清空 redoStack）。
    */
   private pushTransaction(tx: HistoryTransaction): void {
-    console.trace('pushTransaction');
+    // console.trace('pushTransaction');
     if (tx.commands.length === 0) {
       return;
     }
     this.undoStack.push(tx);
     this.redoStack = [];
     this.trimHistory();
+    if (this.onTransactionPushed && !this.isReplaying) {
+      const workbookReplaying = (this.table as any)?.__vtableSheet?.__workbookHistoryReplaying;
+      if (!workbookReplaying) {
+        this.onTransactionPushed({ tx, sheetKey: this.getSheetKey(), table: this.table ?? undefined });
+      }
+    }
   }
 
   /**
@@ -584,15 +596,17 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
 
     const key = e.key.toLowerCase();
     if (key === 'z') {
+      const workbookHistory = this.vtableSheet?.getWorkbookHistoryManager?.();
       if (e.shiftKey) {
-        this.redo();
+        workbookHistory ? workbookHistory.redo() : this.redo();
       } else {
-        this.undo();
+        workbookHistory ? workbookHistory.undo() : this.undo();
       }
       e.preventDefault();
       e.stopPropagation();
     } else if (key === 'y') {
-      this.redo();
+      const workbookHistory = this.vtableSheet?.getWorkbookHistoryManager?.();
+      workbookHistory ? workbookHistory.redo() : this.redo();
       e.preventDefault();
       e.stopPropagation();
     }

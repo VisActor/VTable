@@ -22,7 +22,7 @@ export function createTable() {
         module: VTablePlugins.HistoryPlugin,
         moduleOptions: {
           maxHistory: 100,
-          enableCompression: true
+          enableCompression: false
         },
         disabled: false
       }
@@ -122,15 +122,11 @@ function createControls(sheet: VTableSheet) {
   redoBtn.textContent = '重做 (Ctrl+Shift+Z / Ctrl+Y)';
 
   undoBtn.onclick = () => {
-    const table = sheet.getActiveSheet()?.tableInstance;
-    const historyPlugin = table?.pluginManager?.getPluginByName('History') as any;
-    historyPlugin?.undo?.();
+    sheet.undo();
   };
 
   redoBtn.onclick = () => {
-    const table = sheet.getActiveSheet()?.tableInstance;
-    const historyPlugin = table?.pluginManager?.getPluginByName('History') as any;
-    historyPlugin?.redo?.();
+    sheet.redo();
   };
 
   wrapper.appendChild(undoBtn);

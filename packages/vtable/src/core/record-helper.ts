@@ -60,6 +60,19 @@ export function listTableChangeCellValue(
       table.dataSource.changeFieldValue(value, recordShowIndex, field, col, row, table);
     }
     const range = table.getCellRange(col, row);
+    if (
+      range.isCustom &&
+      range.start.col === col &&
+      range.start.row === row &&
+      Array.isArray(table.options.customMergeCell) &&
+      typeof table.getCellValue === 'function'
+    ) {
+      // 自定义合并单元格展示值由 customMergeCell.text 决定；当编辑落在合并范围左上角时，同步更新 text，保证显示与数据一致，且便于 undo/redo 回放。
+      const customMerge = (table as any).internalProps?.customMergeCell?.(col, row, table) as any;
+      if (customMerge) {
+        customMerge.text = value as any;
+      }
+    }
     //改变单元格的值后 聚合值做重新计算
     const aggregators = table.internalProps.layoutMap.getAggregatorsByCell(col, row);
     if (aggregators) {

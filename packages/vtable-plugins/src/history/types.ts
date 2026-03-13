@@ -1,9 +1,10 @@
-import type { TYPES } from '@visactor/vtable';
+import type { ListTable, TYPES } from '@visactor/vtable';
 
 export interface HistoryPluginOptions {
   id?: string;
   maxHistory?: number;
   enableCompression?: boolean;
+  onTransactionPushed?: (args: { tx: HistoryTransaction; sheetKey?: string; table?: ListTable }) => void;
 }
 
 // 命令是 HistoryPlugin 最小回放单元；事务（transaction）是一次 undo/redo 的原子操作。

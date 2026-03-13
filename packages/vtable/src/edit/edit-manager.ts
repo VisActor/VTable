@@ -192,7 +192,12 @@ export class EditManager {
 
       this.table._makeVisibleCell(col, row);
       this.editingEditor = editor;
-      const dataValue = isValid(value) ? value : this.table.getCellOriginValue(col, row);
+      const customMergeText = this.table.getCustomMerge(col, row)?.text;
+      const dataValue = isValid(value)
+        ? value
+        : isValid(customMergeText)
+        ? customMergeText
+        : this.table.getCellOriginValue(col, row);
       const rect = this.table.getCellRangeRelativeRect(this.table.getCellRange(col, row));
       const referencePosition = { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height } };
 
@@ -262,7 +267,11 @@ export class EditManager {
     if (this.editingEditor.validateValue) {
       this.isValidatingValue = true;
       const newValue = this.editingEditor.getValue();
-      const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+      const customMergeText = this.table.getCustomMerge(this.editCell.col, this.editCell.row)?.text;
+      // 自定义合并单元格在编辑态看到的是 customMerge.text，因此校验 oldValue 也应以 text 为准，避免“校验基准值”与用户看到的不一致。
+      const oldValue = isValid(customMergeText)
+        ? customMergeText
+        : this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
       const target = e?.target as HTMLElement | undefined;
 
       const maybePromiseOrValue = this.editingEditor.validateValue?.(
@@ -303,16 +312,21 @@ export class EditManager {
   doExit() {
     const changedValue = this.editingEditor.getValue?.();
     const range = this.table.getCellRange(this.editCell.col, this.editCell.row);
-    const changedValues: any[] = [];
-    for (let row = range.start.row; row <= range.end.row; row++) {
-      const rowChangedValues = [];
-      for (let col = range.start.col; col <= range.end.col; col++) {
-        rowChangedValues.push(changedValue);
-      }
-      changedValues.push(rowChangedValues);
-    }
     this.editingEditor.beforeEnd?.();
-    (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+    if (range.isCustom) {
+      // 自定义合并单元格的“数据落点”统一写到合并范围左上角单元格；展示值由 record-helper 同步到 customMergeCell.text。
+      (this.table as ListTableAPI).changeCellValue(range.start.col, range.start.row, changedValue);
+    } else {
+      const changedValues: any[] = [];
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        const rowChangedValues = [];
+        for (let col = range.start.col; col <= range.end.col; col++) {
+          rowChangedValues.push(changedValue);
+        }
+        changedValues.push(rowChangedValues);
+      }
+      (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+    }
     this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
     this.editingEditor.exit?.();
     this.editingEditor.onEnd?.();
