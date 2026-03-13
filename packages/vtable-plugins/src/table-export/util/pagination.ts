@@ -1,6 +1,7 @@
 import { cloneDeep } from '@visactor/vutils';
 import type { IVTable } from './type';
-import type { PivotHeaderLayoutMap } from '@visactor/vtable/src/layout/pivot-header-layout';
+// 仅依赖 PivotHeaderLayoutMap 的最小能力（setPagination），避免引用 @visactor/vtable 的内部路径类型，降低跨包编译耦合。
+type PivotHeaderLayoutMap = { setPagination: (pagination?: unknown) => void };
 export function handlePaginationExport(table: IVTable, exportAllData: boolean) {
   const pagination = cloneDeep(table.pagination);
   const isPivot = table.isPivotTable();

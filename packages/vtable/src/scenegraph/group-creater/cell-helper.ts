@@ -562,7 +562,7 @@ export function updateCell(
   // const oldCellGroup = table.scenegraph.getCell(col, row, true);
   const oldCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
 
-  if (oldCellGroup.role !== 'cell' && !addNew) {
+  if (oldCellGroup.role !== 'cell' && oldCellGroup.role !== 'shadow-cell' && !addNew) {
     return undefined;
   }
 

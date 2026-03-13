@@ -230,4 +230,50 @@ describe('Formula with Row Resize and Insert Test', () => {
 
     expect(finalValue).toBe(17);
   });
+
+  test('should keep resized row height after inserting rows before it', async () => {
+    sheetInstance = new VTableSheet(container, {
+      showSheetTab: true,
+      sheets: [
+        {
+          rowCount: 20,
+          columnCount: 10,
+          sheetKey: 'sheet1',
+          sheetTitle: 'sheet1',
+          filter: true,
+          columns: [
+            {
+              title: '名称',
+              sort: true,
+              width: 100
+            }
+          ],
+          data: [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+            ['放到', '个', '哦']
+          ],
+          active: true
+        }
+      ]
+    });
+
+    const tableInstance = sheetInstance.getActiveSheet().tableInstance;
+    const resizedRow = tableInstance.columnHeaderLevelCount;
+    const beforeHeight = tableInstance.getRowHeight(resizedRow);
+    const delta = 30;
+
+    tableInstance.stateManager.startResizeRow(resizedRow, 0, 100);
+    tableInstance.stateManager.updateResizeRow(0, 100 + delta);
+    tableInstance.stateManager.endResizeRow();
+
+    const resizedHeight = tableInstance.getRowHeight(resizedRow);
+    expect(resizedHeight).toBe(beforeHeight + delta);
+
+    tableInstance.addRecords([[], []], 0, true);
+
+    expect(tableInstance.getRowHeight(resizedRow)).toBe(beforeHeight);
+    expect(tableInstance.getRowHeight(resizedRow + 2)).toBe(resizedHeight);
+  });
 });

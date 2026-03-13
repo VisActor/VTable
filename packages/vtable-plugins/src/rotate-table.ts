@@ -1,3 +1,4 @@
+// 旋转坐标转换依赖 vrender 的事件坐标转换工具；通过 @visactor/vtable 根导出透传，避免依赖内部子路径。
 import {
   matrixAllocate,
   transformPointForCanvas,
@@ -5,11 +6,11 @@ import {
   registerGlobalEventTransformer,
   registerWindowEventTransformer,
   vglobal
-} from '@visactor/vtable/es/vrender';
-import type { BaseTable } from '@visactor/vtable/src/core/BaseTable';
+} from '@visactor/vtable';
 import type { ListTable, pluginsDefinition, BaseTableAPI } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
+// 从 TABLE_EVENT_TYPE 常量对象推导出事件值的联合类型，避免依赖 vtable 内部类型路径。
+type TableEventType = typeof TABLE_EVENT_TYPE[keyof typeof TABLE_EVENT_TYPE];
 import type { EventArg } from './types';
 
 // Extend the ListTable interface to include the rotation methods
@@ -44,7 +45,7 @@ export class RotateTablePlugin implements pluginsDefinition.IVTablePlugin {
     this.id = pluginOptions?.id ?? this.id;
     // this.pluginOptions = pluginOptions;
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+  run(...args: [EventArg, TableEventType | TableEventType[], BaseTableAPI]) {
     const table: BaseTableAPI = args[2];
     this.table = table as ListTable;
     //将函数rotate90WithTransform绑定到table实例上，一般情况下插件不需要将api绑定到table实例上，可以直接自身实现某个api功能
@@ -61,7 +62,7 @@ export class RotateTablePlugin implements pluginsDefinition.IVTablePlugin {
  * 业务层旋转功能没有使用收系统接口的话，用的transform:'rotate(90deg)'的设置来达到旋转的目的。vtable及vrender都没有进行坐标处理，这样就会导致交互错乱。
  * 所以需要进行坐标转换，将旋转后的坐标转换后作为VRender及VTable逻辑中用到的坐标。
  */
-export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
+export function rotate90WithTransform(this: ListTable, rotateDom: HTMLElement) {
   this.rotateDegree = 90;
   const rotateCenter =
     rotateDom.clientWidth < rotateDom.clientHeight
@@ -133,7 +134,7 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
   // 可以自定义这两个函数 来修改事件属性，transformPointForCanvas中将坐标转换后存放了_canvasX _canvasY，mapToCanvasPointForCanvas中加以利用
   // 在VTable的touch文件中，利用到了_canvasX _canvasY 所以如果自定义上面两个函数也需提供_canvasX _canvasY
 }
-export function cancelTransform(this: BaseTable, rotateDom: HTMLElement) {
+export function cancelTransform(this: ListTable, rotateDom: HTMLElement) {
   this.rotateDegree = 0;
   rotateDom.style.transform = 'none';
   rotateDom.style.transformOrigin = 'none';

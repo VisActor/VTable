@@ -3,9 +3,9 @@ import { parse, isValid, differenceInDays, addDays, format } from './utils/date'
 // 通用转换器接口
 export interface IConverter {
   key: string; // 转换器标识
-  detect(value: any): boolean; // 检测值是否可被当前转换器处理
-  toNumber(value: any): { v: number; meta?: any }; // 转换为数字
-  fromNumber(num: number, meta?: any): any; // 从数字转换回来
+  detect: (value: any) => boolean; // 检测值是否可被当前转换器处理
+  toNumber: (value: any) => { v: number; meta?: any }; // 转换为数字
+  fromNumber: (num: number, meta?: any) => any; // 从数字转换回来
 }
 
 // 日期格式规则
@@ -34,7 +34,9 @@ export class DateConverter implements IConverter {
       format: 'yyyy年M月d日',
       parser: (value: string) => {
         const match = value.match(/(\d{4})年(\d{1,2})月(\d{1,2})/);
-        if (!match) throw new Error('无效的中文日期格式');
+        if (!match) {
+          throw new Error('无效的中文日期格式');
+        }
         return new Date(+match[1], +match[2] - 1, +match[3]);
       }
     }
@@ -71,18 +73,24 @@ export class DateConverter implements IConverter {
     let formatMeta: string | undefined;
 
     if (value instanceof Date) {
-      if (!isValid(value)) throw new Error('无效的日期对象');
+      if (!isValid(value)) {
+        throw new Error('无效的日期对象');
+      }
       date = value;
       formatMeta = 'yyyy-MM-dd';
     } else {
       const str = value.trim();
       const matchedFormat = this.dateFormats.find(rule => rule.pattern.test(str));
 
-      if (!matchedFormat) throw new Error(`不支持的日期格式: ${str}`);
+      if (!matchedFormat) {
+        throw new Error(`不支持的日期格式: ${str}`);
+      }
 
       date = matchedFormat.parser ? matchedFormat.parser(str) : parse(str, matchedFormat.format, new Date());
 
-      if (!isValid(date)) throw new Error(`无效的日期值: ${str}`);
+      if (!isValid(date)) {
+        throw new Error(`无效的日期值: ${str}`);
+      }
       formatMeta = matchedFormat.format;
     }
 

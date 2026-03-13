@@ -1,6 +1,7 @@
 import type { pluginsDefinition, ListTable, BaseTableAPI } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
+// 从 TABLE_EVENT_TYPE 常量对象推导出事件值的联合类型，避免依赖 vtable 内部类型路径。
+type TableEventType = typeof TABLE_EVENT_TYPE[keyof typeof TABLE_EVENT_TYPE];
 import { AutoFillManager } from './auto-fill-manager';
 export * from './formula-integration';
 export * from './types';
@@ -67,9 +68,7 @@ export class AutoFillPlugin implements pluginsDefinition.IVTablePlugin {
   constructor(options?: IAutoFillPluginOptions) {
     this.autoFillManager = new AutoFillManager(options);
   }
-  run(
-    ...args: [{ direction: string }, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]
-  ) {
+  run(...args: [{ direction: string }, TableEventType | TableEventType[], BaseTableAPI]) {
     // start drag
     if (args[1] === TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
       const [, , table] = args;

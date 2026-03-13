@@ -325,4 +325,6 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
   }
 }
 
-export const formulaEditor = new FormulaInputEditor();
+export function createFormulaEditor(): FormulaInputEditor {
+  return new FormulaInputEditor();
+}

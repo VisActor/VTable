@@ -1,5 +1,5 @@
 /* eslint-disable sort-imports */
-import { graphicUtil, registerForVrender } from '@src/vrender';
+import { registerForVrender } from './vrender';
 registerForVrender();
 
 import * as TYPES from './ts-types';
@@ -54,6 +54,17 @@ export { getTargetCell } from './event/util';
 export { toBoxArray } from './tools/helper';
 export { Icon } from './scenegraph/graphic/icon';
 export { CUSTOM_MERGE_PRE_NAME, CUSTOM_CONTAINER_NAME } from './scenegraph/component/custom';
+// 为插件等场景提供必要的 vrender 能力：只导出用到的符号，避免与 render/jsx 的导出成员发生命名冲突。
+export {
+  matrixAllocate,
+  transformPointForCanvas,
+  mapToCanvasPointForCanvas,
+  registerGlobalEventTransformer,
+  registerWindowEventTransformer,
+  vglobal,
+  Group,
+  graphicUtil
+} from './vrender';
 
 // export * as VRender from './vrender';
 // import * as VRender from './vrender';
@@ -109,11 +120,9 @@ export {
   CustomLayout,
   updateCell,
   renderChart,
-  graphicUtil,
   setCustomAlphabetCharSet,
   restoreMeasureText,
   pluginsDefinition
-  // VRender // should use import {xxx} from '@visactor/vtable/es/vrender'
 };
 
 /** @private */

@@ -228,7 +228,7 @@ export default class SheetTabDragManager {
   /**
    * 获取指定位置的放置区域
    */
-  getDropZoneAt(x: number, y: number): (typeof this.dragState.dropZones)[0] | null {
+  getDropZoneAt(x: number, y: number): typeof this.dragState.dropZones[0] | null {
     for (const zone of this.dragState.dropZones) {
       const rect = zone.element.getBoundingClientRect();
 
@@ -250,7 +250,7 @@ export default class SheetTabDragManager {
   /**
    * 显示插入指示器
    */
-  showInsertIndicator(dropZone: (typeof this.dragState.dropZones)[0]): void {
+  showInsertIndicator(dropZone: typeof this.dragState.dropZones[0]): void {
     if (!this.insertIndicator) {
       return;
     }
@@ -289,10 +289,7 @@ export default class SheetTabDragManager {
    */
   performTabReorder(sourceKey: string, targetKey: string, position: 'left' | 'right'): void {
     try {
-      this.sheet.getSheetManager().reorderSheet(sourceKey, targetKey, position);
-      // 更新UI
-      this.sheet.updateSheetTabs();
-      this.sheet.updateSheetMenu();
+      this.sheet.reorderSheet(sourceKey, targetKey, position);
     } catch (error) {
       console.error('Tab reorder failed:', error);
     }

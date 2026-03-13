@@ -16,7 +16,7 @@ import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { FormulaAutocomplete } from '../formula/formula-autocomplete';
-import { formulaEditor } from '../formula/formula-editor';
+import { createFormulaEditor } from '../formula/formula-editor';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
@@ -28,9 +28,7 @@ import { VTableSheetEventBus } from '../event/vtable-sheet-event-bus';
 import { pluginIsChanged } from '../sheet-helper';
 import type { ITableThemeDefine } from '@visactor/vtable/es/themes';
 import { tableThemeIsChanged } from '@visactor/vtable/es/themes';
-
-// 注册公式编辑器
-VTable.register.editor('formula', formulaEditor);
+import { WorkbookHistoryManager } from '../managers/workbook-history-manager';
 
 export default class VTableSheet {
   /** DOM容器 */
@@ -67,12 +65,15 @@ export default class VTableSheet {
   private formulaBarElement: HTMLElement | null = null;
   private sheetTabElement: HTMLElement | null = null;
   private mainMenuElement: HTMLElement | null = null;
+  private undoRedoElement: HTMLElement | null = null;
   private contentElement: HTMLElement;
 
   // tab拖拽管理器
   private dragManager: SheetTabDragManager;
   /** sheet标签事件处理器 */
   private sheetTabEventHandler: SheetTabEventHandler;
+  private workbookHistoryManager: WorkbookHistoryManager;
+  private formulaEditor = createFormulaEditor();
 
   /**
    * 构造函数
@@ -91,16 +92,19 @@ export default class VTableSheet {
     this.tableEventRelay = new TableEventRelay(this); // ⚠️ 必须在 EventManager 之前初始化
     this.eventManager = new DomEventManager(this); // EventManager 构造函数会调用 this.onTableEvent()
     this.dragManager = new SheetTabDragManager(this);
-    this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
     this.sheetTabEventHandler = new SheetTabEventHandler(this);
     this.spreadsheetEventManager = new SpreadSheetEventManager(this);
+    this.workbookHistoryManager = new WorkbookHistoryManager(this);
+    this.menuManager = new MenuManager(this);
 
     // 初始化UI
     this.initUI();
 
     // 初始化sheets
+    this.workbookHistoryManager.suspend();
     this.initSheets();
+    this.workbookHistoryManager.resume();
 
     this.resize();
   }
@@ -148,11 +152,7 @@ export default class VTableSheet {
     topContainer.className = 'vtable-sheet-top-container';
     this.rootElement.appendChild(topContainer);
 
-    // 创建主菜单
-    if (this.options.mainMenu?.show) {
-      this.mainMenuElement = this.menuManager.createMainMenu();
-      topContainer.appendChild(this.mainMenuElement);
-    }
+    this.renderTopLeftControls(topContainer);
     // 创建公式栏
     if (this.options.showFormulaBar) {
       this.formulaBarElement = this.formulaUIManager.createFormulaBar();
@@ -170,6 +170,30 @@ export default class VTableSheet {
     if (this.options.showSheetTab) {
       this.sheetTabElement = this.createSheetTab();
       this.rootElement.appendChild(this.sheetTabElement);
+    }
+  }
+
+  private renderTopLeftControls(topContainer: HTMLElement): void {
+    if (this.mainMenuElement?.parentElement) {
+      this.mainMenuElement.parentElement.removeChild(this.mainMenuElement);
+      this.mainMenuElement = null;
+    }
+    if (this.undoRedoElement?.parentElement) {
+      this.undoRedoElement.parentElement.removeChild(this.undoRedoElement);
+      this.undoRedoElement = null;
+    }
+    this.menuManager.release();
+
+    const showMainMenu = !!this.options.mainMenu?.show;
+    const showUndoRedo = this.options.undoRedo?.show ?? true;
+    if (showMainMenu) {
+      this.mainMenuElement = this.menuManager.createMainMenu();
+      topContainer.appendChild(this.mainMenuElement);
+      return;
+    }
+    if (showUndoRedo) {
+      this.undoRedoElement = this.menuManager.createUndoRedoOnly();
+      topContainer.appendChild(this.undoRedoElement);
     }
   }
 
@@ -446,9 +470,7 @@ export default class VTableSheet {
   }
 
   addSheet(sheet: ISheetDefine): void {
-    this.sheetManager.addSheet(sheet);
-    this.updateSheetTabs();
-    this.updateSheetMenu();
+    this.workbookHistoryManager.addSheet({ sheet, activate: false });
   }
 
   /**
@@ -460,23 +482,7 @@ export default class VTableSheet {
       showSnackbar('至少保留一个工作表', 1300);
       return;
     }
-
-    // 删除实例对应的dom元素
-    const instance = this.workSheetInstances.get(sheetKey);
-    if (instance) {
-      instance.release();
-      this.workSheetInstances.delete(sheetKey);
-    }
-
-    // 删除sheet定义
-    const newActiveSheetKey = this.sheetManager.removeSheet(sheetKey);
-
-    // 激活新的sheet(如果有)
-    if (newActiveSheetKey) {
-      this.activateSheet(newActiveSheetKey);
-    }
-    this.updateSheetTabs();
-    this.updateSheetMenu();
+    this.workbookHistoryManager.removeSheet(sheetKey);
   }
   getSheetCount(): number {
     return this.sheetManager.getSheetCount();
@@ -493,11 +499,11 @@ export default class VTableSheet {
    * @param sheetDefine sheet的定义
    */
   createWorkSheetInstance(sheetDefine: ISheetDefine): WorkSheet {
-    formulaEditor.setSheet(this);
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
     sheetDefine.dragOrder = sheetDefine.dragOrder ?? this.options.dragOrder;
+    const formulaEditor = createFormulaEditor();
     // 创建sheet实例
     const sheet = new WorkSheet(this, {
       ...sheetDefine,
@@ -508,8 +514,8 @@ export default class VTableSheet {
       defaultColWidth: this.options.defaultColWidth,
       dragOrder: sheetDefine.dragOrder,
       plugins: getTablePlugins(sheetDefine, this.options, this),
-      headerEditor: 'formula',
-      editor: 'formula',
+      headerEditor: formulaEditor,
+      editor: formulaEditor,
       select: {
         makeSelectCellVisible: false
       },
@@ -523,6 +529,7 @@ export default class VTableSheet {
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     });
+    formulaEditor.setSheet(this);
 
     // 事件系统现在通过 TableEventRelay 自动处理，不再需要手动绑定
 
@@ -646,11 +653,7 @@ export default class VTableSheet {
       data: []
     };
 
-    // 添加到管理器
-    this.sheetManager.addSheet(newSheet);
-
-    // 激活新sheet
-    this.activateSheet(key);
+    this.workbookHistoryManager.addSheet({ sheet: newSheet, activate: true });
   }
 
   /**
@@ -686,12 +689,42 @@ export default class VTableSheet {
   getSheetManager(): SheetManager {
     return this.sheetManager;
   }
+  getWorkbookHistoryManager(): WorkbookHistoryManager {
+    return this.workbookHistoryManager;
+  }
 
   /**
    * 获取活动Sheet实例
    */
   getActiveSheet(): WorkSheet | null {
     return this.activeWorkSheet;
+  }
+  getWorkSheetInstance(sheetKey: string): WorkSheet | undefined {
+    return this.workSheetInstances.get(sheetKey);
+  }
+  setWorkSheetInstance(sheetKey: string, instance: WorkSheet): void {
+    this.workSheetInstances.set(sheetKey, instance);
+  }
+  deleteWorkSheetInstance(sheetKey: string): void {
+    this.workSheetInstances.delete(sheetKey);
+  }
+  renameSheet(sheetKey: string, newTitle: string): void {
+    this.workbookHistoryManager.renameSheet(sheetKey, newTitle);
+  }
+  reorderSheet(sourceKey: string, targetKey: string, position: 'left' | 'right'): void {
+    this.workbookHistoryManager.reorderSheet(sourceKey, targetKey, position);
+  }
+  undo(): void {
+    this.workbookHistoryManager.undo();
+  }
+  redo(): void {
+    this.workbookHistoryManager.redo();
+  }
+  startHistoryTransaction(): void {
+    this.workbookHistoryManager.startTransaction();
+  }
+  endHistoryTransaction(): void {
+    this.workbookHistoryManager.endTransaction();
   }
 
   /**
@@ -915,7 +948,11 @@ export default class VTableSheet {
   }
   updateMainMenu(mainMenu: IVTableSheetOptions['mainMenu']): void {
     this.options.mainMenu = mainMenu;
-    this.menuManager.updateMainMenu(mainMenu);
+    const topContainer = this.rootElement.querySelector('.vtable-sheet-top-container') as HTMLElement | null;
+    if (!topContainer) {
+      return;
+    }
+    this.renderTopLeftControls(topContainer);
   }
   /**
    * 更新电子表格配置
@@ -928,9 +965,7 @@ export default class VTableSheet {
       return;
     }
     const hasMainMenu = typeof options.mainMenu !== 'undefined';
-    if (hasMainMenu) {
-      this.updateMainMenu(options.mainMenu);
-    }
+    const hasUndoRedo = typeof (options as any).undoRedo !== 'undefined';
     const pluginModulesChanged = pluginIsChanged(this.options.VTablePluginModules, options.VTablePluginModules);
     const tableThemeChanged = tableThemeIsChanged(this.options.theme?.tableTheme, options.theme?.tableTheme);
     //对options中非sheets的配置项逐项进行分析
@@ -944,6 +979,13 @@ export default class VTableSheet {
       ...this.options,
       ...(options as IVTableSheetOptions)
     };
+
+    if (hasMainMenu || hasUndoRedo) {
+      const topContainer = this.rootElement.querySelector('.vtable-sheet-top-container') as HTMLElement | null;
+      if (topContainer) {
+        this.renderTopLeftControls(topContainer);
+      }
+    }
 
     // 如果包含 sheets，按全量更新处理
     if (Array.isArray(options.sheets) || pluginModulesChanged || tableThemeChanged) {
@@ -1037,8 +1079,8 @@ export default class VTableSheet {
         defaultColWidth: this.options.defaultColWidth,
         dragOrder: next_sheetDefine.dragOrder,
         plugins: getTablePlugins(next_sheetDefine, this.options, this),
-        headerEditor: 'formula',
-        editor: 'formula',
+        headerEditor: this.formulaEditor,
+        editor: this.formulaEditor,
         select: {
           makeSelectCellVisible: false
         },

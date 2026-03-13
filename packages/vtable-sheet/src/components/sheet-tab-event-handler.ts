@@ -87,14 +87,7 @@ export class SheetTabEventHandler {
       return false;
     }
 
-    this.vTableSheet.getSheetManager().renameSheet(sheetKey, newTitle);
-    this.vTableSheet.workSheetInstances.get(sheetKey)?.setTitle(newTitle);
-
-    // 更新公式引擎中的工作表标题映射
-    this.vTableSheet.getFormulaManager().updateSheetTitle(sheetKey, newTitle);
-
-    this.vTableSheet.updateSheetTabs();
-    this.vTableSheet.updateSheetMenu();
+    this.vTableSheet.renameSheet(sheetKey, newTitle);
     return true;
   }
 
