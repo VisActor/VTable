@@ -144,6 +144,46 @@ VTableSheet组件支持的方法如下：
   getFormulaManager: () => FormulaManager
 ```
 
+### getWorkbookHistoryManager(Function)
+
+获取工作簿历史管理器（工作簿级别撤销/重做）。
+
+```
+  getWorkbookHistoryManager: () => WorkbookHistoryManager
+```
+
+### undo(Function)
+
+撤销最近一次工作簿事务。
+
+```
+  undo: () => void
+```
+
+### redo(Function)
+
+重做最近一次工作簿事务。
+
+```
+  redo: () => void
+```
+
+### startHistoryTransaction(Function)
+
+开始一个工作簿级别事务。在该事务期间产生的操作会合并为一次撤销/重做步骤。
+
+```
+  startHistoryTransaction: () => void
+```
+
+### endHistoryTransaction(Function)
+
+结束当前工作簿级别事务，并将其推入历史栈。
+
+```
+  endHistoryTransaction: () => void
+```
+
 ## Events
 
 表格事件列表，可以根据实际需要，监听所需事件，实现自定义业务。

@@ -14,6 +14,8 @@
 | ctrl+x     | 键位不准，这个 cut 是和浏览器的快捷键一致的。<br> 剪切选中单元格内容，需要开启 keyboardOptions.cutSelected                                                                                                                                          |
 | ctrl+v     | 键位不准，粘贴快捷键和浏览器的快捷键一致的。<br> 粘贴内容到单元格，需要开启 keyboardOptions.pasteValueToCell，粘贴生效仅针对配置了编辑 editor 的单元格                                                                                                |
 | ctrl+a     | 全选，需要开启 keyboardOptions.selectAllOnCtrlA                                                                                                                                                                                                       |
+| ctrl/cmd+z | 撤销。需要启用 `HistoryPlugin`（或使用 VTable-Sheet 的工作簿历史）。 |
+| ctrl/cmd+shift+z / ctrl/cmd+y | 重做。需要启用 `HistoryPlugin`（或使用 VTable-Sheet 的工作簿历史）。 |
 | shift      | 按住 shift 和鼠标左键，连续区域选中单元格                                                                                                                                                                                                             |
 | ctrl       | 按住 ctrl 和鼠标左键，选中多个区域                                                                                                                                                                                                                    |
 | 任何一个键 | 可以监听 tableInstance.on('keydown',(args)=>{ })                                                                                                                                                                                                      |

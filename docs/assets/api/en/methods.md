@@ -76,6 +76,44 @@ Corresponding property update interface (see tutorial: https://visactor.io/vtabl
 tableInstance.columns = newColumns;
 ```
 
+## changeHeaderPosition(Function)
+
+Programmatically move header position (drag header behavior), returns whether the move succeeded.
+
+```ts
+  changeHeaderPosition: (args: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+  }) => boolean
+```
+
+Usage:
+
+```ts
+tableInstance.changeHeaderPosition({
+  source: { col: 1, row: 0 },
+  target: { col: 3, row: 0 },
+  movingColumnOrRow: 'column'
+});
+```
+
+## mergeCells(Function)
+
+Merge cells by creating a custom merge range (ListTable only). After merging, the table will refresh and emit the `merge_cells` event.
+
+```ts
+  mergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => void
+```
+
+## unmergeCells(Function)
+
+Unmerge cells by removing the corresponding custom merge range (ListTable only). After unmerging, the table will refresh and emit the `unmerge_cells` event.
+
+```ts
+  unmergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => void
+```
+
 ## updatePagination(Function)
 
 Update pagination configuration information, automatically redraws after calling.

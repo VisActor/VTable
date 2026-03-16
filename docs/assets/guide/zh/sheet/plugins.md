@@ -3,6 +3,7 @@
 VTable-Sheet中目前使用到了VTable的几个插件，具体包括：
 - [filter-plugin](../plugin/filter) 筛选插件
 - [auto-fill-plugin](../plugin/auto-fill) 自动填充插件
+- [history-plugin](../plugin/history) 撤销重做（历史记录）插件
 - [table-series-number-plugin](../plugin/table-series-number) 表格序号插件
 - [highlight-header-when-select-cell-plugin](../plugin/header-highlight) 选中高亮表头插件
 - [context-menu-plugin](../plugin/context-menu) 右键菜单插件
@@ -297,4 +298,3 @@ export enum MenuKey {
 - importFileToSheet
 
 通过插件系统，可以极大地扩展VTable-Sheet的功能，满足各种复杂的业务需求。如果想要自定义插件可以参考[插件贡献](../plugin/contribute.md)
-

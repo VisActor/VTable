@@ -14,6 +14,7 @@ This example shows how to configure a simple online spreadsheet. The spreadsheet
 ## Key Configurations
 
 - `VTableSheet` Configure the theme name or custom theme style
+- `undoRedo` Enable undo/redo buttons (Ctrl/Cmd+Z, Ctrl/Cmd+Y)
 
 ## Code Demo
 
@@ -23,6 +24,7 @@ This example shows how to configure a simple online spreadsheet. The spreadsheet
 
 const container = document.getElementById(CONTAINER_ID);
 const sheetInstance = new VTableSheet.VTableSheet(container, {
+  undoRedo: { show: true },
   VTablePluginModules: [
     { module: VTablePlugins.TableExportPlugin },
     { module: VTablePlugins.ExcelImportPlugin },
