@@ -188,12 +188,20 @@ export default class VTableSheet {
     const showUndoRedo = this.options.undoRedo?.show ?? true;
     if (showMainMenu) {
       this.mainMenuElement = this.menuManager.createMainMenu();
-      topContainer.appendChild(this.mainMenuElement);
+      if (topContainer.firstChild) {
+        topContainer.insertBefore(this.mainMenuElement, topContainer.firstChild);
+      } else {
+        topContainer.appendChild(this.mainMenuElement);
+      }
       return;
     }
     if (showUndoRedo) {
       this.undoRedoElement = this.menuManager.createUndoRedoOnly();
-      topContainer.appendChild(this.undoRedoElement);
+      if (topContainer.firstChild) {
+        topContainer.insertBefore(this.undoRedoElement, topContainer.firstChild);
+      } else {
+        topContainer.appendChild(this.undoRedoElement);
+      }
     }
   }
 
