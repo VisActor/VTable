@@ -173,15 +173,49 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     if (!this.element || !this.sheet) {
       return;
     }
-    this.element.value = '=' + item.value;
-    // 同步内容到顶部输入栏
-    this.sheet.formulaUIManager.formulaInput.value = this.element.value;
+    const value = this.element.value;
+    const selectionStart = this.element.selectionStart ?? value.length;
+    const selectionEnd = this.element.selectionEnd ?? selectionStart;
 
-    // 触发高亮更新
-    const highlightManager = this.sheet.formulaManager.cellHighlightManager;
-    if (highlightManager && this.element.value.startsWith('=')) {
-      highlightManager.highlightFormulaCells(this.element.value);
+    let replaceStart = selectionStart;
+    let replaceEnd = selectionEnd;
+
+    if (selectionStart === selectionEnd) {
+      replaceStart = selectionStart;
+      while (replaceStart > 1 && /[A-Za-z0-9]/.test(value[replaceStart - 1])) {
+        replaceStart--;
+      }
+      const hasLeftWord = replaceStart < selectionStart;
+      replaceEnd = selectionStart;
+      if (hasLeftWord) {
+        while (replaceEnd < value.length && /[A-Za-z0-9]/.test(value[replaceEnd])) {
+          replaceEnd++;
+        }
+      }
     }
+
+    const isFunction = item?.type === 'function';
+    const itemValue = String(item?.value ?? '');
+    const nextChar = value[replaceEnd];
+    const shouldAppendParen = isFunction && nextChar !== '(';
+
+    const insertText = itemValue + (shouldAppendParen ? '(' : '');
+    const newValue = value.slice(0, replaceStart) + insertText + value.slice(replaceEnd);
+
+    this.element.value = newValue;
+
+    let newCursorPos = replaceStart + itemValue.length;
+    if (isFunction && newValue[newCursorPos] === '(') {
+      newCursorPos += 1;
+    }
+    this.element.setSelectionRange(newCursorPos, newCursorPos);
+
+    if (this.sheet.formulaUIManager.formulaInput) {
+      this.sheet.formulaUIManager.formulaInput.value = newValue;
+    }
+
+    const inputEvent = new Event('input', { bubbles: true });
+    this.element.dispatchEvent(inputEvent);
   }
 
   /**

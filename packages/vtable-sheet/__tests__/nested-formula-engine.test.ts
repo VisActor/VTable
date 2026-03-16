@@ -116,6 +116,11 @@ describe('FormulaEngine', () => {
       });
     });
 
+    test('应该正确处理函数参数中的算术表达式与尾部算术', () => {
+      expect(engine.calculateFormula('=SUM(1, SUM(1,1)+1) + 1')).toEqual({ value: 5, error: undefined });
+      expect(engine.calculateFormula('=sum(1, sum(1,1)+1) + 1')).toEqual({ value: 5, error: undefined });
+    });
+
     test('应该正确处理复杂嵌套函数', () => {
       const complexFormula = '=IF(SUM(A1:A3)>10,AVERAGE(B1:B3),MAX(C1:C3))';
       expect(engine.calculateFormula(complexFormula)).toEqual({ value: 5, error: undefined });
