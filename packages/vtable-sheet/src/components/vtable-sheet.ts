@@ -73,7 +73,6 @@ export default class VTableSheet {
   /** sheet标签事件处理器 */
   private sheetTabEventHandler: SheetTabEventHandler;
   private workbookHistoryManager: WorkbookHistoryManager;
-  private formulaEditor = createFormulaEditor();
 
   /**
    * 构造函数
@@ -1071,7 +1070,7 @@ export default class VTableSheet {
         this.workSheetInstances.set(next_sheetDefine.sheetKey, newInstance);
         return;
       }
-
+      const formulaEditor = createFormulaEditor();
       const sheetOption: IWorkSheetOptions = {
         sheetTitle: next_sheetDefine.sheetTitle,
         sheetKey: next_sheetDefine.sheetKey,
@@ -1087,8 +1086,8 @@ export default class VTableSheet {
         defaultColWidth: this.options.defaultColWidth,
         dragOrder: next_sheetDefine.dragOrder,
         plugins: getTablePlugins(next_sheetDefine, this.options, this),
-        headerEditor: this.formulaEditor,
-        editor: this.formulaEditor,
+        headerEditor: formulaEditor,
+        editor: formulaEditor,
         select: {
           makeSelectCellVisible: false
         },
@@ -1101,7 +1100,7 @@ export default class VTableSheet {
         // ...('data' in next_sheetDefine && { data: next_sheetDefine.data }),
         // ...('columns' in next_sheetDefine && { columns: next_sheetDefine.columns })
       };
-
+      formulaEditor.setSheet(this);
       instance.updateSheetOption(sheetOption);
     });
 
