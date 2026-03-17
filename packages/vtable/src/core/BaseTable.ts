@@ -5029,8 +5029,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     if (isValid(cellAddr.row) && cellAddr.row >= this.frozenRowCount) {
       const frozenHeight = this.getFrozenRowsHeight();
-      const top = this.getRowsHeight(0, cellAddr.row - 1);
-      this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
+      // Use rowHeightsMap.getSumInRange directly to bypass the getRowsHeight fast path,
+      // which ignores rowHeightsMap for body rows and uses defaultRowHeight*count instead.
+      // This ensures dynamically-computed row heights (e.g. autoWrapText) are reflected
+      // in the scroll position calculation.
+      const top = this.rowHeightsMap.getSumInRange(0, cellAddr.row - 1);
+      this.scrollTop = Math.min(top - frozenHeight, this.rowHeightsMap.getSumInRange(0, this.rowCount - 1) - drawRange.height);
     }
     this.render();
   }
