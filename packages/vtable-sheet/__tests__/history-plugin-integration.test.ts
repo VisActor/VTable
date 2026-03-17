@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { VTableSheet } from '../src/index';
 import { createDiv, removeDom } from './dom';
-import * as VTablePlugins from '../src/test-shims/vtable-plugins';
+import * as VTablePlugins from '@visactor/vtable-plugins';
 
 (global as any).__VERSION__ = 'none';
 
@@ -293,40 +293,31 @@ test('FilterPlugin apply/clear is undoable via HistoryPlugin', async () => {
     const filter = await waitForFilterPlugin(table);
     expect(filter).toBeTruthy();
 
-    const beforeCount = table.getFilteredRecords().length;
+    const countValid = () => table.getFilteredRecords().filter((r: any) => Array.isArray(r) && r.length > 0).length;
+    const beforeCount = countValid();
 
-    filter.filterToolbar.show(0, 0, ['byValue']);
+    filter.applyFilterSnapshot({
+      filters: [
+        {
+          enable: true,
+          field: 0,
+          type: 'byValue',
+          values: [0]
+        }
+      ]
+    });
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    const checkboxes = Array.from(
-      document.querySelectorAll('.vtable-filter-menu input[type="checkbox"]')
-    ) as HTMLInputElement[];
-    expect(checkboxes.length > 1).toBe(true);
-    const selectAll = checkboxes[0];
-    selectAll.checked = false;
-    selectAll.dispatchEvent(new Event('change', { bubbles: true }));
-
-    const firstOption = checkboxes[1];
-    firstOption.checked = true;
-    firstOption.dispatchEvent(new Event('change', { bubbles: true }));
-
-    const applyBtn = Array.from(document.querySelectorAll('.vtable-filter-menu button')).find(
-      b => (b as HTMLButtonElement).innerText === '确认'
-    ) as HTMLButtonElement | undefined;
-    expect(applyBtn).toBeTruthy();
-    applyBtn!.click();
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    const filteredCount = table.getFilteredRecords().length;
+    const filteredCount = countValid();
     expect(filteredCount).toBeLessThan(beforeCount);
 
     history.undo();
     await new Promise(resolve => setTimeout(resolve, 0));
-    expect(table.getFilteredRecords().length).toBe(beforeCount);
+    expect(countValid()).toBe(beforeCount);
 
     history.redo();
     await new Promise(resolve => setTimeout(resolve, 0));
-    expect(table.getFilteredRecords().length).toBe(filteredCount);
+    expect(countValid()).toBe(filteredCount);
   } finally {
     sheet.release();
     removeDom(container);

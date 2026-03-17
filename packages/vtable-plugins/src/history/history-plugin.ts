@@ -5,6 +5,7 @@ import { captureCellPreChangeContent, parseA1Notation, popCellPreChangeContent }
 import { replayCommand } from './replay';
 import { captureSnapshot, cloneDeep, cloneRecord } from './snapshot';
 import { resolveSheetKey } from './sheet-key';
+import { FilterActionType } from '../filter/types';
 import type {
   AddColumnCommand,
   AddRecordCommand,
@@ -13,6 +14,7 @@ import type {
   ChangeHeaderPositionCommand,
   DeleteColumnCommand,
   DeleteRecordCommand,
+  FilterCommand,
   HistoryCommand,
   HistoryPluginOptions,
   HistoryTransaction,
@@ -49,6 +51,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
    * VTable 会在这些事件发生时调用本插件的 run(...)。
    */
   runTime: any[] = [
+    TABLE_EVENT_TYPE.BEFORE_INIT,
     TABLE_EVENT_TYPE.INITIALIZED,
     TABLE_EVENT_TYPE.BEFORE_KEYDOWN,
     TABLE_EVENT_TYPE.CHANGE_CELL_VALUE,
@@ -195,6 +198,53 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
   private resizeColStartWidth: Map<number, number> = new Map();
 
   /**
+   * Filter 相关绑定是否已完成。
+   *
+   * FilterPlugin 的筛选状态变更不一定会映射成 TABLE_EVENT_TYPE（例如点击筛选面板的应用/清除），
+   * 因此 HistoryPlugin 需要自行“订阅 FilterPlugin 的状态变化”并把快照差异转成可 undo/redo 的命令。
+   */
+  private filterEventBound = false;
+  /**
+   * FilterPlugin.filterStateManager 的订阅取消函数（如果 subscribe 可用）。
+   *
+   * 用于捕获来自 UI/交互产生的 filter action（APPLY_FILTERS/CLEAR_ALL_FILTERS/REMOVE_FILTER/DISABLE_FILTER）。
+   */
+  private filterUnsubscribe: (() => void) | null = null;
+  /**
+   * 最近一次已知的 filter snapshot（用于生成 oldSnapshot/newSnapshot）。
+   *
+   * 由于 FilterPlugin 的状态变更可能来自：
+   * - 直接调用 filter.applyFilterSnapshot（声明式设置）
+   * - UI 触发的 filterStateManager action
+   * 这里缓存一个“上一帧”快照，用来在变化发生时构造历史命令的差异。
+   */
+  private filterSnapshotCache: any;
+  /**
+   * FilterPlugin 的 plugin id（用于回放时从 pluginManager 定位到同一个插件实例）。
+   */
+  private filterPluginId: string | undefined;
+  /**
+   * FilterPlugin 实例引用（用于在解绑时恢复被包裹的 applyFilterSnapshot）。
+   */
+  private filterPluginRef: any;
+  /**
+   * FilterPlugin.applyFilterSnapshot 的原始实现（被 ensureFilterEventBindings 包裹前的函数）。
+   *
+   * 我们包裹 applyFilterSnapshot 的目的：
+   * - 捕获“声明式 snapshot 设置”带来的状态变化，并确保一定能生成一条 filter 历史命令；
+   * - 避免只依赖 stateManager.subscribe（初始化时机/未就绪时可能漏记）。
+   */
+  private filterApplySnapshotOriginal: any;
+  /**
+   * applyFilterSnapshot 包裹函数执行中的保护标记。
+   *
+   * 作用：
+   * - 避免包裹 applyFilterSnapshot 时，内部又触发 stateManager.subscribe 导致重复入栈；
+   * - 在包裹函数 finally 中统一更新 filterSnapshotCache，保持 old/new 计算正确。
+   */
+  private filterApplyingSnapshot = false;
+
+  /**
    * @param options 插件配置：maxHistory / enableCompression 等。
    */
   constructor(options?: HistoryPluginOptions) {
@@ -230,16 +280,24 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     if (!this.table) {
       this.table = table;
       this.vtableSheet = (table as any).__vtableSheet;
-      const state = this.getSnapshotState();
-      const sheetKey = this.getSheetKey();
-      captureSnapshot(table, state, {
-        formulaManager: this.vtableSheet?.formulaManager,
-        sheetKey
-      });
-      this.setSnapshotState(state);
-      this.lastKnownSortState = this.normalizeSortState((table as any).internalProps?.sortState);
+      if (runtime !== TABLE_EVENT_TYPE.BEFORE_INIT && (table as any).internalProps?.dataSource) {
+        const state = this.getSnapshotState();
+        const sheetKey = this.getSheetKey();
+        captureSnapshot(table, state, {
+          formulaManager: this.vtableSheet?.formulaManager,
+          sheetKey
+        });
+        this.setSnapshotState(state);
+        this.lastKnownSortState = this.normalizeSortState((table as any).internalProps?.sortState);
+      }
+    } else if (!this.vtableSheet) {
+      this.vtableSheet = (table as any).__vtableSheet;
     }
 
+    this.ensureFilterEventBindings();
+    if (runtime === TABLE_EVENT_TYPE.BEFORE_INIT) {
+      return;
+    }
     this.ensureFormulaEventBindings();
     this.ensureSortEventBindings();
 
@@ -429,6 +487,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     this.clear();
     this.unbindFormulaEvents();
     this.unbindSortEvents();
+    this.unbindFilterEvents();
     this.table = null;
     this.vtableSheet = null;
     this.resolvedSheetKey = undefined;
@@ -447,6 +506,132 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     this.formulaCache.clear();
     this.resizeRowStartHeight.clear();
     this.resizeColStartWidth.clear();
+    this.filterEventBound = false;
+    this.filterUnsubscribe = null;
+    this.filterSnapshotCache = undefined;
+    this.filterPluginId = undefined;
+  }
+
+  private ensureFilterEventBindings(): void {
+    if (!this.table) {
+      return;
+    }
+    const pm = (this.table as any).pluginManager;
+    const filterPlugin =
+      pm?.getPlugin?.('filter') ??
+      pm?.getPluginByName?.('Filter') ??
+      pm?.getPlugin?.('filter-plugin') ??
+      pm?.getPluginByName?.('filter-plugin');
+    if (!filterPlugin?.getFilterSnapshot || !filterPlugin?.applyFilterSnapshot) {
+      return;
+    }
+
+    /**
+     * 绑定策略（两个入口互补）：
+     * 1) 包裹 filter.applyFilterSnapshot：
+     *    - 任何“声明式设置 snapshot”都会经过这里；
+     *    - 可以直接比较 oldSnapshot/newSnapshot 并 push 一条 filter 命令；
+     *    - 不依赖 filterStateManager.subscribe 的就绪时机。
+     *
+     * 2) 订阅 filter.filterStateManager（如果可用）：
+     *    - 覆盖 UI 交互（例如筛选面板点击“确认/清除”）触发的 action；
+     *    - 通过 action.type 过滤出真正会改变筛选状态的动作，再根据快照差异 push 命令。
+     */
+    if (!this.filterEventBound) {
+      this.filterEventBound = true;
+      this.filterPluginRef = filterPlugin;
+      this.filterPluginId = filterPlugin.id ?? 'filter';
+      this.filterSnapshotCache = cloneDeep(filterPlugin.getFilterSnapshot());
+    }
+
+    if (!this.filterApplySnapshotOriginal) {
+      this.filterApplySnapshotOriginal = filterPlugin.applyFilterSnapshot?.bind(filterPlugin);
+      if (this.filterApplySnapshotOriginal) {
+        filterPlugin.applyFilterSnapshot = (snapshot: any): any => {
+          if (this.isReplaying) {
+            return this.filterApplySnapshotOriginal(snapshot);
+          }
+          const oldSnapshot = this.filterSnapshotCache ?? filterPlugin.getFilterSnapshot();
+          this.filterApplyingSnapshot = true;
+          try {
+            return this.filterApplySnapshotOriginal(snapshot);
+          } finally {
+            this.filterApplyingSnapshot = false;
+            const newSnapshot = filterPlugin.getFilterSnapshot();
+            if (JSON.stringify(oldSnapshot) !== JSON.stringify(newSnapshot)) {
+              const cmd: FilterCommand = {
+                type: 'filter',
+                sheetKey: this.getSheetKey(),
+                pluginId: this.filterPluginId ?? 'filter',
+                oldSnapshot,
+                newSnapshot
+              };
+              this.pushCommand(cmd as any as HistoryCommand);
+              this.filterSnapshotCache = cloneDeep(newSnapshot);
+            } else {
+              this.filterSnapshotCache = cloneDeep(newSnapshot);
+            }
+          }
+        };
+      }
+    }
+
+    const stateManager = filterPlugin?.filterStateManager;
+    if (!this.filterUnsubscribe && stateManager?.subscribe) {
+      this.filterUnsubscribe = stateManager.subscribe((_state: any, action: any) => {
+        if (this.isReplaying) {
+          return;
+        }
+        if (this.filterApplyingSnapshot) {
+          this.filterSnapshotCache = cloneDeep(filterPlugin.getFilterSnapshot());
+          return;
+        }
+
+        const t = action?.type;
+        if (
+          t !== FilterActionType.APPLY_FILTERS &&
+          t !== FilterActionType.CLEAR_ALL_FILTERS &&
+          t !== FilterActionType.REMOVE_FILTER &&
+          t !== FilterActionType.DISABLE_FILTER
+        ) {
+          return;
+        }
+
+        const oldSnapshot = this.filterSnapshotCache ?? filterPlugin.getFilterSnapshot();
+        const newSnapshot = filterPlugin.getFilterSnapshot();
+        if (JSON.stringify(oldSnapshot) === JSON.stringify(newSnapshot)) {
+          return;
+        }
+
+        const cmd: FilterCommand = {
+          type: 'filter',
+          sheetKey: this.getSheetKey(),
+          pluginId: this.filterPluginId ?? 'filter',
+          oldSnapshot,
+          newSnapshot
+        };
+        this.pushCommand(cmd as any as HistoryCommand);
+        this.filterSnapshotCache = cloneDeep(newSnapshot);
+      });
+    }
+  }
+
+  private unbindFilterEvents(): void {
+    /**
+     * 解绑策略：
+     * - 取消 stateManager.subscribe（如果曾订阅）
+     * - 恢复被包裹的 filter.applyFilterSnapshot 原始实现
+     * - 清空缓存/标记，确保 release 后不会继续响应旧实例事件
+     */
+    this.filterUnsubscribe?.();
+    this.filterUnsubscribe = null;
+    this.filterEventBound = false;
+    if (this.filterPluginRef && this.filterApplySnapshotOriginal) {
+      this.filterPluginRef.applyFilterSnapshot = this.filterApplySnapshotOriginal;
+    }
+    this.filterPluginRef = null;
+    this.filterApplySnapshotOriginal = null;
+    this.filterApplyingSnapshot = false;
   }
 
   /**
@@ -766,7 +951,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     if (!this.table || this.sortEventBound) {
       return;
     }
-    const ds: any = (this.table as any).dataSource;
+    const ds: any = (this.table as any).internalProps?.dataSource;
     if (!ds?.on || !ds?.off) {
       return;
     }
@@ -802,7 +987,7 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
     if (!this.sortEventBound) {
       return;
     }
-    const ds: any = (this.table as any)?.dataSource;
+    const ds: any = (this.table as any)?.internalProps?.dataSource;
     try {
       if (ds?.off && this.sortChangeOrderListenerId) {
         ds.off(this.sortChangeOrderListenerId);
@@ -947,6 +1132,36 @@ export class HistoryPlugin implements pluginsDefinition.IVTablePlugin {
       recordIndex: eventArgs.recordIndex,
       recordCount: eventArgs.recordCount ?? (Array.isArray(eventArgs.records) ? eventArgs.records.length : 0)
     };
+    if (this.table && typeof eventArgs.recordIndex === 'number') {
+      const start = eventArgs.recordIndex;
+      const count = cmd.recordCount;
+      const ds: any = (this.table as any)?.internalProps?.dataSource;
+      const rawRecords: any[] | undefined = ds?.dataSourceObj?.records;
+      const viewRecords = (this.table as any).records as any[];
+      if (Array.isArray(viewRecords) && viewRecords.length) {
+        cmd.anchorBefore = start > 0 ? viewRecords[start - 1] : undefined;
+        cmd.anchorAfter = viewRecords[start + count];
+      }
+      if (Array.isArray(rawRecords) && Array.isArray(viewRecords)) {
+        let rawInsertIndex = rawRecords.length;
+        if (viewRecords.length === 0) {
+          rawInsertIndex = rawRecords.length;
+        } else if (start <= 0) {
+          const first = viewRecords[0];
+          const idx = rawRecords.indexOf(first);
+          rawInsertIndex = idx >= 0 ? idx : 0;
+        } else if (start >= viewRecords.length) {
+          const last = viewRecords[viewRecords.length - 1];
+          const idx = rawRecords.indexOf(last);
+          rawInsertIndex = idx >= 0 ? idx + 1 : rawRecords.length;
+        } else {
+          const prev = viewRecords[start - 1];
+          const idx = rawRecords.indexOf(prev);
+          rawInsertIndex = idx >= 0 ? idx + 1 : rawRecords.length;
+        }
+        cmd.rawInsertIndex = rawInsertIndex;
+      }
+    }
     this.pushCommand(cmd);
   }
 

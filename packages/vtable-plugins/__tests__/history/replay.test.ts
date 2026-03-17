@@ -163,3 +163,45 @@ test('replayCommand merge_cells falls back to renderWithRecreateCells when scene
 
   expect(renderWithRecreateCells).toHaveBeenCalled();
 });
+
+test('replayCommand add_record undo removes raw record when filtered view index is wrong', () => {
+  const alice = ['Alice', 26, 'Beijing'];
+  const bob = ['Bob', 30, 'Shanghai'];
+  const carol = ['Carol', 28, 'Shenzhen'];
+  const empty: any[] = [];
+
+  const rawRecords: any[] = [alice, bob, empty, carol];
+  const ds: any = {
+    dataSourceObj: { records: rawRecords },
+    dataConfig: { filterRules: [] },
+    beforeChangedRecordsMap: { clear: jest.fn() },
+    sortedIndexMap: { clear: jest.fn() },
+    updateFilterRules: jest.fn()
+  };
+
+  const table: any = {
+    internalProps: { dataSource: ds },
+    updateFilterRules: jest.fn(),
+    deleteRecords: jest.fn()
+  };
+  const vtableSheet: any = { formulaManager: undefined };
+
+  replayCommand({
+    table,
+    vtableSheet,
+    direction: 'undo',
+    deleteRecordsByReference: jest.fn(),
+    cmd: {
+      type: 'add_record',
+      sheetKey: 'sheet1',
+      records: [[]],
+      recordIndex: 1,
+      recordCount: 1,
+      rawInsertIndex: 2,
+      anchorBefore: bob
+    } as any
+  });
+
+  expect(rawRecords).toEqual([alice, bob, carol]);
+  expect(table.deleteRecords).not.toHaveBeenCalled();
+});

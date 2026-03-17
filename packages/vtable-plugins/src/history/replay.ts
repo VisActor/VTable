@@ -143,14 +143,59 @@ export function replayCommand(args: {
     case 'add_record': {
       const c = cmd as AddRecordCommand;
       if (direction === 'undo') {
-        if (typeof c.recordIndex === 'number' && c.recordCount > 0) {
-          const indexs: number[] = [];
-          for (let i = 0; i < c.recordCount; i++) {
-            indexs.push(c.recordIndex + i);
+        const ds: any = (table as any)?.internalProps?.dataSource;
+        const rawRecords: any[] | undefined = ds?.dataSourceObj?.records;
+        let deletedByRaw = false;
+        if (Array.isArray(rawRecords) && typeof (c as any).rawInsertIndex === 'number' && c.recordCount > 0) {
+          const idx = (c as any).rawInsertIndex;
+          if (idx >= 0 && idx < rawRecords.length) {
+            rawRecords.splice(idx, c.recordCount);
+            deletedByRaw = true;
           }
-          (table as any).deleteRecords?.(indexs);
-        } else {
-          deleteRecordsByReference(c.records);
+        }
+        if (Array.isArray(rawRecords) && Array.isArray(c.records) && c.records.length) {
+          for (let i = 0; i < c.records.length; i++) {
+            const rawIndex = rawRecords.indexOf(c.records[i]);
+            if (rawIndex >= 0) {
+              rawRecords.splice(rawIndex, 1);
+              deletedByRaw = true;
+            }
+          }
+        }
+        if (!deletedByRaw && Array.isArray(rawRecords) && typeof c.recordCount === 'number' && c.recordCount > 0) {
+          const before = (c as any).anchorBefore;
+          const after = (c as any).anchorAfter;
+          const beforeIndex = before ? rawRecords.indexOf(before) : -1;
+          const afterIndex = after ? rawRecords.indexOf(after) : -1;
+          if (beforeIndex >= 0) {
+            rawRecords.splice(beforeIndex + 1, c.recordCount);
+            deletedByRaw = true;
+          } else if (afterIndex >= 0) {
+            rawRecords.splice(Math.max(0, afterIndex - c.recordCount), c.recordCount);
+            deletedByRaw = true;
+          }
+        }
+        if (deletedByRaw) {
+          ds?.beforeChangedRecordsMap?.clear?.();
+          ds?.sortedIndexMap?.clear?.();
+          if (typeof (table as any).updateFilterRules === 'function') {
+            (table as any).updateFilterRules(ds?.dataConfig?.filterRules, {
+              clearRowHeightCache: false
+            });
+          } else {
+            ds?.updateFilterRules?.(ds?.dataConfig?.filterRules);
+          }
+        }
+        if (!deletedByRaw) {
+          if (typeof c.recordIndex === 'number' && c.recordCount > 0) {
+            const indexs: number[] = [];
+            for (let i = 0; i < c.recordCount; i++) {
+              indexs.push(c.recordIndex + i);
+            }
+            (table as any).deleteRecords?.(indexs);
+          } else {
+            deleteRecordsByReference(c.records);
+          }
         }
       } else {
         if (c.records.length) {

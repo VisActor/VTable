@@ -173,7 +173,7 @@ export class ValueFilter {
   }
 
   private toggleSelectAll(fieldId: string | number, selected: boolean): void {
-    const options = this.valueFilterOptionList.get(fieldId);
+    const options = this.valueFilterOptionList.get(fieldId) || [];
     options.forEach(option => {
       if (option.itemContainer.style.display !== 'none') {
         option.checkbox.checked = selected;
@@ -192,7 +192,7 @@ export class ValueFilter {
 
   private onSearch(fieldId: string | number, value: string): void {
     // 更新UI显示
-    const items = this.valueFilterOptionList.get(fieldId);
+    const items = this.valueFilterOptionList.get(fieldId) || [];
     const filterKeywords = value
       .toUpperCase()
       .split(' ')

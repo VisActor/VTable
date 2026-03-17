@@ -153,8 +153,12 @@ describe('Formula with Row Resize and Insert Test', () => {
     // 确保数据行数足够（至少5行，因为我们要设置 row: 4）
     const activeSheet = sheetInstance.getActiveSheet();
     const data = activeSheet.getData();
-    while (data.length <= 4) {
-      data.push([]);
+    if (data.length <= 4) {
+      while (data.length <= 4) {
+        data.push([]);
+      }
+    } else if (!Array.isArray(data[4])) {
+      data[4] = [];
     }
 
     // 直接更新数据（公式管理器已经更新了公式引擎中的数据）

@@ -68,6 +68,9 @@ export interface AddRecordCommand extends BaseCommand {
   records: any[];
   recordIndex?: number | number[];
   recordCount: number;
+  rawInsertIndex?: number;
+  anchorBefore?: any;
+  anchorAfter?: any;
 }
 
 export interface DeleteRecordCommand extends BaseCommand {
