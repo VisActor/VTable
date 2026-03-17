@@ -292,7 +292,7 @@ export class FilterToolbar {
     const currentFilter = this.filterStateManager.getFilterState(field);
     if (currentFilter && currentFilter.type === 'byCondition') {
       this.onTabSwitch('byCondition');
-    } else {
+    } else if (this.filterModes.includes('byValue')) {
       this.onTabSwitch('byValue');
     }
 
