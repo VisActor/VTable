@@ -26,6 +26,8 @@ Time scale configuration.
   {
     backgroundColor?: string;
     colWidth?: number;
+    hideWeekend?: boolean;
+    weekendColWidth?: number | ((colWidth: number) => number);
     /** Vertical line style */
     verticalLine?: ILineStyle;
     /** Horizontal line style */
@@ -42,6 +44,21 @@ Time scale background color.
 ### colWidth(number)
 
 Column width.
+
+### hideWeekend(boolean)
+
+Whether to hide weekend columns in the smallest day scale. Only takes effect when the smallest time scale is `unit: 'day'` and `step: 1`.
+
+Optional
+
+### weekendColWidth(number | (colWidth: number) => number)
+
+Weekend column width override. Only takes effect when the smallest time scale is `unit: 'day'` and `step: 1`.
+
+- When set to a number, weekends use this fixed width.
+- When set to a function, it receives the base `timelineHeader.colWidth` and returns the weekend width.
+
+Optional
 
 ### verticalLine(ILineStyle)
 

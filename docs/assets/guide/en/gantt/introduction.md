@@ -225,6 +225,7 @@ In the vtable-gantt component, the main supported configurations include:
 4. Date Header Configuration `timelineHeader`
    1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.
    2. Style Configuration: You can set the text style of the header, including font size, color, alignment, etc., through the `style` configuration item.
+   3. Weekend column width: You can set weekend column width through `timelineHeader.weekendColWidth`, or hide weekend columns through `timelineHeader.hideWeekend` (only effective when the smallest time scale is `unit: 'day'` and `step: 1`).
 5. Time Scale Configuration `timelineHeader.scales`
    1. Row Height and Time Unit: You can set the row height and time unit (such as day, week, month, etc.) of the time scale through the `rowHeight` and `unit` configuration items.
    2. Step Length and Week Start Day: You can set the step length of the time scale and the start day of the week through the `step` and `startOfWeek` configuration items.

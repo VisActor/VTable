@@ -26,6 +26,8 @@
   {
     backgroundColor?: string;
     colWidth?: number;
+    hideWeekend?: boolean;
+    weekendColWidth?: number | ((colWidth: number) => number);
     /** 垂直间隔线样式 */
     verticalLine?: ILineStyle;
     /** 水平间隔线样式 */
@@ -42,6 +44,21 @@
 ### colWidth(number)
 
 列宽。
+
+### hideWeekend(boolean)
+
+是否在最小粒度为天（`unit: 'day'` 且 `step: 1`）时隐藏周末列。
+
+非必填
+
+### weekendColWidth(number | (colWidth: number) => number)
+
+周末列宽度覆盖。仅在最小粒度为天（`unit: 'day'` 且 `step: 1`）时生效。
+
+- 传入 number 时，周末列使用固定宽度。
+- 传入函数时，入参为基础列宽 `timelineHeader.colWidth`，返回周末列宽。
+
+非必填
 
 ### verticalLine(ILineStyle)
 
