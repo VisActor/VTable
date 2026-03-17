@@ -1,6 +1,7 @@
 import type { ListTable, BaseTableAPI, TYPES, pluginsDefinition } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
+// 从 TABLE_EVENT_TYPE 常量对象推导出事件值的联合类型，避免依赖 vtable 内部类型路径。
+type TableEventType = typeof TABLE_EVENT_TYPE[keyof typeof TABLE_EVENT_TYPE];
 import type { EventArg } from './types';
 import type { IEditor } from '@visactor/vtable-editors';
 export enum ExcelEditCellKeyboardResponse {
@@ -52,7 +53,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
 
     this.bindEvent();
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+  run(...args: [EventArg, TableEventType | TableEventType[], BaseTableAPI]) {
     const table: BaseTableAPI = args[2];
     this.table = table as ListTable;
   }

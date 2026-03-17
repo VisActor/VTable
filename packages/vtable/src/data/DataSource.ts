@@ -1441,6 +1441,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
   private clearFilteredChildren(record: any) {
     record.filteredChildren = undefined;
+    delete record.filteredChildren;
     for (let i = 0; i < (record.children?.length ?? 0); i++) {
       this.clearFilteredChildren(record.children[i]);
     }
@@ -1678,6 +1679,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   canChangeOrder(sourceIndex: number, targetIndex: number): boolean {
     if ((this, this.dataSourceObj?.canChangeOrder)) {
       return this.dataSourceObj.canChangeOrder(sourceIndex, targetIndex);
+    }
+
+    if (this.lastSortStates?.some(state => state.order === 'asc' || state.order === 'desc')) {
+      return false;
     }
 
     if (this.hasHierarchyStateExpand) {

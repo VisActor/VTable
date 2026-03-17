@@ -20,3 +20,4 @@ export * from './context-menu';
 export * from './filter';
 export * from './table-export';
 export * from './auto-fill';
+export * from './history-plugin';

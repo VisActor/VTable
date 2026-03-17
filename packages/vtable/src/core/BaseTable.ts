@@ -3406,6 +3406,122 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManager.select.selecting = false;
   }
 
+  changeHeaderPosition(args: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+  }): boolean {
+    if (
+      !('canMoveHeaderPosition' in this.internalProps.layoutMap) ||
+      this.options.customConfig?.notUpdateInColumnRowMove === true
+    ) {
+      return false;
+    }
+    const prevMoving = this.stateManager.columnMove.movingColumnOrRow;
+    this.stateManager.columnMove.movingColumnOrRow = args.movingColumnOrRow;
+    try {
+      if (this.internalProps.layoutMap.canMoveHeaderPosition?.(args.source, args.target) === false) {
+        return false;
+      }
+      const oldSourceMergeInfo = this.getCellRange(args.source.col, args.source.row);
+      const oldTargetMergeInfo = this.getCellRange(args.target.col, args.target.row);
+      const moveContext = this._moveHeaderPosition(args.source, args.target);
+      if (!moveContext || moveContext.targetIndex === moveContext.sourceIndex) {
+        return false;
+      }
+      this.internalProps.useOneRowHeightFillAll = false;
+      this.internalProps.layoutMap.clearCellRangeMap();
+      const sourceMergeInfo = this.getCellRange(args.source.col, args.source.row);
+      const targetMergeInfo = this.getCellRange(args.target.col, args.target.row);
+
+      const colMin = Math.min(
+        sourceMergeInfo.start.col,
+        targetMergeInfo.start.col,
+        oldSourceMergeInfo.start.col,
+        oldTargetMergeInfo.start.col
+      );
+      const colMax = Math.max(
+        sourceMergeInfo.end.col,
+        targetMergeInfo.end.col,
+        oldSourceMergeInfo.end.col,
+        oldTargetMergeInfo.end.col
+      );
+      const rowMin = Math.min(
+        sourceMergeInfo.start.row,
+        targetMergeInfo.start.row,
+        oldSourceMergeInfo.start.row,
+        oldTargetMergeInfo.start.row
+      );
+      let rowMax = Math.max(
+        sourceMergeInfo.end.row,
+        targetMergeInfo.end.row,
+        oldSourceMergeInfo.end.row,
+        oldTargetMergeInfo.end.row
+      );
+      if (
+        moveContext.moveType === 'row' &&
+        (this.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType === 'tree'
+      ) {
+        if (moveContext.targetIndex > moveContext.sourceIndex) {
+          rowMax = rowMax + moveContext.targetSize - 1;
+        } else {
+          rowMax = rowMax + moveContext.sourceSize - 1;
+        }
+      }
+
+      if (
+        !(this as any).transpose &&
+        (this.isSeriesNumberInBody(args.source.col, args.source.row) || args.movingColumnOrRow === 'row')
+      ) {
+        this.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        this.stateManager.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+      }
+
+      if (moveContext.moveType === 'column') {
+        for (let col = colMin; col <= colMax; col++) {
+          this._clearColRangeWidthsMap(col);
+        }
+      } else {
+        for (let row = rowMin; row <= rowMax; row++) {
+          this._clearRowRangeHeightsMap(row);
+        }
+      }
+
+      this.clearCellStyleCache();
+      if (this.isSeriesNumberInBody(args.source.col, args.source.row) || args.movingColumnOrRow === 'row') {
+        this.scenegraph.updateHeaderPosition(
+          this.scenegraph.proxy.colStart,
+          this.scenegraph.proxy.colEnd,
+          this.scenegraph.proxy.rowStart,
+          this.scenegraph.proxy.rowEnd,
+          moveContext.moveType
+        );
+      } else if (moveContext.moveType === 'column') {
+        this.scenegraph.updateHeaderPosition(colMin, colMax, 0, -1, moveContext.moveType);
+      } else {
+        this.scenegraph.updateHeaderPosition(0, -1, rowMin, rowMax, moveContext.moveType);
+      }
+
+      if (this.internalProps.frozenColDragHeaderMode === 'adjustFrozenCount' && this.isListTable()) {
+        if (this.isLeftFrozenColumn(args.target.col) && !this.isLeftFrozenColumn(args.source.col)) {
+          this.frozenColCount += sourceMergeInfo.end.col - sourceMergeInfo.start.col + 1;
+        } else if (this.isLeftFrozenColumn(args.source.col) && !this.isLeftFrozenColumn(args.target.col)) {
+          this.frozenColCount -= sourceMergeInfo.end.col - sourceMergeInfo.start.col + 1;
+        }
+        if (this.isRightFrozenColumn(args.target.col) && !this.isRightFrozenColumn(args.source.col)) {
+          this.rightFrozenColCount += sourceMergeInfo.end.col - sourceMergeInfo.start.col + 1;
+        } else if (this.isRightFrozenColumn(args.source.col) && !this.isRightFrozenColumn(args.target.col)) {
+          this.rightFrozenColCount -= sourceMergeInfo.end.col - sourceMergeInfo.start.col + 1;
+        }
+      }
+
+      this.scenegraph.updateNextFrame?.();
+      return true;
+    } finally {
+      this.stateManager.columnMove.movingColumnOrRow = prevMoving;
+    }
+  }
+
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
   abstract isPivotChart(): boolean;
@@ -3727,6 +3843,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             col: Math.min(customMerge.range.end.col, this.colCount - 1),
             row: Math.min(customMerge.range.end.row, this.rowCount - 1)
           },
+          // 标记为 custom merge range：编辑、history 等逻辑可据此区分“自定义合并”与 layoutMap 合并。
           isCustom: true
         };
         return range;
@@ -3744,8 +3861,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const customMerge = this.internalProps.customMergeCell(col, row, this);
       if (
         customMerge &&
-        customMerge.range &&
-        (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
+        customMerge.range
+        // (isValid(customMerge.text) || customMerge.customLayout || this.customRender)
       ) {
         if (customMerge.style) {
           const styleClass = this.internalProps.bodyHelper.getStyleClass('text');

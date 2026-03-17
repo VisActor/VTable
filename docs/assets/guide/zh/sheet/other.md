@@ -61,3 +61,55 @@ const sheetInstance = new VTableSheet(document.getElementById('container'), {
   ]
 });
 ```
+
+## 撤销 / 重做（历史记录）
+
+VTable-Sheet 提供工作簿级别的撤销/重做能力，覆盖：
+- 单个 sheet 内的编辑（单元格值修改、增删行列、调整行高列宽、表头拖拽、合并/取消合并、筛选/排序等）
+- sheet 管理操作（新增/删除/重命名/排序）
+
+### UI 按钮
+
+撤销/重做按钮默认开启：当 `mainMenu.show` 为 `true` 时按钮显示在菜单栏；否则会在左上角单独渲染撤销/重做区域。
+
+```ts
+const sheetInstance = new VTableSheet(document.getElementById('container'), {
+  undoRedo: { show: true },
+  sheets: [/* ... */]
+});
+```
+
+隐藏撤销/重做按钮：
+
+```ts
+const sheetInstance = new VTableSheet(document.getElementById('container'), {
+  undoRedo: { show: false },
+  sheets: [/* ... */]
+});
+```
+
+### 快捷键
+
+- Ctrl/Cmd + Z：撤销
+- Ctrl/Cmd + Shift + Z 或 Ctrl/Cmd + Y：重做
+
+### 自定义历史深度
+
+VTable-Sheet 内部基于 `HistoryPlugin` 采集表格层操作，并汇总进工作簿历史栈。可通过 `VTablePluginModules` 自定义 `HistoryPlugin` 的配置：
+
+```ts
+import { HistoryPlugin } from '@visactor/vtable-plugins';
+
+const sheetInstance = new VTableSheet(document.getElementById('container'), {
+  VTablePluginModules: [
+    {
+      module: HistoryPlugin,
+      moduleOptions: {
+        maxHistory: 200,
+        enableCompression: false
+      }
+    }
+  ],
+  sheets: [/* ... */]
+});
+```

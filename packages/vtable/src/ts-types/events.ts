@@ -350,6 +350,22 @@ export interface TableEventHandlersEventArgumentMap {
     // deleteBeforeColumns: ColumnsDefine;
     deleteColIndexs: number[];
     columns: ColumnsDefine;
+    deletedColumns?: ColumnsDefine;
+    deletedRecordValues?: any[][];
+  };
+
+  merge_cells: {
+    startCol: number;
+    startRow: number;
+    endCol: number;
+    endRow: number;
+  };
+
+  unmerge_cells: {
+    startCol: number;
+    startRow: number;
+    endCol: number;
+    endRow: number;
   };
 }
 export interface DrillMenuEventInfo {
@@ -462,6 +478,8 @@ export interface TableEventHandlersReturnMap {
   update_record: void;
   add_column: void;
   delete_column: void;
+  merge_cells: void;
+  unmerge_cells: void;
 
   filter_menu_show: { col: number; row: number };
   filter_menu_hide: { col: number; row: number };

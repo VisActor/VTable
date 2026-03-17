@@ -93,14 +93,15 @@ VTableSheet组件支持丰富的配置选项：
 
 | 选项名 | 类型 | 默认值 | 说明 |
 |-------|------|-------|------|
-| showFormulaBar | boolean | false | 是否显示公式栏 |
-| showSheetTab | boolean | false | 是否显示底部表格页切换栏 |
+| showFormulaBar | boolean | true | 是否显示公式栏 |
+| showSheetTab | boolean | true | 是否显示底部表格页切换栏 |
 | defaultRowHeight | number | 25 | 默认行高 |
 | defaultColWidth | number | 100 | 默认列宽 |
 | sheets | ISheetDefine[] | [] | 表格页定义数组 |
 | theme | ITheme | - | 表格主题配置 |
 | VTablePluginModules | Array | [] | 插件模块配置,可以将VTable支持的插件配置到VTableSheet中，也可以禁用掉某些已经内置使用的插件。插件的配置项请参考[VTable-Plugins](../plugin/usage) |
 | mainMenu | IMainMenu | - | 主菜单配置 |
+| undoRedo | { show?: boolean } | { show: true } | 撤销/重做按钮配置 |
 | dragOrder | Object | - | 拖拽列顺序和行顺序配置 ，如果sheets中ISheetDefine单独配置过，这个配置会被忽略|
 
 ### 工作表配置 (ISheetDefine)
@@ -145,6 +146,11 @@ VTableSheet实例提供了以下常用方法：
 | removeSheet | sheetKey: string | boolean | 删除指定的工作表 |
 | getFilterManager | - | FilterManager | 获取过滤管理器 |
 | getFormulaManager | - | FormulaManager | 获取公式管理器 |
+| getWorkbookHistoryManager | - | WorkbookHistoryManager | 获取工作簿历史管理器 |
+| undo | - | void | 撤销最近一次工作簿事务 |
+| redo | - | void | 重做最近一次工作簿事务 |
+| startHistoryTransaction | - | void | 开始工作簿历史事务 |
+| endHistoryTransaction | - | void | 结束工作簿历史事务 |
 | saveToConfig | - | IVTableSheetOptions | 将当前状态保存为配置对象 |
 | exportSheetToFile | fileType: 'csv' \| 'xlsx' | void | 导出当前工作表到文件 |
 | importFileToSheet | - | void | 导入文件到当前工作表 |

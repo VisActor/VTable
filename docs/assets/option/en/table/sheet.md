@@ -172,6 +172,20 @@ Main menu configuration.
 
 {{use:sheet-main-menu( prefix = '###', )}}
 
+## undoRedo(Object)
+
+Undo/redo UI configuration (workbook-level history).
+
+```ts
+undoRedo?: {
+  /** Whether to show undo/redo buttons */
+  show?: boolean;
+}
+```
+
+- `show` defaults to `true`. When `mainMenu.show` is `true`, buttons are rendered in the menu bar; otherwise a standalone undo/redo control is rendered at the top-left.
+- Shortcuts: Ctrl/Cmd + Z (undo); Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y (redo).
+
 ## theme(IThemeDefine)
 
 Theme configuration. All sheets share the same theme configuration.
@@ -197,6 +211,16 @@ dragOrder: {
   enableDragRowOrder: boolean;
 }
 ```
+
+## Instance Methods (New)
+
+New instance methods related to undo/redo:
+
+- `getWorkbookHistoryManager(): WorkbookHistoryManager`
+- `undo(): void`
+- `redo(): void`
+- `startHistoryTransaction(): void`
+- `endHistoryTransaction(): void`
 
 {{ target: sheet-filter-config }}
 

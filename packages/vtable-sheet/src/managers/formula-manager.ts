@@ -566,7 +566,7 @@ export class FormulaManager implements IFormulaManager {
    * @param cell 单元格
    * @param value 值
    */
-  setCellContent(cell: FormulaCell, value: unknown): void {
+  setCellContent(cell: FormulaCell, value: unknown, options?: { emitEvent?: boolean }): void {
     this.ensureInitialized();
 
     // 检查单元格参数有效性
@@ -601,20 +601,22 @@ export class FormulaManager implements IFormulaManager {
         this.formulaEngine.setCellContent(cell, value);
       }
 
-      // 在操作成功后触发相应的事件
-      const newFormula = this.getCellFormula(cell);
-      if (newFormula && newFormula !== oldFormula) {
-        // 公式添加或更新
-        this.emitFormulaEvent(cell, 'added', newFormula);
-      } else if (!newFormula && oldFormula) {
-        // 公式被移除
-        this.emitFormulaEvent(cell, 'removed', oldFormula);
+      if (options?.emitEvent !== false) {
+        // 在操作成功后触发相应的事件
+        const newFormula = this.getCellFormula(cell);
+        if (newFormula && newFormula !== oldFormula) {
+          // 公式添加或更新
+          this.emitFormulaEvent(cell, 'added', newFormula);
+        } else if (!newFormula && oldFormula) {
+          // 公式被移除
+          this.emitFormulaEvent(cell, 'removed', oldFormula);
+        }
       }
     } catch (error) {
       console.error('Failed to set cell content:', error);
 
       // 触发公式错误事件
-      if (typeof value === 'string' && value.startsWith('=')) {
+      if (options?.emitEvent !== false && typeof value === 'string' && value.startsWith('=')) {
         this.emitFormulaEvent(cell, 'error', value, error);
       }
 

@@ -14,6 +14,7 @@ option: VTableSheet
 ## 关键配置
 
 - `VTableSheet` 配置主题名称或者自定义主题样式
+- `undoRedo` 显示撤销/重做按钮（Ctrl/Cmd+Z，Ctrl/Cmd+Y）
 
 ## 代码演示
 
@@ -23,6 +24,7 @@ option: VTableSheet
 
 const container = document.getElementById(CONTAINER_ID);
 const sheetInstance = new VTableSheet.VTableSheet(container, {
+  undoRedo: { show: true },
   VTablePluginModules: [
     { module: VTablePlugins.TableExportPlugin },
     { module: VTablePlugins.ExcelImportPlugin },
@@ -51,7 +53,7 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
       ],
       active: true,
       filter: true,
-      widthMode:'autoWidth'
+      widthMode:'autoWidth',
       // frozenRowCount: 1,
       // frozenColCount: 1
     },

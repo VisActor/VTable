@@ -85,6 +85,14 @@ export interface TableEvents {
    */
   RESIZE_ROW_END: 'resize_row_end';
   /**
+   * 合并单元格事件（mergeCells 调用成功后触发）
+   */
+  MERGE_CELLS: 'merge_cells';
+  /**
+   * 取消合并单元格事件（unmergeCells 调用后触发）
+   */
+  UNMERGE_CELLS: 'unmerge_cells';
+  /**
    * 拖拽表头移动位置的事件
    */
   CHANGE_HEADER_POSITION: 'change_header_position';
@@ -283,6 +291,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  MERGE_CELLS: 'merge_cells',
+  UNMERGE_CELLS: 'unmerge_cells',
   CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGE_HEADER_POSITION: 'change_header_position',
   CHANGING_HEADER_POSITION: 'changing_header_position',

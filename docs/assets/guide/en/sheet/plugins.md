@@ -3,6 +3,7 @@
 VTable-Sheet currently uses several VTable plugins, including:
 - [filter-plugin](../plugin/filter) Filter plugin
 - [auto-fill-plugin](../plugin/auto-fill) Auto-fill plugin
+- [history-plugin](../plugin/history) History (undo/redo) plugin
 - [table-series-number-plugin](../plugin/table-series-number) Table number plugin
 - [highlight-header-when-select-cell-plugin](../plugin/header-highlight) Header highlight plugin
 - [context-menu-plugin](../plugin/context-menu) Right-click menu plugin
