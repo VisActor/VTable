@@ -73,6 +73,8 @@ export interface GanttConstructorOptions {
   timelineHeader: {
     backgroundColor?: string;
     colWidth?: number;
+    hideWeekend?: boolean;
+    weekendColWidth?: number | ((colWidth: number) => number);
     /** 垂直间隔线样式 */
     verticalLine?: ILineStyle;
     /** 水平间隔线样式 */

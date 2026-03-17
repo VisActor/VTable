@@ -697,6 +697,7 @@ const option = {
   },
   timelineHeader: {
     colWidth: 50,
+    weekendColWidth: 20,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
       lineWidth: 1,

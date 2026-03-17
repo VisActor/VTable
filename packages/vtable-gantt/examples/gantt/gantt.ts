@@ -957,6 +957,8 @@ export function createTable() {
       }
     },
     timelineHeader: {
+      // hideWeekend: true,
+      weekendColWidth: 20,
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'

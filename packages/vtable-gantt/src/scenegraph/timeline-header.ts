@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import { getTextPos } from '../gantt-helper';
-import { computeCountToTimeScale, toBoxArray } from '../tools/util';
+import { toBoxArray } from '../tools/util';
 import type { Scenegraph } from './scenegraph';
 import { Group, Text, createLine, Image } from '@visactor/vtable/es/vrender';
 
@@ -28,7 +28,6 @@ export class TimelineHeader {
     this.group = dateHeader;
     dateHeader.name = 'date-header-container';
     scene.ganttGroup.addChild(this.group);
-    const { unit: minUnit, step } = scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
     let y = 0;
     for (let i = 0; i < scene._gantt.timeLineHeaderLevel; i++) {
       const { timelineDates, customLayout, visible } = scene._gantt.parsedOptions.sortedTimelineScales[i];
@@ -48,14 +47,8 @@ export class TimelineHeader {
 
       for (let j = 0; j < timelineDates?.length; j++) {
         const { days, endDate, startDate, title, dateIndex, unit } = timelineDates[j];
-        const x = Math.ceil(
-          computeCountToTimeScale(startDate, scene._gantt.parsedOptions.minDate, minUnit, step) *
-            scene._gantt.parsedOptions.timelineColWidth
-        );
-        const right_x = Math.ceil(
-          computeCountToTimeScale(endDate, scene._gantt.parsedOptions.minDate, minUnit, step, 1) *
-            scene._gantt.parsedOptions.timelineColWidth
-        );
+        const x = Math.ceil(scene._gantt.getXByTime(startDate.getTime()));
+        const right_x = Math.ceil(scene._gantt.getXByTime(endDate.getTime() + 1));
         const width = right_x - x;
         const date = new Group({
           x,

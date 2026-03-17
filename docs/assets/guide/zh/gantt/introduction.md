@@ -225,6 +225,7 @@ VTableGantt 内部借助这个表格实例 tableInstance 实现的能力有：
 4. 日期表头配置 timelineHeader
    1. 自定义渲染: 通过 customLayout 配置项，可以自定义日期表头的渲染方式。
    2. 样式配置: 通过 style 配置项，可以设置表头的文字样式，包括字体大小、颜色、对齐方式等。
+   3. 周末列宽度: 通过 `timelineHeader.weekendColWidth` 配置周末列宽度，或通过 `timelineHeader.hideWeekend` 隐藏周末列（仅在最小粒度为天且 `unit: 'day'`、`step: 1` 时生效）。
 5. 时间刻度配置 timelineHeader.scales
    1. 行高和时间单位: 通过 rowHeight 和 unit 配置项，可以设置时间刻度的行高和时间单位（如天、周、月等）。
    2. 步长和周起始日: 通过 step 和 startOfWeek 配置项，可以设置时间刻度的步长和一周的起始日。
