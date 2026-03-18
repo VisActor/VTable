@@ -1,6 +1,30 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 04 Mar 2026 07:23:19 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Mar 2026 09:15:31 GMT and should not be manually modified.
+
+## 1.24.0
+Wed, 18 Mar 2026 09:15:31 GMT
+
+### Minor changes
+
+- feat: gantt weekend column width support setting
+
+
+- feat: add undo/redo to sheet
+
+
+
+### Updates
+
+- fix: groupBy with frozenColCount and enableTreeStickCell usage problem
+
+
+- fix: when just has only one column groupTitle not show
+
+
+- fix: checkbox cell render error when set groupBy with rowSeriesNumber
+
+
 
 ## 1.23.3
 Wed, 04 Mar 2026 07:23:19 GMT
