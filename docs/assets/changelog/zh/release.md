@@ -1,3 +1,23 @@
+# v1.24.0
+
+2026-03-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: gantt weekend column width support setting
+- **@visactor/vtable-sheet**: add undo/redo to sheet
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: groupBy with frozenColCount and enableTreeStickCell usage problem
+- **@visactor/vtable**: when just has only one column groupTitle not show
+- **@visactor/vtable**: checkbox cell render error when set groupBy with rowSeriesNumber
+
+
+
+[更多详情请查看 v1.24.0](https://github.com/VisActor/VTable/releases/tag/v1.24.0)
+
 # v1.23.3
 
 2026-03-05
