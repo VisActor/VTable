@@ -94,14 +94,15 @@ The VTableSheet component supports a rich set of configuration options:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| showFormulaBar | boolean | false | Whether to display the formula bar |
-| showSheetTab | boolean | false | Whether to display sheet tabs at the bottom |
+| showFormulaBar | boolean | true | Whether to display the formula bar |
+| showSheetTab | boolean | true | Whether to display sheet tabs at the bottom |
 | defaultRowHeight | number | 25 | Default row height |
 | defaultColWidth | number | 100 | Default column width |
 | sheets | ISheetDefine[] | [] | Array of sheet definitions |
 | theme | ITheme | - | Table theme configuration |
 | VTablePluginModules | Array | [] | Plugin module configuration. You can configure VTable-supported plugins for VTableSheet or disable some built-in plugins. For plugin configuration options, refer to [VTable-Plugins](../plugin/usage) |
 | mainMenu | IMainMenu | - | Main menu configuration |
+| undoRedo | { show?: boolean } | { show: true } | Undo/redo UI configuration |
 | dragOrder | Object | - | Drag column order and row order configuration, if configured in ISheetDefine, this configuration will be ignored |
 
 ### Worksheet Configuration (ISheetDefine)
@@ -146,6 +147,11 @@ The VTableSheet instance provides the following common methods:
 | removeSheet | sheetKey: string | boolean | Remove the specified worksheet |
 | getFilterManager | - | FilterManager | Get the filter manager |
 | getFormulaManager | - | FormulaManager | Get the formula manager |
+| getWorkbookHistoryManager | - | WorkbookHistoryManager | Get the workbook history manager |
+| undo | - | void | Undo the latest workbook transaction |
+| redo | - | void | Redo the latest workbook transaction |
+| startHistoryTransaction | - | void | Start a workbook-level history transaction |
+| endHistoryTransaction | - | void | End the current workbook-level history transaction |
 | saveToConfig | - | IVTableSheetOptions | Save the current state as a configuration object |
 | exportSheetToFile | fileType: 'csv' \| 'xlsx' | void | Export the current worksheet to a file |
 | importFileToSheet | - | void | Import a file to the current worksheet |

@@ -29,6 +29,8 @@
 | 拖拽列宽结束             | RESIZE_COLUMN_END           | 列宽调整结束事件                                                          |
 | 拖拽行高                 | RESIZE_ROW                  | 行高调整事件                                                              |
 | 拖拽行高结束             | RESIZE_ROW_END              | 行高调整结束事件                                                          |
+| 合并单元格               | MERGE_CELLS                 | mergeCells 调用成功后触发                                                 |
+| 取消合并单元格           | UNMERGE_CELLS               | unmergeCells 调用后触发                                                   |
 | 拖拽表头                 | CHANGE_HEADER_POSITION      | 拖拽表头移动位置的事件                                                    |
 | 点击排序                 | SORT_CLICK                  | 点击排序图标事件                                                          |
 | 执行完排序               | AFTER_SORT                  | 执行完排序事件                                                            |

@@ -39,6 +39,10 @@ export interface FilterState {
   // activeFilters: string[];  // 激活的筛选器的 ID 列表
 }
 
+export interface FilterStateSnapshot {
+  filters: FilterConfig[];
+}
+
 export interface FilterConfig {
   enable: boolean; // 是否启用筛选
   field: string | number; // 对应表格列，同时作为筛选配置的唯一标识

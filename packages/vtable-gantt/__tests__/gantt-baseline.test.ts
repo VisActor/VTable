@@ -74,6 +74,7 @@ describe('gantt baseline test', () => {
     expect(ganttInstance.parsedOptions.baselineStyle.barColor).toBe('gray');
     expect(ganttInstance.parsedOptions.baselineStyle.cornerRadius).toBe(5);
 
+    ganttInstance.release?.();
     container.remove();
   });
 
@@ -121,6 +122,7 @@ describe('gantt baseline test', () => {
     expect(baselineInfo.baselineEndDate).not.toBeNull();
     expect(baselineInfo.baselineDays).toBeGreaterThan(0);
 
+    ganttInstance.release?.();
     container.remove();
   });
 
@@ -166,6 +168,7 @@ describe('gantt baseline test', () => {
     expect(baselineInfo.baselineEndDate).toBeNull();
     expect(baselineInfo.baselineDays).toBe(0);
 
+    ganttInstance.release?.();
     container.remove();
   });
 
@@ -212,6 +215,7 @@ describe('gantt baseline test', () => {
       const ganttInstance = new Gantt(container, option);
       expect(ganttInstance.parsedOptions.baselinePosition).toBe(position);
 
+      ganttInstance.release?.();
       container.remove();
     });
   });

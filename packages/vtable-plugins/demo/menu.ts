@@ -135,5 +135,9 @@ export const menus = [
   {
     path: 'table-export',
     name: 'table-export'
+  },
+  {
+    path: 'history',
+    name: 'history'
   }
 ];

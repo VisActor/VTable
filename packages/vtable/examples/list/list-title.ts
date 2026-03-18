@@ -32,6 +32,18 @@ export function createTable() {
     }
   ];
   const option: VTable.ListTableConstructorOptions = {
+    rowSeriesNumber: {
+      title: '序号',
+      dragOrder: true,
+      width: 'auto',
+      headerStyle: {
+        color: 'black',
+        bgColor: 'pink'
+      },
+      style: {
+        color: 'red'
+      }
+    },
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,

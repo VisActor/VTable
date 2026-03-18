@@ -1307,31 +1307,23 @@ export class FormulaEngine {
     try {
       // 这个函数处理包含函数调用的算术表达式，如 SUM(A2:A4)+AVERAGE(A2:A4)
 
-      // 1. 首先找到所有的函数调用
-      const functionMatches = [];
-      const functionRegex = /[A-Z]+\([^)]*\)/g;
-      let match;
-
-      while ((match = functionRegex.exec(expr)) !== null) {
-        functionMatches.push({
-          match: match[0],
-          start: match.index,
-          end: match.index + match[0].length
-        });
-      }
-
-      // 2. 计算每个函数的值
       let processedExpr = expr;
-      const functionValues = [];
-
-      for (const funcMatch of functionMatches) {
-        const funcResult = this.parseExpression(funcMatch.match);
-        if (funcResult.error) {
-          return { value: null, error: `Error in function ${funcMatch.match}: ${funcResult.error}` };
+      let guard = 0;
+      while (true) {
+        if (guard++ > 1000) {
+          return { value: null, error: 'Basic arithmetic evaluation failed' };
         }
-        functionValues.push(funcResult.value);
-        // 用占位符替换函数调用，避免重复处理
-        processedExpr = processedExpr.replace(funcMatch.match, `__FUNC_${functionValues.length - 1}__`);
+        const funcSpan = this.findInnermostFunctionCallSpan(processedExpr);
+        if (!funcSpan) {
+          break;
+        }
+        const funcCall = processedExpr.slice(funcSpan.start, funcSpan.end + 1);
+        const funcResult = this.parseExpression(funcCall);
+        if (funcResult.error) {
+          return { value: null, error: `Error in function ${funcCall}: ${funcResult.error}` };
+        }
+        processedExpr =
+          processedExpr.slice(0, funcSpan.start) + String(funcResult.value) + processedExpr.slice(funcSpan.end + 1);
       }
 
       // 3. 处理剩余的单元格引用（包括带sheet前缀的引用，支持带引号的sheet名称）
@@ -1341,18 +1333,71 @@ export class FormulaEngine {
         processedExpr = processedExpr.replace(cellRef, String(value));
       }
 
-      // 4. 将占位符替换回实际值
-      for (let i = 0; i < functionValues.length; i++) {
-        processedExpr = processedExpr.replace(`__FUNC_${i}__`, String(functionValues[i]));
-      }
-
-      // 5. 计算最终的算术表达式
+      // 4. 计算最终的算术表达式
       // eslint-disable-next-line @typescript-eslint/no-implied-eval
       const result = Function('"use strict"; return (' + processedExpr + ')')();
       return { value: result, error: undefined };
     } catch (error) {
       return { value: null, error: 'Basic arithmetic evaluation failed' };
     }
+  }
+
+  private findInnermostFunctionCallSpan(expr: string): { start: number; end: number } | null {
+    type Frame = { funcStart: number | null };
+    const stack: Frame[] = [];
+    let inQuotes = false;
+    let quoteChar = '';
+
+    for (let i = 0; i < expr.length; i++) {
+      const char = expr[i];
+
+      if ((char === '"' || char === "'") && (i === 0 || expr[i - 1] !== '\\')) {
+        if (!inQuotes) {
+          inQuotes = true;
+          quoteChar = char;
+        } else if (char === quoteChar) {
+          inQuotes = false;
+          quoteChar = '';
+        }
+        continue;
+      }
+
+      if (inQuotes) {
+        continue;
+      }
+
+      if (char === '(') {
+        let j = i - 1;
+        while (j >= 0 && expr[j] === ' ') {
+          j--;
+        }
+        const idEnd = j;
+        while (j >= 0 && /[A-Za-z0-9]/.test(expr[j])) {
+          j--;
+        }
+        const idStart = j + 1;
+
+        let funcStart: number | null = null;
+        if (idStart <= idEnd && /[A-Za-z]/.test(expr[idStart])) {
+          const beforeChar = idStart > 0 ? expr[idStart - 1] : '';
+          if (!beforeChar || !/[A-Za-z0-9_]/.test(beforeChar)) {
+            funcStart = idStart;
+          }
+        }
+
+        stack.push({ funcStart });
+        continue;
+      }
+
+      if (char === ')') {
+        const frame = stack.pop();
+        if (frame?.funcStart !== null && frame?.funcStart !== undefined) {
+          return { start: frame.funcStart, end: i };
+        }
+      }
+    }
+
+    return null;
   }
 
   private getCellValueByA1(a1Notation: string): unknown {
@@ -1496,8 +1541,13 @@ export class FormulaEngine {
 
       const values: unknown[] = [];
 
-      for (let row = startCell.row; row <= endCell.row; row++) {
-        for (let col = startCell.col; col <= endCell.col; col++) {
+      const minRow = Math.min(startCell.row, endCell.row);
+      const maxRow = Math.max(startCell.row, endCell.row);
+      const minCol = Math.min(startCell.col, endCell.col);
+      const maxCol = Math.max(startCell.col, endCell.col);
+
+      for (let row = minRow; row <= maxRow; row++) {
+        for (let col = minCol; col <= maxCol; col++) {
           const cell: FormulaCell = { sheet: sheetKey, row, col };
           values.push(this.getCellValue(cell).value);
         }

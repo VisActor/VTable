@@ -537,7 +537,7 @@ export class StateManager {
       function flatten(cols: any, parentStartIndex = 0) {
         cols.forEach((col: any) => {
           const startIndex = col.startInTotal
-            ? col.startInTotal + state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0
+            ? col.startInTotal + (state.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0)
             : parentStartIndex;
           if (col.columns) {
             flatten(col.columns, startIndex);
@@ -565,14 +565,14 @@ export class StateManager {
           prev.push({
             field: item.field,
             order: item.order,
-            row: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            row: (column?.startInTotal ?? 0) + (this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0),
             col: column?.level
           } as any);
         } else {
           prev.push({
             field: item.field,
             order: item.order,
-            col: column?.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+            col: (column?.startInTotal ?? 0) + (this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0),
             row: column?.level
           } as any);
         }
@@ -1636,13 +1636,16 @@ export class StateManager {
   updateSortState(sortState: SortState[]) {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 
+    const isSame =
+      sortState.length === this.sort.length &&
+      sortState.every(
+        (item, index) => item?.field === this.sort[index]?.field && item?.order === this.sort[index]?.order
+      );
+    if (isSame) {
+      return;
+    }
+
     for (let index = 0; index < sortState.length; index++) {
-      if (
-        sortState[index].field === this.sort[index]?.field &&
-        sortState[sortState.length - 1].order === this.sort[index]?.order
-      ) {
-        return;
-      }
       const oldSortCol = this.table.internalProps.multipleSort ? null : this.sort[index]?.col || null;
       const oldSortRow = this.table.internalProps.multipleSort ? null : this.sort[index]?.row || null;
       const name =
@@ -1696,7 +1699,8 @@ export class StateManager {
         row: null,
         iconMark: null,
         order: null,
-        oldSortCol: column.startInTotal + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0,
+        oldSortCol:
+          (column.startInTotal ?? 0) + (this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount ?? 0),
         oldSortRow: column.level,
         oldIconMark: null
       });

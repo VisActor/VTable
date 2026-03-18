@@ -265,6 +265,7 @@ const option = {
   },
   timelineHeader: {
     colWidth: 100,
+    weekendColWidth: 20,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
       lineWidth: 1,
@@ -347,5 +348,7 @@ window['ganttInstance'] = ganttInstance;
 ```
 
 At this point, you have successfully drawn a simple Gantt chart!
+
+When the smallest time scale is `unit: 'day'` and `step: 1`, you can use `timelineHeader.weekendColWidth` to override weekend column width (or set `timelineHeader.hideWeekend` to hide weekend columns).
 
 I hope this tutorial helps you learn how to use Gantt. Next, you can delve into the various configuration options of vtable-gantt to customize more diverse table effects.

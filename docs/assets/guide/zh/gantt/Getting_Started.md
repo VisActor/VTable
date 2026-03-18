@@ -265,6 +265,7 @@ const option = {
   },
   timelineHeader: {
     colWidth: 100,
+    weekendColWidth: 20,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
       lineWidth: 1,
@@ -347,5 +348,7 @@ window['ganttInstance'] = ganttInstance;
 ```
 
 至此，你已经成功绘制出了一个简单的甘特图！
+
+当最小粒度为天且 `unit: 'day'`、`step: 1` 时，可以通过 `timelineHeader.weekendColWidth` 覆盖周末列宽度（或通过 `timelineHeader.hideWeekend` 隐藏周末列）。
 
 希望这篇教程对你学习如何使用 Gantt 有所帮助。接下来可以深入了解 vtable-gantt 的各种配置选项，定制出更加丰富多样的表格效果。

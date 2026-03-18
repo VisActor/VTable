@@ -153,8 +153,12 @@ describe('Formula with Row Resize and Insert Test', () => {
     // 确保数据行数足够（至少5行，因为我们要设置 row: 4）
     const activeSheet = sheetInstance.getActiveSheet();
     const data = activeSheet.getData();
-    while (data.length <= 4) {
-      data.push([]);
+    if (data.length <= 4) {
+      while (data.length <= 4) {
+        data.push([]);
+      }
+    } else if (!Array.isArray(data[4])) {
+      data[4] = [];
     }
 
     // 直接更新数据（公式管理器已经更新了公式引擎中的数据）
@@ -229,5 +233,51 @@ describe('Formula with Row Resize and Insert Test', () => {
     // }
 
     expect(finalValue).toBe(17);
+  });
+
+  test('should keep resized row height after inserting rows before it', async () => {
+    sheetInstance = new VTableSheet(container, {
+      showSheetTab: true,
+      sheets: [
+        {
+          rowCount: 20,
+          columnCount: 10,
+          sheetKey: 'sheet1',
+          sheetTitle: 'sheet1',
+          filter: true,
+          columns: [
+            {
+              title: '名称',
+              sort: true,
+              width: 100
+            }
+          ],
+          data: [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+            ['放到', '个', '哦']
+          ],
+          active: true
+        }
+      ]
+    });
+
+    const tableInstance = sheetInstance.getActiveSheet().tableInstance;
+    const resizedRow = tableInstance.columnHeaderLevelCount;
+    const beforeHeight = tableInstance.getRowHeight(resizedRow);
+    const delta = 30;
+
+    tableInstance.stateManager.startResizeRow(resizedRow, 0, 100);
+    tableInstance.stateManager.updateResizeRow(0, 100 + delta);
+    tableInstance.stateManager.endResizeRow();
+
+    const resizedHeight = tableInstance.getRowHeight(resizedRow);
+    expect(resizedHeight).toBe(beforeHeight + delta);
+
+    tableInstance.addRecords([[], []], 0, true);
+
+    expect(tableInstance.getRowHeight(resizedRow)).toBe(beforeHeight);
+    expect(tableInstance.getRowHeight(resizedRow + 2)).toBe(resizedHeight);
   });
 });

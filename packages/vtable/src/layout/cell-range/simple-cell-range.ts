@@ -123,18 +123,42 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
     return;
   }
 
-  const cellRecord = layout._table.getCellRawRecord(col, row);
-  if (layout._table.internalProps.groupTitleCheckbox && layout._table.internalProps.rowSeriesNumber) {
-    if (cellRecord?.vtableMerge && col >= layout.leftRowSeriesNumberColumnCount) {
-      cellRange.start.col = layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount;
-      cellRange.end.col = layout.colCount - 1;
-      cellRange.start.row = cellRange.end.row = row;
-    }
-  } else {
-    if (cellRecord?.vtableMerge) {
-      cellRange.start.col = layout.rowHeaderLevelCount;
-      cellRange.end.col = layout.colCount - 1;
-      cellRange.start.row = cellRange.end.row = row;
+  const table: any = layout._table;
+  const internalProps = table.internalProps || {};
+  const isGroupMode = !!internalProps.groupBy;
+  const cellRecord = table.getCellRawRecord(col, row);
+
+  if (!cellRecord?.vtableMerge) {
+    return;
+  }
+
+  const treeTitleStartCol =
+    internalProps.groupTitleCheckbox && internalProps.rowSeriesNumber
+      ? layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount
+      : layout.rowHeaderLevelCount;
+  if (col < treeTitleStartCol) {
+    return;
+  }
+  cellRange.start.col = treeTitleStartCol;
+  cellRange.end.col = layout.colCount - 1;
+  cellRange.start.row = cellRange.end.row = row;
+
+  // 特殊处理：分组模式下且仅有一列数据列时，分组标题行本质上仍应视为“整行合并”
+  // 为了在这种情况下正确展示分组标题文本（尤其是 vtableMerge/vtableMergeName 与 groupTitleFieldFormat），
+  // 这里在源记录上补充该单列对应字段的值，避免依赖多列合并逻辑。
+  if (isGroupMode && layout.columnObjects?.length === 1) {
+    const onlyColumn = layout.columnObjects[0];
+    const field = onlyColumn?.field;
+    if (field != null) {
+      let text = cellRecord.vtableMergeName;
+      const groupTitleFieldFormat = internalProps.groupTitleFieldFormat;
+      if (typeof groupTitleFieldFormat === 'function') {
+        text = groupTitleFieldFormat(cellRecord, col, row, table);
+      }
+      const current = (cellRecord as any)[field as any];
+      if (current == null && text != null) {
+        (cellRecord as any)[field as any] = text;
+      }
     }
   }
 }

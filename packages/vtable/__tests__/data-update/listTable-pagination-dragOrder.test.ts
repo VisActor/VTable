@@ -141,6 +141,37 @@ describe('listTable-pagination-dragOrder test', () => {
     listTable.release();
   });
 
+  test('dragOrder should be blocked when sorted', () => {
+    const records = generateRecords(10);
+
+    const option: VTable.ListTableConstructorOptions = {
+      records,
+      columns: [
+        { field: 'Order ID', title: 'Order ID', width: 'auto' },
+        { field: 'Customer ID', title: 'Customer ID', width: 'auto' }
+      ],
+      widthMode: 'standard',
+      rowSeriesNumber: {
+        dragOrder: true,
+        title: '序号',
+        width: 'auto'
+      }
+    };
+
+    const listTable = new ListTable(containerDom, option);
+    listTable.updateSortState({ field: 'Order ID', order: 'asc' } as any, true);
+
+    const before = listTable.getRecordByCell(1, 1)?.['Order ID'];
+    listTable.stateManager.startMoveCol(0, 1, 10, 10, null, 'row');
+    listTable.stateManager.updateMoveCol(0, 3, 10, 30, null);
+    const ok = listTable.stateManager.endMoveCol();
+    const after = listTable.getRecordByCell(1, 1)?.['Order ID'];
+
+    expect(ok).toBe(false);
+    expect(after).toBe(before);
+    listTable.release();
+  });
+
   test('dragOrder with pagination - multiple page changes and drag operations', () => {
     const records = generateRecords(15);
 

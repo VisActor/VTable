@@ -68,6 +68,8 @@ export interface ISheetDefine {
     enableDragColumnOrder?: boolean;
     enableDragRowOrder?: boolean;
   };
+  /** 是否启用多列排序 */
+  multipleSort?: boolean;
 }
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
@@ -104,6 +106,10 @@ export interface IVTableSheetOptions {
     show?: boolean;
     /** 菜单项 */
     items?: MainMenuItem[];
+  };
+  undoRedo?: {
+    /** 是否显示撤销/重做按钮 */
+    show?: boolean;
   };
   /** 主题 */
   theme?: IThemeDefine;

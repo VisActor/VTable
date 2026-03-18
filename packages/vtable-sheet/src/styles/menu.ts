@@ -17,7 +17,7 @@ export function importStyle() {
   display: flex;
   align-items: center;
   background-color: #fff;
-  width: 50px;
+  width: auto;
   /* 内容居中 */
   justify-content: center;
   flex-shrink: 0; /* 防止菜单被压缩 */
@@ -26,12 +26,55 @@ export function importStyle() {
   background-color: #f0f0f0;
 }
 
+.vtable-sheet-undo-redo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 30px;
+  padding: 0;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fff;
+  flex-shrink: 0;
+}
+
 .vtable-sheet-main-menu-button {
   display: flex;
   align-items: center;
   padding: 0 8px;
   cursor: pointer;
   height: 30px;
+}
+
+.vtable-sheet-main-menu-actions {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  gap: 4px;
+  padding-right: 6px;
+}
+
+.vtable-sheet-main-menu-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+}
+
+.vtable-sheet-main-menu-action:hover:not(:disabled) {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+}
+
+.vtable-sheet-main-menu-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* 菜单项容器 */

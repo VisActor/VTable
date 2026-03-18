@@ -9,7 +9,7 @@ option: Gantt#taskBar.baselineStartDateField
 
 # Gantt Baseline Bar
 
-This example shows how to configure baselines for tasks and control drawing via `baselinePosition`, and `baselineStyle`. See guide: [Gantt Baseline](../../guide/en/gantt/gantt_baseline).
+This example shows how to configure baselines for tasks and control drawing via `baselinePosition`, and `baselineStyle`. See guide: [Gantt Baseline](../../guide/gantt/gantt_baseline).
 
 ## Key Options
 
@@ -88,12 +88,12 @@ let ganttInstance;
     {
       field: 'title',
       title: '任务名称',
-      width: 180
+      width: 80
     },
     {
       field: 'developer',
       title: '负责人',
-      width: 120
+      width: 80
     },
     {
       field: 'progress',
@@ -108,7 +108,7 @@ let ganttInstance;
     taskListTable: {
       columns: columns,
       tableWidth: 'auto',
-      minTableWidth: 300,
+      minTableWidth: 100,
       maxTableWidth: 500
     },
     headerRowHeight: 50,

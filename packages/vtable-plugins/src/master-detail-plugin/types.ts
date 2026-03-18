@@ -1,5 +1,6 @@
 import type * as VTable from '@visactor/vtable';
-import type { Group } from '@visactor/vtable/src/vrender';
+// Group 属于 vrender 的图形容器类型；通过 @visactor/vtable 根导出透传，避免引用 vtable 内部路径。
+import type { Group } from '@visactor/vtable';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
 export interface DetailTableOptions extends VTable.ListTableConstructorOptions {

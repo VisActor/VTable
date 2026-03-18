@@ -9,7 +9,7 @@ option: Gantt#taskBar.baselineStartDateField
 
 # 甘特图基线任务条
 
-该示例展示了如何为任务配置基线，并通过 `baselinePosition` 与 `baselineStyle` 控制基线与主任务条的绘制关系。教程详见：[基线任务条](../../guide/zh/gantt/gantt_baseline).
+该示例展示了如何为任务配置基线，并通过 `baselinePosition` 与 `baselineStyle` 控制基线与主任务条的绘制关系。教程详见：[基线任务条](../../guide/gantt/gantt_baseline).
 
 ## 关键配置
 
@@ -89,12 +89,12 @@ let ganttInstance;
     {
       field: 'title',
       title: '任务名称',
-      width: 180
+      width: 80
     },
     {
       field: 'developer',
       title: '负责人',
-      width: 120
+      width: 80
     },
     {
       field: 'progress',
@@ -109,7 +109,7 @@ let ganttInstance;
     taskListTable: {
       columns: columns,
       tableWidth: 'auto',
-      minTableWidth: 300,
+      minTableWidth: 100,
       maxTableWidth: 500
     },
     headerRowHeight: 50,

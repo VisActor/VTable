@@ -90,15 +90,6 @@ export class FormulaRangeSelector {
     }
 
     formulaInput.value = newValue;
-    // 首先设置公式内容
-    this.formulaManager.setCellContent(
-      {
-        sheet: this.formulaManager.sheet.getActiveSheet().getKey(),
-        row: this.formulaManager.sheet.getActiveSheet().editingCell.row,
-        col: this.formulaManager.sheet.getActiveSheet().editingCell.col
-      },
-      newValue
-    );
     // 设置光标位置到插入内容之后
     const newCursorPos = isCtrlAddSelection
       ? this.formulaManager.lastKnownCursorPosInFormulaInput + (newValue.length - currentValue.length)
