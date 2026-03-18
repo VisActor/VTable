@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "fix: formula has formula case compute result error\n\n",
-      "type": "none",
+      "comment": "feat: add undo/redo to sheet\n\n",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
