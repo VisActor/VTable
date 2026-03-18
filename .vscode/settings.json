@@ -2,6 +2,10 @@
   // Eslint
   "eslint.format.enable": true,
   "eslint.validate": ["typescript", "javascript", "javascriptreact", "typescriptreact"],
+  "eslint.workingDirectories": [
+    { "mode": "auto" }
+  ],
+  "eslint.nodePath": "common/autoinstallers/lint/node_modules",
   // Formatter
   "javascript.format.enable": false,
   "typescript.format.enable": false,

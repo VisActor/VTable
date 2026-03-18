@@ -76,6 +76,44 @@ tableInstance.updateColumns(newColumns, { clearColWidthCache: true })
 tableInstance.columns = newColumns;
 ```
 
+## changeHeaderPosition(Function)
+
+以编程方式移动表头位置（等价于拖拽表头移动），返回是否移动成功。
+
+```ts
+  changeHeaderPosition: (args: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+  }) => boolean
+```
+
+使用示例：
+
+```ts
+tableInstance.changeHeaderPosition({
+  source: { col: 1, row: 0 },
+  target: { col: 3, row: 0 },
+  movingColumnOrRow: 'column'
+});
+```
+
+## mergeCells(Function)
+
+合并单元格（仅 ListTable）。调用后会刷新渲染，并触发 `merge_cells` 事件。
+
+```ts
+  mergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => void
+```
+
+## unmergeCells(Function)
+
+取消合并单元格（仅 ListTable）。调用后会刷新渲染，并触发 `unmerge_cells` 事件。
+
+```ts
+  unmergeCells: (startCol: number, startRow: number, endCol: number, endRow: number) => void
+```
+
 ## updatePagination(Function)
 
 更新页码配置信息 调用后会自动重绘。

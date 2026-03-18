@@ -74,6 +74,7 @@ Specific import methods are as follows:
 | `ExcelImportPlugin` | Import excel, csv, json, and html files into the table | `ListTable` |
 | `ContextMenuPlugin` | Right-click menu plugin | `ListTable` |
 | `TableSeriesNumberPlugin` | Table series number plugin | `ListTable` |
+| `HistoryPlugin` | History (undo/redo) plugin | `ListTable` |
 
 <br>
 

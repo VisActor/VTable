@@ -339,6 +339,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
 
   columnWidthConfig?: { key: string | number; width: number }[];
   rowHeightConfig?: { key: number; height: number }[];
+  /** 当设置为true时，表格的增删改操作会同步到原始records数组 */
   syncRecordOperationsToSourceRecords?: boolean;
 }
 

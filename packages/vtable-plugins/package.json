@@ -29,6 +29,7 @@
   "scripts": {
     "demo": "vite ./demo",
     "compile": "tsc --noEmit",
+    "test": "jest --silent",
     "build": "npm run fix-memory-limit && bundle --clean",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
@@ -107,5 +108,6 @@
     "@types/react-is": "^17.0.3",
     "rollup-plugin-node-resolve": "5.2.0",
     "@types/lodash": "4.14.182"
-  }
+  },
+  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
 }

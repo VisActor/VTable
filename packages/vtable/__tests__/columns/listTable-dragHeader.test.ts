@@ -98,6 +98,33 @@ describe('listTable-cellType-function init test', () => {
       { field: 'city', title: 'city' }
     ]);
   });
+  test('listTable changeHeaderPosition moves columns', () => {
+    const containerDom2: HTMLElement = createDiv();
+    containerDom2.style.position = 'relative';
+    containerDom2.style.width = '1000px';
+    containerDom2.style.height = '800px';
+    const records2 = [
+      { a: 1, b: 2, c: 3 },
+      { a: 4, b: 5, c: 6 }
+    ];
+    const columns2 = [
+      { field: 'a', title: 'A' },
+      { field: 'b', title: 'B' },
+      { field: 'c', title: 'C' }
+    ];
+    const listTable2 = new ListTable(containerDom2, { records: records2, columns: columns2, dragHeaderMode: 'all' });
+    listTable2.changeHeaderPosition({
+      source: { col: 1, row: 0 },
+      target: { col: 2, row: 0 },
+      movingColumnOrRow: 'column'
+    });
+    expect(listTable2.columns).toEqual([
+      { field: 'a', title: 'A' },
+      { field: 'c', title: 'C' },
+      { field: 'b', title: 'B' }
+    ]);
+    listTable2.release();
+  });
   test('listTable dragHeader interaction', () => {
     option.transpose = true;
     listTable.updateOption(option);

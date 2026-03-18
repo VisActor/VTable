@@ -41,6 +41,8 @@ TABLE_EVENT_TYPE = {
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
+  MERGE_CELLS: 'merge_cells',
+  UNMERGE_CELLS: 'unmerge_cells',
   CHANGE_HEADER_POSITION: 'change_header_position',
   CHANGE_HEADER_POSITION_START: 'change_header_position_start',
   CHANGING_HEADER_POSITION: 'changing_header_position',
@@ -259,6 +261,34 @@ TABLE_EVENT_TYPE = {
     rowHeight: number
   }
 
+```
+
+## MERGE_CELLS
+
+`mergeCells` 调用成功后触发。
+
+回调参数：
+```ts
+{
+  startCol: number;
+  startRow: number;
+  endCol: number;
+  endRow: number;
+}
+```
+
+## UNMERGE_CELLS
+
+`unmergeCells` 调用后触发。
+
+回调参数：
+```ts
+{
+  startCol: number;
+  startRow: number;
+  endCol: number;
+  endRow: number;
+}
 ```
 
 ## CHANGE_HEADER_POSITION

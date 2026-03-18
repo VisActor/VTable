@@ -1,6 +1,6 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
-import { arrayEqual, isValid } from '@visactor/vutils';
-import type { ValueFilterOptionDom, FilterState, FilterOptions, FilterStyles } from './types';
+import { isValid } from '@visactor/vutils';
+import type { ValueFilterOptionDom, FilterOptions, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles } from './styles';
@@ -173,7 +173,7 @@ export class ValueFilter {
   }
 
   private toggleSelectAll(fieldId: string | number, selected: boolean): void {
-    const options = this.valueFilterOptionList.get(fieldId);
+    const options = this.valueFilterOptionList.get(fieldId) || [];
     options.forEach(option => {
       if (option.itemContainer.style.display !== 'none') {
         option.checkbox.checked = selected;
@@ -192,7 +192,7 @@ export class ValueFilter {
 
   private onSearch(fieldId: string | number, value: string): void {
     // 更新UI显示
-    const items = this.valueFilterOptionList.get(fieldId);
+    const items = this.valueFilterOptionList.get(fieldId) || [];
     const filterKeywords = value
       .toUpperCase()
       .split(' ')
@@ -212,65 +212,33 @@ export class ValueFilter {
    * 适用情况：表格数据发生变化，或者需要自动检测当前表格的数据情况
    */
   syncSingleStateFromTableData(fieldId: string | number): void {
-    const selectedValues = new Set<any>();
     const originalValues = new Set<any>();
     const originalRecords = this.table.internalProps.records; // 原始数据
     originalRecords.forEach(record => {
-      // 空行不做处理
       if (isValid(record)) {
         originalValues.add(record[fieldId]);
       }
     });
 
-    const syncFilterItemsState = this.pluginOptions?.syncFilterItemsState ?? true;
-    const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
-    if (syncFilterItemsState) {
-      if (hasFiltered) {
-        this.selectedKeys.set(fieldId, selectedValues);
-
-        this.filterStateManager.dispatch({
-          type: FilterActionType.UPDATE_FILTER,
-          payload: {
-            field: fieldId,
-            values: Array.from(selectedValues),
-            enable: true
-          }
-        });
-        const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
-        if (hasFiltered) {
-          this.selectedKeys.set(fieldId, selectedValues);
-          this.filterStateManager.dispatch({
-            type: FilterActionType.ADD_FILTER,
-            payload: {
-              field: fieldId,
-              type: 'byValue',
-              values: Array.from(selectedValues),
-              enable: true
-            }
-          });
-        }
-      }
-    } else {
-      const selectedRules = this.filterStateManager.getFilterState(fieldId)?.values; // 如果按值筛选没有状态, 则默认选中所有值
-      if (selectedRules) {
-        const hasFiltered = !arrayEqual(Array.from(originalValues), selectedRules);
-        if (hasFiltered) {
-          this.selectedKeys.set(fieldId, new Set(selectedRules));
-          this.filterStateManager.dispatch({
-            type: FilterActionType.ADD_FILTER,
-            payload: {
-              field: fieldId,
-              type: 'byValue',
-              values: selectedRules,
-              enable: true,
-              shouldKeepUnrelatedState: true
-            }
-          });
-        }
-      } else {
-        this.selectedKeys.set(fieldId, originalValues);
-      }
+    const current = this.filterStateManager.getFilterState(fieldId);
+    if (current?.type === 'byValue' && Array.isArray(current.values)) {
+      this.selectedKeys.set(fieldId, new Set(current.values));
+      return;
     }
+
+    if (current?.type === 'byCondition' && current.enable) {
+      const visibleValues = new Set<any>();
+      const visibleRecords = this.getRecords(this.table, false);
+      visibleRecords.forEach(record => {
+        if (isValid(record)) {
+          visibleValues.add(record[fieldId]);
+        }
+      });
+      this.selectedKeys.set(fieldId, visibleValues);
+      return;
+    }
+
+    this.selectedKeys.set(fieldId, originalValues);
   }
 
   applyFilter(fieldId: string | number = this.selectedField): void {

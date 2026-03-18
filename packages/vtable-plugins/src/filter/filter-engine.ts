@@ -42,7 +42,12 @@ export class FilterEngine {
     table.updateFilterRules([...this.filterFuncRule, ...this.filterValueRule], {
       clearRowHeightCache: false,
       onFilterRecordsEnd: this.pluginOptions?.onFilterRecordsEnd
-    });
+        ? (records: any[]) => {
+            this.pluginOptions.onFilterRecordsEnd?.(records);
+            return records;
+          }
+        : undefined
+    } as any);
   }
 
   /**

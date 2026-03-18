@@ -143,6 +143,46 @@ Get the formula manager
   getFormulaManager: () => FormulaManager
 ```
 
+### getWorkbookHistoryManager(Function)
+
+Get the workbook history manager (workbook-level undo/redo).
+
+```
+  getWorkbookHistoryManager: () => WorkbookHistoryManager
+```
+
+### undo(Function)
+
+Undo the latest workbook transaction.
+
+```
+  undo: () => void
+```
+
+### redo(Function)
+
+Redo the latest workbook transaction.
+
+```
+  redo: () => void
+```
+
+### startHistoryTransaction(Function)
+
+Start a workbook-level transaction. Operations recorded during the transaction are grouped into a single undo/redo step.
+
+```
+  startHistoryTransaction: () => void
+```
+
+### endHistoryTransaction(Function)
+
+End the current workbook-level transaction and push it into the history stack.
+
+```
+  endHistoryTransaction: () => void
+```
+
 
 ## Events
 

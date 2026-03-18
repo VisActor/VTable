@@ -171,6 +171,20 @@ rowHeightConfig: {
 
 {{use:sheet-main-menu( prefix = '###', )}}
 
+## undoRedo(Object)
+
+撤销/重做按钮配置（工作簿级别历史）。
+
+```ts
+undoRedo?: {
+  /** 是否显示撤销/重做按钮 */
+  show?: boolean;
+}
+```
+
+- `show` 默认 `true`，当 `mainMenu.show` 为 `true` 时按钮显示在菜单栏；否则在左上角单独展示撤销/重做按钮。
+- 支持快捷键：Ctrl/Cmd + Z 撤销；Ctrl/Cmd + Shift + Z 或 Ctrl/Cmd + Y 重做。
+
 ## theme(IThemeDefine)
 
 主题配置. 所有sheet共享相同的主题配置。
@@ -194,6 +208,16 @@ dragOrder: {
   enableDragRowOrder: boolean;
 }
 ```
+
+## 实例方法（新增）
+
+与撤销/重做相关的新增实例方法：
+
+- `getWorkbookHistoryManager(): WorkbookHistoryManager`
+- `undo(): void`
+- `redo(): void`
+- `startHistoryTransaction(): void`
+- `endHistoryTransaction(): void`
 
 {{ target: sheet-filter-config }}
 

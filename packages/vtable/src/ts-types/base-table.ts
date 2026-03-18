@@ -951,6 +951,11 @@ export interface BaseTableAPI {
   getHierarchyState: (col: number, row: number) => HierarchyState | null;
 
   _canDragHeaderPosition: (col: number, row: number) => boolean;
+  changeHeaderPosition: (args: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+  }) => boolean;
 
   isHeader: (col: number, row: number) => boolean;
 

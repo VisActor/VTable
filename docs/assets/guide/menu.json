@@ -939,6 +939,13 @@
           }
         },
         {
+          "path": "history",
+          "title": {
+            "zh": "撤销重做（历史）",
+            "en": "history (undo/redo)"
+          }
+        },
+        {
           "path": "master-detail",
           "title": {
             "zh": "主从表",

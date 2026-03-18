@@ -132,15 +132,14 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
     return;
   }
 
-  if (
-    internalProps.groupTitleCheckbox &&
-    internalProps.rowSeriesNumber &&
-    col >= layout.leftRowSeriesNumberColumnCount
-  ) {
-    cellRange.start.col = layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount;
-  } else {
-    cellRange.start.col = layout.rowHeaderLevelCount;
+  const treeTitleStartCol =
+    internalProps.groupTitleCheckbox && internalProps.rowSeriesNumber
+      ? layout.rowHeaderLevelCount + layout.leftRowSeriesNumberColumnCount
+      : layout.rowHeaderLevelCount;
+  if (col < treeTitleStartCol) {
+    return;
   }
+  cellRange.start.col = treeTitleStartCol;
   cellRange.end.col = layout.colCount - 1;
   cellRange.start.row = cellRange.end.row = row;
 
