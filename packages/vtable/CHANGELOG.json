@@ -2,6 +2,32 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.24.0",
+      "tag": "@visactor/vtable_v1.24.0",
+      "date": "Wed, 18 Mar 2026 09:15:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: groupBy with frozenColCount and enableTreeStickCell usage problem\n\n"
+          },
+          {
+            "comment": "fix: when just has only one column groupTitle not show\n\n"
+          },
+          {
+            "comment": "fix: checkbox cell render error when set groupBy with rowSeriesNumber\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: gantt weekend column width support setting\n\n"
+          },
+          {
+            "comment": "feat: add undo/redo to sheet\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.23.3",
       "tag": "@visactor/vtable_v1.23.3",
       "date": "Wed, 04 Mar 2026 07:23:19 GMT",
