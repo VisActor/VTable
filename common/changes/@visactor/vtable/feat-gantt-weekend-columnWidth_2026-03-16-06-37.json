@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: gantt weekend column width support setting\n\n",
+      "type": "minor",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
