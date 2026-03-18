@@ -1,5 +1,9 @@
 export const menus = [
   {
+    path: 'table-carousel-animation',
+    name: 'table-carousel-animation'
+  },
+  {
     path: 'carousel-animation',
     name: '(deprecated)carousel-animation'
   },
