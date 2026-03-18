@@ -5126,10 +5126,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getTargetScrollTop(row: number) {
     const drawRange = this.getDrawRange();
     const frozenHeight = this.getFrozenRowsHeight();
-    return Math.max(
-      0,
-      Math.min(this.getRowsHeight(0, row - 1) - frozenHeight, this.getAllRowsHeight() - drawRange.height)
-    );
+    // const rowsHeight = this.getRowsHeight(0, row - 1);
+    const rowsHeight = Math.ceil(this.rowHeightsMap.getSumInRange(0, row - 1)); // same as this.scrollTop
+    const allRowsHeight = this.getAllRowsHeight();
+    return Math.max(0, Math.min(rowsHeight - frozenHeight, allRowsHeight - drawRange.height));
   }
 
   private _scheduleScrollToRowCorrect(row: number, delay: number = 0) {
@@ -5192,7 +5192,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // This ensures dynamically-computed row heights (e.g. autoWrapText) are reflected
       // in the scroll position calculation.
       const top = this.rowHeightsMap.getSumInRange(0, cellAddr.row - 1);
-      this.scrollTop = Math.min(top - frozenHeight, this.rowHeightsMap.getSumInRange(0, this.rowCount - 1) - drawRange.height);
+      this.scrollTop = Math.min(
+        top - frozenHeight,
+        this.rowHeightsMap.getSumInRange(0, this.rowCount - 1) - drawRange.height
+      );
     }
     this.render();
   }
