@@ -12,10 +12,18 @@ class Animateaaa extends ACustomAnimate<any> {
     if (this.from.x !== this.to.x) {
       const x = end ? this.to.x : this.from.x + Math.floor((this.to.x - this.from.x) * ratio);
       this.params.table.scrollLeft = x;
+      if (ratio === 1 && this.to.targetCol !== -1) {
+        // ensure scrollToCol is called at the end of animation to avoid not reaching the target col
+        this.params.table.scrollToCol(this.to.targetCol, false);
+      }
     }
     if (this.from.y !== this.to.y) {
       const y = end ? this.to.y : this.from.y + Math.floor((this.to.y - this.from.y) * ratio);
       this.params.table.scrollTop = y;
+      if (ratio === 1 && this.to.targetRow !== -1) {
+        // ensure scrollToRow is called at the end of animation to avoid not reaching the target row
+        this.params.table.scrollToRow(this.to.targetRow, false);
+      }
     }
   }
 }
@@ -72,8 +80,12 @@ export class TableAnimationManager {
       x: isNumber(col) ? left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
       y: isNumber(row) ? top - this.table.getFrozenRowsHeight() : this.table.scrollTop
     };
-    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : animationOption ? 3000 : 0;
-    const easing = !isBoolean(animationOption) ? animationOption?.easing ?? 'linear' : animationOption ? 'linear' : '';
+    const duration = !isBoolean(animationOption) ? (animationOption?.duration ?? 3000) : animationOption ? 3000 : 0;
+    const easing = !isBoolean(animationOption)
+      ? (animationOption?.easing ?? 'linear')
+      : animationOption
+        ? 'linear'
+        : '';
 
     const animation = new Animate(Generator.GenAutoIncrementId(), this.timeline).bind(this.tempGraphic).play(
       new Animateaaa(from, to, duration, easing, {
