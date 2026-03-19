@@ -78,14 +78,12 @@ export class TableAnimationManager {
 
     const to = {
       x: isNumber(col) ? left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
-      y: isNumber(row) ? top - this.table.getFrozenRowsHeight() : this.table.scrollTop
+      y: isNumber(row) ? top - this.table.getFrozenRowsHeight() : this.table.scrollTop,
+      targetCol: colInt ?? -1,
+      targetRow: rowInt ?? -1
     };
-    const duration = !isBoolean(animationOption) ? (animationOption?.duration ?? 3000) : animationOption ? 3000 : 0;
-    const easing = !isBoolean(animationOption)
-      ? (animationOption?.easing ?? 'linear')
-      : animationOption
-        ? 'linear'
-        : '';
+    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : animationOption ? 3000 : 0;
+    const easing = !isBoolean(animationOption) ? animationOption?.easing ?? 'linear' : animationOption ? 'linear' : '';
 
     const animation = new Animate(Generator.GenAutoIncrementId(), this.timeline).bind(this.tempGraphic).play(
       new Animateaaa(from, to, duration, easing, {
