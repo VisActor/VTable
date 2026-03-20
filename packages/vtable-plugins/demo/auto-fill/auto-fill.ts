@@ -75,6 +75,36 @@ export function createTable() {
       field: 'otherDirection_2',
       title: '',
       width: 120
+    },
+    {
+      field: 'id',
+      title: 'ID',
+      width: 80
+    },
+    {
+      field: 'name',
+      title: '章节',
+      width: 150
+    },
+    {
+      field: 'arithmetic',
+      title: '等差',
+      width: 120
+    },
+    {
+      field: 'geometric',
+      title: '等比',
+      width: 120
+    },
+    {
+      field: 'date',
+      title: '日期',
+      width: 120
+    },
+    {
+      field: 'week',
+      title: '星期',
+      width: 120
     }
   ];
 
@@ -93,6 +123,9 @@ export function createTable() {
     excelOptions: {
       fillHandle: true // 启用填充炳功能
     },
+    frozenColCount: 4,
+    maxFrozenWidth: 320,
+    scrollFrozenCols: true,
     plugins: [autoFillPlugin]
   };
 

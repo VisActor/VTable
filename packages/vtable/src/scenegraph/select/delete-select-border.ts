@@ -20,7 +20,6 @@ export function deleteAllSelectBorder(scene: Scenegraph) {
   scene.selectedRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
       selectComp.rect.delete();
-
       selectComp.fillhandle?.delete();
     }
   );
@@ -31,7 +30,6 @@ export function deleteAllSelectingBorder(scene: Scenegraph) {
   scene.selectingRangeComponents.forEach(
     (selectComp: { rect: IRect; fillhandle?: IRect; role: CellSubLocation }, key: string) => {
       selectComp.rect.delete();
-
       selectComp.fillhandle?.delete();
     }
   );

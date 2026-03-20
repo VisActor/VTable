@@ -4,9 +4,13 @@ export function getColX(col: number, table: BaseTableAPI, isRightFrozen?: boolea
   if (isRightFrozen) {
     return Math.min(table.tableNoFrameWidth, table.getAllColsWidth()) - table.getColsWidth(col, table.colCount - 1);
   }
+  const frozenOffset = table.getFrozenColsOffset?.() ?? 0;
+  const frozenScrollLeft = table.getFrozenColsScrollLeft?.() ?? 0;
   let colX = table.getColsWidth(0, col);
   if (col >= table.frozenColCount) {
-    colX -= table.scrollLeft;
+    colX -= table.scrollLeft + frozenOffset;
+  } else {
+    colX -= frozenScrollLeft;
   }
   return colX;
 }

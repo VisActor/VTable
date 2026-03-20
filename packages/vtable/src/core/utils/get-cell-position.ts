@@ -305,6 +305,10 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
   x -= _this.tableX;
   y -= _this.tableY;
 
+  const frozenColsWidth = _this.getFrozenColsWidth();
+  const frozenColsOffset = _this.getFrozenColsOffset?.() ?? 0;
+  const frozenColsScrollLeft = _this.getFrozenColsScrollLeft?.() ?? 0;
+
   // top frozen
   let topFrozen = false;
   if (y > 0 && y < _this.getFrozenRowsHeight()) {
@@ -313,7 +317,7 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   // left frozen
   let leftFrozen = false;
-  if (x > 0 && x < _this.getFrozenColsWidth()) {
+  if (x > 0 && x < frozenColsWidth) {
     leftFrozen = true;
   }
 
@@ -338,7 +342,7 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   // 加上 tableX 和 tableY 是因为在考虑冻结列和冻结行时，需要将坐标转换为相对于表格左上角的坐标
   const colInfo = getTargetColAtConsiderRightFrozen(
-    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
+    (leftFrozen ? x + frozenColsScrollLeft : rightFrozen ? x : x + _this.scrollLeft + frozenColsOffset) + _this.tableX,
     rightFrozen,
     _this
   );
@@ -372,9 +376,13 @@ export function getColAtRelativePosition(x: number, _this: BaseTableAPI): number
   // table border and outer component
   x -= _this.tableX;
 
+  const frozenColsWidth = _this.getFrozenColsWidth();
+  const frozenColsOffset = _this.getFrozenColsOffset?.() ?? 0;
+  const frozenColsScrollLeft = _this.getFrozenColsScrollLeft?.() ?? 0;
+
   // left frozen
   let leftFrozen = false;
-  if (x > 0 && x < _this.getFrozenColsWidth()) {
+  if (x > 0 && x < frozenColsWidth) {
     leftFrozen = true;
   }
 
@@ -390,7 +398,7 @@ export function getColAtRelativePosition(x: number, _this: BaseTableAPI): number
 
   // 加上 tableX 是因为在考虑冻结列时，需要将坐标转换为相对于表格左上角的坐标
   const colInfo = getTargetColAtConsiderRightFrozen(
-    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
+    (leftFrozen ? x + frozenColsScrollLeft : rightFrozen ? x : x + _this.scrollLeft + frozenColsOffset) + _this.tableX,
     rightFrozen,
     _this
   );

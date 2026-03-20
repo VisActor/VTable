@@ -179,6 +179,7 @@ export class StateManager {
   scroll: {
     horizontalBarPos: number;
     verticalBarPos: number;
+    frozenHorizontalBarPos: number;
   };
   tablePosition: {
     absoluteX: number;
@@ -398,7 +399,8 @@ export class StateManager {
     };
     this.scroll = {
       horizontalBarPos: 0,
-      verticalBarPos: 0
+      verticalBarPos: 0,
+      frozenHorizontalBarPos: 0
     };
     this.tablePosition = {
       absoluteX: 0,
@@ -982,7 +984,12 @@ export class StateManager {
       const maxFrozenWidth = this.table._getMaxFrozenWidth();
 
       if (frozenWidth > maxFrozenWidth) {
-        if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
+        if (this.table.options.scrollFrozenCols) {
+          if (this.table.frozenColCount !== originalFrozenColCount) {
+            this.table._setFrozenColCount(originalFrozenColCount);
+            this.setFrozenCol(originalFrozenColCount);
+          }
+        } else if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
           this.table._setFrozenColCount(0);
           this.setFrozenCol(-1);
         } else {
@@ -994,9 +1001,28 @@ export class StateManager {
         this.table._setFrozenColCount(originalFrozenColCount);
         this.setFrozenCol(originalFrozenColCount);
       }
+      if (!this.table.options.scrollFrozenCols || this.table.getFrozenColsOffset() === 0) {
+        this.setFrozenColsScrollLeft(0, false);
+      } else {
+        this.setFrozenColsScrollLeft(this.scroll.frozenHorizontalBarPos, false);
+      }
     } else {
       this.clearFrozenObserver();
     }
+  }
+
+  setFrozenColsScrollLeft(left: number, triggerRender: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
+    const maxScrollLeft = this.table.getFrozenColsOffset();
+    left = Math.max(0, Math.min(left, maxScrollLeft));
+    left = Math.ceil(left);
+    if (this.scroll.frozenHorizontalBarPos === left) {
+      return;
+    }
+    this.scroll.frozenHorizontalBarPos = left;
+    triggerRender && this.table.scenegraph.setFrozenColsScrollLeft(left);
   }
 
   clearFrozenObserver() {
@@ -1124,8 +1150,10 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
+    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
+    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset);
 
-    let horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    let horizontalBarPos = Math.ceil(xRatio * scrollRange);
     if (!isValid(horizontalBarPos) || isNaN(horizontalBarPos)) {
       horizontalBarPos = 0;
     }
@@ -1147,7 +1175,7 @@ export class StateManager {
 
     if (canScroll.some(value => value === false)) {
       // reset scrollbar pos
-      const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+      const xRatio = scrollRange ? this.scroll.horizontalBarPos / scrollRange : 0;
       this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
       return;
     }
@@ -1273,7 +1301,8 @@ export class StateManager {
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
-    const frozenWidth = this.table.getFrozenColsWidth();
+    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
+    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset);
 
     // _disableColumnAndRowSizeRound环境中，可能出现
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
@@ -1281,10 +1310,10 @@ export class StateManager {
     // 这里加入tolerance，避免出现无用滚动
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
 
-    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width - sizeTolerance));
+    left = Math.max(0, Math.min(left, scrollRange - sizeTolerance));
     left = Math.ceil(left);
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
-    const xRatio = left / (totalWidth - this.table.scenegraph.width);
+    const xRatio = scrollRange ? left / scrollRange : 0;
 
     // if (oldHorizontalBarPos !== left && triggerEvent) {
     if (
@@ -1311,7 +1340,7 @@ export class StateManager {
 
       if (canScroll.some(value => value === false)) {
         // reset scrollbar pos
-        const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+        const xRatio = scrollRange ? this.scroll.horizontalBarPos / scrollRange : 0;
         this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
         return;
       }

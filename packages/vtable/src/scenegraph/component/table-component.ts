@@ -355,6 +355,7 @@ export class TableComponent {
     const totalWidth = this.table.getAllColsWidth();
     const frozenRowsHeight = this.table.getFrozenRowsHeight();
     const frozenColsWidth = this.table.getFrozenColsWidth();
+    const frozenColsContentWidth = this.table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
     const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
@@ -366,7 +367,7 @@ export class TableComponent {
 
     if (totalWidth > tableWidth + sizeTolerance) {
       const y = Math.min(tableHeight, totalHeight);
-      const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
+      const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsContentWidth));
 
       let attrY = 0;
       if (this.table.theme.scrollStyle.barToSide) {
@@ -667,7 +668,10 @@ export class TableComponent {
    * @return {*}
    */
   setFrozenColumnShadow(col: number, isRightFrozen?: boolean) {
-    const colX = getColX(col, this.table, isRightFrozen);
+    const colX =
+      !isRightFrozen && col === this.table.frozenColCount - 1 && (this.table.getFrozenColsOffset?.() ?? 0) > 0
+        ? this.table.getFrozenColsWidth()
+        : getColX(col, this.table, isRightFrozen);
     if (col < 0 || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
       this.frozenShadowLine.setAttributes({
         visible: false,

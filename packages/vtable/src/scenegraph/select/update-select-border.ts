@@ -93,14 +93,18 @@ function updateComponent(
   const colsWidth = table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
   const rowsHeight = table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
 
+  const overlayGroup = scene.getSelectOverlayGroup(selectComp.role);
+  const offsetX = scene.tableGroup.attribute.x + (overlayGroup.attribute.x ?? 0);
+  const offsetY = scene.tableGroup.attribute.y + (overlayGroup.attribute.y ?? 0);
+
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
   ).globalAABBBounds;
 
   selectComp.rect.setAttributes({
-    x: firstCellBound.x1 - scene.tableGroup.attribute.x, //坐标xy在下面的逻辑中会做适当调整
-    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    x: firstCellBound.x1 - offsetX,
+    y: firstCellBound.y1 - offsetY,
     width: colsWidth,
     height: rowsHeight,
     visible: true
@@ -127,17 +131,17 @@ function updateComponent(
     //当选择区域没有到到最后一列时
     if (endCol < table.colCount - 1) {
       lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
-      handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+      handlerX = lastCellBound.x2 - offsetX - 3;
     } else {
       // 最后一列
       // computeRectCellRangeStartCol 而且是第一列时
       if (startCol === 0) {
         //解决issue #4376  但还是有问题当存在冻结的时候。以及需要处理类似情况下面逻辑最后一行的情况
         lastCellBound = scene.highPerformanceGetCell(0, endRow).globalAABBBounds;
-        handlerX = lastCellBound.x1 - scene.tableGroup.attribute.x;
+        handlerX = lastCellBound.x1 - offsetX;
       } else {
         lastCellBound = scene.highPerformanceGetCell(startCol - 1, endRow).globalAABBBounds;
-        handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+        handlerX = lastCellBound.x2 - offsetX - 3;
       }
     }
     // const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
@@ -148,7 +152,7 @@ function updateComponent(
       // 最后一行
       lastCellBound = scene.highPerformanceGetCell(endCol, startRow - 1).globalAABBBounds;
     }
-    const handlerY = lastCellBound.y2 - scene.tableGroup.attribute.y - 3;
+    const handlerY = lastCellBound.y2 - offsetY - 3;
     //#endregion
 
     selectComp.fillhandle?.setAttributes({
@@ -159,180 +163,6 @@ function updateComponent(
       visible
     });
   }
-
-  //#region 判断是不是按着表头部分的选中框 因为绘制层级的原因 线宽会被遮住一半，因此需要动态调整层级
-  let isNearRowHeader = table.frozenColCount ? startCol === table.frozenColCount : false;
-  if (!isNearRowHeader && table.frozenColCount && table.scrollLeft > 0 && startCol >= table.frozenColCount) {
-    const startColRelativePosition = table.getColsWidth(0, startCol - 1) - table.scrollLeft;
-    if (startColRelativePosition < table.getFrozenColsWidth()) {
-      isNearRowHeader = true;
-    }
-  }
-
-  let isNearRightRowHeader = table.rightFrozenColCount
-    ? table.rightFrozenColCount > 0 && endCol === table.colCount - table.rightFrozenColCount - 1
-    : false;
-  if (!isNearRightRowHeader && table.rightFrozenColCount && endCol < table.colCount - table.rightFrozenColCount) {
-    const endColRelativePosition = table.getColsWidth(0, endCol) - table.scrollLeft;
-    if (endColRelativePosition > table.tableNoFrameWidth - table.getRightFrozenColsWidth()) {
-      isNearRightRowHeader = true;
-    }
-  }
-
-  let isNearColHeader = table.frozenRowCount ? startRow === table.frozenRowCount : true;
-  if (!isNearColHeader && table.frozenRowCount && table.scrollTop > 0 && startRow >= table.frozenRowCount) {
-    const startRowRelativePosition = table.getRowsHeight(0, startRow - 1) - table.scrollTop;
-    if (startRowRelativePosition < table.getFrozenRowsHeight()) {
-      isNearColHeader = true;
-    }
-  }
-
-  let isNearBottomColHeader = table.bottomFrozenRowCount
-    ? endRow === table.rowCount - table.bottomFrozenRowCount - 1
-    : false;
-  if (!isNearBottomColHeader && table.bottomFrozenRowCount && endRow < table.rowCount - table.bottomFrozenRowCount) {
-    const endRowRelativePosition = table.getRowsHeight(0, endRow) - table.scrollTop;
-    if (endRowRelativePosition > table.tableNoFrameHeight - table.getBottomFrozenRowsHeight()) {
-      isNearBottomColHeader = true;
-    }
-  }
-
-  const { dynamicUpdateSelectionSize } = table.theme.selectionStyle;
-  if (
-    (isNearRowHeader && (selectComp.rect.attribute.stroke[3] || dynamicUpdateSelectionSize)) ||
-    (isNearRightRowHeader && (selectComp.rect.attribute.stroke[1] || dynamicUpdateSelectionSize)) ||
-    (isNearColHeader && (selectComp.rect.attribute.stroke[0] || dynamicUpdateSelectionSize)) ||
-    (isNearBottomColHeader && (selectComp.rect.attribute.stroke[2] || dynamicUpdateSelectionSize))
-  ) {
-    if (isNearRowHeader && selectComp.rect.attribute.stroke[3]) {
-      scene.tableGroup.insertAfter(
-        selectComp.rect,
-        selectComp.role === 'columnHeader'
-          ? scene.cornerHeaderGroup
-          : selectComp.role === 'bottomFrozen'
-          ? scene.leftBottomCornerGroup
-          : scene.rowHeaderGroup
-      );
-    }
-
-    if (isNearBottomColHeader && selectComp.rect.attribute.stroke[2]) {
-      scene.tableGroup.insertAfter(
-        selectComp.rect,
-        selectComp.role === 'rowHeader'
-          ? scene.leftBottomCornerGroup
-          : selectComp.role === 'rightFrozen'
-          ? scene.rightBottomCornerGroup
-          : scene.bottomFrozenGroup
-      );
-    }
-
-    if (isNearColHeader && selectComp.rect.attribute.stroke[0]) {
-      scene.tableGroup.insertAfter(
-        selectComp.rect,
-        selectComp.role === 'rowHeader'
-          ? scene.cornerHeaderGroup
-          : selectComp.role === 'rightFrozen'
-          ? scene.rightTopCornerGroup
-          : scene.colHeaderGroup
-      );
-    }
-    if (isNearRightRowHeader && selectComp.rect.attribute.stroke[1]) {
-      scene.tableGroup.insertAfter(
-        selectComp.rect,
-        selectComp.role === 'columnHeader'
-          ? scene.rightTopCornerGroup
-          : selectComp.role === 'bottomFrozen'
-          ? scene.rightBottomCornerGroup
-          : scene.rightFrozenGroup
-      );
-    }
-
-    //#region 调整层级后 滚动情况下会出现绘制范围出界 如body的选中框 渲染在了rowheader上面，所有需要调整选中框rect的 边界
-    if (
-      selectComp.rect.attribute.x < table.getFrozenColsWidth() &&
-      // selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rowHeaderGroup.attribute.width &&
-      table.scrollLeft > 0 &&
-      (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
-    ) {
-      const width = selectComp.rect.attribute.width - (table.getFrozenColsWidth() - selectComp.rect.attribute.x);
-      selectComp.rect.setAttributes({
-        x: selectComp.rect.attribute.x + (table.getFrozenColsWidth() - selectComp.rect.attribute.x),
-        width: width > 0 ? width : 0
-      });
-      selectComp.fillhandle?.setAttributes({
-        visible: width > 0
-      });
-    }
-    if (
-      // selectComp.rect.attribute.x < scene.rightFrozenGroup.attribute.x &&
-      table.getRightFrozenColsWidth() > 0 && // right冻结列存在的情况下
-      scene.rightFrozenGroup.attribute.height > 0 &&
-      selectComp.rect.attribute.x + selectComp.rect.attribute.width > scene.rightFrozenGroup.attribute.x &&
-      (selectComp.role === 'body' || selectComp.role === 'columnHeader' || selectComp.role === 'bottomFrozen')
-    ) {
-      const width = scene.rightFrozenGroup.attribute.x - selectComp.rect.attribute.x;
-      selectComp.rect.setAttributes({
-        x: selectComp.rect.attribute.x,
-        width: width > 0 ? width : 0
-      });
-      selectComp.fillhandle?.setAttributes({
-        visible: width - colsWidth > 0
-      });
-    }
-    if (
-      selectComp.rect.attribute.y < scene.colHeaderGroup.attribute.height &&
-      table.scrollTop > 0 &&
-      (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
-    ) {
-      const height =
-        selectComp.rect.attribute.height - (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y);
-      selectComp.rect.setAttributes({
-        y: selectComp.rect.attribute.y + (scene.colHeaderGroup.attribute.height - selectComp.rect.attribute.y),
-        height: height > 0 ? height : 0
-      });
-      selectComp.fillhandle?.setAttributes({
-        visible: height > 0
-      });
-    }
-    if (
-      scene.bottomFrozenGroup.attribute.width > 0 &&
-      scene.bottomFrozenGroup.attribute.height > 0 &&
-      selectComp.rect.attribute.y + selectComp.rect.attribute.height > scene.bottomFrozenGroup.attribute.y &&
-      (selectComp.role === 'body' || selectComp.role === 'rowHeader' || selectComp.role === 'rightFrozen')
-    ) {
-      const height = scene.bottomFrozenGroup.attribute.y - selectComp.rect.attribute.y;
-      selectComp.rect.setAttributes({
-        y: selectComp.rect.attribute.y,
-        height: height > 0 ? height : 0
-      });
-      selectComp.fillhandle?.setAttributes({
-        visible: height - rowsHeight > 0
-      });
-    }
-    //#endregion
-  } else {
-    scene.tableGroup.insertAfter(
-      selectComp.rect,
-      selectComp.role === 'body'
-        ? scene.bodyGroup
-        : selectComp.role === 'columnHeader'
-        ? scene.colHeaderGroup
-        : selectComp.role === 'rowHeader'
-        ? scene.rowHeaderGroup
-        : selectComp.role === 'cornerHeader'
-        ? scene.cornerHeaderGroup
-        : selectComp.role === 'rightTopCorner'
-        ? scene.rightTopCornerGroup
-        : selectComp.role === 'rightFrozen'
-        ? scene.rightFrozenGroup
-        : selectComp.role === 'leftBottomCorner'
-        ? scene.leftBottomCornerGroup
-        : selectComp.role === 'bottomFrozen'
-        ? scene.bottomFrozenGroup
-        : scene.rightBottomCornerGroup
-    );
-  }
-  //#endregion
 
   //#region 处理边缘被截问题
   let diffSize = 0;

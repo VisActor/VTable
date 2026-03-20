@@ -204,6 +204,9 @@ function createCustomCellSelectBorder(
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
+  const overlayGroup = scene.getSelectOverlayGroup(selectRangeType);
+  const offsetX = scene.tableGroup.attribute.x + (overlayGroup.attribute.x ?? 0);
+  const offsetY = scene.tableGroup.attribute.y + (overlayGroup.attribute.y ?? 0);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
   const rect = createRect({
     pickable: false,
@@ -216,8 +219,8 @@ function createCustomCellSelectBorder(
       }
       return false;
     }),
-    x: firstCellBound.x1 - scene.tableGroup.attribute.x, // 坐标xy及宽高width height 不需要这里计算具体值 update-select-border文件中updateComponent方法中有逻辑  且该方法调用时间是render
-    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    x: firstCellBound.x1 - offsetX,
+    y: firstCellBound.y1 - offsetY,
     width: 0,
     height: 0,
     visible: true,
@@ -235,24 +238,5 @@ function createCustomCellSelectBorder(
     rect,
     role: selectRangeType
   });
-  scene.tableGroup.insertAfter(
-    rect,
-    selectRangeType === 'body'
-      ? scene.bodyGroup
-      : selectRangeType === 'columnHeader'
-      ? scene.colHeaderGroup
-      : selectRangeType === 'rowHeader'
-      ? scene.rowHeaderGroup
-      : selectRangeType === 'cornerHeader'
-      ? scene.cornerHeaderGroup
-      : selectRangeType === 'rightTopCorner'
-      ? scene.rightTopCornerGroup
-      : selectRangeType === 'rightFrozen'
-      ? scene.rightFrozenGroup
-      : selectRangeType === 'leftBottomCorner'
-      ? scene.leftBottomCornerGroup
-      : selectRangeType === 'bottomFrozen'
-      ? scene.bottomFrozenGroup
-      : scene.rightBottomCornerGroup
-  );
+  overlayGroup.addChild(rect);
 }

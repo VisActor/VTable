@@ -2,6 +2,7 @@ import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
 import type { Group } from '../scenegraph/graphic/group';
 import type { MergeCellInfo } from '../ts-types';
 import { isValid } from '@visactor/vutils';
+import type { BaseTableAPI } from '../ts-types/base-table';
 
 export interface SceneEvent {
   abstractPos: {
@@ -44,6 +45,46 @@ export function getCellEventArgsSet(e: FederatedPointerEvent): SceneEvent {
     };
   }
   return tableEvent;
+}
+
+export function getCellEventArgsSetWithTable(e: FederatedPointerEvent, table: BaseTableAPI): SceneEvent {
+  const eventArgsSet = getCellEventArgsSet(e);
+  if (!eventArgsSet.eventArgs) {
+    return eventArgsSet;
+  }
+  if (!table.options.scrollFrozenCols || table.getFrozenColsOffset?.() === 0) {
+    return eventArgsSet;
+  }
+
+  const xInTable = e.x - table.tableX;
+  const yInTable = e.y - table.tableY;
+  if (xInTable < 0 || yInTable < 0 || xInTable > table.tableNoFrameWidth || yInTable > table.tableNoFrameHeight) {
+    return eventArgsSet;
+  }
+
+  const frozenViewportWidth = table.getFrozenColsWidth();
+  const pickedCol = eventArgsSet.eventArgs.col;
+  const pickedRow = eventArgsSet.eventArgs.row;
+  const isPickedLeftFrozen =
+    pickedCol >= 0 && pickedCol < table.frozenColCount && !table.isRightFrozenColumn(pickedCol, pickedRow);
+
+  if (isPickedLeftFrozen && xInTable >= frozenViewportWidth) {
+    const cell = table.getCellAtRelativePosition(e.x, e.y);
+    if (cell.col === -1 || cell.row === -1) {
+      return eventArgsSet;
+    }
+    const targetCell = table.scenegraph.getCell(cell.col, cell.row);
+    eventArgsSet.eventArgs = {
+      col: cell.col,
+      row: cell.row,
+      event: e,
+      targetCell,
+      mergeInfo: getMergeCellInfo(targetCell),
+      target: targetCell as unknown as IEventTarget
+    };
+  }
+
+  return eventArgsSet;
 }
 
 export function getTargetCell(target: any) {

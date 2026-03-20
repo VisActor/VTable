@@ -571,6 +571,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
           let selectX: number;
           let selectY: number;
+          const frozenOffset = table.getFrozenColsOffset?.() ?? 0;
 
           if (bottom) {
             selectY = table.scrollTop + drawRange.height - bottomFrozenRowHeight - 20;
@@ -579,9 +580,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
 
           if (right) {
-            selectX = table.scrollLeft + drawRange.width - rightFrozenColsWidth - 20;
+            selectX = table.scrollLeft + frozenOffset + drawRange.width - rightFrozenColsWidth - 20;
           } else if (left) {
-            selectX = table.scrollLeft + leftFrozenColsWidth + 20;
+            selectX = table.scrollLeft + frozenOffset + leftFrozenColsWidth + 20;
           }
 
           let considerFrozenY = false;
@@ -594,7 +595,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               selectX = x;
               considerFrozenX = true;
             } else {
-              selectX = table.scrollLeft + x;
+              selectX = table.scrollLeft + frozenOffset + x;
             }
           }
           if (!bottom && !top) {

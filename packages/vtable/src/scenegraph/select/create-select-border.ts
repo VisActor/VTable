@@ -1,7 +1,6 @@
 import { createRect } from '@src/vrender';
 import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
-import { table } from 'console';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
 export function createCellSelectBorder(
@@ -39,6 +38,9 @@ export function createCellSelectBorder(
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
+  const overlayGroup = scene.getSelectOverlayGroup(selectRangeType);
+  const offsetX = scene.tableGroup.attribute.x + (overlayGroup.attribute.x ?? 0);
+  const offsetY = scene.tableGroup.attribute.y + (overlayGroup.attribute.y ?? 0);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
   const lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
   const theme = scene.table.theme;
@@ -60,8 +62,8 @@ export function createCellSelectBorder(
       }
       return false;
     }),
-    x: firstCellBound.x1 - scene.tableGroup.attribute.x, // 坐标xy及宽高width height 不需要这里计算具体值 update-select-border文件中updateComponent方法中有逻辑  且该方法调用时间是render
-    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    x: firstCellBound.x1 - offsetX,
+    y: firstCellBound.y1 - offsetY,
     width: 0,
     height: 0,
     visible: true,
@@ -83,8 +85,8 @@ export function createCellSelectBorder(
       fill: bodyClickBorderColor as string,
       // lineWidth: bodyClickLineWidth as number,
       stroke: bodyClickBorderColor as string, // 右下角小方块边框颜色
-      x: lastCellBound.x2 - 3, // 调整小方块位置
-      y: lastCellBound.y2 - 3, // 调整小方块位置
+      x: lastCellBound.x2 - offsetX - 3,
+      y: lastCellBound.y2 - offsetY - 3,
       width: 6,
       height: 6,
 
@@ -97,47 +99,10 @@ export function createCellSelectBorder(
     fillhandle,
     role: selectRangeType
   });
-  scene.tableGroup.insertAfter(
-    rect,
-    selectRangeType === 'body'
-      ? scene.bodyGroup
-      : selectRangeType === 'columnHeader'
-      ? scene.colHeaderGroup
-      : selectRangeType === 'rowHeader'
-      ? scene.rowHeaderGroup
-      : selectRangeType === 'cornerHeader'
-      ? scene.cornerHeaderGroup
-      : selectRangeType === 'rightTopCorner'
-      ? scene.rightTopCornerGroup
-      : selectRangeType === 'rightFrozen'
-      ? scene.rightFrozenGroup
-      : selectRangeType === 'leftBottomCorner'
-      ? scene.leftBottomCornerGroup
-      : selectRangeType === 'bottomFrozen'
-      ? scene.bottomFrozenGroup
-      : scene.rightBottomCornerGroup
-  );
-  isHasFillHandleRect &&
-    scene.tableGroup.insertAfter(
-      fillhandle,
-      selectRangeType === 'body'
-        ? scene.bodyGroup
-        : selectRangeType === 'columnHeader'
-        ? scene.colHeaderGroup
-        : selectRangeType === 'rowHeader'
-        ? scene.rowHeaderGroup
-        : selectRangeType === 'cornerHeader'
-        ? scene.cornerHeaderGroup
-        : selectRangeType === 'rightTopCorner'
-        ? scene.rightTopCornerGroup
-        : selectRangeType === 'rightFrozen'
-        ? scene.rightFrozenGroup
-        : selectRangeType === 'leftBottomCorner'
-        ? scene.leftBottomCornerGroup
-        : selectRangeType === 'bottomFrozen'
-        ? scene.bottomFrozenGroup
-        : scene.rightBottomCornerGroup
-    );
+  overlayGroup.addChild(rect);
+  if (isHasFillHandleRect) {
+    overlayGroup.addChild(fillhandle);
+  }
 }
 
 // set corner radius in select rect which covers the corner of the table

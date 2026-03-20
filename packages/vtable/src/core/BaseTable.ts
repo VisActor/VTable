@@ -774,7 +774,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // 纠正frozenColCount的值;
     const maxFrozenWidth = this._getMaxFrozenWidth();
     // if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
-    if (this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
+    if (!this.options.scrollFrozenCols && this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
       if (this.internalProps.unfreezeAllOnExceedsMaxWidth) {
         this.internalProps.frozenColCount = 0;
       } else {
@@ -795,7 +795,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //纠正frozenColCount的值
     const maxFrozenWidth = this._getMaxFrozenWidth();
     // if (this.tableNoFrameWidth - this.getColsWidth(0, frozenColCount - 1) <= 120) {
-    if (this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
+    if (!this.options.scrollFrozenCols && this.getColsWidth(0, frozenColCount - 1) > maxFrozenWidth) {
       if (this.internalProps.unfreezeAllOnExceedsMaxWidth) {
         this.internalProps.frozenColCount = 0;
       } else {
@@ -2079,7 +2079,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       relativeY = false;
     }
     const cellRect = this.getCellRect(col, row);
-    return this._toRelativeRect(cellRect, relativeX, relativeY);
+    const rect = this._toRelativeRect(cellRect, relativeX, relativeY);
+    if (isFrozenCell?.col && !this.isRightFrozenColumn(col, row)) {
+      rect.offsetLeft(-this.getFrozenColsScrollLeft());
+    }
+    return rect;
   }
   /**
    * 获取的位置是相对表格显示界面的左上角
@@ -2099,7 +2103,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       } else if (isFrozenCell?.row) {
         relativeY = false;
       }
-      return this._toRelativeRect(
+      const rect = this._toRelativeRect(
         this.getCellsRect(
           (<CellRange>range).start.col,
           (<CellRange>range).start.row,
@@ -2109,6 +2113,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         relativeX,
         relativeY
       );
+      if (isFrozenCell?.col && !this.isRightFrozenColumn((<CellRange>range).start.col, (<CellRange>range).start.row)) {
+        rect.offsetLeft(-this.getFrozenColsScrollLeft());
+      }
+      return rect;
     }
     const cellRange = this.getCellRange((<CellAddress>range).col, (<CellAddress>range).row);
     const isFrozenCell = this.isFrozenCell((<CellAddress>range).col, (<CellAddress>range).row);
@@ -2122,11 +2130,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (isFrozenCell?.row) {
       relativeY = false;
     }
-    return this._toRelativeRect(
+    const rect = this._toRelativeRect(
       this.getCellsRect(cellRange.start.col, cellRange.start.row, cellRange.end.col, cellRange.end.row),
       relativeX,
       relativeY
     );
+    if (isFrozenCell?.col && !this.isRightFrozenColumn((<CellAddress>range).col, (<CellAddress>range).row)) {
+      rect.offsetLeft(-this.getFrozenColsScrollLeft());
+    }
+    return rect;
   }
   /**
    *  即仅视觉看到的位置 获取的位置是相对表格显示界面的左上角
@@ -2429,7 +2441,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { scrollTop, scrollLeft } = this;
     const width = this.tableNoFrameWidth;
     const height = this.tableNoFrameHeight;
-    return new Rect(scrollLeft, scrollTop, width, height);
+    return new Rect(scrollLeft + this.getFrozenColsOffset(), scrollTop, width, height);
   }
   /**
    * 获取网格中完全可见的可滚动行数。不包括表头及冻结的行
@@ -2464,19 +2476,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getBodyVisibleCellRange() {
     const { scrollTop, scrollLeft } = this;
     const frozenRowsHeight = this.getFrozenRowsHeight();
-    const frozenColsWidth = this.getFrozenColsWidth();
+    const frozenColsContentWidth = this.getFrozenColsContentWidth();
+    const frozenColsOffset = this.getFrozenColsOffset();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
     // 计算非冻结
     const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
-    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1);
+    const { col: colStart } = this.getColAt(scrollLeft + frozenColsContentWidth + 1);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
         ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight).row
         : this.rowCount - 1;
     const colEnd =
       this.getAllColsWidth() > this.tableNoFrameWidth
-        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth).col
+        ? this.getColAt(scrollLeft + frozenColsOffset + this.tableNoFrameWidth - 1 - rightFrozenColsWidth).col
         : this.colCount - 1;
     if (colEnd < 0 || rowEnd < 0) {
       return null;
@@ -2512,14 +2525,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getBodyVisibleColRange(start_deltaX: number = 0, end_deltaX: number = 0) {
     const { scrollLeft } = this;
-    const frozenColsWidth = this.getFrozenColsWidth();
+    const frozenColsContentWidth = this.getFrozenColsContentWidth();
+    const frozenColsOffset = this.getFrozenColsOffset();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
     // 计算非冻结
-    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1 + start_deltaX);
+    const { col: colStart } = this.getColAt(scrollLeft + frozenColsContentWidth + 1 + start_deltaX);
 
     const colEnd =
       this.getAllColsWidth() > this.tableNoFrameWidth
-        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth + end_deltaX).col
+        ? this.getColAt(scrollLeft + frozenColsOffset + this.tableNoFrameWidth - 1 - rightFrozenColsWidth + end_deltaX)
+            .col
         : this.colCount - 1;
     if (colEnd < 0) {
       return null;
@@ -2533,8 +2548,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   get visibleColCount(): number {
     const { frozenColCount } = this;
     const visibleRect = this.getVisibleRect();
-    const visibleLeft =
-      frozenColCount > 0 ? visibleRect.left + this.getColsWidth(0, frozenColCount - 1) : visibleRect.left;
+    const visibleLeft = frozenColCount > 0 ? visibleRect.left + this.getFrozenColsWidth() : visibleRect.left;
 
     const initCol = this.getTargetColAt(visibleLeft);
     if (!initCol) {
@@ -2995,8 +3009,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getFrozenColsWidth(): number {
-    const w = this.getColsWidth(0, this.frozenColCount - 1);
-    return w;
+    const contentWidth = this.getFrozenColsContentWidth();
+    if (!this.options.scrollFrozenCols) {
+      return contentWidth;
+    }
+    const maxFrozenWidth = this._getMaxFrozenWidth();
+    return Math.min(contentWidth, maxFrozenWidth);
+  }
+  getFrozenColsContentWidth(): number {
+    return this.getColsWidth(0, this.frozenColCount - 1);
+  }
+  getFrozenColsOffset(): number {
+    const contentWidth = this.getFrozenColsContentWidth();
+    const viewportWidth = this.getFrozenColsWidth();
+    return Math.max(0, contentWidth - viewportWidth);
+  }
+  getFrozenColsScrollLeft(): number {
+    return this.stateManager.scroll.frozenHorizontalBarPos ?? 0;
   }
   /**
    * 获取底部冻结固定列总宽
@@ -5192,7 +5221,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // This ensures dynamically-computed row heights (e.g. autoWrapText) are reflected
       // in the scroll position calculation.
       const top = this.rowHeightsMap.getSumInRange(0, cellAddr.row - 1);
-      this.scrollTop = Math.min(top - frozenHeight, this.rowHeightsMap.getSumInRange(0, this.rowCount - 1) - drawRange.height);
+      this.scrollTop = Math.min(
+        top - frozenHeight,
+        this.rowHeightsMap.getSumInRange(0, this.rowCount - 1) - drawRange.height
+      );
     }
     this.render();
   }

@@ -23,9 +23,39 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
     }
   }
   const autoHide = state.table.options.theme?.scrollStyle?.visible === 'scrolling';
+  let usedFrozenHorizontal = false;
   if (optimizedDeltaX) {
-    state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
-    state.showHorizontalScrollBar(autoHide);
+    const px = (event as any).x ?? (state.table as any).eventManager?.LastBodyPointerXY?.x;
+    const py = (event as any).y ?? (state.table as any).eventManager?.LastBodyPointerXY?.y;
+    const relativeX = typeof px === 'number' ? px - state.table.tableX : NaN;
+    const relativeY = typeof py === 'number' ? py - state.table.tableY : NaN;
+    const isInTable =
+      isFinite(relativeX) &&
+      isFinite(relativeY) &&
+      relativeX >= 0 &&
+      relativeY >= 0 &&
+      relativeX <= state.table.tableNoFrameWidth &&
+      relativeY <= state.table.tableNoFrameHeight;
+    const frozenColsScrollable = state.table.options.scrollFrozenCols && state.table.getFrozenColsOffset() > 0;
+    const isInFrozenViewport = isInTable && relativeX > 0 && relativeX < state.table.getFrozenColsWidth();
+
+    if (frozenColsScrollable && isInFrozenViewport) {
+      const maxFrozenScrollLeft = state.table.getFrozenColsOffset();
+      const nextFrozenScrollLeft = state.scroll.frozenHorizontalBarPos + optimizedDeltaX;
+      const canScrollFrozen =
+        (optimizedDeltaX < 0 && state.scroll.frozenHorizontalBarPos > 0) ||
+        (optimizedDeltaX > 0 && state.scroll.frozenHorizontalBarPos < maxFrozenScrollLeft);
+      if (canScrollFrozen) {
+        state.setFrozenColsScrollLeft(nextFrozenScrollLeft);
+        usedFrozenHorizontal = true;
+      } else {
+        state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
+        state.showHorizontalScrollBar(autoHide);
+      }
+    } else {
+      state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
+      state.showHorizontalScrollBar(autoHide);
+    }
   }
   if (optimizedDeltaY) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY, event);
@@ -37,7 +67,9 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
     ((state.table.internalProps.overscrollBehavior === 'none' &&
       ((deltaY && isVerticalExistScrollBar(state)) || (deltaX && isHorizontalExistScrollBar(state)))) ||
       (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
-      (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
+      (Math.abs(deltaY) <= Math.abs(deltaX) &&
+        deltaX !== 0 &&
+        (usedFrozenHorizontal ? state.table.getFrozenColsOffset() > 0 : isHorizontalScrollable(deltaX, state))))
   ) {
     event.nativeEvent.preventDefault();
   }
@@ -74,7 +106,8 @@ export function isVerticalScrollable(deltaY: number, state: StateManager) {
 }
 
 export function isHorizontalScrollable(deltaX: number, state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const frozenOffset = state.table.getFrozenColsOffset?.() ?? 0;
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width - frozenOffset;
   if (totalWidth === 0) {
     return false;
   }
@@ -90,7 +123,8 @@ export function isVerticalExistScrollBar(state: StateManager) {
 }
 
 export function isHorizontalExistScrollBar(state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const frozenOffset = state.table.getFrozenColsOffset?.() ?? 0;
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width - frozenOffset;
   if (totalWidth <= 0) {
     return false;
   }
@@ -111,7 +145,8 @@ function isScrollToBottom(deltaY: number, state: StateManager) {
 }
 
 function isScrollToLeft(deltaX: number, state: StateManager) {
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const frozenOffset = state.table.getFrozenColsOffset?.() ?? 0;
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width - frozenOffset;
   return totalWidth !== 0 && deltaX <= 0 && state.scroll.horizontalBarPos < 1;
 }
 
@@ -119,7 +154,8 @@ function isScrollToRight(deltaX: number, state: StateManager) {
   // 这里加入tolerance，避免出现无用滚动
   const sizeTolerance = state.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
 
-  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  const frozenOffset = state.table.getFrozenColsOffset?.() ?? 0;
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width - frozenOffset;
   return totalWidth !== 0 && deltaX >= 0 && Math.abs(state.scroll.horizontalBarPos - totalWidth) < 1 + sizeTolerance;
 }
 
