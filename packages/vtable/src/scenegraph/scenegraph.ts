@@ -1709,6 +1709,9 @@ export class Scenegraph {
     if (this.table.options.menu?.contextMenuWorkOnlyCell === false) {
       this.canvasShowMenu();
     }
+    if (this.table.stateManager.select.ranges?.length) {
+      this.recreateAllSelectRangeComponents();
+    }
     this.updateNextFrame();
   }
 
