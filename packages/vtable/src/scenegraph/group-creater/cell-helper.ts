@@ -423,25 +423,53 @@ export function createCell(
       );
     }
   } else if (type === 'radio') {
-    const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
-    cellGroup = createRadioCellGroup(
-      null,
-      columnGroup,
-      0,
-      y,
-      col,
-      row,
-      colWidth,
-      cellWidth,
-      cellHeight,
-      padding,
-      textAlign,
-      textBaseline,
-      table,
-      cellTheme,
-      define as RadioColumnDefine,
-      range
-    );
+    const isAggregation =
+      'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    if (isAggregation && isSeriesNumber) {
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      cellGroup = createTextCellGroup(
+        table,
+        value,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        false,
+        undefined,
+        true,
+        cellTheme,
+        range,
+        isAsync
+      );
+    } else {
+      const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
+      cellGroup = createRadioCellGroup(
+        null,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        table,
+        cellTheme,
+        define as RadioColumnDefine,
+        range
+      );
+    }
   } else if (type === 'switch') {
     const createSwitchCellGroup = Factory.getFunction('createSwitchCellGroup') as CreateSwitchCellGroup;
     cellGroup = createSwitchCellGroup(
