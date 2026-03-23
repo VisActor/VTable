@@ -37,40 +37,44 @@ export function bindScrollBarListener(eventManager: EventManager) {
     }
   });
   scenegraph.component.vScrollBar.addEventListener('pointerout', (e: any) => {
-    if (verticalVisible !== 'focus') {
-      return;
-    }
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    stateManager.hideVerticalScrollBar();
+    if (verticalVisible === 'focus') {
+      stateManager.hideVerticalScrollBar();
+    } else if (verticalVisible === 'scrolling') {
+      stateManager.showVerticalScrollBar(true);
+    }
   });
   scenegraph.component.hScrollBar.addEventListener('pointerout', (e: any) => {
-    if (horizontalVisible !== 'focus') {
-      return;
-    }
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    stateManager.hideHorizontalScrollBar();
+    if (horizontalVisible === 'focus') {
+      stateManager.hideHorizontalScrollBar();
+    } else if (horizontalVisible === 'scrolling') {
+      stateManager.showHorizontalScrollBar(true, 'body');
+    }
   });
   scenegraph.component.frozenHScrollBar.addEventListener('pointerout', (e: any) => {
-    if (horizontalVisible !== 'focus') {
-      return;
-    }
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    stateManager.hideHorizontalScrollBar();
+    if (horizontalVisible === 'focus') {
+      stateManager.hideHorizontalScrollBar();
+    } else if (horizontalVisible === 'scrolling') {
+      stateManager.showHorizontalScrollBar(true, 'frozen');
+    }
   });
   scenegraph.component.rightFrozenHScrollBar.addEventListener('pointerout', (e: any) => {
-    if (horizontalVisible !== 'focus') {
-      return;
-    }
     if (stateManager.interactionState === InteractionState.scrolling) {
       return;
     }
-    stateManager.hideHorizontalScrollBar();
+    if (horizontalVisible === 'focus') {
+      stateManager.hideHorizontalScrollBar();
+    } else if (horizontalVisible === 'scrolling') {
+      stateManager.showHorizontalScrollBar(true, 'rightFrozen');
+    }
   });
   scenegraph.component.vScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     scenegraph.table.stateManager.updateCursor('default');
