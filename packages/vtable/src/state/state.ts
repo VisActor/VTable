@@ -1432,9 +1432,9 @@ export class StateManager {
   }
   showVerticalScrollBar(autoHide?: boolean) {
     this.table.scenegraph.component.showVerticalScrollBar();
+    clearTimeout(this._clearVerticalScrollBar);
     if (autoHide) {
       // 滚轮触发滚动条显示后，异步隐藏
-      clearTimeout(this._clearVerticalScrollBar);
       this._clearVerticalScrollBar = setTimeout(() => {
         this.table.scenegraph?.component.hideVerticalScrollBar();
       }, 1000);
@@ -1446,9 +1446,9 @@ export class StateManager {
   showHorizontalScrollBar(autoHide?: boolean, target: 'body' | 'frozen' | 'rightFrozen' | 'all' = 'all') {
     this.table.scenegraph.component.showHorizontalScrollBar(target);
     this.table.scenegraph?.component.showFrozenColumnShadow();
+    clearTimeout(this._clearHorizontalScrollBar);
     if (autoHide) {
       // 滚轮触发滚动条显示后，异步隐藏
-      clearTimeout(this._clearHorizontalScrollBar);
       this._clearHorizontalScrollBar = setTimeout(() => {
         this.table.scenegraph?.component.hideFrozenColumnShadow();
         this.table.scenegraph?.component.hideHorizontalScrollBar();

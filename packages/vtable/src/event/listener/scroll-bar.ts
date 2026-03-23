@@ -17,22 +17,22 @@ export function bindScrollBarListener(eventManager: EventManager) {
 
   // 监听滚动条组件pointover事件
   scenegraph.component.vScrollBar.addEventListener('pointerover', (e: any) => {
-    if (verticalVisible === 'focus') {
+    if (verticalVisible === 'focus' || verticalVisible === 'scrolling') {
       stateManager.showVerticalScrollBar();
     }
   });
   scenegraph.component.hScrollBar.addEventListener('pointerover', (e: any) => {
-    if (horizontalVisible === 'focus') {
+    if (horizontalVisible === 'focus' || horizontalVisible === 'scrolling') {
       stateManager.showHorizontalScrollBar(false, 'body');
     }
   });
   scenegraph.component.frozenHScrollBar.addEventListener('pointerover', (e: any) => {
-    if (horizontalVisible === 'focus') {
+    if (horizontalVisible === 'focus' || horizontalVisible === 'scrolling') {
       stateManager.showHorizontalScrollBar(false, 'frozen');
     }
   });
   scenegraph.component.rightFrozenHScrollBar.addEventListener('pointerover', (e: any) => {
-    if (horizontalVisible === 'focus') {
+    if (horizontalVisible === 'focus' || horizontalVisible === 'scrolling') {
       stateManager.showHorizontalScrollBar(false, 'rightFrozen');
     }
   });
