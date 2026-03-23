@@ -21,6 +21,12 @@ VTable provides rich scroll style configuration items, and users can customize t
 - barToSide: Whether to display to the edge of the container even though the contents are not full. Default false
 - ignoreFrozenCols: Ignore the width of frozen columns, default false
 
+When horizontal scrolling inside frozen areas is enabled (for example `scrollFrozenCols` / `scrollRightFrozenCols`), there may be multiple horizontal scrollable regions (body / left frozen / right frozen). In this case:
+
+- `visible: 'always'`: Scrollbars of all regions are always visible (only if the region is actually scrollable).
+- `visible: 'scrolling'`: Scrollbars are shown when scrolling happens or when hovering over the scrollbar area, and will auto-hide after leaving.
+- `visible: 'focus'`: Only the scrollbar of the region under the pointer is shown (to avoid multiple scrollbars showing at the same time).
+
 Below we show the effect of these configurations with an example:
 
 ```javascript livedemo  template=vtable
@@ -108,6 +114,30 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 ## Scroll horizontally
 
 VTable supports horizontal scrolling while holding down the Shift key, or directly dragging the horizontal scroll bar to make it easier for users to browse table data. Of course, if your computer has a touchpad, you can swipe left and right directly on the touchpad to achieve horizontal scrolling.
+
+## Horizontal scrolling inside frozen areas
+
+After enabling frozen columns, if the frozen area's total frozen width exceeds the maximum frozen width (`maxFrozenWidth` / `maxRightFrozenWidth`), besides auto-unfreezing columns to fit the viewport, you can enable horizontal scrolling inside frozen areas to keep all frozen columns:
+
+- Left frozen area: enable with `scrollFrozenCols: true`
+- Right frozen area: enable with `scrollRightFrozenCols: true`
+
+After enabling, trackpad horizontal scrolling works inside the corresponding frozen area (without scrolling the body first). When scrollbars are visible, independent horizontal scrollbars for frozen areas will appear at the bottom, supporting dragging the thumb or clicking the track.
+
+Example:
+
+```javascript
+const option = {
+  // ...other configuration items
+  frozenColCount: 6,
+  maxFrozenWidth: 320,
+  scrollFrozenCols: true,
+
+  rightFrozenColCount: 4,
+  maxRightFrozenWidth: 320,
+  scrollRightFrozenCols: true
+};
+```
 
 ## scroll interface
 

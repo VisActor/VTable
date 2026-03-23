@@ -50,7 +50,7 @@ export function createTable() {
     scrollRightFrozenCols: true,
     theme: VTable.themes.DEFAULT.extends({
       scrollStyle: {
-        visible: 'none'
+        visible: 'scrolling'
       }
     }),
     excelOptions: {

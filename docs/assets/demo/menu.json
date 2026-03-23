@@ -439,8 +439,7 @@
             "zh": "甘特图缩放滚动条",
             "en": "Gantt DataZoomAxis Scrollbar"
           }
-        }
-        ,
+        },
         {
           "path": "gantt-baseline",
           "title": {
@@ -918,6 +917,13 @@
           "title": {
             "zh": "滚动",
             "en": "scroll"
+          }
+        },
+        {
+          "path": "scroll-frozen",
+          "title": {
+            "zh": "冻结区可滚动",
+            "en": "Scroll frozen area"
           }
         },
         {

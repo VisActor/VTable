@@ -108,6 +108,18 @@ containerFit: {
 
 最大冻结宽度，固定值 or 百分比。默认为'80%'
 
+#${prefix} scrollFrozenCols(boolean) = false
+
+当冻结列总宽度超过 maxFrozenWidth 时，冻结区域可横向滚动。开启后会保留全部冻结列，并在冻结区域内通过触摸板横向滚动或拖拽滚动条查看超出部分。
+
+#${prefix} maxRightFrozenWidth(number | string) = maxFrozenWidth
+
+右侧最大冻结宽度，固定值 or 百分比。默认与 maxFrozenWidth 一致。
+
+#${prefix} scrollRightFrozenCols(boolean) = false
+
+当右侧冻结列总宽度超过 maxRightFrozenWidth 时，右侧冻结区域可横向滚动。开启后会保留全部右侧冻结列，并在冻结区域内通过触摸板横向滚动或拖拽滚动条查看超出部分。
+
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
 超过最大冻结宽度后是否全部解冻，默认 true。如果设置为 false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
