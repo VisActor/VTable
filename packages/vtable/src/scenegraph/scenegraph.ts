@@ -1961,6 +1961,9 @@ export class Scenegraph {
   updateContainerAttrWidthAndX() {
     const frozenStartX = -(this.table.getFrozenColsScrollLeft?.() ?? 0);
     const frozenViewportWidth = this.table.getFrozenColsWidth();
+    const rightFrozenStartX =
+      -this.table.getRightFrozenColsOffset() + (this.table.getRightFrozenColsScrollLeft?.() ?? 0);
+    const rightFrozenContentWidth = this.table.getRightFrozenColsContentWidth();
     // 更新各列x&col
     updateContainerChildrenX(this.cornerHeaderGroup, frozenStartX);
     updateContainerChildrenX(this.rowHeaderGroup, frozenStartX);
@@ -1982,10 +1985,9 @@ export class Scenegraph {
               : 0
           )
         : 0;
-    const rightX = updateContainerChildrenX(
-      this.rightFrozenGroup.childrenCount > 0 ? this.rightFrozenGroup : this.rightTopCornerGroup,
-      0
-    );
+    if (this.rightFrozenGroup.childrenCount > 0) {
+      updateContainerChildrenX(this.rightFrozenGroup, rightFrozenStartX);
+    }
 
     this.bottomFrozenGroup.hasChildNodes() &&
       this.bottomFrozenGroup.firstChild &&
@@ -1996,8 +1998,8 @@ export class Scenegraph {
           : 0
       );
     updateContainerChildrenX(this.leftBottomCornerGroup, frozenStartX);
-    updateContainerChildrenX(this.rightTopCornerGroup, 0);
-    updateContainerChildrenX(this.rightBottomCornerGroup, 0);
+    updateContainerChildrenX(this.rightTopCornerGroup, rightFrozenStartX);
+    updateContainerChildrenX(this.rightBottomCornerGroup, rightFrozenStartX);
 
     // 更新容器
     this.cornerHeaderGroup.setDeltaWidth(frozenViewportWidth - this.cornerHeaderGroup.attribute.width);
@@ -2007,9 +2009,9 @@ export class Scenegraph {
     // this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
     this.rowHeaderGroup.setDeltaWidth(frozenViewportWidth - this.rowHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setDeltaWidth(colHeaderX - this.bottomFrozenGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
-    this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
-    this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightFrozenContentWidth - this.rightFrozenGroup.attribute.width);
+    this.rightTopCornerGroup.setDeltaWidth(rightFrozenContentWidth - this.rightTopCornerGroup.attribute.width);
+    this.rightBottomCornerGroup.setDeltaWidth(rightFrozenContentWidth - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
@@ -2021,6 +2023,14 @@ export class Scenegraph {
     updateContainerChildrenX(this.cornerHeaderGroup, frozenStartX);
     updateContainerChildrenX(this.rowHeaderGroup, frozenStartX);
     updateContainerChildrenX(this.leftBottomCornerGroup, frozenStartX);
+    this.updateNextFrame();
+  }
+
+  setRightFrozenColsScrollLeft(left: number) {
+    const rightStartX = -this.table.getRightFrozenColsOffset() + left;
+    updateContainerChildrenX(this.rightFrozenGroup, rightStartX);
+    updateContainerChildrenX(this.rightTopCornerGroup, rightStartX);
+    updateContainerChildrenX(this.rightBottomCornerGroup, rightStartX);
     this.updateNextFrame();
   }
 

@@ -43,8 +43,16 @@ export function createTable() {
     records,
     columns,
     frozenColCount: 6,
+    rightFrozenColCount: 4,
     maxFrozenWidth: 320,
     scrollFrozenCols: true,
+    maxRightFrozenWidth: 320,
+    scrollRightFrozenCols: true,
+    theme: VTable.themes.DEFAULT.extends({
+      scrollStyle: {
+        visible: 'none'
+      }
+    }),
     excelOptions: {
       fillHandle: args => {
         const { selectRanges, table } = args;

@@ -16,6 +16,7 @@ import { isValid } from '@visactor/vutils';
  */
 export class TableComponent {
   table: BaseTableAPI;
+  _horizontalScrollBarTarget?: 'body' | 'frozen' | 'rightFrozen' | 'all';
 
   border: IRect; // 表格外边框
   // selectBorder: IRect; // 表格选择区域边框
@@ -28,6 +29,8 @@ export class TableComponent {
   menu: MenuHandler; // 表格菜单
   vScrollBar: ScrollBar; // 表格横向滚动条
   hScrollBar: ScrollBar; // 表格纵向滚动条
+  frozenHScrollBar: ScrollBar; // 左冻结区横向滚动条
+  rightFrozenHScrollBar: ScrollBar; // 右冻结区横向滚动条
   frozenShadowLine: IRect; // 表格冻结列右侧阴影块
   rightFrozenShadowLine: IRect; // 表格右侧冻结列左侧阴影块
   drillIcon: DrillIcon; // drill icon
@@ -254,9 +257,13 @@ export class TableComponent {
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
     if (hoverOn && !this.table.theme.scrollStyle.barToSide) {
       componentGroup.addChild(this.hScrollBar);
+      componentGroup.addChild(this.frozenHScrollBar);
+      componentGroup.addChild(this.rightFrozenHScrollBar);
       componentGroup.addChild(this.vScrollBar);
     } else {
       componentGroup.stage.defaultLayer.addChild(this.hScrollBar);
+      componentGroup.stage.defaultLayer.addChild(this.frozenHScrollBar);
+      componentGroup.stage.defaultLayer.addChild(this.rightFrozenHScrollBar);
       componentGroup.stage.defaultLayer.addChild(this.vScrollBar);
 
       // // add scroll bar before border, avoid scroll hide by border globalCompositeOperation
@@ -314,6 +321,40 @@ export class TableComponent {
     (this.hScrollBar as any).render();
     this.hScrollBar.hideAll();
 
+    this.frozenHScrollBar = new ScrollBar({
+      direction: 'horizontal',
+      x: -this.table.tableNoFrameWidth * 2,
+      y: -this.table.tableNoFrameHeight * 2,
+      width: this.table.tableNoFrameWidth,
+      height: width,
+      padding: horizontalPadding,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle,
+      range: [0, 0.1],
+      visible: false
+    });
+    (this.frozenHScrollBar as any).render();
+    this.frozenHScrollBar.hideAll();
+
+    this.rightFrozenHScrollBar = new ScrollBar({
+      direction: 'horizontal',
+      x: -this.table.tableNoFrameWidth * 2,
+      y: -this.table.tableNoFrameHeight * 2,
+      width: this.table.tableNoFrameWidth,
+      height: width,
+      padding: horizontalPadding,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle,
+      range: [0, 0.1],
+      visible: false
+    });
+    (this.rightFrozenHScrollBar as any).render();
+    this.rightFrozenHScrollBar.hideAll();
+
     this.vScrollBar = new ScrollBar({
       direction: 'vertical',
       x: -this.table.tableNoFrameWidth * 2,
@@ -339,6 +380,8 @@ export class TableComponent {
   updateScrollBar() {
     const oldHorizontalBarPos = this.table.stateManager.scroll.horizontalBarPos;
     const oldVerticalBarPos = this.table.stateManager.scroll.verticalBarPos;
+    const oldFrozenHorizontalBarPos = this.table.stateManager.scroll.frozenHorizontalBarPos;
+    const oldRightFrozenHorizontalBarPos = this.table.stateManager.scroll.rightFrozenHorizontalBarPos;
 
     const theme = this.table.theme;
     const width = theme.scrollStyle?.width as number;
@@ -358,6 +401,7 @@ export class TableComponent {
     const frozenColsContentWidth = this.table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
     const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+    const rightFrozenColsContentWidth = this.table.getRightFrozenColsContentWidth?.() ?? rightFrozenColsWidth;
     const hoverOn = this.table.theme.scrollStyle.hoverOn;
     // _disableColumnAndRowSizeRound环境中，可能出现
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
@@ -367,7 +411,9 @@ export class TableComponent {
 
     if (totalWidth > tableWidth + sizeTolerance) {
       const y = Math.min(tableHeight, totalHeight);
-      const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsContentWidth));
+      const bodyViewportWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+      const bodyContentWidth = totalWidth - frozenColsContentWidth - rightFrozenColsContentWidth;
+      const rangeEnd = bodyContentWidth > 0 ? Math.max(0.05, bodyViewportWidth / bodyContentWidth) : 1;
 
       let attrY = 0;
       if (this.table.theme.scrollStyle.barToSide) {
@@ -409,8 +455,77 @@ export class TableComponent {
       if (horizontalVisible === 'always') {
         this.hScrollBar.showAll();
       }
+
+      const frozenScrollable = this.table.options.scrollFrozenCols && this.table.getFrozenColsOffset() > 0;
+      if (!ignoreFrozenCols && frozenScrollable) {
+        const frozenRangeEnd = Math.max(0.05, frozenColsWidth / frozenColsContentWidth);
+        const x = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+        this.frozenHScrollBar.setAttributes({
+          x,
+          y: attrY,
+          width: frozenColsWidth,
+          range: [0, frozenRangeEnd],
+          visible: horizontalVisible === 'always'
+        });
+        const bounds = this.frozenHScrollBar.AABBBounds && this.frozenHScrollBar.globalAABBBounds;
+        (this.frozenHScrollBar as any)._viewPosition = {
+          x: bounds.x1,
+          y: bounds.y1
+        };
+        if (horizontalVisible === 'always') {
+          this.frozenHScrollBar.showAll();
+        }
+      } else {
+        this.frozenHScrollBar.setAttributes({
+          x: -this.table.tableNoFrameWidth * 2,
+          y: -this.table.tableNoFrameHeight * 2,
+          width: 0,
+          visible: false
+        });
+      }
+
+      const rightFrozenScrollable =
+        this.table.options.scrollRightFrozenCols && this.table.getRightFrozenColsOffset() > 0;
+      if (!ignoreFrozenCols && rightFrozenScrollable) {
+        const rightFrozenRangeEnd = Math.max(0.05, rightFrozenColsWidth / rightFrozenColsContentWidth);
+        const x = tableWidth - rightFrozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+        this.rightFrozenHScrollBar.setAttributes({
+          x,
+          y: attrY,
+          width: rightFrozenColsWidth,
+          range: [0, rightFrozenRangeEnd],
+          visible: horizontalVisible === 'always'
+        });
+        const bounds = this.rightFrozenHScrollBar.AABBBounds && this.rightFrozenHScrollBar.globalAABBBounds;
+        (this.rightFrozenHScrollBar as any)._viewPosition = {
+          x: bounds.x1,
+          y: bounds.y1
+        };
+        if (horizontalVisible === 'always') {
+          this.rightFrozenHScrollBar.showAll();
+        }
+      } else {
+        this.rightFrozenHScrollBar.setAttributes({
+          x: -this.table.tableNoFrameWidth * 2,
+          y: -this.table.tableNoFrameHeight * 2,
+          width: 0,
+          visible: false
+        });
+      }
     } else {
       this.hScrollBar.setAttributes({
+        x: -this.table.tableNoFrameWidth * 2,
+        y: -this.table.tableNoFrameHeight * 2,
+        width: 0,
+        visible: false
+      });
+      this.frozenHScrollBar.setAttributes({
+        x: -this.table.tableNoFrameWidth * 2,
+        y: -this.table.tableNoFrameHeight * 2,
+        width: 0,
+        visible: false
+      });
+      this.rightFrozenHScrollBar.setAttributes({
         x: -this.table.tableNoFrameWidth * 2,
         y: -this.table.tableNoFrameHeight * 2,
         width: 0,
@@ -459,6 +574,8 @@ export class TableComponent {
     }
 
     this.table.stateManager.setScrollLeft(oldHorizontalBarPos);
+    this.table.stateManager.setFrozenColsScrollLeft(oldFrozenHorizontalBarPos, false);
+    this.table.stateManager.setRightFrozenColsScrollLeft(oldRightFrozenHorizontalBarPos, false);
     this.table.stateManager.setScrollTop(oldVerticalBarPos);
   }
 
@@ -693,7 +810,11 @@ export class TableComponent {
    * @return {*}
    */
   setRightFrozenColumnShadow(col: number) {
-    const colX = getColX(col, this.table, true);
+    const shouldFixViewport =
+      this.table.options.scrollRightFrozenCols && (this.table.getRightFrozenColsOffset?.() ?? 0) > 0;
+    const colX = shouldFixViewport
+      ? this.table.tableNoFrameWidth - this.table.getRightFrozenColsWidth()
+      : getColX(col, this.table, true);
     if (col >= this.table.colCount || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
       this.rightFrozenShadowLine.setAttributes({
         visible: false,
@@ -756,16 +877,39 @@ export class TableComponent {
     }
     this.hScrollBar.setAttribute('visible', false);
     this.hScrollBar.hideAll();
+    this.frozenHScrollBar.setAttribute('visible', false);
+    this.frozenHScrollBar.hideAll();
+    this.rightFrozenHScrollBar.setAttribute('visible', false);
+    this.rightFrozenHScrollBar.hideAll();
+    this._horizontalScrollBarTarget = undefined;
     this.table.scenegraph.updateNextFrame();
   }
-  showHorizontalScrollBar() {
+  showHorizontalScrollBar(target: 'body' | 'frozen' | 'rightFrozen' | 'all' = 'all') {
     const visible1 = this.table.theme.scrollStyle.visible;
     const horizontalVisible = this.table.theme.scrollStyle.horizontalVisible ?? visible1;
     if (horizontalVisible !== 'focus' && horizontalVisible !== 'scrolling') {
       return;
     }
-    this.hScrollBar.setAttribute('visible', true);
-    this.hScrollBar.showAll();
+    if (this._horizontalScrollBarTarget === target) {
+      return;
+    }
+    this._horizontalScrollBarTarget = target;
+
+    const showBody = target === 'all' || target === 'body';
+    const showFrozen = target === 'all' || target === 'frozen';
+    const showRightFrozen = target === 'all' || target === 'rightFrozen';
+
+    const bodyVisible = showBody && this.hScrollBar.attribute.width > 0;
+    this.hScrollBar.setAttribute('visible', bodyVisible);
+    bodyVisible ? this.hScrollBar.showAll() : this.hScrollBar.hideAll();
+
+    const frozenVisible = showFrozen && this.frozenHScrollBar.attribute.width > 0;
+    this.frozenHScrollBar.setAttribute('visible', frozenVisible);
+    frozenVisible ? this.frozenHScrollBar.showAll() : this.frozenHScrollBar.hideAll();
+
+    const rightFrozenVisible = showRightFrozen && this.rightFrozenHScrollBar.attribute.width > 0;
+    this.rightFrozenHScrollBar.setAttribute('visible', rightFrozenVisible);
+    rightFrozenVisible ? this.rightFrozenHScrollBar.showAll() : this.rightFrozenHScrollBar.hideAll();
     this.table.scenegraph.updateNextFrame();
   }
   updateVerticalScrollBarPos(topRatio: number) {
@@ -786,6 +930,28 @@ export class TableComponent {
     this.hScrollBar.setAttribute('range', [range0, range0 + size]);
     const bounds = this.hScrollBar.AABBBounds && this.hScrollBar.globalAABBBounds;
     (this.hScrollBar as any)._viewPosition = {
+      x: bounds.x1,
+      y: bounds.y1
+    };
+  }
+  updateFrozenHorizontalScrollBarPos(leftRatio: number) {
+    const range = this.frozenHScrollBar.attribute.range;
+    const size = range[1] - range[0];
+    const range0 = leftRatio * (1 - size);
+    this.frozenHScrollBar.setAttribute('range', [range0, range0 + size]);
+    const bounds = this.frozenHScrollBar.AABBBounds && this.frozenHScrollBar.globalAABBBounds;
+    (this.frozenHScrollBar as any)._viewPosition = {
+      x: bounds.x1,
+      y: bounds.y1
+    };
+  }
+  updateRightFrozenHorizontalScrollBarPos(leftRatio: number) {
+    const range = this.rightFrozenHScrollBar.attribute.range;
+    const size = range[1] - range[0];
+    const range0 = leftRatio * (1 - size);
+    this.rightFrozenHScrollBar.setAttribute('range', [range0, range0 + size]);
+    const bounds = this.rightFrozenHScrollBar.AABBBounds && this.rightFrozenHScrollBar.globalAABBBounds;
+    (this.rightFrozenHScrollBar as any)._viewPosition = {
       x: bounds.x1,
       y: bounds.y1
     };
@@ -825,6 +991,22 @@ export class TableComponent {
     this.vScrollBar.setAttributes({
       width,
       padding: verticalPadding,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle
+    });
+    this.frozenHScrollBar.setAttributes({
+      height: width,
+      padding: horizontalPadding,
+      railStyle: {
+        fill: scrollRailColor
+      },
+      sliderStyle
+    });
+    this.rightFrozenHScrollBar.setAttributes({
+      height: width,
+      padding: horizontalPadding,
       railStyle: {
         fill: scrollRailColor
       },

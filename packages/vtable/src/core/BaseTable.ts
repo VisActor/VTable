@@ -1088,6 +1088,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const maxFrozenWidth = this.options.maxFrozenWidth ?? '80%';
     return _toPxWidth(this, maxFrozenWidth);
   }
+  _getMaxRightFrozenWidth(): number {
+    const maxRightFrozenWidth = this.options.maxRightFrozenWidth ?? this.options.maxFrozenWidth ?? '80%';
+    return _toPxWidth(this, maxRightFrozenWidth);
+  }
   _getComputedFrozenColCount(frozenColCount: number): number {
     const maxFrozenWidth = this._getMaxFrozenWidth();
     let computedfrozenColCount = frozenColCount;
@@ -3047,8 +3051,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns
    */
   getRightFrozenColsWidth(): number {
+    const contentWidth = this.getRightFrozenColsContentWidth();
+    if (!this.options.scrollRightFrozenCols) {
+      return contentWidth;
+    }
+    const maxRightFrozenWidth = this._getMaxRightFrozenWidth();
+    return Math.min(contentWidth, maxRightFrozenWidth);
+  }
+  getRightFrozenColsContentWidth(): number {
     if (this.rightFrozenColCount > 0) {
-      // const width = this.getColsWidth(this.colCount - this.rightFrozenColCount, this.colCount - 1); // 同getBottomFrozenRowsHeight的原因
       let width = 0;
       for (let col = this.colCount - this.rightFrozenColCount; col <= this.colCount - 1; col++) {
         width += this.getColWidth(col);
@@ -3056,6 +3067,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return width;
     }
     return 0;
+  }
+  getRightFrozenColsOffset(): number {
+    const contentWidth = this.getRightFrozenColsContentWidth();
+    const viewportWidth = this.getRightFrozenColsWidth();
+    return Math.max(0, contentWidth - viewportWidth);
+  }
+  getRightFrozenColsScrollLeft(): number {
+    return this.stateManager.scroll.rightFrozenHorizontalBarPos ?? 0;
   }
   /**
    * 获取实际绘制范围的宽高，而非可绘制画布大小

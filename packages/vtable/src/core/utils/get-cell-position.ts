@@ -183,12 +183,14 @@ export function getTargetColAtConsiderRightFrozen(
     return { left: 0, col: 0, right: 0, width: 0 };
   }
   absoluteX = absoluteX - _this.tableX;
+  const rightFrozenScrollLeft = _this.getRightFrozenColsScrollLeft?.() ?? 0;
   if (
     isConsider &&
     absoluteX > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
     absoluteX < _this.tableNoFrameWidth &&
     absoluteX <= _this.getAllColsWidth()
   ) {
+    absoluteX -= rightFrozenScrollLeft;
     for (let i = 0; i < _this.rightFrozenColCount; i++) {
       if (absoluteX > _this.tableNoFrameWidth - _this.getColsWidth(_this.colCount - i - 1, _this.colCount - 1)) {
         return {

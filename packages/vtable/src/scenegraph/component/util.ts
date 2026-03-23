@@ -2,7 +2,11 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 
 export function getColX(col: number, table: BaseTableAPI, isRightFrozen?: boolean) {
   if (isRightFrozen) {
-    return Math.min(table.tableNoFrameWidth, table.getAllColsWidth()) - table.getColsWidth(col, table.colCount - 1);
+    return (
+      Math.min(table.tableNoFrameWidth, table.getAllColsWidth()) -
+      table.getColsWidth(col, table.colCount - 1) +
+      (table.getRightFrozenColsScrollLeft?.() ?? 0)
+    );
   }
   const frozenOffset = table.getFrozenColsOffset?.() ?? 0;
   const frozenScrollLeft = table.getFrozenColsScrollLeft?.() ?? 0;

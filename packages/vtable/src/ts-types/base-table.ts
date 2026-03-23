@@ -317,9 +317,11 @@ export interface BaseTableConstructorOptions {
   bottomFrozenRowCount?: number;
   /** 最大冻结宽度，固定值 or 百分比。默认为'80%' */
   maxFrozenWidth?: number | string;
+  maxRightFrozenWidth?: number | string;
   /** 超过最大冻结宽度后是否全部解冻，默认true */
   unfreezeAllOnExceedsMaxWidth?: boolean;
   scrollFrozenCols?: boolean;
+  scrollRightFrozenCols?: boolean;
 
   // /** 待实现 TODO */
   // frozenRowCount?: number;
@@ -857,6 +859,9 @@ export interface BaseTableAPI {
   getFrozenColsScrollLeft: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
+  getRightFrozenColsContentWidth: () => number;
+  getRightFrozenColsOffset: () => number;
+  getRightFrozenColsScrollLeft: () => number;
   selectCell: (
     col: number,
     row: number,

@@ -179,6 +179,25 @@ export function bindTableGroupListener(eventManager: EventManager) {
         mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       });
     }
+
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
+      const relativeX = e.x - table.tableX;
+      const target =
+        table.options.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0 &&
+        relativeX >= 0 &&
+        relativeX < table.getFrozenColsWidth()
+          ? 'frozen'
+          : table.options.scrollRightFrozenCols &&
+            table.getRightFrozenColsOffset?.() > 0 &&
+            relativeX > table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          ? 'rightFrozen'
+          : 'body';
+      stateManager.showHorizontalScrollBar(false, target);
+    }
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerout', (e: FederatedPointerEvent) => {
@@ -267,7 +286,19 @@ export function bindTableGroupListener(eventManager: EventManager) {
       (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
       (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
     ) {
-      stateManager.showHorizontalScrollBar();
+      const relativeX = e.x - table.tableX;
+      const target =
+        table.options.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0 &&
+        relativeX >= 0 &&
+        relativeX < table.getFrozenColsWidth()
+          ? 'frozen'
+          : table.options.scrollRightFrozenCols &&
+            table.getRightFrozenColsOffset?.() > 0 &&
+            relativeX > table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          ? 'rightFrozen'
+          : 'body';
+      stateManager.showHorizontalScrollBar(false, target);
     }
     if (
       (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
