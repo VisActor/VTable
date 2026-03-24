@@ -1623,6 +1623,15 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    // 如果正在进行列宽/行高调整，先清理指示线，避免残留
+    if (this.stateManager.isResizeCol()) {
+      this.scenegraph.component.hideResizeCol();
+      this.stateManager.columnResize.resizing = false;
+    }
+    if (this.stateManager.isResizeRow()) {
+      this.scenegraph.component.hideResizeRow();
+      this.stateManager.rowResize.resizing = false;
+    }
     this.internalProps.layoutMap.release();
     clearChartRenderQueue();
     this.scenegraph.updateChartState(null, undefined);
