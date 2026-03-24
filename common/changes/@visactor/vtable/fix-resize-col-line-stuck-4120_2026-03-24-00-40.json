@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: clear resize column/row indicator line when setRecords or updateOption is called during resizing #4120",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "2779428708@qq.com"
+}
