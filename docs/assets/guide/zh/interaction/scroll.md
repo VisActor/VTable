@@ -124,6 +124,8 @@ VTable 支持在按住 Shift 键时进行横向滚动，或者直接拖拽横向
 
 开启后，触摸板的横向滚动会在对应冻结区域内生效（无需先滚动 body），并且在滚动条可见时底部会出现对应冻结区域的独立横向滚动条，支持拖拽滑块或点击轨道进行滚动。
 
+默认情况下（`scrollFrozenColsPassThroughToBody: false`），在冻结区域滚动到头/尾时不会联动滚动 body；如希望在冻结区域到边界后继续滚动 body，可开启该配置。
+
 示例：
 
 ```javascript
@@ -135,7 +137,8 @@ const option = {
 
   rightFrozenColCount: 4,
   maxRightFrozenWidth: 320,
-  scrollRightFrozenCols: true
+  scrollRightFrozenCols: true,
+  scrollFrozenColsPassThroughToBody: false
 };
 ```
 

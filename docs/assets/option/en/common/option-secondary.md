@@ -116,6 +116,10 @@ Maximum freeze width for right frozen columns (fixed value or percentage). Defau
 
 When the total width of right frozen columns exceeds maxRightFrozenWidth, the right frozen area becomes horizontally scrollable. When enabled, all right frozen columns are kept and you can use trackpad horizontal scrolling or drag the scrollbar inside the frozen area to view the overflow part.
 
+#${prefix} scrollFrozenColsPassThroughToBody(boolean) = false
+
+When horizontally scrolling inside a frozen area (left frozen / right frozen) reaches its boundary, whether to pass the scroll intent through to the body horizontal scrolling. Default is false, which means the body will not scroll when the frozen area is already at its start/end. When enabled, body horizontal scrolling will be triggered if the frozen area can no longer scroll.
+
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
 Whether to defrost after the maximum freezing width is exceeded. The default value is true. If set to false, it will not unfreeze all columns, but will determine the number of columns to be unfrozen according to the value of maxFrozenWidth.

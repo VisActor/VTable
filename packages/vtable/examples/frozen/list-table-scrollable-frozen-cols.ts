@@ -48,6 +48,7 @@ export function createTable() {
     scrollFrozenCols: true,
     maxRightFrozenWidth: 320,
     scrollRightFrozenCols: true,
+    scrollFrozenColsPassThroughToBody: true,
     theme: VTable.themes.DEFAULT.extends({
       scrollStyle: {
         visible: 'scrolling'

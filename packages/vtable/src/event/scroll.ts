@@ -29,6 +29,8 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
   const verticalAutoHide = verticalVisible === 'scrolling';
   let usedFrozenHorizontal = false;
   let usedRightFrozenHorizontal = false;
+  let blockedFrozenHorizontal = false;
+  let blockedRightFrozenHorizontal = false;
   if (optimizedDeltaX) {
     // 横向滚动需要判断“滚动意图属于哪个区域”：
     // - body：主滚动域（影响非冻结列）
@@ -70,8 +72,13 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
         usedFrozenHorizontal = true;
         state.showHorizontalScrollBar(horizontalAutoHide, 'frozen');
       } else {
-        state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
-        state.showHorizontalScrollBar(horizontalAutoHide, 'body');
+        if (state.table.options.scrollFrozenColsPassThroughToBody) {
+          state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
+          state.showHorizontalScrollBar(horizontalAutoHide, 'body');
+        } else {
+          blockedFrozenHorizontal = true;
+          state.showHorizontalScrollBar(horizontalAutoHide, 'frozen');
+        }
       }
     } else if (rightFrozenColsScrollable && isInRightFrozenViewport) {
       const maxRightFrozenScrollLeft = state.table.getRightFrozenColsOffset();
@@ -87,8 +94,13 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
         usedRightFrozenHorizontal = true;
         state.showHorizontalScrollBar(horizontalAutoHide, 'rightFrozen');
       } else {
-        state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
-        state.showHorizontalScrollBar(horizontalAutoHide, 'body');
+        if (state.table.options.scrollFrozenColsPassThroughToBody) {
+          state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
+          state.showHorizontalScrollBar(horizontalAutoHide, 'body');
+        } else {
+          blockedRightFrozenHorizontal = true;
+          state.showHorizontalScrollBar(horizontalAutoHide, 'rightFrozen');
+        }
       }
     } else {
       state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
@@ -107,7 +119,9 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
       (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
       (Math.abs(deltaY) <= Math.abs(deltaX) &&
         deltaX !== 0 &&
-        (usedFrozenHorizontal
+        (blockedFrozenHorizontal || blockedRightFrozenHorizontal
+          ? false
+          : usedFrozenHorizontal
           ? state.table.getFrozenColsOffset() > 0
           : usedRightFrozenHorizontal
           ? state.table.getRightFrozenColsOffset() > 0

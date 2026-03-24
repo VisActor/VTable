@@ -124,6 +124,8 @@ After enabling frozen columns, if the frozen area's total frozen width exceeds t
 
 After enabling, trackpad horizontal scrolling works inside the corresponding frozen area (without scrolling the body first). When scrollbars are visible, independent horizontal scrollbars for frozen areas will appear at the bottom, supporting dragging the thumb or clicking the track.
 
+By default (`scrollFrozenColsPassThroughToBody: false`), when you reach the start/end of a frozen area, the body will not scroll. If you want to continue scrolling the body after the frozen area hits its boundary, enable this option.
+
 Example:
 
 ```javascript
@@ -135,7 +137,8 @@ const option = {
 
   rightFrozenColCount: 4,
   maxRightFrozenWidth: 320,
-  scrollRightFrozenCols: true
+  scrollRightFrozenCols: true,
+  scrollFrozenColsPassThroughToBody: false
 };
 ```
 

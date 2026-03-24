@@ -348,6 +348,18 @@ export interface BaseTableConstructorOptions {
    */
   scrollRightFrozenCols?: boolean;
 
+  /**
+   * 冻结区域滚动到边界时，是否自动“透传”给 body 横向滚动。
+   *
+   * - `false`（默认）：在冻结区域内滚动时，即使滚动到头/尾也不会触发 body 横向滚动
+   * - `true`：当冻结区域无法继续滚动时，将剩余滚动意图交由 body 横向滚动处理
+   *
+   * 说明：
+   * - 仅对鼠标滚轮/触摸板触发的横向滚动（wheel）生效
+   * - 仅在 `scrollFrozenCols` / `scrollRightFrozenCols` 开启且对应区域存在溢出（offset > 0）时才有意义
+   */
+  scrollFrozenColsPassThroughToBody?: boolean;
+
   // /** 待实现 TODO */
   // frozenRowCount?: number;
   /** 可冻结列数，表示前多少列会出现冻结操作按钮 基本表格生效 */

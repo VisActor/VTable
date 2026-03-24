@@ -120,6 +120,10 @@ containerFit: {
 
 当右侧冻结列总宽度超过 maxRightFrozenWidth 时，右侧冻结区域可横向滚动。开启后会保留全部右侧冻结列，并在冻结区域内通过触摸板横向滚动或拖拽滚动条查看超出部分。
 
+#${prefix} scrollFrozenColsPassThroughToBody(boolean) = false
+
+当在冻结区域（左冻结/右冻结）内横向滚动到边界时，是否将滚动意图“透传”给 body 横向滚动。默认 false，即在冻结区域滚动到头/尾也不会触发 body 滚动；开启后在冻结区域无法继续滚动时会自动联动滚动 body。
+
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
 超过最大冻结宽度后是否全部解冻，默认 true。如果设置为 false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
