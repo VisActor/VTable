@@ -317,10 +317,35 @@ export interface BaseTableConstructorOptions {
   bottomFrozenRowCount?: number;
   /** 最大冻结宽度，固定值 or 百分比。默认为'80%' */
   maxFrozenWidth?: number | string;
+  /**
+   * 右侧最大冻结宽度，固定值 or 百分比。
+   *
+   * - 仅在 `rightFrozenColCount > 0` 时有意义
+   * - 默认与 `maxFrozenWidth` 保持一致（便于左右冻结行为对齐）
+   * - 当 `scrollRightFrozenCols` 开启时，该值决定右侧冻结区域的“视口宽度上限”
+   */
   maxRightFrozenWidth?: number | string;
   /** 超过最大冻结宽度后是否全部解冻，默认true */
   unfreezeAllOnExceedsMaxWidth?: boolean;
+  /**
+   * 是否允许左侧冻结区域内部横向滚动。
+   *
+   * 当左侧冻结列的“内容总宽度”超过 `maxFrozenWidth` 时：
+   * - `false`（默认）：冻结列会按 `unfreezeAllOnExceedsMaxWidth` 的策略自动解冻以适配视口
+   * - `true`：保留全部冻结列，并在左侧冻结区域内通过触摸板横向滚动/滚动条查看超出部分
+   *
+   * 该能力会引入一个独立的滚动域（frozen），对应 `getFrozenColsScrollLeft/getFrozenColsOffset`。
+   */
   scrollFrozenCols?: boolean;
+  /**
+   * 是否允许右侧冻结区域内部横向滚动。
+   *
+   * 当右侧冻结列的“内容总宽度”超过 `maxRightFrozenWidth` 时：
+   * - `false`（默认）：右侧冻结区域宽度等于内容宽度（不会出现内部横向滚动）
+   * - `true`：保留全部右侧冻结列，并在右侧冻结区域内通过触摸板横向滚动/滚动条查看超出部分
+   *
+   * 该能力会引入一个独立的滚动域（rightFrozen），对应 `getRightFrozenColsScrollLeft/getRightFrozenColsOffset`。
+   */
   scrollRightFrozenCols?: boolean;
 
   // /** 待实现 TODO */

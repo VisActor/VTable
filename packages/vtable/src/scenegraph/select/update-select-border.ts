@@ -6,6 +6,10 @@ import { calculateCellRangeDistribution } from '../utils/cell-pos';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
+  // 三类选区组件需要统一更新：
+  // - customSelectedRangeComponents：自定义样式选区（独立于默认 selectionStyle）
+  // - selectingRangeComponents：拖拽/框选过程中的临时选区
+  // - selectedRangeComponents：最终选中态选区
   scene.customSelectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
     updateComponent(selectComp, key, scene);
   });
@@ -28,6 +32,7 @@ function updateComponent(
   scene: Scenegraph
 ) {
   const table = scene.table;
+  // key: `${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`
   const [startColStr, startRowStr, endColStr, endRowStr] = key.split('-');
   const startCol = parseInt(startColStr, 10);
   const startRow = parseInt(startRowStr, 10);
@@ -42,6 +47,7 @@ function updateComponent(
   let visibleCellRange;
   switch (selectComp.role) {
     case 'rowHeader':
+      // rowHeader 的选区高度跟随 body 可视行范围（避免选框覆盖不可见区域造成性能浪费）
       visibleCellRange = table.getBodyVisibleRowRange();
       if (visibleCellRange) {
         computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
@@ -49,6 +55,7 @@ function updateComponent(
       }
       break;
     case 'columnHeader':
+      // columnHeader 的选区宽度跟随 body 可视列范围
       visibleCellRange = table.getBodyVisibleCellRange();
       if (visibleCellRange) {
         computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart - 1);
@@ -58,6 +65,7 @@ function updateComponent(
     case 'cornerHeader':
       break;
     case 'bottomFrozen':
+      // bottomFrozen 的横向范围依赖 body 的可视列范围
       visibleCellRange = table.getBodyVisibleCellRange();
       if (visibleCellRange) {
         computeRectCellRangeStartCol = Math.max(startCol, visibleCellRange.colStart - 1);
@@ -65,6 +73,7 @@ function updateComponent(
       }
       break;
     case 'rightFrozen':
+      // rightFrozen 的纵向范围依赖 body 的可视行范围
       visibleCellRange = table.getBodyVisibleCellRange();
       if (visibleCellRange) {
         computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
@@ -78,6 +87,7 @@ function updateComponent(
     case 'rightBottomCorner':
       break;
     default:
+      // body 区选框默认同时裁剪行列范围
       visibleCellRange = table.getBodyVisibleCellRange();
       if (visibleCellRange) {
         computeRectCellRangeStartRow = Math.max(startRow, visibleCellRange.rowStart - 1);
@@ -97,6 +107,7 @@ function updateComponent(
   const offsetX = scene.tableGroup.attribute.x + (overlayGroup.attribute.x ?? 0);
   const offsetY = scene.tableGroup.attribute.y + (overlayGroup.attribute.y ?? 0);
 
+  // 使用第一个单元格的 global bounds 来确定选框左上角，换算为 overlay 本地坐标。
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
@@ -126,6 +137,9 @@ function updateComponent(
     }
     //#region 计算填充柄小方块的位置
 
+    // fill handle 的定位基于“选区右下角单元格”的 global bounds。
+    // 当选区贴边（最后一列/最后一行）时，需要用相邻单元格 bounds 来推导一个合理的 handle 位置，
+    // 否则 handle 会超出 table/clip 区域导致不可见或命中异常。
     let lastCellBound;
     let handlerX;
     //当选择区域没有到到最后一列时
@@ -165,6 +179,8 @@ function updateComponent(
   }
 
   //#region 处理边缘被截问题
+  // 选框边框线绘制在 rect 边缘的中心（half line width），当选区贴着表格最外边界时，
+  // 有一半线宽会被 clip 或 canvas 边界裁掉。这里通过收缩/偏移 rect 的宽高来避免“半条线”效果。
   let diffSize = 0;
   if (typeof selectComp.rect.attribute.lineWidth === 'number') {
     diffSize = Math.ceil(selectComp.rect.attribute.lineWidth / 2);
@@ -238,6 +254,8 @@ export function updateCellSelectBorder(
   let endRow = Math.min(Math.max(newEndRow, newStartRow), table.rowCount - 1);
   //#region region 校验四周的单元格有没有合并的情况，如有则扩大范围
   const extendSelectRange = () => {
+    // 若选区边缘触达合并单元格的一部分，需要扩大选区以覆盖整个 merge block。
+    // 这里采用递归扩展：一旦发生扩展，继续检查新边界直到收敛。
     let isExtend = false;
     for (let col = startCol; col <= endCol; col++) {
       if (col === startCol) {
@@ -347,6 +365,9 @@ export function updateCellSelectBorder(
     needRightBottomCornerHeader
   } = calculateCellRangeDistribution(startCol, startRow, endCol, endRow, table);
 
+  // 选区可能跨越多个区域（例如 cornerHeader/columnHeader/body/rightFrozen/bottomFrozen 等），
+  // 需要按区域拆分成多个 select border。每段的 strokeArray 用来控制四条边是否绘制，
+  // 避免跨区域边界处出现“重复描边”（两段都画同一条边会显得更粗）。
   // TODO 可以尝试不拆分三个表头和body【前提是theme中合并配置】 用一个SelectBorder 需要结合clip，并动态设置border的范围【依据区域范围 已经是否跨表头及body】
   if (needCornerHeader) {
     const cornerEndCol = Math.min(endCol, table.frozenColCount - 1);

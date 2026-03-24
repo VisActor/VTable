@@ -3014,6 +3014,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getFrozenColsWidth(): number {
     const contentWidth = this.getFrozenColsContentWidth();
+    // frozenColsWidth 表示“冻结区域视口宽度”，可能小于冻结列内容总宽。
+    // 当开启 scrollFrozenCols 时，冻结区域会限制到 maxFrozenWidth，并允许在冻结区域内部横向滚动来查看超出部分。
     if (!this.options.scrollFrozenCols) {
       return contentWidth;
     }
@@ -3021,14 +3023,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return Math.min(contentWidth, maxFrozenWidth);
   }
   getFrozenColsContentWidth(): number {
+    // 冻结列内容总宽（不受 maxFrozenWidth 限制）
     return this.getColsWidth(0, this.frozenColCount - 1);
   }
   getFrozenColsOffset(): number {
+    // 冻结区域可滚动的最大距离（内容宽 - 视口宽），用于计算滚动条范围与边界判断
     const contentWidth = this.getFrozenColsContentWidth();
     const viewportWidth = this.getFrozenColsWidth();
     return Math.max(0, contentWidth - viewportWidth);
   }
   getFrozenColsScrollLeft(): number {
+    // 左冻结区域内部的横向滚动位置（像素值）
     return this.stateManager.scroll.frozenHorizontalBarPos ?? 0;
   }
   /**
@@ -3052,6 +3057,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getRightFrozenColsWidth(): number {
     const contentWidth = this.getRightFrozenColsContentWidth();
+    // rightFrozenColsWidth 表示“右侧冻结区域视口宽度”。
+    // 当开启 scrollRightFrozenCols 时，右侧冻结区域会限制到 maxRightFrozenWidth，并允许在右冻结区域内部横向滚动。
     if (!this.options.scrollRightFrozenCols) {
       return contentWidth;
     }
@@ -3069,11 +3076,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return 0;
   }
   getRightFrozenColsOffset(): number {
+    // 右侧冻结区域可滚动的最大距离（内容宽 - 视口宽）
     const contentWidth = this.getRightFrozenColsContentWidth();
     const viewportWidth = this.getRightFrozenColsWidth();
     return Math.max(0, contentWidth - viewportWidth);
   }
   getRightFrozenColsScrollLeft(): number {
+    // 右冻结区域内部的横向滚动位置（像素值）
     return this.stateManager.scroll.rightFrozenHorizontalBarPos ?? 0;
   }
   /**

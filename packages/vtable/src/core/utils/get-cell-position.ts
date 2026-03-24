@@ -190,6 +190,8 @@ export function getTargetColAtConsiderRightFrozen(
     absoluteX < _this.tableNoFrameWidth &&
     absoluteX <= _this.getAllColsWidth()
   ) {
+    // 命中测试需要将“右冻结视口坐标”映射到“右冻结内容坐标”：
+    // 右冻结内容在视口内可滚动时，实际的列位置会整体随 scrollLeft 平移。
     absoluteX -= rightFrozenScrollLeft;
     for (let i = 0; i < _this.rightFrozenColCount; i++) {
       if (absoluteX > _this.tableNoFrameWidth - _this.getColsWidth(_this.colCount - i - 1, _this.colCount - 1)) {

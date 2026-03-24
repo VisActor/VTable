@@ -15,7 +15,9 @@ export function bindScrollBarListener(eventManager: EventManager) {
   const horizontalVisible = table.theme.scrollStyle?.horizontalVisible ?? visible1;
   const verticalVisible = table.theme.scrollStyle?.verticalVisible ?? visible1;
 
-  // 监听滚动条组件pointover事件
+  // 监听滚动条 hover：
+  // - focus：hover 显示，pointerout 立即隐藏
+  // - scrolling：hover 显示（用于支持“点轨道/拖拽”交互），pointerout 时重新触发 autoHide 计时
   scenegraph.component.vScrollBar.addEventListener('pointerover', (e: any) => {
     if (verticalVisible === 'focus' || verticalVisible === 'scrolling') {
       stateManager.showVerticalScrollBar();
@@ -53,6 +55,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
     if (horizontalVisible === 'focus') {
       stateManager.hideHorizontalScrollBar();
     } else if (horizontalVisible === 'scrolling') {
+      // 鼠标离开滚动条后，滚动条应当回到“滚动时显示”的策略：延迟隐藏
       stateManager.showHorizontalScrollBar(true, 'body');
     }
   });

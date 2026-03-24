@@ -1709,6 +1709,8 @@ export class Scenegraph {
     if (this.table.options.menu?.contextMenuWorkOnlyCell === false) {
       this.canvasShowMenu();
     }
+    // addRecords / setRecords 等数据变更路径可能会 clearCells + recreate scenegraph，
+    // 选区组件挂在 overlay 下会被清空，因此需要在场景树重建完成后按 state 重新创建选区图元。
     if (this.table.stateManager.select.ranges?.length) {
       this.recreateAllSelectRangeComponents();
     }
@@ -1964,6 +1966,9 @@ export class Scenegraph {
     const rightFrozenStartX =
       -this.table.getRightFrozenColsOffset() + (this.table.getRightFrozenColsScrollLeft?.() ?? 0);
     const rightFrozenContentWidth = this.table.getRightFrozenColsContentWidth();
+    // rightFrozenStartX 需要同时考虑“右冻结内容溢出量”与“右冻结滚动位置”：
+    // - 右冻结内容默认是贴在最右侧的，因此需要先整体向左偏移 offset（使右侧内容尾部对齐视口）
+    // - 再加上 scrollLeft（在视口内左右移动查看隐藏的列）
     // 更新各列x&col
     updateContainerChildrenX(this.cornerHeaderGroup, frozenStartX);
     updateContainerChildrenX(this.rowHeaderGroup, frozenStartX);
@@ -2027,6 +2032,7 @@ export class Scenegraph {
   }
 
   setRightFrozenColsScrollLeft(left: number) {
+    // rightStartX 以“右冻结内容右对齐”为基准，再叠加 scrollLeft 在视口内平移
     const rightStartX = -this.table.getRightFrozenColsOffset() + left;
     updateContainerChildrenX(this.rightFrozenGroup, rightStartX);
     updateContainerChildrenX(this.rightTopCornerGroup, rightStartX);

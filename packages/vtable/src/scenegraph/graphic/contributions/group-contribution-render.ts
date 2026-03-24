@@ -1061,6 +1061,13 @@ function getSelectOverlayClipInflate(group: Group, table: BaseTableAPI) {
     return { left: 0, top: 0, right: 0, bottom: 0 };
   }
 
+  // 选区 overlay 组会被各个区域的 clipRect 裁剪。
+  // 当选区贴边（表格边缘/冻结分区边缘）时，边框外描边与 fill handle（右下角小方块）
+  // 可能被 clipRect 截断，因此对 overlay 的 clipRect 做“外扩”处理。
+  //
+  // 其中：
+  // - baseInflate：覆盖 selection border 的线宽（避免只显示一半）
+  // - handleInflate：当开启 fillHandle 且只有一个选区时，为 6x6 的 handle 预留溢出空间（半径 3px）
   const lineWidth = table.theme.selectionStyle?.cellBorderLineWidth;
   const maxLineWidth = Array.isArray(lineWidth)
     ? Math.max(...lineWidth.filter(v => typeof v === 'number'))

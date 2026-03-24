@@ -179,7 +179,9 @@ export class StateManager {
   scroll: {
     horizontalBarPos: number;
     verticalBarPos: number;
+    // 左侧冻结区域内部横向滚动位置（单位：px）。仅在 scrollFrozenCols 开启且存在溢出时生效。
     frozenHorizontalBarPos: number;
+    // 右侧冻结区域内部横向滚动位置（单位：px）。仅在 scrollRightFrozenCols 开启且存在溢出时生效。
     rightFrozenHorizontalBarPos: number;
   };
   tablePosition: {
@@ -1031,6 +1033,7 @@ export class StateManager {
       return;
     }
     this.scroll.frozenHorizontalBarPos = left;
+    // 左冻结滚动条的 0~1 比例与 scrollLeft 同向：ratio = left / maxScrollLeft
     const ratio = maxScrollLeft ? left / maxScrollLeft : 0;
     this.table.scenegraph.component.updateFrozenHorizontalScrollBarPos(ratio);
     triggerRender && this.table.scenegraph.setFrozenColsScrollLeft(left);
@@ -1047,6 +1050,9 @@ export class StateManager {
       return;
     }
     this.scroll.rightFrozenHorizontalBarPos = left;
+    // 右冻结的视觉“展开方向”与 left 值相反（right frozen 的内容从右往左展开）。
+    // 为了让滚动条 thumb 的移动方向更符合直觉，这里将滚动条 ratio 做反向映射：
+    // ratio = 1 - left / maxScrollLeft
     const ratio = maxScrollLeft ? 1 - left / maxScrollLeft : 1;
     this.table.scenegraph.component.updateRightFrozenHorizontalScrollBarPos(ratio);
     triggerRender && this.table.scenegraph.setRightFrozenColsScrollLeft(left);
@@ -1054,6 +1060,7 @@ export class StateManager {
 
   updateFrozenHorizontalScrollBar(xRatio: number) {
     const maxScrollLeft = this.table.getFrozenColsOffset?.() ?? 0;
+    // 由滚动条 ratio 反推左冻结 scrollLeft（同向）
     let left = Math.ceil(xRatio * maxScrollLeft);
     if (!isValid(left) || isNaN(left)) {
       left = 0;
@@ -1063,6 +1070,7 @@ export class StateManager {
 
   updateRightFrozenHorizontalScrollBar(xRatio: number) {
     const maxScrollLeft = this.table.getRightFrozenColsOffset?.() ?? 0;
+    // 由滚动条 ratio 反推右冻结 scrollLeft（反向）
     let left = Math.ceil((1 - xRatio) * maxScrollLeft);
     if (!isValid(left) || isNaN(left)) {
       left = 0;

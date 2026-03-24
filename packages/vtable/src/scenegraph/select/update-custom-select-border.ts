@@ -12,6 +12,9 @@ export function updateCustomSelectBorder(
   selectRange: CellRange & { skipBodyMerge?: boolean },
   style: CustomSelectionStyle
 ) {
+  // 自定义选区（CustomSelectionStyle）与默认选区的拆分方式一致：
+  // 仍然需要按 corner/headers/body/rightFrozen/bottomFrozen 等区域拆分绘制，
+  // 以便配合各区域的 clipRect，避免跨区域绘制导致的越界或重复描边。
   const table = scene.table;
   const newStartCol = selectRange.start.col;
   const newStartRow = selectRange.start.row;
@@ -200,6 +203,7 @@ function createCustomCellSelectBorder(
   strokes: boolean[],
   style: CustomSelectionStyle
 ) {
+  // 自定义选区只负责绘制 rect（不包含 fill handle），其 key 与默认选区保持一致，便于统一更新/删除。
   const startCol = Math.min(start_Col, end_Col);
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);

@@ -30,6 +30,12 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
   let usedFrozenHorizontal = false;
   let usedRightFrozenHorizontal = false;
   if (optimizedDeltaX) {
+    // 横向滚动需要判断“滚动意图属于哪个区域”：
+    // - body：主滚动域（影响非冻结列）
+    // - frozen：左侧冻结区域内部滚动（scrollFrozenCols 开启且溢出时）
+    // - rightFrozen：右侧冻结区域内部滚动（scrollRightFrozenCols 开启且溢出时）
+    //
+    // 部分浏览器/输入设备的 wheel 事件不一定带坐标（event.x/y），因此这里会回退使用 LastBodyPointerXY。
     const pxEvent = (event as any).x;
     const pyEvent = (event as any).y;
     const pxFallback = (state.table as any).eventManager?.LastBodyPointerXY?.x;
@@ -69,6 +75,8 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
       }
     } else if (rightFrozenColsScrollable && isInRightFrozenViewport) {
       const maxRightFrozenScrollLeft = state.table.getRightFrozenColsOffset();
+      // 右冻结区域的内容从右向左展开。为了让触摸板的“向左滑”表现为“展开更多右冻结列”，
+      // 这里将 deltaX 反向映射到 rightFrozen 的 scrollLeft。
       const rightFrozenDelta = -optimizedDeltaX;
       const nextRightFrozenScrollLeft = state.scroll.rightFrozenHorizontalBarPos + rightFrozenDelta;
       const canScrollRightFrozen =

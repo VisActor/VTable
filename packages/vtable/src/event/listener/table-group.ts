@@ -184,6 +184,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
       (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
     ) {
+      // focus 模式下：根据鼠标当前所在的区域，仅显示该区域对应的横向滚动条，
+      // 避免 body/左冻结/右冻结三段滚动条同时展示造成干扰。
       const relativeX = e.x - table.tableX;
       const target =
         table.options.scrollFrozenCols &&
