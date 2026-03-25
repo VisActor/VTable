@@ -7,13 +7,13 @@ Note: This function is only supported in the basic table ListTable.
 ## Set Left Frozen Columns
 
 Freezing the left column is the most common freezing requirement. Compared with the freezing in other directions, this is also the most comprehensive freezing ability supported by VTable.
-f
 The relevant configuration items are as follows:
 
 - `frozenColCount`: Number of frozen columns, default is 0.
 - `allowFrozenColCount`: Number of columns allowed to be operated, that is, the number of columns before which the freeze operation button will appear, default is 0.
 - `showFrozenIcon`: Whether to display the fixed column icon, default is `true`.
 - `maxFrozenWidth`: Maximum freeze width, default is '80%'.
+- `scrollFrozenCols`: When the total width of frozen columns exceeds `maxFrozenWidth`, the left frozen area becomes horizontally scrollable, default is `false`. When enabled, all frozen columns are kept and you can use trackpad horizontal scrolling or drag the scrollbar inside the frozen area.
 - `unfreezeAllOnExceedsMaxWidth`: When the column width exceeds the maximum freeze width, whether to automatically unfreeze all, default is `true`. If set to false, it will not unfreeze all columns, but will determine the number of columns to be unfrozen according to the value of maxFrozenWidth.
 
 Here is a configuration example:
@@ -36,6 +36,29 @@ A common scenario for freezing the right column in a table is to place operation
 The configuration items are as follows:
 
 - `rightFrozenColCount`: Number of right frozen columns, default is 0.
+- `maxRightFrozenWidth`: Maximum freeze width for right frozen columns (fixed value or percentage). Defaults to `maxFrozenWidth`.
+- `scrollRightFrozenCols`: When the total width of right frozen columns exceeds `maxRightFrozenWidth`, the right frozen area becomes horizontally scrollable, default is `false`.
+
+## Horizontal Scrolling Inside Frozen Areas
+
+When the frozen area's content width exceeds the maximum freeze width, you can enable horizontal scrolling inside the frozen area to keep all frozen columns.
+
+```javascript
+const listTable = new ListTable({
+  // ...other configuration items
+  frozenColCount: 6,
+  maxFrozenWidth: 320,
+  scrollFrozenCols: true,
+
+  rightFrozenColCount: 4,
+  maxRightFrozenWidth: 320,
+  scrollRightFrozenCols: true
+});
+```
+
+After enabling:
+- The left/right frozen areas respond to trackpad horizontal scrolling within their own regions.
+- When scrollbars are visible, independent horizontal scrollbars for frozen areas will appear at the bottom.
 
 ## Set Top Frozen Rows
 

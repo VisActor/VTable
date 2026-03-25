@@ -963,65 +963,130 @@ export class ClipBodyGroupBeforeRenderContribution implements IGroupRenderContri
       return;
     }
 
+    const clipInflate = getSelectOverlayClipInflate(group as Group, table);
+
     if ((group as Group).role === 'body') {
-      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
-      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
-      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
-      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth() - clipInflate.left;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight() - clipInflate.top;
+      const width =
+        group.parent.attribute.width -
+        table.getFrozenColsWidth() -
+        table.getRightFrozenColsWidth() +
+        clipInflate.left +
+        clipInflate.right;
+      const height =
+        group.parent.attribute.height -
+        table.getFrozenRowsHeight() -
+        table.getBottomFrozenRowsHeight() +
+        clipInflate.top +
+        clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'row-header') {
-      const x = 0;
-      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
-      const width = table.getFrozenColsWidth();
-      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight() - clipInflate.top;
+      const width = table.getFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height =
+        group.parent.attribute.height -
+        table.getFrozenRowsHeight() -
+        table.getBottomFrozenRowsHeight() +
+        clipInflate.top +
+        clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'col-header') {
-      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
-      const y = 0;
-      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
-      const height = table.getFrozenRowsHeight();
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth() - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width =
+        group.parent.attribute.width -
+        table.getFrozenColsWidth() -
+        table.getRightFrozenColsWidth() +
+        clipInflate.left +
+        clipInflate.right;
+      const height = table.getFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'right-frozen') {
-      const x = 0;
-      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight();
-      const width = table.getRightFrozenColsWidth();
-      const height = group.parent.attribute.height - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = -(group.attribute.y ?? 0) + table.getFrozenRowsHeight() - clipInflate.top;
+      const width = table.getRightFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height =
+        group.parent.attribute.height -
+        table.getFrozenRowsHeight() -
+        table.getBottomFrozenRowsHeight() +
+        clipInflate.top +
+        clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'bottom-frozen') {
-      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth();
-      const y = 0;
-      const width = group.parent.attribute.width - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
-      const height = table.getBottomFrozenRowsHeight();
+      const x = -(group.attribute.x ?? 0) + table.getFrozenColsWidth() - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width =
+        group.parent.attribute.width -
+        table.getFrozenColsWidth() -
+        table.getRightFrozenColsWidth() +
+        clipInflate.left +
+        clipInflate.right;
+      const height = table.getBottomFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'corner-header') {
-      const x = 0;
-      const y = 0;
-      const width = table.getFrozenColsWidth();
-      const height = table.getFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width = table.getFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height = table.getFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'corner-right-top-header') {
-      const x = 0;
-      const y = 0;
-      const width = table.getRightFrozenColsWidth();
-      const height = table.getFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width = table.getRightFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height = table.getFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'corner-right-bottom-header') {
-      const x = 0;
-      const y = 0;
-      const width = table.getRightFrozenColsWidth();
-      const height = table.getBottomFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width = table.getRightFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height = table.getBottomFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     } else if ((group as Group).role === 'corner-left-bottom-header') {
-      const x = 0;
-      const y = 0;
-      const width = table.getFrozenColsWidth();
-      const height = table.getBottomFrozenRowsHeight();
+      const x = 0 - clipInflate.left;
+      const y = 0 - clipInflate.top;
+      const width = table.getFrozenColsWidth() + clipInflate.left + clipInflate.right;
+      const height = table.getBottomFrozenRowsHeight() + clipInflate.top + clipInflate.bottom;
       drawClipRect(context, x, y, width, height);
     }
   }
 }
 
 const precision = Math.pow(2, 24);
+
+function getSelectOverlayClipInflate(group: Group, table: BaseTableAPI) {
+  const isSelectOverlay = (group as any).name === 'select-overlay';
+  if (!isSelectOverlay) {
+    return { left: 0, top: 0, right: 0, bottom: 0 };
+  }
+
+  // 选区 overlay 组会被各个区域的 clipRect 裁剪。
+  // 当选区贴边（表格边缘/冻结分区边缘）时，边框外描边与 fill handle（右下角小方块）
+  // 可能被 clipRect 截断，因此对 overlay 的 clipRect 做“外扩”处理。
+  //
+  // 其中：
+  // - baseInflate：覆盖 selection border 的线宽（避免只显示一半）
+  // - handleInflate：当开启 fillHandle 且只有一个选区时，为 6x6 的 handle 预留溢出空间（半径 3px）
+  const lineWidth = table.theme.selectionStyle?.cellBorderLineWidth;
+  const maxLineWidth = Array.isArray(lineWidth)
+    ? Math.max(...lineWidth.filter(v => typeof v === 'number'))
+    : typeof lineWidth === 'number'
+    ? lineWidth
+    : 0;
+
+  const baseInflate = Math.max(1, Math.ceil(maxLineWidth / 2) + 1);
+  const shouldInflateForFillHandle =
+    !!table.options.excelOptions?.fillHandle && table.stateManager.select.ranges?.length === 1;
+  const handleInflate = shouldInflateForFillHandle ? 3 : 0;
+
+  return {
+    left: baseInflate,
+    top: baseInflate,
+    right: Math.max(baseInflate, handleInflate),
+    bottom: Math.max(baseInflate, handleInflate)
+  };
+}
 
 function drawClipRect(context: IContext2d, x: number, y: number, width: number, height: number) {
   context.beginPath();

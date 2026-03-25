@@ -9,7 +9,7 @@ import type {
 } from '../../ts-types';
 import { IconFuncTypeEnum, InteractionState } from '../../ts-types';
 import type { SceneEvent } from '../util';
-import { getCellEventArgsSet, regIndexReg } from '../util';
+import { getCellEventArgsSetWithTable, regIndexReg } from '../util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import type { Group } from '../../scenegraph/graphic/group';
 import { isValid } from '@visactor/vutils';
@@ -27,6 +27,7 @@ import { clearPageSelection } from '../../tools/env';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
+  const getEventArgsSet = (e: FederatedPointerEvent) => getCellEventArgsSetWithTable(e, table);
 
   table.scenegraph.tableGroup.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const lastX = table.eventManager.LastPointerXY?.x ?? e.x;
@@ -38,7 +39,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       clearTimeout(eventManager.touchSetTimeout);
       eventManager.touchSetTimeout = undefined;
     }
-    const eventArgsSet = getCellEventArgsSet(e);
+    const eventArgsSet = getEventArgsSet(e);
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
@@ -178,10 +179,31 @@ export function bindTableGroupListener(eventManager: EventManager) {
         mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
       });
     }
+
+    if (
+      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
+      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
+    ) {
+      // focus 模式下：根据鼠标当前所在的区域，仅显示该区域对应的横向滚动条，
+      // 避免 body/左冻结/右冻结三段滚动条同时展示造成干扰。
+      const relativeX = e.x - table.tableX;
+      const target =
+        table.options.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0 &&
+        relativeX >= 0 &&
+        relativeX < table.getFrozenColsWidth()
+          ? 'frozen'
+          : table.options.scrollRightFrozenCols &&
+            table.getRightFrozenColsOffset?.() > 0 &&
+            relativeX > table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          ? 'rightFrozen'
+          : 'body';
+      stateManager.showHorizontalScrollBar(false, target);
+    }
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerout', (e: FederatedPointerEvent) => {
-    const eventArgsSet = getCellEventArgsSet(e);
+    const eventArgsSet = getEventArgsSet(e);
     const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
     if (cellGoup?.role === 'table') {
       eventManager.dealTableHover();
@@ -189,7 +211,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('pointerover', (e: FederatedPointerEvent) => {
-    const eventArgsSet = getCellEventArgsSet(e);
+    const eventArgsSet = getEventArgsSet(e);
     const cellGoup = eventArgsSet?.eventArgs?.target as unknown as Group;
     // console.log('pointerover', cellGoup);
 
@@ -266,7 +288,19 @@ export function bindTableGroupListener(eventManager: EventManager) {
       (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
       (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
     ) {
-      stateManager.showHorizontalScrollBar();
+      const relativeX = e.x - table.tableX;
+      const target =
+        table.options.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0 &&
+        relativeX >= 0 &&
+        relativeX < table.getFrozenColsWidth()
+          ? 'frozen'
+          : table.options.scrollRightFrozenCols &&
+            table.getRightFrozenColsOffset?.() > 0 &&
+            relativeX > table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+          ? 'rightFrozen'
+          : 'body';
+      stateManager.showHorizontalScrollBar(false, target);
     }
     if (
       (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
@@ -415,7 +449,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 只处理左键
       return;
     }
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     eventManager.downIcon = undefined;
     if (stateManager.interactionState !== InteractionState.default) {
       return;
@@ -564,7 +598,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         stateManager.updateInteractionState(InteractionState.grabing);
       }
       if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL)) {
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        const eventArgsSet: SceneEvent = getEventArgsSet(e);
         if (eventArgsSet.eventArgs) {
           table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_CELL, {
             col: eventArgsSet.eventArgs.col,
@@ -601,7 +635,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         if (table.stateManager.isFillHandle()) {
           table.stateManager.endFillSelect();
         }
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        const eventArgsSet: SceneEvent = getEventArgsSet(e);
         if (
           table.eventManager.isDraging &&
           eventArgsSet.eventArgs &&
@@ -627,7 +661,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
     if (!table.eventManager.isDraging) {
       // 从pointertap中挪过来的这段逻辑
-      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+      const eventArgsSet: SceneEvent = getEventArgsSet(e);
       if (
         !eventManager.isTouchMove &&
         e.button === 0 &&
@@ -667,7 +701,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     // console.log('DRAG_SELECT_END');
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEUP_CELL)) {
-      const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+      const eventArgsSet: SceneEvent = getEventArgsSet(e);
       if (eventArgsSet.eventArgs) {
         table.fireListeners(TABLE_EVENT_TYPE.MOUSEUP_CELL, {
           col: eventArgsSet.eventArgs.col,
@@ -688,7 +722,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('rightdown', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     // 右键点击
     if (eventArgsSet.eventArgs) {
       stateManager.triggerContextMenu(
@@ -775,7 +809,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     if (table.stateManager.columnResize.resizing) {
       return;
     }
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     // 触发click_cell事件的逻辑挪到了pointerup中
     // if (
     //   !eventManager.isTouchMove &&
@@ -828,7 +862,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 通过这个变量判断非drag鼠标拖拽状态，就不再增加其他变量isDrag了（touchSetTimeout如果拖拽过会变成undefined pointermove事件有置为undefined）
       if (e.pointerType === 'touch') {
         // 移动端事件特殊处理
-        const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+        const eventArgsSet: SceneEvent = getEventArgsSet(e);
+        // replaced by getEventArgsSet above
         if (eventManager.touchSetTimeout) {
           clearTimeout(eventManager.touchSetTimeout);
           const isHasSelected = !!stateManager.select.ranges?.length;
@@ -841,7 +876,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   // stage 的pointerdown监听
   table.scenegraph.stage.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
     if (
       !eventArgsSet.eventArgs?.target ||
       (eventArgsSet.eventArgs?.target as any) !== stateManager.residentHoverIcon?.icon
@@ -947,7 +982,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
   });
   table.scenegraph.stage.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
 
     // 检查事件是否来自当前表格的有效区域
     const isEventFromCurrentTable = e.target?.isDescendantsOf?.(table.scenegraph.tableGroup) ?? false;
@@ -988,7 +1023,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   // });
 
   table.scenegraph.tableGroup.addEventListener('checkbox_state_change', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     const { col, row } = eventArgsSet.eventArgs;
     const cellInfo = table.getCellInfo(col, row);
 
@@ -1058,7 +1093,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('radio_checked', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     const { col, row, target } = eventArgsSet.eventArgs;
     const cellInfo = table.getCellInfo(col, row);
     const indexInCell: string | undefined = regIndexReg.exec(target.id as string)?.[1];
@@ -1143,7 +1178,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
 
   table.scenegraph.tableGroup.addEventListener('switch_state_change', (e: FederatedPointerEvent) => {
-    const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+    const eventArgsSet: SceneEvent = getEventArgsSet(e);
     const { col, row, target } = eventArgsSet.eventArgs;
     const cellInfo = table.getCellInfo(col, row);
 
@@ -1241,7 +1276,7 @@ export function endResizeRow(table: BaseTableAPI) {
 }
 
 function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
-  const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+  const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
   let col = -1;
   let row = -1;
   if (eventArgsSet.eventArgs) {

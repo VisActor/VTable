@@ -526,7 +526,9 @@ export class SceneProxy {
       this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
 
-    const screenLeft = this.table.getTargetColAt(x + this.table.scenegraph.rowHeaderGroup.attribute.width);
+    const screenLeft = this.table.getTargetColAt(
+      x + this.table.scenegraph.rowHeaderGroup.attribute.width + (this.table.getFrozenColsOffset?.() ?? 0)
+    );
     if (screenLeft) {
       this.screenLeftCol = screenLeft.col;
     }
@@ -836,7 +838,9 @@ export class SceneProxy {
         const deltaX =
           colGroup.attribute.x +
           colGroup.attribute.width -
-          (this.table.getAllColsWidth() - this.table.getFrozenColsWidth() - this.table.getRightFrozenColsWidth());
+          (this.table.getAllColsWidth() -
+            (this.table.getFrozenColsContentWidth?.() ?? this.table.getFrozenColsWidth()) -
+            (this.table.getRightFrozenColsContentWidth?.() ?? this.table.getRightFrozenColsWidth()));
         this.deltaX = -deltaX;
       }
     } else if (isValid(screenLeftX) && isValid(screenLeftCol)) {

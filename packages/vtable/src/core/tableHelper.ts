@@ -215,10 +215,12 @@ export function isAutoDefine(width: string | number): width is 'auto' {
 
 export function _getScrollableVisibleRect(table: BaseTableAPI): Rect {
   let frozenColsWidth = 0;
+  let frozenColsContentWidth = 0;
   let rightFrozenColsWidth = 0;
   if (table.frozenColCount > 0) {
     //有固定列时绘制固定列
     frozenColsWidth = table.getFrozenColsWidth();
+    frozenColsContentWidth = table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
   }
   if (table.rightFrozenColCount > 0) {
     //有固定列时绘制固定列
@@ -235,7 +237,7 @@ export function _getScrollableVisibleRect(table: BaseTableAPI): Rect {
     bottomFrozenRowsHeight = table.getBottomFrozenRowsHeight();
   }
   return new Rect(
-    table.scrollLeft + frozenColsWidth,
+    table.scrollLeft + frozenColsContentWidth,
     table.scrollTop + frozenRowsHeight,
     table.tableNoFrameWidth - frozenColsWidth - rightFrozenColsWidth,
     table.tableNoFrameHeight - frozenRowsHeight - bottomFrozenRowsHeight

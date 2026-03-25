@@ -317,8 +317,48 @@ export interface BaseTableConstructorOptions {
   bottomFrozenRowCount?: number;
   /** 最大冻结宽度，固定值 or 百分比。默认为'80%' */
   maxFrozenWidth?: number | string;
+  /**
+   * 右侧最大冻结宽度，固定值 or 百分比。
+   *
+   * - 仅在 `rightFrozenColCount > 0` 时有意义
+   * - 默认与 `maxFrozenWidth` 保持一致（便于左右冻结行为对齐）
+   * - 当 `scrollRightFrozenCols` 开启时，该值决定右侧冻结区域的“视口宽度上限”
+   */
+  maxRightFrozenWidth?: number | string;
   /** 超过最大冻结宽度后是否全部解冻，默认true */
   unfreezeAllOnExceedsMaxWidth?: boolean;
+  /**
+   * 是否允许左侧冻结区域内部横向滚动。
+   *
+   * 当左侧冻结列的“内容总宽度”超过 `maxFrozenWidth` 时：
+   * - `false`（默认）：冻结列会按 `unfreezeAllOnExceedsMaxWidth` 的策略自动解冻以适配视口
+   * - `true`：保留全部冻结列，并在左侧冻结区域内通过触摸板横向滚动/滚动条查看超出部分
+   *
+   * 该能力会引入一个独立的滚动域（frozen），对应 `getFrozenColsScrollLeft/getFrozenColsOffset`。
+   */
+  scrollFrozenCols?: boolean;
+  /**
+   * 是否允许右侧冻结区域内部横向滚动。
+   *
+   * 当右侧冻结列的“内容总宽度”超过 `maxRightFrozenWidth` 时：
+   * - `false`（默认）：右侧冻结区域宽度等于内容宽度（不会出现内部横向滚动）
+   * - `true`：保留全部右侧冻结列，并在右侧冻结区域内通过触摸板横向滚动/滚动条查看超出部分
+   *
+   * 该能力会引入一个独立的滚动域（rightFrozen），对应 `getRightFrozenColsScrollLeft/getRightFrozenColsOffset`。
+   */
+  scrollRightFrozenCols?: boolean;
+
+  /**
+   * 冻结区域滚动到边界时，是否自动“透传”给 body 横向滚动。
+   *
+   * - `false`（默认）：在冻结区域内滚动时，即使滚动到头/尾也不会触发 body 横向滚动
+   * - `true`：当冻结区域无法继续滚动时，将剩余滚动意图交由 body 横向滚动处理
+   *
+   * 说明：
+   * - 仅对鼠标滚轮/触摸板触发的横向滚动（wheel）生效
+   * - 仅在 `scrollFrozenCols` / `scrollRightFrozenCols` 开启且对应区域存在溢出（offset > 0）时才有意义
+   */
+  scrollFrozenColsPassThroughToBody?: boolean;
 
   // /** 待实现 TODO */
   // frozenRowCount?: number;
@@ -851,8 +891,14 @@ export interface BaseTableAPI {
 
   getFrozenRowsHeight: () => number;
   getFrozenColsWidth: () => number;
+  getFrozenColsContentWidth: () => number;
+  getFrozenColsOffset: () => number;
+  getFrozenColsScrollLeft: () => number;
   getBottomFrozenRowsHeight: () => number;
   getRightFrozenColsWidth: () => number;
+  getRightFrozenColsContentWidth: () => number;
+  getRightFrozenColsOffset: () => number;
+  getRightFrozenColsScrollLeft: () => number;
   selectCell: (
     col: number,
     row: number,

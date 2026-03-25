@@ -179,6 +179,10 @@ export class StateManager {
   scroll: {
     horizontalBarPos: number;
     verticalBarPos: number;
+    // 左侧冻结区域内部横向滚动位置（单位：px）。仅在 scrollFrozenCols 开启且存在溢出时生效。
+    frozenHorizontalBarPos: number;
+    // 右侧冻结区域内部横向滚动位置（单位：px）。仅在 scrollRightFrozenCols 开启且存在溢出时生效。
+    rightFrozenHorizontalBarPos: number;
   };
   tablePosition: {
     absoluteX: number;
@@ -229,6 +233,8 @@ export class StateManager {
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
+    this.updateFrozenHorizontalScrollBar = this.updateFrozenHorizontalScrollBar.bind(this);
+    this.updateRightFrozenHorizontalScrollBar = this.updateRightFrozenHorizontalScrollBar.bind(this);
   }
 
   initState() {
@@ -398,7 +404,9 @@ export class StateManager {
     };
     this.scroll = {
       horizontalBarPos: 0,
-      verticalBarPos: 0
+      verticalBarPos: 0,
+      frozenHorizontalBarPos: 0,
+      rightFrozenHorizontalBarPos: 0
     };
     this.tablePosition = {
       absoluteX: 0,
@@ -982,7 +990,12 @@ export class StateManager {
       const maxFrozenWidth = this.table._getMaxFrozenWidth();
 
       if (frozenWidth > maxFrozenWidth) {
-        if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
+        if (this.table.options.scrollFrozenCols) {
+          if (this.table.frozenColCount !== originalFrozenColCount) {
+            this.table._setFrozenColCount(originalFrozenColCount);
+            this.setFrozenCol(originalFrozenColCount);
+          }
+        } else if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
           this.table._setFrozenColCount(0);
           this.setFrozenCol(-1);
         } else {
@@ -994,9 +1007,75 @@ export class StateManager {
         this.table._setFrozenColCount(originalFrozenColCount);
         this.setFrozenCol(originalFrozenColCount);
       }
+      if (!this.table.options.scrollFrozenCols || this.table.getFrozenColsOffset() === 0) {
+        this.setFrozenColsScrollLeft(0, false);
+      } else {
+        this.setFrozenColsScrollLeft(this.scroll.frozenHorizontalBarPos, false);
+      }
+      if (!this.table.options.scrollRightFrozenCols || this.table.getRightFrozenColsOffset() === 0) {
+        this.setRightFrozenColsScrollLeft(0, false);
+      } else {
+        this.setRightFrozenColsScrollLeft(this.scroll.rightFrozenHorizontalBarPos, false);
+      }
     } else {
       this.clearFrozenObserver();
     }
+  }
+
+  setFrozenColsScrollLeft(left: number, triggerRender: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
+    const maxScrollLeft = this.table.getFrozenColsOffset();
+    left = Math.max(0, Math.min(left, maxScrollLeft));
+    left = Math.ceil(left);
+    if (this.scroll.frozenHorizontalBarPos === left) {
+      return;
+    }
+    this.scroll.frozenHorizontalBarPos = left;
+    // 左冻结滚动条的 0~1 比例与 scrollLeft 同向：ratio = left / maxScrollLeft
+    const ratio = maxScrollLeft ? left / maxScrollLeft : 0;
+    this.table.scenegraph.component.updateFrozenHorizontalScrollBarPos(ratio);
+    triggerRender && this.table.scenegraph.setFrozenColsScrollLeft(left);
+  }
+
+  setRightFrozenColsScrollLeft(left: number, triggerRender: boolean = true) {
+    if (!this.table || !this.table.scenegraph) {
+      return;
+    }
+    const maxScrollLeft = this.table.getRightFrozenColsOffset();
+    left = Math.max(0, Math.min(left, maxScrollLeft));
+    left = Math.ceil(left);
+    if (this.scroll.rightFrozenHorizontalBarPos === left) {
+      return;
+    }
+    this.scroll.rightFrozenHorizontalBarPos = left;
+    // 右冻结的视觉“展开方向”与 left 值相反（right frozen 的内容从右往左展开）。
+    // 为了让滚动条 thumb 的移动方向更符合直觉，这里将滚动条 ratio 做反向映射：
+    // ratio = 1 - left / maxScrollLeft
+    const ratio = maxScrollLeft ? 1 - left / maxScrollLeft : 1;
+    this.table.scenegraph.component.updateRightFrozenHorizontalScrollBarPos(ratio);
+    triggerRender && this.table.scenegraph.setRightFrozenColsScrollLeft(left);
+  }
+
+  updateFrozenHorizontalScrollBar(xRatio: number) {
+    const maxScrollLeft = this.table.getFrozenColsOffset?.() ?? 0;
+    // 由滚动条 ratio 反推左冻结 scrollLeft（同向）
+    let left = Math.ceil(xRatio * maxScrollLeft);
+    if (!isValid(left) || isNaN(left)) {
+      left = 0;
+    }
+    this.setFrozenColsScrollLeft(left, true);
+  }
+
+  updateRightFrozenHorizontalScrollBar(xRatio: number) {
+    const maxScrollLeft = this.table.getRightFrozenColsOffset?.() ?? 0;
+    // 由滚动条 ratio 反推右冻结 scrollLeft（反向）
+    let left = Math.ceil((1 - xRatio) * maxScrollLeft);
+    if (!isValid(left) || isNaN(left)) {
+      left = 0;
+    }
+    this.setRightFrozenColsScrollLeft(left, true);
   }
 
   clearFrozenObserver() {
@@ -1124,8 +1203,11 @@ export class StateManager {
   updateHorizontalScrollBar(xRatio: number) {
     const totalWidth = this.table.getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
+    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
+    const rightFrozenOffset = this.table.getRightFrozenColsOffset?.() ?? 0;
+    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset - rightFrozenOffset);
 
-    let horizontalBarPos = Math.ceil(xRatio * (totalWidth - this.table.scenegraph.width));
+    let horizontalBarPos = Math.ceil(xRatio * scrollRange);
     if (!isValid(horizontalBarPos) || isNaN(horizontalBarPos)) {
       horizontalBarPos = 0;
     }
@@ -1147,7 +1229,7 @@ export class StateManager {
 
     if (canScroll.some(value => value === false)) {
       // reset scrollbar pos
-      const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+      const xRatio = scrollRange ? this.scroll.horizontalBarPos / scrollRange : 0;
       this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
       return;
     }
@@ -1273,7 +1355,9 @@ export class StateManager {
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
     const totalWidth = this.table.getAllColsWidth();
-    const frozenWidth = this.table.getFrozenColsWidth();
+    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
+    const rightFrozenOffset = this.table.getRightFrozenColsOffset?.() ?? 0;
+    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset - rightFrozenOffset);
 
     // _disableColumnAndRowSizeRound环境中，可能出现
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
@@ -1281,10 +1365,10 @@ export class StateManager {
     // 这里加入tolerance，避免出现无用滚动
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
 
-    left = Math.max(0, Math.min(left, totalWidth - this.table.scenegraph.width - sizeTolerance));
+    left = Math.max(0, Math.min(left, scrollRange - sizeTolerance));
     left = Math.ceil(left);
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
-    const xRatio = left / (totalWidth - this.table.scenegraph.width);
+    const xRatio = scrollRange ? left / scrollRange : 0;
 
     // if (oldHorizontalBarPos !== left && triggerEvent) {
     if (
@@ -1311,7 +1395,7 @@ export class StateManager {
 
       if (canScroll.some(value => value === false)) {
         // reset scrollbar pos
-        const xRatio = this.scroll.horizontalBarPos / (totalWidth - this.table.scenegraph.width);
+        const xRatio = scrollRange ? this.scroll.horizontalBarPos / scrollRange : 0;
         this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
         return;
       }
@@ -1356,9 +1440,9 @@ export class StateManager {
   }
   showVerticalScrollBar(autoHide?: boolean) {
     this.table.scenegraph.component.showVerticalScrollBar();
+    clearTimeout(this._clearVerticalScrollBar);
     if (autoHide) {
       // 滚轮触发滚动条显示后，异步隐藏
-      clearTimeout(this._clearVerticalScrollBar);
       this._clearVerticalScrollBar = setTimeout(() => {
         this.table.scenegraph?.component.hideVerticalScrollBar();
       }, 1000);
@@ -1367,12 +1451,12 @@ export class StateManager {
   hideHorizontalScrollBar() {
     this.table.scenegraph.component.hideHorizontalScrollBar();
   }
-  showHorizontalScrollBar(autoHide?: boolean) {
-    this.table.scenegraph.component.showHorizontalScrollBar();
+  showHorizontalScrollBar(autoHide?: boolean, target: 'body' | 'frozen' | 'rightFrozen' | 'all' = 'all') {
+    this.table.scenegraph.component.showHorizontalScrollBar(target);
     this.table.scenegraph?.component.showFrozenColumnShadow();
+    clearTimeout(this._clearHorizontalScrollBar);
     if (autoHide) {
       // 滚轮触发滚动条显示后，异步隐藏
-      clearTimeout(this._clearHorizontalScrollBar);
       this._clearHorizontalScrollBar = setTimeout(() => {
         this.table.scenegraph?.component.hideFrozenColumnShadow();
         this.table.scenegraph?.component.hideHorizontalScrollBar();

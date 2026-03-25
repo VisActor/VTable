@@ -7,13 +7,13 @@
 ## 左侧冻结列设置
 
 针对左侧列冻结是最常见的冻结需求，相比其他方向的冻结这也是 VTable 支持功能最全面的冻结能力。
-f
 相关配置项如下：
 
 - `frozenColCount`: 冻结列数，默认为 0。
 - `allowFrozenColCount`: 允许可操作冻结列数，即前多少列会出现冻结操作按钮，默认为 0。
 - `showFrozenIcon`: 是否显示固定列图标，默认为 `true`。
 - `maxFrozenWidth`: 最大冻结宽度，默认为'80%'。
+- `scrollFrozenCols`: 当冻结列总宽度超过 `maxFrozenWidth` 时，左侧冻结区域可横向滚动，默认为 `false`。开启后会保留全部冻结列，并在冻结区域内通过触摸板横向滚动或拖拽滚动条查看超出部分。
 - `unfreezeAllOnExceedsMaxWidth`: 当列宽超过最大冻结宽度时，是否全部自动解冻，默认为 `true`。如果设置为false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
 
 以下是一个配置示例：
@@ -36,6 +36,29 @@ const listTable = new ListTable({
 配置项如下：
 
 - `rightFrozenColCount`: 右侧冻结列数，默认为 0。
+- `maxRightFrozenWidth`: 右侧最大冻结宽度，固定值 or 百分比。默认与 `maxFrozenWidth` 一致。
+- `scrollRightFrozenCols`: 当右侧冻结列总宽度超过 `maxRightFrozenWidth` 时，右侧冻结区域可横向滚动，默认为 `false`。
+
+## 冻结区域横向滚动
+
+当冻结区域的“内容总宽度”超过最大冻结宽度时，可以开启冻结区域内部横向滚动来保留全部冻结列。
+
+```javascript
+const listTable = new ListTable({
+  // ...其他配置项
+  frozenColCount: 6,
+  maxFrozenWidth: 320,
+  scrollFrozenCols: true,
+
+  rightFrozenColCount: 4,
+  maxRightFrozenWidth: 320,
+  scrollRightFrozenCols: true
+});
+```
+
+开启后：
+- 左/右冻结区域会在自身区域内响应触摸板横向滚动。
+- 当滚动条可见时，底部会出现对应冻结区域的独立横向滚动条。
 
 ## 顶部冻结行
 
