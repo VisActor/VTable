@@ -171,6 +171,12 @@ Whether the service clause is optional, the default is true
 
 Not required
 
+${prefix} locateIcon(boolean) = false
+
+When the task bar is horizontally outside the current viewport, show a “locate icon” at the left/right edge of the gantt view. Hover highlights the icon, and click scrolls the task bar into the viewport.
+
+Optional
+
 ${prefix} scheduleCreatable(boolean | Function) = true
 
 When there is no scheduling data, scheduling can be done by creating a task bar. When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, `scheduleCreatable` defaults to `true`, otherwise, when `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, `scheduleCreatable` defaults to `false`.
@@ -267,4 +273,3 @@ Vertical position of the baseline bar relative to the main task bar:
 - `overlap`: baseline overlaps and is centered with the task bar.
 
 Optional
-

@@ -12,6 +12,12 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
   <line x1="70" y1="10" x2="70" y2="190" stroke="black" stroke-width="4"/>
 </svg>`;
 export const TASKBAR_HOVER_ICON_WIDTH = 10;
+const LOCATE_ICON_SIZE = 22;
+const LOCATE_ICON_PADDING = 4;
+const LOCATE_ICON_BG = '#f2f3f5';
+const LOCATE_ICON_BG_HOVER = '#4080ff';
+const LOCATE_ICON_ARROW = '#4e5969';
+const LOCATE_ICON_ARROW_HOVER = '#ffffff';
 
 export class TaskBar {
   formatMilestoneText(text: string, record: any): string {
@@ -98,6 +104,8 @@ export class TaskBar {
   hoverBarLeftIcon: Image;
   hoverBarRightIcon: Image;
   hoverBarProgressHandle: Group;
+  locateIconsGroup?: Group;
+  currentHoverLocateIcon: Group | null;
   _scene: Scenegraph;
   width: number;
   height: number;
@@ -119,6 +127,10 @@ export class TaskBar {
     scene.ganttGroup.addChild(this.group);
     this.initBars();
     this.initHoverBarIcons();
+    if (scene._gantt.parsedOptions.taskBarLocateIcon) {
+      // 定位图标层：用于提示“任务条在当前可视区外”，并支持一键滚动定位
+      this.initLocateIconsGroup();
+    }
   }
 
   initBars() {
@@ -525,6 +537,7 @@ export class TaskBar {
     if (baselineBar) {
       this.barContainer.insertBefore(baselineBar, barGroupBox);
     }
+    this.updateOffscreenIndicators();
   }
   initHoverBarIcons() {
     const hoverBarGroup = new Group({
@@ -602,11 +615,176 @@ export class TaskBar {
     hoverBarGroup.appendChild(progressHandle);
   }
 
+  initLocateIconsGroup() {
+    // 覆盖在任务条区域之上（clip = true），仅用于绘制定位图标，避免受任务条容器滚动影响
+    const locateIconsGroup = new Group({
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+      clip: true,
+      pickable: false
+    });
+    this.locateIconsGroup = locateIconsGroup;
+    locateIconsGroup.name = 'task-bar-locate-icons';
+    this.group.appendChild(locateIconsGroup);
+  }
+
+  applyLocateIconStyle(icon: Group, hover: boolean) {
+    const background = (icon as any).background;
+    const arrow = (icon as any).arrow;
+    if (background) {
+      background.setAttribute('fill', hover ? LOCATE_ICON_BG_HOVER : LOCATE_ICON_BG);
+    }
+    if (arrow) {
+      arrow.setAttribute('fill', hover ? LOCATE_ICON_ARROW_HOVER : LOCATE_ICON_ARROW);
+    }
+  }
+
+  createLocateIcon(side: 'left' | 'right', target: GanttTaskBarNode) {
+    const iconGroup = new Group({
+      x: 0,
+      y: 0,
+      width: LOCATE_ICON_SIZE,
+      height: LOCATE_ICON_SIZE,
+      pickable: true,
+      cursor: 'pointer',
+      visibleAll: false
+    });
+    iconGroup.name = side === 'left' ? 'task-bar-locate-icon-left' : 'task-bar-locate-icon-right';
+    (iconGroup as any).attachedToTaskBarNode = target;
+    (iconGroup as any).side = side;
+    const background = createRect({
+      x: 0,
+      y: 0,
+      width: LOCATE_ICON_SIZE,
+      height: LOCATE_ICON_SIZE,
+      cornerRadius: 4,
+      fill: LOCATE_ICON_BG,
+      pickable: false
+    });
+    const arrowSize = 6;
+    const center = LOCATE_ICON_SIZE / 2;
+    const arrow =
+      side === 'left'
+        ? new Polygon({
+            points: [
+              { x: center + arrowSize / 2, y: center - arrowSize },
+              { x: center - arrowSize / 2, y: center },
+              { x: center + arrowSize / 2, y: center + arrowSize }
+            ],
+            fill: LOCATE_ICON_ARROW,
+            pickable: false
+          })
+        : new Polygon({
+            points: [
+              { x: center - arrowSize / 2, y: center - arrowSize },
+              { x: center + arrowSize / 2, y: center },
+              { x: center - arrowSize / 2, y: center + arrowSize }
+            ],
+            fill: LOCATE_ICON_ARROW,
+            pickable: false
+          });
+    iconGroup.appendChild(background);
+    iconGroup.appendChild(arrow);
+    (iconGroup as any).background = background;
+    (iconGroup as any).arrow = arrow;
+    this.applyLocateIconStyle(iconGroup, false);
+    return iconGroup;
+  }
+
+  setLocateIconHover(icon: Group | null) {
+    if (this.currentHoverLocateIcon && this.currentHoverLocateIcon !== icon) {
+      this.applyLocateIconStyle(this.currentHoverLocateIcon, false);
+    }
+    if (icon) {
+      this.applyLocateIconStyle(icon, true);
+    }
+    this.currentHoverLocateIcon = icon;
+    this._scene.updateNextFrame();
+  }
+
+  updateOffscreenIndicators() {
+    if (!this.locateIconsGroup) {
+      return;
+    }
+    // 任务条相对 barContainer 的坐标系：与滚动值一致（scrollLeft / scrollTop）
+    const gantt = this._scene._gantt;
+    const scrollLeft = gantt.stateManager.scrollLeft;
+    const scrollTop = gantt.stateManager.scrollTop;
+    const viewWidth = gantt.tableNoFrameWidth;
+    const viewHeight = this.height;
+    const visibleLeft = scrollLeft;
+    const visibleRight = scrollLeft + viewWidth;
+    const visibleTop = scrollTop;
+    const visibleBottom = scrollTop + viewHeight;
+
+    let child = this.barContainer.firstChild as any;
+    while (child) {
+      if (child.name === 'task-bar') {
+        const bar = child as GanttTaskBarNode;
+        const barLeft = bar.attribute.x;
+        const barRight = barLeft + bar.attribute.width;
+        const barTop = bar.attribute.y;
+        const barBottom = barTop + bar.attribute.height;
+        // 仅当该行在纵向可视范围内时，才展示横向定位图标
+        const verticalVisible = barBottom >= visibleTop && barTop <= visibleBottom;
+        let side: 'left' | 'right' | null = null;
+        if (verticalVisible) {
+          if (barRight < visibleLeft) {
+            side = 'left';
+          } else if (barLeft > visibleRight) {
+            side = 'right';
+          }
+        }
+        const leftIcon = (bar as any).locateLeftIcon as Group;
+        const rightIcon = (bar as any).locateRightIcon as Group;
+        if (!side) {
+          // 使用 visibleAll 关闭整组显隐（包含子图形），避免只隐藏 group 导致残留
+          leftIcon?.setAttribute('visibleAll', false);
+          rightIcon?.setAttribute('visibleAll', false);
+          if (this.currentHoverLocateIcon === leftIcon || this.currentHoverLocateIcon === rightIcon) {
+            this.setLocateIconHover(null);
+          }
+        } else {
+          let icon = side === 'left' ? leftIcon : rightIcon;
+          if (!icon) {
+            icon = this.createLocateIcon(side, bar);
+            if (side === 'left') {
+              (bar as any).locateLeftIcon = icon;
+            } else {
+              (bar as any).locateRightIcon = icon;
+            }
+            this.locateIconsGroup.appendChild(icon);
+          } else if (icon.parent !== this.locateIconsGroup) {
+            this.locateIconsGroup.appendChild(icon);
+          }
+          const iconX = side === 'left' ? LOCATE_ICON_PADDING : viewWidth - LOCATE_ICON_SIZE - LOCATE_ICON_PADDING;
+          // 图标固定在左右边缘，y 跟随任务条行，并转换到“可视区坐标系”
+          const iconY = barTop - scrollTop + (bar.attribute.height - LOCATE_ICON_SIZE) / 2;
+          icon.setAttributes({
+            x: iconX,
+            y: iconY,
+            visibleAll: true
+          });
+          const otherIcon = side === 'left' ? rightIcon : leftIcon;
+          otherIcon?.setAttribute('visibleAll', false);
+          if (this.currentHoverLocateIcon === otherIcon) {
+            this.setLocateIconHover(null);
+          }
+        }
+      }
+      child = child._next;
+    }
+  }
+
   setX(x: number) {
     this.barContainer.setAttribute('x', x);
+    this.updateOffscreenIndicators();
   }
   setY(y: number) {
     this.barContainer.setAttribute('y', y);
+    this.updateOffscreenIndicators();
   }
   /** 重新创建任务条节点 */
   refresh() {
@@ -617,6 +795,11 @@ export class TaskBar {
       width: this.width,
       y: this._scene._gantt.getAllHeaderRowsHeight()
     });
+    this.locateIconsGroup?.setAttributes({
+      width: this.width,
+      height: this.height
+    });
+    this.locateIconsGroup?.removeAllChild();
     const x = this.barContainer.attribute.x;
     const y = this.barContainer.attribute.y;
     this.barContainer.removeAllChild();
@@ -624,12 +807,18 @@ export class TaskBar {
     this.initBars();
     this.setX(x);
     this.setY(y);
+    this.updateOffscreenIndicators();
   }
   resize() {
     this.width = this._scene._gantt.tableNoFrameWidth;
     this.height = this._scene._gantt.gridHeight;
     this.group.setAttribute('width', this.width);
     this.group.setAttribute('height', this.height);
+    this.locateIconsGroup?.setAttributes({
+      width: this.width,
+      height: this.height
+    });
+    this.updateOffscreenIndicators();
   }
 
   showHoverBar(x: number, y: number, width: number, height: number, target?: GanttTaskBarNode) {
