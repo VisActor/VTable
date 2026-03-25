@@ -1,3 +1,17 @@
+# v1.25.0
+
+2026-03-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: gantt add locateIcon for taskbar
+- **@visactor/vtable**: add option scrollFrozenCols support frozen columns can be scrolled
+
+
+
+[更多详情请查看 v1.25.0](https://github.com/VisActor/VTable/releases/tag/v1.25.0)
+
 # v1.24.0
 
 2026-03-18
