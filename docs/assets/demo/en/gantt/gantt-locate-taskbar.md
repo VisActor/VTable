@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: Task Bar Locate (Offscreen Indicator)
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-locate-taskbar.gif
 link: gantt/Getting_Started
 option: Gantt#taskBar
 ---
@@ -20,7 +20,6 @@ When the timeline is long, task bars may be outside the current viewport. This d
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
 let ganttInstance;
-const CONTAINER_ID = 'vTable';
 
 const records = [
   { id: 1, title: 'Offscreen on the left', start: '2024-02-05', end: '2024-02-20', progress: 20 },

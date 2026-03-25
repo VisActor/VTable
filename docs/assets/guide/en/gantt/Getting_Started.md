@@ -351,20 +351,4 @@ At this point, you have successfully drawn a simple Gantt chart!
 
 When the smallest time scale is `unit: 'day'` and `step: 1`, you can use `timelineHeader.weekendColWidth` to override weekend column width (or set `timelineHeader.hideWeekend` to hide weekend columns).
 
-## Task Bar Locate (Optional)
-
-When the timeline is long and the task bar is outside the current viewport, you can enable the “locate icon” feature: an icon is shown on the left/right edge of the gantt view, and clicking it scrolls the task bar into the viewport.
-
-Key option:
-
-```javascript
-const option = {
-  taskBar: {
-    locateIcon: true
-  }
-};
-```
-
-Demo: `gantt-locate-taskbar`.
-
 I hope this tutorial helps you learn how to use Gantt. Next, you can delve into the various configuration options of vtable-gantt to customize more diverse table effects.

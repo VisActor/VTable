@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图任务条定位（超出可视区提示）
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-locate-taskbar.gif
 link: gantt/Getting_Started
 option: Gantt#taskBar
 ---
@@ -20,7 +20,6 @@ option: Gantt#taskBar
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
 let ganttInstance;
-const CONTAINER_ID = 'vTable';
 
 const records = [
   { id: 1, title: '任务条在左侧不可见', start: '2024-02-05', end: '2024-02-20', progress: 20 },
