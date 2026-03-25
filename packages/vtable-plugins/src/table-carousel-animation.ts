@@ -69,8 +69,8 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
 
   reset() {
     this.playing = false;
-    this.row = this.table.frozenRowCount;
-    this.col = this.table.frozenColCount;
+    this.row = this.table?.frozenRowCount ?? 0;
+    this.col = this.table?.frozenColCount ?? 0;
   }
 
   play() {
