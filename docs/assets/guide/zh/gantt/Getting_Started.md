@@ -351,4 +351,20 @@ window['ganttInstance'] = ganttInstance;
 
 当最小粒度为天且 `unit: 'day'`、`step: 1` 时，可以通过 `timelineHeader.weekendColWidth` 覆盖周末列宽度（或通过 `timelineHeader.hideWeekend` 隐藏周末列）。
 
+## 任务条定位（可选）
+
+当时间轴较长、任务条不在当前可视区域内时，可以开启“定位图标”能力：在甘特图左右边缘显示图标，点击后自动滚动到该任务条的可视区域。
+
+关键配置：
+
+```javascript
+const option = {
+  taskBar: {
+    locateIcon: true
+  }
+};
+```
+
+可参考示例：`gantt-locate-taskbar`。
+
 希望这篇教程对你学习如何使用 Gantt 有所帮助。接下来可以深入了解 vtable-gantt 的各种配置选项，定制出更加丰富多样的表格效果。

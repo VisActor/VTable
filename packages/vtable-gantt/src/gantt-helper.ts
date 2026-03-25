@@ -136,6 +136,8 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.baselineEndDateField = options.taskBar?.baselineEndDateField;
   gantt.parsedOptions.baselinePosition = options.taskBar?.baselinePosition ?? 'bottom';
   gantt.parsedOptions.taskBarClip = options?.taskBar?.clip ?? true;
+  // 是否开启“任务条超出可视区”的定位图标能力（默认关闭）
+  gantt.parsedOptions.taskBarLocateIcon = options?.taskBar?.locateIcon ?? false;
   gantt.parsedOptions.projectSubTasksExpandable = options?.projectSubTasksExpandable ?? true;
   // gantt.parsedOptions.minDate = options?.minDate
   //   ? gantt.parsedOptions.timeScaleIncludeHour

@@ -315,6 +315,13 @@
           }
         },
         {
+          "path": "gantt-locate-taskbar",
+          "title": {
+            "zh": "任务条定位（超出可视区）",
+            "en": "Task Bar Locate"
+          }
+        },
+        {
           "path": "gantt-customLayout",
           "title": {
             "zh": "甘特图自定义渲染",
