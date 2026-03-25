@@ -1666,6 +1666,15 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    */
   setRecords(records: Array<any>): void {
     clearChartRenderQueue();
+    // 如果正在进行列宽/行高调整，先清理指示线，避免残留
+    if (this.stateManager.isResizeCol()) {
+      this.scenegraph.component.hideResizeCol();
+      this.stateManager.columnResize.resizing = false;
+    }
+    if (this.stateManager.isResizeRow()) {
+      this.scenegraph.component.hideResizeRow();
+      this.stateManager.rowResize.resizing = false;
+    }
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;
     this.internalProps.recordsIsTwoDimensionalArray = false;

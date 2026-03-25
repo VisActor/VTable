@@ -1547,6 +1547,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
     clearChartRenderQueue();
+    // 如果正在进行列宽/行高调整，先清理指示线，避免残留
+    if (this.stateManager.isResizeCol()) {
+      this.scenegraph.component.hideResizeCol();
+      this.stateManager.columnResize.resizing = false;
+    }
+    if (this.stateManager.isResizeRow()) {
+      this.scenegraph.component.hideResizeRow();
+      this.stateManager.rowResize.resizing = false;
+    }
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();
     // 过滤掉dataSource的引用

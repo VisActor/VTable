@@ -251,6 +251,14 @@ export class StateManager {
     this.setFrozenState();
   }
   _updateOptionSetState() {
+    // 如果正在进行列宽/行高调整，先隐藏指示线，避免状态重置后指示线残留
+    if (this.columnResize.resizing) {
+      this.table.scenegraph.component.hideResizeCol();
+    }
+    if (this.rowResize.resizing) {
+      this.table.scenegraph.component.hideResizeRow();
+    }
+
     this.interactionState = InteractionState.default;
     // this.select = {
     //   highlightScope: HighlightScope.single,
