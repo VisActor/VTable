@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 18 Mar 2026 09:15:31 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Mar 2026 08:15:12 GMT and should not be manually modified.
+
+## 1.25.0
+Wed, 25 Mar 2026 08:15:12 GMT
+
+### Minor changes
+
+- feat: add option scrollFrozenCols
+
+
+
+### Updates
+
+- feat: gantt add locateIcon for taskbar
+
+
 
 ## 1.24.0
 Wed, 18 Mar 2026 09:15:31 GMT

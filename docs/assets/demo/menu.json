@@ -315,6 +315,13 @@
           }
         },
         {
+          "path": "gantt-locate-taskbar",
+          "title": {
+            "zh": "任务条定位（超出可视区）",
+            "en": "Task Bar Locate"
+          }
+        },
+        {
           "path": "gantt-customLayout",
           "title": {
             "zh": "甘特图自定义渲染",
@@ -439,8 +446,7 @@
             "zh": "甘特图缩放滚动条",
             "en": "Gantt DataZoomAxis Scrollbar"
           }
-        }
-        ,
+        },
         {
           "path": "gantt-baseline",
           "title": {
@@ -918,6 +924,13 @@
           "title": {
             "zh": "滚动",
             "en": "scroll"
+          }
+        },
+        {
+          "path": "scroll-frozen",
+          "title": {
+            "zh": "冻结区可滚动",
+            "en": "Scroll frozen area"
           }
         },
         {

@@ -1,3 +1,23 @@
+# v1.24.0
+
+2026-03-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图配置支持设置周末列宽度
+- **@visactor/vtable-sheet**: 电子表格新增撤销/重做功能
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 groupBy 分组表配合使用 frozenColCount 和 enableTreeStickCell 时滚动错位的问题
+- **@visactor/vtable**: 修复当只有一列时，分组标题不显示问题
+- **@visactor/vtable**: 修复当设置分组表时，复选框单元格渲染错误问题
+
+
+
+[更多详情请查看 v1.24.0](https://github.com/VisActor/VTable/releases/tag/v1.24.0)
+
 # v1.23.3
 
 2026-03-05

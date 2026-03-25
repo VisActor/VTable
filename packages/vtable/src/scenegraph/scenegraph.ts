@@ -126,6 +126,15 @@ export class Scenegraph {
   leftBottomCornerGroup: Group; // 左下角占位单元格Group,只在有下侧冻结行时使用
   rightBottomCornerGroup: Group; // 右下角占位单元格Group,只在有右侧下侧都有冻结行时使用
   componentGroup: Group; // 表格外组件Group
+  bodySelectGroup: Group;
+  rowHeaderSelectGroup: Group;
+  bottomFrozenSelectGroup: Group;
+  colHeaderSelectGroup: Group;
+  rightFrozenSelectGroup: Group;
+  rightTopCornerSelectGroup: Group;
+  leftBottomCornerSelectGroup: Group;
+  rightBottomCornerSelectGroup: Group;
+  cornerHeaderSelectGroup: Group;
   /** 所有选中区域对应的选框组件 */
   selectedRangeComponents: Map<string, { rect: IRect; fillhandle?: IRect; role: CellSubLocation }>;
   /** 当前正在选择区域对应的选框组件 为什么是map 以为可能一个选中区域会被拆分为多个rect组件 三块表头和body都分别对应不同组件*/
@@ -341,6 +350,15 @@ export class Scenegraph {
     delete this.rightBottomCornerGroup.border;
     this.leftBottomCornerGroup.clear();
     delete this.leftBottomCornerGroup.border;
+    this.bodySelectGroup?.clear();
+    this.rowHeaderSelectGroup?.clear();
+    this.bottomFrozenSelectGroup?.clear();
+    this.colHeaderSelectGroup?.clear();
+    this.rightFrozenSelectGroup?.clear();
+    this.rightTopCornerSelectGroup?.clear();
+    this.leftBottomCornerSelectGroup?.clear();
+    this.rightBottomCornerSelectGroup?.clear();
+    this.cornerHeaderSelectGroup?.clear();
 
     this.colHeaderGroup.setAttributes({
       x: 0,
@@ -398,6 +416,65 @@ export class Scenegraph {
       width: 0,
       height: 0,
       visible: false
+    });
+    this.bodySelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rowHeaderSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.bottomFrozenSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.colHeaderSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    });
+    this.rightFrozenSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.rightTopCornerSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.leftBottomCornerSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.rightBottomCornerSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      visible: false
+    });
+    this.cornerHeaderSelectGroup?.setAttributes({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
     });
 
     this.tableGroup.setAttributes({
@@ -1507,8 +1584,21 @@ export class Scenegraph {
     }
     this.bodyGroup.setAttribute('y', this.colHeaderGroup.attribute.height + y);
     this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height + y);
+    this.bodySelectGroup.setAttribute('y', this.bodyGroup.attribute.y);
+    this.rowHeaderSelectGroup.setAttribute('y', this.rowHeaderGroup.attribute.y);
+    this.colHeaderSelectGroup.setAttribute('y', this.colHeaderGroup.attribute.y);
+    this.cornerHeaderSelectGroup.setAttribute('y', this.cornerHeaderGroup.attribute.y);
     if (this.table.rightFrozenColCount > 0) {
       this.rightFrozenGroup.setAttribute('y', this.rightTopCornerGroup.attribute.height + y);
+      this.rightFrozenSelectGroup.setAttribute('y', this.rightFrozenGroup.attribute.y);
+      this.rightTopCornerSelectGroup.setAttribute('y', this.rightTopCornerGroup.attribute.y);
+    }
+    if (this.table.bottomFrozenRowCount > 0) {
+      this.bottomFrozenSelectGroup.setAttribute('y', this.bottomFrozenGroup.attribute.y);
+      this.leftBottomCornerSelectGroup.setAttribute('y', this.leftBottomCornerGroup.attribute.y);
+    }
+    if (this.table.rightFrozenColCount > 0 && this.table.bottomFrozenRowCount > 0) {
+      this.rightBottomCornerSelectGroup.setAttribute('y', this.rightBottomCornerGroup.attribute.y);
     }
     // this.tableGroup.setAttribute('height', this.table.tableNoFrameHeight - y);
     // (this.tableGroup.lastChild as any).setAttribute('width', this.table.tableNoFrameWidth - x);
@@ -1545,8 +1635,21 @@ export class Scenegraph {
     }
     this.bodyGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
     this.colHeaderGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
+    this.bodySelectGroup.setAttribute('x', this.bodyGroup.attribute.x);
+    this.colHeaderSelectGroup.setAttribute('x', this.colHeaderGroup.attribute.x);
+    this.rowHeaderSelectGroup.setAttribute('x', this.rowHeaderGroup.attribute.x);
+    this.cornerHeaderSelectGroup.setAttribute('x', this.cornerHeaderGroup.attribute.x);
     if (this.table.bottomFrozenRowCount > 0) {
       this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth() + x);
+      this.bottomFrozenSelectGroup.setAttribute('x', this.bottomFrozenGroup.attribute.x);
+      this.leftBottomCornerSelectGroup.setAttribute('x', this.leftBottomCornerGroup.attribute.x);
+    }
+    if (this.table.rightFrozenColCount > 0) {
+      this.rightFrozenSelectGroup.setAttribute('x', this.rightFrozenGroup.attribute.x);
+      this.rightTopCornerSelectGroup.setAttribute('x', this.rightTopCornerGroup.attribute.x);
+    }
+    if (this.table.rightFrozenColCount > 0 && this.table.bottomFrozenRowCount > 0) {
+      this.rightBottomCornerSelectGroup.setAttribute('x', this.rightBottomCornerGroup.attribute.x);
     }
     this.updateNextFrame();
   }
@@ -1605,6 +1708,11 @@ export class Scenegraph {
     }
     if (this.table.options.menu?.contextMenuWorkOnlyCell === false) {
       this.canvasShowMenu();
+    }
+    // addRecords / setRecords 等数据变更路径可能会 clearCells + recreate scenegraph，
+    // 选区组件挂在 overlay 下会被清空，因此需要在场景树重建完成后按 state 重新创建选区图元。
+    if (this.table.stateManager.select.ranges?.length) {
+      this.recreateAllSelectRangeComponents();
     }
     this.updateNextFrame();
   }
@@ -1853,9 +1961,17 @@ export class Scenegraph {
   }
 
   updateContainerAttrWidthAndX() {
+    const frozenStartX = -(this.table.getFrozenColsScrollLeft?.() ?? 0);
+    const frozenViewportWidth = this.table.getFrozenColsWidth();
+    const rightFrozenStartX =
+      -this.table.getRightFrozenColsOffset() + (this.table.getRightFrozenColsScrollLeft?.() ?? 0);
+    const rightFrozenContentWidth = this.table.getRightFrozenColsContentWidth();
+    // rightFrozenStartX 需要同时考虑“右冻结内容溢出量”与“右冻结滚动位置”：
+    // - 右冻结内容默认是贴在最右侧的，因此需要先整体向左偏移 offset（使右侧内容尾部对齐视口）
+    // - 再加上 scrollLeft（在视口内左右移动查看隐藏的列）
     // 更新各列x&col
-    const cornerX = updateContainerChildrenX(this.cornerHeaderGroup, 0);
-    const rowHeaderX = updateContainerChildrenX(this.rowHeaderGroup, 0);
+    updateContainerChildrenX(this.cornerHeaderGroup, frozenStartX);
+    updateContainerChildrenX(this.rowHeaderGroup, frozenStartX);
     const colHeaderX =
       this.colHeaderGroup.hasChildNodes() && this.colHeaderGroup.firstChild
         ? updateContainerChildrenX(
@@ -1874,10 +1990,9 @@ export class Scenegraph {
               : 0
           )
         : 0;
-    const rightX = updateContainerChildrenX(
-      this.rightFrozenGroup.childrenCount > 0 ? this.rightFrozenGroup : this.rightTopCornerGroup,
-      0
-    );
+    if (this.rightFrozenGroup.childrenCount > 0) {
+      updateContainerChildrenX(this.rightFrozenGroup, rightFrozenStartX);
+    }
 
     this.bottomFrozenGroup.hasChildNodes() &&
       this.bottomFrozenGroup.firstChild &&
@@ -1887,25 +2002,42 @@ export class Scenegraph {
           ? this.table.getColsWidth(this.table.frozenColCount ?? 0, (this.bottomFrozenGroup.firstChild as any).col - 1)
           : 0
       );
-    updateContainerChildrenX(this.leftBottomCornerGroup, 0);
-    updateContainerChildrenX(this.rightTopCornerGroup, 0);
-    updateContainerChildrenX(this.rightBottomCornerGroup, 0);
+    updateContainerChildrenX(this.leftBottomCornerGroup, frozenStartX);
+    updateContainerChildrenX(this.rightTopCornerGroup, rightFrozenStartX);
+    updateContainerChildrenX(this.rightBottomCornerGroup, rightFrozenStartX);
 
     // 更新容器
-    this.cornerHeaderGroup.setDeltaWidth(cornerX - this.cornerHeaderGroup.attribute.width);
-    this.leftBottomCornerGroup.setDeltaWidth(cornerX - this.leftBottomCornerGroup.attribute.width);
+    this.cornerHeaderGroup.setDeltaWidth(frozenViewportWidth - this.cornerHeaderGroup.attribute.width);
+    this.leftBottomCornerGroup.setDeltaWidth(frozenViewportWidth - this.leftBottomCornerGroup.attribute.width);
     //TODO 可能有影响
     this.colHeaderGroup.setDeltaWidth(colHeaderX - this.colHeaderGroup.attribute.width);
     // this.rightFrozenGroup.setDeltaWidth(colHeaderX - this.table.getRightFrozenColsWidth());
-    this.rowHeaderGroup.setDeltaWidth(rowHeaderX - this.rowHeaderGroup.attribute.width);
+    this.rowHeaderGroup.setDeltaWidth(frozenViewportWidth - this.rowHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setDeltaWidth(colHeaderX - this.bottomFrozenGroup.attribute.width);
-    this.rightFrozenGroup.setDeltaWidth(rightX - this.rightFrozenGroup.attribute.width);
-    this.rightTopCornerGroup.setDeltaWidth(rightX - this.rightTopCornerGroup.attribute.width);
-    this.rightBottomCornerGroup.setDeltaWidth(rightX - this.rightBottomCornerGroup.attribute.width);
+    this.rightFrozenGroup.setDeltaWidth(rightFrozenContentWidth - this.rightFrozenGroup.attribute.width);
+    this.rightTopCornerGroup.setDeltaWidth(rightFrozenContentWidth - this.rightTopCornerGroup.attribute.width);
+    this.rightBottomCornerGroup.setDeltaWidth(rightFrozenContentWidth - this.rightBottomCornerGroup.attribute.width);
     this.bodyGroup.setDeltaWidth(bodyX - this.bodyGroup.attribute.width);
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.bottomFrozenGroup.setAttribute('x', this.table.getFrozenColsWidth());
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
+  }
+
+  setFrozenColsScrollLeft(left: number) {
+    const frozenStartX = -left;
+    updateContainerChildrenX(this.cornerHeaderGroup, frozenStartX);
+    updateContainerChildrenX(this.rowHeaderGroup, frozenStartX);
+    updateContainerChildrenX(this.leftBottomCornerGroup, frozenStartX);
+    this.updateNextFrame();
+  }
+
+  setRightFrozenColsScrollLeft(left: number) {
+    // rightStartX 以“右冻结内容右对齐”为基准，再叠加 scrollLeft 在视口内平移
+    const rightStartX = -this.table.getRightFrozenColsOffset() + left;
+    updateContainerChildrenX(this.rightFrozenGroup, rightStartX);
+    updateContainerChildrenX(this.rightTopCornerGroup, rightStartX);
+    updateContainerChildrenX(this.rightBottomCornerGroup, rightStartX);
+    this.updateNextFrame();
   }
 
   updateContainerAttrHeightAndY() {
@@ -1990,11 +2122,99 @@ export class Scenegraph {
       this.updateContainerAttrHeightAndY();
     }
     this.updateTableSize();
+    this.syncSelectOverlayGroups();
     this.component.updateScrollBar();
 
     // this.updateDomContainer();
 
     this.updateNextFrame();
+  }
+
+  syncSelectOverlayGroups() {
+    this.bodySelectGroup.setAttributes({
+      x: this.bodyGroup.attribute.x,
+      y: this.bodyGroup.attribute.y,
+      width: this.bodyGroup.attribute.width,
+      height: this.bodyGroup.attribute.height
+    });
+    this.rowHeaderSelectGroup.setAttributes({
+      x: this.rowHeaderGroup.attribute.x,
+      y: this.rowHeaderGroup.attribute.y,
+      width: this.rowHeaderGroup.attribute.width,
+      height: this.rowHeaderGroup.attribute.height
+    });
+    this.colHeaderSelectGroup.setAttributes({
+      x: this.colHeaderGroup.attribute.x,
+      y: this.colHeaderGroup.attribute.y,
+      width: this.colHeaderGroup.attribute.width,
+      height: this.colHeaderGroup.attribute.height
+    });
+    this.cornerHeaderSelectGroup.setAttributes({
+      x: this.cornerHeaderGroup.attribute.x,
+      y: this.cornerHeaderGroup.attribute.y,
+      width: this.cornerHeaderGroup.attribute.width,
+      height: this.cornerHeaderGroup.attribute.height
+    });
+
+    this.rightFrozenSelectGroup.setAttributes({
+      x: this.rightFrozenGroup.attribute.x,
+      y: this.rightFrozenGroup.attribute.y,
+      width: this.rightFrozenGroup.attribute.width,
+      height: this.rightFrozenGroup.attribute.height,
+      visible: this.rightFrozenGroup.attribute.visible
+    });
+    this.bottomFrozenSelectGroup.setAttributes({
+      x: this.bottomFrozenGroup.attribute.x,
+      y: this.bottomFrozenGroup.attribute.y,
+      width: this.bottomFrozenGroup.attribute.width,
+      height: this.bottomFrozenGroup.attribute.height,
+      visible: this.bottomFrozenGroup.attribute.visible
+    });
+    this.rightTopCornerSelectGroup.setAttributes({
+      x: this.rightTopCornerGroup.attribute.x,
+      y: this.rightTopCornerGroup.attribute.y,
+      width: this.rightTopCornerGroup.attribute.width,
+      height: this.rightTopCornerGroup.attribute.height,
+      visible: this.rightTopCornerGroup.attribute.visible
+    });
+    this.leftBottomCornerSelectGroup.setAttributes({
+      x: this.leftBottomCornerGroup.attribute.x,
+      y: this.leftBottomCornerGroup.attribute.y,
+      width: this.leftBottomCornerGroup.attribute.width,
+      height: this.leftBottomCornerGroup.attribute.height,
+      visible: this.leftBottomCornerGroup.attribute.visible
+    });
+    this.rightBottomCornerSelectGroup.setAttributes({
+      x: this.rightBottomCornerGroup.attribute.x,
+      y: this.rightBottomCornerGroup.attribute.y,
+      width: this.rightBottomCornerGroup.attribute.width,
+      height: this.rightBottomCornerGroup.attribute.height,
+      visible: this.rightBottomCornerGroup.attribute.visible
+    });
+  }
+
+  getSelectOverlayGroup(selectRangeType: CellSubLocation): Group {
+    switch (selectRangeType) {
+      case 'body':
+        return this.bodySelectGroup;
+      case 'rowHeader':
+        return this.rowHeaderSelectGroup;
+      case 'bottomFrozen':
+        return this.bottomFrozenSelectGroup;
+      case 'columnHeader':
+        return this.colHeaderSelectGroup;
+      case 'rightFrozen':
+        return this.rightFrozenSelectGroup;
+      case 'rightTopCorner':
+        return this.rightTopCornerSelectGroup;
+      case 'leftBottomCorner':
+        return this.leftBottomCornerSelectGroup;
+      case 'rightBottomCorner':
+        return this.rightBottomCornerSelectGroup;
+      case 'cornerHeader':
+      default:
+        return this.cornerHeaderSelectGroup;
+    }
   }
 
   updateCellContentWhileResize(col: number, row: number) {

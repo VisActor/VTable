@@ -1113,6 +1113,10 @@ export const menus = [
       },
       {
         path: 'frozen',
+        name: 'list-table-scrollable-frozen-cols'
+      },
+      {
+        path: 'frozen',
         name: 'pivot-table-right-frozen'
       },
       {

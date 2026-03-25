@@ -133,6 +133,20 @@ links:[
 
 通过 `taskBar.progressAdjustable` 配置项，可以设置任务条是否可调整进度。
 
+####  任务条定位
+
+当时间轴较长、任务条不在当前可视区域内时，可以开启“定位图标”能力：在甘特图左右边缘显示图标，点击后自动滚动到该任务条的可视区域。
+
+关键配置：
+
+```javascript
+const option = {
+  taskBar: {
+    locateIcon: true
+  }
+};
+```
+
 #### 调整左侧表格宽度
 
 通过 `frame.verticalSplitLineMoveable` 配置为 true，可以设置分割线可拖拽。

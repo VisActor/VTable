@@ -183,12 +183,16 @@ export function getTargetColAtConsiderRightFrozen(
     return { left: 0, col: 0, right: 0, width: 0 };
   }
   absoluteX = absoluteX - _this.tableX;
+  const rightFrozenScrollLeft = _this.getRightFrozenColsScrollLeft?.() ?? 0;
   if (
     isConsider &&
     absoluteX > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
     absoluteX < _this.tableNoFrameWidth &&
     absoluteX <= _this.getAllColsWidth()
   ) {
+    // 命中测试需要将“右冻结视口坐标”映射到“右冻结内容坐标”：
+    // 右冻结内容在视口内可滚动时，实际的列位置会整体随 scrollLeft 平移。
+    absoluteX -= rightFrozenScrollLeft;
     for (let i = 0; i < _this.rightFrozenColCount; i++) {
       if (absoluteX > _this.tableNoFrameWidth - _this.getColsWidth(_this.colCount - i - 1, _this.colCount - 1)) {
         return {
@@ -305,6 +309,10 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
   x -= _this.tableX;
   y -= _this.tableY;
 
+  const frozenColsWidth = _this.getFrozenColsWidth();
+  const frozenColsOffset = _this.getFrozenColsOffset?.() ?? 0;
+  const frozenColsScrollLeft = _this.getFrozenColsScrollLeft?.() ?? 0;
+
   // top frozen
   let topFrozen = false;
   if (y > 0 && y < _this.getFrozenRowsHeight()) {
@@ -313,7 +321,7 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   // left frozen
   let leftFrozen = false;
-  if (x > 0 && x < _this.getFrozenColsWidth()) {
+  if (x > 0 && x < frozenColsWidth) {
     leftFrozen = true;
   }
 
@@ -338,7 +346,7 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
 
   // 加上 tableX 和 tableY 是因为在考虑冻结列和冻结行时，需要将坐标转换为相对于表格左上角的坐标
   const colInfo = getTargetColAtConsiderRightFrozen(
-    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
+    (leftFrozen ? x + frozenColsScrollLeft : rightFrozen ? x : x + _this.scrollLeft + frozenColsOffset) + _this.tableX,
     rightFrozen,
     _this
   );
@@ -372,9 +380,13 @@ export function getColAtRelativePosition(x: number, _this: BaseTableAPI): number
   // table border and outer component
   x -= _this.tableX;
 
+  const frozenColsWidth = _this.getFrozenColsWidth();
+  const frozenColsOffset = _this.getFrozenColsOffset?.() ?? 0;
+  const frozenColsScrollLeft = _this.getFrozenColsScrollLeft?.() ?? 0;
+
   // left frozen
   let leftFrozen = false;
-  if (x > 0 && x < _this.getFrozenColsWidth()) {
+  if (x > 0 && x < frozenColsWidth) {
     leftFrozen = true;
   }
 
@@ -390,7 +402,7 @@ export function getColAtRelativePosition(x: number, _this: BaseTableAPI): number
 
   // 加上 tableX 是因为在考虑冻结列时，需要将坐标转换为相对于表格左上角的坐标
   const colInfo = getTargetColAtConsiderRightFrozen(
-    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
+    (leftFrozen ? x + frozenColsScrollLeft : rightFrozen ? x : x + _this.scrollLeft + frozenColsOffset) + _this.tableX,
     rightFrozen,
     _this
   );

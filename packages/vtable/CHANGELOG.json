@@ -2,6 +2,23 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.25.0",
+      "tag": "@visactor/vtable_v1.25.0",
+      "date": "Wed, 25 Mar 2026 08:15:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add option scrollFrozenCols\n\n"
+          }
+        ],
+        "none": [
+          {
+            "comment": "feat: gantt add locateIcon for taskbar\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.24.0",
       "tag": "@visactor/vtable_v1.24.0",
       "date": "Wed, 18 Mar 2026 09:15:31 GMT",

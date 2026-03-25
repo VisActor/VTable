@@ -12,6 +12,9 @@ export function updateCustomSelectBorder(
   selectRange: CellRange & { skipBodyMerge?: boolean },
   style: CustomSelectionStyle
 ) {
+  // 自定义选区（CustomSelectionStyle）与默认选区的拆分方式一致：
+  // 仍然需要按 corner/headers/body/rightFrozen/bottomFrozen 等区域拆分绘制，
+  // 以便配合各区域的 clipRect，避免跨区域绘制导致的越界或重复描边。
   const table = scene.table;
   const newStartCol = selectRange.start.col;
   const newStartRow = selectRange.start.row;
@@ -200,10 +203,14 @@ function createCustomCellSelectBorder(
   strokes: boolean[],
   style: CustomSelectionStyle
 ) {
+  // 自定义选区只负责绘制 rect（不包含 fill handle），其 key 与默认选区保持一致，便于统一更新/删除。
   const startCol = Math.min(start_Col, end_Col);
   const startRow = Math.min(start_Row, end_Row);
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
+  const overlayGroup = scene.getSelectOverlayGroup(selectRangeType);
+  const offsetX = scene.tableGroup.attribute.x + (overlayGroup.attribute.x ?? 0);
+  const offsetY = scene.tableGroup.attribute.y + (overlayGroup.attribute.y ?? 0);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
   const rect = createRect({
     pickable: false,
@@ -216,8 +223,8 @@ function createCustomCellSelectBorder(
       }
       return false;
     }),
-    x: firstCellBound.x1 - scene.tableGroup.attribute.x, // 坐标xy及宽高width height 不需要这里计算具体值 update-select-border文件中updateComponent方法中有逻辑  且该方法调用时间是render
-    y: firstCellBound.y1 - scene.tableGroup.attribute.y,
+    x: firstCellBound.x1 - offsetX,
+    y: firstCellBound.y1 - offsetY,
     width: 0,
     height: 0,
     visible: true,
@@ -235,24 +242,5 @@ function createCustomCellSelectBorder(
     rect,
     role: selectRangeType
   });
-  scene.tableGroup.insertAfter(
-    rect,
-    selectRangeType === 'body'
-      ? scene.bodyGroup
-      : selectRangeType === 'columnHeader'
-      ? scene.colHeaderGroup
-      : selectRangeType === 'rowHeader'
-      ? scene.rowHeaderGroup
-      : selectRangeType === 'cornerHeader'
-      ? scene.cornerHeaderGroup
-      : selectRangeType === 'rightTopCorner'
-      ? scene.rightTopCornerGroup
-      : selectRangeType === 'rightFrozen'
-      ? scene.rightFrozenGroup
-      : selectRangeType === 'leftBottomCorner'
-      ? scene.leftBottomCornerGroup
-      : selectRangeType === 'bottomFrozen'
-      ? scene.bottomFrozenGroup
-      : scene.rightBottomCornerGroup
-  );
+  overlayGroup.addChild(rect);
 }

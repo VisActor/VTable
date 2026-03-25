@@ -165,6 +165,7 @@ export class Gantt extends EventTarget {
     tasksShowMode: TasksShowMode;
     projectSubTasksExpandable: boolean;
     taskBarClip: boolean;
+    taskBarLocateIcon: boolean;
 
     startDateField: string;
     endDateField: string;

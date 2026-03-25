@@ -170,6 +170,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'project-sub-tasks-inline'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-locate-taskbar'
   }
   //   ]
   // }

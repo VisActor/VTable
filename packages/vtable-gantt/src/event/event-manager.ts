@@ -1,5 +1,5 @@
 import { vglobal } from '@visactor/vtable/es/vrender';
-import type { FederatedPointerEvent, FederatedWheelEvent } from '@visactor/vtable/es/vrender';
+import type { FederatedPointerEvent, FederatedWheelEvent, Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
@@ -220,6 +220,19 @@ function bindTableGroupListener(event: EventManager) {
       event.touchSetTimeout = undefined;
     }
     if (stateManager.interactionState === InteractionState.default) {
+      let locateIconTarget: Group | null = null;
+      if (gantt.parsedOptions.taskBarLocateIcon) {
+        // 优先处理定位图标 hover：避免与任务条 hover 互相抢占状态
+        locateIconTarget = e.detailPath.find((pathNode: any) => {
+          return pathNode.name === 'task-bar-locate-icon-left' || pathNode.name === 'task-bar-locate-icon-right';
+        }) as any as Group;
+        if (locateIconTarget) {
+          scene._gantt.scenegraph.taskBar.setLocateIconHover(locateIconTarget);
+        } else if (scene._gantt.scenegraph.taskBar.currentHoverLocateIcon) {
+          scene._gantt.scenegraph.taskBar.setLocateIconHover(null);
+        }
+      }
+
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         return pathNode.name === 'task-bar'; // || pathNode.name === 'task-bar-hover-shadow';
       });
@@ -267,7 +280,7 @@ function bindTableGroupListener(event: EventManager) {
             });
           }
         }
-      } else {
+      } else if (!locateIconTarget) {
         if (scene._gantt.stateManager.hoverTaskBar.target) {
           if (scene._gantt.hasListeners(GANTT_EVENT_TYPE.MOUSELEAVE_TASK_BAR)) {
             // const taskIndex = getTaskIndexByY(e.offset.y, scene._gantt);
@@ -445,8 +458,10 @@ function bindTableGroupListener(event: EventManager) {
       let depedencyLink;
       let isClickMarklineIcon = false;
       let isClickMarklineContent = false;
+      let isClickLocateIcon = false;
       let markLineContentTarget: any;
       let markLineIconTarget: any;
+      let locateIconTarget: any;
 
       const taskBarTarget = e.detailPath.find((pathNode: any) => {
         if (pathNode.name === 'task-bar') {
@@ -476,11 +491,30 @@ function bindTableGroupListener(event: EventManager) {
           isClickMarklineContent = true;
           markLineContentTarget = pathNode;
           return false;
+        } else if (
+          gantt.parsedOptions.taskBarLocateIcon &&
+          (pathNode.name === 'task-bar-locate-icon-left' || pathNode.name === 'task-bar-locate-icon-right')
+        ) {
+          isClickLocateIcon = true;
+          locateIconTarget = pathNode;
+          return false;
         }
         return false;
       });
 
-      if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
+      if (isClickLocateIcon && event.poniterState === 'down') {
+        // 点击定位图标：将任务条滚动到可视区（左右边缘附近），便于快速定位长时间轴任务
+        const barNode = locateIconTarget?.attachedToTaskBarNode as GanttTaskBarNode;
+        const side = locateIconTarget?.side as 'left' | 'right';
+        if (barNode) {
+          const barLeft = barNode.attribute.x;
+          const barRight = barLeft + barNode.attribute.width;
+          const viewWidth = gantt.tableNoFrameWidth;
+          const padding = 12;
+          const targetLeft = side === 'left' ? barLeft - padding : barRight - viewWidth + padding;
+          gantt.stateManager.setScrollLeft(targetLeft);
+        }
+      } else if (isClickBar && scene._gantt.parsedOptions.taskBarSelectable && event.poniterState === 'down') {
         stateManager.hideDependencyLinkSelectedLine();
         const taskBarNode = taskBarTarget as any as GanttTaskBarNode;
         stateManager.showTaskBarSelectedBorder(taskBarNode);
@@ -678,6 +712,9 @@ function bindTableGroupListener(event: EventManager) {
   });
 
   scene.ganttGroup.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
+    if (scene._gantt.scenegraph.taskBar.currentHoverLocateIcon) {
+      scene._gantt.scenegraph.taskBar.setLocateIconHover(null);
+    }
     if (
       (gantt.parsedOptions.scrollStyle.horizontalVisible &&
         gantt.parsedOptions.scrollStyle.horizontalVisible === 'focus') ||

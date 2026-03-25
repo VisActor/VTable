@@ -133,6 +133,20 @@ You can set whether task bars are resizable through the `taskBar.resizable` conf
 
 You can set whether task bars are adjustable through the `taskBar.progressAdjustable` configuration item.
 
+#### Task Bar Locate
+
+When the timeline is long and the task bar is outside the current viewport, you can enable the “locate icon” feature: an icon is shown on the left/right edge of the gantt view, and clicking it scrolls the task bar into the viewport.
+
+Key option:
+
+```javascript
+const option = {
+  taskBar: {
+    locateIcon: true
+  }
+};
+```
+
 #### Adjusting the Width of the Left Table
 
 You can set the divider line to be draggable by configuring `frame.verticalSplitLineMoveable` to true.

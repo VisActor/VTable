@@ -176,6 +176,12 @@ ${prefix} selectable(boolean)
 
 非必填
 
+${prefix} locateIcon(boolean) = false
+
+当任务条在横向上不在当前可视区域内时，在甘特图左右边缘展示“定位图标”；鼠标 hover 会高亮，点击后会一键滚动到任务条可视区域内。
+
+非必填
+
 ${prefix} scheduleCreatable(boolean | Function) = true
 
 数据没有排期时，可通过创建任务条排期。当 tasksShowMode 为 TasksShowMode.Tasks_Separate 或 TasksShowMode.Sub_Tasks_Separate 时 `scheduleCreatable` 默认为 true，其他情况即当 tasksShowMode 为 TasksShowMode.Sub_Tasks_Inline 或 TasksShowMode.Sub_Tasks_Arrange 或 TasksShowMode.Sub_Tasks_Compact 时 `scheduleCreatable` 默认为 false
@@ -273,4 +279,3 @@ ${prefix} baselinePosition('top' | 'bottom' | 'overlap') = 'bottom'
 - `overlap`：基线与主任务条重叠居中。
 
 非必填
-
