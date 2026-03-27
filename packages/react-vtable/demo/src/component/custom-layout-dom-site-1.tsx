@@ -19,6 +19,11 @@ const { Meta } = Card;
 
 import '@arco-design/web-react/dist/css/arco.css';
 
+/**
+ * 该 demo 用 Arco 的 Comment/Popover/Popconfirm 来验证 “DOM 组件渲染到单元格”：
+ * - React18 正常
+ * - React19 需要 Arco 版本不再依赖 react-dom.findDOMNode，否则会直接报错导致单元格自定义 DOM 不显示
+ */
 const CommentComponent = (props: CustomLayoutFunctionArg) => {
   const { table, row, col, rect, dataValue } = props;
   if (!table || row === undefined || col === undefined) {
@@ -33,9 +38,11 @@ const CommentComponent = (props: CustomLayoutFunctionArg) => {
         width,
         height,
         react: {
+          width,
+          height,
           pointerEvents: true,
           penetrateEventList: ['wheel'],
-          container: table.bodyDomContainer, // table.headerDomContainer
+          container: table.bodyDomContainer ?? null, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <CommentReactComponent name={dataValue} />
         }
@@ -46,8 +53,8 @@ const CommentComponent = (props: CustomLayoutFunctionArg) => {
 
 const CommentReactComponent = (props: { name: string }) => {
   const { name } = props;
-  const [like, setLike] = useState();
-  const [star, setStar] = useState();
+  const [like, setLike] = useState(false);
+  const [star, setStar] = useState(false);
   const actions = [
     <button className="custom-comment-action" key="heart" onClick={() => setLike(!like)}>
       {like ? <IconHeartFill style={{ color: '#f53f3f' }} /> : <IconHeart />}
@@ -98,8 +105,10 @@ const OperationComponent = (props: CustomLayoutFunctionArg) => {
         width,
         height,
         react: {
+          width,
+          height,
           pointerEvents: true,
-          container: table.bodyDomContainer, // table.headerDomContainer
+          container: table.bodyDomContainer ?? null, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <OperationReactComponent />
         }
@@ -152,7 +161,7 @@ function generateRandomString(length: number) {
   return result;
 }
 
-const HeaderCustomLayoutComponent = props => {
+const HeaderCustomLayoutComponent = (props: CustomLayoutFunctionArg) => {
   const { table, row, col, rect, dataValue } = props;
   if (!table || row === undefined || col === undefined) {
     return null;
@@ -167,8 +176,10 @@ const HeaderCustomLayoutComponent = props => {
         height,
         fill: 'red',
         react: {
+          width,
+          height,
           pointerEvents: true,
-          container: table.headerDomContainer, // table.headerDomContainer
+          container: table.headerDomContainer ?? null, // table.headerDomContainer
           // anchorType: 'bottom-right',
           element: <span>自定义</span>
         }

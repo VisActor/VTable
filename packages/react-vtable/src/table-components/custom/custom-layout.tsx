@@ -5,8 +5,8 @@ import RootTableContext from '../../context/table';
 import { Group } from '@visactor/vtable/es/vrender';
 import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 import type { FiberRoot } from 'react-reconciler';
-import { reconcilor } from './reconciler';
-import { LegacyRoot } from 'react-reconciler/constants';
+import type { ReconcilerErrorReporter } from './reconciler';
+import { reconcilor, createReconcilerContainer } from './reconciler';
 
 type CustomLayoutProps = { componentId: string };
 
@@ -21,12 +21,29 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     return null;
   }
   const context = useContext(RootTableContext);
-  const { table } = context;
+  const { table, onError } = context;
 
   const isHeaderCustomLayout = children.props.role === 'header-custom-layout';
 
   // react customLayout component container cache
   const container = useRef<Map<string, FiberRoot>>(new Map());
+
+  const reportReconcilerError: ReconcilerErrorReporter = useCallback(
+    (type, error) => {
+      if (!onError) {
+        return;
+      }
+      if (error instanceof Error) {
+        const wrapped = new Error(`[react-vtable custom-layout:${type}] ${error.message}`);
+        (wrapped as any).stack = error.stack;
+        onError(wrapped);
+        return;
+      }
+      const message = typeof error === 'string' ? error : (error as any)?.message ?? String(error);
+      onError(new Error(`[react-vtable custom-layout:${type}] ${message}`));
+    },
+    [onError]
+  );
 
   // customLayout function for vtable
   const createGraphic: ICustomLayoutFuc = useCallback(
@@ -41,16 +58,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
         group = currentContainer.containerInfo;
       } else {
         group = new Group({});
-        const currentContainer = reconcilor.createContainer(
-          group as any,
-          LegacyRoot,
-          null,
-          null,
-          null,
-          'custom',
-          null,
-          null
-        );
+        const currentContainer = createReconcilerContainer(group as any, 'custom', reportReconcilerError);
         container.current.set(key, currentContainer);
         reconcilorUpdateContainer(children, currentContainer, args);
       }
@@ -60,7 +68,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
         renderDefault: !!children.props.renderDefault
       };
     },
-    [children]
+    [children, reportReconcilerError]
   );
 
   const removeContainer = useCallback((col: number, row: number) => {
@@ -154,7 +162,17 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
 };
 
 function reconcilorUpdateContainer(children: ReactElement, currentContainer: any, args: any) {
-  reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
+  const element = React.cloneElement(children, { ...args });
+  const updateContainerSync = (reconcilor as any).updateContainerSync;
+  if (typeof updateContainerSync === 'function') {
+    updateContainerSync(element, currentContainer, null);
+    const flushSyncWork = (reconcilor as any).flushSyncWork;
+    if (typeof flushSyncWork === 'function') {
+      flushSyncWork();
+    }
+    return;
+  }
+  reconcilor.updateContainer(element, currentContainer, null);
   // group = group.firstChild;
   // if (isReactElement(group.attribute.html?.dom)) {
   //   const div = document.createElement('div');

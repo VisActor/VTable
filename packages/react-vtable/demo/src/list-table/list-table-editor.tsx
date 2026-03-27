@@ -1,9 +1,10 @@
 /* eslint-env browser */
-import { ListTable, VTable } from '../../../src';
+import { ListTable } from '../../../src';
+import * as VTable from '@visactor/vtable';
 import { ArcoListEditor } from './ArcoListEditor';
 function App() {
   const editor = new ArcoListEditor();
-  VTable.register.editor('list-editor', editor);
+  VTable.register.editor('list-editor', editor as any);
 
   const option = {
     header: [
@@ -30,12 +31,12 @@ function App() {
         width: 150
       }
     ],
-    records: new Array(1000).fill().map(() => ['张三', 18, '男', '🏀', 'Shanghai'])
+    records: new Array(1000).fill(null).map(() => ['张三', 18, '男', '🏀', 'Shanghai'])
   };
   return (
     <ListTable
       onReady={(...arg: any) => {
-        window.tableInstance = arg[0];
+        (window as any).tableInstance = arg[0];
       }}
       option={option}
     />

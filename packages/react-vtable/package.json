@@ -36,7 +36,9 @@
     }
   },
   "scripts": {
-    "start": "vite ./demo",
+    "start": "vite ./demo --port 3100",
+    "setup:react19-deps": "node ./demo/scripts/ensure-react19-deps.cjs",
+    "start:react19": "npm run setup:react19-deps && vite --config ./demo/vite.config.react19.ts ./demo",
     "build": "npm run fix-memory-limit && bundle --clean",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
@@ -49,11 +51,15 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
     "@visactor/vutils": "~1.0.17",
     "react-is": "^18.2.0",
-    "react-reconciler": "0.29.2"
+    "react-reconciler": "0.29.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -63,10 +69,10 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.25",
     "@vitejs/plugin-react": "3.1.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
@@ -101,7 +107,7 @@
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
     "@types/react-is": "^17.0.3",
-    "@arco-design/web-react": "2.60.2",
-    "@types/react-reconciler": "0.28.8"
+    "@arco-design/web-react": "2.66.12",
+    "@types/react-reconciler": "0.28.9"
   }
 }

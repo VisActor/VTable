@@ -32,7 +32,7 @@ function App() {
             textStick: true
           }}
         />
-        <PivotColumnDimension dimensionKey={'Category'} title={'Category'} width={'auto'} />
+        <PivotColumnDimension dimensionKey={'Category'} title={'Category'} />
         <PivotRowDimension
           dimensionKey={'City'}
           title={'City'}
@@ -52,7 +52,7 @@ function App() {
           style={{
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) {
+              if ((args?.dataValue ?? 0) >= 0) {
                 return 'black';
               }
               return 'red';
@@ -69,7 +69,7 @@ function App() {
           style={{
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) {
+              if ((args?.dataValue ?? 0) >= 0) {
                 return 'black';
               }
               return 'red';
@@ -86,7 +86,7 @@ function App() {
           style={{
             padding: [16, 28, 16, 28],
             color(args) {
-              if (args.dataValue >= 0) {
+              if ((args?.dataValue ?? 0) >= 0) {
                 return 'black';
               }
               return 'red';

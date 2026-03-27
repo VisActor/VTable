@@ -27,7 +27,7 @@ cd VTable
 ### Prerequisites
 
 
-* **Node.js**: Requires Node.js installation, version requirements: `>=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0`
+* **Node.js**: Requires Node.js installation, version requirements: `>=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0 || >=20.0.0 <25.0.0`
 
 *  **Rush**: VTable uses Microsoft Rush for project management
 

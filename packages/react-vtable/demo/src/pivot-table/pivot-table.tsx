@@ -1,6 +1,6 @@
 import { PivotTable } from '../../../src';
 
-function generatePivotDataSource(num, colCount) {
+function generatePivotDataSource(num: number, colCount: number) {
   const array = new Array(num);
   for (let i = 0; i < num; i++) {
     const data = new Array(colCount);
@@ -11,8 +11,8 @@ function generatePivotDataSource(num, colCount) {
   }
   return array;
 }
-const DEFAULT_BAR_COLOR = data => {
-  const num = (data.percentile ?? 0) * 100;
+const DEFAULT_BAR_COLOR = (data: any) => {
+  const num = (data?.percentile ?? 0) * 100;
   if (num > 80) {
     return '#20a8d8';
   }
@@ -28,7 +28,7 @@ const DEFAULT_BAR_COLOR = data => {
 function App() {
   const records = generatePivotDataSource(19, 18);
 
-  const option = {
+  const option: any = {
     columnHeaderTitle: {
       title: true,
       headerStyle: {
@@ -39,11 +39,11 @@ function App() {
       {
         dimensionKey: '地区',
         title: '地区',
-        headerFormat(value) {
+        headerFormat(value: any) {
           return `${value}地区`;
         },
-        description(args) {
-          return args.value;
+        description(args: any) {
+          return args?.value;
         },
         cornerDescription: '地区维度',
         headerStyle: {
@@ -51,11 +51,12 @@ function App() {
           borderColor: 'blue',
           color: 'pink',
           textStick: true,
-          bgColor(arg) {
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '东北') {
+          bgColor(arg: any) {
+            const firstValue = arg?.cellHeaderPaths?.colHeaderPaths?.[0]?.value;
+            if (firstValue === '东北') {
               return '#bd422a';
             }
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '华北') {
+            if (firstValue === '华北') {
               return '#ff9900';
             }
             return 'gray';
@@ -70,7 +71,7 @@ function App() {
       {
         dimensionKey: '邮寄方式',
         title: '邮寄方式11',
-        headerFormat(value) {
+        headerFormat(value: any) {
           return `${value}邮寄方式`;
         },
         headerStyle: {
@@ -83,11 +84,12 @@ function App() {
           fontFamily: 'sans-serif',
           underline: true,
           textStick: true,
-          bgColor(arg) {
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '东北') {
+          bgColor(arg: any) {
+            const firstValue = arg?.cellHeaderPaths?.colHeaderPaths?.[0]?.value;
+            if (firstValue === '东北') {
               return '#bd422a';
             }
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '华北') {
+            if (firstValue === '华北') {
               return '#ff9900';
             }
             return 'gray';
@@ -128,16 +130,19 @@ function App() {
       {
         indicatorKey: '1',
         title: '销售额',
-        format(rec) {
-          return `${rec.dataValue}%`;
+        format(rec: any) {
+          // PivotTable 的 format 回调在某些场景（例如小计/汇总、占位节点）可能拿到 undefined，
+          // 这里做兜底避免 demo 运行时报错导致页面/截图空白。
+          return `${rec?.dataValue ?? ''}%`;
         },
         headerStyle: {
           color: 'red',
-          bgColor(arg) {
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '东北') {
+          bgColor(arg: any) {
+            const firstValue = arg?.cellHeaderPaths?.colHeaderPaths?.[0]?.value;
+            if (firstValue === '东北') {
               return '#bd422a';
             }
-            if (arg.cellHeaderPaths.colHeaderPaths && arg.cellHeaderPaths.colHeaderPaths[0].value === '华北') {
+            if (firstValue === '华北') {
               return '#ff9900';
             }
             return 'gray';
@@ -147,10 +152,9 @@ function App() {
           barHeight: '100%',
           // barBgColor: '#aaa',
           // barColor: '#444',
-          barBgColor: data => {
-            return `rgb(${100 + 100 * (1 - (data.percentile ?? 0))},${100 + 100 * (1 - (data.percentile ?? 0))},${
-              255 * (1 - (data.percentile ?? 0))
-            })`;
+          barBgColor: (data: any) => {
+            const percentile = data?.percentile ?? 0;
+            return `rgb(${100 + 100 * (1 - percentile)},${100 + 100 * (1 - percentile)},${255 * (1 - percentile)})`;
           },
           barColor: 'transparent'
         },
@@ -161,9 +165,10 @@ function App() {
       {
         indicatorKey: '2',
         title: '利润',
-        format(rec) {
+        format(rec: any) {
           // if (rec.rowDimensions[0].value === '东北') return `${rec.dataValue}%`;
-          return rec.dataValue;
+          // 同上：rec 可能为 undefined，demo 兜底处理。
+          return rec?.dataValue ?? '';
         },
         cellType: 'progressbar',
         style: {

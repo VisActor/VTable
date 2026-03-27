@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import type { VTable } from '../../../src';
 import { ListTable } from '../../../src';
+import type { ListTable as VTableInstance } from '@visactor/vtable';
 import data from '../../data/list-data.json';
 
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
@@ -65,7 +65,7 @@ const option = {
 function App() {
   const [props, setProps] = useState<any>(null);
 
-  const tableRef = useRef<VTable>(null);
+  const tableRef = useRef<VTableInstance>(null);
 
   // setTimeout(() => {
   //   window.tableInstance = tableRef.current;

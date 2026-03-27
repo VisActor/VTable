@@ -7,15 +7,15 @@ importers:
 
   ../../docs:
     specifiers:
-      '@arco-design/web-react': 2.60.2
+      '@arco-design/web-react': 2.66.12
       '@arco-design/web-vue': ^2.11.0
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
       '@types/buble': ^0.20.5
       '@types/highlightjs': ^9.12.0
       '@types/markdown-it': ^13.0.0
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@visactor/openinula-vtable': workspace:*
       '@visactor/react-vtable': workspace:*
       '@visactor/vchart': 2.0.13-alpha.10
@@ -41,15 +41,15 @@ importers:
       markdown-it: ^13.0.0
       marked: ^0.3.19
       openinula: ~0.1.2-SNAPSHOT
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       react-router-dom: 6.9.0
       typescript: 4.9.5
       vite: 3.2.6
       vue: ^3.4.14
       yargs: ^17.1.1
     dependencies:
-      '@arco-design/web-react': 2.60.2_7rrstwx6ew2ekscgqoygqm7g4a
+      '@arco-design/web-react': 2.66.12_w6jczczwnzvypw24vvz4pwmbba
       '@arco-design/web-vue': 2.57.0_vue@3.5.27
       '@visactor/openinula-vtable': link:../packages/openinula-vtable
       '@visactor/react-vtable': link:../packages/react-vtable
@@ -69,9 +69,9 @@ importers:
       lodash: 4.17.21
       markdown-it: 13.0.2
       openinula: 0.1.14
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
-      react-router-dom: 6.9.0_nnrd3gsncyragczmpvfhocinkq
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-router-dom: 6.9.0_biqbaboplfbrettd7655fr4n2y
       vue: 3.5.27_typescript@4.9.5
     devDependencies:
       '@internal/eslint-config': link:../share/eslint-config
@@ -79,8 +79,8 @@ importers:
       '@types/buble': 0.20.5
       '@types/highlightjs': 9.12.6
       '@types/markdown-it': 13.0.9
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       chalk: 3.0.0
       chokidar: 3.6.0
@@ -183,7 +183,7 @@ importers:
 
   ../../packages/react-vtable:
     specifiers:
-      '@arco-design/web-react': 2.60.2
+      '@arco-design/web-react': 2.66.12
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2
       '@internal/bundler': workspace:*
@@ -195,10 +195,10 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': ^17.0.3
-      '@types/react-reconciler': 0.28.8
+      '@types/react-reconciler': 0.28.9
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~1.0.17
@@ -219,10 +219,10 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       react-is: ^18.2.0
-      react-reconciler: 0.29.2
+      react-reconciler: 0.29.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -238,9 +238,9 @@ importers:
       '@visactor/vtable': link:../vtable
       '@visactor/vutils': 1.0.21
       react-is: 18.3.1
-      react-reconciler: 0.29.2_react@18.3.1
+      react-reconciler: 0.29.0_react@18.2.0
     devDependencies:
-      '@arco-design/web-react': 2.60.2_7rrstwx6ew2ekscgqoygqm7g4a
+      '@arco-design/web-react': 2.66.12_w6jczczwnzvypw24vvz4pwmbba
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
       '@internal/bundler': link:../../tools/bundler
@@ -252,10 +252,10 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
-      '@types/react-reconciler': 0.28.8
+      '@types/react-reconciler': 0.28.9_@types+react@18.2.79
       '@visactor/vchart': 2.0.13-alpha.10
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.13.2
@@ -274,8 +274,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
@@ -303,8 +303,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vdataset': ~1.0.17
       '@visactor/vrender-animate': ~1.0.41
@@ -342,8 +342,8 @@ importers:
       node-fetch: 2.6.7
       pikaday: 1.8.2
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -382,8 +382,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@visactor/vchart': 2.0.13-alpha.10
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.13.2
@@ -409,8 +409,8 @@ importers:
       node-fetch: 2.6.7
       pikaday: 1.8.2
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
@@ -436,8 +436,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': ^17.0.3
       '@visactor/vtable': workspace:*
       '@visactor/vutils': ~1.0.17
@@ -459,8 +459,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -489,8 +489,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.13.2
@@ -509,8 +509,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -588,8 +588,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vtable': workspace:*
@@ -613,8 +613,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -645,8 +645,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
       '@visactor/vchart': 2.0.13-alpha.10
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
@@ -666,8 +666,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -695,8 +695,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@visactor/vdataset': ~1.0.17
       '@visactor/vscale': ~1.0.17
       '@visactor/vtable': workspace:*
@@ -727,8 +727,8 @@ importers:
       node-fetch: 2.6.7
       pikaday: 1.8.2
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -760,8 +760,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.13.2
       chai: 4.3.4
@@ -786,8 +786,8 @@ importers:
       node-fetch: 2.6.7
       pikaday: 1.8.2
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
@@ -815,8 +815,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vtable': workspace:*
@@ -844,8 +844,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -878,8 +878,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vtable': link:../vtable
@@ -902,8 +902,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -930,8 +930,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': ^17.0.3
       '@visactor/vchart': 2.0.13-alpha.10
       '@visactor/vtable': workspace:*
@@ -953,8 +953,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -982,8 +982,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@types/react-is': 17.0.7
       '@visactor/vchart': 2.0.13-alpha.10
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
@@ -1003,8 +1003,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       rollup-plugin-node-resolve: 5.2.0
       sass: 1.43.5
@@ -1031,8 +1031,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@visactor/vdataset': ~1.0.17
       '@visactor/vscale': ~1.0.17
       '@visactor/vtable': workspace:*
@@ -1056,8 +1056,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: ^18.0.0
-      react-dom: ^18.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: ^26.0.0
@@ -1089,8 +1089,8 @@ importers:
       '@types/mocha': 9.0.0
       '@types/node': 25.0.10
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.27
-      '@types/react-dom': 18.3.7_@types+react@18.3.27
+      '@types/react': 18.2.79
+      '@types/react-dom': 18.2.25
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.13.2
       chai: 4.3.4
@@ -1107,8 +1107,8 @@ importers:
       mocha: 9.1.3
       node-fetch: 2.6.7
       postcss: 8.4.21
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
@@ -1460,8 +1460,8 @@ packages:
     dependencies:
       color: 3.2.1
 
-  /@arco-design/web-react/2.60.2_7rrstwx6ew2ekscgqoygqm7g4a:
-    resolution: {integrity: sha512-qWhGSIYxygIIig41BjflNVxw2iujYYzL3hmQc13J+6O09eentajmfKuWNmI19fX2fwZCzeqrCF1wwOod+YUieQ==}
+  /@arco-design/web-react/2.66.12_w6jczczwnzvypw24vvz4pwmbba:
+    resolution: {integrity: sha512-8gZYKPqdPcDrM+5gDdorqBuqX+fw3sUmmtHQy5x967DtWg5izKIwgwcsOQUdgjhmaiLkD//Q5nvkhqpAQmCNZA==}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
@@ -1474,13 +1474,13 @@ packages:
       dayjs: 1.11.19
       lodash: 4.17.21
       number-precision: 1.6.0
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
-      react-focus-lock: 2.13.7_gvpw3nleobtzb6yriethvjsu44
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-focus-lock: 2.13.7_7mazomva57u3e4dfbc62fsc6ny
       react-is: 18.3.1
-      react-transition-group: 4.4.5_nnrd3gsncyragczmpvfhocinkq
+      react-transition-group: 4.4.5_biqbaboplfbrettd7655fr4n2y
       resize-observer-polyfill: 1.5.1
-      scroll-into-view-if-needed: 2.2.20
+      scroll-into-view-if-needed: 2.2.31
       shallowequal: 1.1.0
     transitivePeerDependencies:
       - '@types/react'
@@ -4029,12 +4029,10 @@ packages:
   /@types/prop-types/15.7.15:
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
 
-  /@types/react-dom/18.3.7_@types+react@18.3.27:
-    resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}
-    peerDependencies:
-      '@types/react': ^18.0.0
+  /@types/react-dom/18.2.25:
+    resolution: {integrity: sha512-o/V48vf4MQh7juIKZU2QGDfli6p1+OOi5oXx36Hffpc9adsHeXjVp8rHuPkjd8VT8sOJ2Zp05HR7CdpGTIUFUA==}
     dependencies:
-      '@types/react': 18.3.27
+      '@types/react': 18.2.79
     dev: true
 
   /@types/react-is/17.0.7:
@@ -4043,10 +4041,12 @@ packages:
       '@types/react': 17.0.90
     dev: true
 
-  /@types/react-reconciler/0.28.8:
-    resolution: {integrity: sha512-SN9c4kxXZonFhbX4hJrZy37yw9e7EIxcpHCxQv5JUS18wDE5ovkQKlqQEkufdJCCMfuI9BnjUJvhYeJ9x5Ra7g==}
+  /@types/react-reconciler/0.28.9_@types+react@18.2.79:
+    resolution: {integrity: sha512-HHM3nxyUZ3zAylX8ZEyrDNd2XZOnQ0D5XfunJF5FLQnZbHHYq4UWvW1QfelQNXv1ICNkwYhfxjwfnqivYB6bFg==}
+    peerDependencies:
+      '@types/react': '*'
     dependencies:
-      '@types/react': 18.3.27
+      '@types/react': 18.2.79
     dev: true
 
   /@types/react/17.0.90:
@@ -4057,8 +4057,8 @@ packages:
       csstype: 3.2.3
     dev: true
 
-  /@types/react/18.3.27:
-    resolution: {integrity: sha512-cisd7gxkzjBKU2GgdYrTdtQx1SORymWyaAFhaxQPK9bYO9ot3Y5OikQRvY0VYQtvwjeQnizCINJAenh/V7MK2w==}
+  /@types/react/18.2.79:
+    resolution: {integrity: sha512-RwGAGXPl9kSXwdNTafkOEuFrTBD5SA2B3iEB96xi8+xu5ddUa/cpvyVCSNn+asgLCTHkb5ZxN8gbuibYJi4s1w==}
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
@@ -5955,9 +5955,6 @@ packages:
       normalize-path: 3.0.0
       readable-stream: 3.6.2
     dev: false
-
-  /compute-scroll-into-view/1.0.11:
-    resolution: {integrity: sha512-uUnglJowSe0IPmWOdDtrlHXof5CTIJitfJEyITHBW6zDVOGu9Pjk5puaLM73SLcwak0L4hEjO7Td88/a6P5i7A==}
 
   /compute-scroll-into-view/1.0.20:
     resolution: {integrity: sha512-UCB0ioiyj8CRjtrvaceBLqqhZCVP+1B8+NWQhmdsm0VXOJtobBCf1dBQmebCCo34qZmUwZfIH2MZLqNHazrfjg==}
@@ -12146,13 +12143,13 @@ packages:
     dependencies:
       safe-buffer: 5.2.1
 
-  /react-clientside-effect/1.2.8_react@18.3.1:
+  /react-clientside-effect/1.2.8_react@18.2.0:
     resolution: {integrity: sha512-ma2FePH0z3px2+WOu6h+YycZcEvFmmxIlAb62cF52bG86eMySciO/EQZeQMXd07kPCYB0a1dWDT5J+KE9mCDUw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
     dependencies:
       '@babel/runtime': 7.28.6
-      react: 18.3.1
+      react: 18.2.0
 
   /react-device-detect/2.2.3:
     resolution: {integrity: sha512-buYY3qrCnQVlIFHrC5UcUoAj7iANs/+srdkwsnNjI7anr3Tt7UY6MqNxtMLlr0tMBied0O49UZVK8XKs3ZIiPw==}
@@ -12163,16 +12160,16 @@ packages:
       ua-parser-js: 1.0.41
     dev: true
 
-  /react-dom/18.3.1_react@18.3.1:
-    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
+  /react-dom/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
-      react: ^18.3.1
+      react: ^18.2.0
     dependencies:
       loose-envify: 1.4.0
-      react: 18.3.1
+      react: 18.2.0
       scheduler: 0.23.2
 
-  /react-focus-lock/2.13.7_gvpw3nleobtzb6yriethvjsu44:
+  /react-focus-lock/2.13.7_7mazomva57u3e4dfbc62fsc6ny:
     resolution: {integrity: sha512-20lpZHEQrXPb+pp1tzd4ULL6DyO5D2KnR0G69tTDdydrmNhU7pdFmbQUYVyHUgp+xN29IuFR0PVuhOmvaZL9Og==}
     peerDependencies:
       '@types/react': '*'
@@ -12182,13 +12179,13 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.28.6
-      '@types/react': 18.3.27
+      '@types/react': 18.2.79
       focus-lock: 1.3.6
       prop-types: 15.8.1
-      react: 18.3.1
-      react-clientside-effect: 1.2.8_react@18.3.1
-      use-callback-ref: 1.3.3_gvpw3nleobtzb6yriethvjsu44
-      use-sidecar: 1.1.3_gvpw3nleobtzb6yriethvjsu44
+      react: 18.2.0
+      react-clientside-effect: 1.2.8_react@18.2.0
+      use-callback-ref: 1.3.3_7mazomva57u3e4dfbc62fsc6ny
+      use-sidecar: 1.1.3_7mazomva57u3e4dfbc62fsc6ny
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -12200,14 +12197,14 @@ packages:
   /react-is/18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
-  /react-reconciler/0.29.2_react@18.3.1:
-    resolution: {integrity: sha512-zZQqIiYgDCTP/f1N/mAR10nJGrPD2ZR+jDSEsKWJHYC7Cm2wodlwbR3upZRdC3cjIjSlTLNVyO7Iu0Yy7t2AYg==}
+  /react-reconciler/0.29.0_react@18.2.0:
+    resolution: {integrity: sha512-wa0fGj7Zht1EYMRhKWwoo1H9GApxYLBuhoAuXN0TlltESAjDssB+Apf0T/DngVqaMyPypDmabL37vw/2aRM98Q==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: ^18.3.1
+      react: ^18.2.0
     dependencies:
       loose-envify: 1.4.0
-      react: 18.3.1
+      react: 18.2.0
       scheduler: 0.23.2
     dev: false
 
@@ -12216,7 +12213,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-router-dom/6.9.0_nnrd3gsncyragczmpvfhocinkq:
+  /react-router-dom/6.9.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-/seUAPY01VAuwkGyVBPCn1OXfVbaWGGu4QN9uj0kCPcTyNYgL1ldZpxZUpRU7BLheKQI4Twtl/OW2nHRF1u26Q==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -12224,22 +12221,22 @@ packages:
       react-dom: '>=16.8'
     dependencies:
       '@remix-run/router': 1.4.0
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
-      react-router: 6.9.0_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-router: 6.9.0_react@18.2.0
     dev: false
 
-  /react-router/6.9.0_react@18.3.1:
+  /react-router/6.9.0_react@18.2.0:
     resolution: {integrity: sha512-51lKevGNUHrt6kLuX3e/ihrXoXCa9ixY/nVWRLlob4r/l0f45x3SzBvYJe3ctleLUQQ5fVa4RGgJOTH7D9Umhw==}
     engines: {node: '>=14'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.4.0
-      react: 18.3.1
+      react: 18.2.0
     dev: false
 
-  /react-transition-group/4.4.5_nnrd3gsncyragczmpvfhocinkq:
+  /react-transition-group/4.4.5_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
       react: '>=16.6.0'
@@ -12249,11 +12246,11 @@ packages:
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1_react@18.3.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
 
-  /react/18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
+  /react/18.2.0:
+    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
@@ -12883,11 +12880,6 @@ packages:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
     dependencies:
       loose-envify: 1.4.0
-
-  /scroll-into-view-if-needed/2.2.20:
-    resolution: {integrity: sha512-P9kYMrhi9f6dvWwTGpO5I3HgjSU/8Mts7xL3lkoH5xlewK7O9Obdc5WmMCzppln7bCVGNmf3qfoZXrpCeyNJXw==}
-    dependencies:
-      compute-scroll-into-view: 1.0.11
 
   /scroll-into-view-if-needed/2.2.31:
     resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
@@ -14311,7 +14303,7 @@ packages:
       requires-port: 1.0.0
     dev: true
 
-  /use-callback-ref/1.3.3_gvpw3nleobtzb6yriethvjsu44:
+  /use-callback-ref/1.3.3_7mazomva57u3e4dfbc62fsc6ny:
     resolution: {integrity: sha512-jQL3lRnocaFtu3V00JToYz/4QkNWswxijDaCVNZRiRTO3HQDLsdu1ZtmIUvV4yPp+rvWm5j0y0TG/S61cuijTg==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -14321,11 +14313,11 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.3.27
-      react: 18.3.1
+      '@types/react': 18.2.79
+      react: 18.2.0
       tslib: 2.3.1
 
-  /use-sidecar/1.1.3_gvpw3nleobtzb6yriethvjsu44:
+  /use-sidecar/1.1.3_7mazomva57u3e4dfbc62fsc6ny:
     resolution: {integrity: sha512-Fedw0aZvkhynoPYlA5WXrMCAMm+nSWdZt6lzJQ7Ok8S6Q+VsHmHpRWndVRJ8Be0ZbkfPc5LRYH+5XrzXcEeLRQ==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -14335,9 +14327,9 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.3.27
+      '@types/react': 18.2.79
       detect-node-es: 1.1.0
-      react: 18.3.1
+      react: 18.2.0
       tslib: 2.3.1
 
   /use/3.1.1:
