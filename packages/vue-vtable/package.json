@@ -58,7 +58,8 @@
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vutils": "~1.0.17"
+    "@visactor/vutils": "~1.0.17",
+    "element-plus": "^2.13.2"
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
@@ -105,5 +106,33 @@
     "axios": "^1.4.0",
     "eslint-plugin-vue": "^9.26.0",
     "vue-eslint-parser": "^9.4.2"
+  },
+  "pnpm": {
+    "allowedDeprecatedVersions": {
+      "are-we-there-yet": "*",
+      "sourcemap-codec": "*",
+      "lodash.isequal": "*",
+      "domexception": "*",
+      "w3c-hr-time": "*",
+      "inflight": "*",
+      "npmlog": "*",
+      "rimraf": "*",
+      "stable": "*",
+      "gauge": "*",
+      "abab": "*",
+      "glob": "*"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "core-js",
+      "es5-ext",
+      "esbuild",
+      "typeit",
+      "vue-demi"
+    ],
+    "ignoredBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "vue3-danmaku"
+    ]
   }
 }
