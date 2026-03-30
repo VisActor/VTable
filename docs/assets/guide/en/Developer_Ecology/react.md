@@ -10,7 +10,58 @@ Make sure **node**, **npm** and **React** are installed in your environment and 
 
 - node 10.12.0+
 - npm 6.4.0+
-- react 16.0+
+- react 18.2.0+ (recommended)
+
+### React Version Compatibility & Notes
+
+The public `peerDependencies` of `@visactor/react-vtable` are:
+- react: `^18.2.0 || ^19.0.0`
+- react-dom: `^18.2.0 || ^19.0.0`
+
+So **React 18.2+** is recommended, and **React 19** is supported.
+
+#### 1) React 18 vs React 19: Dependency alignment (very important)
+
+React major versions are tightly coupled with `react-reconciler`. If you use React-VTable advanced features in a React 19 project (custom-layout / DOM overlay), make sure:
+- Only one copy of React/ReactDOM is installed in the app (avoid “multiple React”)
+- In React 19 projects, the effective `react-reconciler` version matches React 19
+
+Version guidance (for diagnosis/alignment):
+- React 18: `react-reconciler@0.29.x`
+- React 19 (especially React 19.2+): `react-reconciler@0.33.x` (commonly `0.33.0`)
+
+Typical symptoms (check the dependency tree first if you see these):
+- `Cannot read properties of undefined (reading 'ReactCurrentOwner')`
+- `A React Element from an older version of React was rendered`
+- custom-layout / DOM overlay works in React 18 but becomes blank or stops updating in React 19
+
+Recommended approach:
+- Use your package manager's dedupe/hoisting to ensure only one React/ReactDOM is installed
+- To quickly validate that the issue is caused by a mismatched reconciler version, you can temporarily use `overrides`/`resolutions` at the application level. After validation, prefer fixing it in the component library side (or upgrade to a fixed version) rather than maintaining overrides in each app.
+
+#### 2) custom-layout: Two paths (avoid mixing them up)
+
+There are two common ways to implement “custom cells” with React-VTable:
+
+- **VTable core `customLayout` (returns rootContainer)**
+  - The returned `rootContainer` will be decoded internally by VTable (`decodeReactDom`)
+  - `rootContainer.type` must be a callable graphic constructor (e.g. `VGroup / VText / VTag / VImage` exported by `@visactor/vtable`)
+  - Do not return business React components or `React.forwardRef` components directly as rootContainer; otherwise you may hit `decodeReactDom` + `type is not a function`
+
+- **React-VTable `react-custom-layout` (use `<CustomLayout role="custom-layout" />` in grammatical tags)**
+  - React-VTable reconciler creates real VRender graphic instances
+  - This is preferred when you want a React declarative workflow or want to combine with DOM overlay
+
+#### 3) DOM overlay (react attribute) notes for React 19
+
+When you render real DOM inside cells (buttons/inputs/popovers, etc.), you usually need:
+- Pass `ReactDOM` to the outer table component (typically `createRoot` from `react-dom/client`)
+- Pass `reactAttributePlugin` (`VTableReactAttributePlugin`)
+- Use the correct DOM container (commonly `table.bodyDomContainer` / `table.headerDomContainer`)
+
+Also note:
+- React 19 removes `react-dom.findDOMNode`. If a third-party component depends on it (older Popover/Trigger implementations), it will throw in React 19. Upgrade the UI library or replace the implementation.
+  - Typical error: `findDOMNode is not a function`
 
 ### Install
 
