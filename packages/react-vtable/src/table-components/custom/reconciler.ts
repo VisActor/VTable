@@ -100,6 +100,16 @@ export const reconcilor = (ReactReconciler as any)({
     return currentUpdatePriority;
   },
 
+  trackSchedulerEvent: (): void => undefined,
+
+  resolveEventType: (): null => null,
+
+  resolveEventTimeStamp: (): number => {
+    return Date.now();
+  },
+
+  shouldAttemptEagerTransition: (): boolean => false,
+
   getCurrentEventPriority: (): number => DefaultEventPriority,
 
   getInstanceFromNode: (node: any): null => null,

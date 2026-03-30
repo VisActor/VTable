@@ -5,6 +5,8 @@
 当出现以下现象时使用本指南：
 - React18 demo 正常，React19 demo 异常（尤其是 custom-layout 单元格空白/不更新/偏移）
 - 报错包含：`A React Element from an older version of React was rendered`
+- 报错包含：`Cannot read properties of undefined (reading 'ReactCurrentOwner')`
+- 报错包含：`Uncaught TypeError: type is not a function` 且栈里有 `decodeReactDom`
 - 报错包含：`findDOMNode is not a function`（第三方组件兼容问题）
 - React19 页面无明显报错，但 scenegraph/DOM overlay 看起来“像没渲染”
 
@@ -17,7 +19,10 @@
 ## 快速决策树（先选分支，再执行脚本）
 
 - 看到 `older version of React element` / 同页出现多个 React renderer：跳到 “1) 是否存在两份 React”
+- 看到 `ReactCurrentOwner` 相关报错：跳到 “2.1) react-reconciler 与 React 主版本是否匹配”
+- 看到 `decodeReactDom` + `type is not a function`：跳到 “2.2) customLayout 走了 decodeReactDom，rootContainer 类型不符合预期”
 - custom-layout 单元格空白且无明显报错：跳到 “3) Fiber 污染”
+- custom-layout / DOM demo 直接报 `resolveEventTimeStamp is not a function` / `trackSchedulerEvent is not a function`：跳到 “3.3) HostConfig 缺失 React19 必需回调”
 - scenegraph 节点存在但 DOM overlay 不显示/位置不对：跳到 “4) DOM overlay”
 - 报 `findDOMNode is not a function`：跳到 “5) 第三方组件兼容性”
 
@@ -88,6 +93,57 @@
   };
 }
 ```
+
+## 2.1) react-reconciler 与 React 主版本是否匹配（React19 常见崩溃点）
+
+现象：
+- `Cannot read properties of undefined (reading 'ReactCurrentOwner')`
+- 报错发生在 `react-reconciler.*.js` 内部（尤其是 `$$$reconciler` / `reconciler.js`）
+
+常见原因：
+- 业务用 React19，但依赖树里被锁到了 React18 对应的 `react-reconciler@0.29.x`（或别的旧版本）
+- 或 `react-vtable` 自身的依赖/构建配置在 React19 场景下没有切到对应版本（demo 里通常用 alias/.react19-deps 解决）
+
+排查要点：
+- 优先确认“是否两份 React”（见 1)）
+- 再确认 custom-layout 使用的 reconciler 来自哪个包/版本（看 lockfile、node_modules、bundle 产物）
+
+修复建议（按优先级）：
+- 组件库层面：为 React19 场景提供匹配的 reconciler（或通过 demo 脚本确保依赖落到 React19 对应版本）
+- 应用层面：仅作为“快速验证/临时兜底”可用 `overrides`/`resolutions` 修正版本，但根因应回到组件库适配
+
+**npm overrides 示例（用于快速验证）：**
+
+```json
+{
+  "overrides": {
+    "react-reconciler": "0.33.0"
+  }
+}
+```
+
+说明：
+- 这类配置属于应用层“锁依赖”手段，适合验证“是否确实是 reconciler 版本不匹配”导致的崩溃
+- 最终仍建议把修复沉到组件库（例如 demo 脚本确保 React19 依赖树一致），避免业务工程各自维护 overrides
+
+## 2.2) customLayout 走了 decodeReactDom，rootContainer 类型不符合预期（`type is not a function`）
+
+现象：
+- 控制台报：`Uncaught TypeError: type is not a function`
+- 堆栈包含：`decodeReactDom (custom.js:...)` / `dealWithCustom`
+- 新加 demo（或业务）里“语义化标签/自定义组件”写法返回了 `rootContainer: <Something />`，页面空白
+
+机制解释（关键）：
+- VTable core 的 `customLayout` 支持返回“类 ReactElement 结构”，随后在 `decodeReactDom` 里执行 `const g = type({ attribute })`
+- 这里要求 `dom.type` 必须是“可调用的构造函数”（如 `VGroup/VText/VTag/VImage` 这类函数），否则就会 `type is not a function`
+
+排查/修复建议：
+- 如果你在走 **VTable core 的 customLayout（非 react-custom-layout）**：
+  - `rootContainer` 请使用 `@visactor/vtable` 导出的 `VGroup/VText/VTag/VImage/...`（它们的 `type` 是 function）
+  - 不要把 `React.forwardRef` 的组件、或业务 React 组件当成 rootContainer 直接返回
+- 如果你希望在单元格里渲染“真正的 React 组件 / DOM”：
+  - 走 `react-custom-layout`（即在 `ListColumn` children 里写 `<CustomLayout role="custom-layout">...</CustomLayout>` / 或者用 `react attribute`）
+  - 让 `@visactor/react-vtable` 的 reconciler 创建真正的 VRender 图元实例（避免 VTable core decodeReactDom 路径）
 
 ## 3) 关键判定：Fiber 污染（React19 custom-layout 空白的典型原因）
 
@@ -181,6 +237,27 @@
 
 典型异常：
 - `customBounds` 明显大于 cell（例如 500x500），且 y/x 偏移很大
+
+## 3.3) HostConfig 缺失 React19 必需回调（`resolveEventTimeStamp` / `trackSchedulerEvent`）
+
+现象：
+- DOM custom-layout demo 直接空白
+- 控制台报：
+  - `TypeError: resolveEventTimeStamp is not a function`
+  - `TypeError: trackSchedulerEvent is not a function`
+- 堆栈往往包含 `react-reconciler` 的 updateContainer/performWork 逻辑，或 `@visactor/react-vtable` 的 `reconcilerUpdateContainer`
+
+原因：
+- React19 对应的 `react-reconciler` 会从 HostConfig（即 `ReactReconciler(hostConfig)` 的参数对象）读取并调用：
+  - `trackSchedulerEvent`
+  - `resolveEventType`
+  - `resolveEventTimeStamp`
+  - `shouldAttemptEagerTransition`
+- 旧的 HostConfig（按 React18 写的）没有提供这些字段，导致运行时直接 TypeError
+
+修复建议：
+- 组件库层面：在 `packages/react-vtable/src/table-components/custom/reconciler.ts` 的 HostConfig 补齐上述回调（给出安全默认实现）
+- 如果你仍然遇到上述报错：说明你使用的 `@visactor/react-vtable` 版本尚未包含该修复（需要升级到包含 HostConfig 补丁的版本）
 
 ## 4) DOM overlay（react attribute）专项检查
 

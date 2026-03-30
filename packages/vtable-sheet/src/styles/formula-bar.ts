@@ -44,7 +44,7 @@ export function importStyle() {
   margin: 0 8px;
   font-size: 14px;
   color: #666;
-  font-family: 'Roboto Mono', monospace;
+  font-family: monospace;
   width: 20px;
   display: flex;
   align-items: center;

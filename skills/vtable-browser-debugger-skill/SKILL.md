@@ -13,6 +13,8 @@ description: This skill should be used when debugging VTable (canvas-based table
 - 自定义渲染异常：custom-layout / react-custom-layout 不生效、渲染为空、渲染偏移或尺寸不对
 - DOM overlay 异常：react attribute（DOM 容器挂载）不显示、位置不对、与 canvas 不同步
 - React18 正常、React19 异常：custom-layout 空白、`older version of React element`、两份 React 共存、reconciler/hostConfig 兼容问题
+- React19 reconciler 相关直接崩溃：`ReactCurrentOwner`
+- VTable core customLayout 解码报错：`decodeReactDom` + `type is not a function`（rootContainer 的 type 不符合预期）
 - 仅在特定交互触发：滚动/resize 后消失、hover 才出现、冻结列切换后错位
 
 ## 工作流（按顺序执行）
