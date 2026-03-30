@@ -63,6 +63,9 @@ Also note:
 - React 19 removes `react-dom.findDOMNode`. If a third-party component depends on it (older Popover/Trigger implementations), it will throw in React 19. Upgrade the UI library or replace the implementation.
   - Typical error: `findDOMNode is not a function`
 
+#### 4) React19 Demo 
+react 19 demo project: https://github.com/fangsmile/vtable-react19-demo-project
+
 ### Install
 
 #### Install using the package manager
