@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: degrade radio/checkbox cells to text in aggregation rows",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "2779428708@qq.com"
+}
