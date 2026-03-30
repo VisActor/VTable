@@ -251,6 +251,12 @@ export class StateManager {
     this.setFrozenState();
   }
   _updateOptionSetState() {
+    if (this.columnResize.resizing) {
+      this.table.scenegraph.component.hideResizeCol();
+    }
+    if (this.rowResize.resizing) {
+      this.table.scenegraph.component.hideResizeRow();
+    }
     this.interactionState = InteractionState.default;
     // this.select = {
     //   highlightScope: HighlightScope.single,
