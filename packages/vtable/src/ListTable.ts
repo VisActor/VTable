@@ -1546,9 +1546,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param option 附近参数，其中的sortState为排序状态，如果设置null 将清除目前的排序状态
    */
   setRecords(records: Array<any>, option?: { sortState?: SortState | SortState[] | null }): void {
-    if (this.stateManager.columnResize.resizing || this.stateManager.rowResize.resizing) {
-      this.stateManager.updateOptionSetState();
-    }
+    this.stateManager.endResizeIfResizing();
     clearChartRenderQueue();
     // 释放事件 及 对象
     this.internalProps.dataSource?.release();

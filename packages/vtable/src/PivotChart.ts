@@ -1623,9 +1623,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
-    if (this.stateManager.columnResize.resizing || this.stateManager.rowResize.resizing) {
-      this.stateManager.updateOptionSetState();
-    }
+    this.stateManager.endResizeIfResizing();
     this.internalProps.layoutMap.release();
     clearChartRenderQueue();
     this.scenegraph.updateChartState(null, undefined);
