@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@microsoft/rush-lib": "5.94.1",
+    "@microsoft/rush-lib": "5.148.0",
     "minimist": "1.2.6",
     "ts-node": "10.9.0"
   },
