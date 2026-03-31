@@ -250,7 +250,21 @@ export class StateManager {
     this.setSelectState();
     this.setFrozenState();
   }
+  endResizeIfResizing() {
+    if (this.columnResize.resizing) {
+      this.table.scenegraph.component.hideResizeCol();
+      this.columnResize.resizing = false;
+    }
+    if (this.rowResize.resizing) {
+      this.table.scenegraph.component.hideResizeRow();
+      this.rowResize.resizing = false;
+    }
+    if (this.interactionState === InteractionState.grabing) {
+      this.interactionState = InteractionState.default;
+    }
+  }
   _updateOptionSetState() {
+    this.endResizeIfResizing();
     this.interactionState = InteractionState.default;
     // this.select = {
     //   highlightScope: HighlightScope.single,
