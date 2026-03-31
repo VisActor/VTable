@@ -1,5 +1,54 @@
 # DevTools 脚本片段（复制到 evaluate_script 用）
 
+## 0) MCP 连接不上 Chrome（先处理这个再跑脚本）
+
+如果 MCP 报错：
+- `Could not connect to Chrome ... Could not find DevToolsActivePort ...`
+- `Network.enable timed out ...`
+
+先解决“连不上 Chrome”再继续排查 scenegraph。
+
+### 0.1 `DevToolsActivePort` 找不到（最常见）
+
+现象：MCP 报 `Could not find DevToolsActivePort for chrome-beta at .../DevToolsActivePort`。
+
+含义：Chrome 没有以 remote-debugging 模式启动，或 MCP 在找的 profile 目录里没有端口文件。
+
+处理（macOS / Chrome Beta）：
+- 关闭所有 Chrome / Chrome Beta
+- 用“非默认 user-data-dir”启动（Chrome 会拒绝在默认 profile 上开 remote debugging）：
+
+```bash
+rm -rf /tmp/trae-chrome-beta-devtools
+/Applications/Google\\ Chrome\\ Beta.app/Contents/MacOS/Google\\ Chrome\\ Beta \\
+  --remote-debugging-port=0 \\
+  --user-data-dir=/tmp/trae-chrome-beta-devtools \\
+  --no-first-run \\
+  --no-default-browser-check
+```
+
+- 如果 MCP 固定读取 `~/Library/Application Support/Google/Chrome Beta/DevToolsActivePort`，把端口文件软链过去：
+
+```bash
+mkdir -p "/Users/bytedance/Library/Application Support/Google/Chrome Beta"
+ln -sf /tmp/trae-chrome-beta-devtools/DevToolsActivePort \\
+  "/Users/bytedance/Library/Application Support/Google/Chrome Beta/DevToolsActivePort"
+```
+
+- 验证端口是否真的起来（端口号以 DevToolsActivePort 文件内容为准）：
+  - `cat /tmp/trae-chrome-beta-devtools/DevToolsActivePort`
+  - `curl -s http://127.0.0.1:<port>/json/version`
+  - 确认 `chrome://inspect/#remote-debugging` 能打开且页面列表可见
+
+### 0.2 `Network.enable timed out`
+
+含义：MCP 已经连到 Chrome，但在启用 DevTools Network domain 时超时（常见原因：Chrome 进程卡死/扩展干扰/remote debugging 未干净启动）。
+
+处理：
+- 优先用上面的 `0.1` 方式（全新 user-data-dir）重启 Chrome（最有效）
+- 确认 `chrome://inspect/#remote-debugging` 能打开且页面列表可见
+- 如果仍超时，关闭可能拦截网络请求的扩展（抓包/代理/安全类扩展）后重试
+
 ## 1) 查找页面上的 VTable 实例
 
 ### 1.1 最快：取最近创建的表格

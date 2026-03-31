@@ -27,13 +27,17 @@ description: This skill should be used when debugging VTable (canvas-based table
 - NEVER 只看 DOM/console 就下结论，canvas 相关问题如绘制内容缺失，单元格错位等，必须同时用 scenegraph 树 + bounds 对比验证
 - NEVER 忽略 `componentGroup`：selection/tooltip/overlay 等很多“看起来像 cell 的问题”其实是 component/overlay 层问题
 
+## DevTools MCP 连接排障
+
+遇到 MCP 报错（例如 `DevToolsActivePort` 找不到、`Network.enable timed out`）时，先按 [snippets.md](references/snippets.md) 的 `0) MCP 连接不上 Chrome` 处理，确认 DevTools 连接可用后再继续排查 scenegraph。
+
 ### 1) 先拿到 table 与 scenegraph（必做）
 
 目标：
 - 拿到 VTable 实例（ListTable/PivotTable）
 - 确认 `table.scenegraph.stage` 存在且 width/height 正常
 
-MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/snippets.md) 的：
+MANDATORY：加载并使用 [snippets.md](references/snippets.md) 的：
 - 1) 查找页面上的 VTable 实例
 - 2) 快速查看各分区 group 的 childrenCount
 
@@ -45,7 +49,7 @@ MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTabl
 - DOM overlay / 组件问题：`componentGroup`
 
 需要理解 scenegraph 分区结构时，按需加载：
-- [vtable-scenegraph.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/vtable-scenegraph.md)
+- [vtable-scenegraph.md](references/vtable-scenegraph.md)
 
 ### 3) 结构问题：导出树 + 定位 cell（按需）
 
@@ -53,7 +57,7 @@ MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTabl
 - 导出目标分区浅层树确认节点存在
 - 按 col/row 找到目标 cell，再做深层导出
 
-MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/snippets.md) 的：
+MANDATORY：加载并使用 [snippets.md](references/snippets.md) 的：
 - 3) 在 bodyGroup 里按 col/row 找某个 cell group
 - 4) 导出任意 group 的树
 
@@ -63,7 +67,7 @@ MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTabl
 - 对目标节点做 bounds 叠加
 - 截图对比“场景树坐标”与“屏幕像素”
 
-MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/snippets.md) 的：
+MANDATORY：加载并使用 [snippets.md](references/snippets.md) 的：
 - 5) 叠加 bounds 到屏幕（用于截图对比）
 
 ### 5) 快速检查表（必做）
@@ -78,11 +82,11 @@ MANDATORY：加载并使用 [snippets.md](file:///Users/bytedance/VisActor/VTabl
 
 当现象是“React18 正常、React19 异常”或“custom-layout 在 React19 下空白/偏移”，先按专项指南做二分排查（依赖树/双 React/reconciler/HostConfig/DOM overlay），再回到 scenegraph 做细化定位。
 
-MANDATORY：加载并从头到尾执行 [react18-react19.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/react18-react19.md)。
+MANDATORY：加载并从头到尾执行 [react18-react19.md](references/react18-react19.md)。
 
 ## 参考资料（按需加载）
 
-- [snippets.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/snippets.md)
-- [vtable-scenegraph.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/vtable-scenegraph.md)
-- [vrender-graphics.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/vrender-graphics.md)
-- [react18-react19.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/react18-react19.md)
+- [snippets.md](references/snippets.md)
+- [vtable-scenegraph.md](references/vtable-scenegraph.md)
+- [vrender-graphics.md](references/vrender-graphics.md)
+- [react18-react19.md](references/react18-react19.md)
