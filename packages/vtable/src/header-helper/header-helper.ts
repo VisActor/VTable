@@ -464,6 +464,8 @@ export class HeaderHelper {
         return TextHeaderStyle;
       case 'checkbox':
         return CheckboxStyle;
+      default:
+        return TextHeaderStyle;
     }
   }
 

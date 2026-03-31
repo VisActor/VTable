@@ -86,7 +86,7 @@ export function createTable() {
     bottomFrozenRowCount: 1,
     rowSeriesNumber: {
       width: 50,
-      cellType: 'checkbox'
+      cellType: 'radio'
     },
     theme: VTable.themes.DEFAULT.extends({
       bottomFrozenStyle: {
