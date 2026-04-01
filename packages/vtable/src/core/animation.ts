@@ -79,8 +79,8 @@ export class TableAnimationManager {
     const to = {
       x: isNumber(col) ? left - this.table.getFrozenColsWidth() : this.table.scrollLeft,
       y: isNumber(row) ? top - this.table.getFrozenRowsHeight() : this.table.scrollTop,
-      targetCol: colInt ?? -1,
-      targetRow: rowInt ?? -1
+      targetCol: col ?? -1,
+      targetRow: row ?? -1
     };
     const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : animationOption ? 3000 : 0;
     const easing = !isBoolean(animationOption) ? animationOption?.easing ?? 'linear' : animationOption ? 'linear' : '';

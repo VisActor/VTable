@@ -4992,7 +4992,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (isValid(cellAddr.row) && cellAddr.row >= this.frozenRowCount) {
       const frozenHeight = this.getFrozenRowsHeight();
       // const top = this.getRowsHeight(0, cellAddr.row - 1);
-      const top = this.internalProps._rowHeightsMap.getSumInRange(0, cellAddr.row - 1);
+      const rowInt = Math.floor(cellAddr.row);
+      const rowFloat = cellAddr.row - rowInt;
+      let top = this.internalProps._rowHeightsMap.getSumInRange(0, rowInt - 1);
+      if (rowFloat > 0) {
+        top += (this.internalProps._rowHeightsMap.get(rowInt) ?? this.getRowHeight(rowInt)) * rowFloat;
+      }
       this.scrollTop = Math.min(top - frozenHeight, this.getAllRowsHeight() - drawRange.height);
     }
     this.render();
