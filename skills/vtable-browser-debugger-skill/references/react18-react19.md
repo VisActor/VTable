@@ -8,7 +8,7 @@
 - 报错包含：`Cannot read properties of undefined (reading 'ReactCurrentOwner')`
 - 报错包含：`Uncaught TypeError: type is not a function` 且栈里有 `decodeReactDom`
 - 报错包含：`findDOMNode is not a function`（第三方组件兼容问题）
-- React19 页面无明显报错，但 scenegraph/DOM overlay 看起来“像没渲染”
+- React19 页面无明显报错，但 scenegraph/DOM overlay 看起来"像没渲染"
 
 本指南目标是快速把问题归因到以下几类之一：
 - 两份 React/ReactDOM 混用（最常见）
@@ -18,22 +18,22 @@
 
 ## 快速决策树（先选分支，再执行脚本）
 
-- 看到 `older version of React element` / 同页出现多个 React renderer：跳到 “1) 是否存在两份 React”
-- 看到 `ReactCurrentOwner` 相关报错：跳到 “2.1) react-reconciler 与 React 主版本是否匹配”
-- 看到 `decodeReactDom` + `type is not a function`：跳到 “2.2) customLayout 走了 decodeReactDom，rootContainer 类型不符合预期”
-- custom-layout 单元格空白且无明显报错：跳到 “3) Fiber 污染”
-- custom-layout / DOM demo 直接报 `resolveEventTimeStamp is not a function` / `trackSchedulerEvent is not a function`：跳到 “3.3) HostConfig 缺失 React19 必需回调”
-- scenegraph 节点存在但 DOM overlay 不显示/位置不对：跳到 “4) DOM overlay”
-- 报 `findDOMNode is not a function`：跳到 “5) 第三方组件兼容性”
+- 看到 `older version of React element` / 同页出现多个 React renderer：跳到 "1) 是否存在两份 React"
+- 看到 `ReactCurrentOwner` 相关报错：跳到 "2.1) react-reconciler 与 React 主版本是否匹配"
+- 看到 `decodeReactDom` + `type is not a function`：跳到 "2.2) customLayout 走了 decodeReactDom，rootContainer 类型不符合预期"
+- custom-layout 单元格空白且无明显报错：跳到 "3) Fiber 污染"
+- custom-layout / DOM demo 直接报 `resolveEventTimeStamp is not a function` / `trackSchedulerEvent is not a function`：跳到 "3.3) HostConfig 缺失 React19 必需回调"
+- scenegraph 节点存在但 DOM overlay 不显示/位置不对：跳到 "4) DOM overlay"
+- 报 `findDOMNode is not a function`：跳到 "5) 第三方组件兼容性"
 
 ## 0) 预设：先确保你已经拿到 table
 
-先用 [snippets.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/snippets.md) 的 “查找 VTable 实例” 拿到 `table`。
+先用 [snippets.md](snippets.md) 的 "查找 VTable 实例" 拿到 `table`。
 
 后续脚本都默认：
 - `const table = globalThis.tableInstance || globalThis.__vtable__?.last`
 
-## 1) 快速判断：是否存在“两份 React”
+## 1) 快速判断：是否存在"两份 React"
 
 两份 React 的典型症状：
 - React19 demo 里混入了默认依赖树的 React18（或相反）
@@ -59,7 +59,7 @@
 ```
 
 判断要点：
-- 同一页面如果出现“多个 React renderer”（尤其版本差异明显），优先怀疑两份 React
+- 同一页面如果出现"多个 React renderer"（尤其版本差异明显），优先怀疑两份 React
 
 ### 1.2 看 react-vtable renderer 是否真的挂了 root
 
@@ -105,12 +105,12 @@
 - 或 `react-vtable` 自身的依赖/构建配置在 React19 场景下没有切到对应版本（demo 里通常用 alias/.react19-deps 解决）
 
 排查要点：
-- 优先确认“是否两份 React”（见 1)）
+- 优先确认"是否两份 React"（见 1)）
 - 再确认 custom-layout 使用的 reconciler 来自哪个包/版本（看 lockfile、node_modules、bundle 产物）
 
 修复建议（按优先级）：
 - 组件库层面：为 React19 场景提供匹配的 reconciler（或通过 demo 脚本确保依赖落到 React19 对应版本）
-- 应用层面：仅作为“快速验证/临时兜底”可用 `overrides`/`resolutions` 修正版本，但根因应回到组件库适配
+- 应用层面：仅作为"快速验证/临时兜底"可用 `overrides`/`resolutions` 修正版本，但根因应回到组件库适配
 
 **npm overrides 示例（用于快速验证）：**
 
@@ -123,7 +123,7 @@
 ```
 
 说明：
-- 这类配置属于应用层“锁依赖”手段，适合验证“是否确实是 reconciler 版本不匹配”导致的崩溃
+- 这类配置属于应用层"锁依赖"手段，适合验证"是否确实是 reconciler 版本不匹配"导致的崩溃
 - 最终仍建议把修复沉到组件库（例如 demo 脚本确保 React19 依赖树一致），避免业务工程各自维护 overrides
 
 ## 2.2) customLayout 走了 decodeReactDom，rootContainer 类型不符合预期（`type is not a function`）
@@ -131,23 +131,23 @@
 现象：
 - 控制台报：`Uncaught TypeError: type is not a function`
 - 堆栈包含：`decodeReactDom (custom.js:...)` / `dealWithCustom`
-- 新加 demo（或业务）里“语义化标签/自定义组件”写法返回了 `rootContainer: <Something />`，页面空白
+- 新加 demo（或业务）里"语义化标签/自定义组件"写法返回了 `rootContainer: <Something />`，页面空白
 
 机制解释（关键）：
-- VTable core 的 `customLayout` 支持返回“类 ReactElement 结构”，随后在 `decodeReactDom` 里执行 `const g = type({ attribute })`
-- 这里要求 `dom.type` 必须是“可调用的构造函数”（如 `VGroup/VText/VTag/VImage` 这类函数），否则就会 `type is not a function`
+- VTable core 的 `customLayout` 支持返回"类 ReactElement 结构"，随后在 `decodeReactDom` 里执行 `const g = type({ attribute })`
+- 这里要求 `dom.type` 必须是"可调用的构造函数"（如 `VGroup/VText/VTag/VImage` 这类函数），否则就会 `type is not a function`
 
 排查/修复建议：
 - 如果你在走 **VTable core 的 customLayout（非 react-custom-layout）**：
   - `rootContainer` 请使用 `@visactor/vtable` 导出的 `VGroup/VText/VTag/VImage/...`（它们的 `type` 是 function）
   - 不要把 `React.forwardRef` 的组件、或业务 React 组件当成 rootContainer 直接返回
-- 如果你希望在单元格里渲染“真正的 React 组件 / DOM”：
+- 如果你希望在单元格里渲染"真正的 React 组件 / DOM"：
   - 走 `react-custom-layout`（即在 `ListColumn` children 里写 `<CustomLayout role="custom-layout">...</CustomLayout>` / 或者用 `react attribute`）
   - 让 `@visactor/react-vtable` 的 reconciler 创建真正的 VRender 图元实例（避免 VTable core decodeReactDom 路径）
 
 ## 3) 关键判定：Fiber 污染（React19 custom-layout 空白的典型原因）
 
-“Fiber 污染”指 VRender 图元的 `attribute` 被写入了 React Fiber 对象字段（例如 `tag/child/sibling/return/memoizedProps/lanes`），导致坐标/尺寸/visible 等属性被覆盖，最终视觉上看起来是“空白/偏移/不更新”。
+"Fiber 污染"指 VRender 图元的 `attribute` 被写入了 React Fiber 对象字段（例如 `tag/child/sibling/return/memoizedProps/lanes`），导致坐标/尺寸/visible 等属性被覆盖，最终视觉上看起来是"空白/偏移/不更新"。
 
 这类问题通常来源于：React19 的 `react-reconciler` HostConfig 回调签名变化（最常见是 `commitUpdate` 参数顺序变化），而实现仍按 React18 签名处理。
 
@@ -261,7 +261,7 @@
 
 ## 4) DOM overlay（react attribute）专项检查
 
-当 scenegraph 里节点存在，但“DOM 内容不显示/位置不对”时优先检查：
+当 scenegraph 里节点存在，但"DOM 内容不显示/位置不对"时优先检查：
 - `react.container` 是否为 null/undefined，是否指向正确的 `table.bodyDomContainer` 或 `table.headerDomContainer`
 - `react.width/react.height` 是否给了合理值（部分类型定义要求）
 - overlay 容器是否被 CSS 覆盖（例如 `display:none`、`overflow:hidden`、z-index）

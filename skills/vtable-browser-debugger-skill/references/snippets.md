@@ -6,7 +6,7 @@
 - `Could not connect to Chrome ... Could not find DevToolsActivePort ...`
 - `Network.enable timed out ...`
 
-先解决“连不上 Chrome”再继续排查 scenegraph。
+先解决"连不上 Chrome"再继续排查 scenegraph。
 
 ### 0.1 `DevToolsActivePort` 找不到（最常见）
 
@@ -16,7 +16,7 @@
 
 处理（macOS / Chrome Beta）：
 - 关闭所有 Chrome / Chrome Beta
-- 用“非默认 user-data-dir”启动（Chrome 会拒绝在默认 profile 上开 remote debugging）：
+- 用"非默认 user-data-dir"启动（Chrome 会拒绝在默认 profile 上开 remote debugging）：
 
 ```bash
 rm -rf /tmp/trae-chrome-beta-devtools
@@ -116,7 +116,7 @@ ln -sf /tmp/trae-chrome-beta-devtools/DevToolsActivePort \\
 
 ## 3) 在 bodyGroup 里按 col/row 找某个 cell group（启发式）
 
-说明：VTable 的层级随布局而变，这里用“遍历 + role/col/row 匹配”的启发式找 cell。
+说明：VTable 的层级随布局而变，这里用"遍历 + role/col/row 匹配"的启发式找 cell。
 
 ```js
 function listChildren(node) {
@@ -278,8 +278,117 @@ function dumpNode(node, depth, maxDepth) {
 }
 ```
 
-## 6) React18/React19 差异排查
+## 6) 交互类问题调试脚本
+
+用于排查选择、拖拽、滚动等交互相关的问题。
+
+### 6.1 动态注入配置（用于复现问题）
+
+```js
+// 动态设置 disableSelect，禁止最后一行被选中
+(table) => {
+  table.options.select = {
+    ...(table.options.select || {}),
+    disableSelect: (col, row, t) => row === t.rowCount - 1
+  };
+  return { ok: true, rowCount: table.rowCount, disableSelectSet: true };
+}
+```
+
+### 6.2 检查当前选区状态
+
+```js
+(table) => {
+  const ranges = table.getSelectedCellRanges();
+  return {
+    ok: true,
+    rangeCount: ranges.length,
+    ranges: ranges.map(r => ({
+      start: { col: r.start.col, row: r.start.row },
+      end: { col: r.end.col, row: r.end.row }
+    }))
+  };
+}
+```
+
+### 6.3 检查单元格合并信息
+
+```js
+(table, col, row) => {
+  const range = table.getCellRange(col, row);
+  return {
+    ok: true,
+    col,
+    row,
+    merged: range.start.col !== range.end.col || range.start.row !== range.end.row,
+    range: {
+      start: { col: range.start.col, row: range.start.row },
+      end: { col: range.end.col, row: range.end.row }
+    }
+  };
+}
+```
+
+### 6.4 模拟拖拽选区（用于自动化测试）
+
+```js
+async (table, startCol, startRow, endCol, endRow) => {
+  const canvas = table.canvas || table.scenegraph?.stage?.canvas;
+  const rect = canvas.getBoundingClientRect();
+  
+  // 获取单元格位置
+  const startInfo = table.getCellInfo(startCol, startRow);
+  const endInfo = table.getCellInfo(endCol, endRow);
+  
+  const startX = rect.left + (startInfo.cellRange.bounds.x1 + startInfo.cellRange.bounds.x2) / 2;
+  const startY = rect.top + (startInfo.cellRange.bounds.y1 + startInfo.cellRange.bounds.y2) / 2;
+  const endX = rect.left + (endInfo.cellRange.bounds.x1 + endInfo.cellRange.bounds.x2) / 2;
+  const endY = rect.top + (endInfo.cellRange.bounds.y1 + endInfo.cellRange.bounds.y2) / 2;
+  
+  // 触发 pointer 事件
+  const fire = (type, x, y, target = canvas) => {
+    const ev = new PointerEvent(type, {
+      bubbles: true,
+      cancelable: true,
+      clientX: x,
+      clientY: y,
+      pointerId: 1,
+      pointerType: 'mouse',
+      isPrimary: true,
+      buttons: type === 'pointerup' ? 0 : 1,
+      button: 0
+    });
+    target.dispatchEvent(ev);
+  };
+  
+  fire('pointerdown', startX, startY, canvas);
+  await new Promise(r => setTimeout(r, 30));
+  fire('pointermove', endX, endY, window);
+  await new Promise(r => setTimeout(r, 30));
+  fire('pointerup', endX, endY, window);
+  
+  return { ok: true, start: { col: startCol, row: startRow }, end: { col: endCol, row: endRow } };
+}
+```
+
+### 6.5 检查 disableSelect 是否生效
+
+```js
+(table, col, row) => {
+  const disableSelect = table.options.select?.disableSelect;
+  const isDisabled = disableSelect ? disableSelect(col, row, table) : false;
+  return {
+    ok: true,
+    col,
+    row,
+    isDisabled,
+    hasDisableSelect: !!disableSelect
+  };
+}
+```
+
+## 7) React18/React19 差异排查
 
 把 React 版本差异相关的经验集中到一个文件里维护，避免与本文件（通用 snippets）重复。
 
-MANDATORY：阅读并执行 [react18-react19.md](file:///Users/bytedance/VisActor/VTable3/.trae/skills/vtable-browser-debugger-skill/references/react18-react19.md)。
+MANDATORY：阅读并执行 [react18-react19.md](react18-react19.md)。

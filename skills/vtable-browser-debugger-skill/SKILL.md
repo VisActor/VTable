@@ -19,6 +19,26 @@ description: This skill should be used when debugging VTable (canvas-based table
 
 ## 工作流（按顺序执行）
 
+### 0) 复现/验证工作流（源码排查场景）
+
+当在 VTable 源代码中排查解决问题时，使用以下工作流：
+
+**复现问题：**
+1. 在 `/packages/vtable/examples` 中找到与问题相关的 demo，或创建新的 demo
+2. 修改 demo 配置以复现问题（如设置 `select.disableSelect`、`customMergeCell` 等）
+3. 启动 demo 服务：`rushx demo`（在 `packages/vtable` 目录下）
+4. 使用 Chrome DevTools MCP 连接浏览器，验证问题是否复现
+
+**验证修复：**
+1. 修改源代码后，确保 demo 服务已重新加载（Vite 会自动热更新）
+2. 使用相同的 demo 验证问题是否解决
+3. 检查修复是否引入新的问题（如影响其他交互、其他 demo 是否正常）
+
+**常用调试技巧：**
+- 可通过 `table.options.select.disableSelect = (col, row, t) => ...` 动态注入配置测试
+- 使用 `table.getSelectedCellRanges()` 检查当前选区状态
+- 使用 `table.getCellRange(col, row)` 检查单元格合并信息
+
 ## 常见坑（NEVER）
 
 - NEVER 在 `stage.width/height` 为 0 或父容器高度未定时深入排查 scenegraph，先修布局与容器高度
