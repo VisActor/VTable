@@ -1,5 +1,5 @@
 ---
-name: vtable-browser-debugger-skill
+name: vtable-browser-debugger-assistant
 description: This skill should be used when debugging VTable (canvas-based table) rendering/interaction issues in the browser via Chrome DevTools by inspecting the VRender Scenegraph (Scenegraph.tableGroup). Use it for blank/white canvas, missing/misaligned cells, frozen header/body issues, hover/selection box issues, DOM overlay (react attribute) issues, and React18/React19 differences in custom-layout / react-reconciler (e.g., Fiber contamination, double React, older React element errors).
 ---
 
