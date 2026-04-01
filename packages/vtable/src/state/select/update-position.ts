@@ -5,6 +5,7 @@ import type { Scenegraph } from '../../scenegraph/scenegraph';
 import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
+import { isCellDisableSelect } from './is-cell-select-highlight';
 /**
  * @description: 更新select位置
  * @param {StateManager} state
@@ -350,6 +351,10 @@ export function updateSelectPosition(
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
     !table.stateManager.isResizeCol()
   ) {
+    if (col >= 0 && row >= 0 && isCellDisableSelect(table, col, row)) {
+      scenegraph.updateNextFrame();
+      return;
+    }
     let extendSelectRange = isValid(skipBodyMerge) ? !skipBodyMerge : true;
     // 可能有cellPosStart从-1开始grabing的情况
     if (cellPos.col === -1) {

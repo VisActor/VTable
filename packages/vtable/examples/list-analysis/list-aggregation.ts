@@ -103,6 +103,8 @@ export function createTable() {
       field: 'salary',
       title: 'salary',
       width: 100,
+      disableHeaderSelect: true,
+      disableSelect: true,
       aggregation: [
         {
           aggregationType: AggregationType.MAX,
