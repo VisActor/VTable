@@ -34,10 +34,15 @@ description: This skill should be used when debugging VTable (canvas-based table
 2. 使用相同的 demo 验证问题是否解决
 3. 检查修复是否引入新的问题（如影响其他交互、其他 demo 是否正常）
 
-**常用调试技巧：**
-- 可通过 `table.options.select.disableSelect = (col, row, t) => ...` 动态注入配置测试
-- 使用 `table.getSelectedCellRanges()` 检查当前选区状态
-- 使用 `table.getCellRange(col, row)` 检查单元格合并信息
+**常用调试技巧（借助 DevTools MCP）：**
+- **动态修改配置验证**：可通过 `table.options.select.disableSelect = ...` 或修改 `table.theme.scrollStyle` 等动态注入配置，无需频繁修改代码和重启服务即可测试不同边界情况。
+- **排查闭包/作用域问题**：VTable 的事件监听器（如 `pointerleave`, `pointermove`）中存在大量闭包变量。如果某逻辑未按预期执行，可利用 MCP 注入断点或打印日志（覆盖原型链方法或动态添加 event listener），排查闭包变量是否为 `undefined` 或过期。
+- **Canvas 事件与 Scenegraph 层级**：
+  - 区分 `stage` 和 `tableGroup` 的事件。Hover/Leave 相关问题（如滚动条、Tooltip 异常消失），往往是因为 `tableGroup` 的 `pointerleave` 事件在鼠标移动到 canvas 空白区域时被意外触发。
+  - 注意 `e.target` 和 `e.relatedTarget`：判断节点是否在某容器内时，`e.target.isDescendantsOf(stage)` 当 `target` 正是 `stage` 本身时会返回 `false`。**正确的判断模式**应为 `target === stage || target?.isDescendantsOf?.(stage)`。
+- **获取状态**：
+  - 使用 `table.getSelectedCellRanges()` 检查当前选区状态。
+  - 使用 `table.getCellRange(col, row)` 检查单元格合并信息。
 
 ## 常见坑（NEVER）
 
@@ -46,6 +51,9 @@ description: This skill should be used when debugging VTable (canvas-based table
 - NEVER 在检测到 Fiber 污染（图元 `attribute` 出现 `tag/child/sibling/return/memoizedProps/lanes` 等）后继续做 bounds 叠加，直接回到 reconciler HostConfig（常见点：`commitUpdate` 参数签名）
 - NEVER 只看 DOM/console 就下结论，canvas 相关问题如绘制内容缺失，单元格错位等，必须同时用 scenegraph 树 + bounds 对比验证
 - NEVER 忽略 `componentGroup`：selection/tooltip/overlay 等很多“看起来像 cell 的问题”其实是 component/overlay 层问题
+- NEVER 在处理鼠标交互问题（Hover/Leave/Enter）时，想当然地认为 `e.target.isDescendantsOf(stage)` 对于 `stage` 本身会返回 `true`。永远使用 `target === stage || target?.isDescendantsOf?.(stage)`。
+- NEVER 忽视内部 Group 的事件拦截。如果遇到滚动条、高亮状态异常消失，不要只在 `stage` 层寻找原因，多半是内部的 `tableGroup` 或其他 Group 的 `pointerleave` / `pointerout` 冒泡或执行了意外的隐藏逻辑。
+- NEVER 假设 VTable 初始化时的变量在闭包中永远是最新的。由于配置项（如 `theme`, `options`）在运行时可能被深拷贝或替换，在事件监听器等闭包内直接解构或使用外部作用域变量可能会拿到旧值。遇到问题时，利用 MCP `evaluate_script` 检查闭包运行时的实际值。
 
 ## DevTools MCP 连接排障
 
