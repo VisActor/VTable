@@ -29,6 +29,9 @@ import PivotChartPie from './table/gramatical/composition/PivotChartPie.vue';
 import singleTag from './table/single/single-tag.vue';
 import singleCheckbox from './table/single/single-checkbox.vue';
 import singleRadio from './table/single/single-radio.vue';
+
+// el-plus自定义组件表格示例
+import tableEditor from './table/elplus/index.vue';
 </script>
 
 <template>
@@ -50,7 +53,8 @@ import singleRadio from './table/single/single-radio.vue';
   <!-- gramatical -->
   <!-- ---------- -->
 
-  <ListTable />
+  <!-- <ListTable /> -->
+  <tableEditor />
   <!-- <ListTableEditor /> -->
   <!-- <ListTableEditorArco /> -->
   <!-- <ListTableEditorRender /> -->
