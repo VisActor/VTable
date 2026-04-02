@@ -326,16 +326,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateCursor();
     }
 
-    if (
-      (table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.horizontalVisible === 'focus') ||
-      (!table.theme.scrollStyle.horizontalVisible && table.theme.scrollStyle.visible === 'focus')
-    ) {
+    const scrollStyle = table.theme.scrollStyle;
+    const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
+    const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
+    const barToSide = scrollStyle?.barToSide ?? false;
+
+    if (!barToSide && horizontalVisible === 'focus') {
       stateManager.hideHorizontalScrollBar();
     }
-    if (
-      (table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.verticalVisible === 'focus') ||
-      (!table.theme.scrollStyle.verticalVisible && table.theme.scrollStyle.visible === 'focus')
-    ) {
+    if (!barToSide && verticalVisible === 'focus') {
       stateManager.hideVerticalScrollBar();
     }
 
@@ -981,6 +980,61 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.endSelectCells();
     }
   });
+  // 当 barToSide=true 且 visible='focus' 时，hover 到整个 canvas 区域都应显示滚动条
+  const scrollStyle = table.theme.scrollStyle;
+  const barToSide = scrollStyle?.barToSide ?? false;
+  const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
+  const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
+  const shouldShowScrollOnCanvasHover = barToSide && horizontalVisible === 'focus';
+  const shouldShowVScrollOnCanvasHover = barToSide && verticalVisible === 'focus';
+
+  if (shouldShowScrollOnCanvasHover || shouldShowVScrollOnCanvasHover) {
+    table.scenegraph.stage.addEventListener('pointerenter', (e: FederatedPointerEvent) => {
+      // 检查事件是否来自当前表格的 canvas 区域（包括空白区域）
+      const target = e.target as any;
+      const isEventFromCurrentTableCanvas =
+        target === table.scenegraph.stage || target?.isDescendantsOf?.(table.scenegraph.stage);
+      if (!isEventFromCurrentTableCanvas) {
+        return;
+      }
+      if (shouldShowScrollOnCanvasHover) {
+        const relativeX = e.x - table.tableX;
+        const target =
+          table.options.scrollFrozenCols &&
+          table.getFrozenColsOffset?.() > 0 &&
+          relativeX >= 0 &&
+          relativeX < table.getFrozenColsWidth()
+            ? 'frozen'
+            : table.options.scrollRightFrozenCols &&
+              table.getRightFrozenColsOffset?.() > 0 &&
+              relativeX > table.tableNoFrameWidth - table.getRightFrozenColsWidth()
+            ? 'rightFrozen'
+            : 'body';
+        stateManager.showHorizontalScrollBar(false, target);
+      }
+      if (shouldShowVScrollOnCanvasHover) {
+        stateManager.showVerticalScrollBar();
+      }
+    });
+
+    table.scenegraph.stage.addEventListener('pointerleave', (e: FederatedPointerEvent) => {
+      // 检查鼠标是否离开了整个 canvas 区域
+      const relatedTarget = e.relatedTarget as any;
+      const isLeavingCanvas =
+        !relatedTarget ||
+        (relatedTarget !== table.scenegraph.stage && !relatedTarget.isDescendantsOf?.(table.scenegraph.stage));
+      if (!isLeavingCanvas) {
+        return;
+      }
+      if (shouldShowScrollOnCanvasHover) {
+        stateManager.hideHorizontalScrollBar();
+      }
+      if (shouldShowVScrollOnCanvasHover) {
+        stateManager.hideVerticalScrollBar();
+      }
+    });
+  }
+
   table.scenegraph.stage.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
 
