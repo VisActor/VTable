@@ -1665,6 +1665,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param sort
    */
   setRecords(records: Array<any>): void {
+    this.stateManager.endResizeIfResizing();
     clearChartRenderQueue();
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.options.records = this.internalProps.records = records;

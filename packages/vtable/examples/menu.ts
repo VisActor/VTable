@@ -853,6 +853,10 @@ export const menus = [
       },
       {
         path: 'interactive',
+        name: 'resize-setRecords'
+      },
+      {
+        path: 'interactive',
         name: 'pre-sort'
       },
       {
