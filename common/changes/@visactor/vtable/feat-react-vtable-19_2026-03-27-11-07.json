@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "feat: compatible react version 19\n\n",
-      "type": " minor",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
