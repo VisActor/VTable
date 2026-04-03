@@ -30,7 +30,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-exporter.js"
+    "dist/vtable-export.js",
+    "dist/vtable-export.min.js"
   ],
   "publishConfig": {
     "access": "public"

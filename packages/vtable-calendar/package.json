@@ -30,7 +30,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-exporter.js"
+    "dist/vtable-calendar.js",
+    "dist/vtable-calendar.min.js"
   ],
   "publishConfig": {
     "access": "public"
