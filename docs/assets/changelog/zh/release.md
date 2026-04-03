@@ -5,18 +5,14 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: compatible react version 19
+- **@visactor/vtable**: react-vtable 针对react 19 做兼容
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: radio cell type with rowseriesnumber error
-- **@visactor/vtable**: react19 reconciler
-- **@visactor/vtable**: degrade radio/checkbox cells to text in aggregation rows
-- **@visactor/vtable**: reset all interaction states on data update to avoid stale resize indicators
-
-**🔨 功能重构**
-
-- **@visactor/vtable**: when set barToSide and visible focus should not hide scrollbar
+- **@visactor/vtable**: 单选框和行序号功能同时使用时的报错问题
+- **@visactor/vtable**: 单元格类型是单选框时针对聚合行做处理
+- **@visactor/vtable**: 解决调整列宽高亮框不消失问题
+- **@visactor/vtable**: 当设置 barToSide 时，滚动条在画布上不该隐藏问题
 
 
 
