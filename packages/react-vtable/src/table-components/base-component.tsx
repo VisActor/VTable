@@ -146,5 +146,10 @@ function parseCustomChildren(children: ReactNode, componentId: string): ReactNod
 }
 
 function isReactElement(obj: any) {
-  return obj && obj.$$typeof === Symbol.for('react.element');
+  if (!obj) {
+    return false;
+  }
+  const reactElement = Symbol.for('react.element');
+  const reactTransitionalElement = Symbol.for('react.transitional.element');
+  return obj.$$typeof === reactElement || obj.$$typeof === reactTransitionalElement;
 }

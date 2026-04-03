@@ -145,6 +145,10 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const pivotColumnWidths = useRef<{ dimensions: TYPES.IDimensionInfo[]; width: number }[]>([]);
   const pivotHeaderColumnWidths = useRef<number[]>([]);
 
+  if (tableContext.current) {
+    tableContext.current.onError = props.onError;
+  }
+
   const parseOption = useCallback(
     (props: Props) => {
       if (hasOption && props.option) {
@@ -182,7 +186,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       vtable.scenegraph.stage.reactAttribute = props.ReactDOM;
       vtable.scenegraph.stage.pluginService.register(props.reactAttributePlugin ?? new VTableReactAttributePlugin());
       vtable.scenegraph.stage.params.ReactDOM = props.ReactDOM;
-      tableContext.current = { ...tableContext.current, table: vtable };
+      tableContext.current = { ...tableContext.current, table: vtable, onError: props.onError };
       isUnmount.current = false;
 
       columnWidths.current.clear();

@@ -23,7 +23,10 @@
      * When someone asks for "^1.0.0" make sure they get "1.2.3" when working in this repo,
      * instead of the latest version.
      */
-    // "some-library": "1.2.3"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.25"
   },
 
   /**

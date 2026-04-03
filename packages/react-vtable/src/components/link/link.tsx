@@ -94,43 +94,51 @@ function LinkComponent(baseProps: LinkProps, ref: React.Ref<Tag>) {
   const attribute: TagAttributes = getTagAttribute(props);
 
   useEffect(() => {
-    linkRef.current.addEventListener('mouseenter', () => {
+    const inst = linkRef.current;
+    if (!inst) {
+      return;
+    }
+    inst.addEventListener('mouseenter', () => {
       // console.log('mouseenter', linkRef.current, e.clone());
       if (!disabled) {
-        linkRef.current.addState('hover', true, false);
+        inst.addState('hover', true, false);
         // linkRef.current._bgRect.addState('hover', true, false);
         // linkRef.current._textShape.addState('hover', true, false);
-        linkRef.current.stage.renderNextFrame();
+        inst.stage?.renderNextFrame?.();
       }
     });
-    linkRef.current.addEventListener('mouseleave', () => {
+    inst.addEventListener('mouseleave', () => {
       // console.log('mouseleave', linkRef.current, e.clone());
       if (!disabled) {
-        linkRef.current.removeState('hover', false);
+        inst.removeState('hover', false);
         // linkRef.current._bgRect.removeState('hover', false);
         // linkRef.current._textShape.removeState('hover', false);
-        linkRef.current.stage.renderNextFrame();
+        inst.stage?.renderNextFrame?.();
       }
     });
   }, []);
 
   useEffect(() => {
+    const inst = linkRef.current;
+    if (!inst) {
+      return;
+    }
     if (disabled) {
-      linkRef.current.removeState('disabled', false);
+      inst.removeState('disabled', false);
       // linkRef.current._bgRect.removeState('disabled', false);
       // linkRef.current._textShape.removeState('disabled', false);
 
-      linkRef.current.addState('disabled', true, false);
+      inst.addState('disabled', true, false);
       // linkRef.current._bgRect.addState('disabled', true, false);
       // linkRef.current._textShape.addState('disabled', true, false);
       // console.log('add disable');
     } else {
-      linkRef.current.removeState('disabled', false);
+      inst.removeState('disabled', false);
       // linkRef.current._bgRect.removeState('disabled', false);
       // linkRef.current._textShape.removeState('disabled', false);
       // console.log('remove disable');
     }
-    linkRef.current.stage.renderNextFrame();
+    inst.stage?.renderNextFrame?.();
   });
 
   return <VTag ref={linkRef} attribute={attribute} onClick={handleClick}></VTag>;

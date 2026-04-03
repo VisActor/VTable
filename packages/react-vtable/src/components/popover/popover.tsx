@@ -98,7 +98,7 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
     } else {
       setPopupOpen(false);
     }
-    popoverRef.current.stage.renderNextFrame();
+    popoverRef.current?.stage?.renderNextFrame?.();
   }, [popupVisible]);
 
   useEffect(() => {
@@ -137,7 +137,7 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
       return;
     }
     setPopupOpen(true);
-    event.currentTarget.stage.renderNextFrame();
+    event.currentTarget?.stage?.renderNextFrame?.();
   }, []);
 
   const groupMouseLeave = useCallback((event: any) => {
@@ -145,7 +145,7 @@ function PopoverComponent(baseProps: PopoverProps, ref: React.Ref<IGroup>) {
       return;
     }
     setPopupOpen(false);
-    event.currentTarget.stage.renderNextFrame();
+    event.currentTarget?.stage?.renderNextFrame?.();
   }, []);
 
   return (

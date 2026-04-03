@@ -15,11 +15,68 @@ import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
 import strip from '@rollup/plugin-strip';
 import vue from '@vitejs/plugin-vue';
+import * as ts from 'typescript';
 import * as path from 'path';
 import { Config } from './config';
 
 const useTypescriptPlugin2 = process.env.USE_TYPESCRIPT2 === 'true';
-const typescript = useTypescriptPlugin2 ? require('rollup-plugin-typescript2') : require('@rollup/plugin-typescript');
+const typescript1 = require('@rollup/plugin-typescript');
+const typescript2 = require('rollup-plugin-typescript2');
+
+function transpileVueTsSfc(): Plugin {
+  return {
+    name: 'transpile-vue-ts-sfc',
+    transform(code, id) {
+      if (!id.includes('?vue')) {
+        return null;
+      }
+      if (!id.includes('&lang.ts') && !id.includes('&lang.tsx')) {
+        return null;
+      }
+      const result = ts.transpileModule(code, {
+        compilerOptions: {
+          target: ts.ScriptTarget.ES2017,
+          module: ts.ModuleKind.ESNext,
+          jsx: ts.JsxEmit.Preserve,
+          sourceMap: true
+        },
+        fileName: id
+      });
+      return {
+        code: result.outputText,
+        map: result.sourceMapText ? JSON.parse(result.sourceMapText) : null
+      };
+    }
+  };
+}
+
+function transpileTsForRollup(): Plugin {
+  return {
+    name: 'transpile-ts-for-rollup',
+    transform(code, id) {
+      if (id.endsWith('.d.ts')) {
+        return null;
+      }
+      const isTsLike = id.endsWith('.ts') || id.endsWith('.tsx') || id.includes('&lang.ts') || id.includes('&lang.tsx');
+      if (!isTsLike) {
+        return null;
+      }
+      const result = ts.transpileModule(code, {
+        compilerOptions: {
+          target: ts.ScriptTarget.ES2017,
+          module: ts.ModuleKind.ESNext,
+          jsx: ts.JsxEmit.Preserve,
+          sourceMap: true
+        },
+        fileName: id
+      });
+      return {
+        code: result.outputText,
+        map: result.sourceMapText ? JSON.parse(result.sourceMapText) : null
+      };
+    }
+  };
+}
 
 function getExternal(
   rawPackageJson: RawPackageJson,
@@ -42,25 +99,26 @@ export function getRollupOptions(
   config: Config,
   tsconfigOverride?: Record<string, unknown>
 ): RollupOptions {
-  const tsOption = {
-    tsconfig: path.resolve(projectRoot, config.tsconfig)
-  };
-
-  if (useTypescriptPlugin2 && tsconfigOverride) {
-    (tsOption as any).tsconfigOverride = tsconfigOverride;
-  }
+  const tsconfigPath = path.resolve(projectRoot, config.tsconfig);
+  const typescriptPlugin: Plugin = useTypescriptPlugin2
+    ? typescript2(tsconfigOverride ? { tsconfig: tsconfigPath, tsconfigOverride } : { tsconfig: tsconfigPath })
+    : typescript1({ tsconfig: tsconfigPath });
   return {
     input: entry,
     external: getExternal(rawPackageJson, config.external),
     ...config.rollupOptions,
     plugins: [
-      resolve(),
+      resolve({
+        extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx', '.mts', '.cts', '.vue']
+      }),
       commonjs(),
       vue(),
       // typescript(),
-      babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       replace({ ...config.envs, preventAssignment: true }),
-      typescript(tsOption),
+      transpileVueTsSfc(),
+      typescriptPlugin,
+      ...(useTypescriptPlugin2 ? [transpileTsForRollup()] : []),
+      babel({ ...babelPlugins, babelHelpers: 'bundled' }),
       postcss({
         extensions: ['.css']
       }),
