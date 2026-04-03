@@ -582,6 +582,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'radio-aggregation'
+      },
+      {
+        path: 'type',
         name: 'switch'
       },
       {

@@ -3765,7 +3765,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
     if (this.isSeriesNumberInHeader(col, row)) {
-      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(col, row).cellType;
+      const seriesHeaderCellType = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(
+        col,
+        row
+      ).cellType;
+      return seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType;
     } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
