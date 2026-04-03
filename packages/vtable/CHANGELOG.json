@@ -2,6 +2,37 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.0",
+      "tag": "@visactor/vtable_v1.26.0",
+      "date": "Fri, 03 Apr 2026 03:30:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: radio cell type with rowseriesnumber error\n\n"
+          },
+          {
+            "comment": "fix: react19 reconciler\n\n"
+          },
+          {
+            "comment": "refactor: when set barToSide and visible focus should not hide scrollbar\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: compatible react version 19\n\n"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: degrade radio/checkbox cells to text in aggregation rows"
+          },
+          {
+            "comment": "fix: reset all interaction states on data update to avoid stale resize indicators"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.25.0",
       "tag": "@visactor/vtable_v1.25.0",
       "date": "Wed, 25 Mar 2026 08:15:12 GMT",
