@@ -613,6 +613,9 @@ export function bindContainerDomListener(eventManager: EventManager) {
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
           if (!table.options.select?.disableDragSelect && isValid(targetCol) && isValid(targetRow)) {
+            if (isCellDisableSelect(table, targetCol.col, targetRow.row)) {
+              return;
+            }
             table.stateManager.updateSelectPos(
               table.stateManager.select.selectInline === 'row' ? table.colCount - 1 : targetCol.col,
               table.stateManager.select.selectInline === 'col' ? table.rowCount - 1 : targetRow.row,

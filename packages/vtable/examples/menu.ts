@@ -582,6 +582,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'radio-aggregation'
+      },
+      {
+        path: 'type',
         name: 'switch'
       },
       {
@@ -850,6 +854,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'row-resize'
+      },
+      {
+        path: 'interactive',
+        name: 'resize-setRecords'
       },
       {
         path: 'interactive',

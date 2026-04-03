@@ -196,6 +196,58 @@ describe('listTable init test', () => {
     ]);
     expect(listTable.getScrollTop()).toBe(scrollTop);
   });
+  test('listTable drag select should stop before disabled merged last row', () => {
+    const dragContainerDom: HTMLElement = createDiv();
+    dragContainerDom.style.position = 'relative';
+    dragContainerDom.style.width = '800px';
+    dragContainerDom.style.height = '600px';
+    const dragRecords = [
+      { a: 'r1', b: 1, c: 'x' },
+      { a: 'r2', b: 2, c: 'y' },
+      { a: 'r3', b: 3, c: 'z' },
+      { a: 'r4', b: 4, c: 'w' }
+    ];
+    const dragTable = new ListTable({
+      container: dragContainerDom,
+      columns: [
+        { field: 'a', title: 'A', width: 120 },
+        { field: 'b', title: 'B', width: 120 },
+        { field: 'c', title: 'C', width: 120 }
+      ],
+      records: dragRecords,
+      bottomFrozenRowCount: 1,
+      select: {
+        disableSelect: (col, row, table) => row === table.rowCount - 1
+      },
+      customMergeCell: (col, row, table) => {
+        if (row === table.rowCount - 1) {
+          return {
+            text: 'summary',
+            range: {
+              start: { col: 0, row: table.rowCount - 1 },
+              end: { col: table.colCount - 1, row: table.rowCount - 1 }
+            }
+          };
+        }
+      }
+    });
+
+    dragTable.stateManager.updateSelectPos(1, 2, false, false, false, false, false);
+    dragTable.stateManager.updateInteractionState('grabing');
+    dragTable.stateManager.updateSelectPos(1, dragTable.rowCount - 2, false, false, false, false, false);
+    dragTable.stateManager.updateSelectPos(1, dragTable.rowCount - 1, false, false, false, false, false);
+    dragTable.stateManager.endSelectCells(false, false);
+    dragTable.stateManager.updateInteractionState('default');
+
+    expect(dragTable.getSelectedCellRanges()).toEqual([
+      {
+        start: { col: 1, row: 2 },
+        end: { col: 1, row: dragTable.rowCount - 2 }
+      }
+    ]);
+
+    dragTable.release();
+  });
   test('listTable measureTextWidth', () => {
     const measureTextWdith = listTable.measureText("家里方大化工撒个福建师大看哈 fdsfgj! *-+&5%#.,'.，。、", {
       fontFamily: 'Arial',

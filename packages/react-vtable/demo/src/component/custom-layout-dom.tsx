@@ -57,6 +57,9 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
         // }
         react: {
           pointerEvents: true,
+          width,
+          height,
+          container: null,
           element: (
             <Popover
               title="Title"
@@ -141,9 +144,11 @@ const DomCustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: strin
         height,
         react: {
           pointerEvents: true,
-          container: table.bodyDomContainer, // table.headerDomContainer
+          width,
+          height,
+          container: table.bodyDomContainer ?? null, // table.headerDomContainer
           // anchorType
-          element: <CardInfo text={text} />
+          element: <CardInfo text={text} hover={false} />
         }
       }}
       ref={groupRef}
@@ -188,7 +193,9 @@ const UserProfileComponent = (props: CustomLayoutFunctionArg & { text: string })
           alignContent: 'center',
           react: {
             pointerEvents: true,
-            container: table.bodyDomContainer, // table.headerDomContainer
+            width: 70,
+            height: 25,
+            container: table.bodyDomContainer ?? null, // table.headerDomContainer
             anchorType: 'bottom-right',
             element: <CardInfo text={text} hover={hover} row={row} />
           }
@@ -297,6 +304,13 @@ function App() {
       defaultHeaderRowHeight={80}
       defaultRowHeight={227}
       frozenColCount={1}
+      onError={err => {
+        const g: any = Function('return this')();
+        if (g?.console?.error) {
+          g.console.error(err);
+        }
+        g.__react_vtable_last_error__ = err;
+      }}
       onReady={table => {
         // eslint-disable-next-line no-undef
         (window as any).tableInstance = table;

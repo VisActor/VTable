@@ -1,3 +1,17 @@
+# v1.25.0
+
+2026-03-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 甘特图新增定位图标用于当任务时间不在可视范围内时，快速定位任务条
+- **@visactor/vtable**: 左右冻结列区域支持单独滚动
+
+
+
+[更多详情请查看 v1.25.0](https://github.com/VisActor/VTable/releases/tag/v1.25.0)
+
 # v1.24.0
 
 2026-03-18

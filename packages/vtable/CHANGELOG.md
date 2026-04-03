@@ -1,6 +1,32 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 25 Mar 2026 08:15:12 GMT and should not be manually modified.
+This log was last generated on Fri, 03 Apr 2026 03:30:13 GMT and should not be manually modified.
+
+## 1.26.0
+Fri, 03 Apr 2026 03:30:13 GMT
+
+### Minor changes
+
+- feat: compatible react version 19
+
+
+
+### Patches
+
+- fix: degrade radio/checkbox cells to text in aggregation rows
+- fix: reset all interaction states on data update to avoid stale resize indicators
+
+### Updates
+
+- fix: radio cell type with rowseriesnumber error
+
+
+- fix: react19 reconciler
+
+
+- refactor: when set barToSide and visible focus should not hide scrollbar
+
+
 
 ## 1.25.0
 Wed, 25 Mar 2026 08:15:12 GMT

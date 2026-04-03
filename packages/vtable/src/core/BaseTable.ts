@@ -249,7 +249,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   rotateDegree?: number;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
-
+    if (typeof window !== 'undefined') {
+      const g: any = window as any;
+      g[this.id] = this;
+      const registry =
+        g.__vtable__ ||
+        (g.__vtable__ = {
+          byId: Object.create(null),
+          list: [],
+          last: null
+        });
+      registry.byId[this.id] = this;
+      registry.list.push(this);
+      registry.last = this;
+      g.__vtable_last_id__ = this.id;
+    }
     if (Env.mode === 'node') {
       options = container as BaseTableConstructorOptions;
       container = null;
@@ -396,12 +410,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = this.options.canvas;
       internalProps.context = internalProps.canvas.getContext('2d')!;
+      (internalProps.canvas as any).__vtable__ = this;
+      (internalProps.canvas as any).__vtable_id__ = this.id;
+      if (internalProps.element) {
+        (internalProps.element as any).__vtable__ = this;
+        (internalProps.element as any).__vtable_id__ = this.id;
+      }
     } else if (Env.mode !== 'node') {
       internalProps.element = createRootElement(this.padding);
       internalProps.focusControl = new FocusInput(this, internalProps.element);
       internalProps.canvas = document.createElement('canvas');
       internalProps.element.appendChild(internalProps.canvas);
       internalProps.context = internalProps.canvas.getContext('2d')!;
+      (internalProps.canvas as any).__vtable__ = this;
+      (internalProps.canvas as any).__vtable_id__ = this.id;
+      (internalProps.element as any).__vtable__ = this;
+      (internalProps.element as any).__vtable_id__ = this.id;
 
       if (options.customConfig?.createReactContainer) {
         createReactContainer(this);
@@ -2637,6 +2661,35 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @returns {void}
    */
   release(): void {
+    if (typeof window !== 'undefined') {
+      const g: any = window as any;
+      if (g?.[this.id] === this) {
+        delete g[this.id];
+      } else if (g?.[this.id]) {
+        g[this.id] = null;
+      }
+      const registry = g?.__vtable__;
+      if (registry?.byId?.[this.id] === this) {
+        delete registry.byId[this.id];
+      }
+      const list = registry?.list;
+      if (Array.isArray(list) && list.length) {
+        for (let i = list.length - 1; i >= 0; i--) {
+          if (list[i] === this) {
+            list.splice(i, 1);
+          }
+        }
+      }
+      if (registry?.last === this) {
+        registry.last = Array.isArray(list) && list.length ? list[list.length - 1] : null;
+      }
+      if (g?.__vtable_last_id__ === this.id) {
+        g.__vtable_last_id__ = registry?.last?.id ?? null;
+      }
+    }
+    if (this.isReleased) {
+      return;
+    }
     // for memory leak of VRender Event
     this.scenegraph?.component?.vScrollBar?.release();
     this.scenegraph?.component?.hScrollBar?.release();
@@ -2645,8 +2698,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph?.stage?.ticker?.release();
 
     const internalProps = this.internalProps;
-    if (this.isReleased) {
-      return;
+    const canvas = internalProps?.canvas as any;
+    if (canvas?.__vtable__ === this) {
+      delete canvas.__vtable__;
+      delete canvas.__vtable_id__;
+    }
+    const element = internalProps?.element as any;
+    if (element?.__vtable__ === this) {
+      delete element.__vtable__;
+      delete element.__vtable_id__;
     }
     this.clearCorrectTimer();
     internalProps.tooltipHandler?.release?.();
@@ -3765,7 +3825,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
     if (this.isSeriesNumberInHeader(col, row)) {
-      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(col, row).cellType;
+      const seriesHeaderCellType = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(
+        col,
+        row
+      ).cellType;
+      return seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType;
     } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {

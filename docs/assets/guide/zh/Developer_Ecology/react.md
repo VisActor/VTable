@@ -10,7 +10,61 @@
 
 - node 10.12.0+
 - npm 6.4.0+
-- react 16.0+
+- react 18.2.0+（推荐）
+
+### React 版本兼容与注意事项
+
+`@visactor/react-vtable` 的对外 `peerDependencies` 为：
+- react：`^18.2.0 || ^19.0.0`
+- react-dom：`^18.2.0 || ^19.0.0`
+
+因此推荐使用 **React 18.2+**，并支持 **React 19**。
+
+#### 1) React18 vs React19：依赖匹配（非常重要）
+
+React 的主版本与 `react-reconciler` 强绑定；当你在 React19 项目中使用 React-VTable 的自定义渲染能力（custom-layout / DOM overlay）时，必须确保：
+- 同一个应用中只存在一份 React/ReactDOM（避免“多 React”）
+- React 19 场景下，实际生效的 `react-reconciler` 版本与 React 19 匹配
+
+版本建议（用于排查/对齐依赖树）：
+- React 18：`react-reconciler@0.29.x`
+- React 19（尤其是 React 19.2+）：建议 `react-reconciler@0.33.x`（常用版本：`0.33.0`）
+
+典型症状（出现即优先排查依赖树/版本匹配）：
+- `Cannot read properties of undefined (reading 'ReactCurrentOwner')`
+- `A React Element from an older version of React was rendered`
+- custom-layout / DOM overlay 在 React18 正常、React19 空白或不更新
+
+建议做法：
+- 先用包管理器的 dedupe / 依赖提升能力，确保 react/react-dom 只装一份
+- 若需要快速验证“是否为 reconciler 版本不匹配”，可在应用层临时使用 `overrides`/`resolutions` 锁定版本（验证通过后建议回归组件库侧修复/升级，不建议长期靠业务工程维护锁版本）
+
+#### 2) custom-layout：两条实现路径（避免走错）
+
+React-VTable 支持的“自定义单元格”常见有两种路径，概念上需要区分：
+
+- **VTable core 的 `customLayout`（返回 rootContainer）**
+  - 这里的 `rootContainer` 会被 VTable 在内部解码（`decodeReactDom`）
+  - 要求 `rootContainer` 的 `type` 是“可调用的图形构造函数”（例如 `@visactor/vtable` 导出的 `VGroup / VText / VTag / VImage`）
+  - 不要直接把业务 React 组件或 `React.forwardRef` 组件当作 rootContainer 返回，否则可能出现 `decodeReactDom` + `type is not a function`
+
+- **React-VTable 的 `react-custom-layout`（在语法化标签中使用 `<CustomLayout role="custom-layout" />`）**
+  - 由 React-VTable 的 reconciler 创建 VRender 图元实例
+  - 适用于需要使用 React 的声明式写法，或需要结合 DOM overlay 的场景
+
+#### 3) DOM overlay（react attribute）在 React19 的注意点
+
+当你需要在单元格内渲染真实 DOM（例如按钮、输入框、Popover 等）时，需要：
+- 给最外层表格组件传入 `ReactDOM`（通常来自 `react-dom/client` 的 `createRoot`）
+- 传入 `reactAttributePlugin`（`VTableReactAttributePlugin`）
+- 正确设置 DOM 容器（常见为 `table.bodyDomContainer` / `table.headerDomContainer`）
+
+同时需要注意：
+- React19 不支持 `react-dom.findDOMNode`，若第三方组件依赖它（例如旧版本 Popover/Trigger），会在 React19 下报错，需要升级组件库版本或替换实现
+  - 典型报错：`findDOMNode is not a function`
+
+#### 4) React19 Demo 
+react 19的demo项目可访问：https://github.com/fangsmile/vtable-react19-demo-project
 
 ### 安装
 

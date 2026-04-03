@@ -1,4 +1,4 @@
-import type { IGroup, IGroupAttribute } from '@visactor/vtable/es/vrender';
+import type { IGroup, IGroupGraphicAttribute } from '@visactor/vtable/es/vrender';
 import {
   measureTextSize,
   type BackgroundAttributes,
@@ -94,7 +94,7 @@ function getTextAttribute(props: AvatarProps) {
 }
 function getGroupAttribute(props: AvatarProps) {
   const { panelStyle, size, shape } = props;
-  const attribute: IGroupAttribute = {
+  const attribute: IGroupGraphicAttribute = {
     ...panelStyle,
     width: size,
     height: size,

@@ -1,0 +1,11 @@
+{
+  "name": "react19-deps",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-is": "^19.0.0",
+    "react-reconciler": "^0.31.0"
+  }
+}
