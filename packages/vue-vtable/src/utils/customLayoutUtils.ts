@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import { convertPropsToCamelCase, toCamelCase } from './stringUtils';
-import { isFunction, isObject } from '@visactor/vutils';
+import { isFunction, isNil, isObject } from '@visactor/vutils';
 import { cloneVNode, isVNode } from 'vue';
 
 // 检查属性是否为事件
@@ -10,6 +10,9 @@ function isEventProp(key: string, props: any) {
 
 // 创建自定义布局
 export function createCustomLayout(children: any, isHeader?: boolean, args?: any): any {
+  // 同一 cell 内多个 vue Group 的计数器，每次 createCustomLayout 调用时归零
+  let vueIndex = 0;
+
   // 组件映射
   const componentMap: Record<string, any> = {
     Group: VTable.CustomLayout.Group,
@@ -56,10 +59,14 @@ export function createCustomLayout(children: any, isHeader?: boolean, args?: any
         targetVNode = null;
       }
 
+      // 注入稳定 ID：基于 cell 坐标 + 递增索引，确保场景图重建后缓存 key 不变
+      const stableId = isNil((props.vue as any).id) ? `cell_${args.col}_${args.row}_${vueIndex++}` : undefined;
+
       Object.assign(child.props.vue, {
         element: targetVNode,
         // 不接入外部指定
-        container: isHeader ? args?.table?.headerDomContainer : args?.table?.bodyDomContainer
+        container: isHeader ? args?.table?.headerDomContainer : args?.table?.bodyDomContainer,
+        ...(stableId ? { id: stableId } : {})
       });
       return component;
     }
