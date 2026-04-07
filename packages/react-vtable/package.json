@@ -46,7 +46,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/react-vtable.js"
+    "dist/react-vtable.js",
+    "dist/react-vtable.min.js"
   ],
   "publishConfig": {
     "access": "public"

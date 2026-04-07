@@ -122,7 +122,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "build/es5/index.js"
+    "dist/vtable.js",
+    "dist/vtable.min.js"
   ],
   "publishConfig": {
     "access": "public"

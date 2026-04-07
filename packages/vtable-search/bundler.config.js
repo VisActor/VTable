@@ -7,8 +7,8 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   noEmitOnError: false,
   copy: ['css'],
-  name: 'VTable.export',
-  umdOutputFilename: 'vtable-export',
+  name: 'VTable.search',
+  umdOutputFilename: 'vtable-search',
   rollupOptions: {},
   globals: {
     '@visactor/vtable': 'VTable'

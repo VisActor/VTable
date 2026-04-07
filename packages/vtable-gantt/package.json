@@ -112,7 +112,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-gantt.js"
+    "dist/vtable-gantt.js",
+    "dist/vtable-gantt.min.js"
   ],
   "publishConfig": {
     "access": "public"

@@ -29,7 +29,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-exporter.js"
+    "dist/vtable-search.js",
+    "dist/vtable-search.min.js"
   ],
   "publishConfig": {
     "access": "public"

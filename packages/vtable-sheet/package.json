@@ -104,7 +104,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-sheet.js"
+    "dist/vtable-sheet.js",
+    "dist/vtable-sheet.min.js"
   ],
   "publishConfig": {
     "access": "public"

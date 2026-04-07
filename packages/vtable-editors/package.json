@@ -18,6 +18,11 @@
       "import": "./es/index.js"
     }
   },
+  "unpkg": "latest",
+  "unpkgFiles": [
+    "dist/vtable-editors.js",
+    "dist/vtable-editors.min.js"
+  ],
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
