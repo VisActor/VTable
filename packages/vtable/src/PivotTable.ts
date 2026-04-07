@@ -1348,8 +1348,23 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     for (let i = 0; i < this.pivotSortState.length; i++) {
       const pivotState = this.pivotSortState[i];
       const dimensions = pivotState.dimensions;
+
+      if (this.isCornerHeader(col, row)) {
+        const header = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getHeader(col, row) as HeaderData;
+        if (header && header.pivotInfo && dimensions && dimensions.length > 0) {
+          const dim1 = dimensions[0];
+          const dim2 = header.pivotInfo;
+          if (
+            (dim1.isPivotCorner || (!isValid(dim1.isPivotCorner) && dim1.dimensionKey && !dim1.value)) &&
+            dim2.isPivotCorner &&
+            (dim1.dimensionKey === dim2.dimensionKey || dim1.value === dim2.dimensionKey)
+          ) {
+            return pivotState.order;
+          }
+        }
+      }
+
       const cell = this.getCellAddressByHeaderPaths(dimensions);
-      // const { col: sortCol, row: sortRow, order } = this.pivotSortState[i];
       const order = pivotState.order;
 
       if (cell && cellInRange(cellRange, cell.col, cell.row)) {
