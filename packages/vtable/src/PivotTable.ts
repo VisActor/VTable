@@ -1161,6 +1161,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const sortRule = sortRules[i];
       // if ((sortRule as SortByIndicatorRule).sortType) {
       const dimensions: IDimensionInfo[] = [];
+      const sortType = sortRule.sortType ? (sortRule.sortType.toUpperCase() as 'ASC' | 'DESC' | 'NORMAL') : 'ASC';
+
       if (
         (sortRule as SortByIndicatorRule).sortByIndicator &&
         (sortRule as SortByIndicatorRule).sortField ===
@@ -1180,18 +1182,60 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
             this.internalProps.layoutMap.getIndicatorInfo((sortRule as SortByIndicatorRule).sortByIndicator)?.title ??
             (sortRule as SortByIndicatorRule).sortByIndicator
         });
-      } else {
-        dimensions.push({
-          dimensionKey: (sortRule as SortTypeRule).sortField,
-          isPivotCorner: true,
-          value: (sortRule as SortTypeRule).sortField
+        this.pivotSortState.push({
+          dimensions,
+          order: SortType[sortType]
         });
+      } else {
+        const sortField = (sortRule as SortTypeRule).sortField;
+        const rowIndex = this.dataset.rows.indexOf(sortField);
+        const colIndex = this.dataset.columns.indexOf(sortField);
+        let pushed = false;
+
+        if (rowIndex >= 0) {
+          const rowDimensions = [];
+          for (let k = 0; k <= rowIndex; k++) {
+            rowDimensions.push({
+              dimensionKey: this.dataset.rows[k],
+              isPivotCorner: true,
+              value: this.dataset.rows[k]
+            });
+          }
+          this.pivotSortState.push({
+            dimensions: rowDimensions,
+            order: SortType[sortType]
+          });
+          pushed = true;
+        }
+
+        if (colIndex >= 0) {
+          const colDimensions = [];
+          for (let k = 0; k <= colIndex; k++) {
+            colDimensions.push({
+              dimensionKey: this.dataset.columns[k],
+              isPivotCorner: true,
+              value: this.dataset.columns[k]
+            });
+          }
+          this.pivotSortState.push({
+            dimensions: colDimensions,
+            order: SortType[sortType]
+          });
+          pushed = true;
+        }
+
+        if (!pushed) {
+          dimensions.push({
+            dimensionKey: sortField,
+            isPivotCorner: true,
+            value: sortField
+          });
+          this.pivotSortState.push({
+            dimensions,
+            order: SortType[sortType]
+          });
+        }
       }
-      const sortType = sortRule.sortType ? (sortRule.sortType.toUpperCase() as 'ASC' | 'DESC' | 'NORMAL') : 'ASC';
-      this.pivotSortState.push({
-        dimensions,
-        order: SortType[sortType]
-      });
       // }
     }
   }
