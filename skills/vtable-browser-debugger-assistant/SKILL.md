@@ -54,6 +54,7 @@ description: This skill should be used when debugging VTable (canvas-based table
 - NEVER 在处理鼠标交互问题（Hover/Leave/Enter）时，想当然地认为 `e.target.isDescendantsOf(stage)` 对于 `stage` 本身会返回 `true`。永远使用 `target === stage || target?.isDescendantsOf?.(stage)`。
 - NEVER 忽视内部 Group 的事件拦截。如果遇到滚动条、高亮状态异常消失，不要只在 `stage` 层寻找原因，多半是内部的 `tableGroup` 或其他 Group 的 `pointerleave` / `pointerout` 冒泡或执行了意外的隐藏逻辑。
 - NEVER 假设 VTable 初始化时的变量在闭包中永远是最新的。由于配置项（如 `theme`, `options`）在运行时可能被深拷贝或替换，在事件监听器等闭包内直接解构或使用外部作用域变量可能会拿到旧值。遇到问题时，利用 MCP `evaluate_script` 检查闭包运行时的实际值。
+- NEVER 在排查透视表（PivotTable）角表头状态（如排序图标、菜单等）时依赖 `getCellAddressByHeaderPaths` 这种全局坐标映射 API，因为当行列中存在同名维度（如行和列都配置了 `Category` 维度）时，该类 API 只会返回第一个匹配的单元格坐标。**正确的排查思路**是：针对角表头单元格，应通过 `layoutMap.getHeader(col, row)` 获取其自身携带的 `pivotInfo` / `dimensionKey` 等信息直接做状态比对。
 
 ## DevTools MCP 连接排障
 
