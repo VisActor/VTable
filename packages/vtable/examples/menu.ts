@@ -301,6 +301,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-autoFillWidth'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-sort-state-echo'
       }
     ]
   },
