@@ -1350,18 +1350,57 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       const dimensions = pivotState.dimensions;
 
       if (this.isCornerHeader(col, row)) {
-        const header = (this.internalProps.layoutMap as PivotHeaderLayoutMap).getHeader(col, row) as HeaderData;
+        const layoutMap = this.internalProps.layoutMap as PivotHeaderLayoutMap;
+        const header = layoutMap.getHeader(col, row) as HeaderData;
         if (header && header.pivotInfo && dimensions && dimensions.length > 0) {
-          const dim1 = dimensions[0];
-          const dim2 = header.pivotInfo;
-          if (
-            (dim1.isPivotCorner || (!isValid(dim1.isPivotCorner) && dim1.dimensionKey && !dim1.value)) &&
-            dim2.isPivotCorner &&
-            (dim1.dimensionKey === dim2.dimensionKey || dim1.value === dim2.dimensionKey)
-          ) {
-            return pivotState.order;
+          let cellPathKeys: string[] = [];
+          const leftSnCount = layoutMap.leftRowSeriesNumberColumnCount ?? 0;
+          if (layoutMap.cornerSetting.titleOnDimension === 'row') {
+            const dimIndex = col - leftSnCount;
+            cellPathKeys = layoutMap.rowDimensionKeys.slice(0, dimIndex + 1);
+          } else if (layoutMap.cornerSetting.titleOnDimension === 'column') {
+            const dimIndex = row;
+            cellPathKeys = layoutMap.colDimensionKeys.slice(0, dimIndex + 1);
+          } else if (layoutMap.cornerSetting.titleOnDimension === 'all') {
+            if (layoutMap.indicatorsAsCol) {
+              let indicatorAtIndex = layoutMap.colDimensionKeys.indexOf(layoutMap.indicatorDimensionKey);
+              if (indicatorAtIndex === -1) {
+                indicatorAtIndex = layoutMap.columnHeaderLevelCount - 1;
+              }
+              if (row === indicatorAtIndex) {
+                const dimIndex = col - leftSnCount;
+                cellPathKeys = layoutMap.rowDimensionKeys.slice(0, dimIndex + 1);
+              } else {
+                const dimIndex = row;
+                cellPathKeys = layoutMap.colDimensionKeys.slice(0, dimIndex + 1);
+              }
+            } else {
+              let indicatorAtIndex = layoutMap.rowDimensionKeys.indexOf(layoutMap.indicatorDimensionKey);
+              if (indicatorAtIndex === -1) {
+                indicatorAtIndex = layoutMap.rowHeaderLevelCount - 1;
+              }
+              if (col - leftSnCount === indicatorAtIndex) {
+                const dimIndex = row;
+                cellPathKeys = layoutMap.colDimensionKeys.slice(0, dimIndex + 1);
+              } else {
+                const dimIndex = col - leftSnCount;
+                cellPathKeys = layoutMap.rowDimensionKeys.slice(0, dimIndex + 1);
+              }
+            }
+          }
+
+          if (cellPathKeys.length > 0 && dimensions.length === cellPathKeys.length) {
+            const isMatch = dimensions.every((dim, idx) => {
+              const isCorner = dim.isPivotCorner || (!isValid(dim.isPivotCorner) && dim.dimensionKey && !dim.value);
+              const keyMatch = dim.dimensionKey === cellPathKeys[idx] || dim.value === cellPathKeys[idx];
+              return isCorner && keyMatch;
+            });
+            if (isMatch) {
+              return pivotState.order;
+            }
           }
         }
+        continue;
       }
 
       const cell = this.getCellAddressByHeaderPaths(dimensions);
