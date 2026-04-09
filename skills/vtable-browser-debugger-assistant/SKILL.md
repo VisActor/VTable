@@ -24,7 +24,7 @@ description: This skill should be used when debugging VTable (canvas-based table
 当在 VTable 源代码中排查解决问题时，使用以下工作流：
 
 **复现问题：**
-1. 在 `/packages/vtable/examples` 中找到与问题相关的 demo，或创建新的 demo
+1. 在 `/packages/vtable/examples` 中找到与问题相关的 demo或创建新的 demo；如果是gantt问题，需要在 `/packages/vtable-gantt/examples` 中找到对应的 demo或创建新的 demo;如果是插件plugin问题，需要在 `/packages/vtable-plugins/demo` 中找到对应的 demo或创建新的 demo;如果是sheet电子表格问题，需要在 `/packages/vtable-sheet/examples` 中找到对应的 demo或创建新的 demo;也就是看情况决定在哪个目录下创建 demo。
 2. 修改 demo 配置以复现问题（如设置 `select.disableSelect`、`customMergeCell` 等）
 3. 启动 demo 服务：`rushx demo`（在 `packages/vtable` 目录下）
 4. 使用 Chrome DevTools MCP 连接浏览器，验证问题是否复现
