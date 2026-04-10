@@ -434,10 +434,16 @@ export class SumAggregator extends Aggregator {
   deleteRecord(record: any) {
     if (record) {
       if (this.isRecord && this.records) {
-        this.records = this.records.filter(item => item !== record);
+        const index = this.records.indexOf(record);
+        if (index !== -1) {
+          this.records.splice(index, 1);
+        }
       }
       if (record.isAggregator && this.children) {
-        this.children = this.children.filter(item => item !== record);
+        const index = this.children.indexOf(record);
+        if (index !== -1) {
+          this.children.splice(index, 1);
+        }
         const value = record.value();
         this.sum = precisionSub(this.sum, value ?? 0);
         if (this.needSplitPositiveAndNegativeForSum) {
@@ -464,18 +470,18 @@ export class SumAggregator extends Aggregator {
   updateRecord(oldRecord: any, newRecord: any): void {
     if (oldRecord && newRecord) {
       if (this.isRecord && this.records) {
-        this.records = this.records.map(item => {
-          if (item === oldRecord) {
-            return newRecord;
-          }
-          return item;
-        });
+        const index = this.records.indexOf(oldRecord);
+        if (index !== -1) {
+          this.records[index] = newRecord;
+        }
       }
       if (oldRecord.isAggregator && this.children) {
         const oldValue = oldRecord.value();
-        this.children = this.children.filter(item => item !== oldRecord);
+        const index = this.children.indexOf(oldRecord);
+        if (index !== -1) {
+          this.children[index] = newRecord;
+        }
         const newValue = newRecord.value();
-        this.children.push(newRecord);
         this.sum = precisionAdd(this.sum, precisionSub(newValue, oldValue));
         if (this.needSplitPositiveAndNegativeForSum) {
           if (oldValue > 0) {
@@ -510,7 +516,10 @@ export class SumAggregator extends Aggregator {
     }
   }
   value() {
-    return this.changedValue ?? (this.records?.length >= 1 ? this.sum : undefined);
+    return (
+      this.changedValue ??
+      (this.records && this.records.length >= 1 ? this.sum : this.isRecord === false ? this.sum : undefined)
+    );
   }
   positiveValue() {
     return this.positiveSum;
@@ -699,11 +708,17 @@ export class AvgAggregator extends Aggregator {
   deleteRecord(record: any) {
     if (record) {
       if (this.isRecord && this.records) {
-        this.records = this.records.filter(item => item !== record);
+        const index = this.records.indexOf(record);
+        if (index !== -1) {
+          this.records.splice(index, 1);
+        }
       }
       if (record.isAggregator && record.type === AggregationType.AVG) {
         if (this.children) {
-          this.children = this.children.filter(item => item !== record);
+          const index = this.children.indexOf(record);
+          if (index !== -1) {
+            this.children.splice(index, 1);
+          }
         }
         this.sum = precisionSub(this.sum, record.sum);
         this.count -= record.count;
@@ -717,21 +732,17 @@ export class AvgAggregator extends Aggregator {
   updateRecord(oldRecord: any, newRecord: any): void {
     if (oldRecord && newRecord) {
       if (this.isRecord && this.records) {
-        this.records = this.records.map(item => {
-          if (item === oldRecord) {
-            return newRecord;
-          }
-          return item;
-        });
+        const index = this.records.indexOf(oldRecord);
+        if (index !== -1) {
+          this.records[index] = newRecord;
+        }
       }
       if (oldRecord.isAggregator && oldRecord.type === AggregationType.AVG) {
         if (this.children && newRecord.isAggregator) {
-          this.children = this.children.map(item => {
-            if (item === oldRecord) {
-              return newRecord;
-            }
-            return item;
-          });
+          const index = this.children.indexOf(oldRecord);
+          if (index !== -1) {
+            this.children[index] = newRecord;
+          }
         }
         this.sum = precisionAdd(this.sum, precisionSub(newRecord.sum, oldRecord.sum));
         this.count += newRecord.count - oldRecord.count;
@@ -746,7 +757,14 @@ export class AvgAggregator extends Aggregator {
     }
   }
   value() {
-    return this.changedValue ?? (this.records?.length >= 1 ? this.sum / this.count : undefined);
+    return (
+      this.changedValue ??
+      (this.records && this.records.length >= 1
+        ? this.sum / this.count
+        : this.isRecord === false && this.count > 0
+        ? this.sum / this.count
+        : undefined)
+    );
   }
   reset() {
     this.changedValue = undefined;
