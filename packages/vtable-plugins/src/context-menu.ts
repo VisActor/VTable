@@ -4,7 +4,7 @@ import type { pluginsDefinition } from '@visactor/vtable';
 import { MenuManager } from './contextmenu/menu-manager';
 import { MenuHandler } from './contextmenu/handle-menu-helper';
 import { mergeClasses, mergeStyles } from './contextmenu/styles';
-import type { CustomMenuAttributions } from './contextmenu/styles';
+import type { MenuAttributions } from './contextmenu/styles';
 import type { MenuItemOrSeparator, MenuClickEventArgs } from './contextmenu/types';
 import {
   DEFAULT_BODY_MENU_ITEMS,
@@ -30,7 +30,7 @@ export interface ContextMenuOptions {
   /** 表体菜单项 */
   bodyCellMenuItems?: MenuItemOrSeparator[];
   /** 自定义菜单样式 */
-  CustomMenuAttributions?: CustomMenuAttributions;
+  customMenuAttributions?: MenuAttributions;
   /** 菜单点击回调。如果设置是函数，则忽略内部默认的菜单项处理逻辑。如果这里配置的是个对象（对象的key为menuKey），则有匹配的menuKey时忽略内部默认的菜单项处理逻辑，
    * 以这里配置的为准 ，没有匹配的menuKey时，则使用内部默认的菜单项处理逻辑。*/
   menuClickCallback?:
@@ -68,8 +68,8 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
     this.menuManager = new MenuManager(
-      mergeStyles(pluginOptions.CustomMenuAttributions?.style),
-      mergeClasses(pluginOptions.CustomMenuAttributions?.class)
+      mergeStyles(pluginOptions.customMenuAttributions?.style),
+      mergeClasses(pluginOptions.customMenuAttributions?.class)
     );
     this.menuHandler = new MenuHandler();
     this.initDefaultMenuItems();

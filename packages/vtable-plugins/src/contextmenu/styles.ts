@@ -8,7 +8,7 @@ import type { ClassName, MenuItem, MenuItemClassConfig, MenuItemIcon, SvgIconCon
 export type MenuStyleDef = { [K in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[K] };
 export type MenuStyles = typeof MENU_STYLES;
 export type MenuClasses = typeof MENU_CLASSES;
-export type CustomMenuAttributions = {
+export type MenuAttributions = {
   style?: { [K in keyof MenuStyles]?: Partial<MenuStyles[K]> };
   class?: { [K in keyof MenuClasses]?: Partial<MenuClasses[K]> };
 };

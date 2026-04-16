@@ -247,7 +247,7 @@ export function createTableInstance() {
         alert(`设置筛选器: 列${args.colIndex}`);
       }
     },
-    CustomMenuAttributions: {
+    customMenuAttributions: {
       style: {
         menuContainer: {
           backgroundColor: 'rgba(255, 255, 255)',
@@ -421,7 +421,7 @@ export function createTable() {
     <ul>
       <li><b>表体单元格</b>：展示了 SVG 图标、渲染函数图标、内置 emoji 图标的混合使用</li>
       <li><b>表头单元格</b>：展示了 SVG 图标（设置图标）</li>
-      <li>菜单样式和类名通过 <code>CustomMenuAttributions</code> 统一配置</li>
+      <li>菜单样式和类名通过 <code>customMenuAttributions</code> 统一配置</li>
       <li><b>图标类型说明</b></li>
       <ul>
         <li><code>iconName: 'copy'</code> — 内置 emoji 图标</li>
@@ -430,7 +430,7 @@ export function createTable() {
       </ul>
       <li><b>自定义类名说明</b></li>
       <ul>
-        <li><code>CustomMenuAttributions.class</code> — 统一追加类名</li>
+        <li><code>customMenuAttributions.class</code> — 统一追加类名</li>
         <li><code>MenuItem.customClassName</code> — 单项精细化类名</li>
       </ul>
     </ul>
