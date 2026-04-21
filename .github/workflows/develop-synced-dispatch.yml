@@ -1,0 +1,59 @@
+name: Dispatch develop-synced after release
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  dispatch_develop_synced:
+    if: contains(github.event.head_commit.message, 'prelease version')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Extract version from commit message
+        id: meta
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          set -euo pipefail
+          echo "Commit message: ${COMMIT_MESSAGE}"
+          VERSION_WITH_V="$(echo "${COMMIT_MESSAGE}" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || true)"
+          if [ -n "${VERSION_WITH_V}" ]; then
+            VERSION="${VERSION_WITH_V#v}"
+          else
+            VERSION="$(echo "${COMMIT_MESSAGE}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)"
+          fi
+          if [ -z "${VERSION}" ]; then
+            echo "Failed to parse version from commit message" >&2
+            exit 1
+          fi
+          echo "Parsed version: ${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Send develop-synced repository_dispatch
+        uses: actions/github-script@v7
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const version = process.env.VERSION;
+            if (!version) {
+              core.setFailed('VERSION env is not set');
+              return;
+            }
+            core.info(`Sending repository_dispatch develop-synced for version ${version}`);
+            await github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'develop-synced',
+              client_payload: { version }
+            });
