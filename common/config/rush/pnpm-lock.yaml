@@ -19,34 +19,34 @@ importers:
         specifier: ^2.11.0
         version: 2.57.0(vue@3.5.31(typescript@4.9.5))
       '@visactor/openinula-vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/openinula-vtable
       '@visactor/react-vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/react-vtable
       '@visactor/vchart':
         specifier: 2.0.13-alpha.10
         version: 2.0.13-alpha.10
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable-editors
       '@visactor/vtable-export':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable-export
       '@visactor/vtable-gantt':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable-gantt
       '@visactor/vtable-search':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable-search
       '@visactor/vtable-sheet':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vtable-sheet
       '@visactor/vue-vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../packages/vue-vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -140,7 +140,7 @@ importers:
   ../../packages/openinula-vtable:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -270,7 +270,7 @@ importers:
   ../../packages/react-vtable:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -445,7 +445,7 @@ importers:
         specifier: ~1.0.17
         version: 1.0.23
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-editors
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -626,7 +626,7 @@ importers:
   ../../packages/vtable-calendar:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -849,7 +849,7 @@ importers:
         specifier: 2.0.7
         version: 2.0.7
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -1009,10 +1009,10 @@ importers:
         specifier: ~1.0.17
         version: 1.0.23
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-editors
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -1245,13 +1245,13 @@ importers:
         specifier: 2.0.13-alpha.10
         version: 2.0.13-alpha.10
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-editors
       '@visactor/vtable-gantt':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-gantt
       '@vitejs/plugin-react':
         specifier: 3.1.0
@@ -1350,7 +1350,7 @@ importers:
   ../../packages/vtable-search:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -1504,13 +1504,13 @@ importers:
         specifier: ~1.0.17
         version: 1.0.23
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-editors
       '@visactor/vtable-plugins':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable-plugins
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -1649,7 +1649,7 @@ importers:
   ../../packages/vue-vtable:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../vtable
       '@visactor/vutils':
         specifier: ~1.0.17
@@ -1830,19 +1830,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vtable':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../../packages/vtable
       '@visactor/vtable-editors':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../../packages/vtable-editors
       '@visactor/vtable-gantt':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../../packages/vtable-gantt
       '@visactor/vtable-plugins':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../../packages/vtable-plugins
       '@visactor/vtable-sheet':
-        specifier: workspace:*
+        specifier: workspace:1.26.1-alpha.0
         version: link:../../packages/vtable-sheet
     devDependencies:
       '@internal/bundler':
