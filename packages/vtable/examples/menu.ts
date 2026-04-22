@@ -29,6 +29,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'mem'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5114'
       }
     ]
   },
