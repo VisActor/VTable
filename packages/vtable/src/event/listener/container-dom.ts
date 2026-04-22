@@ -228,8 +228,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
           e.preventDefault();
 
-          let targetCol;
-          let targetRow;
+          let targetCol: number;
+          let targetRow: number;
           if (stateManager.select.cellPos.col === table.colCount - 1) {
             targetRow = Math.min(table.rowCount - 1, stateManager.select.cellPos.row + 1);
             targetCol = table.rowHeaderLevelCount;
