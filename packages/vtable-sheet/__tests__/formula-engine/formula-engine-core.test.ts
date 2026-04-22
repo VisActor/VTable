@@ -143,4 +143,53 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       expect(engine.isCellFormula(b7Cell)).toBe(true);
     });
   });
+
+  describe('Common function evaluation', () => {
+    test('math functions FLOOR/CEILING/SQRT/POWER/MOD', () => {
+      engine.setCellContent({ sheet: 'Sheet1', row: 0, col: 0 }, '=FLOOR(5.7)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 0, col: 0 }).value).toBe(5);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 0 }, '=FLOOR(5.7,0.5)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 0 }).value).toBe(5.5);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 2, col: 0 }, '=CEILING(5.2)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 2, col: 0 }).value).toBe(6);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 3, col: 0 }, '=CEILING(5.2,0.5)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 3, col: 0 }).value).toBe(5.5);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 4, col: 0 }, '=SQRT(9)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 4, col: 0 }).value).toBe(3);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 0 }, '=POWER(2,3)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 5, col: 0 }).value).toBe(8);
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 0 }, '=MOD(10,3)');
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 6, col: 0 }).value).toBe(1);
+    });
+
+    test('date and time functions YEAR/MONTH/DAY/HOUR/MINUTE/SECOND', () => {
+      const date = new Date(2020, 0, 15, 10, 20, 30); // 2020-01-15 10:20:30
+      engine.setCellContent({ sheet: 'Sheet1', row: 0, col: 0 }, date); // A1
+
+      engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 0 }, '=YEAR(A1)');
+      engine.setCellContent({ sheet: 'Sheet1', row: 2, col: 0 }, '=MONTH(A1)');
+      engine.setCellContent({ sheet: 'Sheet1', row: 3, col: 0 }, '=DAY(A1)');
+      engine.setCellContent({ sheet: 'Sheet1', row: 4, col: 0 }, '=HOUR(A1)');
+      engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 0 }, '=MINUTE(A1)');
+      engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 0 }, '=SECOND(A1)');
+
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 0 }).value).toBe(2020);
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 2, col: 0 }).value).toBe(1);
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 3, col: 0 }).value).toBe(15);
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 4, col: 0 }).value).toBe(10);
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 5, col: 0 }).value).toBe(20);
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 6, col: 0 }).value).toBe(30);
+
+      // YEAR(NOW()) 至少不报错且返回当前年份
+      engine.setCellContent({ sheet: 'Sheet1', row: 7, col: 0 }, '=YEAR(NOW())');
+      const currentYear = new Date().getFullYear();
+      expect(engine.getCellValue({ sheet: 'Sheet1', row: 7, col: 0 }).value).toBe(currentYear);
+    });
+  });
 });
