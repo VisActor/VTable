@@ -1854,7 +1854,24 @@
             "zh": "产品对比表",
             "en": "Product Compare Table"
           }
+        },
+        {
+          "path": "personnel-info",
+          "title": {
+            "zh": "人员信息表",
+            "en": "Personnel Information Sheet"
+          },
+          "meta": {
+            "title": "Personnel Information Sheet",
+            "keywords": "personnel, phone mask, privacy, icon, click",
+            "category": "demo",
+            "group": "Business",
+            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png",
+            "link": "'../../guide/custom_define/custom_icon'",
+            "option": ""
+          }
         }
+
       ]
     }
   ]
