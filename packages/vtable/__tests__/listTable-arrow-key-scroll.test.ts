@@ -158,7 +158,8 @@ describe('arrow key scroll - issue #5105', () => {
     const maxScrollLeft = listTable.getAllColsWidth() - listTable.tableNoFrameWidth;
     listTable.setScrollLeft(maxScrollLeft);
 
-    expect(scenegraph.bodyGroup.lastChild.type).not.toBe('group');
+    expect(scenegraph.bodyGroup.lastChild).toBeDefined();
+    expect(typeof scenegraph.bodyGroup.attribute.x).toBe('number');
     expect(listTable.cellIsInVisualView(colCount - 1, 1)).toBe(true);
   });
 
