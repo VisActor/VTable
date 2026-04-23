@@ -9,6 +9,9 @@ import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
 export async function dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenLeft) {
+    // screenLeft 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域
+    proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
+    proxy.table.scenegraph.updateNextFrame();
     return;
   }
   const screenLeftCol = screenLeft.col;
