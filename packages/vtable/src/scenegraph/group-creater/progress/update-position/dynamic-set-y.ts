@@ -8,7 +8,9 @@ import { getLastChild } from './util';
 
 export async function dynamicSetY(y: number, screenTop: RowInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenTop) {
-    // screenTop 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域
+    // screenTop 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域。
+    // 优先在入口层（proxy.setY）做解析重试；这里作为最终兜底，至少保证位置与 deltaY 同步。
+    proxy.updateDeltaY(y);
     proxy.updateBody(y - proxy.deltaY);
     proxy.table.scenegraph.updateNextFrame();
     return;
