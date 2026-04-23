@@ -8,6 +8,9 @@ import { getLastChild } from './util';
 
 export async function dynamicSetY(y: number, screenTop: RowInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenTop) {
+    // screenTop 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域
+    proxy.updateBody(y - proxy.deltaY);
+    proxy.table.scenegraph.updateNextFrame();
     return;
   }
   const screenTopRow = screenTop.row;

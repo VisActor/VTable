@@ -878,6 +878,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'custom-scroll'
+      },
+      {
+        path: 'interactive',
+        name: 'arrow-key-scroll'
       }
     ]
   },
