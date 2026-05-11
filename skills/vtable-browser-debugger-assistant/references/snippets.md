@@ -387,6 +387,58 @@ async (table, startCol, startRow, endCol, endRow) => {
 }
 ```
 
+### 6.6 树形路径可见性检查（排查搜索/高亮/聚焦串位）
+
+适用于树形表格、懒加载节点、搜索结果跳转等场景。
+
+核心判断：
+- `table.dataSource.getTableIndex(path)` 返回 `-1`，通常表示这个树节点当前不可见（未展开、被过滤、尚未插入）
+- 这种 path **不能** 直接参与 `row = rawIndex + headerOffset` 的换算，否则高亮常会误落到表头或别的可见记录上
+
+```js
+(table, paths) => {
+  let headerOffset = 0;
+  while (table.isHeader(0, headerOffset)) {
+    headerOffset++;
+  }
+
+  return paths.map(path => {
+    const rawIndex = table.dataSource.getTableIndex(path);
+    return {
+      path,
+      rawIndex,
+      isVisible: rawIndex >= 0,
+      visibleRow: rawIndex >= 0 ? rawIndex + headerOffset : null
+    };
+  });
+}
+```
+
+### 6.7 检查 customCellStyle arrangement 是否持有过期坐标
+
+适用于“搜索 A 却把 B 染黄”“展开/折叠后旧高亮还留在原位置”“排序后焦点落到别的记录”等问题。
+
+排查原则：
+- 布局变更前后的 arrangement 列表要一起看
+- 如果展开/排序/过滤后仍保留旧 `row`，高亮就会落到新的记录上
+- 修复时通常需要：**先清旧 arrangement，再按最新可见布局重算**
+
+```js
+(table) => {
+  const plugin = table.customCellStylePlugin;
+  const arrangements = Array.from(plugin?.customCellStyleArrangement || []);
+  return arrangements.map(item => ({
+    row: item?.cellPosition?.row,
+    col: item?.cellPosition?.col,
+    customStyleId: item?.customStyleId,
+    visibleValue:
+      typeof item?.cellPosition?.col === 'number' && typeof item?.cellPosition?.row === 'number'
+        ? table.getCellValue(item.cellPosition.col, item.cellPosition.row)
+        : null
+  }));
+}
+```
+
 ## 7) React18/React19 差异排查
 
 把 React 版本差异相关的经验集中到一个文件里维护，避免与本文件（通用 snippets）重复。

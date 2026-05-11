@@ -29,6 +29,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'mem'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5114'
       }
     ]
   },
@@ -301,6 +305,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-autoFillWidth'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-sort-state-echo'
       }
     ]
   },

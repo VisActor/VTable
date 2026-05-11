@@ -9,7 +9,9 @@ import { checkFirstColMerge, getFirstChild, getLastChild } from './util';
 
 export async function dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd: boolean, proxy: SceneProxy) {
   if (!screenLeft) {
-    // screenLeft 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域
+    // screenLeft 为 null 时仍需更新 body 位置并触发渲染，避免滚动后出现空白区域。
+    // 优先在入口层（proxy.setX）做解析重试；这里作为最终兜底，至少保证位置与 deltaX 同步。
+    proxy.updateDeltaX(x);
     proxy.table.scenegraph.setBodyAndColHeaderX(-x + proxy.deltaX);
     proxy.table.scenegraph.updateNextFrame();
     return;

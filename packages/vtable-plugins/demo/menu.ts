@@ -40,6 +40,10 @@ export const menus = [
     name: 'auto-fill'
   },
   {
+    path: 'auto-fill',
+    name: 'fill-handle-origin-value'
+  },
+  {
     path: 'wps-fill-handle',
     name: 'wps-fill-handle'
   },

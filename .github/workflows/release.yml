@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest # 如果用了electron，记得改成 macOS-latest
+    runs-on: macOS-latest
     permissions:
       contents: write
       pull-requests: write
@@ -15,11 +15,13 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure git user
+        run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com
 
@@ -30,7 +32,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
-          # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
@@ -40,9 +41,9 @@ jobs:
         with:
           path: packages/vtable
           semver_string: ${{ github.ref_name }}
-          semver_pattern: '^release/(.*)$' # ^v?(.*)$ by default
+          semver_pattern: '^release/(.*)$'
 
-      - name: update nextBump of version policies
+      - name: Update nextBump of version policies
         uses: xile611/set-next-bump-of-rush@main
         with:
           release_version: ${{ steps.semver_parser.outputs.full }}
@@ -53,33 +54,24 @@ jobs:
 
       - name: Build packages
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-          NO_EMIT_ON_ERROR: "true"
+          NODE_OPTIONS: '--max_old_space_size=4096'
+          NO_EMIT_ON_ERROR: 'true'
         run: |
-          # 设置环境变量确保错误信息完整输出
           export NODE_OPTIONS="--max_old_space_size=4096"
           export NO_EMIT_ON_ERROR="true"
-          # 运行构建，并将输出保存到文件
           node common/scripts/install-run-rush.js build --only tag:package 2>&1 | tee build.log || {
             echo "=== Build failed, showing last 1000 lines of build.log ==="
             tail -n 1000 build.log
             echo "=== Full error details ==="
-            # 尝试从日志中提取错误信息
             grep -A 50 "TypeScript Compilation Errors" build.log || true
             grep -A 50 "Build Error" build.log || true
             exit 1
           }
 
-      # - name: Run Bugserver
-      #   working-directory: ./packages/vtable
-      #   env:
-      #     BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
-      #   run: node ../../common/scripts/install-run-rushx.js ci
-
       - name: Publish to npm
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: node common/scripts/install-run-rush.js publish --publish --include-all
 
       - name: Update shrinkwrap
@@ -91,7 +83,7 @@ jobs:
         with:
           path: packages/vtable
 
-      - name: Commit & Push changes
+      - name: Commit and push changes
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -104,19 +96,6 @@ jobs:
         with:
           version: ${{ steps.package-version.outputs.current_version }}
 
-      - name: Create Release for Tag
-        id: release_tag
-        uses: ncipollo/release-action@v1.12.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: v${{ steps.package-version.outputs.current_version }}
-          commit: main
-          prerelease: false
-          body: |
-            ${{ steps.changelog.outputs.markdown }}
-          draft: true #
-
       - name: Create Pull Request
         uses: dustinirving/create-pr@v1.0.2
         with:
@@ -124,7 +103,7 @@ jobs:
           title: '[Auto release] release ${{ steps.package-version.outputs.current_version }}'
           base: main
           head: ${{ github.ref_name }}
-          labels: release # default labels, the action will throw error if not specified
-          reviewers: fangsmile,Rui-Sun # default reviewers, the action will throw error if not specified
+          labels: release
+          reviewers: fangsmile,Rui-Sun
           body: |
             ${{ steps.changelog.outputs.markdown }}

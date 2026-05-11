@@ -30,12 +30,42 @@ export enum MenuKey {
   SORT = 'sort'
 }
 
+/** SVG 图标配置 */
+export interface SvgIconConfig {
+  svg: string;
+  width?: number;
+  height?: number;
+}
+
+export type ClassName = string | string[];
+
+export interface MenuItemClassConfig {
+  item?: ClassName;
+  itemDisabled?: ClassName;
+  leftContainer?: ClassName;
+  icon?: ClassName;
+  text?: ClassName;
+  input?: ClassName;
+  rightContainer?: ClassName;
+  arrow?: ClassName;
+  shortcut?: ClassName;
+}
+
+/** 自定义图标渲染函数，接收菜单项信息返回一个 HTMLElement */
+export type IconRenderFunction = (menuItem: MenuItem) => HTMLElement;
+
+/** 菜单项图标：支持内置名称字符串 / SVG 配置 / 渲染函数 */
+export type MenuItemIcon = string | SvgIconConfig | IconRenderFunction;
+
 export interface MenuItem {
   text: string;
   menuKey: MenuKey | string;
   disabled?: boolean;
   shortcut?: string;
   iconName?: string;
+  /** 图标：内置名称字符串 / SVG 配置 / 自定义渲染函数 */
+  customIcon?: MenuItemIcon;
+  customClassName?: MenuItemClassConfig;
   iconPlaceholder?: boolean; //如果没有iconName时 是否显示占位图标位置 让他与其他有图标的item对齐
   inputDefaultValue?: number;
   children?: (MenuItem | string)[];

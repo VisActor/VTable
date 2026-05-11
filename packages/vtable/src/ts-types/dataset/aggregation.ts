@@ -1,4 +1,4 @@
-import { isValid } from '@visactor/vutils';
+import { isValid, precisionAdd, precisionSub } from '@visactor/vutils';
 import type { SortOrder } from '..';
 import { AggregationType, SortType } from '..';
 import type { BaseTableAPI } from '../base-table';
@@ -409,22 +409,22 @@ export class SumAggregator extends Aggregator {
       if (record.isAggregator && this.children) {
         this.children.push(record);
         const value = record.value();
-        this.sum += value ?? 0;
+        this.sum = precisionAdd(this.sum, value ?? 0);
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
-            this.positiveSum += value;
+            this.positiveSum = precisionAdd(this.positiveSum, value);
           } else if (value < 0) {
-            this.nagetiveSum += value;
+            this.nagetiveSum = precisionAdd(this.nagetiveSum, value);
           }
         }
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
         const value = parseFloat(record[this.field]);
-        this.sum += value;
+        this.sum = precisionAdd(this.sum, value);
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
-            this.positiveSum += value;
+            this.positiveSum = precisionAdd(this.positiveSum, value);
           } else if (value < 0) {
-            this.nagetiveSum += value;
+            this.nagetiveSum = precisionAdd(this.nagetiveSum, value);
           }
         }
       }
@@ -434,27 +434,33 @@ export class SumAggregator extends Aggregator {
   deleteRecord(record: any) {
     if (record) {
       if (this.isRecord && this.records) {
-        this.records = this.records.filter(item => item !== record);
+        const index = this.records.indexOf(record);
+        if (index !== -1) {
+          this.records.splice(index, 1);
+        }
       }
       if (record.isAggregator && this.children) {
-        this.children = this.children.filter(item => item !== record);
+        const index = this.children.indexOf(record);
+        if (index !== -1) {
+          this.children.splice(index, 1);
+        }
         const value = record.value();
-        this.sum -= value ?? 0;
+        this.sum = precisionSub(this.sum, value ?? 0);
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
-            this.positiveSum -= value;
+            this.positiveSum = precisionSub(this.positiveSum, value);
           } else if (value < 0) {
-            this.nagetiveSum -= value;
+            this.nagetiveSum = precisionSub(this.nagetiveSum, value);
           }
         }
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
         const value = parseFloat(record[this.field]);
-        this.sum -= value;
+        this.sum = precisionSub(this.sum, value);
         if (this.needSplitPositiveAndNegativeForSum) {
           if (value > 0) {
-            this.positiveSum -= value;
+            this.positiveSum = precisionSub(this.positiveSum, value);
           } else if (value < 0) {
-            this.nagetiveSum -= value;
+            this.nagetiveSum = precisionSub(this.nagetiveSum, value);
           }
         }
       }
@@ -464,45 +470,45 @@ export class SumAggregator extends Aggregator {
   updateRecord(oldRecord: any, newRecord: any): void {
     if (oldRecord && newRecord) {
       if (this.isRecord && this.records) {
-        this.records = this.records.map(item => {
-          if (item === oldRecord) {
-            return newRecord;
-          }
-          return item;
-        });
+        const index = this.records.indexOf(oldRecord);
+        if (index !== -1) {
+          this.records[index] = newRecord;
+        }
       }
       if (oldRecord.isAggregator && this.children) {
         const oldValue = oldRecord.value();
-        this.children = this.children.filter(item => item !== oldRecord);
+        const index = this.children.indexOf(oldRecord);
+        if (index !== -1) {
+          this.children[index] = newRecord;
+        }
         const newValue = newRecord.value();
-        this.children.push(newRecord);
-        this.sum += newValue - oldValue;
+        this.sum = precisionAdd(this.sum, precisionSub(newValue, oldValue));
         if (this.needSplitPositiveAndNegativeForSum) {
           if (oldValue > 0) {
-            this.positiveSum -= oldValue;
+            this.positiveSum = precisionSub(this.positiveSum, oldValue);
           } else if (oldValue < 0) {
-            this.nagetiveSum -= oldValue;
+            this.nagetiveSum = precisionSub(this.nagetiveSum, oldValue);
           }
           if (newValue > 0) {
-            this.positiveSum += newValue;
+            this.positiveSum = precisionAdd(this.positiveSum, newValue);
           } else if (newValue < 0) {
-            this.nagetiveSum += newValue;
+            this.nagetiveSum = precisionAdd(this.nagetiveSum, newValue);
           }
         }
       } else if (this.field && !isNaN(parseFloat(oldRecord[this.field]))) {
         const oldValue = parseFloat(oldRecord[this.field]);
         const newValue = parseFloat(newRecord[this.field]);
-        this.sum += newValue - oldValue;
+        this.sum = precisionAdd(this.sum, precisionSub(newValue, oldValue));
         if (this.needSplitPositiveAndNegativeForSum) {
           if (oldValue > 0) {
-            this.positiveSum -= oldValue;
+            this.positiveSum = precisionSub(this.positiveSum, oldValue);
           } else if (oldValue < 0) {
-            this.nagetiveSum -= oldValue;
+            this.nagetiveSum = precisionSub(this.nagetiveSum, oldValue);
           }
           if (newValue > 0) {
-            this.positiveSum += newValue;
+            this.positiveSum = precisionAdd(this.positiveSum, newValue);
           } else if (newValue < 0) {
-            this.nagetiveSum += newValue;
+            this.nagetiveSum = precisionAdd(this.nagetiveSum, newValue);
           }
         }
       }
@@ -510,7 +516,10 @@ export class SumAggregator extends Aggregator {
     }
   }
   value() {
-    return this.changedValue ?? (this.records?.length >= 1 ? this.sum : undefined);
+    return (
+      this.changedValue ??
+      (this.records && this.records.length >= 1 ? this.sum : this.isRecord === false ? this.sum : undefined)
+    );
   }
   positiveValue() {
     return this.positiveSum;
@@ -531,12 +540,12 @@ export class SumAggregator extends Aggregator {
         const child = this.children[i];
         if (child.isAggregator) {
           const value = child.value();
-          this.sum += value ?? 0;
+          this.sum = precisionAdd(this.sum, value ?? 0);
           if (this.needSplitPositiveAndNegativeForSum) {
             if (value > 0) {
-              this.positiveSum += value;
+              this.positiveSum = precisionAdd(this.positiveSum, value);
             } else if (value < 0) {
-              this.nagetiveSum += value;
+              this.nagetiveSum = precisionAdd(this.nagetiveSum, value);
             }
           }
         }
@@ -546,22 +555,22 @@ export class SumAggregator extends Aggregator {
         const record = this.records[i];
         if (record.isAggregator) {
           const value = record.value();
-          this.sum += value ?? 0;
+          this.sum = precisionAdd(this.sum, value ?? 0);
           if (this.needSplitPositiveAndNegativeForSum) {
             if (value > 0) {
-              this.positiveSum += value;
+              this.positiveSum = precisionAdd(this.positiveSum, value);
             } else if (value < 0) {
-              this.nagetiveSum += value;
+              this.nagetiveSum = precisionAdd(this.nagetiveSum, value);
             }
           }
         } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
           const value = parseFloat(record[this.field]);
-          this.sum += value;
+          this.sum = precisionAdd(this.sum, value);
           if (this.needSplitPositiveAndNegativeForSum) {
             if (value > 0) {
-              this.positiveSum += value;
+              this.positiveSum = precisionAdd(this.positiveSum, value);
             } else if (value < 0) {
-              this.nagetiveSum += value;
+              this.nagetiveSum = precisionAdd(this.nagetiveSum, value);
             }
           }
         }
@@ -687,10 +696,10 @@ export class AvgAggregator extends Aggregator {
         if (this.children) {
           this.children.push(record);
         }
-        this.sum += record.sum;
+        this.sum = precisionAdd(this.sum, record.sum);
         this.count += record.count;
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
-        this.sum += parseFloat(record[this.field]);
+        this.sum = precisionAdd(this.sum, parseFloat(record[this.field]));
         this.count++;
       }
     }
@@ -699,16 +708,22 @@ export class AvgAggregator extends Aggregator {
   deleteRecord(record: any) {
     if (record) {
       if (this.isRecord && this.records) {
-        this.records = this.records.filter(item => item !== record);
+        const index = this.records.indexOf(record);
+        if (index !== -1) {
+          this.records.splice(index, 1);
+        }
       }
       if (record.isAggregator && record.type === AggregationType.AVG) {
         if (this.children) {
-          this.children = this.children.filter(item => item !== record);
+          const index = this.children.indexOf(record);
+          if (index !== -1) {
+            this.children.splice(index, 1);
+          }
         }
-        this.sum -= record.sum;
+        this.sum = precisionSub(this.sum, record.sum);
         this.count -= record.count;
       } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
-        this.sum -= parseFloat(record[this.field]);
+        this.sum = precisionSub(this.sum, parseFloat(record[this.field]));
         this.count--;
       }
     }
@@ -717,33 +732,39 @@ export class AvgAggregator extends Aggregator {
   updateRecord(oldRecord: any, newRecord: any): void {
     if (oldRecord && newRecord) {
       if (this.isRecord && this.records) {
-        this.records = this.records.map(item => {
-          if (item === oldRecord) {
-            return newRecord;
-          }
-          return item;
-        });
+        const index = this.records.indexOf(oldRecord);
+        if (index !== -1) {
+          this.records[index] = newRecord;
+        }
       }
       if (oldRecord.isAggregator && oldRecord.type === AggregationType.AVG) {
         if (this.children && newRecord.isAggregator) {
-          this.children = this.children.map(item => {
-            if (item === oldRecord) {
-              return newRecord;
-            }
-            return item;
-          });
+          const index = this.children.indexOf(oldRecord);
+          if (index !== -1) {
+            this.children[index] = newRecord;
+          }
         }
-        this.sum += newRecord.sum - oldRecord.sum;
+        this.sum = precisionAdd(this.sum, precisionSub(newRecord.sum, oldRecord.sum));
         this.count += newRecord.count - oldRecord.count;
       } else if (this.field && !isNaN(parseFloat(oldRecord[this.field]))) {
-        this.sum += parseFloat(newRecord[this.field]) - parseFloat(oldRecord[this.field]);
+        this.sum = precisionAdd(
+          this.sum,
+          precisionSub(parseFloat(newRecord[this.field]), parseFloat(oldRecord[this.field]))
+        );
         // this.count++;
       }
       this.clearCacheValue();
     }
   }
   value() {
-    return this.changedValue ?? (this.records?.length >= 1 ? this.sum / this.count : undefined);
+    return (
+      this.changedValue ??
+      (this.records && this.records.length >= 1
+        ? this.sum / this.count
+        : this.isRecord === false && this.count > 0
+        ? this.sum / this.count
+        : undefined)
+    );
   }
   reset() {
     this.changedValue = undefined;
@@ -761,7 +782,7 @@ export class AvgAggregator extends Aggregator {
         const child = this.children[i];
         if (child.isAggregator && child.type === AggregationType.AVG) {
           const childValue = child.value();
-          this.sum += childValue * (child as AvgAggregator).count;
+          this.sum = precisionAdd(this.sum, childValue * (child as AvgAggregator).count);
           this.count += (child as AvgAggregator).count;
         }
       }
@@ -769,10 +790,10 @@ export class AvgAggregator extends Aggregator {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator && record.type === AggregationType.AVG) {
-          this.sum += record.sum;
+          this.sum = precisionAdd(this.sum, record.sum);
           this.count += record.count;
         } else if (this.field && !isNaN(parseFloat(record[this.field]))) {
-          this.sum += parseFloat(record[this.field]);
+          this.sum = precisionAdd(this.sum, parseFloat(record[this.field]));
           this.count++;
         }
       }

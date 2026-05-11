@@ -953,6 +953,16 @@ export class FormulaEngine {
           return this.calculateAbs(args);
         case 'ROUND':
           return this.calculateRound(args);
+        case 'FLOOR':
+          return this.calculateFloor(args);
+        case 'CEILING':
+          return this.calculateCeiling(args);
+        case 'SQRT':
+          return this.calculateSqrt(args);
+        case 'POWER':
+          return this.calculatePower(args);
+        case 'MOD':
+          return this.calculateMod(args);
         case 'INT':
           return this.calculateInt(args);
         case 'RAND':
@@ -987,6 +997,18 @@ export class FormulaEngine {
           return this.calculateToday(args);
         case 'NOW':
           return this.calculateNow(args);
+        case 'YEAR':
+          return this.calculateYear(args);
+        case 'MONTH':
+          return this.calculateMonth(args);
+        case 'DAY':
+          return this.calculateDay(args);
+        case 'HOUR':
+          return this.calculateHour(args);
+        case 'MINUTE':
+          return this.calculateMinute(args);
+        case 'SECOND':
+          return this.calculateSecond(args);
 
         default:
           return { value: null, error: `Unknown function: ${funcName}` };
@@ -1048,6 +1070,44 @@ export class FormulaEngine {
     return { value: Math.abs(num), error: undefined };
   }
 
+  private calculateFloor(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length < 1 || args.length > 2) {
+      return { value: null, error: 'FLOOR requires 1 or 2 arguments' };
+    }
+    const num = Number(args[0]);
+    if (isNaN(num)) {
+      return { value: null, error: 'FLOOR first argument must be a number' };
+    }
+    const significance = args.length === 2 ? Number(args[1]) : 1;
+    if (isNaN(significance)) {
+      return { value: null, error: 'FLOOR significance must be a number' };
+    }
+    if (significance === 0) {
+      return { value: 0, error: undefined };
+    }
+    const factor = Math.floor(num / significance);
+    return { value: factor * significance, error: undefined };
+  }
+
+  private calculateCeiling(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length < 1 || args.length > 2) {
+      return { value: null, error: 'CEILING requires 1 or 2 arguments' };
+    }
+    const num = Number(args[0]);
+    if (isNaN(num)) {
+      return { value: null, error: 'CEILING first argument must be a number' };
+    }
+    const significance = args.length === 2 ? Number(args[1]) : 1;
+    if (isNaN(significance)) {
+      return { value: null, error: 'CEILING significance must be a number' };
+    }
+    if (significance === 0) {
+      return { value: 0, error: undefined };
+    }
+    const factor = Math.ceil(num / significance);
+    return { value: factor * significance, error: undefined };
+  }
+
   private calculateRound(args: unknown[]): { value: unknown; error?: string } {
     if (args.length < 1 || args.length > 2) {
       return { value: null, error: 'ROUND requires 1 or 2 arguments' };
@@ -1062,6 +1122,44 @@ export class FormulaEngine {
     }
     const factor = Math.pow(10, digits);
     return { value: Math.round(num * factor) / factor, error: undefined };
+  }
+
+  private calculateSqrt(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'SQRT requires exactly 1 argument' };
+    }
+    const num = Number(args[0]);
+    if (isNaN(num) || num < 0) {
+      return { value: null, error: 'SQRT argument must be a non-negative number' };
+    }
+    return { value: Math.sqrt(num), error: undefined };
+  }
+
+  private calculatePower(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 2) {
+      return { value: null, error: 'POWER requires exactly 2 arguments' };
+    }
+    const base = Number(args[0]);
+    const exponent = Number(args[1]);
+    if (isNaN(base) || isNaN(exponent)) {
+      return { value: null, error: 'POWER arguments must be numbers' };
+    }
+    return { value: Math.pow(base, exponent), error: undefined };
+  }
+
+  private calculateMod(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 2) {
+      return { value: null, error: 'MOD requires exactly 2 arguments' };
+    }
+    const dividend = Number(args[0]);
+    const divisor = Number(args[1]);
+    if (isNaN(dividend) || isNaN(divisor)) {
+      return { value: null, error: 'MOD arguments must be numbers' };
+    }
+    if (divisor === 0) {
+      return { value: null, error: 'MOD divisor must not be zero' };
+    }
+    return { value: dividend % divisor, error: undefined };
   }
 
   private calculateInt(args: unknown[]): { value: unknown; error?: string } {
@@ -1239,6 +1337,88 @@ export class FormulaEngine {
       return { value: null, error: 'NOW requires no arguments' };
     }
     return { value: new Date(), error: undefined };
+  }
+
+  private toDate(value: unknown): Date | null {
+    if (value instanceof Date) {
+      return value;
+    }
+    if (typeof value === 'number' && !isNaN(value)) {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    if (typeof value === 'string') {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+
+  private calculateYear(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'YEAR requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'YEAR argument must be a valid date' };
+    }
+    return { value: date.getFullYear(), error: undefined };
+  }
+
+  private calculateMonth(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'MONTH requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'MONTH argument must be a valid date' };
+    }
+    // JavaScript month is 0-based; Excel-style is 1-based
+    return { value: date.getMonth() + 1, error: undefined };
+  }
+
+  private calculateDay(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'DAY requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'DAY argument must be a valid date' };
+    }
+    return { value: date.getDate(), error: undefined };
+  }
+
+  private calculateHour(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'HOUR requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'HOUR argument must be a valid date' };
+    }
+    return { value: date.getHours(), error: undefined };
+  }
+
+  private calculateMinute(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'MINUTE requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'MINUTE argument must be a valid date' };
+    }
+    return { value: date.getMinutes(), error: undefined };
+  }
+
+  private calculateSecond(args: unknown[]): { value: unknown; error?: string } {
+    if (args.length !== 1) {
+      return { value: null, error: 'SECOND requires exactly 1 argument' };
+    }
+    const date = this.toDate(args[0]);
+    if (!date) {
+      return { value: null, error: 'SECOND argument must be a valid date' };
+    }
+    return { value: date.getSeconds(), error: undefined };
   }
 
   private flattenArgs(args: unknown[]): unknown[] {
