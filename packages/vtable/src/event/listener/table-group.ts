@@ -1330,6 +1330,10 @@ export function endResizeRow(table: BaseTableAPI) {
 }
 
 function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
+  if (typeof e.button === 'number' && e.button !== 0) {
+    return;
+  }
+
   const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
   let col = -1;
   let row = -1;
