@@ -1,17 +1,15 @@
 import type { ListTable } from '@visactor/vtable';
 import { vglobal } from '@visactor/vtable/es/vrender';
 import {
-  MENU_CONTAINER_CLASS,
-  MENU_ITEM_CLASS,
-  MENU_ITEM_SEPARATOR_CLASS,
-  MENU_ITEM_SUBMENU_CLASS,
   MENU_STYLES,
   createElement,
   applyStyles,
   createIcon,
-  createNumberInputItem,
-  MENU_ITEM_DISABLED_CLASS
+  MENU_CLASSES,
+  normalizeItemClassNameConfig,
+  normalizeClassName
 } from './styles';
+import type { MenuClasses, MenuStyles } from './styles';
 import type { MenuItemOrSeparator, MenuKey } from './types';
 import type { MenuItem } from './types';
 import type { MenuClickEventArgs } from './types';
@@ -35,6 +33,13 @@ export class MenuManager {
   private submenuShowDelay = 100;
   private submenuHideDelay = 500;
   private menuInitializationDelay = 200; // 菜单初始化延迟时间（毫秒）
+  private styles: MenuStyles;
+  private classes: MenuClasses;
+
+  constructor(styles?: MenuStyles, classes?: MenuClasses) {
+    this.styles = styles ?? MENU_STYLES;
+    this.classes = classes ?? MENU_CLASSES;
+  }
 
   /**
    * 显示菜单
@@ -48,8 +53,9 @@ export class MenuManager {
     this.release();
 
     // 创建菜单容器
-    this.menuContainer = createElement('div', MENU_CONTAINER_CLASS);
-    applyStyles(this.menuContainer, MENU_STYLES.menuContainer);
+    this.menuContainer = createElement('div');
+    this.menuContainer.classList.add(...normalizeClassName(this.classes.menuContainer));
+    applyStyles(this.menuContainer, this.styles.menuContainer);
     document.body.appendChild(this.menuContainer);
     this.menuContainer.addEventListener('contextmenu', (e: MouseEvent) => {
       e.preventDefault();
@@ -92,60 +98,62 @@ export class MenuManager {
     items.forEach(item => {
       if (typeof item === 'string' && item === '---') {
         // 创建分隔线
-        const separator = createElement('div', MENU_ITEM_SEPARATOR_CLASS);
-        applyStyles(separator, MENU_STYLES.menuItemSeparator);
+        const separator = createElement('div');
+        separator.classList.add(...normalizeClassName(this.classes.menuItemSeparator));
+        applyStyles(separator, this.styles.menuItemSeparator);
         container.appendChild(separator);
-        // } else if (typeof item === 'object' && 'type' in item && item.type === 'input') {
-        //   // 创建输入框菜单项
-        //   const inputItem = item as MenuItemInput;
-        //   const wrapper = createNumberInputItem(
-        //     inputItem.label,
-        //     inputItem.defaultValue || 1,
-        //     inputItem.iconName,
-        //     (value: number) => {
-        //       this.handleMenuItemClick({
-        //         menuKey: inputItem.menuKey,
-        //         menuText: inputItem.label,
-        //         inputValue: value,
-        //         ...this.context
-        //       });
-        //     }
-        //   );
-        //   container.appendChild(wrapper);
       } else if (typeof item === 'object') {
         // 创建普通菜单项
         const menuItem = item as MenuItem;
-        const menuItemElement = createElement('div', MENU_ITEM_CLASS);
-        applyStyles(menuItemElement, MENU_STYLES.menuItem);
+        const customClassName = normalizeItemClassNameConfig(item.customClassName);
+        const menuItemElement = createElement('div');
+        menuItemElement.classList.add(...normalizeClassName(this.classes.menuItem));
+        if (customClassName.item) {
+          menuItemElement.classList.add(...customClassName.item);
+        }
+        applyStyles(menuItemElement, this.styles.menuItem);
 
         // 创建左侧图标容器
         const leftContainer = createElement('div');
+        if (customClassName.leftContainer) {
+          leftContainer.classList.add(...customClassName.leftContainer);
+        }
         leftContainer.style.display = 'flex';
         leftContainer.style.alignItems = 'center';
 
-        // 添加图标
-        if (menuItem.iconName) {
-          const icon = createIcon(menuItem.iconName);
+        // 添加图标（优先使用 customIcon）
+        const iconValue = menuItem.customIcon ?? menuItem.iconName;
+        if (iconValue) {
+          const icon = createIcon(iconValue, menuItem, this.styles.menuItemIcon);
+          if (customClassName.icon) {
+            icon.classList.add(...customClassName.icon);
+          }
           leftContainer.appendChild(icon);
         } else if (menuItem.iconPlaceholder) {
           // 占位图标，保持对齐
           const placeholder = createElement('span');
-          applyStyles(placeholder, MENU_STYLES.menuItemIcon);
+          applyStyles(placeholder, this.styles.menuItemIcon);
           leftContainer.appendChild(placeholder);
         }
 
         // 添加文本
         const text = createElement('span');
+        if (customClassName.text) {
+          text.classList.add(...customClassName.text);
+        }
         text.textContent = menuItem.text;
-        applyStyles(text, MENU_STYLES.menuItemText);
+        applyStyles(text, this.styles.menuItemText);
         leftContainer.appendChild(text);
         if (item.inputDefaultValue) {
           // 创建输入框
           const input = createElement('input') as HTMLInputElement;
+          if (customClassName.input) {
+            input.classList.add(...customClassName.input);
+          }
           input.type = 'number';
           input.min = '1';
           input.value = item.inputDefaultValue.toString();
-          applyStyles(input, MENU_STYLES.inputField);
+          applyStyles(input, this.styles.inputField);
           leftContainer.appendChild(input);
           //监听enter 回车确认
           input.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -164,23 +172,32 @@ export class MenuManager {
 
         // 创建右侧容器
         const rightContainer = createElement('div');
+        if (customClassName.rightContainer) {
+          rightContainer.classList.add(...customClassName.rightContainer);
+        }
         rightContainer.style.display = 'flex';
         rightContainer.style.alignItems = 'center';
 
         // 添加快捷键
         if (menuItem.shortcut) {
           const shortcut = createElement('span');
+          if (customClassName.shortcut) {
+            shortcut.classList.add(...customClassName.shortcut);
+          }
           shortcut.textContent = menuItem.shortcut;
-          applyStyles(shortcut, MENU_STYLES.menuItemShortcut);
+          applyStyles(shortcut, this.styles.menuItemShortcut);
           rightContainer.appendChild(shortcut);
         }
 
         // 添加子菜单箭头
         if (menuItem.children && menuItem.children.length > 0) {
-          menuItemElement.classList.add(MENU_ITEM_SUBMENU_CLASS);
+          menuItemElement.classList.add(...normalizeClassName(this.classes.menuItemSubmenu));
           const arrow = createElement('span');
+          if (customClassName.arrow) {
+            arrow.classList.add(...customClassName.arrow);
+          }
           arrow.textContent = '▶';
-          applyStyles(arrow, MENU_STYLES.submenuArrow);
+          applyStyles(arrow, this.styles.submenuArrow);
           rightContainer.appendChild(arrow);
         }
 
@@ -188,8 +205,11 @@ export class MenuManager {
 
         // 禁用状态
         if (menuItem.disabled) {
-          menuItemElement.classList.add(MENU_ITEM_DISABLED_CLASS);
-          applyStyles(menuItemElement, MENU_STYLES.menuItemDisabled);
+          menuItemElement.classList.add(...normalizeClassName(this.classes.menuItemDisabled));
+          if (customClassName.itemDisabled) {
+            menuItemElement.classList.add(...customClassName.itemDisabled);
+          }
+          applyStyles(menuItemElement, this.styles.menuItemDisabled);
         }
 
         // 添加事件监听
@@ -211,9 +231,8 @@ export class MenuManager {
 
           // 鼠标悬停事件
           menuItemElement.addEventListener('mouseenter', () => {
-            console.log('mouseenter', menuItem.text);
             // 添加悬停样式
-            applyStyles(menuItemElement, MENU_STYLES.menuItemHover);
+            applyStyles(menuItemElement, this.styles.menuItemHover);
 
             // 清除隐藏定时器
             if (this.hideTimeout !== null) {
@@ -244,10 +263,8 @@ export class MenuManager {
 
           // 鼠标离开事件
           menuItemElement.addEventListener('mouseleave', () => {
-            console.log('mouseleave', menuItem.text);
-            // 移除悬停样式，使用与添加时相同的方式
-            // 通过设置空对象来重置之前应用的menuItemHover样式的属性
-            Object.keys(MENU_STYLES.menuItemHover).forEach(key => {
+            // 移除悬停样式
+            Object.keys(this.styles.menuItemHover).forEach(key => {
               (menuItemElement.style as any)[key] = '';
             });
 
@@ -272,8 +289,12 @@ export class MenuManager {
     const parentRect = parentElement.getBoundingClientRect();
 
     // 创建子菜单容器
-    const submenu = createElement('div', MENU_CONTAINER_CLASS);
-    applyStyles(submenu, MENU_STYLES.submenuContainer);
+    const submenu = createElement('div');
+    submenu.classList.add(
+      ...normalizeClassName(this.classes.menuContainer),
+      ...normalizeClassName(this.classes.submenuContainer)
+    );
+    applyStyles(submenu, this.styles.submenuContainer);
 
     // 创建子菜单项
     this.createMenuItems(items, submenu, parentItem);
