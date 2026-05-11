@@ -109,3 +109,4 @@ tsconfig.tsbuildinfo
 
 .history
 .trae/
+.agents/

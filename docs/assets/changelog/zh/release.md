@@ -1,3 +1,23 @@
+# v1.26.0
+
+2026-04-03
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: react-vtable 针对react 19 做兼容
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 单选框和行序号功能同时使用时的报错问题
+- **@visactor/vtable**: 单元格类型是单选框时针对聚合行做处理
+- **@visactor/vtable**: 解决调整列宽高亮框不消失问题
+- **@visactor/vtable**: 当设置 barToSide 时，滚动条在画布上不该隐藏问题
+
+
+
+[更多详情请查看 v1.26.0](https://github.com/VisActor/VTable/releases/tag/v1.26.0)
+
 # v1.25.0
 
 2026-03-25

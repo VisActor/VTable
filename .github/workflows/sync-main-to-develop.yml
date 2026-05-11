@@ -1,0 +1,32 @@
+name: Sync main to develop after release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync_main_to_develop:
+    if: contains(github.event.head_commit.message, 'prelease version')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create PR from main to develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh pr create \
+            -B develop \
+            -H main \
+            -t "Sync main -> develop" \
+            -b "Sync after release ${GITHUB_SHA}" \
+            || echo 'PR may already exist'

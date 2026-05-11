@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.26.0",
+  "version": "1.26.1",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -35,7 +35,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-plugins.js"
+    "dist/vtable-plugins.js",
+    "dist/vtable-plugins.min.js"
   ],
   "publishConfig": {
     "access": "public"

@@ -85,7 +85,18 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (!this.checkNeedRender(graphic)) {
       return;
     }
-    // 加入异步渲染队列
+
+    // 缓存命中时同步渲染：立即更新 renderId，防止 clearCacheContainer 误清
+    const opts = this.getGraphicOptions(graphic);
+    if (opts) {
+      const targetMap = this.htmlMap?.[opts.id];
+      if (targetMap && this.checkDom(targetMap.wrapContainer)) {
+        this.doRenderGraphic(graphic);
+        return;
+      }
+    }
+
+    // 无缓存或 DOM 不在文档中，走异步渲染队列
     this.renderQueue.add(graphic);
     this.scheduleRender();
   }
@@ -168,6 +179,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 更新样式并记录渲染 ID
     if (targetMap) {
       targetMap.renderId = this.renderId;
+      targetMap.graphic = graphic;
       targetMap.lastAccessed = Date.now();
       this.updateAccessQueue(id);
       this.updateStyleOfWrapContainer(graphic, stage, targetMap.wrapContainer, targetMap.nativeContainer);

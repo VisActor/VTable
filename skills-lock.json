@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "vtable-browser-debugger-assistant": {
+      "source": "VisActor/VTable",
+      "sourceType": "github",
+      "computedHash": "be064dc336796005c403d281243b25684e4f7abc1513125f91d6c65e912bc88b"
+    },
+    "vtable-development-assistant": {
+      "source": "VisActor/VTable",
+      "sourceType": "github",
+      "computedHash": "6f24fceb32b7d460587ed0c8e93c643e969e8102a0a791e0880ad692af07e79a"
+    }
+  }
+}

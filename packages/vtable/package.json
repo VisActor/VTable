@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.26.0",
+  "version": "1.26.1",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -122,7 +122,8 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "build/es5/index.js"
+    "dist/vtable.js",
+    "dist/vtable.min.js"
   ],
   "publishConfig": {
     "access": "public"

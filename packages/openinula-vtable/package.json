@@ -1,6 +1,6 @@
 {
   "name": "@visactor/openinula-vtable",
-  "version": "1.26.0",
+  "version": "1.26.1",
   "description": "The openinula version of VTable",
   "keywords": [
     "openinula",
@@ -40,10 +40,6 @@
     "build": "npm run fix-memory-limit && bundle --clean",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
-  "unpkg": "latest",
-  "unpkgFiles": [
-    "dist/openinula-vtable.js"
-  ],
   "publishConfig": {
     "access": "public"
   },

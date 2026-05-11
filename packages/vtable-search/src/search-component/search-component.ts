@@ -108,6 +108,68 @@ export class SearchComponent {
     this.table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
   }
 
+  private getHeaderOffset(): number {
+    let offset = 0;
+    while (this.table.isHeader(0, offset)) {
+      offset++;
+    }
+    return offset;
+  }
+
+  private getHeaderCellAddressByField(field: string): { col: number; row: number } | undefined {
+    // PivotTable/ListTable share internal layoutMap API but it's not exposed on the public type.
+    const layoutMap = (this.table as any).internalProps?.layoutMap;
+    return layoutMap?.getHeaderCellAddressByField?.(field);
+  }
+
+  private getTreeCol(): number {
+    const treeColumn = (this.table as any)?.options?.columns?.find((c: any) => c?.tree);
+    const field = treeColumn?.field;
+    if (typeof field === 'string' && field) {
+      const addr = this.getHeaderCellAddressByField(field);
+      if (addr && typeof addr.col === 'number') {
+        return addr.col;
+      }
+    }
+    // Fallback to previous behavior.
+    return this.treeIndex;
+  }
+
+  private getVisibleTreeCell(resultItem: typeof this.queryResult[number]): { col: number; row: number } | undefined {
+    if (!resultItem.indexNumber) {
+      return undefined;
+    }
+    const rawIndex = this.getBodyRowIndexByRecordIndex(resultItem.indexNumber);
+    if (rawIndex < 0) {
+      return undefined;
+    }
+    return {
+      col: typeof resultItem.col === 'number' ? resultItem.col : this.getTreeCol(),
+      row: rawIndex + this.getHeaderOffset()
+    };
+  }
+
+  private clearRenderedCellStyles() {
+    const plugin = this.table.customCellStylePlugin;
+    const cellsToRefresh: { col: number; row: number }[] = [];
+    const arrangements = Array.from((plugin as any)?.customCellStyleArrangement || []);
+
+    arrangements.forEach((item: any) => {
+      const cellPosition = item?.cellPosition;
+      if (typeof cellPosition?.col === 'number' && typeof cellPosition?.row === 'number') {
+        cellsToRefresh.push({
+          col: cellPosition.col,
+          row: cellPosition.row
+        });
+      }
+    });
+
+    plugin.clearCustomCellStyleArrangement();
+    cellsToRefresh.forEach(({ col, row }) => {
+      this.table.scenegraph.updateCellContent(col, row, true);
+    });
+  }
+
   search(str: string) {
     this.clear();
     this.queryStr = str;
@@ -122,19 +184,44 @@ export class SearchComponent {
     this.treeIndex = this.isTree ? this.table.options.columns.findIndex((item: any) => item.tree) : 0;
     if (this.isTree) {
       // 如果传入单一节点也能处理
-      const colEnd = this.table.colCount;
+      const treeCol = this.getTreeCol();
       const walk = (nodes: any[], path: number[]) => {
         nodes.forEach((item: any, idx: number) => {
           const currentPath = [...path, idx]; // 当前节点的完整路径
 
-          // 保持你的 treeQueryMethod 调用方式（this 上下文来自定义环境）
-          if (this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table: this.table })) {
+          // 为了做到“单元格级别高亮”，优先按字段匹配并映射到具体列。
+          const searchFields =
+            Array.isArray(this.fieldsToSearch) && this.fieldsToSearch.length > 0
+              ? this.fieldsToSearch
+              : Object.keys(item);
+
+          let hitAnyField = false;
+          searchFields.forEach(field => {
+            const value = item?.[field];
+            if (!isValid(value)) {
+              return;
+            }
+            const col = this.getHeaderCellAddressByField(field)?.col ?? treeCol;
+            // row 在树形场景下要在展开后才能准确计算，这里传 0 仅用于自定义 queryMethod 的兼容参数。
+            if (this.queryMethod(this.queryStr, value, { col, row: 0, table: this.table })) {
+              hitAnyField = true;
+              this.queryResult.push({
+                indexNumber: currentPath,
+                col,
+                value: value?.toString?.() ?? String(value)
+              });
+            }
+          });
+
+          // 兼容旧用法：如果用户自定义 treeQueryMethod 命中但字段级别未命中，则至少高亮树列。
+          if (
+            !hitAnyField &&
+            this.treeQueryMethod &&
+            this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table: this.table })
+          ) {
             this.queryResult.push({
               indexNumber: currentPath,
-              range: {
-                start: { row: null, col: 0 },
-                end: { row: null, col: colEnd }
-              }
+              col: treeCol
             });
           }
 
@@ -145,8 +232,21 @@ export class SearchComponent {
       };
 
       walk(this.table.records, []);
+      // 同一节点同一列可能被多次命中（例如 fieldsToSearch 未限制且字段值重复），做一次简单去重
+      const dedup = new Set<string>();
+      this.queryResult = this.queryResult.filter(r => {
+        const key = `${(r.indexNumber || []).join('.')}:${r.col ?? ''}`;
+        if (dedup.has(key)) {
+          return false;
+        }
+        dedup.add(key);
+        return true;
+      });
+
+      this.currentIndex = this.queryResult.length > 0 ? 0 : -1;
+
       if (this.queryResult.length > 0) {
-        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
+        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber, col: this.queryResult[0].col ?? treeCol });
       }
 
       if (this.callback) {
@@ -160,13 +260,8 @@ export class SearchComponent {
       }
       this.updateCellStyle();
 
-      // if (this.autoJump) {
-      //   return this.next();
-      // }
-      this.currentIndex = 0;
-
       return {
-        index: 0,
+        index: this.currentIndex >= 0 ? this.currentIndex : 0,
         results: this.queryResult
       };
     }
@@ -252,13 +347,7 @@ export class SearchComponent {
 
   updateCellStyle(highlight: boolean = true) {
     if (!highlight) {
-      // (this.queryResult || []).forEach(resultItem => {
-      //   this.arrangeCustomCellStyle(resultItem, highlight);
-      // });
-      this.table.customCellStylePlugin.clearCustomCellStyleArrangement();
-      (this.queryResult || []).forEach(resultItem => {
-        this.table.scenegraph.updateCellContent(resultItem.col, resultItem.row);
-      });
+      this.clearRenderedCellStyles();
       this.table.scenegraph.updateNextFrame();
       return;
     }
@@ -272,30 +361,48 @@ export class SearchComponent {
     if (!this.table.hasCustomCellStyle(FocusHighlightStyleId)) {
       this.table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
     }
+
+    this.clearRenderedCellStyles();
+
     if (this.isTree) {
-      const { range, indexNumber } = this.queryResult[0];
-
-      let i = 0;
-
-      // 如果是表头就往下偏移
-      while (this.table.isHeader(0, i)) {
-        i++;
+      if (!this.queryResult.length) {
+        this.table.scenegraph.updateNextFrame();
+        return;
       }
-      const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-      range.start.row = row;
-      range.end.row = row;
 
-      this.arrangeCustomCellStyle(
-        {
-          range
-        },
-        highlight,
-        FocusHighlightStyleId
-      );
+      // 先为所有命中节点打普通高亮
+      for (let i = 0; i < this.queryResult.length; i++) {
+        const cell = this.getVisibleTreeCell(this.queryResult[i]);
+        if (!cell) {
+          continue;
+        }
+        this.table.customCellStylePlugin.addCustomCellStyleArrangement(
+          {
+            col: cell.col,
+            row: cell.row
+          },
+          HighlightStyleId
+        );
+        this.table.scenegraph.updateCellContent(cell.col, cell.row, true);
+      }
+
+      // 再为当前索引打焦点高亮
+      if (this.currentIndex >= 0 && this.currentIndex < this.queryResult.length) {
+        const cell = this.getVisibleTreeCell(this.queryResult[this.currentIndex]);
+        if (cell) {
+          this.table.customCellStylePlugin.addCustomCellStyleArrangement(
+            {
+              col: cell.col,
+              row: cell.row
+            },
+            FocusHighlightStyleId
+          );
+          this.table.scenegraph.updateCellContent(cell.col, cell.row, true);
+        }
+      }
+
+      this.table.scenegraph.updateNextFrame();
     } else {
-      // for (let i = 0; i < this.queryResult.length; i++) {
-      //   this.arrangeCustomCellStyle(this.queryResult[i], highlight);
-      // }
       for (let i = 0; i < this.queryResult.length; i++) {
         this.table.customCellStylePlugin.addCustomCellStyleArrangement(
           {
@@ -318,48 +425,13 @@ export class SearchComponent {
       };
     }
     if (this.isTree) {
-      if (this.currentIndex !== -1) {
-        const { range, indexNumber } = this.queryResult[this.currentIndex];
-
-        if (range) {
-          let i = 0;
-
-          // 如果是表头就往下偏移
-          while (this.table.isHeader(0, i)) {
-            i++;
-          }
-          const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-          range.start.row = row;
-          range.end.row = row;
-          this.arrangeCustomCellStyle({ range });
-        }
-      }
-
       this.currentIndex++;
       if (this.currentIndex >= this.queryResult.length) {
         this.currentIndex = 0;
       }
-      const { range, indexNumber } = this.queryResult[this.currentIndex];
-      this.jumpToCell({ IndexNumber: indexNumber });
-
-      if (range) {
-        let i = 0;
-
-        // 如果是表头就往下偏移
-        while (this.table.isHeader(0, i)) {
-          i++;
-        }
-        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-        range.start.row = row;
-        range.end.row = row;
-        this.arrangeCustomCellStyle(
-          {
-            range
-          },
-          true,
-          FocusHighlightStyleId
-        );
-      }
+      const { indexNumber, col } = this.queryResult[this.currentIndex];
+      this.jumpToCell({ IndexNumber: indexNumber, col });
+      this.updateCellStyle();
     } else {
       if (this.currentIndex !== -1) {
         // reset last focus
@@ -391,41 +463,14 @@ export class SearchComponent {
     }
 
     if (this.isTree) {
-      // 先取消当前高亮
-      if (this.currentIndex !== -1) {
-        const { range, indexNumber } = this.queryResult[this.currentIndex];
-        if (range) {
-          let i = 0;
-          while (this.table.isHeader(0, i)) {
-            i++;
-          }
-          const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-          range.start.row = row;
-          range.end.row = row;
-          this.arrangeCustomCellStyle({ range });
-        }
-      }
-
-      // 索引向前
       this.currentIndex--;
       if (this.currentIndex < 0) {
         this.currentIndex = this.queryResult.length - 1;
       }
 
-      // 焦点样式
-      const { range, indexNumber } = this.queryResult[this.currentIndex];
-      this.jumpToCell({ IndexNumber: indexNumber });
-
-      if (range) {
-        let i = 0;
-        while (this.table.isHeader(0, i)) {
-          i++;
-        }
-        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-        range.start.row = row;
-        range.end.row = row;
-        this.arrangeCustomCellStyle({ range }, true, FocusHighlightStyleId);
-      }
+      const { indexNumber, col } = this.queryResult[this.currentIndex];
+      this.jumpToCell({ IndexNumber: indexNumber, col });
+      this.updateCellStyle();
     } else {
       // 普通表格处理
       if (this.currentIndex !== -1) {
@@ -477,11 +522,12 @@ export class SearchComponent {
       const finalRow = this.getBodyRowIndexByRecordIndex(indexNumbers) + i;
 
       // 根据配置决定是否滚动表格
-      this.table.scrollToRow(finalRow, this.scrollOption);
+      const targetCol = typeof params.col === 'number' ? params.col : this.getTreeCol();
+      this.table.scrollToCell({ row: finalRow, col: targetCol }, this.scrollOption);
 
       // 根据配置决定是否滚动页面
       if (this.enableViewportScroll) {
-        scrollVTableCellIntoView(this.table, { row: finalRow, col: this.treeIndex });
+        scrollVTableCellIntoView(this.table, { row: finalRow, col: targetCol });
       }
     } else {
       const { col, row } = params;

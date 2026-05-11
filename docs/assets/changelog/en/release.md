@@ -1,3 +1,27 @@
+# v1.26.0
+
+2026-04-03
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: compatible react version 19
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: radio cell type with rowseriesnumber error
+- **@visactor/vtable**: react19 reconciler
+- **@visactor/vtable**: degrade radio/checkbox cells to text in aggregation rows
+- **@visactor/vtable**: reset all interaction states on data update to avoid stale resize indicators
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when set barToSide and visible focus should not hide scrollbar
+
+
+
+[more detail about v1.26.0](https://github.com/VisActor/VTable/releases/tag/v1.26.0)
+
 # v1.25.0
 
 2026-03-25
