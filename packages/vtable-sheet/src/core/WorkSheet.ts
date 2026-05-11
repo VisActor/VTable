@@ -1,5 +1,5 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
-import { ListTable } from '@visactor/vtable';
+import { ListTable, TABLE_EVENT_TYPE } from '@visactor/vtable';
 import { isValid } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
@@ -194,6 +194,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     // 这里应该是实际的表格初始化逻辑
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
+    this._bindKeyboardSelectionVisibility();
     this.element.classList.add('vtable-excel-cursor');
     // 使用统一事件总线
     this.eventBus = this.vtableSheet.getEventBus();
@@ -212,6 +213,55 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       // 触发数据加载完成事件
       this.eventManager.emitDataLoaded(this.rowCount, this.colCount);
     }
+  }
+
+  private _bindKeyboardSelectionVisibility(): void {
+    let isForcingKeyboardSelectionVisible = false;
+    let previousMakeSelectCellVisible: boolean | undefined;
+    let restoreTimer: number | undefined;
+
+    const isArrowKeyEvent = (event?: KeyboardEvent) =>
+      !!event && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key);
+
+    const restoreMakeSelectCellVisible = () => {
+      const tableInstance = this.tableInstance;
+      if (!tableInstance || !isForcingKeyboardSelectionVisible) {
+        return;
+      }
+
+      if (tableInstance.options.select) {
+        tableInstance.options.select.makeSelectCellVisible = previousMakeSelectCellVisible;
+      }
+      isForcingKeyboardSelectionVisible = false;
+      previousMakeSelectCellVisible = undefined;
+    };
+
+    this.tableInstance?.on(TABLE_EVENT_TYPE.BEFORE_KEYDOWN, ({ event }: { event?: KeyboardEvent }) => {
+      if (!isArrowKeyEvent(event)) {
+        return;
+      }
+
+      const tableInstance = this.tableInstance;
+      if (!tableInstance) {
+        return;
+      }
+
+      tableInstance.options.select ??= {};
+      previousMakeSelectCellVisible = tableInstance.options.select.makeSelectCellVisible;
+      tableInstance.options.select.makeSelectCellVisible = true;
+      isForcingKeyboardSelectionVisible = true;
+
+      if (restoreTimer !== undefined) {
+        window.clearTimeout(restoreTimer);
+      }
+      restoreTimer = window.setTimeout(restoreMakeSelectCellVisible, 0);
+    });
+
+    this.tableInstance?.on(TABLE_EVENT_TYPE.KEYDOWN, ({ event }: { event?: KeyboardEvent }) => {
+      if (isArrowKeyEvent(event)) {
+        restoreMakeSelectCellVisible();
+      }
+    });
   }
 
   /**
