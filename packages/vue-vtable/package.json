@@ -31,6 +31,7 @@
   ],
   "exports": {
     ".": {
+      "types": "./es/index.d.ts",
       "require": "./cjs/index.js",
       "import": "./es/index.js"
     },
