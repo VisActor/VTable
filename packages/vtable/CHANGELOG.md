@@ -1,6 +1,39 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 03 Apr 2026 03:30:13 GMT and should not be manually modified.
+This log was last generated on Mon, 11 May 2026 08:51:13 GMT and should not be manually modified.
+
+## 1.26.1
+Mon, 11 May 2026 08:51:13 GMT
+
+### Updates
+
+- fix: fill handle logic about get cell value #5096
+
+
+- fix: aggregation precisionAdd precisionSub
+
+
+- feat: add sheet formula type
+
+
+- fix: dblclickHandler not handle rightClick
+
+
+- fix: edit cell invalidateNotExit #5114
+
+
+- fix: pivot sort state show error when rows and columns have same dimension #5055
+
+
+- fix: arrow right to move select cell occor blank #5113
+
+
+- fix: when search text with tree table results error #5071
+
+
+- fix: update vue vtable packages build export files
+
+
 
 ## 1.26.0
 Fri, 03 Apr 2026 03:30:13 GMT

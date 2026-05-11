@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.1",
+      "tag": "@visactor/vtable_v1.26.1",
+      "date": "Mon, 11 May 2026 08:51:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fill handle logic about get cell value #5096\n\n"
+          },
+          {
+            "comment": "fix: aggregation precisionAdd precisionSub\n\n"
+          },
+          {
+            "comment": "feat: add sheet formula type\n\n"
+          },
+          {
+            "comment": "fix: dblclickHandler not handle rightClick\n\n"
+          },
+          {
+            "comment": "fix: edit cell invalidateNotExit #5114\n\n"
+          },
+          {
+            "comment": "fix: pivot sort state show error when rows and columns have same dimension #5055\n\n"
+          },
+          {
+            "comment": "fix: arrow right to move select cell occor blank #5113\n\n"
+          },
+          {
+            "comment": "fix: when search text with tree table results error #5071\n\n"
+          },
+          {
+            "comment": "fix: update vue vtable packages build export files\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.0",
       "tag": "@visactor/vtable_v1.26.0",
       "date": "Fri, 03 Apr 2026 03:30:13 GMT",
