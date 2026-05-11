@@ -491,7 +491,7 @@ export class SceneProxy {
       this.table.getRowsHeight(this.bodyTopRow, this.bodyTopRow + (this.rowEnd - this.rowStart + 1)) / 2;
     const yLimitBottom = this.table.getAllRowsHeight() - yLimitTop;
 
-    const screenTop = this.table.getTargetRowAt(y + this.table.scenegraph.colHeaderGroup.attribute.height);
+    const screenTop = this.resolveTargetRowInfo(y + this.table.scenegraph.colHeaderGroup.attribute.height);
     if (screenTop) {
       this.screenTopRow = screenTop.row;
     }
@@ -526,7 +526,7 @@ export class SceneProxy {
       this.table.getColsWidth(this.bodyLeftCol, this.bodyLeftCol + (this.colEnd - this.colStart + 1)) / 2;
     const xLimitRight = this.table.getAllColsWidth() - xLimitLeft;
 
-    const screenLeft = this.table.getTargetColAt(
+    const screenLeft = this.resolveTargetColInfo(
       x + this.table.scenegraph.rowHeaderGroup.attribute.width + (this.table.getFrozenColsOffset?.() ?? 0)
     );
     if (screenLeft) {
@@ -561,6 +561,28 @@ export class SceneProxy {
   }
   async dynamicSetX(x: number, screenLeft: ColumnInfo | null, isEnd = false) {
     dynamicSetX(x, screenLeft, isEnd, this);
+  }
+
+  private resolveTargetColInfo(absoluteX: number): ColumnInfo | null {
+    const offsets = [0, -1, 1, -2, 2];
+    for (let i = 0; i < offsets.length; i++) {
+      const screenLeft = this.table.getTargetColAt(absoluteX + offsets[i]);
+      if (screenLeft) {
+        return screenLeft;
+      }
+    }
+    return null;
+  }
+
+  private resolveTargetRowInfo(absoluteY: number): RowInfo | null {
+    const offsets = [0, -1, 1, -2, 2];
+    for (let i = 0; i < offsets.length; i++) {
+      const screenTop = this.table.getTargetRowAt(absoluteY + offsets[i]);
+      if (screenTop) {
+        return screenTop;
+      }
+    }
+    return null;
   }
 
   updateBody(y: number) {

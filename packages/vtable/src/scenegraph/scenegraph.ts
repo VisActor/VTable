@@ -1554,10 +1554,14 @@ export class Scenegraph {
    */
   setBodyAndRowHeaderY(y: number) {
     // correct y, avoid scroll out of range
-    const firstBodyCell =
-      (this.bodyGroup.firstChild?.firstChild as Group) ?? (this.rowHeaderGroup.firstChild?.firstChild as Group);
-    const lastBodyCell =
-      (this.bodyGroup.firstChild?.lastChild as Group) ?? (this.rowHeaderGroup.firstChild?.lastChild as Group);
+    // border 始终作为最后一个子元素（addChild/appendChild），firstChild 无需过滤
+    const firstBodyColGroup = this.bodyGroup.firstChild as Group;
+    const firstRowHeaderColGroup = this.rowHeaderGroup.firstChild as Group;
+    const firstBodyCell = (firstBodyColGroup?.firstChild as Group) ?? (firstRowHeaderColGroup?.firstChild as Group);
+    let lastBodyCell = (firstBodyColGroup?.lastChild ?? firstRowHeaderColGroup?.lastChild) as Group;
+    if (lastBodyCell && lastBodyCell.type !== 'group') {
+      lastBodyCell = lastBodyCell._prev as Group;
+    }
     if (
       y === 0 &&
       firstBodyCell &&
@@ -1612,8 +1616,12 @@ export class Scenegraph {
    */
   setBodyAndColHeaderX(x: number) {
     // correct x, avoid scroll out of range
+    // border 始终作为最后一个子元素（addChild/appendChild），firstChild 无需过滤
     const firstBodyCol = this.bodyGroup.firstChild as Group;
-    const lastBodyCol = this.bodyGroup.lastChild as Group;
+    let lastBodyCol = this.bodyGroup.lastChild as Group;
+    if (lastBodyCol && lastBodyCol.type !== 'group') {
+      lastBodyCol = lastBodyCol._prev as Group;
+    }
     if (x === 0 && firstBodyCol && firstBodyCol.col === this.table.frozenColCount && firstBodyCol.attribute.x + x < 0) {
       x = -firstBodyCol.attribute.x;
     } else if (
