@@ -3,6 +3,12 @@ name: Post release after develop synced
 on:
   repository_dispatch:
     types: [develop-synced]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, e.g. 1.2.3'
+        required: true
+        type: string
 
 jobs:
   post_release:
@@ -12,19 +18,21 @@ jobs:
       contents: write
 
     steps:
-      - name: Read version from repository_dispatch payload
+      - name: Read version from event payload or workflow_dispatch input
         id: meta
         env:
           PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           set -euo pipefail
-          if [ -z "${PAYLOAD_VERSION}" ]; then
-            echo "No version in client_payload, skip post-release."
+          VERSION="${PAYLOAD_VERSION:-${INPUT_VERSION:-}}"
+          if [ -z "${VERSION}" ]; then
+            echo "No version in repository_dispatch payload or workflow_dispatch input, skip post-release."
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "Using version from payload: ${PAYLOAD_VERSION}"
-          echo "version=${PAYLOAD_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Using version: ${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - name: Checkout main
