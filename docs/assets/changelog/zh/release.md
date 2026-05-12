@@ -1,3 +1,27 @@
+# v1.26.1
+
+2026-05-11
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增 sheet 公式类型定义
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复填充柄获取单元格值的逻辑问题 [#5096](https://github.com/VisActor/VTable/issues/5096)
+- **@visactor/vtable**: 修复聚合计算中 precisionAdd 和 precisionSub 的精度问题
+- **@visactor/vtable**: 修复 dblclickHandler 未处理右键点击的问题
+- **@visactor/vtable**: 修复编辑单元格 invalidateNotExit 问题 [#5114](https://github.com/VisActor/VTable/issues/5114)
+- **@visactor/vtable**: 修复透视表行列维度相同时排序状态显示错误的问题 [#5055](https://github.com/VisActor/VTable/issues/5055)
+- **@visactor/vtable-sheet**: 修复使用右方向键移动选中单元格时出现空白的问题 [#5113](https://github.com/VisActor/VTable/issues/5113)
+- **@visactor/vtable-plugin**: 修复树形表搜索文本时结果错误的问题 [#5071](https://github.com/VisActor/VTable/issues/5071)
+- **@visactor/vue-vtable**: 修复 vue-vtable 包构建导出文件问题
+
+
+
+[更多详情请查看 v1.26.1](https://github.com/VisActor/VTable/releases/tag/v1.26.1)
+
 # v1.26.0
 
 2026-04-03

@@ -1,3 +1,27 @@
+# v1.26.1
+
+2026-05-11
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-sheet**: add sheet formula type
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix fill handle logic about getting cell value [#5096](https://github.com/VisActor/VTable/issues/5096)
+- **@visactor/vtable**: fix aggregation precisionAdd and precisionSub precision issue
+- **@visactor/vtable**: fix dblclickHandler not handling right click
+- **@visactor/vtable**: fix edit cell invalidateNotExit issue [#5114](https://github.com/VisActor/VTable/issues/5114)
+- **@visactor/vtable**: fix pivot sort state display error when rows and columns have the same dimension [#5055](https://github.com/VisActor/VTable/issues/5055)
+- **@visactor/vtable-sheet**: fix blank selection issue when moving selected cell with ArrowRight [#5113](https://github.com/VisActor/VTable/issues/5113)
+- **@visactor/vtable-plugin**: fix incorrect search results when searching text in tree table [#5071](https://github.com/VisActor/VTable/issues/5071)
+- **@visactor/vue-vtable**: fix package build export files
+
+
+
+[more detail about v1.26.1](https://github.com/VisActor/VTable/releases/tag/v1.26.1)
+
 # v1.26.0
 
 2026-04-03
