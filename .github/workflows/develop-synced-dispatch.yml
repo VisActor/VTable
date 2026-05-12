@@ -1,59 +1,50 @@
-name: Dispatch develop-synced after release
+name: Dispatch develop-synced after sync/main merged (Scheme A)
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - develop
 
 jobs:
   dispatch_develop_synced:
-    if: contains(github.event.head_commit.message, 'prelease version')
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'sync/main-')
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
 
     steps:
-      - name: Checkout develop
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Extract version from commit message
-        id: meta
-        env:
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      - name: Derive version from sync branch
+        id: version
         run: |
           set -euo pipefail
-          echo "Commit message: ${COMMIT_MESSAGE}"
-          VERSION_WITH_V="$(echo "${COMMIT_MESSAGE}" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || true)"
-          if [ -n "${VERSION_WITH_V}" ]; then
-            VERSION="${VERSION_WITH_V#v}"
-          else
-            VERSION="$(echo "${COMMIT_MESSAGE}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1 || true)"
-          fi
-          if [ -z "${VERSION}" ]; then
-            echo "Failed to parse version from commit message" >&2
-            exit 1
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          echo "Head branch: ${BRANCH}"
+          VERSION="${BRANCH#sync/main-}"
+          if [ -z "${VERSION}" ] || [ "${VERSION}" = "${BRANCH}" ]; then
+            echo "Failed to parse version from branch ${BRANCH}, skip dispatch."
+            echo "version=" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           echo "Parsed version: ${VERSION}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Send develop-synced repository_dispatch
-        uses: actions/github-script@v7
+      - name: Send repository_dispatch develop-synced
+        if: steps.version.outputs.version != ''
         env:
-          VERSION: ${{ steps.meta.outputs.version }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const version = process.env.VERSION;
-            if (!version) {
-              core.setFailed('VERSION env is not set');
-              return;
-            }
-            core.info(`Sending repository_dispatch develop-synced for version ${version}`);
-            await github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'develop-synced',
-              client_payload: { version }
-            });
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          OWNER_REPO="${GITHUB_REPOSITORY}"
+
+          echo "Sending repository_dispatch develop-synced for version ${VERSION} to ${OWNER_REPO}"
+
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/${OWNER_REPO}/dispatches" \
+            -d "{\"event_type\":\"develop-synced\",\"client_payload\":{\"version\":\"${VERSION}\"}}"
