@@ -52,27 +52,47 @@ jobs:
       - name: Update version
         run: node common/scripts/install-run-rush.js version --bump
 
+      - name: Update version (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_release.outputs.main }}
+
       - name: Build packages
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-          NO_EMIT_ON_ERROR: 'true'
         run: |
-          export NODE_OPTIONS="--max_old_space_size=4096"
-          export NO_EMIT_ON_ERROR="true"
-          node common/scripts/install-run-rush.js build --only tag:package 2>&1 | tee build.log || {
-            echo "=== Build failed, showing last 1000 lines of build.log ==="
-            tail -n 1000 build.log
-            echo "=== Full error details ==="
-            grep -A 50 "TypeScript Compilation Errors" build.log || true
-            grep -A 50 "Build Error" build.log || true
-            exit 1
-          }
+          set -euo pipefail
+          package_names=()
+          while IFS= read -r package_name; do
+            [ -n "$package_name" ] && package_names+=("$package_name")
+          done < <(node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: node common/scripts/install-run-rush.js publish --publish --include-all
+          const packagesDir = path.join(process.cwd(), 'packages');
+          const packageNames = fs
+            .readdirSync(packagesDir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => path.join(packagesDir, entry.name, 'package.json'))
+            .filter((packageJsonPath) => fs.existsSync(packageJsonPath))
+            .map((packageJsonPath) => JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name)
+            .filter(Boolean)
+            .sort();
+
+          console.log(packageNames.join('\n'));
+          NODE
+          )
+
+          build_args=()
+          for package_name in "${package_names[@]}"; do
+            build_args+=(--to "$package_name")
+          done
+
+          echo "Build packages: ${package_names[*]}"
+          node common/scripts/install-run-rush.js build "${build_args[@]}"
+
+      - name: Publish to npm (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
