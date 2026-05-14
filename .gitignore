@@ -110,3 +110,6 @@ tsconfig.tsbuildinfo
 .history
 .trae/
 .agents/
+
+# codex
+.omx/
