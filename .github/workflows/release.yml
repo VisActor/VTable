@@ -292,41 +292,39 @@ jobs:
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_release.outputs.main }}
 
-      - name: Build vutils-extension && vtable
+      - name: Build packages
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --to @visactor/vtable
+        run: |
+          set -euo pipefail
+          package_names=()
+          while IFS= read -r package_name; do
+            [ -n "$package_name" ] && package_names+=("$package_name")
+          done < <(node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-      - name: Build vtable-extension
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'pre-release/')
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/vtable-extension
+          const packagesDir = path.join(process.cwd(), 'packages');
+          const packageNames = fs
+            .readdirSync(packagesDir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => path.join(packagesDir, entry.name, 'package.json'))
+            .filter((packageJsonPath) => fs.existsSync(packageJsonPath))
+            .map((packageJsonPath) => JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name)
+            .filter(Boolean)
+            .sort();
 
-      - name: Build react-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/react-vtable
+          console.log(packageNames.join('\n'));
+          NODE
+          )
 
-      - name: Build openinula-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/openinula-vtable
+          build_args=()
+          for package_name in "${package_names[@]}"; do
+            build_args+=(--to "$package_name")
+          done
 
-      - name: Build taro-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/taro-vtable
-
-      - name: Build lark-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/lark-vtable
-
-      - name: Build wx-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/wx-vtable
+          echo "Build packages: ${package_names[*]}"
+          node common/scripts/install-run-rush.js build "${build_args[@]}"
 
       - name: Publish to npm (release)
         if: startsWith(github.ref_name, 'release/')
