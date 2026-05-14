@@ -1,5 +1,5 @@
 import type { Stage } from '@visactor/vtable/es/vrender';
-import { container, Group, vglobal, createStage } from '@visactor/vtable/es/vrender';
+import { container, Group, vglobal, createStageFromVRenderApp } from '@visactor/vtable/es/vrender';
 import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
@@ -35,6 +35,7 @@ export class Scenegraph {
   taskCreationButton: TaskCreationButton;
   toolTip: ToolTip;
   stage: Stage;
+  releaseVRenderAppRef?: () => void;
   tableGroupWidth: number;
   tableGroupHeight: number;
   constructor(gantt: Gantt) {
@@ -52,23 +53,28 @@ export class Scenegraph {
       width = gantt.canvas.width;
       height = gantt.canvas.height;
     }
-    this.stage = createStage({
-      canvas: gantt.canvas,
-      width,
-      height,
-      disableDirtyBounds: false,
-      background: gantt.parsedOptions.underlayBackgroundColor,
-      // dpr: gantt.internalProps.pixelRatio,
-      enableLayout: true,
-      autoRender: false,
-      context: {
-        appName: 'vtable'
+    const { stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas: gantt.canvas,
+        width,
+        height,
+        disableDirtyBounds: false,
+        background: gantt.parsedOptions.underlayBackgroundColor,
+        // dpr: gantt.internalProps.pixelRatio,
+        enableLayout: true,
+        autoRender: false,
+        context: {
+          appName: 'vtable'
+        },
+        pluginList: ['poptipForText']
+        // afterRender: () => {
+        // this._gantt.fireListeners('after_render', null);
+        // }
       },
-      pluginList: ['poptipForText']
-      // afterRender: () => {
-      // this._gantt.fireListeners('after_render', null);
-      // }
-    });
+      { mode: Env.mode === 'node' ? 'node' : 'browser', scope: 'vtable-gantt' }
+    );
+    this.stage = stage as Stage;
+    this.releaseVRenderAppRef = releaseAppRef;
     (this.stage as any).gantt = this._gantt;
     (this.stage as any).table = this._gantt; // 为了使用bindDebugTool
     this.stage.defaultLayer.setTheme({
@@ -282,7 +288,14 @@ export class Scenegraph {
     this.updateNextFrame();
   }
   release() {
-    this.stage.release();
+    const releaseAppRef = this.releaseVRenderAppRef;
+    this.releaseVRenderAppRef = undefined;
+
+    try {
+      this.stage.release();
+    } finally {
+      releaseAppRef?.();
+    }
   }
 
   showTaskCreationButton(x: number, y: number, dateIndex: number) {

@@ -23,21 +23,21 @@ export function dealWithAnimationAppear(table: BaseTableAPI) {
     direction = table.options.animationAppear.direction ?? 'row';
   }
 
-  const { scenegraph: scene, frozenColCount, frozenRowCount } = table;
+  const { scenegraph: scene } = table;
 
   // header cell
-  const { colStart, colEnd, rowStart, rowEnd } = scene.proxy; // to do: right bottom frozen
+  const { colEnd, rowEnd } = scene.proxy; // to do: right bottom frozen
 
   for (let col = 0; col <= colEnd; col++) {
     for (let row = 0; row <= rowEnd; row++) {
       const cellGroup = scene.highPerformanceGetCell(col, row);
       if (cellGroup && cellGroup.role === 'cell') {
         cellGroup.forEachChildren((child: Text) => {
-          child.setAttribute('opacity', 0);
-          child
-            .animate()
-            .wait(type === 'one-by-one' ? (direction === 'row' ? row : col) * (duration - delay) : delay)
-            .to({ opacity: 1 }, duration, 'linear');
+          const finalOpacity = child.attribute.opacity ?? 1;
+          const animationDelay = type === 'one-by-one' ? (direction === 'row' ? row : col) * (duration - delay) : delay;
+
+          child.setAttribute('opacity', finalOpacity);
+          child.animate().wait(animationDelay).from({ opacity: 0 }, duration, 'linear');
         });
       }
     }

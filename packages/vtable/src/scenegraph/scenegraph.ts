@@ -1,5 +1,23 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
+import {
+  createRect,
+  createStageFromVRenderApp,
+  type CheckBox,
+  type FederatedPointerEvent,
+  type IContainPointMode,
+  type INode,
+  type IRect,
+  type IRectGraphicAttribute,
+  type IStage,
+  type ITextCache,
+  type RichText,
+  type Stage,
+  type Text,
+  container,
+  loadPoptip,
+  setPoptipTheme,
+  vglobal,
+  registerForVrender
+} from '@src/vrender';
 import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
@@ -50,8 +68,6 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
-import type { CheckBox } from '@src/vrender';
-import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
 import {
   getIconByXY,
@@ -80,7 +96,6 @@ import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
 import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
-import type { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
@@ -143,6 +158,7 @@ export class Scenegraph {
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
+  releaseVRenderAppRef?: () => void;
   table: BaseTableAPI;
   isPivot: boolean;
   // transpose: boolean;
@@ -205,32 +221,37 @@ export class Scenegraph {
       width = table.canvas.width;
       height = table.canvas.height;
     }
-    this.stage = createStage({
-      canvas: table.canvas,
-      width,
-      height,
-      disableDirtyBounds: false,
-      background: table.theme.underlayBackgroundColor,
-      dpr: table.internalProps.pixelRatio,
-      enableLayout: true,
-      // enableHtmlAttribute: true,
-      // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      beforeRender: (stage: Stage) => {
-        this.table.options.beforeRender && this.table.options.beforeRender(stage);
-        this.table.animationManager.ticker.start();
-      },
-      afterRender: (stage: Stage) => {
-        this.table.options.afterRender && this.table.options.afterRender(stage);
-        this.table.fireListeners('after_render', null);
-        // console.trace('after_render');
-      },
-      // event: { clickInterval: 400 }
-      // autoRender: true
+    const { stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas: table.canvas,
+        width,
+        height,
+        disableDirtyBounds: false,
+        background: table.theme.underlayBackgroundColor,
+        dpr: table.internalProps.pixelRatio,
+        enableLayout: true,
+        // enableHtmlAttribute: true,
+        // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+        beforeRender: (stage: Stage) => {
+          this.table.options.beforeRender && this.table.options.beforeRender(stage);
+          this.table.animationManager.ticker.start();
+        },
+        afterRender: (stage: Stage) => {
+          this.table.options.afterRender && this.table.options.afterRender(stage);
+          this.table.fireListeners('after_render', null);
+          // console.trace('after_render');
+        },
+        // event: { clickInterval: 400 }
+        // autoRender: true
 
-      canvasControled: !table.options.canvas,
-      viewBox: table.options.viewBox,
-      ...table.options.renderOption
-    });
+        canvasControled: !table.options.canvas,
+        viewBox: table.options.viewBox,
+        ...table.options.renderOption
+      },
+      { mode: Env.mode === 'node' ? 'node' : 'browser', scope: 'vtable' }
+    );
+    this.stage = stage;
+    this.releaseVRenderAppRef = releaseAppRef;
 
     this.stage.defaultLayer.setTheme({
       group: {
@@ -491,6 +512,17 @@ export class Scenegraph {
     this.proxy?.release();
 
     this.table.reactCustomLayout?.clearCache();
+  }
+
+  releaseStage() {
+    const releaseAppRef = this.releaseVRenderAppRef;
+    this.releaseVRenderAppRef = undefined;
+
+    try {
+      this.stage?.release();
+    } finally {
+      releaseAppRef?.();
+    }
   }
 
   updateStageBackground() {

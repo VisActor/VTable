@@ -82,9 +82,14 @@
    *
    * PNPM documentation: https://pnpm.io/package_json#pnpmoverrides
    */
-  // "globalOverrides": {
-  //   "@visactor/vrender": "0.12.3"
-  // },
+  "globalOverrides": {
+    "@visactor/vchart": "2.1.0-alpha.2",
+    "@visactor/vrender": "1.1.0-alpha.18",
+    "@visactor/vrender-core": "1.1.0-alpha.18",
+    "@visactor/vrender-kits": "1.1.0-alpha.18",
+    "@visactor/vrender-components": "1.1.0-alpha.18",
+    "@visactor/vrender-animate": "1.1.0-alpha.18"
+  },
   /**
    * The `globalPeerDependencyRules` setting provides various settings for suppressing validation errors
    * that are reported during installation with `strictPeerDependencies=true`.  The settings are copied

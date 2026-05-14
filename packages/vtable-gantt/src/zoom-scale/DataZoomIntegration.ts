@@ -1,5 +1,5 @@
 import type { Gantt } from '../Gantt';
-import { DataZoom, createStage, vglobal } from '@visactor/vtable/es/vrender';
+import { DataZoom, createStageFromVRenderApp, vglobal } from '@visactor/vtable/es/vrender';
 
 export interface DataZoomConfig {
   /** DataZoom 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */
@@ -35,6 +35,7 @@ export class DataZoomIntegration {
   private gantt: Gantt;
   private dataZoomAxis: DataZoom;
   private stage: any;
+  private releaseVRenderAppRef?: () => void;
   private canvas: HTMLCanvasElement;
   private isUpdatingFromDataZoom = false;
   private isUpdatingFromGantt = false;
@@ -179,12 +180,17 @@ export class DataZoomIntegration {
     dataZoomWrapper.appendChild(this.canvas);
     ganttContainer.appendChild(dataZoomWrapper);
 
-    this.stage = createStage({
-      canvas: this.canvas,
-      width,
-      height,
-      autoRender: true
-    });
+    const { stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas: this.canvas,
+        width,
+        height,
+        autoRender: true
+      },
+      { mode: 'browser', scope: 'vtable-gantt-datazoom' }
+    );
+    this.stage = stage;
+    this.releaseVRenderAppRef = releaseAppRef;
 
     // 创建 DataZoom 实例
     this.dataZoomAxis = new DataZoom({
@@ -620,7 +626,14 @@ export class DataZoomIntegration {
     }
 
     if (this.stage) {
-      this.stage.release();
+      const releaseAppRef = this.releaseVRenderAppRef;
+      this.releaseVRenderAppRef = undefined;
+
+      try {
+        this.stage.release();
+      } finally {
+        releaseAppRef?.();
+      }
     }
   }
 }

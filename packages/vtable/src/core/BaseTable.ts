@@ -2731,7 +2731,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.releaseList = null;
     }
 
-    this.scenegraph.stage.release();
+    this.scenegraph.releaseStage();
     this.scenegraph.proxy.release();
 
     const parentElement = internalProps.element?.parentElement;
