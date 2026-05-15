@@ -86,5 +86,10 @@
     "axios": "^1.4.0",
     "@types/react-is": "^17.0.3",
     "rollup-plugin-node-resolve": "5.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/vtable-search"
   }
 }
