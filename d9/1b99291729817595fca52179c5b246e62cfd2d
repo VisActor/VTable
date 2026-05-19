@@ -1,0 +1,42 @@
+packages/vtable-plugins/demo/filter/issue-5137.ts
+  334cdc3105e49d5f 133 gitai:{"mixed_line_ranges":[{"Single":133}],"operations":[]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "d91b99291729817595fca52179c5b246e62cfd2d",
+  "prompts": {
+    "334cdc3105e49d5f": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-5a7628c4-0a3f-435e-9d93-523308568443",
+        "model": "default"
+      },
+      "human_author": "fangsmile <892739385@qq.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 1
+    }
+  },
+  "attestation_metadata": {
+    "packages/vtable-plugins/demo/filter/issue-5137.ts": [
+      {
+        "hash": "334cdc3105e49d5f",
+        "line_ranges": [
+          {
+            "Single": 133
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 133
+          }
+        ],
+        "operations": []
+      }
+    ]
+  },
+  "remote_transcripts": {}
+}
