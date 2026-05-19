@@ -110,5 +110,10 @@
     "@types/react-is": "^17.0.3",
     "@arco-design/web-react": "2.66.12",
     "@types/react-reconciler": "0.28.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/react-vtable"
   }
 }
