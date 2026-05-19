@@ -78,17 +78,20 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.filterEngine = new FilterEngine(this.pluginOptions);
     this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
     this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
+    // BEFORE_INIT 阶段 table.columns 可能还不可用，先缓存本次 options.columns 作为 getCurrentColumns 的回退值。
     this.columns = eventArgs.options.columns;
 
     this.filterToolbar.render(document.body);
-    this.updateFilterIcons(this.columns);
+    this.updateFilterIcons(this.getCurrentColumns());
     this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
       // 新增筛选配置时，不需要更新筛选图标以及表格
       if (action?.type === FilterActionType.ADD_FILTER) {
         return;
       }
-      this.updateFilterIcons(this.columns);
-      (this.table as ListTable).updateColumns(this.columns, {
+      const currentColumns = this.getCurrentColumns();
+      this.columns = currentColumns;
+      this.updateFilterIcons(currentColumns);
+      (this.table as ListTable).updateColumns(currentColumns, {
         clearRowHeightCache: false
       });
     });
@@ -176,7 +179,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     // 更新筛选器UI样式
     this.filterToolbar.updateStyles(this.pluginOptions.styles);
     // 更新icon
-    (this.table as ListTable).updateColumns(this.columns, {
+    const currentColumns = this.getCurrentColumns();
+    this.columns = currentColumns;
+    (this.table as ListTable).updateColumns(currentColumns, {
       clearRowHeightCache: false
     });
   }
@@ -224,6 +229,13 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
     // 更新筛选图标
     this.updateFilterIcons(options.columns);
+  }
+
+  private getCurrentColumns(): ColumnsDefine {
+    if (this.table?.isListTable?.()) {
+      return (this.table as ListTable).columns;
+    }
+    return this.columns ?? [];
   }
 
   /**
