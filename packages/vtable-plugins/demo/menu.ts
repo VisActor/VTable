@@ -21,6 +21,10 @@ export const menus = [
   },
   {
     path: 'filter',
+    name: 'issue-5137'
+  },
+  {
+    path: 'filter',
     name: 'value-filter'
   },
   {
