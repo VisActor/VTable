@@ -118,4 +118,46 @@ describe('FilterPlugin', () => {
       clearRowHeightCache: false
     });
   });
+
+  test('uses synced options.columns when hidden columns exist', () => {
+    const syncedOptionColumns = [
+      { field: 'id', title: 'ID' },
+      { field: 'name', title: 'Name' },
+      { field: 'gender', title: 'Gender', hide: true },
+      { field: 'department', title: 'Department' },
+      { field: 'city', title: 'City' },
+      { field: 'status', title: 'Status' }
+    ];
+    const table = {
+      isListTable: () => true,
+      options: {
+        columns: syncedOptionColumns
+      },
+      updateColumns: jest.fn(),
+      get columns() {
+        return [
+          { field: 'id', title: 'ID' },
+          { field: 'name', title: 'Name' },
+          { field: 'city', title: 'City' },
+          { field: 'gender', title: 'Gender', hide: true },
+          { field: 'department', title: 'Department' },
+          { field: 'status', title: 'Status' }
+        ];
+      }
+    };
+
+    const plugin = new FilterPlugin({});
+    plugin.table = table;
+    plugin.initFilterPlugin({
+      options: {
+        columns: syncedOptionColumns
+      }
+    });
+
+    subscribeCallback?.({}, { type: 'apply_filters' });
+
+    expect(table.updateColumns).toHaveBeenCalledWith(syncedOptionColumns, {
+      clearRowHeightCache: false
+    });
+  });
 });

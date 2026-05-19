@@ -233,6 +233,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
   private getCurrentColumns(): ColumnsDefine {
     if (this.table?.isListTable?.()) {
+      const optionColumns = (this.table as ListTable).options?.columns;
+      if (optionColumns?.length) {
+        return optionColumns;
+      }
       try {
         return (this.table as ListTable).columns;
       } catch (error) {

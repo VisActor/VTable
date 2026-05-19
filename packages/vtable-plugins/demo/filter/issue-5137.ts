@@ -35,11 +35,24 @@ function createColumns(): VTable.ColumnsDefine {
 }
 
 function getOrderText(table: VTable.ListTable) {
-  return table.columns.map(col => `${String(col.field)}${col.hide ? '(hide)' : ''}`).join(' | ');
+  const visibleFields: string[] = [];
+  for (let col = 0; col < table.colCount; col++) {
+    visibleFields.push(String(table.getHeaderField(col, 0)));
+  }
+  return visibleFields.join(' | ');
 }
 
 function getOptionOrderText(table: VTable.ListTable) {
   return (table.options.columns ?? []).map(col => `${String(col.field)}${col.hide ? '(hide)' : ''}`).join(' | ');
+}
+
+function getVisibleHeaderColByField(table: VTable.ListTable, field: string) {
+  for (let col = 0; col < table.colCount; col++) {
+    if (table.getHeaderField(col, 0) === field) {
+      return col;
+    }
+  }
+  return -1;
 }
 
 export function createTable() {
@@ -115,19 +128,19 @@ export function createTable() {
     updateStatus('已隐藏 `gender` 列');
   }
 
-  function dragCityAfterName() {
-    const cityIndex = table.columns.findIndex(col => col.field === 'city');
-    const nameIndex = table.columns.findIndex(col => col.field === 'name');
-    if (cityIndex < 0 || nameIndex < 0) {
-      updateStatus('未找到 `city` 或 `name` 列');
+  function dragCityAfterDepartment() {
+    const cityIndex = getVisibleHeaderColByField(table, 'city');
+    const departmentIndex = getVisibleHeaderColByField(table, 'department');
+    if (cityIndex < 0 || departmentIndex < 0) {
+      updateStatus('未找到 `city` 或 `department` 列');
       return;
     }
     table.changeHeaderPosition({
       source: { col: cityIndex, row: 0 },
-      target: { col: nameIndex + 1, row: 0 },
+      target: { col: departmentIndex, row: 0 },
       movingColumnOrRow: 'column'
     });
-    updateStatus('已把 `city` 拖到 `name` 后面');
+    updateStatus('已把 `city` 拖到 `department` 后面');
   }
 
   function applyStatusFilter() {
@@ -146,7 +159,7 @@ export function createTable() {
 
   function runAllSteps() {
     hideGenderColumn();
-    dragCityAfterName();
+    dragCityAfterDepartment();
     applyStatusFilter();
     updateStatus('已完成完整复现链路');
   }
@@ -176,8 +189,7 @@ export function createTable() {
   }
 
   buttonRow.appendChild(createButton('隐藏性别列', hideGenderColumn));
-  buttonRow.appendChild(createButton('拖拽 city 到 name 后', dragCityAfterName));
-  buttonRow.appendChild(createButton('执行 Filter 确认', applyStatusFilter));
+  buttonRow.appendChild(createButton('拖拽 city 到 department 后', dragCityAfterDepartment));
   buttonRow.appendChild(createButton('一键复现', runAllSteps));
   buttonRow.appendChild(createButton('重置', resetTable));
 
@@ -198,7 +210,7 @@ export function createTable() {
   demoWindow.filterPlugin = filterPlugin;
   demoWindow.issue5137 = {
     hideGenderColumn,
-    dragCityAfterName,
+    dragCityAfterDepartment,
     applyStatusFilter,
     runAllSteps,
     resetTable,

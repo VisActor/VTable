@@ -1062,11 +1062,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return null;
   }
   private syncColumnsStateFromLayoutMap() {
-    const currentColumns = this.columns;
-    this.internalProps.columns = cloneDeepSpec(currentColumns, ['children']);
-    this.options.columns = currentColumns;
+    const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
+    let visibleIndex = 0;
+    const nextColumns = this.internalProps.columns.map(column => {
+      if (column.hide === true) {
+        return column;
+      }
+      const nextVisibleColumn = visibleColumns[visibleIndex];
+      visibleIndex += 1;
+      return nextVisibleColumn ?? column;
+    });
+    this.internalProps.columns = cloneDeepSpec(nextColumns, ['children']);
+    this.options.columns = nextColumns;
     if (this.options.header) {
-      this.options.header = currentColumns;
+      this.options.header = nextColumns;
     }
   }
   changeRecordOrder(sourceIndex: number, targetIndex: number) {
