@@ -233,7 +233,11 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
   private getCurrentColumns(): ColumnsDefine {
     if (this.table?.isListTable?.()) {
-      return (this.table as ListTable).columns;
+      try {
+        return (this.table as ListTable).columns;
+      } catch (error) {
+        // BEFORE_INIT 阶段 ListTable 的 layoutMap 可能尚未建立，回退到最近一次缓存的 columns。
+      }
     }
     return this.columns ?? [];
   }

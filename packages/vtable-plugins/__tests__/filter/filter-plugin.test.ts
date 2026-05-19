@@ -58,6 +58,33 @@ describe('FilterPlugin', () => {
     subscribeCallback = undefined;
   });
 
+  test('falls back to option columns before list table layout is ready', () => {
+    const optionColumns = [
+      { field: 'a', title: 'A' },
+      { field: 'b', title: 'B' }
+    ];
+    const table = {
+      isListTable: () => true,
+      updateColumns: jest.fn(),
+      get columns() {
+        throw new TypeError("Cannot read properties of undefined (reading 'layoutMap')");
+      }
+    };
+
+    const plugin = new FilterPlugin({});
+    plugin.table = table;
+
+    expect(() =>
+      plugin.initFilterPlugin({
+        options: {
+          columns: optionColumns
+        }
+      })
+    ).not.toThrow();
+
+    expect(table.updateColumns).not.toHaveBeenCalled();
+  });
+
   test('uses current table column order when filter state updates', () => {
     const staleColumns = [
       { field: 'a', title: 'A' },
