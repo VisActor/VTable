@@ -116,4 +116,30 @@ describe('listTable init test', () => {
     expect(listTable.cellIsInVisualView(3, 39)).toBe(true);
     expect(listTable.cellIsInVisualView(3, 38)).toBe(true);
   });
+
+  test('listTable body visible row range should ignore frozen rows offset duplication', () => {
+    const optionWithFrozenRows = {
+      ...option,
+      frozenRowCount: 5,
+      rightFrozenColCount: 0,
+      bottomFrozenRowCount: 0,
+      container: createDiv(),
+      records
+    };
+    optionWithFrozenRows.container.style.position = 'relative';
+    optionWithFrozenRows.container.style.width = '1000px';
+    optionWithFrozenRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithFrozenRows);
+    frozenTable.scrollTop = 400;
+
+    expect(frozenTable.getBodyVisibleRowRange()).toEqual({
+      rowStart: 10,
+      rowEnd: 28
+    });
+    expect(frozenTable.getBodyVisibleCellRange()).toMatchObject({
+      rowStart: 10,
+      rowEnd: 28
+    });
+  });
 });
