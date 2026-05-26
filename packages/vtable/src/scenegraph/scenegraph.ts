@@ -13,9 +13,7 @@ import {
   type Stage,
   type Text,
   container,
-  loadPoptip,
   setPoptipTheme,
-  vglobal,
   registerForVrender
 } from '@src/vrender';
 import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
@@ -158,6 +156,7 @@ export class Scenegraph {
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
+  stageOwned: boolean = true;
   releaseVRenderAppRef?: () => void;
   table: BaseTableAPI;
   isPivot: boolean;
@@ -208,20 +207,19 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
-      vglobal.setEnv('node', table.options.modeParams);
+    const mode = table.options.mode ?? (Env.mode === 'node' ? 'node' : 'browser');
+
+    if (mode === 'node') {
       width = table.canvasWidth;
       height = table.canvasHeight;
     } else if (table.options.canvas && table.options.viewBox) {
-      vglobal.setEnv('browser');
       width = table.options.viewBox.x2 - table.options.viewBox.x1;
       height = table.options.viewBox.y2 - table.options.viewBox.y1;
     } else {
-      vglobal.setEnv('browser');
       width = table.canvas.width;
       height = table.canvas.height;
     }
-    const { stage, releaseAppRef } = createStageFromVRenderApp(
+    const { stage, releaseAppRef, stageOwned } = createStageFromVRenderApp(
       {
         canvas: table.canvas,
         width,
@@ -246,11 +244,19 @@ export class Scenegraph {
 
         canvasControled: !table.options.canvas,
         viewBox: table.options.viewBox,
+        context: { appName: 'vtable' },
         ...table.options.renderOption
       },
-      { mode: Env.mode === 'node' ? 'node' : 'browser', scope: 'vtable' }
+      {
+        mode,
+        scope: table.options.vRenderAppScope ?? 'vtable',
+        app: table.options.vRenderApp,
+        stage: table.options.stage,
+        envParams: table.options.modeParams
+      }
     );
     this.stage = stage;
+    this.stageOwned = stageOwned;
     this.releaseVRenderAppRef = releaseAppRef;
 
     this.stage.defaultLayer.setTheme({
@@ -519,7 +525,15 @@ export class Scenegraph {
     this.releaseVRenderAppRef = undefined;
 
     try {
-      this.stage?.release();
+      if (this.stageOwned) {
+        this.stage?.release();
+      } else {
+        const tableGroup = this.tableGroup;
+        const tableGroupParent = tableGroup?.parent as Group | undefined;
+
+        tableGroupParent?.removeChild?.(tableGroup);
+        tableGroup?.release?.(true);
+      }
     } finally {
       releaseAppRef?.();
     }

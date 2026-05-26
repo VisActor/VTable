@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { dealWithAnimationAppear } from '../src/scenegraph/animation/appear';
+import { createText, defaultTimeline, registerAnimate } from '../src/vrender';
 
 type MockAnimationAppear = Partial<{
   duration: number;
@@ -67,6 +68,15 @@ function createTable(children: MockChild[], animationAppear: MockAnimationAppear
 }
 
 describe('dealWithAnimationAppear', () => {
+  beforeEach(() => {
+    registerAnimate();
+    defaultTimeline.clear();
+  });
+
+  afterEach(() => {
+    defaultTimeline.clear();
+  });
+
   it('keeps the final opacity as static state and animates from hidden state', () => {
     const first = createChild();
     const second = createChild(0.4);
@@ -104,5 +114,29 @@ describe('dealWithAnimationAppear', () => {
 
     expect(animation.wait).toHaveBeenCalledWith(1500);
     expect(animation.from).toHaveBeenCalledWith({ opacity: 0 }, 1000, 'linear');
+  });
+
+  it('keeps VRender static and final opacity visible through the fade appear lifecycle', () => {
+    const child = createText({ text: 'cell', opacity: 1 });
+    child.setFinalAttributes({ opacity: 0 });
+    const table = createTable([child], { delay: 0, type: 'all' });
+
+    dealWithAnimationAppear(table as Parameters<typeof dealWithAnimationAppear>[0]);
+
+    expect(child.attribute.opacity).toBe(0);
+    expect(child.baseAttributes.opacity).toBe(1);
+    expect(child.getFinalAttribute().opacity).toBe(1);
+
+    defaultTimeline.tick(500);
+
+    expect(child.attribute.opacity).toBeCloseTo(0.5);
+    expect(child.baseAttributes.opacity).toBe(1);
+    expect(child.getFinalAttribute().opacity).toBe(1);
+
+    defaultTimeline.tick(500);
+
+    expect(child.attribute.opacity).toBe(1);
+    expect(child.baseAttributes.opacity).toBe(1);
+    expect(child.getFinalAttribute().opacity).toBe(1);
   });
 });

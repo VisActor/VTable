@@ -1,9 +1,24 @@
-import { createBrowserVRenderApp, createNodeVRenderApp } from '@visactor/vrender';
+import {
+  createBrowserVRenderApp,
+  createFeishuVRenderApp,
+  createHarmonyVRenderApp,
+  createLynxVRenderApp,
+  createNodeVRenderApp,
+  createTaroVRenderApp,
+  createTTVRenderApp,
+  createWxVRenderApp
+} from '@visactor/vrender';
 import { container as legacyContainer, GraphicRender } from '@visactor/vrender-core';
-import type { IApp, IGraphicRender, IStage, IStageParams } from '@visactor/vrender-core';
+import type { IApp, IEnvParamsMap, IGraphicRender, IStage, IStageParams } from '@visactor/vrender-core';
 import { Env } from './tools/env';
 
-type VRenderAppEnv = 'browser' | 'node';
+type StableVRenderAppEnv = 'browser' | 'node' | 'wx' | 'lynx' | 'harmony';
+// Keep public creator paths for Tier 2 runtimes, but do not treat them as stable default support without real-device smoke.
+type Tier2VRenderAppEnv = 'taro' | 'feishu' | 'tt';
+type VRenderAppEnv = StableVRenderAppEnv | Tier2VRenderAppEnv;
+type VRenderAppEntryOptions = {
+  envParams?: IEnvParamsMap[VRenderAppEnv];
+};
 
 type DefaultVRenderAppRecord = {
   app: IApp;
@@ -14,19 +29,47 @@ export type VRenderStageAppOptions = {
   mode?: VRenderAppEnv;
   scope?: string;
   app?: IApp;
+  stage?: IStage;
+  envParams?: IEnvParamsMap[VRenderAppEnv];
 };
 
 export type VRenderStageAppRef = {
-  app: IApp;
+  app?: IApp;
   stage: IStage;
   releaseAppRef: () => void;
+  stageOwned: boolean;
+  appOwned: boolean;
 };
 
 const defaultVRenderApps = new Map<string, DefaultVRenderAppRecord>();
+const envParamsKeyMap = new WeakMap<object, number>();
+let envParamsKeyId = 0;
 
 const getVRenderAppEnv = (mode?: VRenderAppEnv): VRenderAppEnv => mode ?? (Env.mode === 'node' ? 'node' : 'browser');
 
-const getVRenderAppKey = (env: VRenderAppEnv, scope?: string): string => `${env}:${scope ?? 'default'}`;
+const getEnvParamsKey = (envParams?: IEnvParamsMap[VRenderAppEnv]): string => {
+  if (envParams == null) {
+    return 'default';
+  }
+
+  if (typeof envParams === 'object' || typeof envParams === 'function') {
+    const envParamsObject = envParams as object;
+    const existingKey = envParamsKeyMap.get(envParamsObject);
+
+    if (existingKey != null) {
+      return `object:${existingKey}`;
+    }
+
+    envParamsKeyId += 1;
+    envParamsKeyMap.set(envParamsObject, envParamsKeyId);
+    return `object:${envParamsKeyId}`;
+  }
+
+  return `primitive:${String(envParams)}`;
+};
+
+const getVRenderAppKey = (env: VRenderAppEnv, scope?: string, envParams?: IEnvParamsMap[VRenderAppEnv]): string =>
+  `${env}:${scope ?? 'default'}:${getEnvParamsKey(envParams)}`;
 
 const createRendererRegistryKey = (renderer: IGraphicRender, prefix: string): string => {
   const type = renderer?.type ?? 'unknown';
@@ -60,16 +103,49 @@ const syncLegacyRenderersToApp = (app: IApp): void => {
   });
 };
 
-const createDefaultVRenderApp = (env: VRenderAppEnv): IApp => {
-  const app = env === 'node' ? createNodeVRenderApp() : createBrowserVRenderApp();
+const createDefaultVRenderApp = (env: VRenderAppEnv, envParams?: IEnvParamsMap[VRenderAppEnv]): IApp => {
+  const entryOptions: VRenderAppEntryOptions | undefined = envParams == null ? undefined : { envParams };
+  let app: IApp;
+
+  switch (env) {
+    case 'node':
+      app = createNodeVRenderApp(entryOptions);
+      break;
+    case 'wx':
+      app = createWxVRenderApp(entryOptions);
+      break;
+    case 'lynx':
+      app = createLynxVRenderApp(entryOptions);
+      break;
+    case 'harmony':
+      app = createHarmonyVRenderApp(entryOptions);
+      break;
+    case 'taro':
+      app = createTaroVRenderApp(entryOptions);
+      break;
+    case 'feishu':
+      app = createFeishuVRenderApp(entryOptions);
+      break;
+    case 'tt':
+      app = createTTVRenderApp(entryOptions);
+      break;
+    case 'browser':
+    default:
+      app = createBrowserVRenderApp(entryOptions);
+      break;
+  }
 
   syncLegacyRenderersToApp(app);
 
   return app;
 };
 
-const getDefaultVRenderAppRecord = (env: VRenderAppEnv, scope?: string): DefaultVRenderAppRecord => {
-  const key = getVRenderAppKey(env, scope);
+const getDefaultVRenderAppRecord = (
+  env: VRenderAppEnv,
+  scope?: string,
+  envParams?: IEnvParamsMap[VRenderAppEnv]
+): DefaultVRenderAppRecord => {
+  const key = getVRenderAppKey(env, scope, envParams);
   const record = defaultVRenderApps.get(key);
 
   if (record && !record.app.released) {
@@ -77,7 +153,7 @@ const getDefaultVRenderAppRecord = (env: VRenderAppEnv, scope?: string): Default
   }
 
   const nextRecord = {
-    app: createDefaultVRenderApp(env),
+    app: createDefaultVRenderApp(env, envParams),
     refCount: 0
   };
   defaultVRenderApps.set(key, nextRecord);
@@ -85,9 +161,9 @@ const getDefaultVRenderAppRecord = (env: VRenderAppEnv, scope?: string): Default
   return nextRecord;
 };
 
-const retainDefaultVRenderApp = (env: VRenderAppEnv, scope?: string) => {
-  const key = getVRenderAppKey(env, scope);
-  const record = getDefaultVRenderAppRecord(env, scope);
+const retainDefaultVRenderApp = (env: VRenderAppEnv, scope?: string, envParams?: IEnvParamsMap[VRenderAppEnv]) => {
+  const key = getVRenderAppKey(env, scope, envParams);
+  const record = getDefaultVRenderAppRecord(env, scope, envParams);
   let released = false;
 
   record.refCount += 1;
@@ -115,24 +191,40 @@ const resolveVRenderApp = (options: VRenderStageAppOptions = {}) => {
   if (options.app) {
     return {
       app: options.app,
+      appOwned: false,
       releaseAppRef: (): void => undefined
     };
   }
 
-  return retainDefaultVRenderApp(getVRenderAppEnv(options.mode), options.scope);
+  return {
+    ...retainDefaultVRenderApp(getVRenderAppEnv(options.mode), options.scope, options.envParams),
+    appOwned: true
+  };
 };
 
 export function createStageFromVRenderApp(
   params: Partial<IStageParams>,
   options: VRenderStageAppOptions = {}
 ): VRenderStageAppRef {
+  if (options.stage) {
+    return {
+      app: options.app,
+      stage: options.stage,
+      releaseAppRef: (): void => undefined,
+      stageOwned: false,
+      appOwned: false
+    };
+  }
+
   const resolvedApp = resolveVRenderApp(options);
 
   try {
     return {
       app: resolvedApp.app,
       stage: resolvedApp.app.createStage(params),
-      releaseAppRef: resolvedApp.releaseAppRef
+      releaseAppRef: resolvedApp.releaseAppRef,
+      stageOwned: true,
+      appOwned: resolvedApp.appOwned
     };
   } catch (error) {
     resolvedApp.releaseAppRef();

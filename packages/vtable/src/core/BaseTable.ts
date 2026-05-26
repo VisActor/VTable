@@ -2695,7 +2695,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph?.component?.hScrollBar?.release();
     this.animationManager.clear();
     this.animationManager.ticker.release();
-    this.scenegraph?.stage?.ticker?.release();
+    if (this.scenegraph?.stageOwned) {
+      this.scenegraph?.stage?.ticker?.release();
+    }
 
     const internalProps = this.internalProps;
     const canvas = internalProps?.canvas as any;

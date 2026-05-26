@@ -1,36 +1,5 @@
 import { loadPoptip } from '@visactor/vrender-components';
-import {
-  container as legacyContainer,
-  type ILegacyBindingContext,
-  isBrowserEnv,
-  isNodeEnv,
-  preLoadAllModule,
-  registerFlexLayoutPlugin
-} from '@visactor/vrender-core';
-import {
-  loadBrowserEnv,
-  loadNodeEnv,
-  registerArc,
-  registerArc3d,
-  registerArea,
-  registerCircle,
-  registerGifImage,
-  registerGlyph,
-  registerGroup,
-  registerImage,
-  registerLine,
-  registerPath,
-  registerPolygon,
-  registerPyramid3d,
-  registerRect,
-  registerRect3d,
-  registerRichtext,
-  registerShadowRoot,
-  registerStar,
-  registerSymbol,
-  registerText,
-  registerWrapText
-} from '@visactor/vrender-kits';
+import { container as legacyContainer, type ILegacyBindingContext } from '@visactor/vrender-core';
 // 导出版本号
 // export const version = __VERSION__;
 
@@ -40,38 +9,9 @@ export function registerForVrender() {
     return;
   }
   registed = true;
-  // 注册内置组件
-  preLoadAllModule();
-
-  if (isBrowserEnv()) {
-    loadBrowserEnv(legacyContainer);
-  } else if (isNodeEnv()) {
-    loadNodeEnv(legacyContainer);
-  }
-  registerArc();
-  registerArc3d();
-  registerArea();
-  registerCircle();
-  registerGlyph();
-  registerGroup();
-  registerGifImage();
-  registerImage();
-  registerLine();
-  registerPath();
-  registerPolygon();
-  registerPyramid3d();
-  registerRect();
-  registerRect3d();
-  registerRichtext();
-  registerShadowRoot();
-  registerStar();
-  registerSymbol();
-  registerText();
-  registerFlexLayoutPlugin();
-  registerWrapText();
+  // Default env and graphic bootstrap is owned by create*VRenderApp().
+  // VTable keeps only component/custom assembly that is not covered by the app creator.
   loadPoptip();
-
-  registerFlexLayoutPlugin();
 }
 
 type LegacyBind = ILegacyBindingContext['bind'];

@@ -1,6 +1,32 @@
 import type { Text } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
+type OpacityAttribute = {
+  opacity?: Text['attribute']['opacity'];
+};
+
+type AppearGraphic = Text & {
+  getFinalAttribute?: () => OpacityAttribute | undefined;
+  setFinalAttributes?: (attribute: OpacityAttribute) => void;
+};
+
+function getAppearFinalOpacity(child: AppearGraphic) {
+  return child.attribute.opacity ?? child.getFinalAttribute?.()?.opacity ?? 1;
+}
+
+function setAppearFinalOpacity(child: AppearGraphic, opacity: number) {
+  child.setAttribute('opacity', opacity);
+
+  const finalAttribute = child.getFinalAttribute?.();
+  if (finalAttribute) {
+    if (child.setFinalAttributes) {
+      child.setFinalAttributes({ opacity });
+    } else {
+      finalAttribute.opacity = opacity;
+    }
+  }
+}
+
 export function dealWithAnimationAppear(table: BaseTableAPI) {
   if (!table.options.animationAppear) {
     return;
@@ -32,11 +58,11 @@ export function dealWithAnimationAppear(table: BaseTableAPI) {
     for (let row = 0; row <= rowEnd; row++) {
       const cellGroup = scene.highPerformanceGetCell(col, row);
       if (cellGroup && cellGroup.role === 'cell') {
-        cellGroup.forEachChildren((child: Text) => {
-          const finalOpacity = child.attribute.opacity ?? 1;
+        cellGroup.forEachChildren((child: AppearGraphic) => {
+          const finalOpacity = getAppearFinalOpacity(child);
           const animationDelay = type === 'one-by-one' ? (direction === 'row' ? row : col) * (duration - delay) : delay;
 
-          child.setAttribute('opacity', finalOpacity);
+          setAppearFinalOpacity(child, finalOpacity);
           child.animate().wait(animationDelay).from({ opacity: 0 }, duration, 'linear');
         });
       }
