@@ -571,7 +571,7 @@ export interface BaseTableConstructorOptions {
   // #region for nodejs
   mode?: 'node' | 'browser';
   /**
-   * Node env params are passed to createNodeVRenderApp({ envParams: modeParams }).
+   * Node env params are passed to acquireSharedVRenderApp({ env: 'node', envParams: modeParams }).
    * Release validation should use Node 20.19.6 or another version matching the canvas native binding ABI.
    */
   modeParams?: any;
@@ -602,7 +602,7 @@ export interface BaseTableConstructorOptions {
    */
   vRenderApp?: IApp;
   /**
-   * Scope for VTable-managed shared VRender apps. Tables with the same scope, mode, and envParams share a ref-counted app.
+   * Scope for VTable-managed shared VRender apps. Tables with the same scope, mode, and envParams identity share a ref-counted app.
    */
   vRenderAppScope?: string;
   /**

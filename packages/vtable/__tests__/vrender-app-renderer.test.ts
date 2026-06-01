@@ -1,5 +1,5 @@
 import '../src/scenegraph/scenegraph';
-import { container, createStageFromVRenderApp, TextMeasureContribution } from '../src/vrender';
+import { application, container, createStageFromVRenderApp, TextMeasureContribution, vglobal } from '../src/vrender';
 
 (globalThis as { __VERSION__?: string }).__VERSION__ = 'none';
 
@@ -107,6 +107,46 @@ describe('VRender app renderer installation', () => {
     } finally {
       stage.release();
       releaseAppRef();
+    }
+  });
+
+  test('reactivates the runtime env when reusing an existing shared app', () => {
+    const firstCanvas = document.createElement('canvas');
+    const first = createStageFromVRenderApp(
+      {
+        canvas: firstCanvas,
+        width: 100,
+        height: 100
+      },
+      { mode: 'browser', scope: 'unit-env-reactivation' }
+    );
+
+    try {
+      const runtimeGlobal = application.global as { envContribution?: { loadSvg?: unknown } };
+      const legacyGlobal = vglobal as { envContribution?: { addEventListener?: unknown } };
+      runtimeGlobal.envContribution = undefined;
+      legacyGlobal.envContribution = undefined;
+
+      const secondCanvas = document.createElement('canvas');
+      const second = createStageFromVRenderApp(
+        {
+          canvas: secondCanvas,
+          width: 100,
+          height: 100
+        },
+        { mode: 'browser', scope: 'unit-env-reactivation' }
+      );
+
+      try {
+        expect(typeof runtimeGlobal.envContribution?.loadSvg).toBe('function');
+        expect(typeof legacyGlobal.envContribution?.addEventListener).toBe('function');
+      } finally {
+        second.stage.release();
+        second.releaseAppRef();
+      }
+    } finally {
+      first.stage.release();
+      first.releaseAppRef();
     }
   });
 });

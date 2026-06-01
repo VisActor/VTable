@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+const { createVRenderModuleNameMapper } = require('../../common/config/jest/vrender-module-name-mapper');
 
 module.exports = {
   preset: 'ts-jest',
@@ -65,6 +66,7 @@ module.exports = {
       __dirname,
       '../../common/temp/node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'
     ),
+    ...createVRenderModuleNameMapper('<rootDir>/../vtable/node_modules'),
     '@visactor/vtable-editors': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
     '@visactor/vtable-plugins': path.resolve(__dirname, '../vtable-plugins/src/index.ts'),
     // 子路径映射需放在 @visactor/vtable 之前，确保精确匹配优先生效

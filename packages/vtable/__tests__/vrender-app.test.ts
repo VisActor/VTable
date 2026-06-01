@@ -1,25 +1,15 @@
-jest.mock(
-  '@visactor/vrender',
-  () => ({
-    createBrowserVRenderApp: jest.fn(),
-    createNodeVRenderApp: jest.fn(),
-    createWxVRenderApp: jest.fn(),
-    createLynxVRenderApp: jest.fn(),
-    createHarmonyVRenderApp: jest.fn(),
-    createTaroVRenderApp: jest.fn(),
-    createFeishuVRenderApp: jest.fn(),
-    createTTVRenderApp: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('@visactor/vrender/entries/shared', () => ({
+  acquireSharedVRenderApp: jest.fn()
+}));
 
-import { createBrowserVRenderApp, createNodeVRenderApp, createWxVRenderApp } from '@visactor/vrender';
+import { acquireSharedVRenderApp } from '@visactor/vrender/entries/shared';
 import type { IApp, IStage } from '@visactor/vrender-core';
 import { createStageFromVRenderApp } from '../src/vrender';
 
-const mockedCreateBrowserVRenderApp = createBrowserVRenderApp as jest.Mock;
-const mockedCreateNodeVRenderApp = createNodeVRenderApp as jest.Mock;
-const mockedCreateWxVRenderApp = createWxVRenderApp as jest.Mock;
+const mockedAcquireSharedVRenderApp = acquireSharedVRenderApp as jest.Mock;
+
+const sharedRecords = new Map<string, { app: ReturnType<typeof createMockApp>; refCount: number }>();
+const queuedApps: ReturnType<typeof createMockApp>[] = [];
 
 function createMockApp() {
   const app = {
@@ -36,21 +26,76 @@ function createMockApp() {
   return app;
 }
 
+function getSharedRecordKey(options: { env: string; key?: string | symbol }) {
+  return `${options.env}:${String(options.key ?? 'default')}`;
+}
+
+function queueSharedApps(...apps: ReturnType<typeof createMockApp>[]) {
+  queuedApps.push(...apps);
+}
+
+function installSharedAcquireMock() {
+  mockedAcquireSharedVRenderApp.mockImplementation((options: { env: string; key?: string | symbol }) => {
+    const key = getSharedRecordKey(options);
+    let record = sharedRecords.get(key);
+
+    if (!record || record.app.released) {
+      record = {
+        app: queuedApps.shift() ?? createMockApp(),
+        refCount: 0
+      };
+      sharedRecords.set(key, record);
+    }
+
+    record.refCount += 1;
+    let released = false;
+
+    return {
+      app: record.app,
+      env: options.env,
+      key: options.key ?? 'default',
+      release: jest.fn(() => {
+        if (released) {
+          return;
+        }
+        released = true;
+        record.refCount -= 1;
+
+        if (record.refCount <= 0) {
+          sharedRecords.delete(key);
+          if (!record.app.released) {
+            record.app.release();
+          }
+        }
+      })
+    };
+  });
+}
+
 describe('VRender app-scoped stage helper', () => {
   beforeEach(() => {
-    mockedCreateBrowserVRenderApp.mockReset();
-    mockedCreateNodeVRenderApp.mockReset();
-    mockedCreateWxVRenderApp.mockReset();
+    mockedAcquireSharedVRenderApp.mockReset();
+    sharedRecords.clear();
+    queuedApps.length = 0;
+    installSharedAcquireMock();
   });
 
-  it('reuses the fallback app by env and scope until every retained stage is released', () => {
+  it('reuses the shared app by env and scope until every retained stage is released', () => {
     const app = createMockApp();
-    mockedCreateBrowserVRenderApp.mockReturnValue(app);
+    queueSharedApps(app);
 
     const first = createStageFromVRenderApp({ width: 100 }, { mode: 'browser', scope: 'unit-reuse' });
     const second = createStageFromVRenderApp({ width: 200 }, { mode: 'browser', scope: 'unit-reuse' });
 
-    expect(mockedCreateBrowserVRenderApp).toHaveBeenCalledTimes(1);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(2);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenNthCalledWith(1, {
+      env: 'browser',
+      key: 'browser:unit-reuse:default'
+    });
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenNthCalledWith(2, {
+      env: 'browser',
+      key: 'browser:unit-reuse:default'
+    });
     expect(app.createStage).toHaveBeenCalledTimes(2);
     expect(first.stage).not.toBe(second.stage);
 
@@ -65,12 +110,20 @@ describe('VRender app-scoped stage helper', () => {
   it('keeps fallback apps isolated by scope', () => {
     const firstApp = createMockApp();
     const secondApp = createMockApp();
-    mockedCreateBrowserVRenderApp.mockReturnValueOnce(firstApp).mockReturnValueOnce(secondApp);
+    queueSharedApps(firstApp, secondApp);
 
     const first = createStageFromVRenderApp({ width: 100 }, { mode: 'browser', scope: 'unit-scope-a' });
     const second = createStageFromVRenderApp({ width: 100 }, { mode: 'browser', scope: 'unit-scope-b' });
 
-    expect(mockedCreateBrowserVRenderApp).toHaveBeenCalledTimes(2);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(2);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenNthCalledWith(1, {
+      env: 'browser',
+      key: 'browser:unit-scope-a:default'
+    });
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenNthCalledWith(2, {
+      env: 'browser',
+      key: 'browser:unit-scope-b:default'
+    });
     expect(firstApp.createStage).toHaveBeenCalledTimes(1);
     expect(secondApp.createStage).toHaveBeenCalledTimes(1);
 
@@ -80,16 +133,21 @@ describe('VRender app-scoped stage helper', () => {
     expect(secondApp.release).toHaveBeenCalledTimes(1);
   });
 
-  it('uses the node app creator with envParams for node mode', () => {
+  it('uses the shared entry with envParams for node mode', () => {
     const app = createMockApp();
     const envParams = { createCanvas: jest.fn() };
-    mockedCreateNodeVRenderApp.mockReturnValue(app);
+    queueSharedApps(app);
 
     const created = createStageFromVRenderApp({ width: 100 }, { mode: 'node', scope: 'unit-node', envParams });
 
-    expect(mockedCreateNodeVRenderApp).toHaveBeenCalledTimes(1);
-    expect(mockedCreateNodeVRenderApp).toHaveBeenCalledWith({ envParams });
-    expect(mockedCreateBrowserVRenderApp).not.toHaveBeenCalled();
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(1);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        env: 'node',
+        key: expect.stringMatching(/^node:unit-node:object:\d+$/),
+        envParams
+      })
+    );
     expect(app.createStage).toHaveBeenCalledWith({ width: 100 });
 
     created.releaseAppRef();
@@ -101,7 +159,7 @@ describe('VRender app-scoped stage helper', () => {
     const secondApp = createMockApp();
     const firstEnvParams = { createCanvas: jest.fn() };
     const secondEnvParams = { createCanvas: jest.fn() };
-    mockedCreateNodeVRenderApp.mockReturnValueOnce(firstApp).mockReturnValueOnce(secondApp);
+    queueSharedApps(firstApp, secondApp);
 
     const first = createStageFromVRenderApp(
       { width: 100 },
@@ -112,7 +170,12 @@ describe('VRender app-scoped stage helper', () => {
       { mode: 'node', scope: 'unit-node-envparams', envParams: secondEnvParams }
     );
 
-    expect(mockedCreateNodeVRenderApp).toHaveBeenCalledTimes(2);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(2);
+    const firstKey = mockedAcquireSharedVRenderApp.mock.calls[0][0].key;
+    const secondKey = mockedAcquireSharedVRenderApp.mock.calls[1][0].key;
+    expect(firstKey).toEqual(expect.stringMatching(/^node:unit-node-envparams:object:\d+$/));
+    expect(secondKey).toEqual(expect.stringMatching(/^node:unit-node-envparams:object:\d+$/));
+    expect(firstKey).not.toBe(secondKey);
     expect(firstApp.createStage).toHaveBeenCalledTimes(1);
     expect(secondApp.createStage).toHaveBeenCalledTimes(1);
 
@@ -122,15 +185,21 @@ describe('VRender app-scoped stage helper', () => {
     expect(secondApp.release).toHaveBeenCalledTimes(1);
   });
 
-  it('uses stable mini-app creators for stable mini modes', () => {
+  it('uses the shared entry for stable mini modes', () => {
     const app = createMockApp();
     const envParams = { canvasIdLists: ['unit'] };
-    mockedCreateWxVRenderApp.mockReturnValue(app);
+    queueSharedApps(app);
 
     const created = createStageFromVRenderApp({ width: 100 }, { mode: 'wx', scope: 'unit-wx', envParams });
 
-    expect(mockedCreateWxVRenderApp).toHaveBeenCalledTimes(1);
-    expect(mockedCreateWxVRenderApp).toHaveBeenCalledWith({ envParams });
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(1);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        env: 'wx',
+        key: expect.stringMatching(/^wx:unit-wx:object:\d+$/),
+        envParams
+      })
+    );
     expect(app.createStage).toHaveBeenCalledWith({ width: 100 });
 
     created.releaseAppRef();
@@ -161,8 +230,7 @@ describe('VRender app-scoped stage helper', () => {
     expect(created.appOwned).toBe(false);
     expect(created.releaseAppRef()).toBeUndefined();
     expect(stage.release).not.toHaveBeenCalled();
-    expect(mockedCreateBrowserVRenderApp).not.toHaveBeenCalled();
-    expect(mockedCreateNodeVRenderApp).not.toHaveBeenCalled();
+    expect(mockedAcquireSharedVRenderApp).not.toHaveBeenCalled();
   });
 
   it('releases the retained fallback app when stage creation throws', () => {
@@ -171,7 +239,7 @@ describe('VRender app-scoped stage helper', () => {
     app.createStage.mockImplementationOnce(() => {
       throw error;
     });
-    mockedCreateBrowserVRenderApp.mockReturnValue(app);
+    queueSharedApps(app);
 
     expect(() => createStageFromVRenderApp({ width: 100 }, { mode: 'browser', scope: 'unit-error' })).toThrow(error);
     expect(app.release).toHaveBeenCalledTimes(1);

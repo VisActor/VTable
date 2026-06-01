@@ -1,29 +1,28 @@
+import { acquireSharedVRenderApp } from '@visactor/vrender/entries/shared';
 import {
-  createBrowserVRenderApp,
-  createFeishuVRenderApp,
-  createHarmonyVRenderApp,
-  createLynxVRenderApp,
-  createNodeVRenderApp,
-  createTaroVRenderApp,
-  createTTVRenderApp,
-  createWxVRenderApp
-} from '@visactor/vrender';
-import { container as legacyContainer, GraphicRender } from '@visactor/vrender-core';
-import type { IApp, IEnvParamsMap, IGraphicRender, IStage, IStageParams } from '@visactor/vrender-core';
+  installBrowserEnvToApp,
+  installFeishuEnvToApp,
+  installHarmonyEnvToApp,
+  installLynxEnvToApp,
+  installNodeEnvToApp,
+  installTaroEnvToApp,
+  installTTEnvToApp,
+  installWxEnvToApp
+} from '@visactor/vrender-kits/installers/app';
+import { loadBrowserEnv } from '@visactor/vrender-kits/env/browser';
+import { loadFeishuEnv } from '@visactor/vrender-kits/env/feishu';
+import { loadHarmonyEnv } from '@visactor/vrender-kits/env/harmony';
+import { loadLynxEnv } from '@visactor/vrender-kits/env/lynx';
+import { loadNodeEnv } from '@visactor/vrender-kits/env/node';
+import { loadTaroEnv } from '@visactor/vrender-kits/env/taro';
+import { loadTTEnv } from '@visactor/vrender-kits/env/tt';
+import { loadWxEnv } from '@visactor/vrender-kits/env/wx';
+import type { TVRenderSharedAppEnv, TVRenderSharedAppOptions } from '@visactor/vrender/entries/shared';
+import { vglobal } from '@visactor/vrender-core';
+import type { IApp, IEnvParamsMap, IStage, IStageParams } from '@visactor/vrender-core';
 import { Env } from './tools/env';
 
-type StableVRenderAppEnv = 'browser' | 'node' | 'wx' | 'lynx' | 'harmony';
-// Keep public creator paths for Tier 2 runtimes, but do not treat them as stable default support without real-device smoke.
-type Tier2VRenderAppEnv = 'taro' | 'feishu' | 'tt';
-type VRenderAppEnv = StableVRenderAppEnv | Tier2VRenderAppEnv;
-type VRenderAppEntryOptions = {
-  envParams?: IEnvParamsMap[VRenderAppEnv];
-};
-
-type DefaultVRenderAppRecord = {
-  app: IApp;
-  refCount: number;
-};
+type VRenderAppEnv = TVRenderSharedAppEnv;
 
 export type VRenderStageAppOptions = {
   mode?: VRenderAppEnv;
@@ -41,7 +40,6 @@ export type VRenderStageAppRef = {
   appOwned: boolean;
 };
 
-const defaultVRenderApps = new Map<string, DefaultVRenderAppRecord>();
 const envParamsKeyMap = new WeakMap<object, number>();
 let envParamsKeyId = 0;
 
@@ -71,118 +69,100 @@ const getEnvParamsKey = (envParams?: IEnvParamsMap[VRenderAppEnv]): string => {
 const getVRenderAppKey = (env: VRenderAppEnv, scope?: string, envParams?: IEnvParamsMap[VRenderAppEnv]): string =>
   `${env}:${scope ?? 'default'}:${getEnvParamsKey(envParams)}`;
 
-const createRendererRegistryKey = (renderer: IGraphicRender, prefix: string): string => {
-  const type = renderer?.type ?? 'unknown';
-  const numberType = renderer?.numberType ?? 'unknown';
-  const ctor = renderer?.constructor?.name ?? 'anonymous';
-
-  return `${prefix}:${String(numberType)}:${String(type)}:${ctor}`;
-};
-
-const syncLegacyRenderersToApp = (app: IApp): void => {
-  const rendererRegistry = app.registry?.renderer;
-  const existingRenderers = rendererRegistry?.getAll?.() ?? [];
-  const legacyRenderers = legacyContainer.getAll<IGraphicRender>(GraphicRender) ?? [];
-
-  if (!rendererRegistry || !legacyRenderers.length) {
-    return;
+const getForcedEnvParams = (
+  envParams?: IEnvParamsMap[VRenderAppEnv]
+): IEnvParamsMap[VRenderAppEnv] & { force: true } => {
+  if (envParams != null && (typeof envParams === 'object' || typeof envParams === 'function')) {
+    return Object.assign(Object.create(envParams as object), { force: true });
   }
 
-  const seen = new Set<string>();
-  rendererRegistry.clear();
-
-  [...legacyRenderers, ...existingRenderers].forEach(renderer => {
-    const key = createRendererRegistryKey(renderer, 'renderer');
-
-    if (seen.has(key)) {
-      return;
-    }
-    seen.add(key);
-    renderer.reInit?.();
-    rendererRegistry.register(key, renderer);
-  });
+  return { force: true } as IEnvParamsMap[VRenderAppEnv] & { force: true };
 };
 
-const createDefaultVRenderApp = (env: VRenderAppEnv, envParams?: IEnvParamsMap[VRenderAppEnv]): IApp => {
-  const entryOptions: VRenderAppEntryOptions | undefined = envParams == null ? undefined : { envParams };
-  let app: IApp;
-
+const activateLegacyVGlobalEnv = (env: VRenderAppEnv, envParams?: IEnvParamsMap[VRenderAppEnv]): void => {
   switch (env) {
     case 'node':
-      app = createNodeVRenderApp(entryOptions);
+      loadNodeEnv();
       break;
     case 'wx':
-      app = createWxVRenderApp(entryOptions);
+      loadWxEnv();
       break;
     case 'lynx':
-      app = createLynxVRenderApp(entryOptions);
+      loadLynxEnv();
       break;
     case 'harmony':
-      app = createHarmonyVRenderApp(entryOptions);
+      loadHarmonyEnv();
       break;
     case 'taro':
-      app = createTaroVRenderApp(entryOptions);
+      loadTaroEnv();
       break;
     case 'feishu':
-      app = createFeishuVRenderApp(entryOptions);
+      loadFeishuEnv();
       break;
     case 'tt':
-      app = createTTVRenderApp(entryOptions);
+      loadTTEnv();
       break;
     case 'browser':
     default:
-      app = createBrowserVRenderApp(entryOptions);
+      loadBrowserEnv();
       break;
   }
 
-  syncLegacyRenderersToApp(app);
-
-  return app;
+  vglobal.setEnv(env, getForcedEnvParams(envParams));
 };
 
-const getDefaultVRenderAppRecord = (
-  env: VRenderAppEnv,
-  scope?: string,
-  envParams?: IEnvParamsMap[VRenderAppEnv]
-): DefaultVRenderAppRecord => {
-  const key = getVRenderAppKey(env, scope, envParams);
-  const record = defaultVRenderApps.get(key);
-
-  if (record && !record.app.released) {
-    return record;
+const activateSharedVRenderAppEnv = (app: IApp, env: VRenderAppEnv, envParams?: IEnvParamsMap[VRenderAppEnv]): void => {
+  switch (env) {
+    case 'node':
+      installNodeEnvToApp(app, envParams as IEnvParamsMap['node']);
+      break;
+    case 'wx':
+      installWxEnvToApp(app, envParams as IEnvParamsMap['wx']);
+      break;
+    case 'lynx':
+      installLynxEnvToApp(app, envParams as IEnvParamsMap['lynx']);
+      break;
+    case 'harmony':
+      installHarmonyEnvToApp(app, envParams as IEnvParamsMap['harmony']);
+      break;
+    case 'taro':
+      installTaroEnvToApp(app, envParams as IEnvParamsMap['taro']);
+      break;
+    case 'feishu':
+      installFeishuEnvToApp(app, envParams as IEnvParamsMap['feishu']);
+      break;
+    case 'tt':
+      installTTEnvToApp(app, envParams as IEnvParamsMap['tt']);
+      break;
+    case 'browser':
+    default:
+      installBrowserEnvToApp(app, envParams as IEnvParamsMap['browser']);
+      break;
   }
 
-  const nextRecord = {
-    app: createDefaultVRenderApp(env, envParams),
-    refCount: 0
-  };
-  defaultVRenderApps.set(key, nextRecord);
-
-  return nextRecord;
+  activateLegacyVGlobalEnv(env, envParams);
 };
 
 const retainDefaultVRenderApp = (env: VRenderAppEnv, scope?: string, envParams?: IEnvParamsMap[VRenderAppEnv]) => {
   const key = getVRenderAppKey(env, scope, envParams);
-  const record = getDefaultVRenderAppRecord(env, scope, envParams);
+  const sharedOptions = {
+    env,
+    key,
+    ...(envParams == null ? undefined : { envParams })
+  } as TVRenderSharedAppOptions<VRenderAppEnv>;
+  const handle = acquireSharedVRenderApp(sharedOptions);
   let released = false;
 
-  record.refCount += 1;
+  activateSharedVRenderAppEnv(handle.app, env, envParams);
 
   return {
-    app: record.app,
+    app: handle.app,
     releaseAppRef: () => {
       if (released) {
         return;
       }
       released = true;
-      record.refCount -= 1;
-
-      if (record.refCount <= 0) {
-        defaultVRenderApps.delete(key);
-        if (!record.app.released) {
-          record.app.release();
-        }
-      }
+      handle.release();
     }
   };
 };

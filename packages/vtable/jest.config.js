@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+const { createVRenderModuleNameMapper } = require('../../common/config/jest/vrender-module-name-mapper');
 
 module.exports = {
   preset: 'ts-jest',
@@ -47,6 +48,7 @@ module.exports = {
     'd3-dsv': path.resolve(__dirname, './node_modules/d3-dsv/dist/d3-dsv.min.js'),
     'd3-hexbin': path.resolve(__dirname, './node_modules/d3-hexbin/build/d3-hexbin.min.js'),
     'd3-hierarchy': path.resolve(__dirname, './node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'),
+    ...createVRenderModuleNameMapper(),
     // '@visactor/vtable-editors': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
     // '@visactor/vtable-plugins': path.resolve(__dirname, '../vtable-plugins/src/index.ts'),
     '@visactor/vtable-editors': '<rootDir>/../vtable-editors/src/index.ts',

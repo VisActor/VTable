@@ -72,11 +72,9 @@ function App() {
                           text: 'item.label',
                           fill: '#000'
                         }}
-                        stateProxy={stateName => {
-                          if (stateName === 'hover') {
-                            return {
-                              fill: 'red'
-                            };
+                        states={{
+                          hover: {
+                            fill: 'red'
                           }
                         }}
                         onMouseEnter={event => {

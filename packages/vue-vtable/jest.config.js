@@ -1,4 +1,5 @@
 const path = require('path');
+const { createVRenderModuleNameMapper } = require('../../common/config/jest/vrender-module-name-mapper');
 
 module.exports = {
   preset: 'ts-jest',
@@ -19,6 +20,7 @@ module.exports = {
     __DEV__: true
   },
   moduleNameMapper: {
+    ...createVRenderModuleNameMapper('<rootDir>/../vtable/node_modules'),
     '@visactor/vtable$': '<rootDir>/../vtable/src/index',
     '@visactor/vtable/es/(.*)': '<rootDir>/../vtable/src/$1'
   },

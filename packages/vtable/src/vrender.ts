@@ -1,4 +1,5 @@
 import { loadPoptip } from '@visactor/vrender-components';
+import { getRuntimeInstallerBindingContext } from '@visactor/vrender-core/entries/runtime-installer';
 import { container as legacyContainer, type ILegacyBindingContext } from '@visactor/vrender-core';
 // 导出版本号
 // export const version = __VERSION__;
@@ -32,12 +33,21 @@ const unbindLegacyService = (): void => undefined;
 
 export const container = Object.assign(legacyContainer, {
   load(module: ContainerModule | ((context: ILegacyBindingContext) => void)): void {
+    const runtimeInstallerContext = getRuntimeInstallerBindingContext();
+
     if (module instanceof ContainerModule) {
       module.registry(legacyContainer.bind, unbindLegacyService, legacyContainer.isBound, legacyContainer.rebind);
+      module.registry(
+        runtimeInstallerContext.bind,
+        unbindLegacyService,
+        runtimeInstallerContext.isBound,
+        runtimeInstallerContext.rebind
+      );
       return;
     }
 
     module(legacyContainer);
+    module(runtimeInstallerContext);
   },
   get<T>(serviceIdentifier: unknown): T {
     return legacyContainer.getAll<T>(serviceIdentifier as never)[0];

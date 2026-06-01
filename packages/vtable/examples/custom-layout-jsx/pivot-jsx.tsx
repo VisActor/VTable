@@ -594,16 +594,14 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
             boundsPadding: [10, 0, 0, 0],
             cursor: 'pointer'
           }}
-          stateProxy={(stateName: string) => {
-            if (stateName === 'hover') {
-              return {
-                background: {
-                  fill: '#ccc',
-                  cornerRadius: 5,
-                  expandX: 1,
-                  expandY: 1
-                }
-              };
+          states={{
+            hover: {
+              background: {
+                fill: '#ccc',
+                cornerRadius: 5,
+                expandX: 1,
+                expandY: 1
+              }
             }
           }}
           onMouseEnter={event => {
@@ -734,16 +732,14 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
                       boundsPadding: [0, 0, 0, 5],
                       cursor: 'pointer'
                     }}
-                    stateProxy={(stateName: string) => {
-                      if (stateName === 'hover') {
-                        return {
-                          background: {
-                            fill: '#ccc',
-                            cornerRadius: 5,
-                            expandX: 1,
-                            expandY: 1
-                          }
-                        };
+                    states={{
+                      hover: {
+                        background: {
+                          fill: '#ccc',
+                          cornerRadius: 5,
+                          expandX: 1,
+                          expandY: 1
+                        }
                       }
                     }}
                     onMouseEnter={event => {
@@ -782,16 +778,14 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
               boundsPadding: [12, 0, 0, 5],
               cursor: 'pointer'
             }}
-            stateProxy={(stateName: string) => {
-              if (stateName === 'hover') {
-                return {
-                  background: {
-                    fill: '#ccc',
-                    cornerRadius: 5,
-                    expandX: 1,
-                    expandY: 1
-                  }
-                };
+            states={{
+              hover: {
+                background: {
+                  fill: '#ccc',
+                  cornerRadius: 5,
+                  expandX: 1,
+                  expandY: 1
+                }
               }
             }}
             onMouseEnter={event => {
@@ -814,16 +808,14 @@ function customLayout(args: VTable.TYPES.CustomRenderFunctionArg) {
             boundsPadding: [8, 0, 0, 5],
             cursor: 'pointer'
           }}
-          stateProxy={(stateName: string) => {
-            if (stateName === 'hover') {
-              return {
-                background: {
-                  fill: '#ccc',
-                  cornerRadius: 5,
-                  expandX: 1,
-                  expandY: 1
-                }
-              };
+          states={{
+            hover: {
+              background: {
+                fill: '#ccc',
+                cornerRadius: 5,
+                expandX: 1,
+                expandY: 1
+              }
             }
           }}
           onMouseEnter={event => {
@@ -938,16 +930,14 @@ function customLayoutRow(args: VTable.TYPES.CustomRenderFunctionArg) {
               height: 20,
               cursor: 'pointer'
             }}
-            stateProxy={(stateName: string) => {
-              if (stateName === 'hover') {
-                return {
-                  background: {
-                    fill: '#ccc',
-                    cornerRadius: 5,
-                    expandX: 1,
-                    expandY: 1
-                  }
-                };
+            states={{
+              hover: {
+                background: {
+                  fill: '#ccc',
+                  cornerRadius: 5,
+                  expandX: 1,
+                  expandY: 1
+                }
               }
             }}
             onMouseEnter={event => {
@@ -983,16 +973,14 @@ function customLayoutRow(args: VTable.TYPES.CustomRenderFunctionArg) {
             boundsPadding: [0, 10, 0, 0],
             cursor: 'pointer'
           }}
-          stateProxy={(stateName: string) => {
-            if (stateName === 'hover') {
-              return {
-                background: {
-                  fill: '#ccc',
-                  cornerRadius: 5,
-                  expandX: 1,
-                  expandY: 1
-                }
-              };
+          states={{
+            hover: {
+              background: {
+                fill: '#ccc',
+                cornerRadius: 5,
+                expandX: 1,
+                expandY: 1
+              }
             }
           }}
           onMouseEnter={event => {
@@ -1015,16 +1003,14 @@ function customLayoutRow(args: VTable.TYPES.CustomRenderFunctionArg) {
             visible: false,
             cursor: 'pointer'
           }}
-          stateProxy={(stateName: string) => {
-            if (stateName === 'hover') {
-              return {
-                background: {
-                  fill: '#ccc',
-                  cornerRadius: 5,
-                  expandX: 1,
-                  expandY: 1
-                }
-              };
+          states={{
+            hover: {
+              background: {
+                fill: '#ccc',
+                cornerRadius: 5,
+                expandX: 1,
+                expandY: 1
+              }
             }
           }}
           onMouseEnter={event => {
@@ -1086,16 +1072,14 @@ function customLayoutIndicator(args: VTable.TYPES.CustomRenderFunctionArg) {
           boundsPadding: [0, 5, 0, 0],
           cursor: 'pointer'
         }}
-        stateProxy={(stateName: string) => {
-          if (stateName === 'hover') {
-            return {
-              background: {
-                fill: '#ccc',
-                cornerRadius: 5,
-                expandX: 1,
-                expandY: 1
-              }
-            };
+        states={{
+          hover: {
+            background: {
+              fill: '#ccc',
+              cornerRadius: 5,
+              expandX: 1,
+              expandY: 1
+            }
           }
         }}
         onMouseEnter={event => {
