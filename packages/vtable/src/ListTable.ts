@@ -1056,9 +1056,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
         adjustHeightResizedRowMap(moveContext, this);
       }
+      this.syncColumnsStateFromLayoutMap();
       return moveContext;
     }
     return null;
+  }
+  private syncColumnsStateFromLayoutMap() {
+    const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
+    let visibleIndex = 0;
+    const nextColumns = this.internalProps.columns.map(column => {
+      if (column.hide === true) {
+        return column;
+      }
+      const nextVisibleColumn = visibleColumns[visibleIndex];
+      visibleIndex += 1;
+      return nextVisibleColumn ?? column;
+    });
+    this.internalProps.columns = cloneDeepSpec(nextColumns, ['children']);
+    this.options.columns = nextColumns;
+    if (this.options.header) {
+      this.options.header = nextColumns;
+    }
   }
   changeRecordOrder(sourceIndex: number, targetIndex: number) {
     if (this.transpose) {

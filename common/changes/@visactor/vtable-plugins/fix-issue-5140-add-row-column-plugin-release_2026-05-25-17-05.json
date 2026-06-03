@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-plugins",
+      "comment": "Fix an issue where `AddRowColumnPlugin.release()` threw when only row or column controls were enabled (GitHub #5140)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "892739385@qq.com"
+}

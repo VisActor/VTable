@@ -457,13 +457,13 @@ export class AddRowColumnPlugin implements pluginsDefinition.IVTablePlugin {
   }
   // #endregion
   release() {
-    this.leftDotForAddColumn.remove();
-    this.rightDotForAddColumn.remove();
-    this.addIconForAddColumn.remove();
-    this.addLineForAddColumn.remove();
-    this.topDotForAddRow.remove();
-    this.bottomDotForAddRow.remove();
-    this.addIconForAddRow.remove();
-    this.addLineForAddRow.remove();
+    this.leftDotForAddColumn?.remove();
+    this.rightDotForAddColumn?.remove();
+    this.addIconForAddColumn?.remove();
+    this.addLineForAddColumn?.remove();
+    this.topDotForAddRow?.remove();
+    this.bottomDotForAddRow?.remove();
+    this.addIconForAddRow?.remove();
+    this.addLineForAddRow?.remove();
   }
 }
