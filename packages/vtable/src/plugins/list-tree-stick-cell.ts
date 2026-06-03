@@ -6,6 +6,8 @@ import type { Graphic } from '@src/vrender';
 import { createRect } from '@src/vrender';
 import { Factory } from '../core/factory';
 import { getTargetCell } from '../event/util';
+import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
+import { IconFuncTypeEnum } from '../ts-types';
 
 export interface IListTreeStickCellPlugin {
   new (table: ListTable): ListTreeStickCellPlugin;
@@ -247,7 +249,18 @@ function prepareShadowRoot(table: ListTable) {
       const titleRows = table.listTreeStickCellPlugin.titleRows;
       const { shadowTarget } = e.pickParams;
       const cellGroup = getTargetCell(shadowTarget);
-      const { col, row } = cellGroup;
+      if (!cellGroup) {
+        return;
+      }
+      const iconInfo = getIconAndPositionFromTarget(shadowTarget);
+      const funcType = iconInfo?.icon?.attribute?.funcType;
+      if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
+        const stickCellTop = getStickCellTop(cellGroup, table);
+        table.toggleHierarchyState(cellGroup.col, cellGroup.row);
+        keepRowAtVisiblePosition(cellGroup.col, cellGroup.row, stickCellTop, table);
+        return;
+      }
+      const { row } = cellGroup;
       const rowIndex = titleRows.indexOf(row);
       // table.scrollToCell({ col, row: row - rowIndex });
       scrollToRow(row - rowIndex, table);
@@ -271,7 +284,18 @@ function prepareShadowRoot(table: ListTable) {
       const titleRows = table.listTreeStickCellPlugin.titleRows;
       const { shadowTarget } = e.pickParams;
       const cellGroup = getTargetCell(shadowTarget);
-      const { col, row } = cellGroup;
+      if (!cellGroup) {
+        return;
+      }
+      const iconInfo = getIconAndPositionFromTarget(shadowTarget);
+      const funcType = iconInfo?.icon?.attribute?.funcType;
+      if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
+        const stickCellTop = getStickCellTop(cellGroup, table);
+        table.toggleHierarchyState(cellGroup.col, cellGroup.row);
+        keepRowAtVisiblePosition(cellGroup.col, cellGroup.row, stickCellTop, table);
+        return;
+      }
+      const { row } = cellGroup;
       const rowIndex = titleRows.indexOf(row);
       // table.scrollToCell({ col, row: row - rowIndex });
       scrollToRow(row - rowIndex, table);
@@ -294,6 +318,21 @@ function scrollToRow(row: number, table: ListTable) {
     const top = table.getRowsHeight(0, row - 1);
     table.scrollTop = Math.min(top - frozenHeight, table.getAllRowsHeight() - drawRange.height) - 1;
   }
+  table.scenegraph.updateNextFrame();
+}
+
+function getStickCellTop(cellGroup: Group, table: ListTable) {
+  return table.getFrozenRowsHeight() + (cellGroup.attribute?.y ?? 0);
+}
+
+function keepRowAtVisiblePosition(col: number, row: number, visibleTop: number, table: ListTable) {
+  const drawRange = table.getDrawRange();
+  // Keep the clicked sticky group row in roughly the same viewport position after collapse/expand.
+  const targetScrollTop = Math.max(
+    0,
+    Math.min(table.getCellRect(col, row).top - visibleTop, table.getAllRowsHeight() - drawRange.height)
+  );
+  table.scrollTop = targetScrollTop;
   table.scenegraph.updateNextFrame();
 }
 
