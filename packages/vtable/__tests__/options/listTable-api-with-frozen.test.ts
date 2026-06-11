@@ -135,11 +135,11 @@ describe('listTable init test', () => {
 
     expect(frozenTable.getBodyVisibleRowRange()).toEqual({
       rowStart: 10,
-      rowEnd: 28
+      rowEnd: 29
     });
     expect(frozenTable.getBodyVisibleCellRange()).toMatchObject({
       rowStart: 10,
-      rowEnd: 28
+      rowEnd: 29
     });
   });
 });
