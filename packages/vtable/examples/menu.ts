@@ -41,6 +41,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'issue-5027'
+      },
+      {
+        path: 'debug',
+        name: 'scroll-collapse-bottom'
       }
     ]
   },
