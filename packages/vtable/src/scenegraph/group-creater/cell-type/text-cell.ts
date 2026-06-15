@@ -113,7 +113,7 @@ export function createCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup?.addCellGroup(cellGroup);
+    cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
   }
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);

@@ -58,7 +58,7 @@ export function createRadioCellGroup(
     cellGroup.col = col;
     cellGroup.row = row;
     // columnGroup?.addChild(cellGroup);
-    columnGroup?.addCellGroup(cellGroup);
+    cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
   }
 
   // radio
