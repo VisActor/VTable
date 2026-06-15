@@ -6,11 +6,11 @@ settings:
 
 overrides:
   '@visactor/vchart': 2.1.0-alpha.9
-  '@visactor/vrender': 1.1.0-alpha.25
-  '@visactor/vrender-core': 1.1.0-alpha.25
-  '@visactor/vrender-kits': 1.1.0-alpha.25
-  '@visactor/vrender-components': 1.1.0-alpha.25
-  '@visactor/vrender-animate': 1.1.0-alpha.25
+  '@visactor/vrender': 1.1.0-alpha.26
+  '@visactor/vrender-core': 1.1.0-alpha.26
+  '@visactor/vrender-kits': 1.1.0-alpha.26
+  '@visactor/vrender-components': 1.1.0-alpha.26
+  '@visactor/vrender-animate': 1.1.0-alpha.26
 
 pnpmfileChecksum: sha256-XTeZQwJtKk4dimqf7175GhJCXrnq3Yh7+kwb86Bwcdo=
 
@@ -438,20 +438,20 @@ importers:
         specifier: ~1.0.17
         version: 1.0.23
       '@visactor/vrender':
-        specifier: 1.1.0-alpha.25
-        version: 1.1.0-alpha.25
+        specifier: 1.1.0-alpha.26
+        version: 1.1.0-alpha.26
       '@visactor/vrender-animate':
-        specifier: 1.1.0-alpha.25
-        version: 1.1.0-alpha.25
+        specifier: 1.1.0-alpha.26
+        version: 1.1.0-alpha.26
       '@visactor/vrender-components':
-        specifier: 1.1.0-alpha.25
-        version: 1.1.0-alpha.25
+        specifier: 1.1.0-alpha.26
+        version: 1.1.0-alpha.26
       '@visactor/vrender-core':
-        specifier: 1.1.0-alpha.25
-        version: 1.1.0-alpha.25
+        specifier: 1.1.0-alpha.26
+        version: 1.1.0-alpha.26
       '@visactor/vrender-kits':
-        specifier: 1.1.0-alpha.25
-        version: 1.1.0-alpha.25
+        specifier: 1.1.0-alpha.26
+        version: 1.1.0-alpha.26
       '@visactor/vscale':
         specifier: ~1.0.17
         version: 1.0.23
@@ -3573,20 +3573,20 @@ packages:
   '@visactor/vlayouts@1.0.23':
     resolution: {integrity: sha512-fK1f5LmuumhYanLArk5yrT4BZxu4IAmdc8WMwfB/KAvV+2dTPFuBUMWbWnDl0siQoU9SX9l/bLozUnI9n7BwBQ==}
 
-  '@visactor/vrender-animate@1.1.0-alpha.25':
-    resolution: {integrity: sha512-vAzV46ZO4ghKTK9zfFLpsBm4X/u8Hih+GSyxIJmcWhItDw0ZHvRr3zOKtUZ4q9fpib0e+u+7oUe3+t71O50gFw==}
+  '@visactor/vrender-animate@1.1.0-alpha.26':
+    resolution: {integrity: sha512-shcWacvEJ5FXbbOlMHtZKRFr2KrCtdiPrMMlUiuaZJK7rJ/Wm3Y/ATEksiqzTN0SUOsYH+G/1JTcKc2Pdf5xzw==}
 
-  '@visactor/vrender-components@1.1.0-alpha.25':
-    resolution: {integrity: sha512-gp3KcghfNQaSRnOwUX2oF2N8vP29iD7QYa7bB5cxr9EjRosOAGBZpbwnbkHSdQwlahc5dzdJ6tN2hpkOE0VGYA==}
+  '@visactor/vrender-components@1.1.0-alpha.26':
+    resolution: {integrity: sha512-o72vPXrZY9K/uu49E1tjfRHCKznNcrqAdE4EEI48paqKCX3qoK38QzdUvkFt68srrWVG0lVmwWV/fGg72XGjrw==}
 
-  '@visactor/vrender-core@1.1.0-alpha.25':
-    resolution: {integrity: sha512-02HQr5RrH1WXKDP6iMLSS2HUb3YqR6Y2qgikQ3BzxnElppPs1F7VnWWVfVXhM9r9UGd0+PBkAJkz16wnjK6p4w==}
+  '@visactor/vrender-core@1.1.0-alpha.26':
+    resolution: {integrity: sha512-3JenybipQI8U1kK/P5w72LDyQOLUC0cBnUyteEZhUOH7dToyLNXv2x2HzTvMDolYtifd4jbGedZkqb5Bnb7/7g==}
 
-  '@visactor/vrender-kits@1.1.0-alpha.25':
-    resolution: {integrity: sha512-i5GsKSmJ0nBwmGDuUhCpV/mGpZiuqj/xzBKXy8D4OBijhfJwa6Xbgvf5ihLHKPt97zHorsr52mT39AWR+ImXUQ==}
+  '@visactor/vrender-kits@1.1.0-alpha.26':
+    resolution: {integrity: sha512-OED02T92OeiWng/7uN7Oa2479kgWroBmxwn/QLDN8z/USzWJr63VO1uKUAtxi8WIQo8Aal2fVo4PCie0aOlwpg==}
 
-  '@visactor/vrender@1.1.0-alpha.25':
-    resolution: {integrity: sha512-gmhv8bPe03t94ju5yxVIjuKquaf2aCTTeKpoPyyE9vmfYu93WAMQWQcWkOmGqji0v5cJr8eKWyxfqVyxs7rFOA==}
+  '@visactor/vrender@1.1.0-alpha.26':
+    resolution: {integrity: sha512-SSDapsXKM88RLtcQKMs+StBe5DxetJOxOIAWGu0Sl5eCbdCp3kHJ2r+YUbKaMwk/4s2tAaNVXfXmmm5B+vfIpg==}
 
   '@visactor/vscale@1.0.23':
     resolution: {integrity: sha512-XePhYuRoNAp+8MeSMuEOOvhVAlOwvM1sDT2yFxE6zdwVB2GjZk8mH+5N2xQGQWk75YmGJjlJASFtgwjlb1yWxw==}
@@ -10478,7 +10478,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@jest/test-sequencer@26.6.3':
+  '@jest/test-sequencer@26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5))':
     dependencies:
       '@jest/test-result': 26.6.2
       graceful-fs: 4.2.11
@@ -10486,7 +10486,11 @@ snapshots:
       jest-runner: 26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5))
       jest-runtime: 26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5))
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   '@jest/transform@24.9.0':
     dependencies:
@@ -11180,11 +11184,11 @@ snapshots:
     dependencies:
       '@visactor/vdataset': 1.0.23
       '@visactor/vlayouts': 1.0.23
-      '@visactor/vrender': 1.1.0-alpha.25
-      '@visactor/vrender-animate': 1.1.0-alpha.25
-      '@visactor/vrender-components': 1.1.0-alpha.25
-      '@visactor/vrender-core': 1.1.0-alpha.25
-      '@visactor/vrender-kits': 1.1.0-alpha.25
+      '@visactor/vrender': 1.1.0-alpha.26
+      '@visactor/vrender-animate': 1.1.0-alpha.26
+      '@visactor/vrender-components': 1.1.0-alpha.26
+      '@visactor/vrender-core': 1.1.0-alpha.26
+      '@visactor/vrender-kits': 1.1.0-alpha.26
       '@visactor/vscale': 1.0.23
       '@visactor/vutils': 1.0.23
       '@visactor/vutils-extension': 2.1.0-alpha.9
@@ -11217,39 +11221,39 @@ snapshots:
       '@visactor/vutils': 1.0.23
       eventemitter3: 4.0.7
 
-  '@visactor/vrender-animate@1.1.0-alpha.25':
+  '@visactor/vrender-animate@1.1.0-alpha.26':
     dependencies:
-      '@visactor/vrender-core': 1.1.0-alpha.25
+      '@visactor/vrender-core': 1.1.0-alpha.26
       '@visactor/vutils': 1.0.23
 
-  '@visactor/vrender-components@1.1.0-alpha.25':
+  '@visactor/vrender-components@1.1.0-alpha.26':
     dependencies:
-      '@visactor/vrender-animate': 1.1.0-alpha.25
-      '@visactor/vrender-core': 1.1.0-alpha.25
-      '@visactor/vrender-kits': 1.1.0-alpha.25
+      '@visactor/vrender-animate': 1.1.0-alpha.26
+      '@visactor/vrender-core': 1.1.0-alpha.26
+      '@visactor/vrender-kits': 1.1.0-alpha.26
       '@visactor/vscale': 1.0.23
       '@visactor/vutils': 1.0.23
 
-  '@visactor/vrender-core@1.1.0-alpha.25':
+  '@visactor/vrender-core@1.1.0-alpha.26':
     dependencies:
       '@visactor/vutils': 1.0.23
       color-convert: 2.0.1
 
-  '@visactor/vrender-kits@1.1.0-alpha.25':
+  '@visactor/vrender-kits@1.1.0-alpha.26':
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.1.0-alpha.25
+      '@visactor/vrender-core': 1.1.0-alpha.26
       '@visactor/vutils': 1.0.23
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
       roughjs: 4.6.6
 
-  '@visactor/vrender@1.1.0-alpha.25':
+  '@visactor/vrender@1.1.0-alpha.26':
     dependencies:
-      '@visactor/vrender-animate': 1.1.0-alpha.25
-      '@visactor/vrender-components': 1.1.0-alpha.25
-      '@visactor/vrender-core': 1.1.0-alpha.25
-      '@visactor/vrender-kits': 1.1.0-alpha.25
+      '@visactor/vrender-animate': 1.1.0-alpha.26
+      '@visactor/vrender-components': 1.1.0-alpha.26
+      '@visactor/vrender-core': 1.1.0-alpha.26
+      '@visactor/vrender-kits': 1.1.0-alpha.26
 
   '@visactor/vscale@1.0.23':
     dependencies:
@@ -14375,7 +14379,7 @@ snapshots:
   jest-config@26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5)):
     dependencies:
       '@babel/core': 7.20.12
-      '@jest/test-sequencer': 26.6.3
+      '@jest/test-sequencer': 26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5))
       '@jest/types': 26.6.2
       babel-jest: 26.6.3(@babel/core@7.20.12)
       chalk: 4.1.2
@@ -14385,7 +14389,7 @@ snapshots:
       jest-environment-jsdom: 26.6.2
       jest-environment-node: 26.6.2
       jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5))
+      jest-jasmine2: 26.6.3
       jest-regex-util: 26.0.0
       jest-resolve: 26.6.2
       jest-util: 26.6.2
@@ -14558,7 +14562,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jest-jasmine2@26.6.3(ts-node@10.9.0(@types/node@25.9.1)(typescript@4.9.5)):
+  jest-jasmine2@26.6.3:
     dependencies:
       '@babel/traverse': 7.29.7
       '@jest/environment': 26.6.2
@@ -14579,11 +14583,7 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-leak-detector@24.9.0:
     dependencies:
