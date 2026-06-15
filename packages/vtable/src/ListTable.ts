@@ -84,6 +84,17 @@ import {
 //   registerVideoCell
 // } from './scenegraph/group-creater/cell-type';
 
+const LAYOUT_COLUMN_STATE_KEYS = ['level', 'startIndex', 'id', 'levelSpan', 'size', 'startInTotal'];
+
+function clearLayoutColumnState(columns: ColumnsDefine | undefined) {
+  columns?.forEach(column => {
+    LAYOUT_COLUMN_STATE_KEYS.forEach(key => {
+      delete (column as any)[key];
+    });
+    clearLayoutColumnState((column as any).children ?? (column as any).columns);
+  });
+}
+
 // registerAxis();
 // registerEmptyTip();
 // registerLegend();
@@ -1062,9 +1073,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return null;
   }
   private syncColumnsStateFromLayoutMap() {
+    const sourceColumns = this.options.columns ?? this.internalProps.columns;
+    const nextColumns = sourceColumns.some(column => column.hide === true)
+      ? this.mergeHiddenColumnsWithVisibleOrder(sourceColumns)
+      : this.columns;
+    const publicColumns = cloneDeepSpec(nextColumns, ['children']);
+    clearLayoutColumnState(publicColumns);
+    this.internalProps.columns = cloneDeepSpec(publicColumns, ['children']);
+    this.options.columns = publicColumns;
+    if (this.options.header) {
+      this.options.header = publicColumns;
+    }
+  }
+  private mergeHiddenColumnsWithVisibleOrder(sourceColumns: ColumnsDefine) {
     const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
     let visibleIndex = 0;
-    const nextColumns = this.internalProps.columns.map(column => {
+    return sourceColumns.map(column => {
       if (column.hide === true) {
         return column;
       }
@@ -1072,11 +1096,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       visibleIndex += 1;
       return nextVisibleColumn ?? column;
     });
-    this.internalProps.columns = cloneDeepSpec(nextColumns, ['children']);
-    this.options.columns = nextColumns;
-    if (this.options.header) {
-      this.options.header = nextColumns;
-    }
   }
   changeRecordOrder(sourceIndex: number, targetIndex: number) {
     if (this.transpose) {

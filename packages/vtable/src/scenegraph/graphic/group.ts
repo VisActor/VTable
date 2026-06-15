@@ -227,6 +227,11 @@ export class Group extends VRenderGroup {
   }
 
   addCellGroup(cellGroup: Group) {
+    const parent = cellGroup.parent as Group | undefined;
+    if (parent) {
+      parent.removeChild(cellGroup);
+    }
+
     if (this.childrenCount === 0 || (this.lastChild as Group).row === cellGroup.row - 1) {
       this.addChild(cellGroup);
     } else {

@@ -163,8 +163,12 @@ export function createVideoCellGroup(
   const value = table.getCellValue(col, row);
   const video = document.createElement('video');
   video.addEventListener('loadeddata', (): void => {
+    const scenegraph = table.scenegraph;
+    if (!scenegraph) {
+      return;
+    }
     if (imageAutoSizing) {
-      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, table.scenegraph, padding, cellGroup);
+      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, scenegraph, padding, cellGroup);
     }
     // const width = cellGroup.attribute.width;
     // const height = cellGroup.attribute.height;
@@ -249,9 +253,12 @@ export function createVideoCellGroup(
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
     // 触发重绘
-    table.scenegraph.updateNextFrame();
+    scenegraph.updateNextFrame();
   });
   video.onerror = (): void => {
+    if (!table.scenegraph) {
+      return;
+    }
     const regedIcons = icons.get();
     (image as any).image = regedIcons.video_damage_pic
       ? (regedIcons.video_damage_pic as any).svg
@@ -274,6 +281,10 @@ export function createVideoCellGroup(
   image.textBaseline = textBaseline;
   cellGroup.appendChild(image);
   image.successCallback = () => {
+    const scenegraph = table.scenegraph;
+    if (!scenegraph) {
+      return;
+    }
     //补丁处理，上面loadeddata已经有一些尺寸处理，对应image-cell中updateAutoSizingAndKeepAspectRatio处理，
     //image重新赋值为损坏的图片的资源地址后，successCallback回调处理
     //仿照image-cell.ts中的处理方法updateAutoSizingAndKeepAspectRatio
@@ -288,7 +299,7 @@ export function createVideoCellGroup(
         cellGroup,
         table
       );
-      table.scenegraph.updateNextFrame();
+      scenegraph.updateNextFrame();
     }
   };
   return cellGroup;
