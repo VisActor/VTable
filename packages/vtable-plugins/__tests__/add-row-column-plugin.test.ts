@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ListTable } from '@visactor/vtable';
-import { AddRowColumnPlugin } from '../src';
+import { AddRowColumnPlugin } from '../src/add-row-column';
 import { createDiv } from '../../vtable/__tests__/dom';
 
 global.__VERSION__ = 'none';
