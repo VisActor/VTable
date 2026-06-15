@@ -1569,7 +1569,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     const sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
     const getMaxScrollTop = () =>
       Math.max(0, this.getAllRowsHeight() - (this.scenegraph?.height ?? this.tableNoFrameHeight) - sizeTolerance);
-    const isScrollToBottom = this.scrollTop >= getMaxScrollTop() - 1;
+    const oldMaxScrollTop = getMaxScrollTop();
+    const isScrollToBottom = oldMaxScrollTop > 0 && this.scrollTop >= oldMaxScrollTop - 1;
     const visibleStartRow = this.getBodyVisibleRowRange().rowStart;
     this.internalProps._oldRowCount = this.rowCount;
     this.internalProps._oldColCount = this.colCount;

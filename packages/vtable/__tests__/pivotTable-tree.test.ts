@@ -587,4 +587,76 @@ describe('pivotTable grid-tree hierarchy scroll', () => {
       pivotTable.release();
     }
   });
+
+  test('does not scroll to bottom after expanding a row tree node when table was not scrollable', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const columnTree = Array.from({ length: 5 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree: [
+        {
+          dimensionKey: 'province',
+          value: '浙江省',
+          hierarchyState: 'collapse',
+          children: Array.from({ length: 20 }, (_, index) => ({
+            dimensionKey: 'city',
+            value: `city-${index}`
+          }))
+        },
+        {
+          dimensionKey: 'province',
+          value: '江苏省'
+        }
+      ],
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'province',
+          title: 'province',
+          width: 200
+        },
+        {
+          dimensionKey: 'city',
+          title: 'city',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const getMaxScrollTop = () => Math.max(0, pivotTable.getAllRowsHeight() - pivotTable.scenegraph.height);
+
+      expect(pivotTable.scrollTop).toBe(0);
+      expect(getMaxScrollTop()).toBe(0);
+      expect(pivotTable.getHierarchyState(0, 1)).toBe('collapse');
+
+      pivotTable.toggleHierarchyState(0, 1);
+
+      expect(getMaxScrollTop()).toBeGreaterThan(0);
+      expect(pivotTable.scrollTop).toBe(0);
+    } finally {
+      pivotTable.release();
+    }
+  });
 });
