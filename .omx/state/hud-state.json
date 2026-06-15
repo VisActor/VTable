@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-05-14T03:42:48.326Z",
-  "turn_count": 9,
-  "last_progress_at": "2026-05-14T03:42:48.326Z",
-  "last_agent_output": "已按“先改配置，暂不安装”处理完。\n\n配置层面现在是：\n\n- `common/config/rush/pnpm-config.json`\n  - `@visactor/vchart`: `2.1.0-"
-}
