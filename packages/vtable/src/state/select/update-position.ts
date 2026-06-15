@@ -145,6 +145,9 @@ export function updateSelectPosition(
       if (!enableShiftSelectMode) {
         currentRange.end = currentRange.start;
       }
+      // Keep the focus cell in sync with the latest keyboard expansion target.
+      cellPos.col = col;
+      cellPos.row = row;
       scenegraph.deleteLastSelectedRangeComponents();
       scenegraph.updateCellSelectBorder(currentRange);
       // } else if (isCtrl) {

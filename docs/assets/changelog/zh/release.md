@@ -1,3 +1,28 @@
+# v1.26.1
+
+2026-05-12
+
+# v1.26.1
+
+2026-05-11
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增 sheet 公式类型
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复填充柄获取单元格值逻辑问题 [[#5096](https://github.com/VisActor/VTable/issues/5096)](https://github.com/VisActor/VTable/issues/5096)
+- **@visactor/vtable**: 修复 aggregation 中 precisionAdd 和 precisionSub 的精度问题
+- **@visactor/vtable**: 修复 `dblclickHandler` 未处理右键点击的问题
+- **@visactor/vtable**: 修复编辑单元格时 `invalidateNotExit` 的问题 [[#5114](https://github.com/VisActor/VTable/issues/5114)](https://github.com/VisActor/VTable/issues/5114)
+- **@visactor/vtable**: 修复行列使用相同维度时透视排序状态显示错误的问题 [[#5055](https://github.com/VisActor/VTable/issues/5055)](https://github.com/VisActor/VTable/issues/5055)
+- **@visactor/vtable-sheet**: 修复使用 `ArrowRight` 移动选中单元格时出现空白选区的问题 [[#5113](https://github.com/VisActor/VTable/issues/5113)](https://github.com/VisActor/VTable/issues/5113)
+- **@visactor/vtable-plugin**: 修复树表搜索文本时结果不正确的问题 [[#5071](https://github.com/VisActor/VTable/issues/5071)](https://github.com/VisActor/VTable/issues/5071)
+- **@visactor/vue-vtable**: 修复包构建导出文件的问题
+
+[更多详情请查看 v1.26.1](https://github.com/VisActor/VTable/releases/tag/v1.26.1)
+
 # v1.26.0
 
 2026-04-03
@@ -870,7 +895,7 @@
 
 2025-04-17
 
-**💥 Breaking change**
+**💥 破坏性变更**
 
 - **@visactor/vtable**: 修复 switch 默认方向问题 [#3667](https://github.com/VisActor/VTable/issues/3667)
 - **@visactor/vtable-editors**: 修改了input编辑器中的默认样式
@@ -1022,7 +1047,7 @@
 
 2025-02-26
 
-**💥 Breaking change**
+**💥 破坏性变更**
 
 - **@visactor/vtable**: 删除 loading 加载图标的自动注册，需要手动注册，具体可以参考教程：/guide/table_type/List_table/tree_list
 
@@ -1775,7 +1800,7 @@
 
 2024-08-30
 
-**🆕 New feature**
+**🆕 新增功能**
 
 - **@visactor/vtable-gantt**: 新增甘特图 gantt chart
 
@@ -1816,7 +1841,7 @@
 
 2024-08-19
 
-**💥 Breaking change**
+**💥 破坏性变更**
 
 - **@visactor/react-vtable**: 优化打包体积，删除`VTable`的导出，如果需要使用`VTable`，请安装并从相同版本的`@visactor/vtable`中导入。
 - **@visactor/react-vtable**: 优化打包体积，删除`VRender`的导出，如果需要使用`VRender`，请从`@visactor/vtable/es/vrender`中导入。
@@ -2000,7 +2025,7 @@
 - **@visactor/vtable**: 修复 updateSortState api 调用问题 [#1939](https://github.com/VisActor/VTable/issues/1939)
 - **@visactor/vtable**: 调用 setRecords 时更新 emptyTip 组件 [#1953](https://github.com/VisActor/VTable/issues/1953)
 - **@visactor/vtable**: 修复冻结单元格 getCellRect api 获取 bounds 错误 [#1955](https://github.com/VisActor/VTable/issues/1955)
-- **@visactor/vtable**: when drag cell and enter edit state but can not exit edit rightly [#1956](https://github.com/VisActor/VTable/issues/1956)
+- **@visactor/vtable**: 修复拖拽单元格并进入编辑状态后无法正确退出编辑的问题 [#1956](https://github.com/VisActor/VTable/issues/1956)
 - **@visactor/vtable**: 修复自定义单元格列宽计算问题 [#1905](https://github.com/VisActor/VTable/issues/1905)
 - **@visactor/vtable**: 修复 getCellRange 中的内容判断逻辑 [#1911](https://github.com/VisActor/VTable/issues/1911)
 - **@visactor/vtable**: 修复透视表排序时尺寸更新问题 [#1958](https://github.com/VisActor/VTable/issues/1958)
@@ -2098,7 +2123,7 @@
 
 **🔧 项目配置**
 
-- **@visactor/vtable**: update vrender version
+- **@visactor/vtable**: 更新 vrender 版本
 
 [更多详情请查看 v1.1.2](https://github.com/VisActor/VTable/releases/tag/v1.1.2)
 
@@ -2108,12 +2133,12 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: when set emptyTip interaction not work well with has records [#1818](https://github.com/VisActor/VTable/issues/1818)
-- **@visactor/vtable**: fix table frame corner radius display problem [#1783](https://github.com/VisActor/VTable/issues/1783)
+- **@visactor/vtable**: 修复设置 `emptyTip` 且存在记录时交互表现异常的问题 [#1818](https://github.com/VisActor/VTable/issues/1818)
+- **@visactor/vtable**: 修复表格边框圆角显示问题 [#1783](https://github.com/VisActor/VTable/issues/1783)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: dimension value same with indicator key cell value error [#1817](https://github.com/VisActor/VTable/issues/1817)
+- **@visactor/vtable**: 修复维度值与指标 key 相同时单元格值错误的问题 [#1817](https://github.com/VisActor/VTable/issues/1817)
 
 [更多详情请查看 v1.1.1](https://github.com/VisActor/VTable/releases/tag/v1.1.1)
 
@@ -2185,7 +2210,7 @@
 
 2024-05-21
 
-**💥 Breaking change**
+**💥 破坏性变更**
 
 - **@visactor/vtable**: 透视表 getCellOriginRecord 接口返回结果变为数组结构
 

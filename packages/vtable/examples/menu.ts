@@ -33,6 +33,14 @@ export const menus = [
       {
         path: 'debug',
         name: 'issue-5114'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5146'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5027'
       }
     ]
   },
