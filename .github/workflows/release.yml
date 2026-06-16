@@ -152,7 +152,6 @@ jobs:
             date: new Date().toISOString().slice(0, 10),
             changefiles,
             langs: ['en', 'zh'],
-            reuseHarmonyFromEn: true,
             template: 'default',
           };
 
@@ -184,7 +183,6 @@ jobs:
             fs.mkdirSync('.changelog', { recursive: true });
             fs.writeFileSync('.changelog/en.md', enLines.join('\n') + '\n', 'utf8');
             fs.writeFileSync('.changelog/zh.md', zhLines.join('\n') + '\n', 'utf8');
-            fs.writeFileSync('.changelog/harmony.md', enLines.join('\n') + '\n', 'utf8');
             console.log('Wrote fallback changelog blocks for version', version);
           }
 
@@ -221,14 +219,12 @@ jobs:
                   const parsed = JSON.parse(data || '{}');
                   const en = parsed.blocks && parsed.blocks.en;
                   const zh = parsed.blocks && parsed.blocks.zh;
-                  const harmony = parsed.harmony || en;
                   if (!en || !zh) {
                     throw new Error('Missing en/zh blocks in response');
                   }
                   fs.mkdirSync('.changelog', { recursive: true });
                   fs.writeFileSync('.changelog/en.md', String(en).trimEnd() + '\n', 'utf8');
                   fs.writeFileSync('.changelog/zh.md', String(zh).trimEnd() + '\n', 'utf8');
-                  fs.writeFileSync('.changelog/harmony.md', String(harmony).trimEnd() + '\n', 'utf8');
                   console.log('Changelog blocks generated via API. traceId:', parsed.traceId || '(none)');
                 } catch (e) {
                   console.error('Failed to parse API response, fallback to template:', e.message || e);
@@ -270,19 +266,6 @@ jobs:
               echo "Missing changelog block for $lang, skip."
             fi
           done
-
-          harmony_block=".changelog/harmony.md"
-          harmony_target="packages/harmony_vtable/library/CHANGELOG.md"
-          if [ -f "$harmony_block" ]; then
-            if [ -f "$harmony_target" ]; then
-              cp "$harmony_target" "${harmony_target}.bak"
-              cat "$harmony_block" "${harmony_target}.bak" > "$harmony_target"
-            else
-              cp "$harmony_block" "$harmony_target"
-            fi
-          else
-            echo "Missing harmony changelog block, skip."
-          fi
 
       - name: Generate rush version (release)
         if: startsWith(github.ref_name, 'release/')
