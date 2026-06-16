@@ -235,7 +235,9 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
       const headerColGroup = scene.getColGroup(col, true);
       insertBefore(rightTopCornerGroup, headerColGroup, rightTopCornerGroup.firstChild as Group);
       const bottomColGroup = scene.getColGroupInBottom(col);
-      insertBefore(rightBottomCornerGroup, bottomColGroup, rightBottomCornerGroup.firstChild as Group);
+      if (bottomColGroup) {
+        insertBefore(rightBottomCornerGroup, bottomColGroup, rightBottomCornerGroup.firstChild as Group);
+      }
     }
     // reset cell y
     let x = 0;
@@ -268,12 +270,14 @@ export function dealRightFrozen(distRightFrozenCol: number, scene: Scenegraph) {
       );
       colHeaderGroup.appendChild(headerColGroup);
       const bottomColGroup = scene.getColGroupInRightBottomCorner(col);
-      bottomColGroup.setAttribute(
-        'x',
-        (bottomFrozenGroup.lastChild as Group).attribute.x +
-          table.getColWidth((bottomFrozenGroup.lastChild as Group).col)
-      );
-      bottomFrozenGroup.appendChild(bottomColGroup);
+      if (bottomColGroup) {
+        const lastBottomColGroup = bottomFrozenGroup.lastChild as Group | undefined;
+        bottomColGroup.setAttribute(
+          'x',
+          lastBottomColGroup ? lastBottomColGroup.attribute.x + table.getColWidth(lastBottomColGroup.col) : 0
+        );
+        bottomFrozenGroup.appendChild(bottomColGroup);
+      }
     }
     // reset cell y
     let x = 0;
