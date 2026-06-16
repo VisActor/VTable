@@ -88,8 +88,55 @@ jobs:
           semver_string: ${{ github.ref_name }}
           semver_pattern: '^release/(.*)$'
 
-      - name: update nextBump (release)
+      - name: Check version-policy version (release)
         if: startsWith(github.ref_name, 'release/')
+        id: release_version_policy
+        env:
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.full }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const policies = JSON.parse(fs.readFileSync('common/config/rush/version-policies.json', 'utf8'));
+          const policyVersion = policies[0] && policies[0].version;
+          const releaseVersion = process.env.RELEASE_VERSION;
+
+          const parseVersion = version => String(version).split('-')[0].split('.').map(Number);
+          const compareVersion = (a, b) => {
+            const av = parseVersion(a);
+            const bv = parseVersion(b);
+            for (let i = 0; i < Math.max(av.length, bv.length); i++) {
+              const diff = (av[i] || 0) - (bv[i] || 0);
+              if (diff !== 0) {
+                return diff;
+              }
+            }
+            return 0;
+          };
+
+          if (!releaseVersion || !policyVersion) {
+            console.error('Missing release version or version-policy version.', { releaseVersion, policyVersion });
+            process.exit(1);
+          }
+
+          const result = compareVersion(releaseVersion, policyVersion);
+          if (result < 0) {
+            console.error(
+              `Release version ${releaseVersion} is lower than version-policy version ${policyVersion}.`
+            );
+            process.exit(1);
+          }
+
+          const shouldSkip = result === 0 ? 'true' : 'false';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `skip_next_bump=${shouldSkip}\n`);
+          console.log(
+            result === 0
+              ? `Release version ${releaseVersion} equals version-policy version ${policyVersion}, skip nextBump update.`
+              : `Release version ${releaseVersion} is greater than version-policy version ${policyVersion}, update nextBump.`
+          );
+          NODE
+
+      - name: update nextBump (release)
+        if: startsWith(github.ref_name, 'release/') && steps.release_version_policy.outputs.skip_next_bump != 'true'
         uses: xile611/set-next-bump-of-rush@main
         with:
           release_version: ${{ steps.semver_release.outputs.full }}
@@ -98,8 +145,8 @@ jobs:
       - name: Generate changelog blocks from changefiles (release)
         if: startsWith(github.ref_name, 'release/')
         env:
-          CHANGELOG_API_URL: ${{ secrets.VTABLE_CHANGELOG_API_URL }}
-          CHANGELOG_API_TOKEN: ${{ secrets.VTABLE_CHANGELOG_API_TOKEN }}
+          CHANGELOG_API_URL: ${{ secrets.VCHART_CHANGELOG_API_URL }}
+          CHANGELOG_API_TOKEN: ${{ secrets.VCHART_CHANGELOG_API_TOKEN }}
           RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
         run: |
           node <<'NODE'
@@ -152,46 +199,25 @@ jobs:
             date: new Date().toISOString().slice(0, 10),
             changefiles,
             langs: ['en', 'zh'],
-            reuseHarmonyFromEn: true,
             template: 'default',
           };
 
           const baseUrl = process.env.CHANGELOG_API_URL;
           const token = process.env.CHANGELOG_API_TOKEN;
 
-          function writeFallback() {
-            const date = payload.date;
-            const enLines = [
-              `# v${version}`,
-              '',
-              date,
-              '',
-              '**🆕 New Features**',
-              '',
-              `- TODO: Fill in change details for v${version}.`,
-              '',
-            ];
-            const zhLines = [
-              `# v${version}`,
-              '',
-              date,
-              '',
-              '**🆕 新增功能**',
-              '',
-              `- TODO：补充 v${version} 的更新内容。`,
-              '',
-            ];
-            fs.mkdirSync('.changelog', { recursive: true });
-            fs.writeFileSync('.changelog/en.md', enLines.join('\n') + '\n', 'utf8');
-            fs.writeFileSync('.changelog/zh.md', zhLines.join('\n') + '\n', 'utf8');
-            fs.writeFileSync('.changelog/harmony.md', enLines.join('\n') + '\n', 'utf8');
-            console.log('Wrote fallback changelog blocks for version', version);
+          function failChangelog(message) {
+            console.error(message);
+            process.exit(1);
+          }
+
+          function validateBlock(block, lang) {
+            if (!block || /TODO/i.test(block)) {
+              throw new Error(`Invalid ${lang} changelog block: empty or contains TODO`);
+            }
           }
 
           if (!baseUrl || !token) {
-            console.log('CHANGELOG_API_URL or CHANGELOG_API_TOKEN not configured, using fallback template.');
-            writeFallback();
-            process.exit(0);
+            failChangelog('CHANGELOG_API_URL or CHANGELOG_API_TOKEN not configured.');
           }
 
           const url = new URL('/api/changelog/vtable/generate', baseUrl);
@@ -221,29 +247,26 @@ jobs:
                   const parsed = JSON.parse(data || '{}');
                   const en = parsed.blocks && parsed.blocks.en;
                   const zh = parsed.blocks && parsed.blocks.zh;
-                  const harmony = parsed.harmony || en;
                   if (!en || !zh) {
                     throw new Error('Missing en/zh blocks in response');
                   }
+                  validateBlock(String(en), 'en');
+                  validateBlock(String(zh), 'zh');
                   fs.mkdirSync('.changelog', { recursive: true });
                   fs.writeFileSync('.changelog/en.md', String(en).trimEnd() + '\n', 'utf8');
                   fs.writeFileSync('.changelog/zh.md', String(zh).trimEnd() + '\n', 'utf8');
-                  fs.writeFileSync('.changelog/harmony.md', String(harmony).trimEnd() + '\n', 'utf8');
                   console.log('Changelog blocks generated via API. traceId:', parsed.traceId || '(none)');
                 } catch (e) {
-                  console.error('Failed to parse API response, fallback to template:', e.message || e);
-                  writeFallback();
+                  failChangelog(`Failed to parse API response: ${e.message || e}`);
                 }
               } else {
-                console.error('Changelog API returned non-2xx status:', res.statusCode, data);
-                writeFallback();
+                failChangelog(`Changelog API returned non-2xx status: ${res.statusCode} ${data}`);
               }
             });
           });
 
           req.on('error', (err) => {
-            console.error('Changelog API request failed, fallback to template:', err.message || err);
-            writeFallback();
+            failChangelog(`Changelog API request failed: ${err.message || err}`);
           });
 
           req.write(body);
@@ -252,6 +275,8 @@ jobs:
 
       - name: Prepend changelog blocks into release docs (release)
         if: startsWith(github.ref_name, 'release/')
+        env:
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
         run: |
           set -euo pipefail
           mkdir -p docs/assets/changelog/en docs/assets/changelog/zh
@@ -260,29 +285,23 @@ jobs:
             block_file=".changelog/${lang}.md"
             target_file="docs/assets/changelog/${lang}/release.md"
             if [ -f "$block_file" ]; then
-              if [ -f "$target_file" ]; then
-                cp "$target_file" "${target_file}.bak"
-                cat "$block_file" "${target_file}.bak" > "$target_file"
-              else
-                cp "$block_file" "$target_file"
-              fi
+              node -e '
+                const fs = require("fs");
+                const [blockFile, targetFile, version] = process.argv.slice(1);
+                const block = fs.readFileSync(blockFile, "utf8").trimEnd() + "\n\n";
+                const oldContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, "utf8") : "";
+                const heading = `# v${version}`;
+                let contentWithoutSameVersion = oldContent;
+                if (oldContent.startsWith(`${heading}\n`) || oldContent.startsWith(`${heading}\r\n`)) {
+                  const nextVersionIndex = oldContent.slice(1).search(/\n# v\d/);
+                  contentWithoutSameVersion = nextVersionIndex >= 0 ? oldContent.slice(nextVersionIndex + 2) : "";
+                }
+                fs.writeFileSync(targetFile, block + contentWithoutSameVersion.replace(/^\n+/, ""), "utf8");
+              ' "$block_file" "$target_file" "$RELEASE_VERSION"
             else
               echo "Missing changelog block for $lang, skip."
             fi
           done
-
-          harmony_block=".changelog/harmony.md"
-          harmony_target="packages/harmony_vtable/library/CHANGELOG.md"
-          if [ -f "$harmony_block" ]; then
-            if [ -f "$harmony_target" ]; then
-              cp "$harmony_target" "${harmony_target}.bak"
-              cat "$harmony_block" "${harmony_target}.bak" > "$harmony_target"
-            else
-              cp "$harmony_block" "$harmony_target"
-            fi
-          else
-            echo "Missing harmony changelog block, skip."
-          fi
 
       - name: Generate rush version (release)
         if: startsWith(github.ref_name, 'release/')
@@ -292,44 +311,57 @@ jobs:
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_release.outputs.main }}
 
-      - name: Build vutils-extension && vtable
+      - name: Build packages
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --to @visactor/vtable
+        run: |
+          set -euo pipefail
+          package_names=()
+          while IFS= read -r package_name; do
+            [ -n "$package_name" ] && package_names+=("$package_name")
+          done < <(node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-      - name: Build vtable-extension
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'pre-release/')
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/vtable-extension
+          const packagesDir = path.join(process.cwd(), 'packages');
+          const packageNames = fs
+            .readdirSync(packagesDir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => path.join(packagesDir, entry.name, 'package.json'))
+            .filter((packageJsonPath) => fs.existsSync(packageJsonPath))
+            .map((packageJsonPath) => JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name)
+            .filter(Boolean)
+            .sort();
 
-      - name: Build react-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/react-vtable
+          console.log(packageNames.join('\n'));
+          NODE
+          )
 
-      - name: Build openinula-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/openinula-vtable
+          build_args=()
+          for package_name in "${package_names[@]}"; do
+            build_args+=(--to "$package_name")
+          done
 
-      - name: Build taro-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/taro-vtable
+          echo "Build packages: ${package_names[*]}"
+          node common/scripts/install-run-rush.js build "${build_args[@]}"
 
-      - name: Build lark-vtable
+      - name: Check npm version (release)
+        if: startsWith(github.ref_name, 'release/')
+        id: npm_version_release
         env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/lark-vtable
-
-      - name: Build wx-vtable
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build --only @visactor/wx-vtable
+          PACKAGE_VERSION: ${{ steps.semver_release.outputs.main }}
+        run: |
+          set -euo pipefail
+          if npm view "@visactor/vtable@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "Version $PACKAGE_VERSION already exists on npm, skip publish."
+            echo "skip_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version $PACKAGE_VERSION does not exist on npm, continue publish."
+            echo "skip_publish=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Publish to npm (release)
-        if: startsWith(github.ref_name, 'release/')
+        if: startsWith(github.ref_name, 'release/') && steps.npm_version_release.outputs.skip_publish != 'true'
         run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
 
       - name: Update shrinkwrap
@@ -349,6 +381,8 @@ jobs:
           if git diff --quiet; then
             echo 'No changes to commit for release branch.'
           else
+            rm -rf .changelog
+            find docs/assets/changelog -name '*.bak' -delete
             git add .
             git commit -m "build: release version ${{ steps.package_version_release.outputs.current_version }} [skip ci]" -n
             git push --no-verify origin ${{ github.ref_name }}

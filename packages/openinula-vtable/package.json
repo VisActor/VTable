@@ -1,6 +1,6 @@
 {
   "name": "@visactor/openinula-vtable",
-  "version": "1.26.1",
+  "version": "1.26.2",
   "description": "The openinula version of VTable",
   "keywords": [
     "openinula",
@@ -44,7 +44,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.26.2",
     "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
@@ -91,5 +91,10 @@
   },
   "peerDependencies": {
     "openinula": "~0.1.2-SNAPSHOT"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/openinula-vtable"
   }
 }

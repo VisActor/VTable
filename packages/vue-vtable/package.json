@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.26.1",
+  "version": "1.26.2",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
@@ -59,7 +59,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.26.2",
     "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
@@ -107,5 +107,10 @@
     "axios": "^1.4.0",
     "eslint-plugin-vue": "^9.26.0",
     "vue-eslint-parser": "^9.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/vue-vtable"
   }
 }

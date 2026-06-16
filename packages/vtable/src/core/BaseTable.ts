@@ -2503,17 +2503,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** 获取表格body部分的显示单元格范围 */
   getBodyVisibleCellRange() {
     const { scrollTop, scrollLeft } = this;
-    const frozenRowsHeight = this.getFrozenRowsHeight();
     const frozenColsContentWidth = this.getFrozenColsContentWidth();
     const frozenColsOffset = this.getFrozenColsOffset();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
     // 计算非冻结
-    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
+    const rowStart = Math.max(this.getTargetRowAt(scrollTop + 1)?.row ?? -1, this.frozenRowCount);
     const { col: colStart } = this.getColAt(scrollLeft + frozenColsContentWidth + 1);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
-        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight).row
+        ? Math.max(
+            this.getTargetRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight)?.row ?? -1,
+            rowStart
+          )
         : this.rowCount - 1;
     const colEnd =
       this.getAllColsWidth() > this.tableNoFrameWidth
@@ -2532,13 +2534,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getBodyVisibleRowRange(start_deltaY: number = 0, end_deltaY: number = 0) {
     const { scrollTop } = this;
-    const frozenRowsHeight = this.getFrozenRowsHeight();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
     // 计算非冻结
-    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1 + start_deltaY);
+    const rowStart = Math.max(this.getTargetRowAt(scrollTop + 1 + start_deltaY)?.row ?? -1, this.frozenRowCount);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
-        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + end_deltaY).row
+        ? Math.max(
+            this.getTargetRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + end_deltaY)?.row ??
+              -1,
+            rowStart
+          )
         : this.rowCount - 1;
     if (rowEnd < 0) {
       return null;

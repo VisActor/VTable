@@ -1566,6 +1566,11 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   _refreshHierarchyState(col: number, row: number, recalculateColWidths: boolean = true, beforeUpdateCell?: Function) {
     const oldFrozenColCount = this.frozenColCount;
     const oldFrozenRowCount = this.frozenRowCount;
+    const sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    const getMaxScrollTop = () =>
+      Math.max(0, this.getAllRowsHeight() - (this.scenegraph?.height ?? this.tableNoFrameHeight) - sizeTolerance);
+    const oldMaxScrollTop = getMaxScrollTop();
+    const isScrollToBottom = oldMaxScrollTop > 0 && this.scrollTop >= oldMaxScrollTop - 1;
     const visibleStartRow = this.getBodyVisibleRowRange().rowStart;
     this.internalProps._oldRowCount = this.rowCount;
     this.internalProps._oldColCount = this.colCount;
@@ -1640,9 +1645,18 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.clearCellStyleCache();
       this.scenegraph.createSceneGraph();
       this.scrollToRow(visibleStartRow);
+      if (isScrollToBottom) {
+        this.clearCorrectTimer();
+        this.setScrollTop(Number.MAX_SAFE_INTEGER);
+      }
       // this.renderWithRecreateCells();
     }
     this.reactCustomLayout?.updateAllCustomCell();
+
+    if (isScrollToBottom) {
+      this.clearCorrectTimer();
+      this.setScrollTop(Number.MAX_SAFE_INTEGER);
+    }
 
     if (checkHasChart) {
       // 检查更新节点状态后总宽高未撑满autoFill是否在起作用
