@@ -2,19 +2,14 @@
 
 2026-06-16
 
-**🐛 问题修复**
+**🐛 功能修复**
 
-- **@visactor/vtable**: preserve sticky group position after toggle
-- **@visactor/vtable**: avoid selection gap with frozen rows
-- **@visactor/vtable**: preserve hidden column order after filter update
-- **@visactor/vtable**: 修复 regression from #5137 fix which broke nested header drag and exposed internal state
-- **@visactor/vtable**: 修复 an 问题 where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell （GitHub #5146）
-
-**🔨 维护与杂项**
-
-- **@visactor/vtable**: Merge pull request #5144 from VisActor/fix/问题-5027 fix: avoid selection gap with frozen rows
-
-**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.1...v1.26.2
+- **@visactor/vtable**: 修复分组展开或折叠后 sticky group 位置未正确保持的问题
+- **@visactor/vtable**: 修复筛选更新后隐藏列顺序被打乱的问题
+- **@visactor/vtable**: 修复 #5137 修复后引入的回归问题，避免嵌套表头拖拽异常并暴露内部状态
+- **@visactor/vtable**: 修复使用 `Shift` 配合方向键进行多选时，选区在第二个单元格后无法继续扩展的问题 [[#5146](https://github.com/VisActor/VTable/issues/5146)](https://github.com/VisActor/VTable/issues/5146)
+- **@visactor/vtable**: 修复冻结列场景下出现选区空隙的问题
+- **@visactor/vtable**: 修复透视表在底部折叠或展开层级节点时滚动位置异常的问题
 
 [更多详情请查看 v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
 
