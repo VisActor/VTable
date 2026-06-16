@@ -4,19 +4,12 @@
 
 **🐛 Bug Fixes**
 
-- **@visactor/vtable**: preserve sticky group position after toggle
-- **@visactor/vtable**: avoid selection gap with frozen rows
-- **@visactor/vtable**: preserve hidden column order after filter update
-- **@visactor/vtable**: resolve regression from #5137 fix which broke nested header drag and exposed internal state
-- **@visactor/vtable**: Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)
-
-**🔨 Chores**
-
-- **@visactor/vtable**: Merge pull request #5144 from VisActor/fix/issue-5027
-
-fix: avoid selection gap with frozen rows
-
-**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.1...v1.26.2
+- **@visactor/vtable**: preserve sticky group position after expand or collapse
+- **@visactor/vtable**: preserve hidden column order after filter updates
+- **@visactor/vtable**: resolve the regression introduced by the #5137 fix that broke nested header dragging and exposed internal state
+- **@visactor/vtable**: fix an issue where keyboard multi-selection with `Shift` plus arrow keys stopped expanding after the second cell [#5146](https://github.com/VisActor/VTable/issues/5146)
+- **@visactor/vtable**: avoid selection gaps with frozen rows
+- **@visactor/vtable**: fix unexpected scroll position changes when collapsing or expanding hierarchy nodes at the bottom of a pivot table
 
 [more detail about v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
 
@@ -24,20 +17,23 @@ fix: avoid selection gap with frozen rows
 
 2026-05-11
 
+
 **🆕 New feature**
 
 - **@visactor/vtable-sheet**: add sheet formula type
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix fill handle logic about getting cell value [[#5096](https://github.com/VisActor/VTable/issues/5096)](https://github.com/VisActor/VTable/issues/5096)
+- **@visactor/vtable**: fix fill handle logic about getting cell value [#5096](https://github.com/VisActor/VTable/issues/5096)
 - **@visactor/vtable**: fix aggregation precisionAdd and precisionSub precision issue
 - **@visactor/vtable**: fix dblclickHandler not handling right click
-- **@visactor/vtable**: fix edit cell invalidateNotExit issue [[#5114](https://github.com/VisActor/VTable/issues/5114)](https://github.com/VisActor/VTable/issues/5114)
-- **@visactor/vtable**: fix pivot sort state display error when rows and columns have the same dimension [[#5055](https://github.com/VisActor/VTable/issues/5055)](https://github.com/VisActor/VTable/issues/5055)
-- **@visactor/vtable-sheet**: fix blank selection issue when moving selected cell with ArrowRight [[#5113](https://github.com/VisActor/VTable/issues/5113)](https://github.com/VisActor/VTable/issues/5113)
-- **@visactor/vtable-plugin**: fix incorrect search results when searching text in tree table [[#5071](https://github.com/VisActor/VTable/issues/5071)](https://github.com/VisActor/VTable/issues/5071)
+- **@visactor/vtable**: fix edit cell invalidateNotExit issue [#5114](https://github.com/VisActor/VTable/issues/5114)
+- **@visactor/vtable**: fix pivot sort state display error when rows and columns have the same dimension [#5055](https://github.com/VisActor/VTable/issues/5055)
+- **@visactor/vtable-sheet**: fix blank selection issue when moving selected cell with ArrowRight [#5113](https://github.com/VisActor/VTable/issues/5113)
+- **@visactor/vtable-plugin**: fix incorrect search results when searching text in tree table [#5071](https://github.com/VisActor/VTable/issues/5071)
 - **@visactor/vue-vtable**: fix package build export files
+
+
 
 [more detail about v1.26.1](https://github.com/VisActor/VTable/releases/tag/v1.26.1)
 
