@@ -7,6 +7,7 @@ on:
 jobs:
   update-changelog-after-publish-a-release:
     name: GitHub Actions Test
+    if: ${{ false }}
     runs-on: macOS-latest
 
     strategy:
