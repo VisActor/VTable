@@ -145,8 +145,8 @@ jobs:
       - name: Generate changelog blocks from changefiles (release)
         if: startsWith(github.ref_name, 'release/')
         env:
-          CHANGELOG_API_URL: ${{ secrets.VCHART_CHANGELOG_API_URL }}
-          CHANGELOG_API_TOKEN: ${{ secrets.VCHART_CHANGELOG_API_TOKEN }}
+          CHANGELOG_API_URL: ${{ secrets.VTABLE_CHANGELOG_API_URL }}
+          CHANGELOG_API_TOKEN: ${{ secrets.VTABLE_CHANGELOG_API_TOKEN }}
           RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
         run: |
           node <<'NODE'
@@ -205,38 +205,19 @@ jobs:
           const baseUrl = process.env.CHANGELOG_API_URL;
           const token = process.env.CHANGELOG_API_TOKEN;
 
-          function writeFallback() {
-            const date = payload.date;
-            const enLines = [
-              `# v${version}`,
-              '',
-              date,
-              '',
-              '**🆕 New Features**',
-              '',
-              `- TODO: Fill in change details for v${version}.`,
-              '',
-            ];
-            const zhLines = [
-              `# v${version}`,
-              '',
-              date,
-              '',
-              '**🆕 新增功能**',
-              '',
-              `- TODO：补充 v${version} 的更新内容。`,
-              '',
-            ];
-            fs.mkdirSync('.changelog', { recursive: true });
-            fs.writeFileSync('.changelog/en.md', enLines.join('\n') + '\n', 'utf8');
-            fs.writeFileSync('.changelog/zh.md', zhLines.join('\n') + '\n', 'utf8');
-            console.log('Wrote fallback changelog blocks for version', version);
+          function failChangelog(message) {
+            console.error(message);
+            process.exit(1);
+          }
+
+          function validateBlock(block, lang) {
+            if (!block || /TODO/i.test(block)) {
+              throw new Error(`Invalid ${lang} changelog block: empty or contains TODO`);
+            }
           }
 
           if (!baseUrl || !token) {
-            console.log('CHANGELOG_API_URL or CHANGELOG_API_TOKEN not configured, using fallback template.');
-            writeFallback();
-            process.exit(0);
+            failChangelog('CHANGELOG_API_URL or CHANGELOG_API_TOKEN not configured.');
           }
 
           const url = new URL('/api/changelog/vtable/generate', baseUrl);
@@ -269,24 +250,23 @@ jobs:
                   if (!en || !zh) {
                     throw new Error('Missing en/zh blocks in response');
                   }
+                  validateBlock(String(en), 'en');
+                  validateBlock(String(zh), 'zh');
                   fs.mkdirSync('.changelog', { recursive: true });
                   fs.writeFileSync('.changelog/en.md', String(en).trimEnd() + '\n', 'utf8');
                   fs.writeFileSync('.changelog/zh.md', String(zh).trimEnd() + '\n', 'utf8');
                   console.log('Changelog blocks generated via API. traceId:', parsed.traceId || '(none)');
                 } catch (e) {
-                  console.error('Failed to parse API response, fallback to template:', e.message || e);
-                  writeFallback();
+                  failChangelog(`Failed to parse API response: ${e.message || e}`);
                 }
               } else {
-                console.error('Changelog API returned non-2xx status:', res.statusCode, data);
-                writeFallback();
+                failChangelog(`Changelog API returned non-2xx status: ${res.statusCode} ${data}`);
               }
             });
           });
 
           req.on('error', (err) => {
-            console.error('Changelog API request failed, fallback to template:', err.message || err);
-            writeFallback();
+            failChangelog(`Changelog API request failed: ${err.message || err}`);
           });
 
           req.write(body);
@@ -295,6 +275,8 @@ jobs:
 
       - name: Prepend changelog blocks into release docs (release)
         if: startsWith(github.ref_name, 'release/')
+        env:
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
         run: |
           set -euo pipefail
           mkdir -p docs/assets/changelog/en docs/assets/changelog/zh
@@ -303,12 +285,19 @@ jobs:
             block_file=".changelog/${lang}.md"
             target_file="docs/assets/changelog/${lang}/release.md"
             if [ -f "$block_file" ]; then
-              if [ -f "$target_file" ]; then
-                cp "$target_file" "${target_file}.bak"
-                cat "$block_file" "${target_file}.bak" > "$target_file"
-              else
-                cp "$block_file" "$target_file"
-              fi
+              node -e '
+                const fs = require("fs");
+                const [blockFile, targetFile, version] = process.argv.slice(1);
+                const block = fs.readFileSync(blockFile, "utf8").trimEnd() + "\n\n";
+                const oldContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, "utf8") : "";
+                const heading = `# v${version}`;
+                let contentWithoutSameVersion = oldContent;
+                if (oldContent.startsWith(`${heading}\n`) || oldContent.startsWith(`${heading}\r\n`)) {
+                  const nextVersionIndex = oldContent.slice(1).search(/\n# v\d/);
+                  contentWithoutSameVersion = nextVersionIndex >= 0 ? oldContent.slice(nextVersionIndex + 2) : "";
+                }
+                fs.writeFileSync(targetFile, block + contentWithoutSameVersion.replace(/^\n+/, ""), "utf8");
+              ' "$block_file" "$target_file" "$RELEASE_VERSION"
             else
               echo "Missing changelog block for $lang, skip."
             fi
@@ -392,6 +381,8 @@ jobs:
           if git diff --quiet; then
             echo 'No changes to commit for release branch.'
           else
+            rm -rf .changelog
+            find docs/assets/changelog -name '*.bak' -delete
             git add .
             git commit -m "build: release version ${{ steps.package_version_release.outputs.current_version }} [skip ci]" -n
             git push --no-verify origin ${{ github.ref_name }}
