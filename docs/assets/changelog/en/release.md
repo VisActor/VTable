@@ -2,6 +2,28 @@
 
 2026-06-16
 
+# v1.26.2
+
+2026-06-16
+
+**🐛 Bug Fixes**
+
+- **@visactor/vtable**: preserve sticky group position after expand or collapse
+- **@visactor/vtable**: preserve hidden column order after filter updates
+- **@visactor/vtable**: resolve the regression introduced by the [#5137](https://github.com/VisActor/VTable/issues/5137) fix that broke nested header dragging and exposed internal state
+- **@visactor/vtable**: fix an issue where keyboard multi-selection with `Shift` plus arrow keys stopped expanding after the second cell [[#5146](https://github.com/VisActor/VTable/issues/5146)](https://github.com/VisActor/VTable/issues/5146)
+- **@visactor/vtable**: avoid selection gaps with frozen rows
+- **@visactor/vtable**: fix unexpected scroll position changes when collapsing or expanding hierarchy nodes at the bottom of a pivot table
+
+[more detail about v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
+
+
+[more detail about v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
+
+# v1.26.2
+
+2026-06-16
+
 **🐛 Bug Fixes**
 
 - **@visactor/vtable**: preserve sticky group position after expand or collapse
