@@ -145,8 +145,8 @@ jobs:
       - name: Generate changelog blocks from changefiles (release)
         if: startsWith(github.ref_name, 'release/')
         env:
-          CHANGELOG_API_URL: ${{ secrets.VCHART_CHANGELOG_API_URL }}
-          CHANGELOG_API_TOKEN: ${{ secrets.VCHART_CHANGELOG_API_TOKEN }}
+          CHANGELOG_API_URL: ${{ secrets.VTABLE_CHANGELOG_API_URL }}
+          CHANGELOG_API_TOKEN: ${{ secrets.VTABLE_CHANGELOG_API_TOKEN }}
           RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
         run: |
           node <<'NODE'

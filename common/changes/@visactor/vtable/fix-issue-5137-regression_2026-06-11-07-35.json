@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: resolve regression from #5137 fix which broke nested header drag and exposed internal state\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
