@@ -1,3 +1,25 @@
+# v1.26.2
+
+2026-06-16
+
+**🐛 Bug Fixes**
+
+- **@visactor/vtable**: preserve sticky group position after toggle
+- **@visactor/vtable**: avoid selection gap with frozen rows
+- **@visactor/vtable**: preserve hidden column order after filter update
+- **@visactor/vtable**: resolve regression from #5137 fix which broke nested header drag and exposed internal state
+- **@visactor/vtable**: Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)
+
+**🔨 Chores**
+
+- **@visactor/vtable**: Merge pull request #5144 from VisActor/fix/issue-5027
+
+fix: avoid selection gap with frozen rows
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.1...v1.26.2
+
+[more detail about v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
+
 # v1.26.1
 
 2026-05-11

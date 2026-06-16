@@ -2,9 +2,21 @@
 
 2026-06-16
 
-**🆕 新增功能**
+**🐛 问题修复**
 
-- TODO：补充 v1.26.2 的更新内容。
+- **@visactor/vtable**: preserve sticky group position after toggle
+- **@visactor/vtable**: avoid selection gap with frozen rows
+- **@visactor/vtable**: preserve hidden column order after filter update
+- **@visactor/vtable**: 修复 regression from #5137 fix which broke nested header drag and exposed internal state
+- **@visactor/vtable**: 修复 an 问题 where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell （GitHub #5146）
+
+**🔨 维护与杂项**
+
+- **@visactor/vtable**: Merge pull request #5144 from VisActor/fix/问题-5027 fix: avoid selection gap with frozen rows
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.1...v1.26.2
+
+[更多详情请查看 v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
 
 # v1.26.1
 
