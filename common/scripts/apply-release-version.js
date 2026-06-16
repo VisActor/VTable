@@ -4,7 +4,8 @@ const parseVersion = require('./parse-version');
 
 
 function run() {
-  const preReleaseName = process.argv.slice(2)[0];
+  const preReleaseNameArg = process.argv.slice(2)[0];
+  const preReleaseName = preReleaseNameArg === 'none' ? '' : preReleaseNameArg;
   const nextVersionOrNextBump = process.argv.slice(2)[1];
   const buildName = process.argv.slice(2)[2];
   const nextBump = checkAndUpdateNextBump(nextVersionOrNextBump);

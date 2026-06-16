@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.26.1",
+  "version": "1.26.2-none",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -61,9 +61,9 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
-    "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-gantt": "workspace:*",
+    "@visactor/vtable": "workspace:1.26.2-none",
+    "@visactor/vtable-editors": "workspace:1.26.2-none",
+    "@visactor/vtable-gantt": "workspace:1.26.2-none",
     "@visactor/vchart": "2.1.0-alpha.9",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",

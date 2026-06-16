@@ -84,7 +84,7 @@ import {
 //   registerVideoCell
 // } from './scenegraph/group-creater/cell-type';
 
-const LAYOUT_COLUMN_STATE_KEYS = ['level', 'startIndex', 'id', 'levelSpan', 'size', 'startInTotal'];
+const LAYOUT_COLUMN_STATE_KEYS = ['level', 'startIndex', 'id', 'levelSpan', 'size', 'startInTotal', 'hierarchyState'];
 
 function clearLayoutColumnState(columns: ColumnsDefine | undefined) {
   columns?.forEach(column => {
