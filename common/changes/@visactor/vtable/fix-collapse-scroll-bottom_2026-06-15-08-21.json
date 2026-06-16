@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Merge pull request #5144 from VisActor/fix/issue-5027\n\nfix: avoid selection gap with frozen rows\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

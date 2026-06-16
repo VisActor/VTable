@@ -1062,17 +1062,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return null;
   }
   private syncColumnsStateFromLayoutMap() {
-    const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
-    let visibleIndex = 0;
-    const nextColumns = this.internalProps.columns.map(column => {
-      if (column.hide === true) {
-        return column;
-      }
-      const nextVisibleColumn = visibleColumns[visibleIndex];
-      visibleIndex += 1;
-      return nextVisibleColumn ?? column;
-    });
-    this.internalProps.columns = cloneDeepSpec(nextColumns, ['children']);
+    const nextColumns = cloneDeepSpec(this.internalProps.columns, ['children']);
+    const cleanColumns = (columns: any[]) => {
+      columns.forEach(col => {
+        delete col.level;
+        delete col.size;
+        delete col.startInTotal;
+        delete col.startIndex;
+        delete col.id;
+        delete col.hierarchyState;
+        if (col.columns) {
+          cleanColumns(col.columns);
+        }
+      });
+    };
+    cleanColumns(nextColumns);
     this.options.columns = nextColumns;
     if (this.options.header) {
       this.options.header = nextColumns;

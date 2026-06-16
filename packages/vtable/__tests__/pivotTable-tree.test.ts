@@ -509,3 +509,154 @@ describe('pivotTableTree init test', () => {
     pivotTableTree.release();
   });
 });
+
+describe('pivotTable grid-tree hierarchy scroll', () => {
+  test('keeps bottom scroll position after collapsing a visible bottom row tree node', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const rowTree = Array.from({ length: 80 }, (_, index) => ({
+      dimensionKey: 'category',
+      value: index % 2 === 0 ? '餐饮' : `category-${index}`,
+      hierarchyState: 'expand',
+      children: [
+        {
+          dimensionKey: 'subCategory',
+          value: `sub-${index}`
+        }
+      ]
+    }));
+    const columnTree = Array.from({ length: 20 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree,
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'category',
+          title: 'category',
+          width: 200
+        },
+        {
+          dimensionKey: 'subCategory',
+          title: 'subCategory',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const getMaxScrollTop = () => Math.max(0, pivotTable.getAllRowsHeight() - pivotTable.scenegraph.height);
+
+      pivotTable.setScrollTop(Number.MAX_SAFE_INTEGER);
+      expect(pivotTable.scrollTop).toBe(getMaxScrollTop());
+
+      const visibleRowRange = pivotTable.getBodyVisibleRowRange();
+      let targetRow = -1;
+      for (let row = visibleRowRange.rowStart; row <= visibleRowRange.rowEnd; row++) {
+        if (pivotTable.getCellValue(0, row) === '餐饮' && pivotTable.getHierarchyState(0, row) === 'expand') {
+          targetRow = row;
+          break;
+        }
+      }
+      expect(targetRow).toBeGreaterThanOrEqual(0);
+
+      pivotTable.toggleHierarchyState(0, targetRow);
+
+      expect(pivotTable.scrollTop).toBe(getMaxScrollTop());
+    } finally {
+      pivotTable.release();
+    }
+  });
+
+  test('does not scroll to bottom after expanding a row tree node when table was not scrollable', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const columnTree = Array.from({ length: 5 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree: [
+        {
+          dimensionKey: 'province',
+          value: '浙江省',
+          hierarchyState: 'collapse',
+          children: Array.from({ length: 20 }, (_, index) => ({
+            dimensionKey: 'city',
+            value: `city-${index}`
+          }))
+        },
+        {
+          dimensionKey: 'province',
+          value: '江苏省'
+        }
+      ],
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'province',
+          title: 'province',
+          width: 200
+        },
+        {
+          dimensionKey: 'city',
+          title: 'city',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const getMaxScrollTop = () => Math.max(0, pivotTable.getAllRowsHeight() - pivotTable.scenegraph.height);
+
+      expect(pivotTable.scrollTop).toBe(0);
+      expect(getMaxScrollTop()).toBe(0);
+      expect(pivotTable.getHierarchyState(0, 1)).toBe('collapse');
+
+      pivotTable.toggleHierarchyState(0, 1);
+
+      expect(getMaxScrollTop()).toBeGreaterThan(0);
+      expect(pivotTable.scrollTop).toBe(0);
+    } finally {
+      pivotTable.release();
+    }
+  });
+});
