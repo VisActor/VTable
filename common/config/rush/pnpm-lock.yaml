@@ -3565,7 +3565,7 @@ packages:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
 
   '@visactor/vchart@2.1.0-alpha.18':
-    resolution: {integrity: sha512-TQVNLaxrIbumI2skEoJ3WU1AjvnErf7fahodk+OIcAcYUAGtIyFf68sO0U6V1AMTPhvPcI+oEGoyMgmPeBfkDg==}
+    resolution: {integrity: sha512-rY3yT5Kl3Qu+OTSUMP7Gu6rXGZQaaNJhQT4yF9D2SOU1tZRYc64cfC2c3DWBQh5mv49P3l+JKQjGGHqAe5z5/A==}
 
   '@visactor/vdataset@1.0.23':
     resolution: {integrity: sha512-zrLk9FBUWJoW6b30XnPKzXwAXl8USdLDfed6QZLsmdkylRU8V7yZeXE2aKwU8Lg1U4HmQngqmqOx7/QlbX44Tg==}
@@ -3574,19 +3574,19 @@ packages:
     resolution: {integrity: sha512-fK1f5LmuumhYanLArk5yrT4BZxu4IAmdc8WMwfB/KAvV+2dTPFuBUMWbWnDl0siQoU9SX9l/bLozUnI9n7BwBQ==}
 
   '@visactor/vrender-animate@1.1.0-alpha.27':
-    resolution: {integrity: sha512-shcWacvEJ5FXbbOlMHtZKRFr2KrCtdiPrMMlUiuaZJK7rJ/Wm3Y/ATEksiqzTN0SUOsYH+G/1JTcKc2Pdf5xzw==}
+    resolution: {integrity: sha512-8b7kmHisbRa1j2xbiPj4VFtbtw1RolBuqHOJBtuEN0U/KDrGzNYSCKC7DyTcAyty/aXOGpfnt+sIjfA4Y0ADbw==}
 
   '@visactor/vrender-components@1.1.0-alpha.27':
-    resolution: {integrity: sha512-o72vPXrZY9K/uu49E1tjfRHCKznNcrqAdE4EEI48paqKCX3qoK38QzdUvkFt68srrWVG0lVmwWV/fGg72XGjrw==}
+    resolution: {integrity: sha512-l2gnaUb5Cj1AJpOilCOEv+xKS+pje219x0Y/bivxToPR1J84oOgj8TMQA7jPIQ30F8Fmxh+QIBTqxe/bui+9Eg==}
 
   '@visactor/vrender-core@1.1.0-alpha.27':
-    resolution: {integrity: sha512-3JenybipQI8U1kK/P5w72LDyQOLUC0cBnUyteEZhUOH7dToyLNXv2x2HzTvMDolYtifd4jbGedZkqb5Bnb7/7g==}
+    resolution: {integrity: sha512-RbEzQ0K1ONxaPMTKPb/DYiQwKuINAcsoGFZJWfZHFVlMgYMk3E30h4RFv06JI7leX8LGIEswq1jq4gnLESIqgA==}
 
   '@visactor/vrender-kits@1.1.0-alpha.27':
-    resolution: {integrity: sha512-OED02T92OeiWng/7uN7Oa2479kgWroBmxwn/QLDN8z/USzWJr63VO1uKUAtxi8WIQo8Aal2fVo4PCie0aOlwpg==}
+    resolution: {integrity: sha512-pHir9VqOolL0+/Kiq1Knt9Jpe6YZVPgj1AGqZdjBR+aVwL2gdC2AU9YFEBw0H9gopC4dv0KPW4GyJqhhrhQqhw==}
 
   '@visactor/vrender@1.1.0-alpha.27':
-    resolution: {integrity: sha512-SSDapsXKM88RLtcQKMs+StBe5DxetJOxOIAWGu0Sl5eCbdCp3kHJ2r+YUbKaMwk/4s2tAaNVXfXmmm5B+vfIpg==}
+    resolution: {integrity: sha512-sj8p7thffFX54Tirjl1AebZ5qMjbRegQPCfLzYWRxpasgLgvInF3zRHp3R/I/KvT06kdqRLJWWmkIDqjgjOdrg==}
 
   '@visactor/vscale@1.0.23':
     resolution: {integrity: sha512-XePhYuRoNAp+8MeSMuEOOvhVAlOwvM1sDT2yFxE6zdwVB2GjZk8mH+5N2xQGQWk75YmGJjlJASFtgwjlb1yWxw==}
@@ -3595,7 +3595,7 @@ packages:
     resolution: {integrity: sha512-PRxjplZF1/Qdsflb1hYh9DGGJdblq91yIG7CCC6MIlMMSlDYEAMJzJ9y2clnR1MgWa2AsAtMtuu+MSdG3DctUA==}
 
   '@visactor/vutils-extension@2.1.0-alpha.18':
-    resolution: {integrity: sha512-TZ12sCLSOEpN3AGwvO3iNV0RGHyymplyXRTj4+YakJhbEc7JTRJBnGN5Pmxv2Dfn4TSplwI1raHJKayR8UkSEA==}
+    resolution: {integrity: sha512-lFbAKkac8m1rDp06d6NwL/QEZakHZLPNgYp2FCq9kvhjIAJLloh3jFtQz84xVS2ezC+55oDrqotPO8zqTqlmUA==}
 
   '@visactor/vutils@1.0.23':
     resolution: {integrity: sha512-M8SLqgdHhKN8QmQKTWD1gzEaHptpIV9pvMYvC6+VeOsqYvZZ6UdhSCAAczTYVo+m/uwcEC2JHSUspbrs8rzlRQ==}

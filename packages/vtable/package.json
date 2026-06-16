@@ -52,7 +52,7 @@
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "dependencies": {
-    "@visactor/vtable-editors": "workspace:1.26.2-none",
+    "@visactor/vtable-editors": "workspace:1.26.2",
     "@visactor/vrender": "1.1.0-alpha.27",
     "@visactor/vrender-core": "1.1.0-alpha.27",
     "@visactor/vrender-kits": "1.1.0-alpha.27",
