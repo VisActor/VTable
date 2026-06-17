@@ -40,6 +40,7 @@ module.exports = {
       statements: 60
     }
   },
+  cacheDirectory: '<rootDir>/.jest-cache',
   moduleNameMapper: {
     'd3-color': path.resolve(__dirname, './node_modules/d3-color/dist/d3-color.min.js'),
     'd3-array': path.resolve(process.cwd(), './node_modules/d3-array/dist/d3-array.min.js'),
