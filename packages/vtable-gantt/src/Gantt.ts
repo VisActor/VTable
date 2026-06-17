@@ -1219,7 +1219,7 @@ export class Gantt extends EventTarget {
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(indexs) ? indexs : index);
       // 递归更新父级project任务的时间范围
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
@@ -1240,7 +1240,7 @@ export class Gantt extends EventTarget {
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(indexs) ? indexs : index);
       // 递归更新父级project任务的时间范围
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
@@ -1263,7 +1263,7 @@ export class Gantt extends EventTarget {
     if (!isValid(sub_task_index)) {
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(indexs) ? indexs : index);
       // 递归更新父级project任务的时间范围
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
@@ -1286,7 +1286,7 @@ export class Gantt extends EventTarget {
     if (progressField) {
       taskRecord[progressField] = progress;
       const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(indexs) ? indexs : index);
       this._refreshTaskBar(index, sub_task_index);
     }
   }
