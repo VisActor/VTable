@@ -1,5 +1,5 @@
 import type { Stage } from '@visactor/vtable/es/vrender';
-import { container, Group, vglobal, createStageFromVRenderApp } from '@visactor/vtable/es/vrender';
+import { container, Group, createStageFromVRenderApp } from '@visactor/vtable/es/vrender';
 import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';
@@ -49,7 +49,6 @@ export class Scenegraph {
       // width = table.canvasWidth;
       // height = table.canvasHeight;
     } else {
-      vglobal.setEnv('browser');
       width = gantt.canvas.width;
       height = gantt.canvas.height;
     }
@@ -136,7 +135,6 @@ export class Scenegraph {
     let height;
     if (Env.mode === 'node') {
     } else {
-      vglobal.setEnv('browser');
       width = gantt.canvas.width;
       height = gantt.canvas.height;
     }
