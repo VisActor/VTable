@@ -1,6 +1,6 @@
 import { Text } from '../../src/vrender';
 import { Group } from '../../src/scenegraph/graphic/group';
-import { insertTextBeforeCellIcons } from '../../src/scenegraph/utils/text-icon-layout';
+import { dealWithIcon, insertTextBeforeCellIcons } from '../../src/scenegraph/utils/text-icon-layout';
 
 describe('text icon layout insertion', () => {
   test('clones ancestor text before inserting it into a cell group', () => {
@@ -24,5 +24,19 @@ describe('text icon layout insertion', () => {
 
     cellGroup.removeAllChild();
     (cellGroup as any).parent = null;
+  });
+
+  test('maps circle image icons to native image corner radius', () => {
+    const iconMark = dealWithIcon({
+      type: 'image',
+      src: 'avatar',
+      name: 'avatar_pic',
+      shape: 'circle',
+      width: 30,
+      height: 20
+    } as any);
+
+    expect(iconMark.attribute.shape).toBe('circle');
+    expect(iconMark.attribute.cornerRadius).toBe(10);
   });
 });

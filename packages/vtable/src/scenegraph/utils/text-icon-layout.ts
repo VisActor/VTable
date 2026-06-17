@@ -581,6 +581,11 @@ export function dealWithIcon(
 
   if ('shape' in icon && icon.shape === 'circle') {
     iconAttribute.shape = icon.shape;
+    const iconWidth = icon.width ?? icon.height;
+    const iconHeight = icon.height ?? icon.width;
+    if (isNumber(iconWidth) && isNumber(iconHeight)) {
+      iconAttribute.cornerRadius = Math.min(iconWidth, iconHeight) / 2;
+    }
   }
 
   if (mark) {
