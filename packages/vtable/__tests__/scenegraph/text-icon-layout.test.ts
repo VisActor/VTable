@@ -26,7 +26,7 @@ describe('text icon layout insertion', () => {
     (cellGroup as any).parent = null;
   });
 
-  test('maps circle image icons to native image corner radius', () => {
+  test('keeps circle image icon shape for image render contribution', () => {
     const iconMark = dealWithIcon({
       type: 'image',
       src: 'avatar',
@@ -37,6 +37,6 @@ describe('text icon layout insertion', () => {
     } as any);
 
     expect(iconMark.attribute.shape).toBe('circle');
-    expect(iconMark.attribute.cornerRadius).toBe(10);
+    expect(iconMark.attribute.cornerRadius).toBeUndefined();
   });
 });

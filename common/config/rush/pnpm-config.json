@@ -84,11 +84,11 @@
    */
   "globalOverrides": {
     "@visactor/vchart": "2.1.0-alpha.18",
-    "@visactor/vrender": "1.1.0-alpha.27",
-    "@visactor/vrender-core": "1.1.0-alpha.27",
-    "@visactor/vrender-kits": "1.1.0-alpha.27",
-    "@visactor/vrender-components": "1.1.0-alpha.27",
-    "@visactor/vrender-animate": "1.1.0-alpha.27"
+    "@visactor/vrender": "1.1.0-alpha.28",
+    "@visactor/vrender-core": "1.1.0-alpha.28",
+    "@visactor/vrender-kits": "1.1.0-alpha.28",
+    "@visactor/vrender-components": "1.1.0-alpha.28",
+    "@visactor/vrender-animate": "1.1.0-alpha.28"
   },
   /**
    * The `globalPeerDependencyRules` setting provides various settings for suppressing validation errors

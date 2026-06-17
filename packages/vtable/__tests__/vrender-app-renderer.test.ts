@@ -9,6 +9,11 @@ type RendererWithGroupContributions = {
   _groupRenderContribitions?: { constructor?: { name?: string } }[];
 };
 
+type RendererWithRenderContributions = {
+  constructor?: { name?: string };
+  _renderContribitions?: { constructor?: { name?: string } }[];
+};
+
 type PickerWithContains = {
   constructor?: { name?: string };
   type?: string;
@@ -45,6 +50,63 @@ describe('VRender app renderer installation', () => {
       );
 
       expect(contributionNames).toContain('SplitGroupAfterRenderContribution');
+    } finally {
+      stage.release();
+      releaseAppRef();
+    }
+  });
+
+  test('uses the VTable image renderer contributions for app-scoped stages', () => {
+    const canvas = document.createElement('canvas');
+    const { app, stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas,
+        width: 100,
+        height: 100
+      },
+      { mode: 'browser', scope: 'unit-image-renderer-contributions' }
+    );
+
+    try {
+      const imageRenderer = app.registry.renderer
+        .getAll()
+        .find(renderer => renderer.constructor?.name === 'DefaultCanvasImageRender') as
+        | RendererWithRenderContributions
+        | undefined;
+
+      const contributionNames = imageRenderer?._renderContribitions?.map(
+        contribution => contribution.constructor?.name
+      );
+
+      expect(contributionNames).toContain('BeforeImageRenderContribution');
+      expect(contributionNames).toContain('AfterImageRenderContribution');
+    } finally {
+      stage.release();
+      releaseAppRef();
+    }
+  });
+
+  test('uses the VTable text renderer contributions for app-scoped stages', () => {
+    const canvas = document.createElement('canvas');
+    const { app, stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas,
+        width: 100,
+        height: 100
+      },
+      { mode: 'browser', scope: 'unit-text-renderer-contributions' }
+    );
+
+    try {
+      const textRenderer = app.registry.renderer
+        .getAll()
+        .find(renderer => renderer.constructor?.name === 'DefaultCanvasTextRender') as
+        | RendererWithRenderContributions
+        | undefined;
+
+      const contributionNames = textRenderer?._renderContribitions?.map(contribution => contribution.constructor?.name);
+
+      expect(contributionNames).toContain('SuffixTextBeforeRenderContribution');
     } finally {
       stage.release();
       releaseAppRef();
