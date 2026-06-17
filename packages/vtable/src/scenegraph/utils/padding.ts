@@ -1,6 +1,7 @@
 type PaddingObject = { left?: number; right?: number; top?: number; bottom?: number };
+type Quad = [any, any, any, any];
 
-function normalizePaddingArray(values: number[]): [number, number, number, number] {
+function normalizeQuadArray(values: any[]): Quad {
   if (values.length === 0) {
     return [0, 0, 0, 0];
   }
@@ -16,43 +17,44 @@ function normalizePaddingArray(values: number[]): [number, number, number, numbe
   return [values[0], values[1], values[2], values[3]];
 }
 
-function parsePaddingString(padding: string): [number, number, number, number] {
-  const values = padding
-    .trim()
-    .split(/\s+/)
-    .map(token => Number.parseFloat(token))
-    .filter(value => Number.isFinite(value));
-  return normalizePaddingArray(values);
+function parseStringQuad(padding: string): Quad {
+  const tokens = padding.trim().split(/\s+/);
+  const values = tokens.map(token => Number.parseFloat(token)).filter(value => Number.isFinite(value));
+
+  if (values.length === tokens.length && values.length > 0) {
+    return normalizeQuadArray(values);
+  }
+
+  return [padding, padding, padding, padding];
 }
 
-export function getQuadProps(
-  paddingOrigin: number | string | number[] | PaddingObject
-): [number, number, number, number] {
+function normalizePaddingObject(paddingOrigin: PaddingObject): Quad {
+  if (
+    Number.isFinite(paddingOrigin.bottom) ||
+    Number.isFinite(paddingOrigin.left) ||
+    Number.isFinite(paddingOrigin.right) ||
+    Number.isFinite(paddingOrigin.top)
+  ) {
+    return [paddingOrigin.top ?? 0, paddingOrigin.right ?? 0, paddingOrigin.bottom ?? 0, paddingOrigin.left ?? 0];
+  }
+  return [0, 0, 0, 0];
+}
+
+export function getQuadProps(paddingOrigin: number | string | any[] | PaddingObject): Quad {
+  if (Array.isArray(paddingOrigin)) {
+    return normalizeQuadArray(paddingOrigin.slice(0, 4));
+  }
+
   if (typeof paddingOrigin === 'number' && Number.isFinite(paddingOrigin)) {
     return [paddingOrigin, paddingOrigin, paddingOrigin, paddingOrigin];
   }
 
   if (typeof paddingOrigin === 'string') {
-    return parsePaddingString(paddingOrigin);
+    return parseStringQuad(paddingOrigin);
   }
 
-  if (Array.isArray(paddingOrigin)) {
-    const values = paddingOrigin
-      .map(value => (typeof value === 'number' && Number.isFinite(value) ? value : 0))
-      .slice(0, 4);
-    return normalizePaddingArray(values);
-  }
-
-  if (
-    paddingOrigin &&
-    typeof paddingOrigin === 'object' &&
-    !Array.isArray(paddingOrigin) &&
-    (Number.isFinite(paddingOrigin.bottom) ||
-      Number.isFinite(paddingOrigin.left) ||
-      Number.isFinite(paddingOrigin.right) ||
-      Number.isFinite(paddingOrigin.top))
-  ) {
-    return [paddingOrigin.top ?? 0, paddingOrigin.right ?? 0, paddingOrigin.bottom ?? 0, paddingOrigin.left ?? 0];
+  if (paddingOrigin && typeof paddingOrigin === 'object') {
+    return normalizePaddingObject(paddingOrigin);
   }
 
   return [0, 0, 0, 0];
