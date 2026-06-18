@@ -107,4 +107,50 @@ describe('bugserver gantt initialization', () => {
     gantt.release?.();
     container.remove();
   });
+
+  test('initializes the gantt stage with the configured pixel ratio', () => {
+    const container = createDiv();
+    container.style.width = '1600px';
+    container.style.height = '800px';
+
+    const gantt = new Gantt(container, {
+      pixelRatio: 3,
+      records: [
+        { id: 101, title: '需求评审', owner: 'Alice', start: '2024-12-05', end: '2024-12-12', progress: 20 },
+        { id: 102, title: '交互设计', owner: 'Bob', start: '2024-12-10', end: '2024-12-18', progress: 35 }
+      ],
+      taskListTable: {
+        columns: [
+          { field: 'title', title: 'title', width: 160, sort: true },
+          { field: 'owner', title: 'owner', width: 80, sort: true },
+          { field: 'start', title: 'start', width: 120, sort: true }
+        ],
+        tableWidth: 360,
+        minTableWidth: 280,
+        maxTableWidth: 640
+      },
+      taskKeyField: 'id',
+      taskBar: {
+        startDateField: 'start',
+        endDateField: 'end',
+        progressField: 'progress',
+        moveable: true,
+        labelText: '{title}'
+      },
+      minDate: '2024-12-01',
+      maxDate: '2024-12-31',
+      timelineHeader: {
+        colWidth: 30,
+        scales: [{ unit: 'day', step: 1 }]
+      },
+      scrollStyle: {
+        visible: 'scrolling'
+      }
+    });
+
+    expect((gantt.scenegraph.stage as any).window.dpr).toBe(gantt.parsedOptions.pixelRatio);
+
+    gantt.release?.();
+    container.remove();
+  });
 });
