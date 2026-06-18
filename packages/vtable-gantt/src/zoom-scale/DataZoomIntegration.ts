@@ -185,6 +185,7 @@ export class DataZoomIntegration {
         canvas: this.canvas,
         width,
         height,
+        dpr: this.gantt.parsedOptions.pixelRatio,
         autoRender: true
       },
       { mode: 'browser', scope: 'vtable-gantt-datazoom' }
