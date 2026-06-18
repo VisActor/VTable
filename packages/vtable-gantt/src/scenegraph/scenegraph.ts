@@ -49,8 +49,8 @@ export class Scenegraph {
       // width = table.canvasWidth;
       // height = table.canvasHeight;
     } else {
-      width = gantt.canvas.width;
-      height = gantt.canvas.height;
+      width = gantt.canvas.parentElement?.offsetWidth ?? gantt.canvas.width;
+      height = gantt.canvas.parentElement?.offsetHeight ?? gantt.canvas.height;
     }
     const { stage, releaseAppRef } = createStageFromVRenderApp(
       {
@@ -62,6 +62,7 @@ export class Scenegraph {
         dpr: gantt.parsedOptions.pixelRatio,
         enableLayout: true,
         autoRender: false,
+        canvasControled: true,
         context: {
           appName: 'vtable'
         },
@@ -135,8 +136,8 @@ export class Scenegraph {
     let height;
     if (Env.mode === 'node') {
     } else {
-      width = gantt.canvas.width;
-      height = gantt.canvas.height;
+      width = gantt.canvas.parentElement?.offsetWidth ?? gantt.canvas.width / gantt.parsedOptions.pixelRatio;
+      height = gantt.canvas.parentElement?.offsetHeight ?? gantt.canvas.height / gantt.parsedOptions.pixelRatio;
     }
     this.stage.resize(width, height);
     this.refreshAll();

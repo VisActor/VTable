@@ -4,6 +4,7 @@ global.__VERSION__ = 'none';
 
 import { createDiv } from './dom';
 import { Gantt } from '../src/index';
+import { defaultPixelRatio } from '../src/tools/pixel-ratio';
 
 describe('bugserver gantt initialization', () => {
   test('initializes gantt with mixed date formats and top-level columns', () => {
@@ -149,6 +150,155 @@ describe('bugserver gantt initialization', () => {
     });
 
     expect((gantt.scenegraph.stage as any).window.dpr).toBe(gantt.parsedOptions.pixelRatio);
+    expect(gantt.canvas.width).toBe(parseFloat(gantt.canvas.style.width) * gantt.parsedOptions.pixelRatio);
+    expect(gantt.canvas.height).toBe(parseFloat(gantt.canvas.style.height) * gantt.parsedOptions.pixelRatio);
+
+    gantt.release?.();
+    container.remove();
+  });
+
+  test('uses the browser pixel ratio by default for gantt owned canvas', () => {
+    const container = createDiv();
+    container.style.width = '800px';
+    container.style.height = '200px';
+
+    const gantt = new Gantt(container, {
+      records: [
+        {
+          id: 1,
+          title: '项目规划',
+          developer: '张三',
+          startDate: '2024-07-05',
+          endDate: '2024-07-14',
+          baselineStartDate: '2024-07-01',
+          baselineEndDate: '2024-07-10',
+          progress: 80
+        },
+        {
+          id: 2,
+          title: '需求分析',
+          developer: '李四',
+          startDate: '2024-07-08',
+          endDate: '2024-07-12',
+          baselineStartDate: '2024-07-03',
+          baselineEndDate: '2024-07-08',
+          progress: 100
+        }
+      ],
+      taskListTable: {
+        columns: [
+          { field: 'title', title: '任务名称', width: 80 },
+          { field: 'developer', title: '负责人', width: 80 },
+          { field: 'progress', title: '进度', width: 80, format: (val: number) => `${val}%` }
+        ],
+        tableWidth: 'auto',
+        minTableWidth: 100,
+        maxTableWidth: 500
+      },
+      headerRowHeight: 50,
+      rowHeight: 90,
+      taskBar: {
+        startDateField: 'startDate',
+        endDateField: 'endDate',
+        progressField: 'progress',
+        baselineStartDateField: 'baselineStartDate',
+        baselineEndDateField: 'baselineEndDate',
+        labelText: '{title}',
+        barStyle: {
+          width: 25,
+          barColor: '#3498db',
+          completedBarColor: '#27ae60',
+          cornerRadius: 5
+        },
+        baselineStyle: {
+          width: 15,
+          barColor: 'gray',
+          cornerRadius: 5
+        }
+      },
+      timelineHeader: {
+        colWidth: 50,
+        scales: [
+          { unit: 'month', step: 1 },
+          { unit: 'week', step: 1, startOfWeek: 'monday' },
+          { unit: 'day', step: 1 }
+        ]
+      },
+      minDate: '2024-06-30',
+      maxDate: '2024-09-01'
+    });
+
+    expect(gantt.parsedOptions.pixelRatio).toBe(defaultPixelRatio);
+    expect((gantt.scenegraph.stage as any).window.dpr).toBe(defaultPixelRatio);
+    expect(gantt.canvas.width).toBe(parseFloat(gantt.canvas.style.width) * defaultPixelRatio);
+    expect(gantt.canvas.height).toBe(parseFloat(gantt.canvas.style.height) * defaultPixelRatio);
+
+    gantt.release?.();
+    container.remove();
+  });
+
+  test('keeps gantt owned canvas scaled after task table split resize', () => {
+    const container = createDiv();
+    container.style.width = '800px';
+    container.style.height = '400px';
+
+    const gantt = new Gantt(container, {
+      pixelRatio: 2,
+      records: [
+        { id: 1, title: 'Software Development', start: '2024-07-15', end: '2024-07-16', progress: 31 },
+        { id: 2, title: 'Scope', start: '2024-07-16', end: '2024-07-17', progress: 60 },
+        { id: 3, title: 'Determine project scope', start: '2024/07/17', end: '2024/07/18', progress: 100 }
+      ],
+      taskListTable: {
+        columns: [
+          { field: 'title', title: 'title', width: 200, sort: true },
+          { field: 'start', title: 'start', width: 150, sort: true }
+        ],
+        tableWidth: 400,
+        minTableWidth: 100,
+        maxTableWidth: 600
+      },
+      frame: {
+        verticalSplitLineMoveable: true,
+        outerFrameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'red',
+          cornerRadius: 8
+        }
+      },
+      headerRowHeight: 60,
+      rowHeight: 40,
+      taskBar: {
+        startDateField: 'start',
+        endDateField: 'end',
+        progressField: 'progress',
+        labelText: '{title} {progress}%'
+      },
+      timelineHeader: {
+        colWidth: 60,
+        scales: [
+          { unit: 'week', step: 1, startOfWeek: 'sunday' },
+          { unit: 'day', step: 1 }
+        ]
+      },
+      minDate: '2024-07-14',
+      maxDate: '2024-10-15',
+      rowSeriesNumber: {
+        title: '行号',
+        dragOrder: true
+      }
+    });
+
+    const stateManager = gantt.stateManager as any;
+    stateManager.resizeTableWidth.resizing = true;
+    stateManager.resizeTableWidth.lastX = 400;
+
+    stateManager.dealResizeTableWidth({ pageX: 350 } as MouseEvent);
+
+    expect(gantt.taskTableWidth).toBe(350);
+    expect((gantt.scenegraph.stage as any).window.dpr).toBe(gantt.parsedOptions.pixelRatio);
+    expect(gantt.canvas.width).toBe(parseFloat(gantt.canvas.style.width) * gantt.parsedOptions.pixelRatio);
+    expect(gantt.canvas.height).toBe(parseFloat(gantt.canvas.style.height) * gantt.parsedOptions.pixelRatio);
 
     gantt.release?.();
     container.remove();
@@ -206,6 +356,8 @@ describe('bugserver gantt initialization', () => {
     });
 
     expect((dataZoom as any).stage.window.dpr).toBe(gantt.parsedOptions.pixelRatio);
+    expect((dataZoom as any).canvas.width).toBe(400 * gantt.parsedOptions.pixelRatio);
+    expect((dataZoom as any).canvas.height).toBe(30 * gantt.parsedOptions.pixelRatio);
 
     gantt.release?.();
     container.remove();
