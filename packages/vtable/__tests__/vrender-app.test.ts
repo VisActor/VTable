@@ -1,12 +1,18 @@
 jest.mock('@visactor/vrender/entries/shared', () => ({
   acquireSharedVRenderApp: jest.fn()
 }));
+jest.mock('@visactor/vrender-components', () => ({
+  installPoptipToApp: jest.fn(),
+  loadPoptip: jest.fn()
+}));
 
 import { acquireSharedVRenderApp } from '@visactor/vrender/entries/shared';
+import { installPoptipToApp } from '@visactor/vrender-components';
 import type { IApp, IStage } from '@visactor/vrender-core';
 import { createStageFromVRenderApp } from '../src/vrender';
 
 const mockedAcquireSharedVRenderApp = acquireSharedVRenderApp as jest.Mock;
+const mockedInstallPoptipToApp = installPoptipToApp as jest.Mock;
 
 const sharedRecords = new Map<string, { app: ReturnType<typeof createMockApp>; refCount: number }>();
 const queuedApps: ReturnType<typeof createMockApp>[] = [];
@@ -75,6 +81,7 @@ function installSharedAcquireMock() {
 describe('VRender app-scoped stage helper', () => {
   beforeEach(() => {
     mockedAcquireSharedVRenderApp.mockReset();
+    mockedInstallPoptipToApp.mockReset();
     sharedRecords.clear();
     queuedApps.length = 0;
     installSharedAcquireMock();
@@ -97,6 +104,9 @@ describe('VRender app-scoped stage helper', () => {
       key: 'browser:unit-reuse:default'
     });
     expect(app.createStage).toHaveBeenCalledTimes(2);
+    expect(mockedInstallPoptipToApp).toHaveBeenCalledTimes(2);
+    expect(mockedInstallPoptipToApp).toHaveBeenNthCalledWith(1, app);
+    expect(mockedInstallPoptipToApp).toHaveBeenNthCalledWith(2, app);
     expect(first.stage).not.toBe(second.stage);
 
     first.releaseAppRef();

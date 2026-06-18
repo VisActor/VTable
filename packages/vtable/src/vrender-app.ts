@@ -1,4 +1,5 @@
 import { acquireSharedVRenderApp } from '@visactor/vrender/entries/shared';
+import { installPoptipToApp } from '@visactor/vrender-components';
 import {
   installBrowserEnvToApp,
   installFeishuEnvToApp,
@@ -148,6 +149,7 @@ const activateSharedVRenderAppEnv = (app: IApp, env: VRenderAppEnv, envParams?: 
   }
 
   activateLegacyVGlobalEnv(env, envParams);
+  installPoptipToApp(app);
 };
 
 const retainDefaultVRenderApp = (env: VRenderAppEnv, scope?: string, envParams?: IEnvParamsMap[VRenderAppEnv]) => {

@@ -113,6 +113,26 @@ describe('VRender app renderer installation', () => {
     }
   });
 
+  test('installs poptipForText for app-scoped stages', () => {
+    const canvas = document.createElement('canvas');
+    const { stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas,
+        width: 100,
+        height: 100,
+        pluginList: ['poptipForText']
+      },
+      { mode: 'browser', scope: 'unit-poptip-plugin' }
+    );
+
+    try {
+      expect(stage.pluginService.findPluginsByName('poptipForText').length).toBeGreaterThan(0);
+    } finally {
+      stage.release();
+      releaseAppRef();
+    }
+  });
+
   test('uses the VTable chart picker contribution for app-scoped stages', () => {
     const canvas = document.createElement('canvas');
     const { app, stage, releaseAppRef } = createStageFromVRenderApp(

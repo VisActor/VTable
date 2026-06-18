@@ -304,6 +304,103 @@ describe('bugserver gantt initialization', () => {
     container.remove();
   });
 
+  test('shows clipped task label poptip on hover after owned canvas DPR setup', () => {
+    const container = createDiv();
+    container.style.width = '600px';
+    container.style.height = '400px';
+
+    const gantt = new Gantt(container, {
+      records: [
+        {
+          id: 1,
+          title: 'Software Development',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-04 08:30:00',
+          end: '2024-07-04 12:29:59',
+          progress: 31,
+          priority: 'P0'
+        },
+        {
+          id: 2,
+          title: 'Scope',
+          developer: 'liufangfang.jane@bytedance.com',
+          start: '2024-07-04 00:30:00',
+          end: '2024-07-04 17:59:59',
+          progress: 60,
+          priority: 'P0'
+        }
+      ],
+      taskListTable: {
+        columns: [
+          { field: 'title', title: 'title', width: 200, sort: true },
+          { field: 'start', title: 'start', width: 150, sort: true },
+          { field: 'end', title: 'end', width: 150, sort: true }
+        ],
+        tableWidth: 100,
+        minTableWidth: 100,
+        maxTableWidth: 600
+      },
+      headerRowHeight: 40,
+      rowHeight: 40,
+      taskBar: {
+        selectable: false,
+        startDateField: 'start',
+        endDateField: 'end',
+        progressField: 'progress',
+        labelText: '{title} {progress}%',
+        labelTextStyle: {
+          fontFamily: 'Arial',
+          fontSize: 16,
+          textAlign: 'left'
+        },
+        barStyle: {
+          width: 20,
+          barColor: '#ee8800',
+          completedBarColor: '#91e8e0',
+          cornerRadius: 10
+        }
+      },
+      timelineHeader: {
+        colWidth: 30,
+        scales: [
+          { unit: 'year', step: 3, style: { textStick: true } },
+          { unit: 'month', step: 1, style: { textStick: true } },
+          { unit: 'quarter', step: 1, style: { textStick: true } },
+          { unit: 'week', step: 2, startOfWeek: 'sunday', style: { textStick: true } },
+          { unit: 'day', step: 2 },
+          { unit: 'hour', step: 1 }
+        ]
+      },
+      minDate: '2024-07-03 18:00:00',
+      maxDate: '2024-07-25',
+      rowSeriesNumber: {
+        title: '行号',
+        dragOrder: true
+      },
+      scrollStyle: {
+        visible: 'scrolling'
+      }
+    });
+
+    const taskBarNode = gantt.scenegraph.taskBar.getTaskBarNodeByIndex(0) as any;
+    const label = taskBarNode.textLabel;
+
+    const poptipPlugin = gantt.scenegraph.stage.pluginService.findPluginsByName('poptipForText')[0] as any;
+
+    expect(label).toBeDefined();
+    expect(label.cliped).toBe(true);
+    expect(poptipPlugin).toBeDefined();
+
+    poptipPlugin.poptip({ target: label });
+    gantt.scenegraph.stage.render();
+
+    const interactiveLayer = gantt.scenegraph.stage.getLayer('_builtin_interactive') as any;
+    expect(interactiveLayer?.getChildren().some((child: any) => child.name === 'poptip')).toBe(true);
+
+    gantt.release?.();
+    container.remove();
+  });
+
   test('initializes the data zoom stage with the configured pixel ratio', () => {
     const container = createDiv();
     container.style.width = '1600px';
