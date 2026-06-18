@@ -211,4 +211,29 @@ describe('VRender app renderer installation', () => {
       first.releaseAppRef();
     }
   });
+
+  test('normalizes desktop-browser mode before activating legacy env', () => {
+    const canvas = document.createElement('canvas');
+    const created = createStageFromVRenderApp(
+      {
+        canvas,
+        width: 100,
+        height: 100
+      },
+      { mode: 'desktop-browser' as never, scope: 'unit-desktop-browser-env' }
+    );
+
+    try {
+      const legacyGlobal = vglobal as {
+        env?: string;
+        envContribution?: { addEventListener?: unknown };
+      };
+
+      expect(legacyGlobal.env).toBe('browser');
+      expect(typeof legacyGlobal.envContribution?.addEventListener).toBe('function');
+    } finally {
+      created.stage.release();
+      created.releaseAppRef();
+    }
+  });
 });

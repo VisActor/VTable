@@ -23,9 +23,10 @@ import type { IApp, IEnvParamsMap, IStage, IStageParams } from '@visactor/vrende
 import { Env } from './tools/env';
 
 type VRenderAppEnv = TVRenderSharedAppEnv;
+type VRenderStageMode = VRenderAppEnv | 'desktop-browser';
 
 export type VRenderStageAppOptions = {
-  mode?: VRenderAppEnv;
+  mode?: VRenderStageMode;
   scope?: string;
   app?: IApp;
   stage?: IStage;
@@ -43,7 +44,13 @@ export type VRenderStageAppRef = {
 const envParamsKeyMap = new WeakMap<object, number>();
 let envParamsKeyId = 0;
 
-const getVRenderAppEnv = (mode?: VRenderAppEnv): VRenderAppEnv => mode ?? (Env.mode === 'node' ? 'node' : 'browser');
+const getVRenderAppEnv = (mode?: VRenderStageMode): VRenderAppEnv => {
+  if (mode === 'desktop-browser') {
+    return 'browser';
+  }
+
+  return mode ?? (Env.mode === 'node' ? 'node' : 'browser');
+};
 
 const getEnvParamsKey = (envParams?: IEnvParamsMap[VRenderAppEnv]): string => {
   if (envParams == null) {

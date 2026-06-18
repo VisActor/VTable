@@ -206,6 +206,26 @@ describe('VRender app-scoped stage helper', () => {
     expect(app.release).toHaveBeenCalledTimes(1);
   });
 
+  it('normalizes VChart desktop-browser mode to the browser VRender app env', () => {
+    const app = createMockApp();
+    queueSharedApps(app);
+
+    const created = createStageFromVRenderApp(
+      { width: 100 },
+      { mode: 'desktop-browser' as never, scope: 'unit-desktop-browser' }
+    );
+
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledTimes(1);
+    expect(mockedAcquireSharedVRenderApp).toHaveBeenCalledWith({
+      env: 'browser',
+      key: 'browser:unit-desktop-browser:default'
+    });
+    expect(app.createStage).toHaveBeenCalledWith({ width: 100 });
+
+    created.releaseAppRef();
+    expect(app.release).toHaveBeenCalledTimes(1);
+  });
+
   it('borrows an externally supplied app and only creates a VTable-owned stage from it', () => {
     const app = createMockApp();
 
