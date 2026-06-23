@@ -21,6 +21,10 @@ export const menus = [
   },
   {
     path: 'sheet',
+    name: 'issue-5184-multi-header'
+  },
+  {
+    path: 'sheet',
     name: 'history'
   }
 ];
