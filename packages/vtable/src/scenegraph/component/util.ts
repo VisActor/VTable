@@ -1,5 +1,17 @@
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
+export function getBodyHorizontalScrollRange(table: BaseTableAPI) {
+  const totalWidth = table.getAllColsWidth();
+  const frozenColsWidth = table.getFrozenColsWidth();
+  const rightFrozenColsWidth = table.getRightFrozenColsWidth();
+  const frozenColsContentWidth = table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
+  const rightFrozenColsContentWidth = table.getRightFrozenColsContentWidth?.() ?? rightFrozenColsWidth;
+  const bodyViewportWidth = table.tableNoFrameWidth - frozenColsWidth - rightFrozenColsWidth;
+  const bodyContentWidth = totalWidth - frozenColsContentWidth - rightFrozenColsContentWidth;
+
+  return Math.max(0, bodyContentWidth - bodyViewportWidth);
+}
+
 export function getColX(col: number, table: BaseTableAPI, isRightFrozen?: boolean) {
   if (isRightFrozen) {
     // 右冻结列的 x 位置以“表格最右侧”为基准向左累加。

@@ -6,7 +6,7 @@ import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
 import { DrillIcon } from './drill-icon';
 import { CellMover } from './cell-mover';
-import { getColX, getRowY } from './util';
+import { getBodyHorizontalScrollRange, getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isValid } from '@visactor/vutils';
 
@@ -416,31 +416,31 @@ export class TableComponent {
     // 这里加入tolerance，避免出现无用滚动
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
 
-    if (totalWidth > tableWidth + sizeTolerance) {
-      const y = Math.min(tableHeight, totalHeight);
+    const bodyScrollRange = getBodyHorizontalScrollRange(this.table);
+    const y = Math.min(tableHeight, totalHeight);
+    let attrY = 0;
+    if (this.table.theme.scrollStyle.barToSide) {
+      attrY =
+        this.table.tableNoFrameHeight -
+        (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y) +
+        this.table.tableY;
+    } else {
+      attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
+    }
+    // 忽略所有冻结列宽度
+    const ignoreFrozenCols = this.table.theme.scrollStyle?.ignoreFrozenCols ?? false;
+
+    if (bodyScrollRange > sizeTolerance) {
       // 多滚动域下，body 的可视区域需要扣除左右冻结占用的视口宽度；
       // body 的可滚动内容宽度也需要扣除左右冻结列的内容宽度。
       // 这样主滚动条的滑块长度能准确反映“body 可视宽 / body 内容宽”的比例。
       const bodyViewportWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
-      const bodyContentWidth = totalWidth - frozenColsContentWidth - rightFrozenColsContentWidth;
+      const bodyContentWidth = bodyViewportWidth + bodyScrollRange;
       const rangeEnd = bodyContentWidth > 0 ? Math.max(0.05, bodyViewportWidth / bodyContentWidth) : 1;
-
-      let attrY = 0;
-      if (this.table.theme.scrollStyle.barToSide) {
-        attrY =
-          this.table.tableNoFrameHeight -
-          (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y) +
-          this.table.tableY;
-      } else {
-        attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
-      }
 
       let hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
 
       let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
-
-      // 忽略所有冻结列宽度
-      const ignoreFrozenCols = this.table.theme.scrollStyle?.ignoreFrozenCols ?? false;
 
       if (ignoreFrozenCols) {
         hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
@@ -465,65 +465,6 @@ export class TableComponent {
       if (horizontalVisible === 'always') {
         this.hScrollBar.showAll();
       }
-
-      const frozenScrollable = this.table.options.scrollFrozenCols && this.table.getFrozenColsOffset() > 0;
-      if (!ignoreFrozenCols && frozenScrollable) {
-        // 左冻结滚动条的滑块长度 = 冻结视口宽 / 冻结内容宽
-        const frozenRangeEnd = Math.max(0.05, frozenColsWidth / frozenColsContentWidth);
-        const x = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
-        this.frozenHScrollBar.setAttributes({
-          x,
-          y: attrY,
-          width: frozenColsWidth,
-          range: [0, frozenRangeEnd],
-          visible: horizontalVisible === 'always'
-        });
-        const bounds = this.frozenHScrollBar.AABBBounds && this.frozenHScrollBar.globalAABBBounds;
-        (this.frozenHScrollBar as any)._viewPosition = {
-          x: bounds.x1,
-          y: bounds.y1
-        };
-        if (horizontalVisible === 'always') {
-          this.frozenHScrollBar.showAll();
-        }
-      } else {
-        this.frozenHScrollBar.setAttributes({
-          x: -this.table.tableNoFrameWidth * 2,
-          y: -this.table.tableNoFrameHeight * 2,
-          width: 0,
-          visible: false
-        });
-      }
-
-      const rightFrozenScrollable =
-        this.table.options.scrollRightFrozenCols && this.table.getRightFrozenColsOffset() > 0;
-      if (!ignoreFrozenCols && rightFrozenScrollable) {
-        // 右冻结滚动条的滑块长度 = 右冻结视口宽 / 右冻结内容宽
-        const rightFrozenRangeEnd = Math.max(0.05, rightFrozenColsWidth / rightFrozenColsContentWidth);
-        const x = tableWidth - rightFrozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
-        this.rightFrozenHScrollBar.setAttributes({
-          x,
-          y: attrY,
-          width: rightFrozenColsWidth,
-          range: [0, rightFrozenRangeEnd],
-          visible: horizontalVisible === 'always'
-        });
-        const bounds = this.rightFrozenHScrollBar.AABBBounds && this.rightFrozenHScrollBar.globalAABBBounds;
-        (this.rightFrozenHScrollBar as any)._viewPosition = {
-          x: bounds.x1,
-          y: bounds.y1
-        };
-        if (horizontalVisible === 'always') {
-          this.rightFrozenHScrollBar.showAll();
-        }
-      } else {
-        this.rightFrozenHScrollBar.setAttributes({
-          x: -this.table.tableNoFrameWidth * 2,
-          y: -this.table.tableNoFrameHeight * 2,
-          width: 0,
-          visible: false
-        });
-      }
     } else {
       this.hScrollBar.setAttributes({
         x: -this.table.tableNoFrameWidth * 2,
@@ -531,12 +472,59 @@ export class TableComponent {
         width: 0,
         visible: false
       });
+    }
+
+    const frozenScrollable = this.table.options.scrollFrozenCols && this.table.getFrozenColsOffset() > 0;
+    if (!ignoreFrozenCols && frozenScrollable) {
+      // 左冻结滚动条的滑块长度 = 冻结视口宽 / 冻结内容宽
+      const frozenRangeEnd = Math.max(0.05, frozenColsWidth / frozenColsContentWidth);
+      const x = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+      this.frozenHScrollBar.setAttributes({
+        x,
+        y: attrY,
+        width: frozenColsWidth,
+        range: [0, frozenRangeEnd],
+        visible: horizontalVisible === 'always'
+      });
+      const bounds = this.frozenHScrollBar.AABBBounds && this.frozenHScrollBar.globalAABBBounds;
+      (this.frozenHScrollBar as any)._viewPosition = {
+        x: bounds.x1,
+        y: bounds.y1
+      };
+      if (horizontalVisible === 'always') {
+        this.frozenHScrollBar.showAll();
+      }
+    } else {
       this.frozenHScrollBar.setAttributes({
         x: -this.table.tableNoFrameWidth * 2,
         y: -this.table.tableNoFrameHeight * 2,
         width: 0,
         visible: false
       });
+    }
+
+    const rightFrozenScrollable =
+      this.table.options.scrollRightFrozenCols && this.table.getRightFrozenColsOffset() > 0;
+    if (!ignoreFrozenCols && rightFrozenScrollable) {
+      // 右冻结滚动条的滑块长度 = 右冻结视口宽 / 右冻结内容宽
+      const rightFrozenRangeEnd = Math.max(0.05, rightFrozenColsWidth / rightFrozenColsContentWidth);
+      const x = tableWidth - rightFrozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+      this.rightFrozenHScrollBar.setAttributes({
+        x,
+        y: attrY,
+        width: rightFrozenColsWidth,
+        range: [0, rightFrozenRangeEnd],
+        visible: horizontalVisible === 'always'
+      });
+      const bounds = this.rightFrozenHScrollBar.AABBBounds && this.rightFrozenHScrollBar.globalAABBBounds;
+      (this.rightFrozenHScrollBar as any)._viewPosition = {
+        x: bounds.x1,
+        y: bounds.y1
+      };
+      if (horizontalVisible === 'always') {
+        this.rightFrozenHScrollBar.showAll();
+      }
+    } else {
       this.rightFrozenHScrollBar.setAttributes({
         x: -this.table.tableNoFrameWidth * 2,
         y: -this.table.tableNoFrameHeight * 2,

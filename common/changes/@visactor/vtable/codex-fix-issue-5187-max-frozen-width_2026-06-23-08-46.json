@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: handle scroll frozen columns width",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
