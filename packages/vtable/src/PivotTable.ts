@@ -1571,6 +1571,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       Math.max(0, this.getAllRowsHeight() - (this.scenegraph?.height ?? this.tableNoFrameHeight) - sizeTolerance);
     const oldMaxScrollTop = getMaxScrollTop();
     const isScrollToBottom = oldMaxScrollTop > 0 && this.scrollTop >= oldMaxScrollTop - 1;
+    const oldScrollTop = this.scrollTop;
     const visibleStartRow = this.getBodyVisibleRowRange().rowStart;
     this.internalProps._oldRowCount = this.rowCount;
     this.internalProps._oldColCount = this.colCount;
@@ -1588,6 +1589,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     const isChangeRowTree = this.internalProps.layoutMap.isRowHeader(col, row);
+    const oldHierarchyState = isChangeRowTree ? this.getHierarchyState(col, row) : undefined;
+    const shouldKeepBottomAfterToggle = isScrollToBottom && oldHierarchyState === 'expand';
+    const shouldKeepScrollAfterToggle = isChangeRowTree && !shouldKeepBottomAfterToggle;
     const result: {
       addCellPositionsRowDirection?: CellAddress[];
       removeCellPositionsRowDirection?: CellAddress[];
@@ -1645,17 +1649,27 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.clearCellStyleCache();
       this.scenegraph.createSceneGraph();
       this.scrollToRow(visibleStartRow);
-      if (isScrollToBottom) {
+      if (shouldKeepBottomAfterToggle) {
         this.clearCorrectTimer();
         this.setScrollTop(Number.MAX_SAFE_INTEGER);
+      } else if (shouldKeepScrollAfterToggle) {
+        this.clearCorrectTimer();
+        this.setScrollTop(oldScrollTop);
       }
       // this.renderWithRecreateCells();
     }
     this.reactCustomLayout?.updateAllCustomCell();
 
-    if (isScrollToBottom) {
+    if (shouldKeepBottomAfterToggle) {
       this.clearCorrectTimer();
       this.setScrollTop(Number.MAX_SAFE_INTEGER);
+    } else if (
+      shouldKeepScrollAfterToggle &&
+      this.rowHierarchyType !== 'grid-tree' &&
+      this.columnHierarchyType !== 'grid-tree'
+    ) {
+      this.clearCorrectTimer();
+      this.setScrollTop(oldScrollTop);
     }
 
     if (checkHasChart) {

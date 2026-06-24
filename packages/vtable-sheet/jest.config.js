@@ -45,6 +45,7 @@ module.exports = {
       statements: 60
     }
   },
+  cacheDirectory: '<rootDir>/.jest-cache',
   moduleNameMapper: {
     'd3-array': path.resolve(
       __dirname,

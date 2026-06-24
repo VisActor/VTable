@@ -5283,18 +5283,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   // anmiation
   scrollToRow(row: number, animationOption?: ITableAnimationOption | boolean) {
-    const targetRow = Math.min(Math.max(Math.floor(row), 0), this.rowCount - 1);
+    const targetRow = Math.min(Math.max(row, 0), this.rowCount - 1);
+    const targetRowInt = Math.floor(targetRow);
     this.clearCorrectTimer();
     if (!animationOption) {
-      this.scrollToCell({ row: targetRow });
-      this._scheduleScrollToRowCorrect(targetRow);
+      this.scrollToCell({ row: targetRowInt });
+      this._scheduleScrollToRowCorrect(targetRowInt);
       return;
     }
     const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : 3000;
     this.animationManager.scrollTo({ row: targetRow }, animationOption);
-    this._scrollToRowCorrectTimer = setTimeout(() => {
-      this.scrollToRow(targetRow, false);
-    }, duration);
+    if (targetRowInt === targetRow) {
+      this._scrollToRowCorrectTimer = setTimeout(() => {
+        this.scrollToRow(targetRowInt, false);
+      }, duration);
+    }
   }
   scrollToCol(col: number, animationOption?: ITableAnimationOption | boolean) {
     if (!animationOption) {

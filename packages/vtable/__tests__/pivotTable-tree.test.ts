@@ -659,4 +659,253 @@ describe('pivotTable grid-tree hierarchy scroll', () => {
       pivotTable.release();
     }
   });
+
+  test('keeps scroll top after expanding a row tree node at scroll bottom', async () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const columnTree = Array.from({ length: 5 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree: [
+        ...Array.from({ length: 30 }, (_, index) => ({
+          dimensionKey: 'category',
+          value: `category-${index}`
+        })),
+        {
+          dimensionKey: 'category',
+          value: 'Technology',
+          hierarchyState: 'collapse',
+          children: Array.from({ length: 20 }, (_, index) => ({
+            dimensionKey: 'subCategory',
+            value: `technology-${index}`
+          }))
+        }
+      ],
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'category',
+          title: 'category',
+          width: 200
+        },
+        {
+          dimensionKey: 'subCategory',
+          title: 'subCategory',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const getMaxScrollTop = () => Math.max(0, pivotTable.getAllRowsHeight() - pivotTable.scenegraph.height);
+
+      pivotTable.setScrollTop(Number.MAX_SAFE_INTEGER);
+      const oldMaxScrollTop = getMaxScrollTop();
+      expect(pivotTable.scrollTop).toBe(oldMaxScrollTop);
+
+      const visibleRowRange = pivotTable.getBodyVisibleRowRange();
+      let targetRow = -1;
+      for (let row = visibleRowRange.rowStart; row <= visibleRowRange.rowEnd; row++) {
+        if (pivotTable.getCellValue(0, row) === 'Technology' && pivotTable.getHierarchyState(0, row) === 'collapse') {
+          targetRow = row;
+          break;
+        }
+      }
+      expect(targetRow).toBeGreaterThanOrEqual(0);
+      pivotTable.toggleHierarchyState(0, targetRow);
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(getMaxScrollTop()).toBeGreaterThan(oldMaxScrollTop);
+      expect(pivotTable.scrollTop).toBe(oldMaxScrollTop);
+    } finally {
+      pivotTable.release();
+    }
+  });
+
+  test('returns to scroll bottom after expanding and collapsing a bottom row tree node', async () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const columnTree = Array.from({ length: 5 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree: [
+        ...Array.from({ length: 30 }, (_, index) => ({
+          dimensionKey: 'category',
+          value: `category-${index}`
+        })),
+        {
+          dimensionKey: 'category',
+          value: 'Technology',
+          hierarchyState: 'collapse',
+          children: Array.from({ length: 20 }, (_, index) => ({
+            dimensionKey: 'subCategory',
+            value: `technology-${index}`
+          }))
+        }
+      ],
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'category',
+          title: 'category',
+          width: 200
+        },
+        {
+          dimensionKey: 'subCategory',
+          title: 'subCategory',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const getMaxScrollTop = () => Math.max(0, pivotTable.getAllRowsHeight() - pivotTable.scenegraph.height);
+
+      pivotTable.setScrollTop(Number.MAX_SAFE_INTEGER);
+      const collapsedMaxScrollTop = getMaxScrollTop();
+      expect(pivotTable.scrollTop).toBe(collapsedMaxScrollTop);
+
+      const visibleRowRange = pivotTable.getBodyVisibleRowRange();
+      let targetRow = -1;
+      for (let row = visibleRowRange.rowStart; row <= visibleRowRange.rowEnd; row++) {
+        if (pivotTable.getCellValue(0, row) === 'Technology' && pivotTable.getHierarchyState(0, row) === 'collapse') {
+          targetRow = row;
+          break;
+        }
+      }
+      expect(targetRow).toBeGreaterThanOrEqual(0);
+
+      pivotTable.toggleHierarchyState(0, targetRow);
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(getMaxScrollTop()).toBeGreaterThan(collapsedMaxScrollTop);
+      expect(pivotTable.scrollTop).toBe(collapsedMaxScrollTop);
+
+      pivotTable.toggleHierarchyState(0, targetRow);
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(getMaxScrollTop()).toBe(collapsedMaxScrollTop);
+      expect(pivotTable.scrollTop).toBe(getMaxScrollTop());
+    } finally {
+      pivotTable.release();
+    }
+  });
+
+  test('keeps scroll top after expanding a visible row tree node', async () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const columnTree = Array.from({ length: 5 }, (_, index) => ({
+      value: `indicator-${index}`,
+      indicatorKey: `indicator-${index}`
+    }));
+    const indicators = columnTree.map(item => ({
+      indicatorKey: item.indicatorKey,
+      caption: item.value,
+      width: 100
+    }));
+
+    const pivotTable = new PivotTable({
+      container: containerDom,
+      records: [],
+      rowTree: [
+        ...Array.from({ length: 10 }, (_, index) => ({
+          dimensionKey: 'region',
+          value: `region-${index}`,
+          hierarchyState: 'collapse',
+          children: Array.from({ length: 4 }, (_, childIndex) => ({
+            dimensionKey: 'province',
+            value: `province-${index}-${childIndex}`
+          }))
+        })),
+        {
+          dimensionKey: 'region',
+          value: 'grand-total'
+        }
+      ],
+      columnTree,
+      rows: [
+        {
+          dimensionKey: 'region',
+          title: 'region',
+          width: 200
+        },
+        {
+          dimensionKey: 'province',
+          title: 'province',
+          width: 200
+        }
+      ],
+      columns: [],
+      indicators,
+      defaultRowHeight: 40,
+      defaultHeaderRowHeight: 40,
+      rowHierarchyType: 'grid-tree',
+      columnHierarchyType: 'grid-tree',
+      widthMode: 'standard'
+    });
+
+    try {
+      const scrollTop = 90;
+      pivotTable.setScrollTop(scrollTop);
+      const oldScrollTop = pivotTable.scrollTop;
+
+      const visibleRowRange = pivotTable.getBodyVisibleRowRange();
+      let targetRow = -1;
+      for (let row = visibleRowRange.rowStart; row <= visibleRowRange.rowEnd; row++) {
+        if (pivotTable.getHierarchyState(0, row) === 'collapse') {
+          targetRow = row;
+          break;
+        }
+      }
+      expect(targetRow).toBeGreaterThanOrEqual(0);
+
+      pivotTable.toggleHierarchyState(0, targetRow);
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(pivotTable.scrollTop).toBe(oldScrollTop);
+    } finally {
+      pivotTable.release();
+    }
+  });
 });

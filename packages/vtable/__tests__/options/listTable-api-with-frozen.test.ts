@@ -142,4 +142,28 @@ describe('listTable init test', () => {
       rowEnd: 28
     });
   });
+
+  test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
+    const optionWithRightFrozen = {
+      ...option,
+      bottomFrozenRowCount: 0,
+      rowSeriesNumber: {
+        title: 'index',
+        dragOrder: true,
+        width: 'auto'
+      },
+      container: createDiv(),
+      records
+    };
+    optionWithRightFrozen.container.style.position = 'relative';
+    optionWithRightFrozen.container.style.width = '1000px';
+    optionWithRightFrozen.container.style.height = '800px';
+
+    const rightFrozenTable = new ListTable(optionWithRightFrozen);
+
+    expect(() => {
+      rightFrozenTable.rightFrozenColCount = 1;
+    }).not.toThrow();
+    expect(rightFrozenTable.rightFrozenColCount).toBe(1);
+  });
 });
