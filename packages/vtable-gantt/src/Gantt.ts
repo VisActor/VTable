@@ -1041,6 +1041,26 @@ export class Gantt extends EventTarget {
     // }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
+  private _refreshSortedTaskBarsAfterRecordUpdate(recordIndex: number | number[], taskShowIndex: number) {
+    const sortState = this.taskListTableInstance?.sortState;
+    if (!sortState || (Array.isArray(sortState) && sortState.length === 0)) {
+      return false;
+    }
+
+    const nextTaskShowIndex = this.getTaskShowIndexByRecordIndex(recordIndex);
+    if (!isValid(nextTaskShowIndex) || nextTaskShowIndex === taskShowIndex) {
+      return false;
+    }
+
+    this._syncPropsFromTable();
+    this.scenegraph.refreshTaskBarsAndGrid();
+
+    const left = this.stateManager.scroll.horizontalBarPos;
+    const top = this.stateManager.scroll.verticalBarPos;
+    this.scenegraph.setX(-left);
+    this.scenegraph.setY(-top);
+    return true;
+  }
   /**
    * 获取指定index处任务数据的具体信息
    * @param taskShowIndex 任务显示的index，从0开始
@@ -1218,12 +1238,13 @@ export class Gantt extends EventTarget {
 
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
@@ -1239,12 +1260,13 @@ export class Gantt extends EventTarget {
     taskRecord[endDateField] = newEndDate;
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
@@ -1261,13 +1283,14 @@ export class Gantt extends EventTarget {
     const newEndDate = formatDate(endDate, dateFormat);
     taskRecord[endDateField] = newEndDate;
     if (!isValid(sub_task_index)) {
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
@@ -1285,9 +1308,11 @@ export class Gantt extends EventTarget {
     const progressField = this.parsedOptions.progressField;
     if (progressField) {
       taskRecord[progressField] = progress;
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
-      this._refreshTaskBar(index, sub_task_index);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
+      if (!this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index)) {
+        this._refreshTaskBar(index, sub_task_index);
+      }
     }
   }
 

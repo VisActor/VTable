@@ -18,6 +18,7 @@ module.exports = {
     },
     __DEV__: true
   },
+  cacheDirectory: '<rootDir>/.jest-cache',
   moduleNameMapper: {
     '@visactor/vtable$': '<rootDir>/../vtable/src/index',
     '@visactor/vtable/es/(.*)': '<rootDir>/../vtable/src/$1'

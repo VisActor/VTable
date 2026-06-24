@@ -40,6 +40,7 @@ module.exports = {
         }
       }
     : undefined,
+  cacheDirectory: '<rootDir>/.jest-cache',
   moduleNameMapper: {
     'd3-array': path.resolve(
       __dirname,
