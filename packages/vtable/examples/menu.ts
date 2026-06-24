@@ -45,6 +45,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'scroll-collapse-bottom'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5187-max-frozen-width'
       }
     ]
   },

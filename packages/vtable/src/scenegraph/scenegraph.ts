@@ -1684,6 +1684,9 @@ export class Scenegraph {
         lastBodyCol.attribute.x -
         lastBodyCol.attribute.width;
     }
+    if (this.table.options.scrollFrozenCols && x > 0) {
+      x = 0;
+    }
     if (this.table.getFrozenColsWidth() + x === this.bodyGroup.attribute.x) {
       return;
     }
@@ -1841,11 +1844,17 @@ export class Scenegraph {
     this.rowHeaderGroup.forEachChildrenSkipChild((column: Group) => {
       rowHeaderWidth += column.attribute.width;
     });
+    if (table.options.scrollFrozenCols) {
+      rowHeaderWidth = table.getFrozenColsWidth();
+    }
     this.rowHeaderGroup.setAttribute('width', rowHeaderWidth);
     let cornerHeaderWidth = 0;
     this.cornerHeaderGroup.forEachChildrenSkipChild((column: Group) => {
       cornerHeaderWidth += column.attribute.width;
     });
+    if (table.options.scrollFrozenCols) {
+      cornerHeaderWidth = table.getFrozenColsWidth();
+    }
     this.cornerHeaderGroup.setAttribute('width', cornerHeaderWidth);
     this.colHeaderGroup.setAttribute('x', this.cornerHeaderGroup.attribute.width);
     this.rowHeaderGroup.setAttribute('y', this.cornerHeaderGroup.attribute.height);
