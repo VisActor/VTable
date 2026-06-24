@@ -138,7 +138,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
           col,
           row,
           dataValue: table.getCellOriginValue(col, row),
-          value: table.getCellValue(col, row) || '',
+          value: table.getCellValue(col, row),
           rect: {
             left: 0,
             top: 0,

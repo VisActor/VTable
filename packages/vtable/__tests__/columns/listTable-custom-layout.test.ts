@@ -320,4 +320,49 @@ describe('listTable-custom-layout init test', () => {
     expect(rectBound.bottom).toBe(240);
     listTable.release();
   });
+
+  test('custom layout args should preserve falsy cell values', () => {
+    const falsyValueContainer = createDiv();
+    falsyValueContainer.style.position = 'relative';
+    falsyValueContainer.style.width = '400px';
+    falsyValueContainer.style.height = '300px';
+
+    const receivedArgs = [];
+    const createCustomLayout = () => args => {
+      receivedArgs.push(args);
+
+      return {
+        rootContainer: new VTable.CustomLayout.Container({
+          width: args.rect.width,
+          height: args.rect.height
+        }),
+        renderDefault: false
+      };
+    };
+
+    const falsyValueTable = new ListTable(falsyValueContainer, {
+      columns: [
+        {
+          field: 'zero',
+          title: 'zero',
+          customLayout: createCustomLayout()
+        },
+        {
+          field: 'enabled',
+          title: 'enabled',
+          customLayout: createCustomLayout()
+        }
+      ],
+      records: [
+        {
+          zero: 0,
+          enabled: false
+        }
+      ]
+    });
+
+    expect(receivedArgs.map(args => args.value)).toEqual([0, false]);
+    expect(receivedArgs.map(args => args.dataValue)).toEqual([0, false]);
+    falsyValueTable.release();
+  });
 });
