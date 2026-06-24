@@ -17,7 +17,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     return this.element;
   }
   targetIsOnEditor(target: HTMLElement): boolean {
-    return target === this.element || target === this.sheet.formulaUIManager.formulaInput;
+    return target === this.element || target === this.sheet?.formulaUIManager.formulaInput;
   }
   /**
    * 创建编辑器元素
@@ -65,7 +65,10 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
 
     const value = this.element.value;
     // 同步内容到顶部输入栏
-    this.sheet.formulaUIManager.formulaInput.value = value;
+    const formulaInput = this.sheet.formulaUIManager.formulaInput;
+    if (formulaInput) {
+      formulaInput.value = value;
+    }
     // const inputEvent = new Event('input', { bubbles: true });
     // Object.defineProperty(inputEvent, 'isFormulaInsertion', { value: true });
     // this.sheet.formulaUIManager.formulaInput.dispatchEvent(inputEvent);
