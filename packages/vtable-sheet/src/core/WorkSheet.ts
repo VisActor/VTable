@@ -48,6 +48,34 @@ type WorkSheetUpdateOptions = Pick<
   theme?: TYPES.VTableThemes.ITableThemeDefine;
 };
 
+const normalizeColumnsField = (columns: IWorkSheetOptions['columns'], startFieldIndex = 0): number => {
+  if (!columns?.length) {
+    return startFieldIndex;
+  }
+
+  let fieldIndex = startFieldIndex;
+
+  columns.forEach(column => {
+    const childColumns = (column as IWorkSheetOptions['columns'][number] & { columns?: IWorkSheetOptions['columns'] })
+      .columns;
+
+    if (childColumns?.length) {
+      fieldIndex = normalizeColumnsField(childColumns, fieldIndex);
+      return;
+    }
+
+    if (!isValid(column.field)) {
+      column.field = fieldIndex;
+    }
+    if (!isValid(column.key)) {
+      column.key = column.field as any;
+    }
+    fieldIndex++;
+  });
+
+  return fieldIndex;
+};
+
 export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
   options: IWorkSheetOptions;
@@ -274,10 +302,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       isShowTableHeader = isValid(isShowTableHeader) ? isShowTableHeader : false;
       this.options.columns = [];
     } else {
-      for (let i = 0; i < this.options.columns.length; i++) {
-        this.options.columns[i].field = i;
-        this.options.columns[i].key = i as any;
-      }
+      normalizeColumnsField(this.options.columns);
     }
     if (!this.options.data) {
       this.options.data = [];

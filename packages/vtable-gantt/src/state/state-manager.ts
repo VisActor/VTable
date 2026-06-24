@@ -356,6 +356,7 @@ export class StateManager {
     if (target.name === 'task-bar-hover-shadow') {
       target = target.parent;
     }
+    syncTaskBarNodeRecord(target, this._gantt);
     this.moveTaskBar.moving = true;
     this.moveTaskBar.target = target;
     this.moveTaskBar.targetStartX = target.attribute.x;
@@ -417,11 +418,13 @@ export class StateManager {
       );
       // 判断横向拖动 更新数据的date
       let dateChanged: 'left' | 'right';
+      let reorderedTaskShowIndex: number | undefined;
       if (createDateAtMidnight(oldStartDate).getTime() !== newStartDate.getTime()) {
         dateChanged = createDateAtMidnight(oldStartDate).getTime() > newStartDate.getTime() ? 'left' : 'right';
         // this._gantt._updateDateToTaskRecord('move', days, taskIndex, sub_task_index);
         this._gantt._updateStartEndDateToTaskRecord(newStartDate, newEndDate, taskIndex, sub_task_index);
-        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        const newRecord = target.record;
+        reorderedTaskShowIndex = getTaskShowIndexByTaskRecord(newRecord, this._gantt);
 
         if (this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
           this._gantt.fireListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE, {
@@ -435,7 +438,7 @@ export class StateManager {
         }
 
         const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
-        const newRowIndex = indexs.task_index;
+        const newRowIndex = isValid(reorderedTaskShowIndex) ? reorderedTaskShowIndex : indexs.task_index;
         // 触发通用拖拽事件
         if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR)) {
           this._gantt.fireListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR, {
@@ -506,39 +509,48 @@ export class StateManager {
           }
           // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
         } else {
-          let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
-          if (target.record.type === TaskType.MILESTONE) {
-            const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
-            newX -= milestoneTaskbarHeight / 2;
-          }
-          moveTaskBar(target, newX - (target as Group).attribute.x, targetEndY - (target as Group).attribute.y, this);
+          if (dateChanged && isValid(reorderedTaskShowIndex) && reorderedTaskShowIndex !== taskIndex) {
+            this._gantt._syncPropsFromTable();
+            this._gantt.scenegraph.refreshTaskBarsAndGrid();
+            const left = this._gantt.stateManager.scroll.horizontalBarPos;
+            const top = this._gantt.stateManager.scroll.verticalBarPos;
+            this._gantt.scenegraph.setX(-left);
+            this._gantt.scenegraph.setY(-top);
+          } else {
+            let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
+            if (target.record.type === TaskType.MILESTONE) {
+              const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+              newX -= milestoneTaskbarHeight / 2;
+            }
+            moveTaskBar(target, newX - (target as Group).attribute.x, targetEndY - (target as Group).attribute.y, this);
 
-          // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
-          if (dateChanged === 'right') {
-            let insertAfterNode = target;
-            while (
-              (insertAfterNode as Group).nextSibling &&
-              (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
-              (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
-                target.record[this._gantt.parsedOptions.startDateField]
-            ) {
-              insertAfterNode = (insertAfterNode as Group).nextSibling as any;
-            }
-            if (insertAfterNode !== target) {
-              ((insertAfterNode as Group).parent as any).insertAfter(target, insertAfterNode);
-            }
-          } else if (dateChanged === 'left') {
-            let insertBeforeNode = target;
-            while (
-              (insertBeforeNode as Group).previousSibling &&
-              (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
-              (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
-                target.record[this._gantt.parsedOptions.startDateField]
-            ) {
-              insertBeforeNode = (insertBeforeNode as Group).previousSibling as any;
-            }
-            if (insertBeforeNode !== target) {
-              ((insertBeforeNode as Group).parent as any).insertBefore(target, insertBeforeNode);
+            // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
+            if (dateChanged === 'right') {
+              let insertAfterNode = target;
+              while (
+                (insertAfterNode as Group).nextSibling &&
+                (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
+                (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
+                  target.record[this._gantt.parsedOptions.startDateField]
+              ) {
+                insertAfterNode = (insertAfterNode as Group).nextSibling as any;
+              }
+              if (insertAfterNode !== target) {
+                ((insertAfterNode as Group).parent as any).insertAfter(target, insertAfterNode);
+              }
+            } else if (dateChanged === 'left') {
+              let insertBeforeNode = target;
+              while (
+                (insertBeforeNode as Group).previousSibling &&
+                (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
+                (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
+                  target.record[this._gantt.parsedOptions.startDateField]
+              ) {
+                insertBeforeNode = (insertBeforeNode as Group).previousSibling as any;
+              }
+              if (insertBeforeNode !== target) {
+                ((insertBeforeNode as Group).parent as any).insertBefore(target, insertBeforeNode);
+              }
             }
           }
         }
@@ -688,6 +700,7 @@ export class StateManager {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
+    syncTaskBarNodeRecord(target as GanttTaskBarNode, this._gantt);
     this.resizeTaskBar.onIconName = onIconName;
     this.resizeTaskBar.resizing = true;
     this.resizeTaskBar.target = target as GanttTaskBarNode;
@@ -822,6 +835,7 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
   startAdjustProgressBar(target: GanttTaskBarNode, x: number, y: number) {
+    syncTaskBarNodeRecord(target, this._gantt);
     // 验证目标任务条是否有效
     if (!target || !target.record) {
       console.warn('Invalid target for progress adjustment');
@@ -1403,6 +1417,29 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
       }
     }
   }
+}
+
+function syncTaskBarNodeRecord(target: GanttTaskBarNode, gantt: Gantt) {
+  if (!target) {
+    return;
+  }
+  target.record = gantt.getRecordByIndex(target.task_index, target.sub_task_index);
+}
+
+function getTaskShowIndexByTaskRecord(record: any, gantt: Gantt): number | undefined {
+  if (!record) {
+    return undefined;
+  }
+  const taskKeyField = gantt.parsedOptions.taskKeyField;
+  const taskKey = record?.[taskKeyField];
+  if (!isValid(taskKey)) {
+    return undefined;
+  }
+  const matchedRecord = findRecordByTaskKey(gantt.records, taskKeyField, taskKey);
+  if (!matchedRecord) {
+    return undefined;
+  }
+  return gantt.getTaskShowIndexByRecordIndex(matchedRecord.index);
 }
 
 function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: StateManager) {
