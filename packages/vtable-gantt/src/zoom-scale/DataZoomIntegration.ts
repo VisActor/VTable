@@ -1,5 +1,6 @@
 import type { Gantt } from '../Gantt';
-import { DataZoom, createStageFromVRenderApp, vglobal } from '@visactor/vtable/es/vrender';
+import { DataZoom, vglobal } from '@visactor/vtable/es/vrender';
+import { createStageFromVRenderApp } from '@visactor/vtable/es/vrender-app';
 
 export interface DataZoomConfig {
   /** DataZoom 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */

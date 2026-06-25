@@ -1,5 +1,6 @@
 import type { Stage } from '@visactor/vtable/es/vrender';
-import { container, Group, createStageFromVRenderApp } from '@visactor/vtable/es/vrender';
+import { container, Group } from '@visactor/vtable/es/vrender';
+import { createStageFromVRenderApp } from '@visactor/vtable/es/vrender-app';
 import { Grid } from './grid';
 import type { Gantt } from '../Gantt';
 import { Env } from '../env';

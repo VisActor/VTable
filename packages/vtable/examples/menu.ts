@@ -49,6 +49,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'issue-5187-max-frozen-width'
+      },
+      {
+        path: 'debug',
+        name: 'header-frame-border-null-color'
       }
     ]
   },

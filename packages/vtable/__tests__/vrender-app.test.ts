@@ -5,14 +5,19 @@ jest.mock('@visactor/vrender-components', () => ({
   installPoptipToApp: jest.fn(),
   loadPoptip: jest.fn()
 }));
+jest.mock('../src/scenegraph/runtime-contributions', () => ({
+  installVTableRuntimeContributions: jest.fn()
+}));
 
 import { acquireSharedVRenderApp } from '@visactor/vrender/entries/shared';
 import { installPoptipToApp } from '@visactor/vrender-components';
 import type { IApp, IStage } from '@visactor/vrender-core';
-import { createStageFromVRenderApp } from '../src/vrender';
+import { createStageFromVRenderApp } from '../src/vrender-app';
+import { installVTableRuntimeContributions } from '../src/scenegraph/runtime-contributions';
 
 const mockedAcquireSharedVRenderApp = acquireSharedVRenderApp as jest.Mock;
 const mockedInstallPoptipToApp = installPoptipToApp as jest.Mock;
+const mockedInstallVTableRuntimeContributions = installVTableRuntimeContributions as jest.Mock;
 
 const sharedRecords = new Map<string, { app: ReturnType<typeof createMockApp>; refCount: number }>();
 const queuedApps: ReturnType<typeof createMockApp>[] = [];
@@ -82,6 +87,7 @@ describe('VRender app-scoped stage helper', () => {
   beforeEach(() => {
     mockedAcquireSharedVRenderApp.mockReset();
     mockedInstallPoptipToApp.mockReset();
+    mockedInstallVTableRuntimeContributions.mockReset();
     sharedRecords.clear();
     queuedApps.length = 0;
     installSharedAcquireMock();
@@ -244,6 +250,10 @@ describe('VRender app-scoped stage helper', () => {
     expect(created.app).toBe(app);
     expect(created.stageOwned).toBe(true);
     expect(created.appOwned).toBe(false);
+    expect(mockedInstallVTableRuntimeContributions).toHaveBeenCalledWith(app);
+    expect(mockedInstallVTableRuntimeContributions.mock.invocationCallOrder[0]).toBeLessThan(
+      app.createStage.mock.invocationCallOrder[0]
+    );
     expect(app.createStage).toHaveBeenCalledWith({ width: 100 });
 
     created.releaseAppRef();
@@ -261,6 +271,7 @@ describe('VRender app-scoped stage helper', () => {
     expect(created.releaseAppRef()).toBeUndefined();
     expect(stage.release).not.toHaveBeenCalled();
     expect(mockedAcquireSharedVRenderApp).not.toHaveBeenCalled();
+    expect(mockedInstallVTableRuntimeContributions).not.toHaveBeenCalled();
   });
 
   it('releases the retained fallback app when stage creation throws', () => {

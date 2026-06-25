@@ -6,11 +6,11 @@ settings:
 
 overrides:
   '@visactor/vchart': 2.1.0
-  '@visactor/vrender': 1.1.0
-  '@visactor/vrender-core': 1.1.0
-  '@visactor/vrender-kits': 1.1.0
-  '@visactor/vrender-components': 1.1.0
-  '@visactor/vrender-animate': 1.1.0
+  '@visactor/vrender': 1.1.1
+  '@visactor/vrender-core': 1.1.1
+  '@visactor/vrender-kits': 1.1.1
+  '@visactor/vrender-components': 1.1.1
+  '@visactor/vrender-animate': 1.1.1
 
 pnpmfileChecksum: sha256-XTeZQwJtKk4dimqf7175GhJCXrnq3Yh7+kwb86Bwcdo=
 
@@ -438,20 +438,20 @@ importers:
         specifier: ~1.0.17
         version: 1.0.23
       '@visactor/vrender':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@visactor/vrender-animate':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@visactor/vrender-components':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@visactor/vrender-core':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@visactor/vrender-kits':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@visactor/vscale':
         specifier: ~1.0.17
         version: 1.0.23
@@ -3573,20 +3573,20 @@ packages:
   '@visactor/vlayouts@1.0.23':
     resolution: {integrity: sha512-fK1f5LmuumhYanLArk5yrT4BZxu4IAmdc8WMwfB/KAvV+2dTPFuBUMWbWnDl0siQoU9SX9l/bLozUnI9n7BwBQ==}
 
-  '@visactor/vrender-animate@1.1.0':
-    resolution: {integrity: sha512-lgU09GGleyc7YPiUbhS7NR4s/jH5DXOxvFdcHgoaXPnP/DOqwKhG36s2xFVPGmpyknPwdjfVkMZg/zq/7GJE8A==}
+  '@visactor/vrender-animate@1.1.1':
+    resolution: {integrity: sha512-rrxVDZSvxGsRsgUjmuivQtQqcqkk35dOqYGAVE2fs9lD/TYEhErJjhmwRAuqGaTR2fBAFRgVku6h+O7H4qalAQ==}
 
-  '@visactor/vrender-components@1.1.0':
-    resolution: {integrity: sha512-ccAM/7lP1rl/P4Ed6uwns5fh9dctJrTmQGs+Oe2mBUoPr5AhSfAldWDlzz0WxgoOS38Ph1P/YOxMtJLAoCxKJQ==}
+  '@visactor/vrender-components@1.1.1':
+    resolution: {integrity: sha512-Dyk+zwx8/ofYFA2QoxFWXsyWip2+8LhO8UQJ9d1V7/x7pJ4twa3aPBbu5drC5Gx6SqI/7RkwuSA3Y0yzRmvYEA==}
 
-  '@visactor/vrender-core@1.1.0':
-    resolution: {integrity: sha512-ha7Ng0mPNV42gHkLxYGu+L7zbGC1Hxa07grwDvZsknbXpYkzd5O8IEI/Auy9nYd3nlKYZQk283reYhVDlEdUmA==}
+  '@visactor/vrender-core@1.1.1':
+    resolution: {integrity: sha512-GumHmNqmCVl7uYJJwC3O1lAN7/rCtnSIkEuA6QDUAyFzhzFuaTtG9eDFDDU+f4AaslFZM67D3FI+c7WOFOq3vw==}
 
-  '@visactor/vrender-kits@1.1.0':
-    resolution: {integrity: sha512-AJ5t5oCu7YEuOqssVlYvzk4UseY9nPl+DZpAvMpDQq7vtTB/r7Ow0aWEdA6Va/7zazSl369cmgbGWYm9S6BUbA==}
+  '@visactor/vrender-kits@1.1.1':
+    resolution: {integrity: sha512-t+lBq/6lA8Ck7ZOgtUgCFGV4Zuj06Irk2qIMze8fqpNn1+htzEizxgTgT8FdZuYN6mybHJbzL86BpicBw1tMfg==}
 
-  '@visactor/vrender@1.1.0':
-    resolution: {integrity: sha512-70aMVJgi9lQxLwnpAdn0HWEjc6vAJPszhkX3fvK/GaSUWiNvHaydtus8vJb/6a9ejxhYZDqAQ5aL3XNy+AQZQA==}
+  '@visactor/vrender@1.1.1':
+    resolution: {integrity: sha512-sRcaLfaD7LHtxIOm/EIeJ75BQhr7asUdkmdSWnnYuAL/yzEkrQvAF4Nf+g9Rf45XwRK3f38n339kUwlsyS0a+Q==}
 
   '@visactor/vscale@1.0.23':
     resolution: {integrity: sha512-XePhYuRoNAp+8MeSMuEOOvhVAlOwvM1sDT2yFxE6zdwVB2GjZk8mH+5N2xQGQWk75YmGJjlJASFtgwjlb1yWxw==}
@@ -11192,11 +11192,11 @@ snapshots:
     dependencies:
       '@visactor/vdataset': 1.0.23
       '@visactor/vlayouts': 1.0.23
-      '@visactor/vrender': 1.1.0
-      '@visactor/vrender-animate': 1.1.0
-      '@visactor/vrender-components': 1.1.0
-      '@visactor/vrender-core': 1.1.0
-      '@visactor/vrender-kits': 1.1.0
+      '@visactor/vrender': 1.1.1
+      '@visactor/vrender-animate': 1.1.1
+      '@visactor/vrender-components': 1.1.1
+      '@visactor/vrender-core': 1.1.1
+      '@visactor/vrender-kits': 1.1.1
       '@visactor/vscale': 1.0.23
       '@visactor/vutils': 1.0.23
       '@visactor/vutils-extension': 2.1.0
@@ -11229,39 +11229,39 @@ snapshots:
       '@visactor/vutils': 1.0.23
       eventemitter3: 4.0.7
 
-  '@visactor/vrender-animate@1.1.0':
+  '@visactor/vrender-animate@1.1.1':
     dependencies:
-      '@visactor/vrender-core': 1.1.0
+      '@visactor/vrender-core': 1.1.1
       '@visactor/vutils': 1.0.23
 
-  '@visactor/vrender-components@1.1.0':
+  '@visactor/vrender-components@1.1.1':
     dependencies:
-      '@visactor/vrender-animate': 1.1.0
-      '@visactor/vrender-core': 1.1.0
-      '@visactor/vrender-kits': 1.1.0
+      '@visactor/vrender-animate': 1.1.1
+      '@visactor/vrender-core': 1.1.1
+      '@visactor/vrender-kits': 1.1.1
       '@visactor/vscale': 1.0.23
       '@visactor/vutils': 1.0.23
 
-  '@visactor/vrender-core@1.1.0':
+  '@visactor/vrender-core@1.1.1':
     dependencies:
       '@visactor/vutils': 1.0.23
       color-convert: 2.0.1
 
-  '@visactor/vrender-kits@1.1.0':
+  '@visactor/vrender-kits@1.1.1':
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.1.0
+      '@visactor/vrender-core': 1.1.1
       '@visactor/vutils': 1.0.23
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
       roughjs: 4.6.6
 
-  '@visactor/vrender@1.1.0':
+  '@visactor/vrender@1.1.1':
     dependencies:
-      '@visactor/vrender-animate': 1.1.0
-      '@visactor/vrender-components': 1.1.0
-      '@visactor/vrender-core': 1.1.0
-      '@visactor/vrender-kits': 1.1.0
+      '@visactor/vrender-animate': 1.1.1
+      '@visactor/vrender-components': 1.1.1
+      '@visactor/vrender-core': 1.1.1
+      '@visactor/vrender-kits': 1.1.1
 
   '@visactor/vscale@1.0.23':
     dependencies:
@@ -14413,7 +14413,7 @@ snapshots:
       jest-environment-jsdom: 26.6.2
       jest-environment-node: 26.6.2
       jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3
+      jest-jasmine2: 26.6.3(ts-node@10.9.0(@types/node@25.9.3)(typescript@4.9.5))
       jest-regex-util: 26.0.0
       jest-resolve: 26.6.2
       jest-util: 26.6.2
@@ -14586,7 +14586,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jest-jasmine2@26.6.3:
+  jest-jasmine2@26.6.3(ts-node@10.9.0(@types/node@25.9.3)(typescript@4.9.5)):
     dependencies:
       '@babel/traverse': 7.29.7
       '@jest/environment': 26.6.2
@@ -14607,7 +14607,11 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   jest-leak-detector@24.9.0:
     dependencies:

@@ -22,6 +22,7 @@ import type { TVRenderSharedAppEnv, TVRenderSharedAppOptions } from '@visactor/v
 import { vglobal } from '@visactor/vrender-core';
 import type { IApp, IEnvParamsMap, IStage, IStageParams } from '@visactor/vrender-core';
 import { Env } from './tools/env';
+import { installVTableRuntimeContributions } from './scenegraph/runtime-contributions';
 
 type VRenderAppEnv = TVRenderSharedAppEnv;
 type VRenderStageMode = VRenderAppEnv | 'desktop-browser';
@@ -208,9 +209,12 @@ export function createStageFromVRenderApp(
   const resolvedApp = resolveVRenderApp(options);
 
   try {
+    installVTableRuntimeContributions(resolvedApp.app);
+    const stage = resolvedApp.app.createStage(params);
+
     return {
       app: resolvedApp.app,
-      stage: resolvedApp.app.createStage(params),
+      stage,
       releaseAppRef: resolvedApp.releaseAppRef,
       stageOwned: true,
       appOwned: resolvedApp.appOwned

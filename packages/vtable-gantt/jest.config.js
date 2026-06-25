@@ -56,6 +56,7 @@ module.exports = {
     ...createVRenderModuleNameMapper('<rootDir>/../vtable/node_modules'),
     '^@visactor/vtable-editors$': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
     '^@visactor/vtable/es/themes$': path.resolve(__dirname, '../vtable/src/themes.ts'),
+    '^@visactor/vtable/es/vrender-app$': path.resolve(__dirname, '../vtable/src/vrender-app.ts'),
     '^@visactor/vtable/es/vrender$': path.resolve(__dirname, '../vtable/src/vrender.ts'),
     '^@visactor/vtable$': path.resolve(__dirname, '../vtable/src/index.ts'),
     '^@src/vrender$': path.resolve(__dirname, '../vtable/src/vrender.ts'),

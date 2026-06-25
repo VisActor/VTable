@@ -1,5 +1,6 @@
 import '../src/scenegraph/scenegraph';
-import { application, container, createStageFromVRenderApp, TextMeasureContribution, vglobal } from '../src/vrender';
+import { application, container, TextMeasureContribution, vglobal } from '../src/vrender';
+import { createStageFromVRenderApp } from '../src/vrender-app';
 
 (globalThis as { __VERSION__?: string }).__VERSION__ = 'none';
 
@@ -11,7 +12,24 @@ type RendererWithGroupContributions = {
 
 type RendererWithRenderContributions = {
   constructor?: { name?: string };
+  reInit?: () => void;
+  type?: string;
   _renderContribitions?: { constructor?: { name?: string } }[];
+};
+
+type RendererWithDrawableContributions = {
+  constructor?: { name?: string };
+  reInit?: () => void;
+  type?: string;
+  _renderContribitions?: { constructor?: { name?: string }; drawShape?: (...args: unknown[]) => unknown }[];
+};
+
+type StageWithDrawContribution = {
+  renderService?: {
+    drawContribution?: {
+      defaultRenderMap?: Map<unknown, RendererWithDrawableContributions>;
+    };
+  };
 };
 
 type PickerWithContains = {
@@ -26,7 +44,43 @@ type PickerWithContains = {
   ) => unknown;
 };
 
+function getSelectedRectRenderer(stage: unknown): RendererWithDrawableContributions | undefined {
+  const renderMap = (stage as StageWithDrawContribution).renderService?.drawContribution?.defaultRenderMap;
+
+  return [...(renderMap?.values?.() ?? [])].find(
+    renderer => renderer.type === 'rect' || renderer.constructor?.name === 'DefaultCanvasRectRender'
+  );
+}
+
+function getSplitRectContributionSources(renderer?: RendererWithDrawableContributions): string[] {
+  return (renderer?._renderContribitions ?? [])
+    .filter(contribution => contribution.constructor?.name?.includes('SplitRect'))
+    .map(contribution => String(contribution.drawShape));
+}
+
 describe('VRender app renderer installation', () => {
+  test('uses the VTable split rect contribution in the selected stage renderer', () => {
+    const canvas = document.createElement('canvas');
+    const { stage, releaseAppRef } = createStageFromVRenderApp(
+      {
+        canvas,
+        width: 100,
+        height: 100
+      },
+      { mode: 'browser', scope: 'unit-selected-rect-renderer-contributions' }
+    );
+
+    try {
+      const rectRenderer = getSelectedRectRenderer(stage);
+      const splitRectSources = getSplitRectContributionSources(rectRenderer);
+
+      expect(splitRectSources.some(source => source.includes('strokeArrayColor'))).toBe(true);
+    } finally {
+      stage.release();
+      releaseAppRef();
+    }
+  });
+
   test('uses the VTable group renderer contributions for app-scoped stages', () => {
     const canvas = document.createElement('canvas');
     const { app, stage, releaseAppRef } = createStageFromVRenderApp(

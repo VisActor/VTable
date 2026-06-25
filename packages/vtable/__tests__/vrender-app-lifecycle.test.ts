@@ -1,5 +1,5 @@
 import { ListTable } from '../src';
-import { createStageFromVRenderApp } from '../src/vrender';
+import { createStageFromVRenderApp } from '../src/vrender-app';
 import { createCanvas, createDiv, removeDom } from './dom';
 
 (globalThis as { __VERSION__?: string }).__VERSION__ = 'none';

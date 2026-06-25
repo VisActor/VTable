@@ -1,6 +1,10 @@
 import { loadPoptip } from '@visactor/vrender-components';
 import { getRuntimeInstallerBindingContext } from '@visactor/vrender-core/entries/runtime-installer';
-import { container as legacyContainer, type ILegacyBindingContext } from '@visactor/vrender-core';
+import {
+  container as legacyContainer,
+  type ILegacyBindingContext,
+  type ServiceIdentifier
+} from '@visactor/vrender-core';
 // 导出版本号
 // export const version = __VERSION__;
 
@@ -20,7 +24,7 @@ type LegacyRebind = ILegacyBindingContext['rebind'];
 type LegacyIsBound = ILegacyBindingContext['isBound'];
 type LegacyContainerModuleHandler = (
   bind: LegacyBind,
-  unbind: (serviceIdentifier: unknown) => void,
+  unbind: (serviceIdentifier: ServiceIdentifier<unknown>) => void,
   isBound: LegacyIsBound,
   rebind: LegacyRebind
 ) => void;
@@ -71,7 +75,6 @@ export const named =
 
 export type { Direction } from '@visactor/vrender-core';
 export type { State } from '@visactor/vrender-components';
-export { createStageFromVRenderApp } from './vrender-app';
 export type { VRenderStageAppOptions, VRenderStageAppRef } from './vrender-app';
 // export { GroupFadeIn } from '@visactor/vrender-core';
 // export { GroupFadeOut } from '@visactor/vrender-core';

@@ -1,6 +1,5 @@
 import {
   createRect,
-  createStageFromVRenderApp,
   type CheckBox,
   type FederatedPointerEvent,
   type IContainPointMode,
@@ -12,10 +11,10 @@ import {
   type RichText,
   type Stage,
   type Text,
-  container,
   setPoptipTheme,
   registerForVrender
 } from '@src/vrender';
+import { createStageFromVRenderApp } from '../vrender-app';
 import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
@@ -35,7 +34,6 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
@@ -66,7 +64,7 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
-import textMeasureModule from './utils/text-measure';
+import { installVTableRuntimeContributions } from './runtime-contributions';
 import {
   getIconByXY,
   hideClickIcon,
@@ -105,14 +103,7 @@ import {
 } from './graphic/active-cell-chart-list';
 
 registerForVrender();
-
-// VChart poptip theme
-// loadPoptip();
-container.load(splitModule);
-container.load(textMeasureModule);
-// container.load(renderServiceModule);
-// container.load(contextModule);
-// console.log(container);
+installVTableRuntimeContributions();
 
 export type MergeMap = Map<
   string,
