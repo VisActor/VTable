@@ -210,6 +210,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-group-updateOption-perf'
+      },
+      {
+        path: 'list',
         name: 'list-groupBy'
       },
       {

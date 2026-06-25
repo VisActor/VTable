@@ -78,6 +78,7 @@ export function createComplexColumn(
     let customStyle;
     let customResult;
     let isCustomMerge = false;
+    let rawRecord;
     if (table.internalProps.customMergeCell) {
       const customMerge = table.getCustomMerge(col, row);
       if (customMerge) {
@@ -157,9 +158,22 @@ export function createComplexColumn(
       !range &&
       (table.internalProps.enableTreeNodeMerge || cellLocation !== 'body' || (define as TextColumnDefine)?.mergeCell)
     ) {
-      // 只有表头或者column配置合并单元格后再进行信息获取
-      range = table.getCellRange(col, row);
-      isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      // grouped/tree merge 仅发生在带 vtableMerge 标记的数据行上，普通 body cell 不必全量探测 range
+      if (
+        table.internalProps.enableTreeNodeMerge &&
+        cellLocation === 'body' &&
+        !(define as TextColumnDefine)?.mergeCell
+      ) {
+        rawRecord = table.getCellRawRecord(col, row);
+        if (rawRecord?.vtableMerge) {
+          range = table.getCellRange(col, row);
+          isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+        }
+      } else {
+        // 只有表头或者column配置合并单元格后再进行信息获取
+        range = table.getCellRange(col, row);
+        isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
+      }
       // 所有Merge单元格，只保留左上角一个真实的单元格，其他使用空Group占位
       if (isMerge) {
         const needUpdateRange = rowStart > range.start.row;
@@ -170,7 +184,7 @@ export function createComplexColumn(
     }
     let isVtableMerge = false;
     if (table.internalProps.enableTreeNodeMerge && isMerge) {
-      const rawRecord = table.getCellRawRecord(range.start.col, range.start.row);
+      rawRecord = rawRecord ?? table.getCellRawRecord(range.start.col, range.start.row);
       const { vtableMergeName, vtableMerge } = rawRecord ?? {};
 
       isVtableMerge = vtableMerge;
@@ -275,7 +289,8 @@ export function createComplexColumn(
         mayHaveIcon,
         cellTheme,
         range,
-        customResult
+        customResult,
+        cellStyle
       );
       columnGroup.updateColumnRowNumber(row);
       if (isMerge) {
@@ -402,7 +417,8 @@ function callCreateCellForPromiseValue(createCellArgs: any) {
     mayHaveIcon,
     cellTheme,
     range,
-    customResult
+    customResult,
+    cellStyle
   );
 }
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {

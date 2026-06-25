@@ -2967,7 +2967,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.emptyTip = null;
     internalProps.layoutMap.release();
     clearChartRenderQueue();
-    this.scenegraph.clearCells();
+    if (!(updateConfig as { skipClearCells?: boolean })?.skipClearCells) {
+      this.scenegraph.clearCells();
+    }
     this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();
 

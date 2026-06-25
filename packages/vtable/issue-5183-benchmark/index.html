@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>issue-5183 benchmark</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      #app {
+        padding: 16px;
+      }
+      #toolbar {
+        margin-bottom: 12px;
+      }
+      #toolbar button {
+        margin-right: 8px;
+      }
+      #status {
+        margin-bottom: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      #vTable {
+        width: 1200px;
+        height: 800px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="toolbar"></div>
+      <div id="status"></div>
+      <div id="vTable"></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+  </html>

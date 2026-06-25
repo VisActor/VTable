@@ -63,7 +63,8 @@ export function createCell(
   customResult?: {
     elementsGroup?: VGroup;
     renderDefault: boolean;
-  }
+  },
+  headerStyle?: any
 ): Group {
   let isAsync = false;
   let cellGroup: Group;
@@ -204,7 +205,8 @@ export function createCell(
       renderDefault,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      headerStyle
     );
 
     const axisConfig = table.internalProps.layoutMap.getAxisConfigInPivotChart(col, row);
@@ -332,7 +334,8 @@ export function createCell(
       renderDefault,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      headerStyle
     );
 
     // 创建bar group
@@ -395,7 +398,8 @@ export function createCell(
         true,
         cellTheme,
         range,
-        isAsync
+        isAsync,
+        headerStyle
       );
     } else {
       const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
@@ -445,7 +449,8 @@ export function createCell(
         true,
         cellTheme,
         range,
-        isAsync
+        isAsync,
+        headerStyle
       );
     } else {
       const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;

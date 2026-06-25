@@ -23,7 +23,9 @@ import {
   _setDataSource,
   _setRecords,
   checkHasAggregationOnColumnDefine,
-  generateAggregationForColumn
+  generateAggregationForColumn,
+  getHierarchyExpandLevel,
+  getListTableRowHierarchyType
 } from './core/tableHelper';
 import { BaseTable } from './core';
 import type { BaseTableAPI, ListTableProtected } from './ts-types/base-table';
@@ -43,7 +45,7 @@ import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/ch
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
-import { DataSource, type CachedDataSource } from './data';
+import { CachedDataSource, DataSource } from './data';
 import { getValueFromDeepArray } from './data/DataSource';
 import {
   listTableAddRecord,
@@ -760,9 +762,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   ) {
     const internalProps = this.internalProps;
+    const prevSortState = internalProps.sortState;
+    const nextSortStates = Array.isArray(options.sortState)
+      ? options.sortState
+      : options.sortState
+      ? [options.sortState]
+      : [];
+    const hasActiveSortState = nextSortStates.some(item => item?.field && item?.order && item.order !== 'normal');
+    const shouldSkipInitialClearCells =
+      Boolean(options.records) || (!!options.dataSource && this.dataSource !== options.dataSource);
 
     this.pluginManager.removeOrAddPlugins(options.plugins);
-    super.updateOption(options, updateConfig);
+    super.updateOption(options, {
+      ...updateConfig,
+      skipClearCells: shouldSkipInitialClearCells
+    } as typeof updateConfig & { skipClearCells?: boolean });
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
     //分页配置
@@ -818,6 +832,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.dataSource && this.dataSource !== options.dataSource) {
       // _setDataSource(this, options.dataSource);
       this.dataSource = options.dataSource;
+    } else if (
+      options.records &&
+      options.records === internalProps.records &&
+      options.sortState === prevSortState &&
+      !hasActiveSortState &&
+      this.dataSource instanceof CachedDataSource
+    ) {
+      this._refreshCurrentRecordsForOptionUpdate(options.records as any);
     } else if (options.records) {
       this.setRecords(options.records as any, {
         sortState: options.sortState
@@ -854,6 +876,44 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
+  }
+
+  private _refreshCurrentRecordsForOptionUpdate(records: Array<any>): void {
+    const dataSource = this.dataSource as CachedDataSource;
+    this.stateManager.endResizeIfResizing();
+    clearChartRenderQueue();
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+
+    this.scenegraph.clearCells();
+    this.internalProps.records = records;
+    dataSource.refreshRecords(
+      records,
+      this.internalProps.dataConfig,
+      this.pagination,
+      this.internalProps.columns,
+      getListTableRowHierarchyType(this),
+      getHierarchyExpandLevel(this)
+    );
+    this.refreshRowColCount();
+    this.stateManager.initCheckedState(records);
+    this.clearCellStyleCache();
+    this.scenegraph.createSceneGraph();
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+
+    this._updateSize();
+    const layoutOrder = this.options.componentLayoutOrder ?? ['legend', 'title'];
+    layoutOrder.forEach(component => {
+      if (component === 'legend') {
+        this.internalProps.legends?.forEach(legend => {
+          legend?.resize();
+        });
+      } else if (component === 'title') {
+        this.internalProps.title?.resize();
+      }
+    });
+
+    this.scenegraph.resize();
+    this.render();
   }
   /**
    * 更新页码
