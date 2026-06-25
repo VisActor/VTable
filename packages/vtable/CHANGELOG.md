@@ -22,7 +22,7 @@ Thu, 25 Jun 2026 03:15:59 GMT
 - fix: preserve quad style values
 
 ## 1.26.2
-Tue, 16 Jun 2026 01:39:41 GMT
+Tue, 16 Jun 2026 06:22:51 GMT
 
 ### Patches
 
