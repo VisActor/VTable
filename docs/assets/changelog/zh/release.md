@@ -1,3 +1,22 @@
+# v1.26.3
+
+2026-06-25
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：在调整尺寸交互结束后，跳过单元格点击事件的触发
+- **@visactor/vtable**：处理滚动时冻结列宽度
+- **@visactor/vtable**：在切换时保持透视表行树滚动位置
+- **@visactor/vtable**：保留自定义布局中的假值
+- **@visactor/vtable**：处理右侧冻结列数量更新
+- **@visactor/vtable**：保持带小数的行滚动目标位置
+- **@visactor/vtable**：在排序更新后同步甘特任务条
+- **@visactor/vtable**：保留四向边框样式值
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.2...v1.26.3
+
+[更多详情请查看 v1.26.3](https://github.com/VisActor/VTable/releases/tag/v1.26.3)
+
 # v1.26.2
 
 2026-06-16
