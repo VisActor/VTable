@@ -307,6 +307,10 @@ jobs:
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/install-run-rush.js version --bump
 
+      - name: Align rush changelog version (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: node common/scripts/align-rush-changelog-version.js ${{ steps.semver_release.outputs.main }}
+
       - name: Update version (release)
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_release.outputs.main }}

@@ -2,8 +2,8 @@
   "name": "@visactor/vtable",
   "entries": [
     {
-      "version": "1.26.4",
-      "tag": "@visactor/vtable_v1.26.4",
+      "version": "1.26.3",
+      "tag": "@visactor/vtable_v1.26.3",
       "date": "Thu, 25 Jun 2026 03:15:59 GMT",
       "comments": {
         "patch": [
@@ -32,35 +32,6 @@
           },
           {
             "comment": "fix: preserve quad style values"
-          }
-        ]
-      }
-    },
-    {
-      "version": "1.26.3",
-      "tag": "@visactor/vtable_v1.26.3",
-      "date": "Tue, 16 Jun 2026 06:22:51 GMT",
-      "comments": {
-        "none": [
-          {
-            "comment": "Merge pull request #5144 from VisActor/fix/issue-5027\n\nfix: avoid selection gap with frozen rows\n"
-          },
-          {
-            "comment": "fix: preserve sticky group position after toggle\n\n"
-          },
-          {
-            "comment": "fix: avoid selection gap with frozen rows\n\n"
-          },
-          {
-            "comment": "fix: preserve hidden column order after filter update\n\n"
-          },
-          {
-            "comment": "fix: resolve regression from #5137 fix which broke nested header drag and exposed internal state\n\n"
-          }
-        ],
-        "patch": [
-          {
-            "comment": "Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)"
           }
         ]
       }
