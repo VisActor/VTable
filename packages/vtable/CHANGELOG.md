@@ -1,6 +1,25 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 16 Jun 2026 06:22:51 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Jun 2026 03:15:59 GMT and should not be manually modified.
+
+## 1.26.4
+Thu, 25 Jun 2026 03:15:59 GMT
+
+### Patches
+
+- fix: skip click cell after resize interaction ends
+- fix: handle scroll frozen columns width
+- fix: keep pivot row tree scroll position on toggle
+
+### Updates
+
+- fix: preserve custom layout falsy values
+- fix: handle right frozen column count update
+- fix: keep fractional row scroll target
+- fix: sync gantt task bars after sorted updates
+
+
+- fix: preserve quad style values
 
 ## 1.26.3
 Tue, 16 Jun 2026 06:22:51 GMT

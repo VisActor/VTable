@@ -1,3 +1,22 @@
+# v1.26.3
+
+2026-06-25
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: skip click cell after resize interaction ends
+- **@visactor/vtable**: handle scroll frozen columns width
+- **@visactor/vtable**: keep pivot row tree scroll position on toggle
+- **@visactor/vtable**: preserve custom layout falsy values
+- **@visactor/vtable**: handle right frozen column count update
+- **@visactor/vtable**: keep fractional row scroll target
+- **@visactor/vtable**: sync gantt task bars after sorted updates
+- **@visactor/vtable**: preserve quad style values
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.2...v1.26.3
+
+[更多详情请查看 v1.26.3](https://github.com/VisActor/VTable/releases/tag/v1.26.3)
+
 # v1.26.2
 
 2026-06-16
