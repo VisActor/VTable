@@ -2,16 +2,16 @@
 
 2026-06-25
 
-**🐛 问题修复**
+**🐛 功能修复**
 
-- **@visactor/vtable**: skip click cell after resize interaction ends
-- **@visactor/vtable**: handle scroll frozen columns width
-- **@visactor/vtable**: keep pivot row tree scroll position on toggle
-- **@visactor/vtable**: preserve custom layout falsy values
-- **@visactor/vtable**: handle right frozen column count update
-- **@visactor/vtable**: keep fractional row scroll target
-- **@visactor/vtable**: sync gantt task bars after sorted updates
-- **@visactor/vtable**: preserve quad style values
+- **@visactor/vtable**：在调整尺寸交互结束后，跳过单元格点击事件的触发
+- **@visactor/vtable**：处理滚动时冻结列宽度
+- **@visactor/vtable**：在切换时保持透视表行树滚动位置
+- **@visactor/vtable**：保留自定义布局中的假值
+- **@visactor/vtable**：处理右侧冻结列数量更新
+- **@visactor/vtable**：保持带小数的行滚动目标位置
+- **@visactor/vtable**：在排序更新后同步甘特任务条
+- **@visactor/vtable**：保留四向边框样式值
 
 **Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.2...v1.26.3
 
