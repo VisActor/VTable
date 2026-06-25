@@ -620,8 +620,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
     const endedResizeCol = stateManager.isResizeCol();
     const endedResizeRow = stateManager.isResizeRow();
     const endedMoveCol = stateManager.isMoveCol();
-    const endedDragSelect = stateManager.isSelecting() && table.eventManager.isDraging;
-    const shouldSkipClickCell = endedResizeCol || endedResizeRow || endedMoveCol || endedDragSelect;
+    // const endedDragSelect = stateManager.isSelecting() && table.eventManager.isDraging;
+    const shouldSkipClickCell = endedResizeCol || endedResizeRow;
     if (stateManager.interactionState === 'grabing') {
       // stateManager.interactionState = 'default';
       stateManager.updateInteractionState(InteractionState.default);
