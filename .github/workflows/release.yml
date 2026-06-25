@@ -303,17 +303,27 @@ jobs:
             fi
           done
 
+      - name: Reset version-policy base version (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const packageJson = JSON.parse(fs.readFileSync('packages/vtable/package.json', 'utf8'));
+          const policiesPath = 'common/config/rush/version-policies.json';
+          const policies = JSON.parse(fs.readFileSync(policiesPath, 'utf8'));
+
+          if (!policies[0]) {
+            throw new Error('Missing version policy.');
+          }
+
+          policies[0].version = packageJson.version;
+          fs.writeFileSync(policiesPath, JSON.stringify(policies));
+          NODE
+
       - name: Generate rush version (release)
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/install-run-rush.js version --bump
-
-      - name: Align rush changelog version (release)
-        if: startsWith(github.ref_name, 'release/')
-        run: node common/scripts/align-rush-changelog-version.js ${{ steps.semver_release.outputs.main }}
-
-      - name: Update version (release)
-        if: startsWith(github.ref_name, 'release/')
-        run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_release.outputs.main }}
 
       - name: Build packages
         env:
