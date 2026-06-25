@@ -2,6 +2,41 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.4",
+      "tag": "@visactor/vtable_v1.26.4",
+      "date": "Thu, 25 Jun 2026 03:15:59 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: skip click cell after resize interaction ends"
+          },
+          {
+            "comment": "fix: handle scroll frozen columns width"
+          },
+          {
+            "comment": "fix: keep pivot row tree scroll position on toggle"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: preserve custom layout falsy values"
+          },
+          {
+            "comment": "fix: handle right frozen column count update"
+          },
+          {
+            "comment": "fix: keep fractional row scroll target"
+          },
+          {
+            "comment": "fix: sync gantt task bars after sorted updates\n\n"
+          },
+          {
+            "comment": "fix: preserve quad style values"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.3",
       "tag": "@visactor/vtable_v1.26.3",
       "date": "Tue, 16 Jun 2026 06:22:51 GMT",

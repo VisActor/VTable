@@ -174,6 +174,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-locate-taskbar'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-issue-5162-sort-drag'
   }
   //   ]
   // }

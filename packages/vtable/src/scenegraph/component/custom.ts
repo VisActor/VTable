@@ -57,7 +57,7 @@ export function dealWithCustom(
       col: range?.start.col ?? col,
       row: range?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row) || '',
+      value: table.getCellValue(col, row),
       rect: {
         left: 0,
         top: 0,
@@ -96,7 +96,7 @@ export function dealWithCustom(
       col,
       row,
       dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row) || '',
+      value: table.getCellValue(col, row),
       rect: {
         left: 0,
         top: 0,
