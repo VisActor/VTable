@@ -689,7 +689,10 @@ export class Gantt extends EventTarget {
 
   _sortScales() {
     const { timelineHeader } = this.options;
-    if (timelineHeader) {
+    // `scales` can be undefined when only `zoomScale` is configured (the zoom
+    // scale manager may not have populated it yet), so guard against it instead
+    // of crashing on `timelineScales.length`.
+    if (timelineHeader?.scales) {
       const timelineScales = timelineHeader.scales;
       const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
       if (timelineScales.length === 1) {
