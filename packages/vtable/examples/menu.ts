@@ -210,6 +210,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-group-tree-stick-updateOption'
+      },
+      {
+        path: 'list',
         name: 'list-group-updateOption-perf'
       },
       {

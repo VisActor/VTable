@@ -2058,60 +2058,51 @@ export class Scenegraph {
   }
 
   updateContainerAttrHeightAndY() {
-    for (let i = 0; i < this.cornerHeaderGroup.children.length; i++) {
-      updateContainerChildrenY(this.cornerHeaderGroup.children[i] as Group, 0);
-    }
-    for (let i = 0; i < this.colHeaderGroup.children.length; i++) {
-      updateContainerChildrenY(this.colHeaderGroup.children[i] as Group, 0);
-    }
-    for (let i = 0; i < this.rightTopCornerGroup.children.length; i++) {
-      updateContainerChildrenY(this.rightTopCornerGroup.children[i] as Group, 0);
-    }
-    for (let i = 0; i < this.rowHeaderGroup.children.length; i++) {
-      this.rowHeaderGroup.children[i].firstChild &&
+    this.cornerHeaderGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
+    this.colHeaderGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
+    this.rightTopCornerGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
+    this.rowHeaderGroup.forEachChildrenSkipChild((column: Group) => {
+      column.firstChild &&
         updateContainerChildrenY(
-          this.rowHeaderGroup.children[i] as Group,
-          (this.rowHeaderGroup.children[i].firstChild as Group).row > 0
-            ? this.table.getRowsHeight(
-                this.table.frozenRowCount ?? 0,
-                (this.rowHeaderGroup.children[i].firstChild as Group).row - 1
-              )
+          column,
+          (column.firstChild as Group).row > 0
+            ? this.table.getRowsHeight(this.table.frozenRowCount ?? 0, (column.firstChild as Group).row - 1)
             : 0
         );
-    }
-    for (let i = 0; i < this.bodyGroup.children.length; i++) {
-      this.bodyGroup.children[i].firstChild &&
+    });
+    this.bodyGroup.forEachChildrenSkipChild((column: Group) => {
+      column.firstChild &&
         updateContainerChildrenY(
-          this.bodyGroup.children[i] as Group,
-          (this.bodyGroup.children[i].firstChild as Group).row > 0
-            ? this.table.getRowsHeight(
-                this.table.frozenRowCount ?? 0,
-                (this.bodyGroup.children[i].firstChild as Group).row - 1
-              )
+          column,
+          (column.firstChild as Group).row > 0
+            ? this.table.getRowsHeight(this.table.frozenRowCount ?? 0, (column.firstChild as Group).row - 1)
             : 0
         );
-    }
-    for (let i = 0; i < this.rightFrozenGroup.children.length; i++) {
-      this.rightFrozenGroup.children[i].firstChild &&
+    });
+    this.rightFrozenGroup.forEachChildrenSkipChild((column: Group) => {
+      column.firstChild &&
         updateContainerChildrenY(
-          this.rightFrozenGroup.children[i] as Group,
-          (this.rightFrozenGroup.children[i].firstChild as Group).row > 0
-            ? this.table.getRowsHeight(
-                this.table.frozenRowCount ?? 0,
-                (this.rightFrozenGroup.children[i].firstChild as Group).row - 1
-              )
+          column,
+          (column.firstChild as Group).row > 0
+            ? this.table.getRowsHeight(this.table.frozenRowCount ?? 0, (column.firstChild as Group).row - 1)
             : 0
         );
-    }
-    for (let i = 0; i < this.leftBottomCornerGroup.children.length; i++) {
-      updateContainerChildrenY(this.leftBottomCornerGroup.children[i] as Group, 0);
-    }
-    for (let i = 0; i < this.bottomFrozenGroup.children.length; i++) {
-      updateContainerChildrenY(this.bottomFrozenGroup.children[i] as Group, 0);
-    }
-    for (let i = 0; i < this.rightBottomCornerGroup.children.length; i++) {
-      updateContainerChildrenY(this.rightBottomCornerGroup.children[i] as Group, 0);
-    }
+    });
+    this.leftBottomCornerGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
+    this.bottomFrozenGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
+    this.rightBottomCornerGroup.forEachChildrenSkipChild((column: Group) => {
+      updateContainerChildrenY(column, 0);
+    });
   }
   updateContainer(
     updateConfig: { async?: boolean; needUpdateCellY?: boolean } = { async: false, needUpdateCellY: false }
