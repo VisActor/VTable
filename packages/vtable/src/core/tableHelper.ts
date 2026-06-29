@@ -67,7 +67,7 @@ export function getListTableRowHierarchyType(table: ListTableAPI): 'grid' | 'tre
   if (isArray(table.internalProps.dataConfig?.groupByRules)) {
     rowHierarchyType = 'tree';
   }
-  if (tableWithPlugins.pluginManager.getPluginByName('Master Detail Plugin')) {
+  if (tableWithPlugins.pluginManager?.getPluginByName('Master Detail Plugin')) {
     rowHierarchyType = 'grid';
   }
   return rowHierarchyType;

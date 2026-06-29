@@ -118,7 +118,7 @@ The library is built on a canvas-based rendering system using VRender:
 ## vtable-sheet 项目详细信息
 
 ### 项目路径
-`/Users/bytedance/VisActor/VTable/packages/vtable-sheet`
+`packages/vtable-sheet`
 
 ### 核心功能需求
 - **跨sheet tab公式计算支持**: 实现不同sheet页签间的公式引用和计算

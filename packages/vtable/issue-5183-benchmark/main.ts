@@ -84,6 +84,12 @@ async function applyOption(records: Record<string, string | number>[], label: st
 }
 
 async function runBenchmark(rounds = BENCHMARK_ROUNDS) {
+  if (rounds <= 0) {
+    const result = { samples: [], average: 0, min: 0, max: 0 };
+    updateStatus('benchmark 跳过，rounds 需要大于 0');
+    return result;
+  }
+
   const samples: number[] = [];
   await applyOption(shiftedRecords, 'benchmark 预热切换到替换数据');
   await applyOption(fullRecords, 'benchmark 预热切换回原始数据');

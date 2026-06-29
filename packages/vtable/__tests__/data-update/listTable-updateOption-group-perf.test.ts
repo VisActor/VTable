@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { ListTable } from '../../src';
 import { CachedDataSource } from '../../src/data/CachedDataSource';
+import { getListTableRowHierarchyType } from '../../src/core/tableHelper';
 import { createDiv } from '../dom';
 import data from '../data/North_American_Superstore_data.json';
 
@@ -201,5 +202,45 @@ describe('listTable grouped updateOption perf', () => {
     expect(records[1][0]).toBe('inserted');
 
     table.release();
+  });
+
+  test('refreshRecords syncs rowHierarchyType before processing tree filter children', () => {
+    const records = [
+      {
+        name: 'parent',
+        children: [
+          { name: 'keep', visible: true },
+          { name: 'drop', visible: false }
+        ]
+      }
+    ];
+    const dataConfig = {
+      filterRules: [
+        {
+          filterFunc: record => record.visible !== false
+        }
+      ]
+    };
+    const columns = [{ field: 'name', title: 'Name' }];
+    const dataSource = CachedDataSource.ofArray(records, undefined, undefined, columns, 'grid');
+
+    dataSource.refreshRecords(records, dataConfig, undefined, columns, 'tree');
+
+    expect(records[0].filteredChildren).toEqual([{ name: 'keep', visible: true }]);
+  });
+
+  test('getListTableRowHierarchyType works before pluginManager initialization', () => {
+    const table = {
+      internalProps: {
+        layoutMap: {
+          rowHierarchyType: 'grid'
+        },
+        dataConfig: {
+          groupByRules: [{ field: 'Category' }]
+        }
+      }
+    };
+
+    expect(getListTableRowHierarchyType(table)).toBe('tree');
   });
 });

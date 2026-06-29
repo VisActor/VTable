@@ -224,6 +224,7 @@ export class CachedDataSource extends DataSource {
     this.dataConfig = dataConfig;
     this.columns = columns;
     this._isGrouped = isArray(dataConfig?.groupByRules);
+    this.rowHierarchyType = rowHierarchyType;
     this.dataSourceObj = {
       get: (index: number): any => records[index],
       length: records.length,
@@ -248,7 +249,6 @@ export class CachedDataSource extends DataSource {
     if (rowHierarchyType === 'tree') {
       this.initTreeHierarchyState();
     }
-    this.rowHierarchyType = rowHierarchyType;
     this.updatePagerData();
   }
 

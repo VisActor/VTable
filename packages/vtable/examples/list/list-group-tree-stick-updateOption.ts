@@ -51,6 +51,7 @@ export function createTable() {
 
   dom.style.width = '1000px';
   dom.style.height = '600px';
+  // Reproduce updating options after the host container size changes.
   tableInstance.updateOption(createOption(records));
 
   const toolbar = document.createElement('div');

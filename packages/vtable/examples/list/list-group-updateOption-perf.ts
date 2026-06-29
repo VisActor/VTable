@@ -111,6 +111,12 @@ export function createTable() {
   };
 
   const runBenchmark = async (rounds = BENCHMARK_ROUNDS) => {
+    if (rounds <= 0) {
+      const result = { samples: [], average: 0, min: 0, max: 0 };
+      updateStatus('benchmark 跳过，rounds 需要大于 0');
+      return result;
+    }
+
     const samples: number[] = [];
     updateStatus(`benchmark 预热中...`);
     await applyOption(shiftedRecords, true, 'benchmark 预热切换到替换数据');
