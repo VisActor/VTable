@@ -26,5 +26,9 @@ export const menus = [
   {
     path: 'sheet',
     name: 'history'
+  },
+  {
+    path: 'sheet',
+    name: 'issue-5204-formula-manager'
   }
 ];
