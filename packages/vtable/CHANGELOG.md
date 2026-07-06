@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 25 Jun 2026 03:15:59 GMT and should not be manually modified.
+This log was last generated on Mon, 06 Jul 2026 09:35:12 GMT and should not be manually modified.
+
+## 1.26.4
+Mon, 06 Jul 2026 09:35:12 GMT
+
+### Minor changes
+
+- Support rendering video cells from a first-frame canvas snapshot to release video resources after loading.
 
 ## 1.26.3
 Thu, 25 Jun 2026 03:15:59 GMT
