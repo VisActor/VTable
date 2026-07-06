@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Render group title for single-column list tables.",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "biukam.w@gmail.com"
+}
