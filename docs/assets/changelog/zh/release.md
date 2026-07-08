@@ -4,7 +4,7 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: 支持 rendering video cells from a first-frame canvas snapshot release video resources after loading.
+- **@visactor/vtable**: 支持通过首帧 canvas 快照渲染视频单元格，并在加载后释放视频资源。
 
 **Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.3...v1.26.4
 
