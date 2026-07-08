@@ -344,7 +344,7 @@ export function updateImageCellContentWhileResize(
   const leftIconWidth = (cellGroup as any)._cellLeftIconWidth ?? 0;
   const rightIconWidth = (cellGroup as any)._cellRightIconWidth ?? 0;
 
-  if ((image as any).keepAspectRatio) {
+  if ((image as any).keepAspectRatio || isDamagePic(image)) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || (originImage as any).videoWidth,
       originImage.height || (originImage as any).videoHeight,

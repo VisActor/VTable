@@ -1,3 +1,15 @@
+# v1.26.4
+
+2026-07-06
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持通过首帧 canvas 快照渲染视频单元格，并在加载后释放视频资源。
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.3...v1.26.4
+
+[更多详情请查看 v1.26.4](https://github.com/VisActor/VTable/releases/tag/v1.26.4)
+
 # v1.26.3
 
 2026-06-25

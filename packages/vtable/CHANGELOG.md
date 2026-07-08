@@ -1,8 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 25 Jun 2026 03:15:59 GMT and should not be manually modified.
+This log was last generated on Mon, 06 Jul 2026 09:35:12 GMT and should not be manually modified.
 
 ## 1.26.4
+Mon, 06 Jul 2026 09:35:12 GMT
+
+### Minor changes
+
+- Support rendering video cells from a first-frame canvas snapshot to release video resources after loading.
+
+## 1.26.3
 Thu, 25 Jun 2026 03:15:59 GMT
 
 ### Patches
@@ -21,34 +28,8 @@ Thu, 25 Jun 2026 03:15:59 GMT
 
 - fix: preserve quad style values
 
-## 1.26.3
-Tue, 16 Jun 2026 06:22:51 GMT
-
-### Patches
-
-- Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)
-
-### Updates
-
-- Merge pull request #5144 from VisActor/fix/issue-5027
-
-fix: avoid selection gap with frozen rows
-
-- fix: preserve sticky group position after toggle
-
-
-- fix: avoid selection gap with frozen rows
-
-
-- fix: preserve hidden column order after filter update
-
-
-- fix: resolve regression from #5137 fix which broke nested header drag and exposed internal state
-
-
-
 ## 1.26.2
-Tue, 16 Jun 2026 01:39:41 GMT
+Tue, 16 Jun 2026 06:22:51 GMT
 
 ### Patches
 

@@ -1,3 +1,15 @@
+# v1.26.4
+
+2026-07-06
+
+**🆕 New Features**
+
+- **@visactor/vtable**: Support rendering video cells from a first-frame canvas snapshot to release video resources after loading.
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.3...v1.26.4
+
+[more detail about v1.26.4](https://github.com/VisActor/VTable/releases/tag/v1.26.4)
+
 # v1.26.3
 
 2026-06-25
