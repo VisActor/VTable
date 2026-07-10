@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.4",
+      "tag": "@visactor/vtable_v1.26.4",
+      "date": "Mon, 06 Jul 2026 09:35:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Support rendering video cells from a first-frame canvas snapshot to release video resources after loading."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.3",
       "tag": "@visactor/vtable_v1.26.3",
       "date": "Thu, 25 Jun 2026 03:15:59 GMT",
