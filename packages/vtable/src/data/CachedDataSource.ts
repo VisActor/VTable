@@ -209,6 +209,49 @@ export class CachedDataSource extends DataSource {
     return this.dataConfig?.groupByRules?.length ?? 0;
   }
 
+  refreshRecords(
+    records: any[] = [],
+    dataConfig?: IListTableDataConfig,
+    pagination?: IPagination,
+    columns?: ColumnsDefine,
+    rowHierarchyType?: 'grid' | 'tree',
+    hierarchyExpandLevel?: number
+  ) {
+    this.clearCache();
+    this.beforeChangedRecordsMap.clear();
+    this.groupAggregator = null;
+    this.addRecordRule = dataConfig?.addRecordRule || 'Object';
+    this.dataConfig = dataConfig;
+    this.columns = columns;
+    this._isGrouped = isArray(dataConfig?.groupByRules);
+    this.rowHierarchyType = rowHierarchyType;
+    this.dataSourceObj = {
+      get: (index: number): any => records[index],
+      length: records.length,
+      records
+    };
+    (this as any)._source = this.processRecords(records);
+    this.sourceLength = this.source?.length || 0;
+    this.sortedIndexMap.clear();
+    this._currentPagerIndexedData = [];
+    this.userPagination = pagination;
+    this.pagination = pagination || {
+      totalCount: this.sourceLength,
+      perPageCount: this.sourceLength,
+      currentPage: 0
+    };
+    this.hierarchyExpandLevel = hierarchyExpandLevel >= 1 ? hierarchyExpandLevel : 0;
+    this.currentIndexedData = Array.from({ length: this.sourceLength }, (_, i) => i);
+    if (!this.userPagination) {
+      this.pagination.perPageCount = this.sourceLength;
+      this.pagination.totalCount = this.sourceLength;
+    }
+    if (rowHierarchyType === 'tree') {
+      this.initTreeHierarchyState();
+    }
+    this.updatePagerData();
+  }
+
   updateGroup() {
     this.clearCache();
 

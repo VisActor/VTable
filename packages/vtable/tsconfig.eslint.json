@@ -14,6 +14,6 @@
       ]
     }
   },
-  "include": ["src", "__tests__", "examples", "site-demo"],
+  "include": ["src", "__tests__", "examples", "site-demo", "issue-5183-benchmark"],
   "exclude": ["bugserver-config"]
 }

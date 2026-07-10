@@ -67,8 +67,7 @@ export function createCellContent(
   // const absoluteLeftIcons: ColumnIconOption[] = [];
   // const absoluteRightIcons: ColumnIconOption[] = [];
 
-  let contentWidth: number;
-  let contentHeight: number;
+  let contentWidth = 0;
   let leftIconWidth = 0;
   // let leftIconHeight = 0;
   let rightIconWidth = 0;
@@ -167,8 +166,9 @@ export function createCellContent(
       // cellGroup.appendChild(line);
       // cellGroup.appendChild(line1);
 
-      contentWidth = wrapText.AABBBounds.width();
-      contentHeight = wrapText.AABBBounds.height();
+      if (autoColWidth) {
+        contentWidth = wrapText.AABBBounds.width();
+      }
     }
   } else {
     // // icon分类
@@ -408,8 +408,9 @@ export function createCellContent(
       cellGroup.appendChild(cellContent);
       cellContent.layout();
 
-      contentWidth = cellContent.AABBBounds.width();
-      contentHeight = cellContent.AABBBounds.height();
+      if (autoColWidth) {
+        contentWidth = cellContent.AABBBounds.width();
+      }
     } else {
       // 没有content icon，cellGroup: CellIcons + wrapText/richtext
       // cellGroup.appendChild(textMark);
@@ -418,8 +419,9 @@ export function createCellContent(
       } else {
         cellGroup.appendChild(textMark);
       }
-      contentWidth = textMark.AABBBounds.width();
-      contentHeight = textMark.AABBBounds.height();
+      if (autoColWidth) {
+        contentWidth = textMark.AABBBounds.width();
+      }
     }
   }
 

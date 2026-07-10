@@ -60,19 +60,23 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
     })
   ];
 }
+
+export function getListTableRowHierarchyType(table: ListTableAPI): 'grid' | 'tree' {
+  const tableWithPlugins = table as ListTableAPI & { pluginManager?: PluginManager };
+  let rowHierarchyType = table.internalProps.layoutMap.rowHierarchyType;
+  if (isArray(table.internalProps.dataConfig?.groupByRules)) {
+    rowHierarchyType = 'tree';
+  }
+  if (tableWithPlugins.pluginManager?.getPluginByName('Master Detail Plugin')) {
+    rowHierarchyType = 'grid';
+  }
+  return rowHierarchyType;
+}
 /** @private */
 export function _setRecords(table: ListTableAPI, records: any[] = []): void {
-  const tableWithPlugins = table as ListTableAPI & { pluginManager?: PluginManager };
-
   _dealWithUpdateDataSource(table, () => {
     table.internalProps.records = records;
-    let rowHierarchyType = table.internalProps.layoutMap.rowHierarchyType;
-    if (isArray(table.internalProps.dataConfig?.groupByRules)) {
-      rowHierarchyType = 'tree';
-    }
-    if (tableWithPlugins.pluginManager.getPluginByName('Master Detail Plugin')) {
-      rowHierarchyType = 'grid';
-    }
+    const rowHierarchyType = getListTableRowHierarchyType(table);
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
       records,
       table.internalProps.dataConfig,
@@ -85,7 +89,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
   });
 }
 
-function getHierarchyExpandLevel(table: ListTableAPI) {
+export function getHierarchyExpandLevel(table: ListTableAPI) {
   if ((table.options as ListTableConstructorOptions).hierarchyExpandLevel) {
     return (table.options as ListTableConstructorOptions).hierarchyExpandLevel;
   } else if ((table.internalProps as ListTableProtected).groupBy) {

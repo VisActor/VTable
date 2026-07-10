@@ -46,9 +46,10 @@ export function createCellGroup(
   renderDefault: boolean,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  headerStyle?: any
 ): Group {
-  const headerStyle = table._getCellStyle(col, row); // to be fixed
+  headerStyle = headerStyle || table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
     padding = functionalPadding;
