@@ -289,9 +289,11 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
       const rowIndex = seriesNumberCell.id;
       //判断rowIndex整行是否被选中
       const isRowSelected = this.table.stateManager.select.ranges.some(range => {
+        const startRow = Math.min(range.start.row, range.end.row);
+        const endRow = Math.max(range.start.row, range.end.row);
         return (
-          range.start.row <= rowIndex &&
-          rowIndex <= range.end.row &&
+          startRow <= rowIndex &&
+          rowIndex <= endRow &&
           range.start.col === 0 &&
           range.end.col === this.table.colCount - 1
         );
