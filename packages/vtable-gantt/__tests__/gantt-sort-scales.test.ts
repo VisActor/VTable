@@ -15,6 +15,8 @@ describe('Gantt._sortScales', () => {
     };
 
     expect(() => Gantt.prototype._sortScales.call(context)).not.toThrow();
+    expect(context.parsedOptions.sortedTimelineScales.map(scale => scale.unit)).toEqual(['day']);
+    expect(context.parsedOptions.reverseSortedTimelineScales.map(scale => scale.unit)).toEqual(['day']);
   });
 
   test('still sorts the configured scales', () => {
@@ -25,6 +27,42 @@ describe('Gantt._sortScales', () => {
 
     Gantt.prototype._sortScales.call(context);
 
+    expect(context.parsedOptions.sortedTimelineScales.map(scale => scale.unit)).toEqual(['month', 'day']);
+    expect(context.parsedOptions.reverseSortedTimelineScales.map(scale => scale.unit)).toEqual(['day', 'month']);
+  });
+
+  test('uses zoomScale current level when timelineHeader.scales is undefined', () => {
+    const context = {
+      options: {
+        timelineHeader: {
+          zoomScale: {
+            enabled: true,
+            levels: [
+              [
+                { unit: 'month', step: 1 },
+                { unit: 'day', step: 1 }
+              ]
+            ]
+          }
+        }
+      },
+      zoomScaleManager: {
+        config: {
+          levels: [
+            [
+              { unit: 'month', step: 1 },
+              { unit: 'day', step: 1 }
+            ]
+          ]
+        },
+        getCurrentLevel: () => 0
+      },
+      parsedOptions: {}
+    };
+
+    Gantt.prototype._sortScales.call(context);
+
+    expect(context.options.timelineHeader.scales.map(scale => scale.unit)).toEqual(['month', 'day']);
     expect(context.parsedOptions.sortedTimelineScales.map(scale => scale.unit)).toEqual(['month', 'day']);
     expect(context.parsedOptions.reverseSortedTimelineScales.map(scale => scale.unit)).toEqual(['day', 'month']);
   });
