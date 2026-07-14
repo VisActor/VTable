@@ -1,12 +1,13 @@
 import { VTableSheet } from '../../src/index';
+import type { IColumnDefine, SheetData } from '../../src/ts-types';
 
 const CONTAINER_ID = 'vTable';
 
-const columns = [
+const columns: IColumnDefine[] = [
   { title: '测试公式计算', field: 'test', width: 120 },
   {
     title: 'B商品营业额',
-    field: 'Bmoney',
+    field: ['sales', 'Bmoney'],
     width: 120
   },
   {
@@ -16,9 +17,11 @@ const columns = [
   }
 ];
 
-const dataA = Array.from({ length: 12 }, (_, index) => ({
+const dataA: SheetData = Array.from({ length: 12 }, (_, index) => ({
   test: `${index}-row`,
-  Bmoney: `${(index + 1) * 50}`,
+  sales: {
+    Bmoney: `${(index + 1) * 50}`
+  },
   Amoney: `${(index + 2) * 50}`
 }));
 
@@ -48,14 +51,14 @@ export function createTable() {
         sheetKey: 'Issue-5204-a',
         sheetTitle: 'data是Array<Object>',
         columns,
-        data: dataA as any,
+        data: dataA,
         active: true
       },
       {
         sheetKey: 'Issue-5204-b',
         sheetTitle: 'data是Array<Array<any>>',
         columns: columnsB,
-        data: dataB as any,
+        data: dataB,
         active: true
       }
     ]

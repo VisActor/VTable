@@ -2,7 +2,7 @@ import { FormulaEngine } from '../formula/formula-engine';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult, IFormulaManager } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
-import type { CellRange, ISheetDefine } from '../ts-types';
+import type { CellRange, ISheetDefine, SheetData } from '../ts-types';
 import { CellHighlightManager } from '../formula';
 import type * as VTable from '@visactor/vtable';
 import { CrossSheetFormulaHandler } from '../formula/cross-sheet-formula-handler';
@@ -137,7 +137,7 @@ export class FormulaManager implements IFormulaManager {
    * @param data 工作表数据
    * @returns 标准化后的工作表数据
    */
-  normalizeSheetData(data: unknown[][], tableInstance: VTable.ListTable): unknown[][] {
+  normalizeSheetData(data: SheetData, tableInstance: VTable.ListTable): unknown[][] {
     try {
       //将columns中的title追加到data中
       const headerRows: unknown[][] = [];
@@ -158,11 +158,12 @@ export class FormulaManager implements IFormulaManager {
       let dataCopy: unknown[][];
       const firstRow = data[0];
       if (firstRow && typeof firstRow === 'object' && !Array.isArray(firstRow)) {
-        dataCopy = data.map((row: Record<string, any>) => {
+        dataCopy = data.map((_, rowIndex) => {
+          const bodyRow = tableInstance.columnHeaderLevelCount + rowIndex;
           const rowTemp = new Array<unknown>(colCount);
           for (let col = 0; col < colCount; col++) {
-            const field = headerKeyColMap.get(col);
-            rowTemp[col] = field !== undefined ? row[field] ?? null : null;
+            const field = tableInstance.getBodyField(col, bodyRow) ?? headerKeyColMap.get(col);
+            rowTemp[col] = field !== undefined ? tableInstance.getRawFieldData(field, col, bodyRow) ?? null : null;
           }
           return rowTemp;
         });
