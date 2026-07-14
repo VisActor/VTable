@@ -141,15 +141,34 @@ export class FormulaManager implements IFormulaManager {
     try {
       //将columns中的title追加到data中
       const headerRows: unknown[][] = [];
+      const headerKeyColMap = new Map();
       for (let i = 0; i < tableInstance.columnHeaderLevelCount; i++) {
         const headerRow: unknown[] = [];
         for (let j = 0; j < tableInstance.colCount; j++) {
           const cellValue = tableInstance.getCellValue(j, i);
+          const filedDefine = tableInstance.getHeaderDefine(j, i);
+          if (cellValue === filedDefine.title) {
+            headerKeyColMap.set(j, filedDefine.field);
+          }
           headerRow.push(cellValue);
         }
         headerRows.push(headerRow);
       }
-      const dataCopy = JSON.parse(JSON.stringify(data));
+      const colCount = tableInstance.colCount;
+      let dataCopy: unknown[][];
+      const firstRow = data[0];
+      if (firstRow && typeof firstRow === 'object' && !Array.isArray(firstRow)) {
+        dataCopy = data.map((row: Record<string, any>) => {
+          const rowTemp = new Array<unknown>(colCount);
+          for (let col = 0; col < colCount; col++) {
+            const field = headerKeyColMap.get(col);
+            rowTemp[col] = field !== undefined ? row[field] ?? null : null;
+          }
+          return rowTemp;
+        });
+      } else {
+        dataCopy = JSON.parse(JSON.stringify(data));
+      }
 
       const toNormalizeData = tableInstance.columnHeaderLevelCount > 0 ? [...headerRows].concat(dataCopy) : dataCopy;
 
@@ -1372,7 +1391,6 @@ export class FormulaManager implements IFormulaManager {
           // 如果还没有对应的 WorkSheet 实例，跳过，后续按需再补充
           return;
         }
-
         const normalizedData = this.normalizeSheetData(worksheetInstance.getData(), worksheetInstance.tableInstance);
         this.addSheet(sheetKey, normalizedData, sheetDefine.sheetTitle);
       });
