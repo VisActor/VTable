@@ -267,7 +267,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (Env.mode === 'node') {
       options = container as BaseTableConstructorOptions;
       container = null;
-    } else if (!(container instanceof HTMLElement)) {
+    } else if (container && !(container instanceof HTMLElement)) {
       options = container as BaseTableConstructorOptions;
       if ((container as BaseTableConstructorOptions).container) {
         container = (container as BaseTableConstructorOptions).container;
