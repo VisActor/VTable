@@ -1502,22 +1502,143 @@ export class FormulaEngine {
         if (funcResult.error) {
           return { value: null, error: `Error in function ${funcCall}: ${funcResult.error}` };
         }
+        const numericFuncValue = this.toArithmeticNumber(funcResult.value);
+        if (numericFuncValue.error) {
+          return { value: null, error: numericFuncValue.error };
+        }
         processedExpr =
-          processedExpr.slice(0, funcSpan.start) + String(funcResult.value) + processedExpr.slice(funcSpan.end + 1);
+          processedExpr.slice(0, funcSpan.start) +
+          String(numericFuncValue.value) +
+          processedExpr.slice(funcSpan.end + 1);
       }
 
       // 3. 处理剩余的单元格引用（包括带sheet前缀的引用，支持带引号的sheet名称）
       const cellRefs = processedExpr.match(/('[^']+'!)?([A-Za-z0-9_\s一-龥]+!)?[A-Z]+[0-9]+/g) || [];
       for (const cellRef of cellRefs) {
         const value = this.getCellValueByA1(cellRef);
-        processedExpr = processedExpr.replace(cellRef, String(value));
+        const numericValue = this.toArithmeticNumber(value);
+        if (numericValue.error) {
+          return { value: null, error: numericValue.error };
+        }
+        processedExpr = processedExpr.replace(cellRef, String(numericValue.value));
       }
 
-      // 4. 计算最终的算术表达式
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const result = Function('"use strict"; return (' + processedExpr + ')')();
-      return { value: result, error: undefined };
+      // 4. 使用白名单算术解析器计算，禁止通过 Function/eval 执行用户可控表达式
+      return this.evaluateBasicArithmetic(processedExpr);
     } catch (error) {
+      return { value: null, error: 'Basic arithmetic evaluation failed' };
+    }
+  }
+
+  private toArithmeticNumber(value: unknown): { value: number; error?: string } {
+    if (value === null || value === undefined || value === '') {
+      return { value: 0, error: undefined };
+    }
+
+    const num = Number(value);
+    if (!Number.isFinite(num)) {
+      return { value: 0, error: 'Arithmetic operands must be numeric' };
+    }
+
+    return { value: num, error: undefined };
+  }
+
+  private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
+    try {
+      let index = 0;
+
+      const skipWhitespace = () => {
+        while (index < expr.length && /\s/.test(expr[index])) {
+          index++;
+        }
+      };
+
+      const parseNumber = (): number | null => {
+        skipWhitespace();
+        const match = expr.slice(index).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/i);
+        if (!match) {
+          return null;
+        }
+        index += match[0].length;
+        return Number(match[0]);
+      };
+
+      const parseFactor = (): number => {
+        skipWhitespace();
+
+        if (expr[index] === '+') {
+          index++;
+          return parseFactor();
+        }
+        if (expr[index] === '-') {
+          index++;
+          return -parseFactor();
+        }
+        if (expr[index] === '(') {
+          index++;
+          const value = parseAdditive();
+          skipWhitespace();
+          if (expr[index] !== ')') {
+            throw new Error('Missing closing parenthesis');
+          }
+          index++;
+          return value;
+        }
+
+        const value = parseNumber();
+        if (value === null || !Number.isFinite(value)) {
+          throw new Error('Invalid arithmetic token');
+        }
+        return value;
+      };
+
+      const parseMultiplicative = (): number => {
+        let value = parseFactor();
+        while (true) {
+          skipWhitespace();
+          const operator = expr[index];
+          if (operator !== '*' && operator !== '/') {
+            break;
+          }
+          index++;
+          const right = parseFactor();
+          if (operator === '*') {
+            value *= right;
+          } else {
+            value /= right;
+          }
+        }
+        return value;
+      };
+
+      const parseAdditive = (): number => {
+        let value = parseMultiplicative();
+        while (true) {
+          skipWhitespace();
+          const operator = expr[index];
+          if (operator !== '+' && operator !== '-') {
+            break;
+          }
+          index++;
+          const right = parseMultiplicative();
+          if (operator === '+') {
+            value += right;
+          } else {
+            value -= right;
+          }
+        }
+        return value;
+      };
+
+      const result = parseAdditive();
+      skipWhitespace();
+
+      if (index !== expr.length || !Number.isFinite(result)) {
+        return { value: null, error: 'Basic arithmetic evaluation failed' };
+      }
+
+      return { value: result, error: undefined };
+    } catch {
       return { value: null, error: 'Basic arithmetic evaluation failed' };
     }
   }
