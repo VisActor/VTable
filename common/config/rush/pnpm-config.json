@@ -83,7 +83,7 @@
    * PNPM documentation: https://pnpm.io/package_json#pnpmoverrides
    */
   "globalOverrides": {
-    "@visactor/vchart": "2.1.0",
+    "@visactor/vchart": "2.1.3",
     "@visactor/vrender": "1.1.4",
     "@visactor/vrender-core": "1.1.4",
     "@visactor/vrender-kits": "1.1.4",

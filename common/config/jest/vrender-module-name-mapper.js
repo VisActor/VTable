@@ -6,7 +6,7 @@ function createVRenderModuleNameMapper(nodeModulesRoot = '<rootDir>/node_modules
     '^@visactor/vrender-core/color-string$': `${visactorRoot}/vrender-core/cjs/color-string/index.js`,
     '^@visactor/vrender-core/event/constant$': `${visactorRoot}/vrender-core/cjs/event/public-constant.js`,
     '^@visactor/vrender-core/graphic/builtin-symbol$':
-      `${visactorRoot}/vrender-core/cjs/graphic/builtin-symbol/index.js`,
+      `${visactorRoot}/vrender-core/cjs/graphic/builtin-symbol.js`,
     '^@visactor/vrender-core/render/draw-interceptor$':
       `${visactorRoot}/vrender-core/cjs/render/contributions/render/draw-interceptor.js`,
     '^@visactor/vrender-core/render/symbol$':
