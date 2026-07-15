@@ -1,6 +1,14 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 06 Jul 2026 09:35:12 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Jul 2026 10:41:26 GMT and should not be manually modified.
+
+## 1.26.5
+Wed, 15 Jul 2026 10:41:26 GMT
+
+### Updates
+
+- Render group title for single-column list tables.
+- fix: handle null table container
 
 ## 1.26.4
 Mon, 06 Jul 2026 09:35:12 GMT

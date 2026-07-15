@@ -1,3 +1,19 @@
+# v1.26.5
+
+2026-07-15
+
+**🐛 Bug Fixes**
+
+- **@visactor/vtable**: handle null table container
+
+**🔨 Chores**
+
+- **@visactor/vtable**: Render group title for single-column list tables.
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.4...v1.26.5
+
+[more detail about v1.26.5](https://github.com/VisActor/VTable/releases/tag/v1.26.5)
+
 # v1.26.4
 
 2026-07-06
