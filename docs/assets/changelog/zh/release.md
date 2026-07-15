@@ -4,11 +4,11 @@
 
 **🐛 问题修复**
 
-- **@visactor/vtable**: handle null table container
+- **@visactor/vtable**: 处理表格容器为空的情况
 
 **🔨 维护与杂项**
 
-- **@visactor/vtable**: Render group title for single-column list tables.
+- **@visactor/vtable**: 支持单列列表表格渲染分组标题
 
 **Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.4...v1.26.5
 
