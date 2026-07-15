@@ -16,13 +16,16 @@ import type {
   IRectGraphicAttribute,
   ISymbolGraphicAttribute,
   IRichTextGraphicAttribute,
-  IPolygonGraphicAttribute
+  IPolygonGraphicAttribute,
+  StateDefinitionsInput
 } from '@visactor/vtable/es/vrender';
 
-type GraphicProps<IGraphicGraphicAttribute> = {
+type GraphicProps<IGraphicGraphicAttribute extends Record<string, unknown>> = {
   attribute: IGraphicGraphicAttribute;
   ref?: Ref<IGraphic>;
   children?: ReactNode;
+  states?: StateDefinitionsInput<IGraphicGraphicAttribute>;
+  sharedStateDefinitions?: StateDefinitionsInput<Record<string, unknown>>;
 } & IEventParamsType;
 
 export const Group: (

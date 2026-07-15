@@ -82,7 +82,7 @@ export function createChartCellGroup(
       cellGroup.role = 'cell';
       cellGroup.col = col;
       cellGroup.row = row;
-      columnGroup?.addCellGroup(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改

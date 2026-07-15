@@ -266,16 +266,14 @@ In addition to basic properties, state updates can be used to implement interact
     height: 20,
     cursor: 'pointer'
   }}
-  stateProxy={(stateName: string) => {
-    if (stateName === 'hover') {
-      return {
-        background: {
-          fill: '#ccc',
-          cornerRadius: 5,
-          expandX: 1,
-          expandY: 1
-        }
-      };
+  states={{
+    hover: {
+      background: {
+        fill: '#ccc',
+        cornerRadius: 5,
+        expandX: 1,
+        expandY: 1
+      }
     }
   }}
   onMouseEnter={event => {

@@ -226,21 +226,57 @@ export class Group extends VRenderGroup {
     return null;
   }
 
-  addCellGroup(cellGroup: Group) {
+  addCellGroup(cellGroup: Group): Group {
+    cellGroup = this.getInsertableCellGroup(cellGroup);
+
     if (this.childrenCount === 0 || (this.lastChild as Group).row === cellGroup.row - 1) {
       this.addChild(cellGroup);
+      return cellGroup;
     } else {
       // for promise cell row order in column
       let c = this._firstChild as Group;
       for (let i = 0; i < this.childrenCount; i++) {
         if (c.row === cellGroup.row - 1) {
           this.insertAfter(cellGroup, c);
-          return;
+          return cellGroup;
         }
         c = c._next as Group;
       }
       this.addChild(cellGroup);
+      return cellGroup;
     }
+  }
+
+  private getInsertableCellGroup(cellGroup: Group): Group {
+    if (cellGroup.isAncestorsOf(this)) {
+      return this.cloneCellGroupForInsertion(cellGroup);
+    }
+
+    const parent = cellGroup.parent as Group | undefined;
+    if (parent) {
+      parent.removeChild(cellGroup);
+    }
+    return cellGroup;
+  }
+
+  private cloneCellGroupForInsertion(cellGroup: Group): Group {
+    const clonedCellGroup = new Group({ ...cellGroup.attribute });
+    clonedCellGroup.name = cellGroup.name;
+    clonedCellGroup.role = cellGroup.role;
+    clonedCellGroup.col = cellGroup.col;
+    clonedCellGroup.row = cellGroup.row;
+    clonedCellGroup.mergeStartCol = cellGroup.mergeStartCol;
+    clonedCellGroup.mergeStartRow = cellGroup.mergeStartRow;
+    clonedCellGroup.mergeEndCol = cellGroup.mergeEndCol;
+    clonedCellGroup.mergeEndRow = cellGroup.mergeEndRow;
+    clonedCellGroup.contentWidth = cellGroup.contentWidth;
+    clonedCellGroup.contentHeight = cellGroup.contentHeight;
+    clonedCellGroup.rowNumber = cellGroup.rowNumber;
+    clonedCellGroup.colHeight = cellGroup.colHeight;
+    clonedCellGroup.needUpdate = cellGroup.needUpdate;
+    clonedCellGroup.needUpdateWidth = cellGroup.needUpdateWidth;
+    clonedCellGroup.needUpdateHeight = cellGroup.needUpdateHeight;
+    return clonedCellGroup;
   }
 
   getChildAt(index: number) {

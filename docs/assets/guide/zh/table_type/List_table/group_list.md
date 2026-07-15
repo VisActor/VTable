@@ -311,16 +311,14 @@ const option = {
       boundsPadding: [0, 0, 0, 10],
       cursor: 'pointer'
     });
-    icon.stateProxy = (stateName) => {
-      if (stateName === 'hover') {
-        return {
-          background: {
-            fill: '#ccc',
-            cornerRadius: 5,
-            expandX: 1,
-            expandY: 1
-          }
-        };
+    icon.states = {
+      hover: {
+        background: {
+          fill: '#ccc',
+          cornerRadius: 5,
+          expandX: 1,
+          expandY: 1
+        }
       }
     };
     icon.addEventListener('pointerenter', event => {
@@ -476,5 +474,4 @@ window['tableInstance'] = tableInstance;
 如果不想关联表头和body单元格的选中状态，可以配置`enableHeaderCheckboxCascade`属性为false，用于开启或者关闭表头复选框级联功能。
 
 enableCheckboxCascade为true时则enableHeaderCheckboxCascade必定为true。
-
 

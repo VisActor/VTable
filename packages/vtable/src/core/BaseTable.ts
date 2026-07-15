@@ -2507,13 +2507,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const frozenColsOffset = this.getFrozenColsOffset();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
+    const frozenHeaderHeight =
+      this.frozenRowCount > this.columnHeaderLevelCount ? this.getRowsHeight(0, this.columnHeaderLevelCount - 1) : 0;
     // 计算非冻结
     const rowStart = Math.max(this.getTargetRowAt(scrollTop + 1)?.row ?? -1, this.frozenRowCount);
     const { col: colStart } = this.getColAt(scrollLeft + frozenColsContentWidth + 1);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
         ? Math.max(
-            this.getTargetRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight)?.row ?? -1,
+            this.getTargetRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight - frozenHeaderHeight)
+              ?.row ?? -1,
             rowStart
           )
         : this.rowCount - 1;
@@ -2535,13 +2538,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getBodyVisibleRowRange(start_deltaY: number = 0, end_deltaY: number = 0) {
     const { scrollTop } = this;
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
+    const frozenHeaderHeight =
+      this.frozenRowCount > this.columnHeaderLevelCount ? this.getRowsHeight(0, this.columnHeaderLevelCount - 1) : 0;
     // 计算非冻结
     const rowStart = Math.max(this.getTargetRowAt(scrollTop + 1 + start_deltaY)?.row ?? -1, this.frozenRowCount);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
         ? Math.max(
-            this.getTargetRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + end_deltaY)?.row ??
-              -1,
+            this.getTargetRowAt(
+              scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight - frozenHeaderHeight + end_deltaY
+            )?.row ?? -1,
             rowStart
           )
         : this.rowCount - 1;
@@ -2700,7 +2706,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph?.component?.hScrollBar?.release();
     this.animationManager.clear();
     this.animationManager.ticker.release();
-    this.scenegraph?.stage?.ticker?.release();
+    if (this.scenegraph?.stageOwned) {
+      this.scenegraph?.stage?.ticker?.release();
+    }
 
     const internalProps = this.internalProps;
     const canvas = internalProps?.canvas as any;
@@ -2736,7 +2744,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.releaseList = null;
     }
 
-    this.scenegraph.stage.release();
+    this.scenegraph.releaseStage();
     this.scenegraph.proxy.release();
 
     const parentElement = internalProps.element?.parentElement;

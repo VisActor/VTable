@@ -266,16 +266,14 @@ customLayout 函数返回一个对象，该对象需要有：`rootContainer`来�
     height: 20,
     cursor: 'pointer'
   }}
-  stateProxy={(stateName: string) => {
-    if (stateName === 'hover') {
-      return {
-        background: {
-          fill: '#ccc',
-          cornerRadius: 5,
-          expandX: 1,
-          expandY: 1
-        }
-      };
+  states={{
+    hover: {
+      background: {
+        fill: '#ccc',
+        cornerRadius: 5,
+        expandX: 1,
+        expandY: 1
+      }
     }
   }}
   onMouseEnter={event => {

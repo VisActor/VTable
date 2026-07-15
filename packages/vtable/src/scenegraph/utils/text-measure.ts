@@ -9,11 +9,6 @@ import {
   Text
 } from '@src/vrender';
 import { MeasureModeEnum } from '@src/vrender';
-// eslint-disable-next-line max-len
-// import {
-//   DefaultTextMeasureContribution,
-//   TextMeasureContribution
-// } from '@visactor/vrender/es/core/contributions/textMeasure/textMeasure-contribution';
 import type { ITextMeasureOption, ITextSize } from '@visactor/vutils';
 import { isValid, TextMeasure } from '@visactor/vutils';
 

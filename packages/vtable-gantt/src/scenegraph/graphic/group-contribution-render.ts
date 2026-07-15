@@ -8,7 +8,12 @@ import type {
   IGroup,
   IGroupRenderContribution
 } from '@visactor/vtable/es/vrender';
-import { injectable, BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
+import { BaseRenderContributionTime } from '@visactor/vtable/es/vrender';
+
+const injectable =
+  () =>
+  <T>(target: T): T =>
+    target;
 
 // const highlightDash: number[] = [];
 

@@ -77,7 +77,7 @@ export function createButtonCellGroup(
       cellGroup.role = 'cell';
       cellGroup.col = col;
       cellGroup.row = row;
-      columnGroup?.addCellGroup(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
   }
 
