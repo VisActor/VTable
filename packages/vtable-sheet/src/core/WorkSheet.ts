@@ -11,7 +11,7 @@ import type {
   IThemeDefine,
   IFilterConfig,
   IFilterState,
-  ISheetDefine,
+  SheetData,
   IVTableSheetUpdateOptions
 } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
@@ -27,7 +27,7 @@ import type { IWorksheetEventSource } from '../event/event-interfaces';
  */
 export type WorkSheetConstructorOptions = {
   /** 表格数据 */
-  data?: any[][];
+  data?: SheetData;
   /** 公式计算选项 */
   formula?: IFormulaManagerOptions;
   /** Sheet 唯一标识 */
@@ -782,7 +782,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /**
    * 获取表格数据
    */
-  getData(): any[][] {
+  getData(): SheetData {
     // 从表格实例获取数据
     return this.options.data || [];
   }
@@ -806,9 +806,9 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       }
     }
 
-    const data = this.getData();
-    if (data && data[row] && data[row][col] !== undefined) {
-      return data[row][col];
+    const rowData = this.getData()[row];
+    if (Array.isArray(rowData) && rowData[col] !== undefined) {
+      return rowData[col];
     }
     return null;
   }
@@ -848,9 +848,9 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
    * @param value 新值
    */
   setCellValue(col: number, row: number, value: any): void {
-    const data = this.getData();
-    if (data && data[row]) {
-      data[row][col] = value;
+    const rowData = this.getData()[row];
+    if (Array.isArray(rowData)) {
+      rowData[col] = value;
 
       // 更新表格实例
       if (this.tableInstance) {

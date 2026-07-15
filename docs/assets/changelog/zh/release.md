@@ -1,3 +1,19 @@
+# v1.26.5
+
+2026-07-15
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 处理表格容器为空的情况
+
+**🔨 维护与杂项**
+
+- **@visactor/vtable**: 支持单列列表表格渲染分组标题
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.4...v1.26.5
+
+[更多详情请查看 v1.26.5](https://github.com/VisActor/VTable/releases/tag/v1.26.5)
+
 # v1.26.4
 
 2026-07-06

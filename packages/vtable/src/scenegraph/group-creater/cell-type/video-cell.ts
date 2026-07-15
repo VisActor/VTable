@@ -187,7 +187,7 @@ export function createVideoCellGroup(
     cellGroup.role = 'cell';
     cellGroup.col = col;
     cellGroup.row = row;
-    columnGroup?.addCellGroup(cellGroup);
+    cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
   }
 
   let cellIcons;
@@ -339,8 +339,12 @@ export function createVideoCellGroup(
       releaseCurrentVideo();
       return;
     }
+    const scenegraph = table.scenegraph;
+    if (!scenegraph) {
+      return;
+    }
     if (imageAutoSizing) {
-      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, table.scenegraph, padding, cellGroup);
+      _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, scenegraph, padding, cellGroup);
     }
     // const width = cellGroup.attribute.width;
     // const height = cellGroup.attribute.height;
@@ -428,7 +432,7 @@ export function createVideoCellGroup(
       releaseCurrentVideo();
     }
     // 触发重绘
-    table.scenegraph.updateNextFrame();
+    scenegraph.updateNextFrame();
   });
   video.addEventListener('error', handleVideoLoadFail);
   video.addEventListener('abort', handleVideoLoadFail);
@@ -447,6 +451,10 @@ export function createVideoCellGroup(
   image.textBaseline = textBaseline;
   cellGroup.appendChild(image);
   image.successCallback = () => {
+    const scenegraph = table.scenegraph;
+    if (!scenegraph) {
+      return;
+    }
     //补丁处理，上面loadeddata已经有一些尺寸处理，对应image-cell中updateAutoSizingAndKeepAspectRatio处理，
     //image重新赋值为损坏的图片的资源地址后，successCallback回调处理
     //仿照image-cell.ts中的处理方法updateAutoSizingAndKeepAspectRatio
@@ -461,7 +469,7 @@ export function createVideoCellGroup(
         cellGroup,
         table
       );
-      table.scenegraph.updateNextFrame();
+      scenegraph.updateNextFrame();
     }
   };
 

@@ -1,4 +1,4 @@
-import type { GraphicType, IGroupGraphicAttribute, Stage, Group } from '@src/vrender';
+import type { GraphicType, IGroupGraphicAttribute, ISetAttributeContext, Stage, Group } from '@src/vrender';
 import { genNumberType, Rect } from '@src/vrender';
 import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
@@ -45,6 +45,20 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   detectPickChartItem?: boolean;
 }
 
+const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
+  'canvas',
+  'modeParams',
+  'spec',
+  'ClassType',
+  'chartInstance',
+  'dataId',
+  'data',
+  'cellPadding',
+  'axes',
+  'tableChartOption',
+  'detectPickChartItem'
+];
+
 export const CHART_NUMBER_TYPE = genNumberType();
 
 export class Chart extends Rect {
@@ -61,6 +75,7 @@ export class Chart extends Rect {
   isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
   constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
     super(params);
+    this.syncRuntimeAttributes(params);
     this.numberType = CHART_NUMBER_TYPE;
     this.isShareChartSpec = isShareChartSpec;
     // 创建chart
@@ -90,14 +105,72 @@ export class Chart extends Rect {
       chartInstance.renderSync();
       chartInstance.getStage().enableDirtyBounds();
       params.chartInstance = this.chartInstance = chartInstance;
+      this.syncRuntimeAttributes({ chartInstance } as Partial<IChartGraphicAttribute>);
     } else {
       this.chartInstance = params.chartInstance;
+      this.syncRuntimeAttributes({ chartInstance: params.chartInstance } as Partial<IChartGraphicAttribute>);
     }
 
     // this.chart.load().then((cache) => {
     //   this.cacheCanvas = cache;
     //   this.deactivate();
     // });
+  }
+
+  private syncRuntimeAttributes(source: Partial<IChartGraphicAttribute>) {
+    const attribute = this.attribute as Record<string, any>;
+    const baseAttributes = this.baseAttributes as Record<string, any>;
+
+    CHART_RUNTIME_ATTRIBUTE_KEYS.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        attribute[key] = source[key];
+        baseAttributes[key] = source[key];
+      }
+    });
+  }
+
+  private restoreRuntimeAttributeRefs() {
+    const attribute = this.attribute as Record<string, any>;
+    const baseAttributes = this.baseAttributes as Record<string, any>;
+
+    CHART_RUNTIME_ATTRIBUTE_KEYS.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(baseAttributes, key)) {
+        attribute[key] = baseAttributes[key];
+      }
+    });
+  }
+
+  setAttributes(
+    params: Partial<IChartGraphicAttribute>,
+    forceUpdateTag?: boolean,
+    context?: ISetAttributeContext
+  ): void {
+    super.setAttributes(params, forceUpdateTag, context);
+    this.restoreRuntimeAttributeRefs();
+  }
+
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext): void {
+    super.setAttribute(key, value, forceUpdateTag, context);
+    this.restoreRuntimeAttributeRefs();
+  }
+
+  // Chart attributes carry DOM/VChart runtime references; VRender state snapshots must not deep-clone them.
+  protected buildStaticAttributeSnapshot(): Partial<IChartGraphicAttribute> {
+    const snapshot = { ...((this.baseAttributes as Record<string, any> | undefined) ?? {}) };
+    const resolvedPatch = this.resolvedStatePatch as Record<string, any> | undefined;
+
+    resolvedPatch &&
+      Object.keys(resolvedPatch).forEach(key => {
+        snapshot[key] = resolvedPatch[key];
+      });
+
+    CHART_RUNTIME_ATTRIBUTE_KEYS.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(this.attribute, key)) {
+        snapshot[key] = (this.attribute as Record<string, any>)[key];
+      }
+    });
+
+    return snapshot as Partial<IChartGraphicAttribute>;
   }
 
   // onBeforeAttributeUpdate() {

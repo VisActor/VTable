@@ -84,6 +84,17 @@ import {
 //   registerVideoCell
 // } from './scenegraph/group-creater/cell-type';
 
+const LAYOUT_COLUMN_STATE_KEYS = ['level', 'startIndex', 'id', 'levelSpan', 'size', 'startInTotal', 'hierarchyState'];
+
+function clearLayoutColumnState(columns: ColumnsDefine | undefined) {
+  columns?.forEach(column => {
+    LAYOUT_COLUMN_STATE_KEYS.forEach(key => {
+      delete (column as any)[key];
+    });
+    clearLayoutColumnState((column as any).children ?? (column as any).columns);
+  });
+}
+
 // registerAxis();
 // registerEmptyTip();
 // registerLegend();
@@ -1062,25 +1073,29 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return null;
   }
   private syncColumnsStateFromLayoutMap() {
-    const nextColumns = cloneDeepSpec(this.internalProps.columns, ['children']);
-    const cleanColumns = (columns: any[]) => {
-      columns.forEach(col => {
-        delete col.level;
-        delete col.size;
-        delete col.startInTotal;
-        delete col.startIndex;
-        delete col.id;
-        delete col.hierarchyState;
-        if (col.columns) {
-          cleanColumns(col.columns);
-        }
-      });
-    };
-    cleanColumns(nextColumns);
-    this.options.columns = nextColumns;
+    const sourceColumns = this.options.columns ?? this.internalProps.columns;
+    const nextColumns = sourceColumns.some(column => column.hide === true)
+      ? this.mergeHiddenColumnsWithVisibleOrder(sourceColumns)
+      : this.columns;
+    const publicColumns = cloneDeepSpec(nextColumns, ['children']);
+    clearLayoutColumnState(publicColumns);
+    this.internalProps.columns = cloneDeepSpec(publicColumns, ['children']);
+    this.options.columns = publicColumns;
     if (this.options.header) {
-      this.options.header = nextColumns;
+      this.options.header = publicColumns;
     }
+  }
+  private mergeHiddenColumnsWithVisibleOrder(sourceColumns: ColumnsDefine) {
+    const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
+    let visibleIndex = 0;
+    return sourceColumns.map(column => {
+      if (column.hide === true) {
+        return column;
+      }
+      const nextVisibleColumn = visibleColumns[visibleIndex];
+      visibleIndex += 1;
+      return nextVisibleColumn ?? column;
+    });
   }
   changeRecordOrder(sourceIndex: number, targetIndex: number) {
     if (this.transpose) {

@@ -144,16 +144,14 @@ export function createTable() {
         //   //   boundsPadding: [0, 0, 0, 10],
         //   //   cursor: 'pointer'
         //   // });
-        //   // icon.stateProxy = (stateName: string) => {
-        //   //   if (stateName === 'hover') {
-        //   //     return {
-        //   //       background: {
-        //   //         fill: '#ccc',
-        //   //         cornerRadius: 5,
-        //   //         expandX: 1,
-        //   //         expandY: 1
-        //   //       }
-        //   //     };
+        //   // icon.states = {
+        //   //   hover: {
+        //   //     background: {
+        //   //       fill: '#ccc',
+        //   //       cornerRadius: 5,
+        //   //       expandX: 1,
+        //   //       expandY: 1
+        //   //     }
         //   //   }
         //   // };
         //   // icon.addEventListener('pointerenter', event => {
@@ -261,16 +259,14 @@ export function createTable() {
         //     boundsPadding: [0, 0, 0, 10],
         //     cursor: 'pointer'
         //   });
-        //   icon.stateProxy = (stateName: string) => {
-        //     if (stateName === 'hover') {
-        //       return {
-        //         background: {
-        //           fill: '#ccc',
-        //           cornerRadius: 5,
-        //           expandX: 1,
-        //           expandY: 1
-        //         }
-        //       };
+        //   icon.states = {
+        //     hover: {
+        //       background: {
+        //         fill: '#ccc',
+        //         cornerRadius: 5,
+        //         expandX: 1,
+        //         expandY: 1
+        //       }
         //     }
         //   };
         //   icon.addEventListener('pointerenter', event => {

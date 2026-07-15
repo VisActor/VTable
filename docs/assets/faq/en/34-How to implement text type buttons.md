@@ -50,12 +50,10 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          editText.stateProxy = (stateName: string) => {
-            if (stateName === 'hover') {
-              return {
-                fill: '#315efb',
-                underline: 1
-              };
+          editText.states = {
+            hover: {
+              fill: '#315efb',
+              underline: 1
             }
           };
           editText.addEventListener('mouseenter', e => {
@@ -128,12 +126,10 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          editText.stateProxy = (stateName) => {
-            if (stateName === 'hover') {
-              return {
-                fill: '#315efb',
-                underline: 1
-              };
+          editText.states = {
+            hover: {
+              fill: '#315efb',
+              underline: 1
             }
           };
           editText.addEventListener('mouseenter', e => {
@@ -158,12 +154,10 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          deleteText.stateProxy = (stateName) => {
-            if (stateName === 'hover') {
-              return {
-                fill: '#315efb',
-                underline: 1
-              };
+          deleteText.states = {
+            hover: {
+              fill: '#315efb',
+              underline: 1
             }
           };
           deleteText.addEventListener('mouseenter', e => {
@@ -215,6 +209,5 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
 
 Related api: https://www.visactor.io/vtable/guide/custom_define/custom_layout</br>
 github：https://github.com/VisActor/VTable</br>
-
 
 

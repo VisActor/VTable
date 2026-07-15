@@ -46,7 +46,7 @@ jobs:
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.18.0
 
       - name: Install latest pnpm
         run: npm install -g pnpm@10.7.0

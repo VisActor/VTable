@@ -105,7 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
-import type { FederatedPointerEvent } from '@src/vrender';
+import type { FederatedPointerEvent, IApp, IStage } from '@src/vrender';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -570,6 +570,10 @@ export interface BaseTableConstructorOptions {
 
   // #region for nodejs
   mode?: 'node' | 'browser';
+  /**
+   * Node env params are passed to acquireSharedVRenderApp({ env: 'node', envParams: modeParams }).
+   * Release validation should use Node 20.19.6 or another version matching the canvas native binding ABI.
+   */
   modeParams?: any;
   canvasWidth?: number | 'auto';
   canvasHeight?: number | 'auto';
@@ -592,6 +596,20 @@ export interface BaseTableConstructorOptions {
 
   canvas?: HTMLCanvasElement;
   viewBox?: IBoundsLike;
+  /**
+   * Advanced VRender app provider. Normal VTable users do not need to pass an app.
+   * VTable creates and releases the stage it creates from this app, but app ownership remains with the caller.
+   */
+  vRenderApp?: IApp;
+  /**
+   * Scope for VTable-managed shared VRender apps. Tables with the same scope, mode, and envParams identity share a ref-counted app.
+   */
+  vRenderAppScope?: string;
+  /**
+   * Advanced borrowed VRender stage. When supplied, VTable only mounts its table group and will not release the stage or app.
+   * The caller owns the stage lifecycle.
+   */
+  stage?: IStage;
   /** 具体同 VChart 的 Option 配置。会与表格中标准的 chart Option 配置进行合并，后在图表中使用。 */
   chartOption?: any;
   disableInteraction?: boolean;

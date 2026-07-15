@@ -1,4 +1,4 @@
-import type { IColumnDefine, IFilterConfig, IFilterState, ISheetDefine } from './index';
+import type { IColumnDefine, IFilterConfig, IFilterState, ISheetDefine, SheetData } from './index';
 import type { CellCoord, CellRange, CellValue } from './base';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
@@ -13,7 +13,7 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
   width?: number;
   height?: number;
   /** 数据 */
-  data?: any[][];
+  data?: SheetData;
   /** 是否显示表头 */
   showHeader?: boolean;
   /** 是否将data中第一行作为表头。如果设置为true，则获取到的getData()将不包含data中的第一行 */
@@ -50,7 +50,7 @@ export interface IWorkSheetAPI {
   getSelection: () => CellRange | null;
 
   /** 获取数据 */
-  getData: () => CellValue[][];
+  getData: () => SheetData;
 
   /** 获取行数 */
   getRowCount: () => number;

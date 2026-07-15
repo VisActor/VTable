@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-sheet",
+      "comment": "fix: prevent formula arithmetic evaluation from executing user-controlled cell content",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-sheet",
+  "email": "892739385@qq.com"
+}

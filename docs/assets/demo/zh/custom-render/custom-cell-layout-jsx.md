@@ -123,16 +123,14 @@ const option = {
                     boundsPadding: [0, 0, 0, 10],
                     cursor: 'pointer'
                   }}
-                  stateProxy={stateName => {
-                    if (stateName === 'hover') {
-                      return {
-                        background: {
-                          fill: '#c90',
-                          cornerRadius: 5,
-                          expandX: 1,
-                          expandY: 1
-                        }
-                      };
+                  states={{
+                    hover: {
+                      background: {
+                        fill: '#c90',
+                        cornerRadius: 5,
+                        expandX: 1,
+                        expandY: 1
+                      }
                     }
                   }}
                   onMouseEnter={event => {

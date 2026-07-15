@@ -2,6 +2,7 @@
 const path = require('path');
 
 const isCI = process.env.CI === 'true' || process.env.CI === '1';
+const { createVRenderModuleNameMapper } = require('../../common/config/jest/vrender-module-name-mapper');
 
 module.exports = {
   preset: 'ts-jest',
@@ -62,9 +63,12 @@ module.exports = {
       __dirname,
       '../../common/temp/node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'
     ),
+    ...createVRenderModuleNameMapper('<rootDir>/../vtable/node_modules'),
+    '^@visactor/vtable-editors$': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
+    '^@visactor/vtable/es/ts-types$': '<rootDir>/../vtable/src/ts-types/index.ts',
     '^@visactor/vtable/es/(.*)$': '<rootDir>/../vtable/src/$1',
-    '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
-    '@src/vrender': path.resolve(__dirname, '../vtable/src/vrender.ts')
+    '^@visactor/vtable$': path.resolve(__dirname, '../vtable/src/index.ts'),
+    '^@src/vrender$': path.resolve(__dirname, '../vtable/src/vrender.ts')
   },
   setupFiles: ['./setup-mock.js']
 };

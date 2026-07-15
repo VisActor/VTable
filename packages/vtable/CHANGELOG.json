@@ -2,6 +2,21 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.5",
+      "tag": "@visactor/vtable_v1.26.5",
+      "date": "Wed, 15 Jul 2026 10:41:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Render group title for single-column list tables."
+          },
+          {
+            "comment": "fix: handle null table container"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.4",
       "tag": "@visactor/vtable_v1.26.4",
       "date": "Mon, 06 Jul 2026 09:35:12 GMT",

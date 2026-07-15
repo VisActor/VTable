@@ -10,7 +10,8 @@ import type {
   IVTableSheetUpdateOptions,
   ISheetDefine,
   IWorkSheetOptions,
-  IColumnDefine
+  IColumnDefine,
+  SheetData
 } from '../ts-types';
 import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
@@ -1356,7 +1357,7 @@ export default class VTableSheet {
    * @param sheetKey sheet的key
    * @returns 数据
    */
-  exportData(sheetKey: string): any[][] {
+  exportData(sheetKey: string): SheetData {
     const sheet = this.workSheetInstances.get(sheetKey);
     if (!sheet) {
       return [];
@@ -1368,7 +1369,7 @@ export default class VTableSheet {
    * 导出所有sheet的数据
    * @returns 数据
    */
-  exportAllData(): any[][] {
+  exportAllData(): SheetData[] {
     const sheets = Array.from(this.workSheetInstances.values());
     return sheets.map(sheet => sheet.getData());
   }

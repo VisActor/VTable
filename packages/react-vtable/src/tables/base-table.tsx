@@ -67,7 +67,7 @@ export type BaseTableProps = EventsProps &
 
 // for react-vtable
 if (isBrowserEnv()) {
-  container.load(reactEnvModule);
+  (container as any).load(reactEnvModule);
 }
 
 type Props = React.PropsWithChildren<BaseTableProps>;

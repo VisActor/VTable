@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "1.26.4",
+  "version": "1.26.5",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",
@@ -37,7 +37,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.26.4",
+    "@visactor/vtable": "workspace:1.26.5",
     "@visactor/vutils": "~1.0.17",
     "file-saver": "2.0.5",
     "@types/file-saver": "2.0.7",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
-    "@visactor/vchart": "2.0.13-alpha.10",
+    "@visactor/vchart": "2.1.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

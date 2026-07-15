@@ -1,28 +1,10 @@
 import { loadPoptip } from '@visactor/vrender-components';
-import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule, registerFlexLayoutPlugin } from '@visactor/vrender-core';
+import { getRuntimeInstallerBindingContext } from '@visactor/vrender-core/entries/runtime-installer';
 import {
-  loadBrowserEnv,
-  loadNodeEnv,
-  registerArc,
-  registerArc3d,
-  registerArea,
-  registerCircle,
-  registerGlyph,
-  registerGroup,
-  registerImage,
-  registerLine,
-  registerPath,
-  registerPolygon,
-  registerPyramid3d,
-  registerRect,
-  registerRect3d,
-  registerRichtext,
-  registerShadowRoot,
-  registerSymbol,
-  registerText,
-  registerWrapText
-} from '@visactor/vrender-kits';
+  container as legacyContainer,
+  type ILegacyBindingContext,
+  type ServiceIdentifier
+} from '@visactor/vrender-core';
 // 导出版本号
 // export const version = __VERSION__;
 
@@ -32,40 +14,68 @@ export function registerForVrender() {
     return;
   }
   registed = true;
-  // 注册内置组件
-  preLoadAllModule();
-
-  if (isBrowserEnv()) {
-    loadBrowserEnv(container);
-  } else if (isNodeEnv()) {
-    loadNodeEnv(container);
-  }
-  registerArc();
-  // registerArc3d();
-  // registerArea();
-  registerCircle();
-  // registerGlyph();
-  registerGroup();
-  registerImage();
-  registerLine();
-  // registerPath();
-  // registerPolygon();
-  // registerPyramid3d();
-  registerRect();
-  // registerRect3d();
-  registerRichtext();
-  registerShadowRoot();
-  registerSymbol();
-  registerText();
-  registerFlexLayoutPlugin();
-  // registerWrapText();
+  // Default env and graphic bootstrap is owned by create*VRenderApp().
+  // VTable keeps only component/custom assembly that is not covered by the app creator.
   loadPoptip();
-
-  registerFlexLayoutPlugin();
 }
+
+type LegacyBind = ILegacyBindingContext['bind'];
+type LegacyRebind = ILegacyBindingContext['rebind'];
+type LegacyIsBound = ILegacyBindingContext['isBound'];
+type LegacyContainerModuleHandler = (
+  bind: LegacyBind,
+  unbind: (serviceIdentifier: ServiceIdentifier<unknown>) => void,
+  isBound: LegacyIsBound,
+  rebind: LegacyRebind
+) => void;
+
+export class ContainerModule {
+  constructor(public readonly registry: LegacyContainerModuleHandler) {}
+}
+
+const unbindLegacyService = (): void => undefined;
+
+export const container = Object.assign(legacyContainer, {
+  load(module: ContainerModule | ((context: ILegacyBindingContext) => void)): void {
+    const runtimeInstallerContext = getRuntimeInstallerBindingContext();
+
+    if (module instanceof ContainerModule) {
+      module.registry(legacyContainer.bind, unbindLegacyService, legacyContainer.isBound, legacyContainer.rebind);
+      module.registry(
+        runtimeInstallerContext.bind,
+        unbindLegacyService,
+        runtimeInstallerContext.isBound,
+        runtimeInstallerContext.rebind
+      );
+      return;
+    }
+
+    module(legacyContainer);
+    module(runtimeInstallerContext);
+  },
+  get<T>(serviceIdentifier: unknown): T {
+    return legacyContainer.getAll<T>(serviceIdentifier as never)[0];
+  }
+});
+
+export const injectable =
+  () =>
+  <T>(target: T): T =>
+    target;
+
+export const inject =
+  (_serviceIdentifier: unknown) =>
+  (..._args: unknown[]): void =>
+    undefined;
+
+export const named =
+  (_name: unknown) =>
+  (..._args: unknown[]): void =>
+    undefined;
 
 export type { Direction } from '@visactor/vrender-core';
 export type { State } from '@visactor/vrender-components';
+export type { VRenderStageAppOptions, VRenderStageAppRef } from './vrender-app';
 // export { GroupFadeIn } from '@visactor/vrender-core';
 // export { GroupFadeOut } from '@visactor/vrender-core';
 

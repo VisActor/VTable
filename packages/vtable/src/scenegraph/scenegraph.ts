@@ -1,5 +1,20 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
+import {
+  createRect,
+  type CheckBox,
+  type FederatedPointerEvent,
+  type IContainPointMode,
+  type INode,
+  type IRect,
+  type IRectGraphicAttribute,
+  type IStage,
+  type ITextCache,
+  type RichText,
+  type Stage,
+  type Text,
+  setPoptipTheme,
+  registerForVrender
+} from '@src/vrender';
+import { createStageFromVRenderApp } from '../vrender-app';
 import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
@@ -19,7 +34,6 @@ import { updateRowHeight } from './layout/update-height';
 import { updateImageCellContentWhileResize } from './group-creater/cell-type/image-cell';
 import { getQuadProps } from './utils/padding';
 import { createFrameBorder, updateCornerRadius, updateFrameBorder, updateFrameBorderSize } from './style/frame-border';
-import splitModule from './graphic/contributions';
 import { getFunctionalProp, getProp } from './utils/get-prop';
 import { dealWithIcon } from './utils/text-icon-layout';
 import { SceneProxy } from './group-creater/progress/proxy';
@@ -50,9 +64,7 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
-import type { CheckBox } from '@src/vrender';
-import { loadPoptip, setPoptipTheme } from '@src/vrender';
-import textMeasureModule from './utils/text-measure';
+import { installVTableRuntimeContributions } from './runtime-contributions';
 import {
   getIconByXY,
   hideClickIcon,
@@ -80,7 +92,6 @@ import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
 import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
-import type { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
@@ -92,14 +103,7 @@ import {
 } from './graphic/active-cell-chart-list';
 
 registerForVrender();
-
-// VChart poptip theme
-// loadPoptip();
-container.load(splitModule);
-container.load(textMeasureModule);
-// container.load(renderServiceModule);
-// container.load(contextModule);
-// console.log(container);
+installVTableRuntimeContributions();
 
 export type MergeMap = Map<
   string,
@@ -143,6 +147,8 @@ export class Scenegraph {
   lastSelectId: string;
   component: TableComponent;
   stage: IStage;
+  stageOwned: boolean = true;
+  releaseVRenderAppRef?: () => void;
   table: BaseTableAPI;
   isPivot: boolean;
   // transpose: boolean;
@@ -192,45 +198,57 @@ export class Scenegraph {
     setPoptipTheme(this.table.theme.textPopTipStyle);
     let width;
     let height;
-    if (Env.mode === 'node') {
-      vglobal.setEnv('node', table.options.modeParams);
+    const mode = table.options.mode ?? (Env.mode === 'node' ? 'node' : 'browser');
+
+    if (mode === 'node') {
       width = table.canvasWidth;
       height = table.canvasHeight;
     } else if (table.options.canvas && table.options.viewBox) {
-      vglobal.setEnv('browser');
       width = table.options.viewBox.x2 - table.options.viewBox.x1;
       height = table.options.viewBox.y2 - table.options.viewBox.y1;
     } else {
-      vglobal.setEnv('browser');
       width = table.canvas.width;
       height = table.canvas.height;
     }
-    this.stage = createStage({
-      canvas: table.canvas,
-      width,
-      height,
-      disableDirtyBounds: false,
-      background: table.theme.underlayBackgroundColor,
-      dpr: table.internalProps.pixelRatio,
-      enableLayout: true,
-      // enableHtmlAttribute: true,
-      // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
-      beforeRender: (stage: Stage) => {
-        this.table.options.beforeRender && this.table.options.beforeRender(stage);
-        this.table.animationManager.ticker.start();
-      },
-      afterRender: (stage: Stage) => {
-        this.table.options.afterRender && this.table.options.afterRender(stage);
-        this.table.fireListeners('after_render', null);
-        // console.trace('after_render');
-      },
-      // event: { clickInterval: 400 }
-      // autoRender: true
+    const { stage, releaseAppRef, stageOwned } = createStageFromVRenderApp(
+      {
+        canvas: table.canvas,
+        width,
+        height,
+        disableDirtyBounds: false,
+        background: table.theme.underlayBackgroundColor,
+        dpr: table.internalProps.pixelRatio,
+        enableLayout: true,
+        // enableHtmlAttribute: true,
+        // pluginList: table.isPivotChart() ? ['poptipForText'] : undefined,
+        beforeRender: (stage: Stage) => {
+          this.table.options.beforeRender && this.table.options.beforeRender(stage);
+          this.table.animationManager.ticker.start();
+        },
+        afterRender: (stage: Stage) => {
+          this.table.options.afterRender && this.table.options.afterRender(stage);
+          this.table.fireListeners('after_render', null);
+          // console.trace('after_render');
+        },
+        // event: { clickInterval: 400 }
+        // autoRender: true
 
-      canvasControled: !table.options.canvas,
-      viewBox: table.options.viewBox,
-      ...table.options.renderOption
-    });
+        canvasControled: !table.options.canvas,
+        viewBox: table.options.viewBox,
+        context: { appName: 'vtable' },
+        ...table.options.renderOption
+      },
+      {
+        mode,
+        scope: table.options.vRenderAppScope ?? 'vtable',
+        app: table.options.vRenderApp,
+        stage: table.options.stage,
+        envParams: table.options.modeParams
+      }
+    );
+    this.stage = stage;
+    this.stageOwned = stageOwned;
+    this.releaseVRenderAppRef = releaseAppRef;
 
     this.stage.defaultLayer.setTheme({
       group: {
@@ -491,6 +509,25 @@ export class Scenegraph {
     this.proxy?.release();
 
     this.table.reactCustomLayout?.clearCache();
+  }
+
+  releaseStage() {
+    const releaseAppRef = this.releaseVRenderAppRef;
+    this.releaseVRenderAppRef = undefined;
+
+    try {
+      if (this.stageOwned) {
+        this.stage?.release();
+      } else {
+        const tableGroup = this.tableGroup;
+        const tableGroupParent = tableGroup?.parent as Group | undefined;
+
+        tableGroupParent?.removeChild?.(tableGroup);
+        tableGroup?.release?.(true);
+      }
+    } finally {
+      releaseAppRef?.();
+    }
   }
 
   updateStageBackground() {
