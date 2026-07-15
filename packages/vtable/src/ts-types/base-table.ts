@@ -657,6 +657,12 @@ export interface BaseTableConstructorOptions {
 
     // 图片资源请求时是否使用anonymous模式
     imageAnonymous?: boolean;
+    // 视频单元格首帧绘制后是否替换为canvas快照并释放video资源
+    videoFirstFrameSnapshot?: boolean;
+    // 视频单元格等待首帧的超时时间，单位ms，默认8000
+    videoFirstFrameTimeout?: number;
+    // 视频单元格首帧快照canvas的最大边长，默认512
+    videoFirstFrameMaxCanvasSize?: number;
 
     // 滚动到边界是否继续触发滚动事件
     scrollEventAlwaysTrigger?: boolean;

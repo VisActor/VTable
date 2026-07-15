@@ -618,7 +618,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       col: cellRange?.start.col ?? col,
       row: cellRange?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row) || '',
+      value: table.getCellValue(col, row),
       rect: getCellRect(col, row, table),
       table,
       originCol: col,

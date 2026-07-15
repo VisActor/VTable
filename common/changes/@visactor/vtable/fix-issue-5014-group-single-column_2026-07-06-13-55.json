@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "fix: sync gantt task bars after sorted updates\n\n",
+      "comment": "Render group title for single-column list tables.",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "liufangfang.jane@bytedance.com"
+  "email": "biukam.w@gmail.com"
 }

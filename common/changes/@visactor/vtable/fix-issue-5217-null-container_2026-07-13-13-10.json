@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "fix: preserve quad style values",
+      "comment": "fix: handle null table container",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "liufangfang.jane@bytedance.com"
+  "email": "biukam.w@gmail.com"
 }

@@ -84,6 +84,9 @@ export function createRootElement(padding: any, className: string = 'vtable-gant
 
   return element;
 }
+
+const DEFAULT_TIMELINE_SCALE: ITimelineScale = { unit: 'day', step: 1 };
+
 export class Gantt extends EventTarget {
   options: GanttConstructorOptions;
   container: HTMLElement;
@@ -689,45 +692,58 @@ export class Gantt extends EventTarget {
 
   _sortScales() {
     const { timelineHeader } = this.options;
-    if (timelineHeader) {
-      const timelineScales = timelineHeader.scales;
-      const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
-      if (timelineScales.length === 1) {
-        if (
-          timelineScales[0].unit === 'hour' ||
-          timelineScales[0].unit === 'minute' ||
-          timelineScales[0].unit === 'second'
-        ) {
-          this.parsedOptions.timeScaleIncludeHour = true;
-        }
-      }
-      const orderedScales = timelineScales.slice().sort((a, b) => {
-        if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
-          this.parsedOptions.timeScaleIncludeHour = true;
-        }
-        const indexA = sortOrder.indexOf(a.unit);
-        const indexB = sortOrder.indexOf(b.unit);
-        if (indexA === -1) {
-          return 1;
-        } else if (indexB === -1) {
-          return -1;
-        }
-        return indexA - indexB;
-      });
-      const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
-        const indexA = sortOrder.indexOf(a.unit);
-        const indexB = sortOrder.indexOf(b.unit);
-        if (indexA === -1) {
-          return 1;
-        } else if (indexB === -1) {
-          return -1;
-        }
-        return indexB - indexA;
-      });
-
-      this.parsedOptions.sortedTimelineScales = orderedScales;
-      this.parsedOptions.reverseSortedTimelineScales = reverseOrderedScales;
+    const zoomLevelScales = this.zoomScaleManager?.config.levels[this.zoomScaleManager.getCurrentLevel()];
+    const defaultTimelineScale: ITimelineScale = { ...DEFAULT_TIMELINE_SCALE };
+    let timelineScales: ITimelineScale[];
+    if (timelineHeader?.scales?.length > 0) {
+      timelineScales = timelineHeader.scales;
+    } else if (zoomLevelScales?.length > 0) {
+      timelineScales = zoomLevelScales;
+    } else {
+      timelineScales = [defaultTimelineScale];
     }
+
+    if (timelineHeader && (!timelineHeader.scales || timelineHeader.scales.length === 0)) {
+      timelineHeader.scales = timelineScales.map(scale => ({ ...scale }));
+    }
+
+    const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
+    this.parsedOptions.timeScaleIncludeHour = false;
+    if (timelineScales.length === 1) {
+      if (
+        timelineScales[0].unit === 'hour' ||
+        timelineScales[0].unit === 'minute' ||
+        timelineScales[0].unit === 'second'
+      ) {
+        this.parsedOptions.timeScaleIncludeHour = true;
+      }
+    }
+    const orderedScales = timelineScales.slice().sort((a, b) => {
+      if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
+        this.parsedOptions.timeScaleIncludeHour = true;
+      }
+      const indexA = sortOrder.indexOf(a.unit);
+      const indexB = sortOrder.indexOf(b.unit);
+      if (indexA === -1) {
+        return 1;
+      } else if (indexB === -1) {
+        return -1;
+      }
+      return indexA - indexB;
+    });
+    const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
+      const indexA = sortOrder.indexOf(a.unit);
+      const indexB = sortOrder.indexOf(b.unit);
+      if (indexA === -1) {
+        return 1;
+      } else if (indexB === -1) {
+        return -1;
+      }
+      return indexB - indexA;
+    });
+
+    this.parsedOptions.sortedTimelineScales = orderedScales;
+    this.parsedOptions.reverseSortedTimelineScales = reverseOrderedScales;
   }
 
   _generateTimeLineDateMap() {

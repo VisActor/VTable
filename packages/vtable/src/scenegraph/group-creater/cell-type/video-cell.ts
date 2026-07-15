@@ -23,6 +23,89 @@ import { dealWithIconLayout } from '../../utils/text-icon-layout';
 
 const regedIcons = icons.get();
 
+function releaseVideoResource(video: HTMLVideoElement): void {
+  try {
+    video.pause();
+  } catch (err) {
+    // ignore media cleanup errors
+  }
+  video.removeAttribute('src');
+  try {
+    video.load();
+  } catch (err) {
+    // ignore media cleanup errors
+  }
+}
+
+function getVideoFirstFrameTimeout(table: BaseTableAPI): number {
+  const timeout = table.options.customConfig?.videoFirstFrameTimeout;
+  return typeof timeout === 'number' && timeout >= 0 ? timeout : 8000;
+}
+
+function getVideoFirstFrameMaxCanvasSize(table: BaseTableAPI): number {
+  const maxCanvasSize = table.options.customConfig?.videoFirstFrameMaxCanvasSize;
+  return typeof maxCanvasSize === 'number' && maxCanvasSize > 0 ? maxCanvasSize : 512;
+}
+
+function snapshotVideoFirstFrame(video: HTMLVideoElement, image: IImage, table: BaseTableAPI): boolean {
+  const displayWidth = image.attribute.width;
+  const displayHeight = image.attribute.height;
+  if (
+    typeof displayWidth !== 'number' ||
+    typeof displayHeight !== 'number' ||
+    displayWidth <= 0 ||
+    displayHeight <= 0
+  ) {
+    return false;
+  }
+
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) {
+    return false;
+  }
+
+  const dpr = Math.min((typeof window === 'undefined' ? 1 : window.devicePixelRatio) || 1, 2);
+  const maxSize = getVideoFirstFrameMaxCanvasSize(table);
+  const scale = Math.min(dpr, maxSize / Math.max(displayWidth, displayHeight));
+  canvas.width = Math.max(1, Math.ceil(displayWidth * scale));
+  canvas.height = Math.max(1, Math.ceil(displayHeight * scale));
+  canvas.style.width = `${displayWidth}px`;
+  canvas.style.height = `${displayHeight}px`;
+
+  try {
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    image.setAttributes({ image: canvas as any });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function getSvgSize(svg: string): { width: number; height: number } | undefined {
+  const svgTag = svg.match(/<svg\b[^>]*>/i)?.[0];
+  if (!svgTag) {
+    return undefined;
+  }
+
+  const widthMatch = svgTag.match(/\bwidth=["']?([\d.]+)/i);
+  const heightMatch = svgTag.match(/\bheight=["']?([\d.]+)/i);
+  const width = widthMatch ? Number(widthMatch[1]) : undefined;
+  const height = heightMatch ? Number(heightMatch[1]) : undefined;
+  if (width > 0 && height > 0) {
+    return { width, height };
+  }
+
+  const viewBoxMatch = svgTag.match(/\bviewBox=["']\s*[-\d.]+\s+[-\d.]+\s+([\d.]+)\s+([\d.]+)\s*["']/i);
+  const viewBoxWidth = viewBoxMatch ? Number(viewBoxMatch[1]) : undefined;
+  const viewBoxHeight = viewBoxMatch ? Number(viewBoxMatch[2]) : undefined;
+  if (viewBoxWidth > 0 && viewBoxHeight > 0) {
+    return { width: viewBoxWidth, height: viewBoxHeight };
+  }
+
+  return undefined;
+}
+
 export function createVideoCellGroup(
   columnGroup: Group,
   xOrigin: number,
@@ -162,7 +245,100 @@ export function createVideoCellGroup(
   // video
   const value = table.getCellValue(col, row);
   const video = document.createElement('video');
+  video.muted = true;
+  video.playsInline = true;
+  const shouldSnapshot = table.options.customConfig?.videoFirstFrameSnapshot === true;
+  let loadTimer: ReturnType<typeof setTimeout> | undefined;
+  let videoReleased = false;
+
+  const clearVideoLoadTimer = (): void => {
+    if (loadTimer !== undefined) {
+      clearTimeout(loadTimer);
+      loadTimer = undefined;
+    }
+  };
+  const releaseCurrentVideo = (): void => {
+    if (videoReleased) {
+      return;
+    }
+    videoReleased = true;
+    clearVideoLoadTimer();
+    releaseVideoResource(video);
+  };
+  const isCurrentImage = (): boolean => cellGroup.getChildByName('image', true) === image;
+  const setVideoDamageImage = (): void => {
+    const regedIcons = icons.get();
+    const damageIcon = regedIcons.video_damage_pic || regedIcons.damage_pic;
+    const damageImage = (damageIcon as any).svg;
+    image.setAttributes({
+      image: damageImage
+    } as any);
+    const originImage = image.resources?.get(damageImage)?.data;
+    const svgSize = typeof damageImage === 'string' ? getSvgSize(damageImage) : undefined;
+    const originWidth = originImage?.width || (damageIcon as any).width || svgSize?.width || 24;
+    const originHeight = originImage?.height || (damageIcon as any).height || svgSize?.height || 24;
+    const { width: cellWidth, height: cellHeight, isMerge } = getCellRange(cellGroup, table);
+    const availableWidth = cellWidth - padding[1] - padding[3];
+    const availableHeight = cellHeight - padding[0] - padding[2];
+
+    if (originWidth > 0 && originHeight > 0 && availableWidth > 0 && availableHeight > 0) {
+      const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
+        originWidth,
+        originHeight,
+        availableWidth,
+        availableHeight
+      );
+      const pos = calcStartPosition(
+        0,
+        0,
+        cellWidth,
+        cellHeight,
+        imageWidth,
+        imageHeight,
+        textAlign,
+        textBaseline,
+        padding
+      );
+
+      image.setAttributes({
+        x: pos.x,
+        y: pos.y,
+        width: imageWidth,
+        height: imageHeight
+      });
+
+      if (isMerge) {
+        updateImageDxDy(
+          cellGroup.mergeStartCol,
+          cellGroup.mergeEndCol,
+          cellGroup.mergeStartRow,
+          cellGroup.mergeEndRow,
+          table
+        );
+      }
+    }
+  };
+  const handleVideoLoadFail = (): void => {
+    if (videoReleased) {
+      return;
+    }
+    if (isCurrentImage()) {
+      setVideoDamageImage();
+      table.scenegraph.updateNextFrame();
+    }
+    if (shouldSnapshot) {
+      releaseCurrentVideo();
+    }
+  };
   video.addEventListener('loadeddata', (): void => {
+    clearVideoLoadTimer();
+    if (videoReleased) {
+      return;
+    }
+    if (!isCurrentImage()) {
+      releaseCurrentVideo();
+      return;
+    }
     const scenegraph = table.scenegraph;
     if (!scenegraph) {
       return;
@@ -252,20 +428,14 @@ export function createVideoCellGroup(
     });
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
+    if (shouldSnapshot && snapshotVideoFirstFrame(video, image, table)) {
+      releaseCurrentVideo();
+    }
     // 触发重绘
     scenegraph.updateNextFrame();
   });
-  video.onerror = (): void => {
-    if (!table.scenegraph) {
-      return;
-    }
-    const regedIcons = icons.get();
-    (image as any).image = regedIcons.video_damage_pic
-      ? (regedIcons.video_damage_pic as any).svg
-      : (regedIcons.damage_pic as any).svg;
-  };
-  video.src = value;
-  video.setAttribute('preload', 'auto');
+  video.addEventListener('error', handleVideoLoadFail);
+  video.addEventListener('abort', handleVideoLoadFail);
 
   const image: IImage = createImage({
     x: padding[3],
@@ -302,6 +472,13 @@ export function createVideoCellGroup(
       scenegraph.updateNextFrame();
     }
   };
+
+  video.setAttribute('preload', 'auto');
+  video.src = value;
+  const timeout = getVideoFirstFrameTimeout(table);
+  if (shouldSnapshot && timeout > 0) {
+    loadTimer = setTimeout(handleVideoLoadFail, timeout);
+  }
   return cellGroup;
 }
 
