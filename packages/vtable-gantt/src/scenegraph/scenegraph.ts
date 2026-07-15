@@ -18,7 +18,7 @@ import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
 import type { GanttTaskBarNode } from './gantt-node';
 import { TasksShowMode, TaskType } from '../ts-types';
-container.load(graphicContribution);
+(container as any).load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
   rowHeight: number;
