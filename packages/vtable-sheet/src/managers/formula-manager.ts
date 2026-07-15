@@ -2,7 +2,7 @@ import { FormulaEngine } from '../formula/formula-engine';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult, IFormulaManager } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
-import type { CellRange, ISheetDefine } from '../ts-types';
+import type { CellRange, ISheetDefine, SheetData } from '../ts-types';
 import { CellHighlightManager } from '../formula';
 import type * as VTable from '@visactor/vtable';
 import { CrossSheetFormulaHandler } from '../formula/cross-sheet-formula-handler';
@@ -137,19 +137,39 @@ export class FormulaManager implements IFormulaManager {
    * @param data 工作表数据
    * @returns 标准化后的工作表数据
    */
-  normalizeSheetData(data: unknown[][], tableInstance: VTable.ListTable): unknown[][] {
+  normalizeSheetData(data: SheetData, tableInstance: VTable.ListTable): unknown[][] {
     try {
       //将columns中的title追加到data中
       const headerRows: unknown[][] = [];
+      const headerKeyColMap = new Map();
       for (let i = 0; i < tableInstance.columnHeaderLevelCount; i++) {
         const headerRow: unknown[] = [];
         for (let j = 0; j < tableInstance.colCount; j++) {
           const cellValue = tableInstance.getCellValue(j, i);
+          const filedDefine = tableInstance.getHeaderDefine(j, i);
+          if (cellValue === filedDefine.title) {
+            headerKeyColMap.set(j, filedDefine.field);
+          }
           headerRow.push(cellValue);
         }
         headerRows.push(headerRow);
       }
-      const dataCopy = JSON.parse(JSON.stringify(data));
+      const colCount = tableInstance.colCount;
+      let dataCopy: unknown[][];
+      const firstRow = data[0];
+      if (firstRow && typeof firstRow === 'object' && !Array.isArray(firstRow)) {
+        dataCopy = data.map((_, rowIndex) => {
+          const bodyRow = tableInstance.columnHeaderLevelCount + rowIndex;
+          const rowTemp = new Array<unknown>(colCount);
+          for (let col = 0; col < colCount; col++) {
+            const field = tableInstance.getBodyField(col, bodyRow) ?? headerKeyColMap.get(col);
+            rowTemp[col] = field !== undefined ? tableInstance.getRawFieldData(field, col, bodyRow) ?? null : null;
+          }
+          return rowTemp;
+        });
+      } else {
+        dataCopy = JSON.parse(JSON.stringify(data));
+      }
 
       const toNormalizeData = tableInstance.columnHeaderLevelCount > 0 ? [...headerRows].concat(dataCopy) : dataCopy;
 
@@ -1372,7 +1392,6 @@ export class FormulaManager implements IFormulaManager {
           // 如果还没有对应的 WorkSheet 实例，跳过，后续按需再补充
           return;
         }
-
         const normalizedData = this.normalizeSheetData(worksheetInstance.getData(), worksheetInstance.tableInstance);
         this.addSheet(sheetKey, normalizedData, sheetDefine.sheetTitle);
       });

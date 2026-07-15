@@ -14,10 +14,12 @@ export interface IFilterConfig {
 /** 扩展的列定义，添加筛选相关配置；field 可选，构建 ListTable 时由 WorkSheet 按列索引填充 */
 export interface IColumnDefine extends Omit<ColumnDefine, 'field'> {
   /** 列字段，可选；未指定时由 WorkSheet 按列索引填充 */
-  field?: string | number;
+  field?: ColumnDefine['field'];
   /** 是否启用筛选功能 */
   filter?: boolean;
 }
+
+export type SheetData = (CellValue[] | null)[] | Record<string, unknown>[];
 
 /** Sheet定义 */
 export interface ISheetDefine {
@@ -32,7 +34,7 @@ export interface ISheetDefine {
   /** 表头定义 */
   columns?: IColumnDefine[];
   /** 数据 */
-  data?: (CellValue[] | null)[];
+  data?: SheetData;
   /** 是否是当前活动sheet TODO 是不是放到外层更好*/
   active?: boolean;
   cellMerge?: VTableTypes.CustomMergeCellArray;
