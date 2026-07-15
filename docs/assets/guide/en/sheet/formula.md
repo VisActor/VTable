@@ -164,6 +164,7 @@ Supports common formula error handling:
 - Supports nested functions, such as `=IF(SUM(A1:A5)>100, MAX(B1:B5), MIN(C1:C5))`
 - Cell addresses use A1 format, such as A1, B2, C3, etc.
 - Range references use a colon separator, such as A1:B10
+- Arithmetic expressions are evaluated as numeric calculations only. Cell values or function results used with `+`, `-`, `*`, or `/` must be convertible to finite numbers. Non-numeric content returns a formula error and is never executed as script or code.
 
 **The formula capabilities are not fully complete**
 **The formula linkage processing, formula and sorting, and dragging rows and columns have conflicts**
