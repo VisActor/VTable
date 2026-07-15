@@ -1,4 +1,5 @@
 import { FormulaManager } from '../src/managers/formula-manager';
+import { FormulaEngine } from '../src/formula/formula-engine';
 
 // Mock VTableSheet for testing
 const mockVTableSheet = {
@@ -91,5 +92,37 @@ describe('Basic Formula Functionality', () => {
 
     expect(formulas['A1']).toBe('=SUM(A1:A2)');
     expect(formulas['A2']).toBe('=A1*2');
+  });
+
+  test('should evaluate arithmetic formulas without executing cell content as code', () => {
+    const engine = new FormulaEngine();
+    const marker = '__vtableSheetRceExecuted';
+    const payload = `0,globalThis.${marker}=1,0`;
+
+    delete (globalThis as any)[marker];
+    engine.addSheet('Sheet1', [['', '']]);
+    engine.setActiveSheet('Sheet1');
+
+    engine.updateSheetData('Sheet1', [[payload], ['=A1+1']]);
+    const batchResult = engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 0 });
+    expect(batchResult.error).toBeTruthy();
+    expect((globalThis as any)[marker]).toBeUndefined();
+
+    engine.setCellContent({ sheet: 'Sheet1', row: 0, col: 0 }, payload);
+    engine.setCellContent({ sheet: 'Sheet1', row: 0, col: 1 }, '=A1+1');
+    const singleResult = engine.getCellValue({ sheet: 'Sheet1', row: 0, col: 1 });
+    expect(singleResult.error).toBeTruthy();
+    expect((globalThis as any)[marker]).toBeUndefined();
+  });
+
+  test('should keep numeric arithmetic, precedence and functions working', () => {
+    const engine = new FormulaEngine();
+    engine.addSheet('Sheet1', [[2], ['=A1+1'], ['=SUM(A1:A2)+3'], ['=1+2*3'], ['=-(1+2)*3']]);
+    engine.setActiveSheet('Sheet1');
+
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 0 })).toEqual({ value: 3, error: undefined });
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 2, col: 0 })).toEqual({ value: 8, error: undefined });
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 3, col: 0 })).toEqual({ value: 7, error: undefined });
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 4, col: 0 })).toEqual({ value: -9, error: undefined });
   });
 });
