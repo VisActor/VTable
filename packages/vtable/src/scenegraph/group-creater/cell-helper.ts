@@ -666,12 +666,12 @@ export function updateCell(
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
   let isVtableMerge = false;
-  if (table.internalProps.enableTreeNodeMerge && isMerge) {
+  if (table.internalProps.enableTreeNodeMerge && range) {
     const rawRecord = table.getCellRawRecord(range.start.col, range.start.row);
     const { vtableMergeName, vtableMerge } = rawRecord ?? {};
 
-    isVtableMerge = vtableMerge;
-    if (vtableMerge) {
+    isVtableMerge = vtableMerge && (isMerge || !table.isSeriesNumberInBody(col, row));
+    if (isVtableMerge) {
       mayHaveIcon = true;
       if ((table.internalProps as ListTableProtected).groupTitleCustomLayout) {
         customResult = dealWithCustom(
@@ -712,6 +712,7 @@ export function updateCell(
   if (
     !addNew &&
     !isMerge &&
+    !isVtableMerge &&
     !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
     (forceFastUpdate || canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table))
   ) {
