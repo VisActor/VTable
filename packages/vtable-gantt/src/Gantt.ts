@@ -693,12 +693,15 @@ export class Gantt extends EventTarget {
   _sortScales() {
     const { timelineHeader } = this.options;
     const zoomLevelScales = this.zoomScaleManager?.config.levels[this.zoomScaleManager.getCurrentLevel()];
-    const timelineScales =
-      timelineHeader?.scales?.length > 0
-        ? timelineHeader.scales
-        : zoomLevelScales?.length > 0
-        ? zoomLevelScales
-        : [DEFAULT_TIMELINE_SCALE];
+    const defaultTimelineScale: ITimelineScale = { ...DEFAULT_TIMELINE_SCALE };
+    let timelineScales: ITimelineScale[];
+    if (timelineHeader?.scales?.length > 0) {
+      timelineScales = timelineHeader.scales;
+    } else if (zoomLevelScales?.length > 0) {
+      timelineScales = zoomLevelScales;
+    } else {
+      timelineScales = [defaultTimelineScale];
+    }
 
     if (timelineHeader && (!timelineHeader.scales || timelineHeader.scales.length === 0)) {
       timelineHeader.scales = timelineScales.map(scale => ({ ...scale }));

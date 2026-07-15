@@ -19,6 +19,23 @@ describe('Gantt._sortScales', () => {
     expect(context.parsedOptions.reverseSortedTimelineScales.map(scale => scale.unit)).toEqual(['day']);
   });
 
+  test('does not share mutable default scale objects across calls', () => {
+    const firstContext = {
+      options: {},
+      parsedOptions: {}
+    };
+    const secondContext = {
+      options: {},
+      parsedOptions: {}
+    };
+
+    Gantt.prototype._sortScales.call(firstContext);
+    firstContext.parsedOptions.sortedTimelineScales[0].timelineDates = ['stale'];
+    Gantt.prototype._sortScales.call(secondContext);
+
+    expect(secondContext.parsedOptions.sortedTimelineScales[0].timelineDates).toBeUndefined();
+  });
+
   test('still sorts the configured scales', () => {
     const context = {
       options: { timelineHeader: { scales: [{ unit: 'day' }, { unit: 'month' }] } },

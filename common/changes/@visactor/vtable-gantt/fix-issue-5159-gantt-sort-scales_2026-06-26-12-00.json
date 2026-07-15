@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable-gantt",
-      "comment": "Fix a crash in the Gantt component when `zoomScale` is configured without `scales`; `_sortScales` accessed `timelineHeader.scales.length` without a guard (GitHub #5159)",
+      "comment": "Fix a crash in the Gantt component when `zoomScale` is configured without `timelineHeader.scales`, and initialize timeline scales from the active zoom level or a safe default (GitHub #5159)",
       "type": "patch"
     }
   ],
