@@ -141,6 +141,10 @@ export const menus = [
     name: 'context-menu'
   },
   {
+    path: 'context-menu',
+    name: 'issue-5214-reverse-selected-row-delete'
+  },
+  {
     path: 'table-export',
     name: 'table-export'
   },
