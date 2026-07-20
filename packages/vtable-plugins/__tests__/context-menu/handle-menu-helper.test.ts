@@ -1,0 +1,65 @@
+// @ts-nocheck
+import { ListTable } from '@visactor/vtable';
+import { createDiv } from '../../../vtable/__tests__/dom';
+import { MenuHandler } from '../../src/contextmenu/handle-menu-helper';
+import { TableSeriesNumber } from '../../src/table-series-number';
+
+global.__VERSION__ = 'none';
+
+describe('Context menu row deletion', () => {
+  let table: ListTable;
+
+  afterEach(() => {
+    table?.release();
+    document.body.innerHTML = '';
+  });
+
+  test('deletes all rows in a reverse-dragged row selection', () => {
+    const container = createDiv();
+    container.style.width = '600px';
+    container.style.height = '400px';
+
+    const seriesNumberPlugin = new TableSeriesNumber({
+      rowCount: 5,
+      colCount: 2
+    });
+    table = new ListTable({
+      container,
+      showHeader: false,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records: [
+        { id: 0, name: 'A' },
+        { id: 1, name: 'B' },
+        { id: 2, name: 'C' },
+        { id: 3, name: 'D' },
+        { id: 4, name: 'E' }
+      ],
+      syncRecordOperationsToSourceRecords: true,
+      plugins: [seriesNumberPlugin]
+    });
+
+    table.stateManager.select.ranges = [
+      {
+        start: { col: 0, row: 3 },
+        end: { col: table.colCount - 1, row: 1 }
+      }
+    ];
+
+    const selectCells = jest.spyOn(table, 'selectCells');
+    seriesNumberPlugin['handleSeriesNumberCellRightClick']({
+      detail: {
+        seriesNumberCell: { id: 2, name: 'row-series-number-cell' },
+        event: new MouseEvent('contextmenu')
+      }
+    });
+
+    expect(selectCells).not.toHaveBeenCalled();
+
+    new MenuHandler().handleDeleteRow(table);
+
+    expect(table.records.map(record => record.id)).toEqual([0, 4]);
+  });
+});
