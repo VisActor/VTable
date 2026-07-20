@@ -590,6 +590,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
+      }
       let value;
       if ((this.internalProps as ListTableProtected).groupBy) {
         const record = table.getCellRawRecord(col, row);
@@ -639,6 +642,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
+      }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
