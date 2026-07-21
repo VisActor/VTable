@@ -52,6 +52,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5213-row-series-number-aggregation'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
