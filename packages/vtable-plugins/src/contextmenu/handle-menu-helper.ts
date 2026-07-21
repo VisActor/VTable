@@ -105,7 +105,9 @@ export class MenuHandler {
       const deleteRowIndexs: number[] = [];
       for (let i = 0; i < selectRanges.length; i++) {
         const range = selectRanges[i];
-        for (let j = range.start.row; j <= range.end.row; j++) {
+        const startRow = Math.min(range.start.row, range.end.row);
+        const endRow = Math.max(range.start.row, range.end.row);
+        for (let j = startRow; j <= endRow; j++) {
           if (!deleteRowIndexs.includes(j)) {
             deleteRowIndexs.push(j);
           }
