@@ -12,6 +12,10 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'excel-import',
+    name: 'issue-5227-leading-blank-row'
+  },
+  {
     path: 'filter',
     name: 'filter'
   },
