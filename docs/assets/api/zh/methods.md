@@ -2015,9 +2015,9 @@ changeCellValuesByRecords 的别名形式（位置参数）。
   /**
    * 修改数据 支持多条数据
    * @param records 修改数据条目
-   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）,在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。
+   * @param recordIndexs 对应修改数据的索引（显示在body中的索引，即要修改的是body部分的第几行数据）,在树形（分组）结构中，recordIndex可能是一个数组，代表改节点从根节点开始的每级索引位置。省略时会按 records 顺序更新对应索引。
    */
-  updateRecords(records: any[], recordIndexs: number[]|number[][])
+  updateRecords(records: any[], recordIndexs?: number[]|number[][])
 ```
 
 ## getBodyVisibleCellRange(Function)
