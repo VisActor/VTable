@@ -98,6 +98,18 @@ export class InputEditor implements IEditor {
     this.eventHandlers.push({ type: 'paste', handler: pasteHandler });
   }
 
+  protected ensureElementMounted(container: HTMLElement) {
+    if (!this.element) {
+      this.createElement();
+      return;
+    }
+
+    if (!container.contains(this.element)) {
+      this.element.parentElement?.removeChild(this.element);
+      this.container.appendChild(this.element);
+    }
+  }
+
   setValue(value: string) {
     this.element.value = typeof value !== 'undefined' ? value : '';
   }
@@ -118,14 +130,7 @@ export class InputEditor implements IEditor {
     if (selectCell.col !== this.col || selectCell.row !== this.row) {
       return;
     }
-    if (!this.element) {
-      this.createElement();
-    } else {
-      if (!container.contains(this.element)) {
-        this.element.parentElement.removeChild(this.element);
-        this.container.appendChild(this.element);
-      }
-    }
+    this.ensureElementMounted(container);
     this.element.style.opacity = '0';
     //这个pointerEvents = 'none'很重要，如果没有的话会引起vtable.getElement()元素和这里的element元素的focus和blur的切换，
     //也会引起mouseleave_table mouseleave_cell和mouseenter的切换
@@ -141,19 +146,12 @@ export class InputEditor implements IEditor {
     this.table = table;
     this.col = col;
     this.row = row;
-    if (!this.element) {
-      this.createElement();
-      if (referencePosition?.rect) {
-        this.adjustPosition(referencePosition.rect);
-      }
-    } else {
-      if (!container.contains(this.element)) {
-        this.element.parentElement.removeChild(this.element);
-        this.container.appendChild(this.element);
-      }
-    }
+    this.ensureElementMounted(container);
     if (value !== undefined && value !== null) {
       this.setValue(value);
+    }
+    if (referencePosition?.rect) {
+      this.adjustPosition(referencePosition.rect);
     }
     //防止调用过prepareEdit 后，元素的显示和可操作性被影响
     this.element.style.opacity = '1';
