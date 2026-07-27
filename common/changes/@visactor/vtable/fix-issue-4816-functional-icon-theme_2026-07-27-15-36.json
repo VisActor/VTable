@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "fix: refresh functional icons after theme updates",
-      "type": "none",
+      "type": "patch",
       "packageName": "@visactor/vtable"
     }
   ],
