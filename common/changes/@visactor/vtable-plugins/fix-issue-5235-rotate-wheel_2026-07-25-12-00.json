@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-plugins",
+      "comment": "fix: keep wheel events cancelable after restoring a rotated table (GitHub #5235)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "biukam.w@gmail.com"
+}
