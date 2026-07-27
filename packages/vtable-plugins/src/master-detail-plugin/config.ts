@@ -161,7 +161,7 @@ export class ConfigManager {
   /**
    * 处理记录的层级状态
    */
-  private processRecordsHierarchyStates(records: unknown[]): void {
+  processRecordsHierarchyStates(records: unknown[], expandInitialRows: boolean = true): void {
     const HierarchyState = VTable.TYPES.HierarchyState;
     // 兼容处理headerExpandLevel
     const hierarchyExpandLevel = this.table.options.hierarchyExpandLevel || this.table.options.headerExpandLevel;
@@ -193,7 +193,9 @@ export class ConfigManager {
       });
     };
     processRecords(records);
-    this.performInitialExpansion();
+    if (expandInitialRows) {
+      this.performInitialExpansion();
+    }
   }
 
   /**

@@ -23,6 +23,7 @@ export class TableAPIExtensions {
   private originalUpdateChartSizeForResizeColWidth?: (col: number) => void;
   private originalUpdateChartSizeForResizeRowHeight?: (row: number) => void;
   private originalUpdateRowHeight?: (row: number, detaY: number, skipTableHeightMap?: boolean) => void;
+  private originalSetRecords?: (records: Array<any>, option?: Parameters<VTable.ListTable['setRecords']>[1]) => void;
   private originalGetResizeColAt?: (
     abstractX: number,
     abstractY: number,
@@ -50,6 +51,7 @@ export class TableAPIExtensions {
     collapseRow: (rowIndex: number) => void;
     updateSubTablePositions: () => void;
     updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) => void;
+    resetMasterDetailStateBeforeSetRecords: () => void;
   };
 
   constructor(
@@ -67,6 +69,7 @@ export class TableAPIExtensions {
       collapseRow: (rowIndex: number) => void;
       updateSubTablePositions: () => void;
       updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) => void;
+      resetMasterDetailStateBeforeSetRecords: () => void;
     }
   ) {
     this.table = table;
@@ -140,6 +143,8 @@ export class TableAPIExtensions {
     this.extendUpdateRowHeight();
     // 处理展开行的列宽调整检测
     this.extendGetResizeColAt();
+    // 处理 setRecords 后主从表层级状态重建
+    this.extendSetRecords();
   }
 
   /**
@@ -194,6 +199,24 @@ export class TableAPIExtensions {
       // 非展开行或其他情况，直接调用原始方法
       const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
       return result;
+    };
+  }
+
+  /**
+   * 扩展 setRecords 方法
+   */
+  private extendSetRecords(): void {
+    const table = this.table;
+    this.originalSetRecords = table.setRecords.bind(table);
+    table.setRecords = (records: Array<any>, option?: Parameters<VTable.ListTable['setRecords']>[1]) => {
+      this.callbacks.resetMasterDetailStateBeforeSetRecords();
+      if (Array.isArray(records)) {
+        this.configManager.processRecordsHierarchyStates(records, false);
+      }
+      this.originalSetRecords?.(records, option);
+      if (Array.isArray(records)) {
+        this.configManager.processRecordsHierarchyStates(records);
+      }
     };
   }
 

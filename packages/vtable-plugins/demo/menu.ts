@@ -132,6 +132,10 @@ export const menus = [
     name: 'master-detail-plugin9'
   },
   {
+    path: 'master-detail-plugin',
+    name: 'issue-5185-set-records-expand'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {
