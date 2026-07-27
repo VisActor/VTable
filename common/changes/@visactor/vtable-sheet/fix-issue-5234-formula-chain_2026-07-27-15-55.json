@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-sheet",
+      "comment": "fix: recalculate multi-level formula dependents",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-sheet",
+  "email": "892739385@qq.com"
+}

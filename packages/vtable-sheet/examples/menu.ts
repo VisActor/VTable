@@ -30,5 +30,9 @@ export const menus = [
   {
     path: 'sheet',
     name: 'issue-5204-formula-manager'
+  },
+  {
+    path: 'sheet',
+    name: 'issue-5234-formula-chain'
   }
 ];
