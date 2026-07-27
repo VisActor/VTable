@@ -38,6 +38,10 @@ export class HeaderHelper {
   _table: BaseTableAPI;
   constructor(_table: BaseTableAPI) {
     this._table = _table;
+    this.updateIcons();
+  }
+
+  updateIcons() {
     const regedIcons = registerIcons.get();
     //pin默认值
     this.freezeIcon = regedIcons[InternalIconName.freezeIconName] as SvgIcon;
