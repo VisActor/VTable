@@ -1637,8 +1637,11 @@ export class Gantt extends EventTarget {
     this.stateManager.setScrollLeft(value);
   }
   /** 获取任务条的位置。相对应甘特图表左上角的位置。 */
-  getTaskBarRelativeRect(index: number) {
-    const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index);
+  getTaskBarRelativeRect(index: number, sub_task_index?: number) {
+    const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index, sub_task_index);
+    if (!taskBarNode) {
+      return null;
+    }
     const left =
       taskBarNode.attribute.x +
       this.taskListTableInstance.tableNoFrameWidth +
