@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: refresh vue custom layout dom content after sort",
+      "type": "patch",
+      "packageName": "@visactor/vue-vtable"
+    }
+  ],
+  "packageName": "@visactor/vue-vtable",
+  "email": "github@visactor.io"
+}
