@@ -12,6 +12,7 @@ export class PluginManager {
     this.table = table;
     options.plugins?.map(plugin => {
       this.register(plugin);
+      plugin.init?.(this.table, options);
       this._bindTableEventForPlugin(plugin);
     });
   }
@@ -59,6 +60,7 @@ export class PluginManager {
     const addedPlugins = plugins?.filter(plugin => !this.plugins.has(plugin.id));
     addedPlugins?.forEach(plugin => {
       this.register(plugin);
+      plugin.init?.(this.table, this.table.options);
       this._bindTableEventForPlugin(plugin);
     });
   }
