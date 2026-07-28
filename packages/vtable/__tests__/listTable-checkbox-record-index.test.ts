@@ -33,10 +33,12 @@ describe('ListTable checkbox record index api', () => {
       ],
       enableCheckboxCascade: false
     });
+    const renderAsync = jest.spyOn(table, 'renderAsync').mockImplementation(() => Promise.resolve());
 
     table.setCellCheckboxStateByRecordIndex([0, 0], 'task', false);
 
     expect(table.stateManager.checkedState.get('0,0').task).toBe(false);
+    expect(renderAsync).toHaveBeenCalledTimes(1);
   });
 
   test('clears all checkbox states for a field', () => {
@@ -61,6 +63,7 @@ describe('ListTable checkbox record index api', () => {
       ],
       enableCheckboxCascade: false
     });
+    const renderAsync = jest.spyOn(table, 'renderAsync').mockImplementation(() => Promise.resolve());
 
     table.clearAllCheckboxState('task');
 
@@ -68,6 +71,7 @@ describe('ListTable checkbox record index api', () => {
     expect(table.stateManager.checkedState.get('0,0').task).toBe(false);
     expect(table.stateManager.checkedState.get('1').task).toBe(false);
     expect(table.stateManager.headerCheckedState.task).toBe(false);
+    expect(renderAsync).toHaveBeenCalledTimes(1);
   });
 
   test('keeps header indeterminate when checkedState is sparse', () => {

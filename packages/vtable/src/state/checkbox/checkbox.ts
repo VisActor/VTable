@@ -319,6 +319,7 @@ export function setCheckboxStateByRecordIndex(
 
   updateVisibleCheckboxCellByRecordIndex(recordIndex, field, checked, table);
   updateHeaderCheckboxStateByField(field, table);
+  renderCheckboxStateUpdate(table);
 }
 
 export function clearCheckboxState(field: FieldDef, table: BaseTableAPI) {
@@ -328,6 +329,7 @@ export function clearCheckboxState(field: FieldDef, table: BaseTableAPI) {
   clearRecordCheckboxState((table as any).records, field, table);
   updateVisibleCheckboxCellsByField(field, false, table);
   updateHeaderCheckboxStateByField(field, table);
+  renderCheckboxStateUpdate(table);
 }
 
 export function setCellCheckboxStateByAttribute(
@@ -496,6 +498,15 @@ function updateVisibleCheckboxCellsByField(field: FieldDef, checked: boolean | '
     cols.forEach(col => {
       setCellCheckboxStateByAttribute(col, row, checked, table);
     });
+  }
+}
+
+function renderCheckboxStateUpdate(table: BaseTableAPI) {
+  const renderAsync = (table as any).renderAsync;
+  if (isFunction(renderAsync)) {
+    renderAsync.call(table);
+  } else {
+    table.render();
   }
 }
 
