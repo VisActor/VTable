@@ -1,6 +1,6 @@
 import { isArray, isFunction, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
-import type { CheckboxColumnDefine, ListTableAPI } from '../../ts-types';
+import type { CheckboxColumnDefine, FieldDef, ListTableAPI } from '../../ts-types';
 import { getOrApply } from '../../tools/helper';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { CachedDataSource } from '../../data';
@@ -304,6 +304,34 @@ export function setCellCheckboxState(
   }
 }
 
+export function setCheckboxStateByRecordIndex(
+  recordIndex: number | number[],
+  field: FieldDef,
+  checked: boolean | 'indeterminate',
+  table: BaseTableAPI
+) {
+  const dataIndex = normalizeRecordIndex(recordIndex).toString();
+  if (table.stateManager.checkedState.get(dataIndex)) {
+    table.stateManager.checkedState.get(dataIndex)[field as string | number] = checked;
+  } else {
+    table.stateManager.checkedState.set(dataIndex, {
+      [field as string | number]: checked
+    });
+  }
+
+  updateVisibleCheckboxCellByRecordIndex(recordIndex, field, checked, table);
+  updateHeaderCheckboxStateByField(field, table);
+}
+
+export function clearCheckboxState(field: FieldDef, table: BaseTableAPI) {
+  if (!isValid(field)) {
+    return;
+  }
+  updateAllRecordCheckboxState((table as any).records, field, false, table.stateManager.checkedState);
+  updateVisibleCheckboxCellsByField(field, false, table);
+  updateHeaderCheckboxStateByField(field, table);
+}
+
 export function setCellCheckboxStateByAttribute(
   col: number,
   row: number,
@@ -402,6 +430,113 @@ export function getGroupCheckboxState(table: BaseTableAPI) {
   });
 
   return result;
+}
+
+function normalizeRecordIndex(recordIndex: number | number[]): number | number[] {
+  if (isArray(recordIndex) && recordIndex.length === 1) {
+    return recordIndex[0];
+  }
+  return recordIndex;
+}
+
+function updateAllRecordCheckboxState(
+  records: any[],
+  field: FieldDef,
+  checked: boolean | 'indeterminate',
+  checkedState: Map<string | number, any>,
+  parentIndex: number[] = []
+) {
+  if (!isArray(records)) {
+    return;
+  }
+
+  records.forEach((record, index) => {
+    const recordIndex = parentIndex.length ? parentIndex.concat(index) : [index];
+    const dataIndex = normalizeRecordIndex(recordIndex).toString();
+    if (checkedState.get(dataIndex)) {
+      checkedState.get(dataIndex)[field as string | number] = checked;
+    } else {
+      checkedState.set(dataIndex, {
+        [field as string | number]: checked
+      });
+    }
+
+    if (isArray(record?.children)) {
+      updateAllRecordCheckboxState(record.children, field, checked, checkedState, recordIndex);
+    }
+  });
+}
+
+function updateVisibleCheckboxCellByRecordIndex(
+  recordIndex: number | number[],
+  field: FieldDef,
+  checked: boolean | 'indeterminate',
+  table: BaseTableAPI
+) {
+  const bodyRowIndex = (table as ListTableAPI).getBodyRowIndexByRecordIndex?.(recordIndex);
+  if (!isNumber(bodyRowIndex) || bodyRowIndex < 0) {
+    return;
+  }
+
+  const row = bodyRowIndex + table.columnHeaderLevelCount;
+  const cols = getCheckboxColsByField(field, row, table);
+  cols.forEach(col => {
+    setCellCheckboxStateByAttribute(col, row, checked, table);
+  });
+}
+
+function updateVisibleCheckboxCellsByField(field: FieldDef, checked: boolean | 'indeterminate', table: BaseTableAPI) {
+  for (let row = table.columnHeaderLevelCount; row < table.rowCount; row++) {
+    getCheckboxColsByField(field, row, table).forEach(col => {
+      setCellCheckboxStateByAttribute(col, row, checked, table);
+    });
+  }
+}
+
+function updateHeaderCheckboxStateByField(field: FieldDef, table: BaseTableAPI) {
+  const fieldKey = field as string | number;
+  let hasChecked = false;
+  let hasUnchecked = false;
+
+  table.stateManager.checkedState.forEach(checkState => {
+    if (checkState?.[fieldKey] === true) {
+      hasChecked = true;
+    } else {
+      hasUnchecked = true;
+    }
+  });
+
+  const checked = hasChecked && !hasUnchecked ? true : hasChecked ? 'indeterminate' : false;
+  table.stateManager.headerCheckedState[fieldKey] = checked;
+  updateVisibleHeaderCheckboxCellByField(field, checked, table);
+}
+
+function updateVisibleHeaderCheckboxCellByField(
+  field: FieldDef,
+  checked: boolean | 'indeterminate',
+  table: BaseTableAPI
+) {
+  for (let row = 0; row < table.columnHeaderLevelCount; row++) {
+    for (let col = 0; col < table.colCount; col++) {
+      if (table.getHeaderField(col, row) === field && table.getCellType(col, row) === 'checkbox') {
+        table.scenegraph.updateHeaderCheckboxCellState(col, row, checked);
+      }
+    }
+  }
+}
+
+function getCheckboxColsByField(field: FieldDef, row: number, table: BaseTableAPI): number[] {
+  const cols: number[] = [];
+  for (let col = 0; col < table.colCount; col++) {
+    if (table.isHeader(col, row)) {
+      continue;
+    }
+    const define = table.getBodyColumnDefine(col, row);
+    if (define?.field === field && table.getCellType(col, row) === 'checkbox') {
+      cols.push(col);
+    }
+  }
+  return cols;
 }
 
 function initRecordCheckState(records: any[], state: StateManager) {
