@@ -2143,6 +2143,28 @@ setCellCheckboxState(col: number, row: number, checked: boolean) => void
 - row: Row number
 - checked: Whether selected
 
+## setCellCheckboxStateByRecordIndex(Function)
+
+Set the checkbox state by source records index and field. For tree tables, pass a children path such as `[0, 1]` for the second child of the first root record. The state is updated even when the target node is collapsed and not currently visible.
+
+```
+setCellCheckboxStateByRecordIndex(recordIndex: number | number[], field: string | number, checked: boolean | 'indeterminate') => void
+```
+
+- recordIndex: Source data index; number for normal tables, number[] for tree tables
+- field: Field of the checkbox column
+- checked: Checkbox state, including `'indeterminate'`
+
+## clearCheckboxState(Function)
+
+Clear all checkbox checked states under the specified field. `clearAllCheckboxState(field)` is an alias of this method.
+
+```
+clearCheckboxState(field: string | number) => void
+```
+
+- field: Field of the checkbox column
+
 ## setCellRadioState(Function)
 
 Set the radio state of the cell to selected state

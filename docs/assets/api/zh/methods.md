@@ -2142,6 +2142,28 @@ setCellCheckboxState(col: number, row: number, checked: boolean) => void
 - row: 行号
 - checked: 是否选中
 
+## setCellCheckboxStateByRecordIndex(Function)
+
+根据源数据 records 的 index 和 field 设置 checkbox 状态。树形表格可传入 children 路径，例如 `[0, 1]` 表示第 1 条根节点下第 2 条子节点；即使该节点当前处于折叠不可见状态，也会更新其 checkbox 状态。
+
+```
+setCellCheckboxStateByRecordIndex(recordIndex: number | number[], field: string | number, checked: boolean | 'indeterminate') => void
+```
+
+- recordIndex: 源数据索引；普通表格为 number，树形表格为 number[]
+- field: checkbox 所在字段
+- checked: 是否选中，支持半选状态 `'indeterminate'`
+
+## clearCheckboxState(Function)
+
+清除指定 field 下所有 checkbox 的选中状态。`clearAllCheckboxState(field)` 是该方法的别名。
+
+```
+clearCheckboxState(field: string | number) => void
+```
+
+- field: checkbox 所在字段
+
 ## setCellRadioState(Function)
 
 将单元格的 radio 状态设置为选中状态

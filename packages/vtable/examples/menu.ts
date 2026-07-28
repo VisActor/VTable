@@ -125,6 +125,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'issue-5211-tree-checkbox-record-index'
+      },
+      {
+        path: 'list',
         name: 'list-tree-20000'
       },
       {
