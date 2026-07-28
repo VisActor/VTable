@@ -158,10 +158,6 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
         wrapContainer.setAttribute('data-vue-renderId', dataRenderId);
         // 先隐藏
         wrapContainer.style.display = 'none';
-        if (!reuse) {
-          // 仅在非复用时需要重新渲染
-          render(element, wrapContainer);
-        }
         targetMap = {
           wrapContainer,
           nativeContainer,
@@ -181,6 +177,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       targetMap.renderId = this.renderId;
       targetMap.graphic = graphic;
       targetMap.lastAccessed = Date.now();
+      render(element, targetMap.wrapContainer);
       this.updateAccessQueue(id);
       this.updateStyleOfWrapContainer(graphic, stage, targetMap.wrapContainer, targetMap.nativeContainer);
     }
