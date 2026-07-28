@@ -77,7 +77,8 @@ export function getTablePlugins(
     } else {
       const addRowColumnPlugin = new AddRowColumnPlugin({
         addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
-          tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
+          const record = tableInstance.options.addRecordRule === 'Object' ? {} : [];
+          tableInstance.addRecord(record, row - tableInstance.columnHeaderLevelCount);
         },
         ...userPluginOptions
       });
