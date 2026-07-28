@@ -88,6 +88,10 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'rotate-table',
+    name: 'issue-5235-rotate-wheel'
+  },
+  {
     path: 'table-series-number',
     name: 'table-series-number'
   },

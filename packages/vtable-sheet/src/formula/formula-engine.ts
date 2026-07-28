@@ -2487,11 +2487,6 @@ export class FormulaEngine {
   private recalculateDependentsWithTracking(changedCell: FormulaCell, visited: Set<string>): void {
     const cellKey = this.getCellKey(changedCell);
 
-    // 防止循环依赖导致的无限递归
-    if (visited.has(cellKey)) {
-      return;
-    }
-
     const dependents = this.dependents.get(cellKey);
 
     if (!dependents || dependents.size === 0) {
@@ -2502,6 +2497,9 @@ export class FormulaEngine {
     const sortedDependents = this.sortCellsByDependency([...dependents]);
 
     for (const dependentKey of sortedDependents) {
+      if (visited.has(dependentKey)) {
+        continue;
+      }
       this.recalculateSingleCellWithTracking(dependentKey, visited);
     }
   }

@@ -60,6 +60,14 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4810-edit-cell-double-click-blank'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4816-functional-icons-theme'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
