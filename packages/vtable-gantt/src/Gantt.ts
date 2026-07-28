@@ -1262,6 +1262,7 @@ export class Gantt extends EventTarget {
       }
       this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
@@ -1284,6 +1285,7 @@ export class Gantt extends EventTarget {
       }
       this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
@@ -1308,6 +1310,7 @@ export class Gantt extends EventTarget {
       }
       this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
@@ -1324,6 +1327,11 @@ export class Gantt extends EventTarget {
     const progressField = this.parsedOptions.progressField;
     if (progressField) {
       taskRecord[progressField] = progress;
+      if (Array.isArray(sub_task_index)) {
+        this._updateRecordToListTable(taskRecord, sub_task_index);
+        this._refreshTaskBar(index, sub_task_index);
+        return;
+      }
       const recordIndex = this.getRecordIndexByTaskShowIndex(index);
       this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       if (!this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index)) {
