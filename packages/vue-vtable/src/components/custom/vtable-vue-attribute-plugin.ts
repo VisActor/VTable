@@ -489,6 +489,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
     const { x: left, y: top } = this.calculatePosition(graphic, options.anchorType);
     const { left: offsetX, top: offsetTop } = this.calculateOffset(stage, nativeContainer, left, top);
+    const { safeWidth, safeHeight } = this.getScrollbarSafeSize(graphic, offsetX, offsetTop, width, height, options);
 
     const { id } = this.getGraphicOptions(graphic) || {};
     const record = id ? this.htmlMap[id] : null;
@@ -499,10 +500,6 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 位置变化检查
     const positionChanged =
       !record.lastPosition || record.lastPosition.x !== offsetX || record.lastPosition.y !== offsetTop;
-    if (!positionChanged) {
-      // 位置没有变化，无需更新样式
-      return;
-    }
 
     // 默认自定义区域内也可带动表格画布滚动
     const { pointerEvents } = options;
@@ -510,8 +507,8 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 单元格样式
     const style = this.convertCellStyle(graphic);
     Object.assign(calculateStyle, {
-      width: `${width}px`,
-      height: `${height}px`,
+      width: `${safeWidth}px`,
+      height: `${safeHeight}px`,
       overflow: 'hidden',
       ...(style || {}),
       ...(rest || {}),
@@ -546,6 +543,38 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
       record.lastStyle = calculateStyle;
     }
+    record.lastPosition = positionChanged ? { x: offsetX, y: offsetTop } : record.lastPosition;
+  }
+
+  private getScrollbarSafeSize(
+    graphic: IGraphic,
+    offsetX: number,
+    offsetTop: number,
+    width: number,
+    height: number,
+    options: any
+  ) {
+    const pointerEvents = options?.pointerEvents === true ? 'all' : options?.pointerEvents || 'none';
+    const table = getTargetGroup(graphic)?.stage?.table;
+    const scrollStyle = table?.theme?.scrollStyle;
+    const barToSide = scrollStyle?.barToSide ?? false;
+    let safeWidth = width;
+    let safeHeight = height;
+
+    if (pointerEvents !== 'none' && table && !barToSide) {
+      const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
+      const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
+      const hasVerticalScrollBar = verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight;
+      const hasHorizontalScrollBar = horizontalVisible !== 'none' && table.getAllColsWidth() > table.tableNoFrameWidth;
+      const scrollBarSize = scrollStyle?.width ?? 7;
+      const maxRight = table.tableNoFrameWidth - (hasVerticalScrollBar ? scrollBarSize : 0);
+      const maxBottom = table.tableNoFrameHeight - (hasHorizontalScrollBar ? scrollBarSize : 0);
+
+      safeWidth = Math.max(0, Math.min(width, maxRight - offsetX));
+      safeHeight = Math.max(0, Math.min(height, maxBottom - offsetTop));
+    }
+
+    return { safeWidth, safeHeight };
   }
 
   /**
