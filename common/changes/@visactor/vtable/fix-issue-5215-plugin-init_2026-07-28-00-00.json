@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: allow plugins to initialize before first render",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "github@visactor.io"
+}

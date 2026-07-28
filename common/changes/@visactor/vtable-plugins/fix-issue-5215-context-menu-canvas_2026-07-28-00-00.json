@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: support context menu plugin on canvas blank area",
+      "type": "patch",
+      "packageName": "@visactor/vtable-plugins"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "github@visactor.io"
+}
