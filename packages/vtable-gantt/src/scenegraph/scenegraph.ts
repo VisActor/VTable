@@ -338,7 +338,12 @@ export class Scenegraph {
     this.toolTip.hide();
   }
 
-  refreshRecordLinkNodes(taskIndex: number, sub_task_index: number, target: GanttTaskBarNode, dy: number = 0) {
+  refreshRecordLinkNodes(
+    taskIndex: number,
+    sub_task_index: number | number[],
+    target: GanttTaskBarNode,
+    dy: number = 0
+  ) {
     const gantt: Gantt = this._gantt;
     const record = gantt.getRecordByIndex(taskIndex, sub_task_index);
     const vtable_gantt_linkedTo = record.vtable_gantt_linkedTo;

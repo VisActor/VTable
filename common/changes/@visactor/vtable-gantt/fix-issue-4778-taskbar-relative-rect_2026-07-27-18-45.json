@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-gantt",
+      "comment": "fix: return null for missing gantt task bars and support sub task rect lookup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "892739385@qq.com"
+}

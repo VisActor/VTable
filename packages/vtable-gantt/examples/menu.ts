@@ -178,6 +178,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-issue-5162-sort-drag'
+  },
+  {
+    path: 'gantt',
+    name: 'issue-4778-taskbar-relative-rect'
   }
   //   ]
   // }
