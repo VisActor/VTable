@@ -56,6 +56,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4761-update-records-edit-render'
+      },
+      {
+        path: 'debug',
         name: 'issue-4810-edit-cell-double-click-blank'
       },
       {

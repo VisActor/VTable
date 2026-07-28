@@ -2422,14 +2422,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
-    listTableUpdateRecords(records, recordIndexs, this);
+  updateRecords(records: any[], recordIndexs?: (number | number[])[], triggerEvent = true) {
+    const updateRecordIndexs = recordIndexs ?? records?.map((_, index) => index) ?? [];
+    listTableUpdateRecords(records, updateRecordIndexs, this);
 
-    // 触发更新数据记录事件 - 假设操作成功
     if (triggerEvent) {
       this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
         records,
-        recordIndexs,
+        recordIndexs: updateRecordIndexs,
         updateCount: records.length
       });
     }

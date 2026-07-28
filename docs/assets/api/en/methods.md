@@ -2016,9 +2016,9 @@ Modify data, supports multiple data items
   /**
    * Modify data, supports multiple data items
    * @param records Modified data items
-   * @param recordIndexs Corresponding index of modified data (index displayed in body, i.e., which row of data in the body part to modify), in tree (grouping) structures, recordIndex may be an array, representing the index position of each level from the root node for that node.
+   * @param recordIndexs Corresponding index of modified data (index displayed in body, i.e., which row of data in the body part to modify), in tree (grouping) structures, recordIndex may be an array, representing the index position of each level from the root node for that node. When omitted, the records are updated by their array order.
    */
-  updateRecords(records: any[], recordIndexs: number[]|number[][])
+  updateRecords(records: any[], recordIndexs?: number[]|number[][])
 ```
 
 ## getBodyVisibleCellRange(Function)
