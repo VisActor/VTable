@@ -7,6 +7,7 @@ import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
 export class ConfigManager {
   private expandRowCallback?: (rowIndex: number) => void;
   private childrenKey: string;
+  private expansionVersion = 0;
 
   constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {
     this.childrenKey = pluginOptions.childrenKey || 'children';
@@ -162,6 +163,7 @@ export class ConfigManager {
    * 处理记录的层级状态
    */
   processRecordsHierarchyStates(records: unknown[], expandInitialRows: boolean = true): void {
+    const expansionVersion = ++this.expansionVersion;
     const HierarchyState = VTable.TYPES.HierarchyState;
     // 兼容处理headerExpandLevel
     const hierarchyExpandLevel = this.table.options.hierarchyExpandLevel || this.table.options.headerExpandLevel;
@@ -194,7 +196,7 @@ export class ConfigManager {
     };
     processRecords(records);
     if (expandInitialRows) {
-      this.performInitialExpansion();
+      this.performInitialExpansion(expansionVersion);
     }
   }
 
@@ -202,7 +204,7 @@ export class ConfigManager {
    * 遍历所有记录，根据 hierarchyState 状态执行初始展开
    * 与VTable的异步CellGroup创建过程同步，在每个CellGroup创建后检查是否需要展开
    */
-  private performInitialExpansion(): void {
+  private performInitialExpansion(expansionVersion: number): void {
     // 获取需要展开的记录索引列表
     const expandableRecords = this.getExpandableRecords();
     if (expandableRecords.length === 0) {
@@ -210,7 +212,7 @@ export class ConfigManager {
     }
 
     // 开始异步展开过程，与VTable的渲染频率同步
-    this.startAsyncExpansion(expandableRecords);
+    this.startAsyncExpansion(expandableRecords, expansionVersion);
   }
 
   /**
@@ -270,11 +272,16 @@ export class ConfigManager {
    * 开始异步展开过程，与VTable的异步渲染同步
    */
   private startAsyncExpansion(
-    expandableRecords: Array<{ recordIndex: number; actualRowIndex: number; record: unknown }>
+    expandableRecords: Array<{ recordIndex: number; actualRowIndex: number; record: unknown }>,
+    expansionVersion: number
   ): void {
     let currentIndex = 0;
 
     const processNextExpansion = (): void => {
+      if (expansionVersion !== this.expansionVersion) {
+        return;
+      }
+
       if (currentIndex >= expandableRecords.length) {
         return; // 所有展开操作完成
       }
