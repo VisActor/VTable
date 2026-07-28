@@ -15,7 +15,7 @@ export class GanttTaskBarNode extends Group {
   textLabel?: IText;
   declare name: string;
   task_index: number;
-  sub_task_index?: number;
+  sub_task_index?: number | number[];
   record?: any;
   labelStyle?: ITaskBarLabelTextStyle;
 

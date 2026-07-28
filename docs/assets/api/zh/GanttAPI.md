@@ -150,12 +150,12 @@ const info = ganttInstance.getBaselineInfoByTaskListIndex(0);
 获取任务条的位置。相对应甘特图表左上角的位置。
 
 ```
-  getTaskBarRelativeRect:(index: number) =>{
+  getTaskBarRelativeRect:(index: number, sub_task_index?: number) =>{
     left: number;
     top: number;
     width: number;
     height: number;
-  }
+  } | null
 ```
 
 ## Events

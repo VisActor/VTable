@@ -71,6 +71,24 @@ describe('Recalculation Chain Issue Test', () => {
     }
   });
 
+  test('should recalculate downstream formulas after an intermediate formula has a cached value', () => {
+    engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, 1); // B2
+    engine.setCellContent({ sheet: 'Sheet1', row: 2, col: 1 }, 10); // B3
+    engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 2 }, '=B2'); // C2
+    engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 3 }, '=C2+B3'); // D2
+
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 2 })).toEqual({ value: 1, error: undefined });
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 3 })).toEqual({ value: 11, error: undefined });
+
+    engine.setCellContent({ sheet: 'Sheet1', row: 2, col: 1 }, 20);
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 3 })).toEqual({ value: 21, error: undefined });
+
+    engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, 5);
+
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 2 })).toEqual({ value: 5, error: undefined });
+    expect(engine.getCellValue({ sheet: 'Sheet1', row: 1, col: 3 })).toEqual({ value: 25, error: undefined });
+  });
+
   test('测试重新计算过程中的中间状态', () => {
     console.log('\n=== 测试重新计算过程中的中间状态 ===');
 

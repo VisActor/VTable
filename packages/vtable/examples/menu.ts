@@ -60,6 +60,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4816-functional-icons-theme'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
