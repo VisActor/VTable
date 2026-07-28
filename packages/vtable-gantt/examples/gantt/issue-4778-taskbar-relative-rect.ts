@@ -1,7 +1,7 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import type { GanttConstructorOptions } from '../../src/index';
 import { Gantt } from '../../src/index';
-import { TasksShowMode } from '../../src/ts-types';
+import { TasksShowMode, TaskType } from '../../src/ts-types';
 
 const CONTAINER_ID = 'vTable';
 
@@ -37,8 +37,8 @@ const checkRects = () => {
 
   try {
     emptyRect = ganttInstance.getTaskBarRelativeRect(1);
-    firstChildRect = ganttInstance.getTaskBarRelativeRect(0, 0);
-    secondChildRect = ganttInstance.getTaskBarRelativeRect(0, 1);
+    firstChildRect = ganttInstance.getTaskBarRelativeRect(0, [0, 0]);
+    secondChildRect = ganttInstance.getTaskBarRelativeRect(0, [0, 1]);
   } catch (err) {
     status.textContent = `FAIL | ${(err as Error).message}`;
     return status.textContent;
@@ -60,7 +60,8 @@ export function createTable() {
   const records = [
     {
       id: 1,
-      title: 'Parent with compact subtasks',
+      title: 'Collapsed project with inline subtasks',
+      type: TaskType.PROJECT,
       children: [
         { id: 11, title: 'Sub task A', start: '2024-07-01', end: '2024-07-04', progress: 30 },
         { id: 12, title: 'Sub task B', start: '2024-07-08', end: '2024-07-12', progress: 60 }
@@ -86,7 +87,7 @@ export function createTable() {
       tableWidth: 260
     },
     taskKeyField: 'id',
-    tasksShowMode: TasksShowMode.Sub_Tasks_Compact,
+    tasksShowMode: TasksShowMode.Project_Sub_Tasks_Inline,
     taskBar: {
       startDateField: 'start',
       endDateField: 'end',

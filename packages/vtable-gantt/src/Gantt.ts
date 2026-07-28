@@ -1027,12 +1027,12 @@ export class Gantt extends EventTarget {
     return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(taskShowIndex: number, sub_task_index?: number) {
+  _refreshTaskBar(taskShowIndex: number, sub_task_index?: number | number[]) {
     // this.taskListTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex, sub_task_index);
     this.scenegraph.refreshRecordLinkNodes(
       taskShowIndex,
-      undefined,
+      sub_task_index,
       this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex, sub_task_index) as GanttTaskBarNode
     );
     this.scenegraph.updateNextFrame();
@@ -1267,7 +1267,7 @@ export class Gantt extends EventTarget {
     }
   }
 
-  _updateEndDateToTaskRecord(endDate: Date, index: number, sub_task_index?: number) {
+  _updateEndDateToTaskRecord(endDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const endDateField = this.parsedOptions.endDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
@@ -1289,7 +1289,7 @@ export class Gantt extends EventTarget {
     }
   }
 
-  _updateStartEndDateToTaskRecord(startDate: Date, endDate: Date, index: number, sub_task_index?: number) {
+  _updateStartEndDateToTaskRecord(startDate: Date, endDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
@@ -1319,7 +1319,7 @@ export class Gantt extends EventTarget {
    * @param index 对应的一定是左侧表格body的index
    * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
    */
-  _updateProgressToTaskRecord(progress: number, index: number, sub_task_index?: number) {
+  _updateProgressToTaskRecord(progress: number, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const progressField = this.parsedOptions.progressField;
     if (progressField) {
@@ -1353,11 +1353,11 @@ export class Gantt extends EventTarget {
    * 如果TasksShowModes是 sub_tasks_*** 模式 则需要传入task_index和sub_task_index
    */
   updateTaskRecord(record: any, task_index: number | number[]): void;
-  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
-  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number | number[]) {
     if (isValid(sub_task_index)) {
       const index = typeof task_index === 'number' ? task_index : task_index[0];
-      this._updateRecordToListTable(record, [index, sub_task_index]);
+      this._updateRecordToListTable(record, Array.isArray(sub_task_index) ? sub_task_index : [index, sub_task_index]);
       this._refreshTaskBar(index, sub_task_index);
       return;
     }
@@ -1637,7 +1637,7 @@ export class Gantt extends EventTarget {
     this.stateManager.setScrollLeft(value);
   }
   /** 获取任务条的位置。相对应甘特图表左上角的位置。 */
-  getTaskBarRelativeRect(index: number, sub_task_index?: number) {
+  getTaskBarRelativeRect(index: number, sub_task_index?: number | number[]) {
     const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index, sub_task_index);
     if (!taskBarNode) {
       return null;

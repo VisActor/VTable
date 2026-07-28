@@ -3,6 +3,8 @@ import type { IMarkLine, ITaskLink, ITimelineDateInfo } from './gantt-engine';
 import type { IPosition } from './common';
 import type { IZoomEventArgs } from './zoom-scale';
 
+type SubTaskIndex = number | number[];
+
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
   args: TableEventHandlersEventArgumentMap[TYPE]
 ) => TableEventHandlersReturnMap[TYPE]; //AnyFunction;
@@ -19,7 +21,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseenter_task_bar: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -27,7 +29,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseleave_task_bar: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -35,7 +37,7 @@ export interface TableEventHandlersEventArgumentMap {
   click_task_bar: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -43,7 +45,7 @@ export interface TableEventHandlersEventArgumentMap {
   contextmenu_task_bar: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     record: any;
     event: Event;
     federatedEvent: FederatedPointerEvent;
@@ -51,7 +53,7 @@ export interface TableEventHandlersEventArgumentMap {
   change_date_range: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
@@ -66,7 +68,7 @@ export interface TableEventHandlersEventArgumentMap {
   move_end_task_bar: {
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     /** 改变后的起始日期 */
     startDate: Date;
     /** 改变后的结束日期 */
@@ -87,7 +89,7 @@ export interface TableEventHandlersEventArgumentMap {
     event: Event;
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     /** 改变后的起始日期 */
     startDate: string;
     /** 改变后的结束日期 */
@@ -114,7 +116,7 @@ export interface TableEventHandlersEventArgumentMap {
     point: 'start' | 'end';
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     record: any;
   };
   contextmenu_dependency_link: {
@@ -138,7 +140,7 @@ export interface TableEventHandlersEventArgumentMap {
     event: Event;
     /** 第几条数据 */
     index: number;
-    sub_task_index?: number;
+    sub_task_index?: SubTaskIndex;
     /** 新的进度值 */
     progress: number;
     /** 原来的进度值 */
