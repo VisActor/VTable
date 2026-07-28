@@ -65,18 +65,27 @@ export class TextAreaEditor implements IEditor {
     return this.element?.value;
   }
 
+  protected ensureElementMounted(container: HTMLElement) {
+    if (!this.element) {
+      this.createElement();
+      return;
+    }
+
+    if (!container.contains(this.element)) {
+      this.element.parentElement?.removeChild(this.element);
+      container.appendChild(this.element);
+    }
+  }
+
   onStart({ value, referencePosition, container, endEdit }: EditContext<string>) {
     this.container = container;
     this.successCallback = endEdit;
-    if (!this.element) {
-      this.createElement();
-
-      if (value !== undefined && value !== null) {
-        this.setValue(value);
-      }
-      if (referencePosition?.rect) {
-        this.adjustPosition(referencePosition.rect);
-      }
+    this.ensureElementMounted(container);
+    if (value !== undefined && value !== null) {
+      this.setValue(value);
+    }
+    if (referencePosition?.rect) {
+      this.adjustPosition(referencePosition.rect);
     }
     this.element.focus();
     // do nothing

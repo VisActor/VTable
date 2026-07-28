@@ -106,7 +106,7 @@ export class InputEditor implements IEditor {
 
     if (!container.contains(this.element)) {
       this.element.parentElement?.removeChild(this.element);
-      this.container.appendChild(this.element);
+      container.appendChild(this.element);
     }
   }
 
