@@ -76,6 +76,25 @@ const normalizeColumnsField = (columns: IWorkSheetOptions['columns'], startField
   return fieldIndex;
 };
 
+const hasObjectFieldColumn = (columns: IWorkSheetOptions['columns'] = []): boolean =>
+  columns.some(column => {
+    const childColumns = (column as IWorkSheetOptions['columns'][number] & { columns?: IWorkSheetOptions['columns'] })
+      .columns;
+    if (childColumns?.length) {
+      return hasObjectFieldColumn(childColumns);
+    }
+    return isValid(column.field) && typeof column.field !== 'number';
+  });
+
+const getAddRecordRule = (options: IWorkSheetOptions): ListTableConstructorOptions['addRecordRule'] => {
+  if (options.addRecordRule) {
+    return options.addRecordRule;
+  }
+
+  const hasObjectRecord = options.data?.some(record => record && typeof record === 'object' && !Array.isArray(record));
+  return hasObjectRecord || hasObjectFieldColumn(options.columns) ? 'Object' : 'Array';
+};
+
 export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /** 选项 */
   options: IWorkSheetOptions;
@@ -333,12 +352,13 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       showCopyCellBorder: true,
       cutSelected: true
     };
+    const addRecordRule = getAddRecordRule(this.options);
     return {
       ...(this.options as any),
       dragOrder: {
         maintainArrayDataOrder: true
       },
-      addRecordRule: 'Array',
+      addRecordRule,
       syncRecordOperationsToSourceRecords: true,
       defaultCursor: 'cell',
       records: this.options.data,
