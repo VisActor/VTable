@@ -2106,13 +2106,20 @@ arrangeCustomCellStyle: (cellPosition: { col?: number; row?: number; range?: Cel
 getCheckboxState(field?: string | number): Array
 ```
 
+- field: 可选，checkbox 所在字段；不传时返回所有字段的 checkbox 状态
+- 返回值: checkbox 状态数组，树形数据会按 children 路径组织状态
+
 ## getCellCheckboxState(Function)
 
 获取某个单元格 checkbox 的状态
 
 ```
-getCellCheckboxState(col: number, row: number): Array
+getCellCheckboxState(col: number, row: number): boolean | 'indeterminate' | undefined
 ```
+
+- col: 列号
+- row: 行号
+- 返回值: 当前单元格 checkbox 状态
 
 ## getRadioState(Function)
 
@@ -2160,6 +2167,16 @@ setCellCheckboxStateByRecordIndex(recordIndex: number | number[], field: string 
 
 ```
 clearCheckboxState(field: string | number) => void
+```
+
+- field: checkbox 所在字段
+
+## clearAllCheckboxState(Function)
+
+`clearCheckboxState(field)` 的别名，用于清除指定 field 下所有 checkbox 的选中状态。
+
+```
+clearAllCheckboxState(field: string | number) => void
 ```
 
 - field: checkbox 所在字段

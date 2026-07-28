@@ -2107,13 +2107,20 @@ Get the selection state of all checkbox data under a field, the order correspond
 getCheckboxState(field?: string | number): Array
 ```
 
+- field: Optional checkbox field. If omitted, returns checkbox states for all fields
+- return: Checkbox state array. Tree data keeps state by children path
+
 ## getCellCheckboxState(Function)
 
 Get the state of a checkbox in a specific cell
 
 ```
-getCellCheckboxState(col: number, row: number): Array
+getCellCheckboxState(col: number, row: number): boolean | 'indeterminate' | undefined
 ```
+
+- col: Column number
+- row: Row number
+- return: Checkbox state of the cell
 
 ## getRadioState(Function)
 
@@ -2161,6 +2168,16 @@ Clear all checkbox checked states under the specified field. `clearAllCheckboxSt
 
 ```
 clearCheckboxState(field: string | number) => void
+```
+
+- field: Field of the checkbox column
+
+## clearAllCheckboxState(Function)
+
+Alias of `clearCheckboxState(field)`. Clear all checkbox checked states under the specified field.
+
+```
+clearAllCheckboxState(field: string | number) => void
 ```
 
 - field: Field of the checkbox column
