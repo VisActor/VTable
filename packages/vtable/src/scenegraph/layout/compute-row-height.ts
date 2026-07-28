@@ -351,7 +351,22 @@ export function computeRowsHeight(
   }
 }
 
+const limitMinRowHeight = (height: number, row: number, table: BaseTableAPI): number => {
+  const defaultHeight = table.getDefaultRowHeight(row);
+  return isNumber(defaultHeight) ? Math.max(height, defaultHeight) : height;
+};
+
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
+  return computeRowHeightInternal(row, startCol, endCol, table, true);
+}
+
+function computeRowHeightInternal(
+  row: number,
+  startCol: number,
+  endCol: number,
+  table: BaseTableAPI,
+  enableCustomCompute: boolean
+): number {
   const isAllRowsAuto =
     table.isAutoRowHeight(row) || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
@@ -359,16 +374,19 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
   }
 
   let maxHeight;
-  if (table.options.customComputeRowHeight) {
+  if (enableCustomCompute && table.options.customComputeRowHeight) {
+    const realHeight = computeRowHeightInternal(row, startCol, endCol, table, false);
     const customRowHeight = table.options.customComputeRowHeight({
       row,
-      table
+      table,
+      realHeight
     });
     if (typeof customRowHeight === 'number') {
       return customRowHeight;
-    } else if (customRowHeight !== 'auto') {
-      return table.getDefaultRowHeight(row) as number;
+    } else if (customRowHeight === 'auto' || customRowHeight === undefined) {
+      return realHeight;
     }
+    return table.getDefaultRowHeight(row) as number;
   }
   if (table.internalProps.rowHeightConfig) {
     const rowHeightConfig = table.internalProps.rowHeightConfig.find((item: { key: number }) => item.key === row);
@@ -462,7 +480,7 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     maxHeight = isValid(maxHeight) ? Math.max(textHeight, maxHeight) : textHeight;
   }
   if (isValid(maxHeight)) {
-    return maxHeight;
+    return limitMinRowHeight(maxHeight, row, table);
   }
 
   const defaultHeight = table.getDefaultRowHeight(row);
