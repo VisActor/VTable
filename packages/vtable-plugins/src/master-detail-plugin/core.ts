@@ -171,11 +171,37 @@ export class MasterDetailPlugin implements pluginsDefinition.IVTablePlugin {
       collapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
       updateSubTablePositions: () => this.subTableManager.recalculateAllSubTablePositions(),
       updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) =>
-        this.updateRowHeightForExpand(rowIndex, deltaHeight)
+        this.updateRowHeightForExpand(rowIndex, deltaHeight),
+      resetMasterDetailStateBeforeSetRecords: () => this.resetMasterDetailStateBeforeSetRecords()
     });
 
     // 执行API扩展
     this.tableAPIExtensions.extendTableAPI();
+  }
+
+  /**
+   * setRecords 前清理旧主从表状态，避免新数据复用旧展开行和子表实例
+   */
+  private resetMasterDetailStateBeforeSetRecords(): void {
+    const internalProps = getInternalProps(this.table);
+    const expandedRows = [...this.eventManager.getExpandedRows()];
+    expandedRows.forEach(rowIndex => {
+      try {
+        this.collapseRowToNoRealRecordIndex(rowIndex);
+      } catch (error) {
+        console.warn(`Failed to collapse master detail row ${rowIndex} before setRecords:`, error);
+      }
+    });
+
+    const subTableRowIndices = Array.from(internalProps.subTableInstances?.keys() ?? []);
+    subTableRowIndices.forEach(bodyRowIndex => {
+      this.subTableManager.removeSubTable(bodyRowIndex);
+    });
+
+    internalProps.expandedRecordIndices?.splice(0);
+    internalProps.originalRowHeights?.clear();
+    internalProps.subTableCheckboxStates?.clear();
+    this.eventManager.setExpandedRows([]);
   }
 
   /**
@@ -266,9 +292,6 @@ export class MasterDetailPlugin implements pluginsDefinition.IVTablePlugin {
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-    if (rowIndex === 96) {
-      console.log('wokk');
-    }
     this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
