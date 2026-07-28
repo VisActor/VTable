@@ -52,7 +52,8 @@ export class PluginManager {
       this.pluginEventMap.get(plugin.id)?.forEach(id => {
         this.table.off(id);
       });
-      this.release();
+      this.pluginEventMap.delete(plugin.id);
+      plugin.release?.(this.table);
       this.plugins.delete(plugin.id);
     });
 

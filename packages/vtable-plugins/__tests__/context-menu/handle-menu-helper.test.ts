@@ -155,4 +155,39 @@ describe('Context menu canvas option', () => {
 
     expect(table.options.menu.contextMenuWorkOnlyCell).toBe(false);
   });
+
+  test('PluginManager only releases plugins removed through updateOption', () => {
+    const container = createDiv();
+    const removedPlugin = {
+      id: 'removed-plugin',
+      name: 'removed-plugin',
+      runTime: [],
+      run: jest.fn(),
+      release: jest.fn()
+    };
+    const keptPlugin = {
+      id: 'kept-plugin',
+      name: 'kept-plugin',
+      runTime: [],
+      run: jest.fn(),
+      release: jest.fn()
+    };
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [removedPlugin, keptPlugin]
+    });
+
+    table.updateOption({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [keptPlugin]
+    });
+
+    expect(removedPlugin.release).toHaveBeenCalledTimes(1);
+    expect(keptPlugin.release).not.toHaveBeenCalled();
+  });
 });
