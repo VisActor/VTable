@@ -1366,6 +1366,8 @@ export class StateManager {
             // 更新父任务的时间范围
             parent[startDateField] = formatDateValue(earliestStart);
             parent[endDateField] = formatDateValue(latestEnd);
+            const parentRecordIndex = parentPath.length === 0 ? childIndex : [...parentPath, childIndex];
+            this._gantt._updateRecordToListTable(parent, parentRecordIndex);
           }
         }
       }
