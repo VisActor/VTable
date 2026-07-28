@@ -1,5 +1,5 @@
 import type { TableEvents } from '../core/TABLE_EVENT_TYPE';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, BaseTableConstructorOptions } from '../ts-types/base-table';
 
 // 插件生命周期接口
 export interface IVTablePlugin {
@@ -16,7 +16,9 @@ export interface IVTablePlugin {
   runTime: TableEvents[keyof TableEvents][];
   // // 插件依赖
   // dependencies?: string[];
-  // 初始化方法，在VTable实例创建后、首次渲染前调用
+  // 初始化方法，在 VTable 实例创建后、首次渲染前调用
+  init?: (table: BaseTableAPI, options: BaseTableConstructorOptions) => void;
+  // 运行方法，在订阅的表格事件触发时调用
   run: (...args: any[]) => void;
   // 更新方法，当表格数据或配置更新时调用
   update?: () => void;

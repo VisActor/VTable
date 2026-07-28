@@ -154,6 +154,10 @@ export const menus = [
   },
   {
     path: 'context-menu',
+    name: 'issue-5215-context-menu-canvas'
+  },
+  {
+    path: 'context-menu',
     name: 'issue-5214-reverse-selected-row-delete'
   },
   {

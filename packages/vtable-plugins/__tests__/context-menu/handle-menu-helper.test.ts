@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { ListTable } from '@visactor/vtable';
 import { createDiv } from '../../../vtable/__tests__/dom';
+import { ContextMenuPlugin } from '../../src/context-menu';
 import { MenuHandler } from '../../src/contextmenu/handle-menu-helper';
 import { TableSeriesNumber } from '../../src/table-series-number';
 
@@ -61,5 +62,31 @@ describe('Context menu row deletion', () => {
     new MenuHandler().handleDeleteRow(table);
 
     expect(table.records.map(record => record.id)).toEqual([0, 4]);
+  });
+});
+
+describe('Context menu canvas option', () => {
+  let table: ListTable;
+
+  afterEach(() => {
+    table?.release();
+    document.body.innerHTML = '';
+  });
+
+  test('ContextMenuPlugin enables canvas context menu through contextMenuWorkOnlyCell', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin({
+      contextMenuWorkOnlyCell: false
+    });
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [contextMenuPlugin]
+    });
+
+    expect(table.options.menu.contextMenuWorkOnlyCell).toBe(false);
+    expect(contextMenuPlugin.runTime).toContain(ListTable.EVENT_TYPE.CONTEXTMENU_CANVAS);
   });
 });
