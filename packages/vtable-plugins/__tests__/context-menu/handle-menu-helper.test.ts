@@ -89,4 +89,48 @@ describe('Context menu canvas option', () => {
     expect(table.options.menu.contextMenuWorkOnlyCell).toBe(false);
     expect(contextMenuPlugin.runTime).toContain(ListTable.EVENT_TYPE.CONTEXTMENU_CANVAS);
   });
+
+  test('ContextMenuPlugin shows canvasMenuItems on CONTEXTMENU_CANVAS event', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin({
+      contextMenuWorkOnlyCell: false,
+      bodyCellMenuItems: [{ text: 'Body Item', menuKey: 'body_item' }],
+      canvasMenuItems: [{ text: 'Canvas Item', menuKey: 'canvas_item' }]
+    });
+    const showMenu = jest.spyOn(contextMenuPlugin['menuManager'], 'showMenu');
+    const preventDefault = jest.fn();
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [contextMenuPlugin]
+    });
+
+    contextMenuPlugin.run(
+      {
+        col: -1,
+        row: -1,
+        event: {
+          clientX: 10,
+          clientY: 20,
+          preventDefault
+        }
+      },
+      ListTable.EVENT_TYPE.CONTEXTMENU_CANVAS,
+      table
+    );
+
+    expect(preventDefault).toHaveBeenCalled();
+    expect(showMenu).toHaveBeenCalledWith(
+      [{ text: 'Canvas Item', menuKey: 'canvas_item' }],
+      10,
+      20,
+      {
+        rowIndex: -1,
+        colIndex: -1
+      },
+      table
+    );
+  });
 });

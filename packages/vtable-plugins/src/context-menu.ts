@@ -29,6 +29,8 @@ export interface ContextMenuOptions {
   headerCellMenuItems?: MenuItemOrSeparator[];
   /** 表体菜单项 */
   bodyCellMenuItems?: MenuItemOrSeparator[];
+  /** 空白画布区域菜单项。仅 contextMenuWorkOnlyCell 为 false 时生效。 */
+  canvasMenuItems?: MenuItemOrSeparator[];
   /** 右键菜单是否只工作在单元格上。默认 true；配置 false 时空白画布区域也弹出菜单。 */
   contextMenuWorkOnlyCell?: boolean;
   /** 自定义菜单样式 */
@@ -162,7 +164,7 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
    * 处理空白画布右键菜单事件
    */
   private handleContextMenuCanvas = (eventArgs: any, table: BaseTableAPI): void => {
-    let menuItems = this.pluginOptions.bodyCellMenuItems || [];
+    let menuItems = this.pluginOptions.canvasMenuItems || [];
     const { col = -1, row = -1 } = eventArgs;
 
     if (this.pluginOptions.beforeShowAdjustMenuItems) {

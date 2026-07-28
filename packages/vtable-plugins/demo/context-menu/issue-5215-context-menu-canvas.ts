@@ -12,12 +12,15 @@ export function createTableInstance() {
   const plugin = new ContextMenuPlugin({
     contextMenuWorkOnlyCell: false,
     bodyCellMenuItems: [
-      { text: 'Copy from plugin', menuKey: 'copy' },
+      { text: 'Copy from plugin', menuKey: 'copy' }
+    ],
+    canvasMenuItems: [
+      { text: 'Canvas blank area', menuKey: 'canvas_blank_area' },
       { text: 'Canvas menu item', menuKey: 'canvas_menu_item' }
     ],
     beforeShowAdjustMenuItems: (menuItems, _table, col, row) => {
       if (col === -1 && row === -1) {
-        return [{ text: 'Canvas blank area', menuKey: 'canvas_blank_area' }, ...menuItems];
+        return menuItems;
       }
       return menuItems;
     }

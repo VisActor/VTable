@@ -10,7 +10,7 @@ export class PluginManager {
 
   constructor(table: BaseTableAPI, options: BaseTableConstructorOptions) {
     this.table = table;
-    options.plugins?.map(plugin => {
+    options.plugins?.forEach(plugin => {
       this.register(plugin);
       plugin.init?.(this.table, options);
       this._bindTableEventForPlugin(plugin);
