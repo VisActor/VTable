@@ -346,6 +346,7 @@ export class ConfigManager {
    * 释放所有资源和引用
    */
   release(): void {
+    this.expansionVersion++;
     this.isRowExpanded = () => false;
     // 清理对表格的引用
     (this as unknown as { table: VTable.ListTable | null }).table = null;
