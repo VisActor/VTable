@@ -6,6 +6,21 @@ import { computeRowsHeight } from '../../layout/compute-row-height';
 import { createColGroup } from '../column';
 import type { SceneProxy } from './proxy';
 
+function fillVisibleBodyRows(proxy: SceneProxy, distRow: number): number {
+  const { table } = proxy;
+  const bodyBottomRow = table.rowCount - 1 - table.bottomFrozenRowCount;
+  const visibleBodyHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+  let targetRow = distRow;
+
+  while (targetRow < bodyBottomRow && table.getRowsHeight(table.frozenRowCount, targetRow) < visibleBodyHeight) {
+    const nextRow = targetRow + 1;
+    computeRowsHeight(table, targetRow + 1, nextRow);
+    targetRow = nextRow;
+  }
+
+  return targetRow;
+}
+
 export function createGroupForFirstScreen(
   cornerHeaderGroup: Group,
   colHeaderGroup: Group,
@@ -64,6 +79,7 @@ export function createGroupForFirstScreen(
         ? table.rowCount - 1
         : distRowForCompute ?? distRow
     ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
+    distRow = fillVisibleBodyRows(proxy, distRow);
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {

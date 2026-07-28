@@ -36,6 +36,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5115-auto-height-zero-row'
+      },
+      {
+        path: 'debug',
         name: 'issue-5146'
       },
       {
