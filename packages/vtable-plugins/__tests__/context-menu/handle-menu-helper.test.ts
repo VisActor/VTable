@@ -133,4 +133,26 @@ describe('Context menu canvas option', () => {
       table
     );
   });
+
+  test('ContextMenuPlugin init uses new options when added through updateOption', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin({
+      contextMenuWorkOnlyCell: false
+    });
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }]
+    });
+
+    table.updateOption({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [contextMenuPlugin]
+    });
+
+    expect(table.options.menu.contextMenuWorkOnlyCell).toBe(false);
+  });
 });

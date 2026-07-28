@@ -45,7 +45,7 @@ export class PluginManager {
   }
 
   // 移除或添加插件
-  removeOrAddPlugins(plugins?: IVTablePlugin[]): void {
+  removeOrAddPlugins(plugins?: IVTablePlugin[], options: BaseTableConstructorOptions = this.table.options): void {
     // 先找到plugins中没有，但this.plugins中有，也就是已经被移除的插件
     const removedPlugins = Array.from(this.plugins.values()).filter(plugin => !plugins?.some(p => p.id === plugin.id));
     removedPlugins.forEach(plugin => {
@@ -60,7 +60,7 @@ export class PluginManager {
     const addedPlugins = plugins?.filter(plugin => !this.plugins.has(plugin.id));
     addedPlugins?.forEach(plugin => {
       this.register(plugin);
-      plugin.init?.(this.table, this.table.options);
+      plugin.init?.(this.table, options);
       this._bindTableEventForPlugin(plugin);
     });
   }

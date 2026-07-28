@@ -778,7 +778,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   ) {
     const internalProps = this.internalProps;
 
-    this.pluginManager.removeOrAddPlugins(options.plugins);
+    this.pluginManager.removeOrAddPlugins(options.plugins, options);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
