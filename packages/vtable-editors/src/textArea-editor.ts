@@ -57,8 +57,8 @@ export class TextAreaEditor implements IEditor {
     });
   }
 
-  setValue(value: string) {
-    this.element.value = typeof value !== 'undefined' ? value : '';
+  setValue(value: string | null | undefined) {
+    this.element.value = value ?? '';
   }
 
   getValue() {
@@ -81,9 +81,7 @@ export class TextAreaEditor implements IEditor {
     this.container = container;
     this.successCallback = endEdit;
     this.ensureElementMounted(container);
-    if (value !== undefined && value !== null) {
-      this.setValue(value);
-    }
+    this.setValue(value);
     if (referencePosition?.rect) {
       this.adjustPosition(referencePosition.rect);
     }
