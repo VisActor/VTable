@@ -567,11 +567,52 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       const hasVerticalScrollBar = verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight;
       const hasHorizontalScrollBar = horizontalVisible !== 'none' && table.getAllColsWidth() > table.tableNoFrameWidth;
       const scrollBarSize = scrollStyle?.width ?? 7;
-      const maxRight = table.tableNoFrameWidth - (hasVerticalScrollBar ? scrollBarSize : 0);
-      const maxBottom = table.tableNoFrameHeight - (hasHorizontalScrollBar ? scrollBarSize : 0);
+      const groupX = table.scenegraph?.tableGroup?.attribute?.x ?? 0;
+      const groupY = table.scenegraph?.tableGroup?.attribute?.y ?? 0;
+      const hoverOn = scrollStyle?.hoverOn;
+      const domRight = offsetX + width;
+      const domBottom = offsetTop + height;
 
-      safeWidth = Math.max(0, Math.min(width, maxRight - offsetX));
-      safeHeight = Math.max(0, Math.min(height, maxBottom - offsetTop));
+      if (hasVerticalScrollBar) {
+        const verticalLeft =
+          Math.min(table.tableNoFrameWidth, table.getAllColsWidth()) - (hoverOn ? scrollBarSize : -groupX);
+        const verticalTop = table.getFrozenRowsHeight() + (!hoverOn ? groupY : 0);
+        const verticalBottom =
+          verticalTop + table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+
+        if (
+          offsetTop < verticalBottom &&
+          domBottom > verticalTop &&
+          offsetX < verticalLeft + scrollBarSize &&
+          domRight > verticalLeft
+        ) {
+          safeWidth = Math.max(0, Math.min(width, verticalLeft - offsetX));
+        }
+      }
+
+      if (hasHorizontalScrollBar) {
+        const ignoreFrozenCols = scrollStyle?.ignoreFrozenCols ?? false;
+        const horizontalLeft = ignoreFrozenCols
+          ? !hoverOn
+            ? groupX
+            : 0
+          : table.getFrozenColsWidth() + (!hoverOn ? groupX : 0);
+        const horizontalWidth = ignoreFrozenCols
+          ? table.tableNoFrameWidth
+          : table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+        const horizontalTop =
+          Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - (hoverOn ? scrollBarSize : -groupY);
+        const horizontalRight = horizontalLeft + horizontalWidth;
+
+        if (
+          offsetX < horizontalRight &&
+          domRight > horizontalLeft &&
+          offsetTop < horizontalTop + scrollBarSize &&
+          domBottom > horizontalTop
+        ) {
+          safeHeight = Math.max(0, Math.min(height, horizontalTop - offsetTop));
+        }
+      }
     }
 
     return { safeWidth, safeHeight };
