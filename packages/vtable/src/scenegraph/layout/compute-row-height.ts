@@ -375,16 +375,29 @@ function computeRowHeightInternal(
 
   let maxHeight;
   if (enableCustomCompute && table.options.customComputeRowHeight) {
-    const realHeight = computeRowHeightInternal(row, startCol, endCol, table, false);
-    const customRowHeight = table.options.customComputeRowHeight({
+    let realHeight: number;
+    let hasRealHeight = false;
+    const getRealHeight = () => {
+      if (!hasRealHeight) {
+        realHeight = computeRowHeightInternal(row, startCol, endCol, table, false);
+        hasRealHeight = true;
+      }
+      return realHeight;
+    };
+    const computeArgs = {
       row,
-      table,
-      realHeight
+      table
+    } as Parameters<NonNullable<BaseTableAPI['options']['customComputeRowHeight']>>[0];
+    Object.defineProperty(computeArgs, 'realHeight', {
+      get: getRealHeight,
+      enumerable: true,
+      configurable: true
     });
+    const customRowHeight = table.options.customComputeRowHeight(computeArgs);
     if (typeof customRowHeight === 'number') {
       return customRowHeight;
-    } else if (customRowHeight === 'auto' || customRowHeight === undefined) {
-      return realHeight;
+    } else if (customRowHeight === 'auto') {
+      return getRealHeight();
     }
     return table.getDefaultRowHeight(row) as number;
   }
