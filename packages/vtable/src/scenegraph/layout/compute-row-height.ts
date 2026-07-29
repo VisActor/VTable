@@ -351,11 +351,6 @@ export function computeRowsHeight(
   }
 }
 
-const limitMinRowHeight = (height: number, row: number, table: BaseTableAPI): number => {
-  const defaultHeight = table.getDefaultRowHeight(row);
-  return isNumber(defaultHeight) ? Math.max(height, defaultHeight) : height;
-};
-
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
   return computeRowHeightInternal(row, startCol, endCol, table, true);
 }
@@ -493,7 +488,7 @@ function computeRowHeightInternal(
     maxHeight = isValid(maxHeight) ? Math.max(textHeight, maxHeight) : textHeight;
   }
   if (isValid(maxHeight)) {
-    return limitMinRowHeight(maxHeight, row, table);
+    return maxHeight;
   }
 
   const defaultHeight = table.getDefaultRowHeight(row);

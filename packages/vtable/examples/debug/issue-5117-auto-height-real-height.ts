@@ -27,6 +27,7 @@ export function createTable() {
   container.before(toolbar);
 
   const realHeights: Array<number | undefined> = [];
+  const minRowHeight = 64;
   const tableInstance = new VTable.ListTable({
     container,
     records,
@@ -44,18 +45,17 @@ export function createTable() {
     ],
     widthMode: 'standard',
     heightMode: 'autoHeight',
-    defaultRowHeight: 64,
     customComputeRowHeight: ({ row, realHeight }) => {
       realHeights[row] = realHeight;
-      return 'auto';
+      return Math.max(realHeight ?? 0, minRowHeight);
     }
   });
 
   const check = () => {
-    const bodyRow = tableInstance.columnHeaderLevelCount + 1;
+    const bodyRow = tableInstance.columnHeaderLevelCount;
     const realHeight = realHeights[bodyRow];
     const rowHeight = tableInstance.getRowHeight(bodyRow);
-    const pass = typeof realHeight === 'number' && realHeight >= 64 && rowHeight >= 64;
+    const pass = typeof realHeight === 'number' && rowHeight === Math.max(realHeight, minRowHeight);
     const state = document.getElementById('issue5117State')!;
     state.textContent = `${pass ? 'PASS' : 'FAIL'} | realHeight=${realHeight} rowHeight=${rowHeight}`;
     return { pass, realHeight, rowHeight };
