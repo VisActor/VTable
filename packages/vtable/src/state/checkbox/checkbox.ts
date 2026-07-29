@@ -6,6 +6,9 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { CachedDataSource } from '../../data';
 import type { CheckBox } from '@src/vrender';
 
+type CheckboxStateValue = boolean | 'indeterminate';
+type CheckboxRecordValue = CheckboxStateValue | { checked?: CheckboxStateValue };
+
 export function setCheckedState(
   col: number,
   row: number,
@@ -590,9 +593,12 @@ function updateParentCheckboxStateByRecordIndex(recordIndex: number | number[], 
       continue;
     }
 
-    const childStates = parentRecord.children.map((child: any, childIndex: number) =>
-      getRecordCheckboxState(parentIndex.concat(childIndex), child, field, table)
-    );
+    const childStates: CheckboxStateValue[] = parentRecord.children.map((child: any, childIndex: number) => {
+      const childRecordIndex = parentIndex.concat(childIndex);
+      const childState = getRecordCheckboxState(childRecordIndex, child, field, table);
+      setRecordCheckboxState(childRecordIndex, field, childState, table.stateManager.checkedState);
+      return childState;
+    });
     const allChecked = childStates.every(state => state === true);
     const allUnchecked = childStates.every(state => state !== true && state !== 'indeterminate');
     const parentState = allChecked ? true : allUnchecked ? false : 'indeterminate';
@@ -606,7 +612,7 @@ function getRecordCheckboxState(
   record: any,
   field: FieldDef,
   table: BaseTableAPI
-): boolean | 'indeterminate' {
+): CheckboxStateValue {
   const fieldKey = field as string | number;
   const dataIndex = normalizeRecordIndex(recordIndex).toString();
   const cachedState = table.stateManager.checkedState.get(dataIndex)?.[fieldKey];
@@ -614,9 +620,9 @@ function getRecordCheckboxState(
     return cachedState;
   }
 
-  const value = record?.[fieldKey];
-  if (isObject(value) && isValid(value.checked)) {
-    return value.checked;
+  const value = record?.[fieldKey] as CheckboxRecordValue | undefined;
+  if (isObject(value) && isValid((value as { checked?: CheckboxStateValue }).checked)) {
+    return (value as { checked?: CheckboxStateValue }).checked;
   }
   if (typeof value === 'boolean') {
     return value;
