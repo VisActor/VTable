@@ -79,7 +79,9 @@ export function createGroupForFirstScreen(
         ? table.rowCount - 1
         : distRowForCompute ?? distRow
     ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
-    distRow = fillVisibleBodyRows(proxy, distRow);
+    if (table.heightMode === 'autoHeight') {
+      distRow = fillVisibleBodyRows(proxy, distRow);
+    }
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
