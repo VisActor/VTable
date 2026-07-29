@@ -489,7 +489,16 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
     const { x: left, y: top } = this.calculatePosition(graphic, options.anchorType);
     const { left: offsetX, top: offsetTop } = this.calculateOffset(stage, nativeContainer, left, top);
-    const { safeWidth, safeHeight } = this.getScrollbarSafeSize(graphic, offsetX, offsetTop, width, height, options);
+    const { safeWidth, safeHeight } = this.getScrollbarSafeSize(
+      graphic,
+      stage,
+      nativeContainer,
+      offsetX,
+      offsetTop,
+      width,
+      height,
+      options
+    );
 
     const { id } = this.getGraphicOptions(graphic) || {};
     const record = id ? this.htmlMap[id] : null;
@@ -548,6 +557,8 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
   private getScrollbarSafeSize(
     graphic: IGraphic,
+    stage: IStage,
+    nativeContainer: HTMLElement,
     offsetX: number,
     offsetTop: number,
     width: number,
@@ -579,14 +590,21 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
         const verticalTop = table.getFrozenRowsHeight() + (!hoverOn ? groupY : 0);
         const verticalBottom =
           verticalTop + table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+        const { left: verticalDomLeft, top: verticalDomTop } = this.calculateOffset(
+          stage,
+          nativeContainer,
+          verticalLeft,
+          verticalTop
+        );
+        const verticalDomBottom = verticalDomTop + verticalBottom - verticalTop;
 
         if (
-          offsetTop < verticalBottom &&
-          domBottom > verticalTop &&
-          offsetX < verticalLeft + scrollBarSize &&
-          domRight > verticalLeft
+          offsetTop < verticalDomBottom &&
+          domBottom > verticalDomTop &&
+          offsetX < verticalDomLeft + scrollBarSize &&
+          domRight > verticalDomLeft
         ) {
-          safeWidth = Math.max(0, Math.min(width, verticalLeft - offsetX));
+          safeWidth = Math.max(0, Math.min(width, verticalDomLeft - offsetX));
         }
       }
 
@@ -603,14 +621,21 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
         const horizontalTop =
           Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - (hoverOn ? scrollBarSize : -groupY);
         const horizontalRight = horizontalLeft + horizontalWidth;
+        const { left: horizontalDomLeft, top: horizontalDomTop } = this.calculateOffset(
+          stage,
+          nativeContainer,
+          horizontalLeft,
+          horizontalTop
+        );
+        const horizontalDomRight = horizontalDomLeft + horizontalRight - horizontalLeft;
 
         if (
-          offsetX < horizontalRight &&
-          domRight > horizontalLeft &&
-          offsetTop < horizontalTop + scrollBarSize &&
-          domBottom > horizontalTop
+          offsetX < horizontalDomRight &&
+          domRight > horizontalDomLeft &&
+          offsetTop < horizontalDomTop + scrollBarSize &&
+          domBottom > horizontalDomTop
         ) {
-          safeHeight = Math.max(0, Math.min(height, horizontalTop - offsetTop));
+          safeHeight = Math.max(0, Math.min(height, horizontalDomTop - offsetTop));
         }
       }
     }
