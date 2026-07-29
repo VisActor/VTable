@@ -76,12 +76,23 @@ export function createTable() {
       tableInstance.tableNoFrameHeight - tableInstance.getFrozenRowsHeight() - tableInstance.getBottomFrozenRowsHeight();
     const renderedHeight = tableInstance.getRowsHeight(bodyStart, proxy.rowEnd);
     const firstFilteredRowHeight = tableInstance.getRowHeight(tableInstance.columnHeaderLevelCount + 1);
-    const pass = firstFilteredRowHeight === 0 && renderedHeight >= bodyHeight;
+    const proxyRowsSynced =
+      proxy.totalRow >= proxy.rowEnd && proxy.totalActualBodyRowCount >= proxy.rowEnd - proxy.rowStart + 1;
+    const pass = firstFilteredRowHeight === 0 && renderedHeight >= bodyHeight && proxyRowsSynced;
     const state = document.getElementById('issue5115State')!;
     state.textContent =
       `${pass ? 'PASS' : 'FAIL'} | firstFilteredRowHeight=${firstFilteredRowHeight} renderedHeight=${renderedHeight} ` +
-      `bodyHeight=${bodyHeight} rowEnd=${proxy.rowEnd}`;
-    return { pass, firstFilteredRowHeight, renderedHeight, bodyHeight, rowEnd: proxy.rowEnd };
+      `bodyHeight=${bodyHeight} rowEnd=${proxy.rowEnd} totalRow=${proxy.totalRow}`;
+    return {
+      pass,
+      firstFilteredRowHeight,
+      renderedHeight,
+      bodyHeight,
+      rowEnd: proxy.rowEnd,
+      totalRow: proxy.totalRow,
+      totalActualBodyRowCount: proxy.totalActualBodyRowCount,
+      proxyRowsSynced
+    };
   };
 
   const filterRows = () => {

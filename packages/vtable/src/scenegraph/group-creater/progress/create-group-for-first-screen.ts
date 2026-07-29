@@ -21,6 +21,15 @@ function fillVisibleBodyRows(proxy: SceneProxy, distRow: number): number {
   return targetRow;
 }
 
+function syncVisibleBodyRows(proxy: SceneProxy, targetRow: number) {
+  if (targetRow <= proxy.totalRow) {
+    return;
+  }
+
+  proxy.totalRow = targetRow;
+  proxy.totalActualBodyRowCount = Math.max(proxy.totalActualBodyRowCount, targetRow - proxy.bodyTopRow + 1);
+}
+
 export function createGroupForFirstScreen(
   cornerHeaderGroup: Group,
   colHeaderGroup: Group,
@@ -82,6 +91,7 @@ export function createGroupForFirstScreen(
     ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
     if (table.heightMode === 'autoHeight') {
       bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
+      syncVisibleBodyRows(proxy, bodyDistRow);
     }
   }
 
