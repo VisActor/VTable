@@ -142,10 +142,7 @@ describe('ListTable checkbox record index api', () => {
         {
           task: { text: 'parent', checked: true },
           hierarchyState: TYPES.HierarchyState.collapse,
-          children: [
-            { task: { text: 'child 1', checked: true } },
-            { task: { text: 'child 2', checked: true } }
-          ]
+          children: [{ task: { text: 'child 1', checked: true } }, { task: { text: 'child 2', checked: true } }]
         }
       ],
       enableCheckboxCascade: true
