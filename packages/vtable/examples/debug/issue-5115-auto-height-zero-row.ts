@@ -34,6 +34,7 @@ export function createTable() {
     widthMode: 'standard',
     heightMode: 'autoHeight',
     defaultRowHeight: 40,
+    bottomFrozenRowCount: 2,
     customComputeRowHeight: ({ row }) => {
       if (row > 0 && (row - 1) % 2 === 0) {
         return 0;
@@ -45,7 +46,8 @@ export function createTable() {
   const check = () => {
     const proxy = tableInstance.scenegraph.proxy;
     const bodyStart = tableInstance.frozenRowCount;
-    const bodyHeight = tableInstance.tableNoFrameHeight - tableInstance.getFrozenRowsHeight();
+    const bodyHeight =
+      tableInstance.tableNoFrameHeight - tableInstance.getFrozenRowsHeight() - tableInstance.getBottomFrozenRowsHeight();
     const renderedHeight = tableInstance.getRowsHeight(bodyStart, proxy.rowEnd);
     const zeroHeight = tableInstance.getRowHeight(tableInstance.columnHeaderLevelCount) === 0;
     const pass = zeroHeight && renderedHeight >= bodyHeight;

@@ -65,6 +65,7 @@ export function createGroupForFirstScreen(
   } else {
     distRow = Math.min(proxy.firstScreenRowLimit - 1, table.rowCount - 1);
   }
+  let bodyDistRow = Math.min(proxy.bodyBottomRow, distRow - table.bottomFrozenRowCount);
   if (table.internalProps._widthResizedColMap.size === 0) {
     // compute colums width in first screen
     computeColsWidth(table, 0, distColForCompute ?? distCol);
@@ -80,7 +81,7 @@ export function createGroupForFirstScreen(
         : distRowForCompute ?? distRow
     ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
     if (table.heightMode === 'autoHeight') {
-      distRow = fillVisibleBodyRows(proxy, distRow);
+      bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
     }
   }
 
@@ -90,7 +91,7 @@ export function createGroupForFirstScreen(
       computeColsWidth(table, table.colCount - table.rightFrozenColCount, table.colCount - 1);
     }
   }
-  if (distRow < table.rowCount - table.bottomFrozenRowCount) {
+  if (bodyDistRow < table.rowCount - table.bottomFrozenRowCount) {
     // compute bottom frozen row height
     if (table.rowCount - table.bottomFrozenRowCount <= table.rowCount - 1) {
       computeRowsHeight(table, table.rowCount - table.bottomFrozenRowCount, table.rowCount - 1);
@@ -146,7 +147,7 @@ export function createGroupForFirstScreen(
         table.leftRowSeriesNumberCount - 1, // colEnd
         table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-        distRow - table.bottomFrozenRowCount,
+        bodyDistRow,
         'rowHeader', // isHeader
         table
       );
@@ -160,7 +161,7 @@ export function createGroupForFirstScreen(
         Math.min(table.frozenColCount - 1, table.rowHeaderLevelCount + table.leftRowSeriesNumberCount - 1), // colEnd
         table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-        distRow - table.bottomFrozenRowCount,
+        bodyDistRow,
         'rowHeader', // isHeader
         table
       );
@@ -174,7 +175,7 @@ export function createGroupForFirstScreen(
         table.frozenColCount - 1, // colEnd
         table.frozenRowCount, // rowStart
         // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-        distRow - table.bottomFrozenRowCount,
+        bodyDistRow,
         'body',
         table
       );
@@ -293,7 +294,7 @@ export function createGroupForFirstScreen(
       table.colCount - 1, // colEnd
       table.frozenRowCount, // rowStart
       // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-      distRow - table.bottomFrozenRowCount,
+      bodyDistRow,
       table.isPivotChart() ? 'rowHeader' : 'body', // isHeader
       table
     );
@@ -325,7 +326,7 @@ export function createGroupForFirstScreen(
       distCol - table.rightFrozenColCount,
       table.frozenRowCount, // rowStart
       // Math.min(proxy.firstScreenRowLimit, table.rowCount - 1 - table.bottomFrozenRowCount), // rowEnd
-      distRow - table.bottomFrozenRowCount,
+      bodyDistRow,
       'body', // isHeader
       table
     );
