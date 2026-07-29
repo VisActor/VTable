@@ -36,6 +36,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5117-auto-height-real-height'
+      },
+      {
+        path: 'debug',
         name: 'issue-5146'
       },
       {
