@@ -72,6 +72,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4904-frozen-row-gap'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]

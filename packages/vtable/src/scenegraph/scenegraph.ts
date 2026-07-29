@@ -1316,7 +1316,7 @@ export class Scenegraph {
         0
       );
 
-    const contentHeight =
+    let contentHeight =
       Math.max(
         this.colHeaderGroup.attribute.height,
         this.cornerHeaderGroup.attribute.height,
@@ -1335,6 +1335,10 @@ export class Scenegraph {
         this.rightBottomCornerGroup.attribute.height,
         0
       );
+    const allRowsHeight = this.table.getAllRowsHeight();
+    if (allRowsHeight > 0) {
+      contentHeight = allRowsHeight;
+    }
 
     // 处理containerFit模式
     let tableWidth = contentWidth;
