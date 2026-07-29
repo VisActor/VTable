@@ -4,7 +4,19 @@
     <span>{{ state }}</span>
   </div>
   <vue-list-table ref="tableRef" :options="tableOptions">
-    <ListColumn field="name" title="Name" width="180" />
+    <ListColumn field="name" title="Name" width="180">
+      <template #customLayout="{ width, height, record, row }">
+        <Group
+          :width="width"
+          :height="height"
+          :vue="{
+            element: renderAction(record, row, 'Frozen'),
+            pointerEvents: true,
+            id: `issue5157-frozen-${row}`
+          }"
+        />
+      </template>
+    </ListColumn>
     <ListColumn field="value" title="Value" width="180" />
     <ListColumn field="action" title="Action" width="260">
       <template #customLayout="{ width, height, record, row }">
@@ -12,9 +24,9 @@
           :width="width"
           :height="height"
           :vue="{
-            element: renderAction(record, row),
+            element: renderAction(record, row, 'Action'),
             pointerEvents: true,
-            id: `issue5157-${row}`
+            id: `issue5157-body-${row}`
           }"
         />
       </template>
@@ -43,6 +55,9 @@ const tableOptions = ref({
   heightMode: 'standard',
   defaultRowHeight: 44,
   defaultHeaderRowHeight: 40,
+  frozenColCount: 1,
+  scrollFrozenCols: true,
+  maxFrozenWidth: 80,
   theme: {
     ...VTable.themes.DEFAULT,
     scrollStyle: {
@@ -56,7 +71,7 @@ const tableOptions = ref({
   }
 });
 
-function renderAction(record: any, row: number) {
+function renderAction(record: any, row: number, label: string) {
   return h(
     'button',
     {
@@ -66,26 +81,36 @@ function renderAction(record: any, row: number) {
         state.value = `clicked ${record.id}`;
       }
     },
-    `Action ${record.id}`
+    `${label} ${record.id}`
   );
 }
 
 function check() {
   const table = tableRef.value?.vTableInstance;
-  const dom = document.querySelector<HTMLElement>('[id^="vue_issue5157-"]');
-  if (!table || !dom) {
+  const bodyDom = document.querySelector<HTMLElement>('[id^="vue_issue5157-body-"]');
+  const frozenDom = document.querySelector<HTMLElement>('[id^="vue_issue5157-frozen-"]');
+  if (!table || !bodyDom || !frozenDom) {
     state.value = 'FAIL | missing table or dom';
     return { pass: false };
   }
 
-  const domRect = dom.getBoundingClientRect();
+  const bodyRect = bodyDom.getBoundingClientRect();
+  const frozenRect = frozenDom.getBoundingClientRect();
   const tableRect = table.getElement().getBoundingClientRect();
   const scrollbarLeft = tableRect.left + table.tableNoFrameWidth - 16;
-  const pass = domRect.right <= scrollbarLeft + 0.5;
-  state.value = `${pass ? 'PASS' : 'FAIL'} | domRight=${Math.round(domRect.right)} scrollbarLeft=${Math.round(
-    scrollbarLeft
-  )}`;
-  return { pass, domRight: domRect.right, scrollbarLeft };
+  const frozenScrollbarTop = tableRect.top + Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - 16;
+  const pass = bodyRect.right <= scrollbarLeft + 0.5 && frozenRect.bottom <= frozenScrollbarTop + 0.5;
+  state.value =
+    `${pass ? 'PASS' : 'FAIL'} | bodyRight=${Math.round(bodyRect.right)} scrollbarLeft=${Math.round(scrollbarLeft)} ` +
+    `frozenBottom=${Math.round(frozenRect.bottom)} frozenScrollbarTop=${Math.round(frozenScrollbarTop)}`;
+  return {
+    pass,
+    bodyRight: bodyRect.right,
+    scrollbarLeft,
+    frozenBottom: frozenRect.bottom,
+    frozenScrollbarTop,
+    frozenOffset: table.getFrozenColsOffset?.()
+  };
 }
 
 nextTick(() => {

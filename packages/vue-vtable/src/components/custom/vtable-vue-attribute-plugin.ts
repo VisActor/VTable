@@ -586,6 +586,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       const hoverOn = scrollStyle?.hoverOn;
       const domRight = offsetX + width;
       const domBottom = offsetTop + height;
+      const ignoreFrozenCols = scrollStyle?.ignoreFrozenCols ?? false;
 
       if (hasVerticalScrollBar) {
         const verticalLeft =
@@ -611,16 +612,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
         }
       }
 
-      if (hasHorizontalScrollBar) {
-        const ignoreFrozenCols = scrollStyle?.ignoreFrozenCols ?? false;
-        const horizontalLeft = ignoreFrozenCols
-          ? !hoverOn
-            ? groupX
-            : 0
-          : table.getFrozenColsWidth() + (!hoverOn ? groupX : 0);
-        const horizontalWidth = ignoreFrozenCols
-          ? table.tableNoFrameWidth
-          : table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+      const clipHorizontalScrollbar = (horizontalLeft: number, horizontalWidth: number) => {
         const horizontalTop =
           Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - (hoverOn ? scrollBarSize : -groupY);
         const horizontalRight = horizontalLeft + horizontalWidth;
@@ -640,6 +632,39 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
         ) {
           safeHeight = Math.max(0, Math.min(height, horizontalDomTop - offsetTop));
         }
+      };
+
+      if (hasHorizontalScrollBar) {
+        const horizontalLeft = ignoreFrozenCols
+          ? !hoverOn
+            ? groupX
+            : 0
+          : table.getFrozenColsWidth() + (!hoverOn ? groupX : 0);
+        const horizontalWidth = ignoreFrozenCols
+          ? table.tableNoFrameWidth
+          : table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+        clipHorizontalScrollbar(horizontalLeft, horizontalWidth);
+      }
+
+      if (
+        horizontalVisible !== 'none' &&
+        !ignoreFrozenCols &&
+        table.options?.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0
+      ) {
+        clipHorizontalScrollbar(!hoverOn ? groupX : 0, table.getFrozenColsWidth());
+      }
+
+      if (
+        horizontalVisible !== 'none' &&
+        !ignoreFrozenCols &&
+        table.options?.scrollRightFrozenCols &&
+        table.getRightFrozenColsOffset?.() > 0
+      ) {
+        clipHorizontalScrollbar(
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + (!hoverOn ? groupX : 0),
+          table.getRightFrozenColsWidth()
+        );
       }
     }
 
