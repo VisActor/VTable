@@ -576,7 +576,8 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
       const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
       const hasVerticalScrollBar = verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight;
-      const hasHorizontalScrollBar = horizontalVisible !== 'none' && table.getAllColsWidth() > table.tableNoFrameWidth;
+      const hasHorizontalScrollBar =
+        horizontalVisible !== 'none' && this.getBodyHorizontalScrollRange(table) > this.getScrollSizeTolerance(table);
       const scrollBarSize = scrollStyle?.width ?? 7;
       const groupX = table.scenegraph?.tableGroup?.attribute?.x ?? 0;
       const groupY = table.scenegraph?.tableGroup?.attribute?.y ?? 0;
@@ -641,6 +642,22 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     return { safeWidth, safeHeight };
+  }
+
+  private getBodyHorizontalScrollRange(table: any) {
+    const totalWidth = table.getAllColsWidth();
+    const frozenColsWidth = table.getFrozenColsWidth();
+    const rightFrozenColsWidth = table.getRightFrozenColsWidth();
+    const frozenColsContentWidth = table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
+    const rightFrozenColsContentWidth = table.getRightFrozenColsContentWidth?.() ?? rightFrozenColsWidth;
+    const bodyViewportWidth = table.tableNoFrameWidth - frozenColsWidth - rightFrozenColsWidth;
+    const bodyContentWidth = totalWidth - frozenColsContentWidth - rightFrozenColsContentWidth;
+
+    return Math.max(0, bodyContentWidth - bodyViewportWidth);
+  }
+
+  private getScrollSizeTolerance(table: any) {
+    return table.options?.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
   }
 
   /**
