@@ -3,35 +3,37 @@
     <button @click="check">Check scrollbar hit area</button>
     <span>{{ state }}</span>
   </div>
-  <vue-list-table ref="tableRef" :options="tableOptions">
-    <ListColumn field="name" title="Name" width="180">
-      <template #customLayout="{ width, height, record, row }">
-        <Group
-          :width="width"
-          :height="height"
-          :vue="{
-            element: renderAction(record, row, 'Frozen'),
-            pointerEvents: true,
-            id: `issue5157-frozen-${row}`
-          }"
-        />
-      </template>
-    </ListColumn>
-    <ListColumn field="value" title="Value" width="180" />
-    <ListColumn field="action" title="Action" width="260">
-      <template #customLayout="{ width, height, record, row }">
-        <Group
-          :width="width"
-          :height="height"
-          :vue="{
-            element: renderAction(record, row, 'Action'),
-            pointerEvents: true,
-            id: `issue5157-body-${row}`
-          }"
-        />
-      </template>
-    </ListColumn>
-  </vue-list-table>
+  <div class="issue5157-table">
+    <vue-list-table ref="tableRef" :options="tableOptions">
+      <ListColumn field="name" title="Name" width="180">
+        <template #customLayout="{ width, height, record, row }">
+          <Group
+            :width="width"
+            :height="height"
+            :vue="{
+              element: renderAction(record, row, 'Frozen'),
+              pointerEvents: true,
+              id: `issue5157-frozen-${row}`
+            }"
+          />
+        </template>
+      </ListColumn>
+      <ListColumn field="value" title="Value" width="180" />
+      <ListColumn field="action" title="Action" width="260">
+        <template #customLayout="{ width, height, record, row }">
+          <Group
+            :width="width"
+            :height="height"
+            :vue="{
+              element: renderAction(record, row, 'Action'),
+              pointerEvents: true,
+              id: `issue5157-body-${row}`
+            }"
+          />
+        </template>
+      </ListColumn>
+    </vue-list-table>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -87,28 +89,38 @@ function renderAction(record: any, row: number, label: string) {
 
 function check() {
   const table = tableRef.value?.vTableInstance;
-  const bodyDom = document.querySelector<HTMLElement>('[id^="vue_issue5157-body-"]');
-  const frozenDom = document.querySelector<HTMLElement>('[id^="vue_issue5157-frozen-"]');
-  if (!table || !bodyDom || !frozenDom) {
+  const bodyDoms = Array.from(document.querySelectorAll<HTMLElement>('[id^="vue_issue5157-body-"]'));
+  const frozenDoms = Array.from(document.querySelectorAll<HTMLElement>('[id^="vue_issue5157-frozen-"]'));
+  if (!table || !bodyDoms.length || !frozenDoms.length) {
     state.value = 'FAIL | missing table or dom';
     return { pass: false };
   }
 
-  const bodyRect = bodyDom.getBoundingClientRect();
-  const frozenRect = frozenDom.getBoundingClientRect();
+  const firstBodyRect = bodyDoms[0].getBoundingClientRect();
+  const firstFrozenRect = frozenDoms[0].getBoundingClientRect();
   const tableRect = table.getElement().getBoundingClientRect();
-  const scrollbarLeft = tableRect.left + table.tableNoFrameWidth - 16;
-  const frozenScrollbarTop = tableRect.top + Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - 16;
-  const pass = bodyRect.right <= scrollbarLeft + 0.5 && frozenRect.bottom <= frozenScrollbarTop + 0.5;
+  const scrollbarSize = table.theme?.scrollStyle?.width ?? 16;
+  const scrollbarLeft = tableRect.left + table.tableNoFrameWidth - scrollbarSize;
+  const frozenScrollbarTop = tableRect.top + Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - scrollbarSize;
+  const clippedFrozenDoms = frozenDoms.filter(dom => {
+    const rect = dom.getBoundingClientRect();
+    return rect.bottom > frozenScrollbarTop && getComputedStyle(dom).clipPath !== 'none';
+  });
+  const pass =
+    firstBodyRect.right <= scrollbarLeft + 0.5 &&
+    firstFrozenRect.bottom <= frozenScrollbarTop + 0.5 &&
+    clippedFrozenDoms.length > 0;
   state.value =
-    `${pass ? 'PASS' : 'FAIL'} | bodyRight=${Math.round(bodyRect.right)} scrollbarLeft=${Math.round(scrollbarLeft)} ` +
-    `frozenBottom=${Math.round(frozenRect.bottom)} frozenScrollbarTop=${Math.round(frozenScrollbarTop)}`;
+    `${pass ? 'PASS' : 'FAIL'} | bodyRight=${Math.round(firstBodyRect.right)} scrollbarLeft=${Math.round(scrollbarLeft)} ` +
+    `frozenBottom=${Math.round(firstFrozenRect.bottom)} frozenScrollbarTop=${Math.round(frozenScrollbarTop)} ` +
+    `clippedFrozen=${clippedFrozenDoms.length}`;
   return {
     pass,
-    bodyRight: bodyRect.right,
+    bodyRight: firstBodyRect.right,
     scrollbarLeft,
-    frozenBottom: frozenRect.bottom,
+    frozenBottom: firstFrozenRect.bottom,
     frozenScrollbarTop,
+    clippedFrozenCount: clippedFrozenDoms.length,
     frozenOffset: table.getFrozenColsOffset?.()
   };
 }
@@ -130,7 +142,7 @@ nextTick(() => {
   font-size: 12px;
 }
 
-:deep(.vtable) {
+.issue5157-table {
   width: 620px;
   height: 360px;
 }

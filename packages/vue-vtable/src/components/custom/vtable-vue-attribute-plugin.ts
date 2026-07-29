@@ -513,6 +513,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 默认自定义区域内也可带动表格画布滚动
     const { pointerEvents } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
+    const clipStyle = this.getScrollbarClipStyle(width, height, safeWidth, safeHeight);
     // 单元格样式
     const style = this.convertCellStyle(graphic);
     Object.assign(calculateStyle, {
@@ -521,6 +522,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
       overflow: 'hidden',
       ...(style || {}),
       ...(rest || {}),
+      ...clipStyle,
       transform: `translate(${offsetX}px, ${offsetTop}px)`,
       boxSizing: 'border-box',
       display: visible !== false ? display || 'block' : 'none',
@@ -669,6 +671,19 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     return { safeWidth, safeHeight };
+  }
+
+  private getScrollbarClipStyle(width: number, height: number, safeWidth: number, safeHeight: number) {
+    if (safeWidth >= width && safeHeight >= height) {
+      return { clipPath: 'none' };
+    }
+
+    const right = safeWidth < width ? `calc(100% - ${safeWidth}px)` : '0px';
+    const bottom = safeHeight < height ? `calc(100% - ${safeHeight}px)` : '0px';
+
+    return {
+      clipPath: `inset(0 ${right} ${bottom} 0)`
+    };
   }
 
   private getBodyHorizontalScrollRange(table: any) {
