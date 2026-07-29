@@ -575,9 +575,11 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     if (pointerEvents !== 'none' && table && !barToSide) {
       const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
       const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
-      const hasVerticalScrollBar = verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight;
+      const sizeTolerance = this.getScrollSizeTolerance(table);
+      const hasVerticalScrollBar =
+        verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight + sizeTolerance;
       const hasHorizontalScrollBar =
-        horizontalVisible !== 'none' && this.getBodyHorizontalScrollRange(table) > this.getScrollSizeTolerance(table);
+        horizontalVisible !== 'none' && this.getBodyHorizontalScrollRange(table) > sizeTolerance;
       const scrollBarSize = scrollStyle?.width ?? 7;
       const groupX = table.scenegraph?.tableGroup?.attribute?.x ?? 0;
       const groupY = table.scenegraph?.tableGroup?.attribute?.y ?? 0;
