@@ -14,7 +14,7 @@ function fillVisibleBodyRows(proxy: SceneProxy, distRow: number): number {
 
   while (targetRow < bodyBottomRow && table.getRowsHeight(table.frozenRowCount, targetRow) < visibleBodyHeight) {
     const nextRow = targetRow + 1;
-    computeRowsHeight(table, targetRow + 1, nextRow);
+    computeRowsHeight(table, nextRow, nextRow, false);
     targetRow = nextRow;
   }
 
