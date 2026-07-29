@@ -385,7 +385,7 @@ function computeRowHeightInternal(
     } as Parameters<NonNullable<BaseTableAPI['options']['customComputeRowHeight']>>[0];
     Object.defineProperty(computeArgs, 'realHeight', {
       get: getRealHeight,
-      enumerable: true,
+      enumerable: false,
       configurable: true
     });
     const customRowHeight = table.options.customComputeRowHeight(computeArgs);
