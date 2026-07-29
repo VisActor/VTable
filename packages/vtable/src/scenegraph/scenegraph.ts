@@ -1316,25 +1316,7 @@ export class Scenegraph {
         0
       );
 
-    const contentHeight =
-      Math.max(
-        this.colHeaderGroup.attribute.height,
-        this.cornerHeaderGroup.attribute.height,
-        this.rightTopCornerGroup.attribute.height,
-        0
-      ) +
-      Math.max(
-        this.rowHeaderGroup.attribute.height,
-        this.bodyGroup.attribute.height,
-        this.rightFrozenGroup.attribute.height,
-        0
-      ) +
-      Math.max(
-        this.leftBottomCornerGroup.attribute.height,
-        this.bottomFrozenGroup.attribute.height,
-        this.rightBottomCornerGroup.attribute.height,
-        0
-      );
+    const contentHeight = this.table.getAllRowsHeight();
 
     // 处理containerFit模式
     let tableWidth = contentWidth;

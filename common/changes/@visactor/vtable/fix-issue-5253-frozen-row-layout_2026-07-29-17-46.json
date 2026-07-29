@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: align frozen rows in short tables",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "biukam.w@gmail.com"
+}
