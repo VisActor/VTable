@@ -101,7 +101,7 @@ export function createGroupForFirstScreen(
       computeColsWidth(table, table.colCount - table.rightFrozenColCount, table.colCount - 1);
     }
   }
-  if (bodyDistRow < table.rowCount - table.bottomFrozenRowCount) {
+  if (distRow < table.rowCount - table.bottomFrozenRowCount) {
     // compute bottom frozen row height
     if (table.rowCount - table.bottomFrozenRowCount <= table.rowCount - 1) {
       computeRowsHeight(table, table.rowCount - table.bottomFrozenRowCount, table.rowCount - 1);
