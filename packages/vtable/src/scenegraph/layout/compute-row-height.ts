@@ -352,6 +352,16 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
+  return computeRowHeightInternal(row, startCol, endCol, table, true);
+}
+
+function computeRowHeightInternal(
+  row: number,
+  startCol: number,
+  endCol: number,
+  table: BaseTableAPI,
+  enableCustomCompute: boolean
+): number {
   const isAllRowsAuto =
     table.isAutoRowHeight(row) || (table.heightMode === 'adaptive' && table.options.autoHeightInAdaptiveMode !== false);
   if (!isAllRowsAuto && table.getDefaultRowHeight(row) !== 'auto') {
@@ -359,16 +369,32 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
   }
 
   let maxHeight;
-  if (table.options.customComputeRowHeight) {
-    const customRowHeight = table.options.customComputeRowHeight({
+  if (enableCustomCompute && table.options.customComputeRowHeight) {
+    let realHeight: number;
+    let hasRealHeight = false;
+    const getRealHeight = () => {
+      if (!hasRealHeight) {
+        realHeight = computeRowHeightInternal(row, startCol, endCol, table, false);
+        hasRealHeight = true;
+      }
+      return realHeight;
+    };
+    const computeArgs = {
       row,
       table
+    } as Parameters<NonNullable<BaseTableAPI['options']['customComputeRowHeight']>>[0];
+    Object.defineProperty(computeArgs, 'realHeight', {
+      get: getRealHeight,
+      enumerable: false,
+      configurable: true
     });
+    const customRowHeight = table.options.customComputeRowHeight(computeArgs);
     if (typeof customRowHeight === 'number') {
       return customRowHeight;
-    } else if (customRowHeight !== 'auto') {
-      return table.getDefaultRowHeight(row) as number;
+    } else if (customRowHeight === 'auto') {
+      return getRealHeight();
     }
+    return table.getDefaultRowHeight(row) as number;
   }
   if (table.internalProps.rowHeightConfig) {
     const rowHeightConfig = table.internalProps.rowHeightConfig.find((item: { key: number }) => item.key === row);

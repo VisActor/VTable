@@ -694,7 +694,11 @@ export interface BaseTableConstructorOptions {
   renderOption?: any;
 
   formatCopyValue?: (value: string) => string;
-  customComputeRowHeight?: (computeArgs: { row: number; table: BaseTableAPI }) => number | 'auto' | undefined;
+  customComputeRowHeight?: (computeArgs: {
+    row: number;
+    table: BaseTableAPI;
+    realHeight?: number;
+  }) => number | 'auto' | undefined;
   /** 当表格出现抖动情况，请排查是否上层dom容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为true */
   tableSizeAntiJitter?: boolean;
 

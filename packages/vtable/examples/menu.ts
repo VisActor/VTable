@@ -40,6 +40,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5117-auto-height-real-height'
+      },
+      {
+        path: 'debug',
         name: 'issue-5146'
       },
       {
@@ -126,6 +130,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
+        name: 'issue-5211-tree-checkbox-record-index'
       },
       {
         path: 'list',

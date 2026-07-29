@@ -39,7 +39,12 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
+import {
+  clearCheckboxState,
+  getGroupCheckboxState,
+  setCellCheckboxState,
+  setCheckboxStateByRecordIndex
+} from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
@@ -1567,6 +1572,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
+  }
+  setCellCheckboxStateByRecordIndex(
+    recordIndex: number | number[],
+    field: FieldDef,
+    checked: boolean | 'indeterminate'
+  ) {
+    setCheckboxStateByRecordIndex(recordIndex, field, checked, this);
+  }
+  clearCheckboxState(field: FieldDef) {
+    clearCheckboxState(field, this);
+  }
+  clearAllCheckboxState(field: FieldDef) {
+    this.clearCheckboxState(field);
   }
   setCellRadioState(col: number, row: number, index?: number) {
     setCellRadioState(col, row, index, this);
