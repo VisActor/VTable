@@ -489,6 +489,16 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     const { vue: options, width, height, visible, display, ...rest } = attribute || {};
     const { x: left, y: top } = this.calculatePosition(graphic, options.anchorType);
     const { left: offsetX, top: offsetTop } = this.calculateOffset(stage, nativeContainer, left, top);
+    const { safeWidth, safeHeight } = this.getScrollbarSafeSize(
+      graphic,
+      stage,
+      nativeContainer,
+      offsetX,
+      offsetTop,
+      width,
+      height,
+      options
+    );
 
     const { id } = this.getGraphicOptions(graphic) || {};
     const record = id ? this.htmlMap[id] : null;
@@ -499,22 +509,20 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     // 位置变化检查
     const positionChanged =
       !record.lastPosition || record.lastPosition.x !== offsetX || record.lastPosition.y !== offsetTop;
-    if (!positionChanged) {
-      // 位置没有变化，无需更新样式
-      return;
-    }
 
     // 默认自定义区域内也可带动表格画布滚动
     const { pointerEvents } = options;
     const calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
+    const clipStyle = this.getScrollbarClipStyle(width, height, safeWidth, safeHeight);
     // 单元格样式
     const style = this.convertCellStyle(graphic);
     Object.assign(calculateStyle, {
-      width: `${width}px`,
-      height: `${height}px`,
+      width: `${safeWidth}px`,
+      height: `${safeHeight}px`,
       overflow: 'hidden',
       ...(style || {}),
       ...(rest || {}),
+      ...clipStyle,
       transform: `translate(${offsetX}px, ${offsetTop}px)`,
       boxSizing: 'border-box',
       display: visible !== false ? display || 'block' : 'none',
@@ -546,6 +554,152 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
 
       record.lastStyle = calculateStyle;
     }
+    record.lastPosition = positionChanged ? { x: offsetX, y: offsetTop } : record.lastPosition;
+  }
+
+  private getScrollbarSafeSize(
+    graphic: IGraphic,
+    stage: IStage,
+    nativeContainer: HTMLElement,
+    offsetX: number,
+    offsetTop: number,
+    width: number,
+    height: number,
+    options: any
+  ) {
+    const pointerEvents = options?.pointerEvents === true ? 'all' : options?.pointerEvents || 'none';
+    const table = getTargetGroup(graphic)?.stage?.table;
+    const scrollStyle = table?.theme?.scrollStyle;
+    const barToSide = scrollStyle?.barToSide ?? false;
+    let safeWidth = width;
+    let safeHeight = height;
+
+    if (pointerEvents !== 'none' && table && !barToSide) {
+      const verticalVisible = scrollStyle?.verticalVisible ?? scrollStyle?.visible;
+      const horizontalVisible = scrollStyle?.horizontalVisible ?? scrollStyle?.visible;
+      const sizeTolerance = this.getScrollSizeTolerance(table);
+      const hasVerticalScrollBar =
+        verticalVisible !== 'none' && table.getAllRowsHeight() > table.tableNoFrameHeight + sizeTolerance;
+      const hasHorizontalScrollBar =
+        horizontalVisible !== 'none' && this.getBodyHorizontalScrollRange(table) > sizeTolerance;
+      const scrollBarSize = scrollStyle?.width ?? 7;
+      const groupX = table.scenegraph?.tableGroup?.attribute?.x ?? 0;
+      const groupY = table.scenegraph?.tableGroup?.attribute?.y ?? 0;
+      const hoverOn = scrollStyle?.hoverOn;
+      const domRight = offsetX + width;
+      const domBottom = offsetTop + height;
+      const ignoreFrozenCols = scrollStyle?.ignoreFrozenCols ?? false;
+
+      if (hasVerticalScrollBar) {
+        const verticalLeft =
+          Math.min(table.tableNoFrameWidth, table.getAllColsWidth()) - (hoverOn ? scrollBarSize : -groupX);
+        const verticalTop = table.getFrozenRowsHeight() + (!hoverOn ? groupY : 0);
+        const verticalBottom =
+          verticalTop + table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+        const { left: verticalDomLeft, top: verticalDomTop } = this.calculateOffset(
+          stage,
+          nativeContainer,
+          verticalLeft,
+          verticalTop
+        );
+        const verticalDomBottom = verticalDomTop + verticalBottom - verticalTop;
+
+        if (
+          offsetTop < verticalDomBottom &&
+          domBottom > verticalDomTop &&
+          offsetX < verticalDomLeft + scrollBarSize &&
+          domRight > verticalDomLeft
+        ) {
+          safeWidth = Math.max(0, Math.min(width, verticalDomLeft - offsetX));
+        }
+      }
+
+      const clipHorizontalScrollbar = (horizontalLeft: number, horizontalWidth: number) => {
+        const horizontalTop =
+          Math.min(table.tableNoFrameHeight, table.getAllRowsHeight()) - (hoverOn ? scrollBarSize : -groupY);
+        const horizontalRight = horizontalLeft + horizontalWidth;
+        const { left: horizontalDomLeft, top: horizontalDomTop } = this.calculateOffset(
+          stage,
+          nativeContainer,
+          horizontalLeft,
+          horizontalTop
+        );
+        const horizontalDomRight = horizontalDomLeft + horizontalRight - horizontalLeft;
+
+        if (
+          offsetX < horizontalDomRight &&
+          domRight > horizontalDomLeft &&
+          offsetTop < horizontalDomTop + scrollBarSize &&
+          domBottom > horizontalDomTop
+        ) {
+          safeHeight = Math.max(0, Math.min(height, horizontalDomTop - offsetTop));
+        }
+      };
+
+      if (hasHorizontalScrollBar) {
+        const horizontalLeft = ignoreFrozenCols
+          ? !hoverOn
+            ? groupX
+            : 0
+          : table.getFrozenColsWidth() + (!hoverOn ? groupX : 0);
+        const horizontalWidth = ignoreFrozenCols
+          ? table.tableNoFrameWidth
+          : table.tableNoFrameWidth - table.getFrozenColsWidth() - table.getRightFrozenColsWidth();
+        clipHorizontalScrollbar(horizontalLeft, horizontalWidth);
+      }
+
+      if (
+        horizontalVisible !== 'none' &&
+        !ignoreFrozenCols &&
+        table.options?.scrollFrozenCols &&
+        table.getFrozenColsOffset?.() > 0
+      ) {
+        clipHorizontalScrollbar(!hoverOn ? groupX : 0, table.getFrozenColsWidth());
+      }
+
+      if (
+        horizontalVisible !== 'none' &&
+        !ignoreFrozenCols &&
+        table.options?.scrollRightFrozenCols &&
+        table.getRightFrozenColsOffset?.() > 0
+      ) {
+        clipHorizontalScrollbar(
+          table.tableNoFrameWidth - table.getRightFrozenColsWidth() + (!hoverOn ? groupX : 0),
+          table.getRightFrozenColsWidth()
+        );
+      }
+    }
+
+    return { safeWidth, safeHeight };
+  }
+
+  private getScrollbarClipStyle(width: number, height: number, safeWidth: number, safeHeight: number) {
+    if (safeWidth >= width && safeHeight >= height) {
+      return { clipPath: 'none' };
+    }
+
+    const right = safeWidth < width ? `calc(100% - ${safeWidth}px)` : '0px';
+    const bottom = safeHeight < height ? `calc(100% - ${safeHeight}px)` : '0px';
+
+    return {
+      clipPath: `inset(0 ${right} ${bottom} 0)`
+    };
+  }
+
+  private getBodyHorizontalScrollRange(table: any) {
+    const totalWidth = table.getAllColsWidth();
+    const frozenColsWidth = table.getFrozenColsWidth();
+    const rightFrozenColsWidth = table.getRightFrozenColsWidth();
+    const frozenColsContentWidth = table.getFrozenColsContentWidth?.() ?? frozenColsWidth;
+    const rightFrozenColsContentWidth = table.getRightFrozenColsContentWidth?.() ?? rightFrozenColsWidth;
+    const bodyViewportWidth = table.tableNoFrameWidth - frozenColsWidth - rightFrozenColsWidth;
+    const bodyContentWidth = totalWidth - frozenColsContentWidth - rightFrozenColsContentWidth;
+
+    return Math.max(0, bodyContentWidth - bodyViewportWidth);
+  }
+
+  private getScrollSizeTolerance(table: any) {
+    return table.options?.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
   }
 
   /**
