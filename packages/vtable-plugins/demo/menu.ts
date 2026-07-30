@@ -29,6 +29,10 @@ export const menus = [
   },
   {
     path: 'filter',
+    name: 'issue-4625-filter-popup-position'
+  },
+  {
+    path: 'filter',
     name: 'value-filter'
   },
   {
