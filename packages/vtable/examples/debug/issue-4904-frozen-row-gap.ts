@@ -44,7 +44,7 @@ export function createTable() {
           width: 200
         },
         {
-          field: 'name',
+          field: 'lastName',
           title: 'Last Name',
           width: 200
         }
