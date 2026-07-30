@@ -16,35 +16,38 @@ function registerSortIcons() {
   VTable.register.icon('sort_normal', {
     ...sortIconBase,
     name: 'sort_normal',
-    content: 'N',
+    content: '-',
     visibleTime: 'mouseenter_cell',
     style: {
-      fill: '#999'
+      fill: '#999',
+      fontWeight: 'bold'
     }
   });
   VTable.register.icon('sort_upward', {
     ...sortIconBase,
     name: 'sort_upward',
-    content: 'A',
+    content: '^',
     visibleTime: 'always',
     style: {
-      fill: '#1677ff'
+      fill: '#1677ff',
+      fontWeight: 'bold'
     }
   });
   VTable.register.icon('sort_downward', {
     ...sortIconBase,
     name: 'sort_downward',
-    content: 'D',
+    content: 'v',
     visibleTime: 'always',
     style: {
-      fill: '#1677ff'
+      fill: '#f5222d',
+      fontWeight: 'bold'
     }
   });
 }
 
-function getSortIconState(tableInstance: VTable.ListTable) {
+function getSortIconState(tableInstance: VTable.ListTable, col: number) {
   let state: any = null;
-  tableInstance.scenegraph.getCell(0, 0).forEachChildren((mark: any) => {
+  tableInstance.scenegraph.getCell(col, 0).forEachChildren((mark: any) => {
     if (mark.attribute?.funcType === VTable.TYPES.IconFuncTypeEnum.sort) {
       state = {
         name: mark.name,
@@ -58,14 +61,6 @@ function getSortIconState(tableInstance: VTable.ListTable) {
   return state;
 }
 
-function showCurrentSortIcon(tableInstance: VTable.ListTable) {
-  tableInstance.scenegraph.getCell(0, 0).forEachChildren((mark: any) => {
-    if (mark.attribute?.funcType === VTable.TYPES.IconFuncTypeEnum.sort) {
-      mark.setAttribute('opacity', 1);
-    }
-  });
-}
-
 export function createTable() {
   registerSortIcons();
 
@@ -76,27 +71,40 @@ export function createTable() {
   const tableInstance = new VTable.ListTable({
     container,
     records: [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-      { id: 3, name: 'Carol' }
+      { id: 1, name: 'Alice', score: 91 },
+      { id: 2, name: 'Bob', score: 85 },
+      { id: 3, name: 'Carol', score: 96 }
     ],
     columns: [
       { field: 'id', title: 'ID', width: 120, sort: true },
-      { field: 'name', title: 'Name', width: 200 }
+      { field: 'name', title: 'Name', width: 200, sort: true },
+      { field: 'score', title: 'Score', width: 120 }
     ]
   });
 
   window.tableInstance = tableInstance;
-  (window as any).issue4798GetSortIconState = () => getSortIconState(tableInstance);
-  (window as any).issue4798CycleSort = () => {
-    showCurrentSortIcon(tableInstance);
-    const shownNormal = getSortIconState(tableInstance);
+  (window as any).issue4798GetSortIconState = (col = 0) => getSortIconState(tableInstance, col);
+  (window as any).issue4798Run = () => {
     tableInstance.updateSortState({ field: 'id', order: 'asc' });
-    const asc = getSortIconState(tableInstance);
-    tableInstance.updateSortState({ field: 'id', order: 'desc' });
-    const desc = getSortIconState(tableInstance);
-    tableInstance.updateSortState(null);
-    const normal = getSortIconState(tableInstance);
-    return { shownNormal, asc, desc, normal };
+    const firstAsc = getSortIconState(tableInstance, 0);
+    tableInstance.updateSortState({ field: 'name', order: 'asc' });
+    const firstNormalAfterSecondSort = getSortIconState(tableInstance, 0);
+    const secondAsc = getSortIconState(tableInstance, 1);
+    return {
+      firstAsc,
+      firstNormalAfterSecondSort,
+      secondAsc,
+      fixed:
+        firstNormalAfterSecondSort?.name === 'sort_normal' &&
+        firstNormalAfterSecondSort?.text === '-' &&
+        firstNormalAfterSecondSort?.fill === '#999' &&
+        firstNormalAfterSecondSort?.visibleTime === 'mouseenter_cell' &&
+        firstNormalAfterSecondSort?.opacity === 0 &&
+        secondAsc?.name === 'sort_upward' &&
+        secondAsc?.text === '^' &&
+        secondAsc?.fill === '#1677ff' &&
+        secondAsc?.visibleTime === 'always' &&
+        secondAsc?.opacity === 1
+    };
   };
 }
