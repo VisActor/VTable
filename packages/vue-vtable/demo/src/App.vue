@@ -21,6 +21,7 @@ import ListTableCustom from './table/gramatical/composition/ListTable-custom.vue
 import ListTableCustomHover from './table/gramatical/composition/ListTable-custom-hover.vue';
 import Issue5150CustomLayoutSort from './table/gramatical/composition/Issue5150CustomLayoutSort.vue';
 import Issue5157CustomLayoutScrollbar from './table/gramatical/composition/Issue5157CustomLayoutScrollbar.vue';
+import Issue4884SlotEditorBackground from './table/gramatical/composition/Issue4884SlotEditorBackground.vue';
 import ListTableVFor from './table/gramatical/options/ListTable-v-for.vue';
 
 import PivotTable from './table/gramatical/options/PivotTable.vue';
@@ -54,7 +55,7 @@ import singleRadio from './table/single/single-radio.vue';
 
   <!-- <ListTable /> -->
   <!-- <Issue5150CustomLayoutSort /> -->
-  <Issue5157CustomLayoutScrollbar />
+  <Issue4884SlotEditorBackground />
   <!-- <ListTableEditor /> -->
   <!-- <ListTableEditorArco /> -->
   <!-- <ListTableEditorRender /> -->
