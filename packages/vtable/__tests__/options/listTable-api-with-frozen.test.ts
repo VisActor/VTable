@@ -143,6 +143,29 @@ describe('listTable init test', () => {
     });
   });
 
+  test('listTable bottom frozen rows should stay connected after short body content', () => {
+    const optionWithBottomFrozenRows = {
+      ...option,
+      frozenRowCount: 5,
+      rightFrozenColCount: 0,
+      bottomFrozenRowCount: 2,
+      container: createDiv(),
+      records: records.slice(0, 10)
+    };
+    optionWithBottomFrozenRows.container.style.position = 'relative';
+    optionWithBottomFrozenRows.container.style.width = '1000px';
+    optionWithBottomFrozenRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithBottomFrozenRows);
+    const { scenegraph } = frozenTable;
+
+    expect(scenegraph.bottomFrozenGroup.attribute.y).toBe(
+      scenegraph.bodyGroup.attribute.y + scenegraph.bodyGroup.attribute.height
+    );
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,
