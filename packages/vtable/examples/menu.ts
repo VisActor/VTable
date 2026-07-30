@@ -76,6 +76,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4798-sort-icon-visible-time'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
