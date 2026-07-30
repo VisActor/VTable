@@ -539,6 +539,8 @@ export function dealWithIcon(
   iconAttribute.funcType = icon.funcType;
   iconAttribute.interactive = icon.interactive;
   iconAttribute.isGif = (icon as any).isGif;
+  iconAttribute.opacity =
+    iconAttribute.visibleTime === 'mouseenter_cell' || iconAttribute.visibleTime === 'click_cell' ? 0 : 1;
 
   let hierarchyOffset = 0;
   if (
