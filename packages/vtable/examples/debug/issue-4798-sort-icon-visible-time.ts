@@ -48,6 +48,8 @@ function getSortIconState(tableInstance: VTable.ListTable) {
     if (mark.attribute?.funcType === VTable.TYPES.IconFuncTypeEnum.sort) {
       state = {
         name: mark.name,
+        text: mark.attribute.text,
+        fill: mark.attribute.fill,
         visibleTime: mark.attribute.visibleTime,
         opacity: mark.attribute.opacity
       };

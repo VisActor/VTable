@@ -539,8 +539,6 @@ export function dealWithIcon(
   iconAttribute.funcType = icon.funcType;
   iconAttribute.interactive = icon.interactive;
   iconAttribute.isGif = (icon as any).isGif;
-  iconAttribute.opacity =
-    iconAttribute.visibleTime === 'mouseenter_cell' || iconAttribute.visibleTime === 'click_cell' ? 0 : 1;
 
   let hierarchyOffset = 0;
   if (
@@ -585,9 +583,21 @@ export function dealWithIcon(
     iconAttribute.shape = icon.shape;
   }
 
+  if (icon.type === 'text') {
+    iconAttribute.text = icon.content;
+    merge(iconAttribute, icon.style);
+  }
+
+  if (isNil(iconAttribute.opacity)) {
+    iconAttribute.opacity =
+      iconAttribute.visibleTime === 'mouseenter_cell' || iconAttribute.visibleTime === 'click_cell' ? 0 : 1;
+  }
+
   if (mark) {
     mark.setAttributes(iconAttribute);
-    mark.loadImage(iconAttribute.image);
+    if (iconAttribute.image) {
+      mark.loadImage(iconAttribute.image);
+    }
     mark.tooltip = icon.tooltip;
     mark.name = icon.name;
     return mark;
@@ -596,8 +606,6 @@ export function dealWithIcon(
 
   let iconMark: Icon | TextIcon;
   if (icon.type === 'text') {
-    iconAttribute.text = icon.content;
-    merge(iconAttribute, icon.style);
     iconMark = new TextIcon(iconAttribute);
     iconMark.tooltip = icon.tooltip;
     iconMark.name = icon.name;
