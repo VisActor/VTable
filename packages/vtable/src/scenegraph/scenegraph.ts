@@ -1449,8 +1449,10 @@ export class Scenegraph {
         width: this.table.getFrozenColsWidth()
       });
       this.rightBottomCornerGroup.setAttributes({
-        visible: true,
+        visible: this.table.rightFrozenColCount > 0,
+        x: 0,
         y: bottomFrozenY,
+        width: 0,
         height: bottomFrozenRowsHeight
       });
     }

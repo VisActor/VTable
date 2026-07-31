@@ -162,6 +162,7 @@ describe('listTable init test', () => {
     expect(scenegraph.bottomFrozenGroup.attribute.y).toBe(
       scenegraph.bodyGroup.attribute.y + scenegraph.bodyGroup.attribute.height
     );
+    expect(scenegraph.rightBottomCornerGroup.attribute.visible).toBe(false);
 
     frozenTable.release();
   });
