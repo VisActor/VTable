@@ -224,5 +224,6 @@ describe('listTable init test', () => {
       rightFrozenTable.rightFrozenColCount = 1;
     }).not.toThrow();
     expect(rightFrozenTable.rightFrozenColCount).toBe(1);
+    expect(rightFrozenTable.scenegraph.rightBottomCornerGroup.attribute.visible).toBe(false);
   });
 });

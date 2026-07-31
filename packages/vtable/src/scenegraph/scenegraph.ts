@@ -1471,7 +1471,7 @@ export class Scenegraph {
         height: this.table.getFrozenRowsHeight()
       });
       this.rightBottomCornerGroup.setAttributes({
-        visible: true,
+        visible: this.table.bottomFrozenRowCount > 0,
         x: rightFrozenX,
         width: rightFrozenColsWidth
       });
