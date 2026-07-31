@@ -1443,10 +1443,10 @@ export class Scenegraph {
       );
       this.bottomFrozenGroup.setAttribute('y', bottomFrozenY);
       this.leftBottomCornerGroup.setAttributes({
-        visible: true,
+        visible: this.table.frozenColCount > 0,
         y: bottomFrozenY,
         height: bottomFrozenRowsHeight,
-        width: this.table.getFrozenColsWidth()
+        width: this.table.frozenColCount > 0 ? this.table.getFrozenColsWidth() : 0
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: this.table.rightFrozenColCount > 0,

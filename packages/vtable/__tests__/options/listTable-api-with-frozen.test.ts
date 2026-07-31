@@ -167,6 +167,28 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable bottom left corner should be hidden without frozen columns', () => {
+    const optionWithOnlyBottomFrozenRows = {
+      ...option,
+      frozenColCount: 0,
+      rightFrozenColCount: 0,
+      bottomFrozenRowCount: 2,
+      container: createDiv(),
+      records: records.slice(0, 10)
+    };
+    optionWithOnlyBottomFrozenRows.container.style.position = 'relative';
+    optionWithOnlyBottomFrozenRows.container.style.width = '1000px';
+    optionWithOnlyBottomFrozenRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithOnlyBottomFrozenRows);
+
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.visible).toBe(false);
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.width).toBe(0);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.visible).toBe(false);
+
+    frozenTable.release();
+  });
+
   test('listTable bottom right corner should stay connected after short content', () => {
     const shortColumns = columns.slice(0, 5).map(column => ({
       ...column,
