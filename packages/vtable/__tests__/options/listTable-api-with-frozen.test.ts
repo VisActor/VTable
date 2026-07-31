@@ -247,5 +247,61 @@ describe('listTable init test', () => {
     }).not.toThrow();
     expect(rightFrozenTable.rightFrozenColCount).toBe(1);
     expect(rightFrozenTable.scenegraph.rightBottomCornerGroup.attribute.visible).toBe(false);
+    expect(rightFrozenTable.scenegraph.rightBottomCornerGroup.attribute.width).toBe(0);
+  });
+
+  test('listTable bottom corner groups should be reset after clearing bottom frozen rows', () => {
+    const optionWithBottomFrozenRows = {
+      ...option,
+      frozenColCount: 2,
+      rightFrozenColCount: 2,
+      bottomFrozenRowCount: 2,
+      container: createDiv(),
+      records: records.slice(0, 10)
+    };
+    optionWithBottomFrozenRows.container.style.position = 'relative';
+    optionWithBottomFrozenRows.container.style.width = '1000px';
+    optionWithBottomFrozenRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithBottomFrozenRows);
+
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.visible).toBe(true);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.visible).toBe(true);
+
+    frozenTable.bottomFrozenRowCount = 0;
+
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.visible).toBe(false);
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.height).toBe(0);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.visible).toBe(false);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.width).toBe(0);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.height).toBe(0);
+
+    frozenTable.release();
+  });
+
+  test('listTable right top corner group should be reset after clearing frozen rows', () => {
+    const optionWithRightFrozenRows = {
+      ...option,
+      frozenRowCount: 5,
+      bottomFrozenRowCount: 0,
+      rightFrozenColCount: 2,
+      container: createDiv(),
+      records
+    };
+    optionWithRightFrozenRows.container.style.position = 'relative';
+    optionWithRightFrozenRows.container.style.width = '1000px';
+    optionWithRightFrozenRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithRightFrozenRows);
+
+    expect(frozenTable.scenegraph.rightTopCornerGroup.attribute.visible).toBe(true);
+
+    frozenTable.frozenRowCount = 0;
+
+    expect(frozenTable.scenegraph.rightTopCornerGroup.attribute.visible).toBe(false);
+    expect(frozenTable.scenegraph.rightTopCornerGroup.attribute.width).toBe(0);
+    expect(frozenTable.scenegraph.rightTopCornerGroup.attribute.height).toBe(0);
+
+    frozenTable.release();
   });
 });
