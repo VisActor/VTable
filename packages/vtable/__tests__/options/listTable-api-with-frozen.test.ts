@@ -166,6 +166,41 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable bottom right corner should stay connected after short content', () => {
+    const shortColumns = columns.slice(0, 5).map(column => ({
+      ...column,
+      width: 100
+    }));
+    const optionWithBottomRightFrozen = {
+      ...option,
+      columns: shortColumns,
+      defaultColWidth: 100,
+      frozenColCount: 2,
+      frozenRowCount: 5,
+      rightFrozenColCount: 2,
+      bottomFrozenRowCount: 2,
+      containerFit: true,
+      container: createDiv(),
+      records: records.slice(0, 10)
+    };
+    optionWithBottomRightFrozen.container.style.position = 'relative';
+    optionWithBottomRightFrozen.container.style.width = '1000px';
+    optionWithBottomRightFrozen.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithBottomRightFrozen);
+    const { scenegraph } = frozenTable;
+
+    expect(scenegraph.rightFrozenGroup.attribute.x).toBe(
+      scenegraph.bodyGroup.attribute.x + scenegraph.bodyGroup.attribute.width
+    );
+    expect(scenegraph.rightBottomCornerGroup.attribute.x).toBe(scenegraph.rightFrozenGroup.attribute.x);
+    expect(scenegraph.rightBottomCornerGroup.attribute.y).toBe(
+      scenegraph.bodyGroup.attribute.y + scenegraph.bodyGroup.attribute.height
+    );
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,

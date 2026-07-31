@@ -1456,17 +1456,22 @@ export class Scenegraph {
     }
 
     if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth());
+      const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+      const rightFrozenX = Math.min(
+        this.tableGroup.attribute.width - rightFrozenColsWidth,
+        this.bodyGroup.attribute.x + this.bodyGroup.attribute.width
+      );
+      this.rightFrozenGroup.setAttribute('x', rightFrozenX);
       this.rightTopCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth(),
+        x: rightFrozenX,
+        width: rightFrozenColsWidth,
         height: this.table.getFrozenRowsHeight()
       });
       this.rightBottomCornerGroup.setAttributes({
         visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth()
+        x: rightFrozenX,
+        width: rightFrozenColsWidth
       });
     }
 
