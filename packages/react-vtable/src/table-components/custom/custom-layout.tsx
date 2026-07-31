@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { PropsWithChildren, ReactElement } from 'react';
-import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef } from 'react';
+import React, { isValidElement, useCallback, useContext, useLayoutEffect, useRef, useState } from 'react';
 import RootTableContext from '../../context/table';
 import { Group } from '@visactor/vtable/es/vrender';
 import type { ICustomLayoutFuc, CustomRenderFunctionArg } from '@visactor/vtable/es/ts-types';
 import type { FiberRoot } from 'react-reconciler';
-import type { ReconcilerErrorReporter } from './reconciler';
-import { reconcilor, createReconcilerContainer } from './reconciler';
+import type { ReconcilerErrorReporter, ReconcilerErrorType } from './reconciler';
 
 type CustomLayoutProps = { componentId: string };
 
@@ -22,6 +21,8 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   }
   const context = useContext(RootTableContext);
   const { table, onError } = context;
+  const [reconcilerReady, setReconcilerReady] = useState(false);
+  const reconcilerModule = useRef<ReconcilerModule | null>(null);
 
   const isHeaderCustomLayout = children.props.role === 'header-custom-layout';
 
@@ -45,22 +46,48 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     [onError]
   );
 
+  useLayoutEffect(() => {
+    let released = false;
+    // Load the custom-layout reconciler only when CustomLayout is actually used.
+    import('./reconciler')
+      .then(module => {
+        if (released) {
+          return;
+        }
+        reconcilerModule.current = module;
+        setReconcilerReady(true);
+      })
+      .catch(error => {
+        reportReconcilerError('uncaught', error);
+      });
+    return () => {
+      released = true;
+    };
+  }, [reportReconcilerError]);
+
   // customLayout function for vtable
   const createGraphic: ICustomLayoutFuc = useCallback(
-    args => {
+    (args: any) => {
+      const module = reconcilerModule.current;
+      if (!module) {
+        return {
+          rootContainer: new Group({}),
+          renderDefault: !!children.props.renderDefault
+        };
+      }
       const key = `${args.originCol ?? args.col}-${args.originRow ?? args.row}${
         args.forComputation ? '-forComputation' : ''
       }`;
       let group;
       if (container.current.has(key)) {
         const currentContainer = container.current.get(key);
-        reconcilorUpdateContainer(children, currentContainer, args);
+        reconcilorUpdateContainer(module, children, currentContainer, args);
         group = currentContainer.containerInfo;
       } else {
         group = new Group({});
-        const currentContainer = createReconcilerContainer(group as any, 'custom', reportReconcilerError);
+        const currentContainer = module.createReconcilerContainer(group as any, 'custom', reportReconcilerError);
         container.current.set(key, currentContainer);
-        reconcilorUpdateContainer(children, currentContainer, args);
+        reconcilorUpdateContainer(module, children, currentContainer, args);
       }
 
       return {
@@ -72,10 +99,14 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   );
 
   const removeContainer = useCallback((col: number, row: number) => {
+    const module = reconcilerModule.current;
+    if (!module) {
+      return;
+    }
     const key = `${col}-${row}`;
     if (container.current.has(key)) {
       const currentContainer = container.current.get(key);
-      reconcilor.updateContainer(null, currentContainer, null);
+      module.reconcilor.updateContainer(null, currentContainer, null);
       // group = currentContainer.containerInfo;
       currentContainer.containerInfo.delete();
       container.current.delete(key);
@@ -83,9 +114,14 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   }, []);
 
   const removeAllContainer = useCallback(() => {
+    const module = reconcilerModule.current;
+    if (!module) {
+      container.current.clear();
+      return;
+    }
     container.current.forEach((value, key) => {
       const currentContainer = value;
-      reconcilor.updateContainer(null, currentContainer, null);
+      module.reconcilor.updateContainer(null, currentContainer, null);
       currentContainer.containerInfo.delete();
     });
     container.current.clear();
@@ -108,6 +144,9 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     // eslint-disable-next-line no-undef
     console.log('update props', props, table);
 
+    if (!reconcilerReady) {
+      return;
+    }
     table?.checkReactCustomLayout(); // init reactCustomLayout component
     table?.reactCustomLayout?.setReactRemoveAllGraphic(componentId, removeAllContainer, isHeaderCustomLayout); // set customLayout function
 
@@ -129,6 +168,10 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       ); // update customLayout function
       // update all container
       container.current.forEach((value, key) => {
+        const module = reconcilerModule.current;
+        if (!module) {
+          return;
+        }
         const [col, row] = key.split('-').map(Number);
         // const width = table.getColWidth(col); // to be fixed: may be merge cell
         // const height = table.getRowHeight(row); // to be fixed: may be merge cell
@@ -151,7 +194,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
         };
         // update element in container
         const group = currentContainer.containerInfo;
-        reconcilorUpdateContainer(children, currentContainer, args);
+        reconcilorUpdateContainer(module, children, currentContainer, args);
         // reconcilor.updateContainer(React.cloneElement(children, { ...args }), currentContainer, null);
         table.scenegraph.updateNextFrame();
       });
@@ -161,8 +204,18 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
   return null;
 };
 
-function reconcilorUpdateContainer(children: ReactElement, currentContainer: any, args: any) {
+type ReconcilerModule = {
+  reconcilor: any;
+  createReconcilerContainer: (
+    container: any,
+    identifierPrefix?: string,
+    reportError?: (type: ReconcilerErrorType, error: unknown) => void
+  ) => FiberRoot;
+};
+
+function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElement, currentContainer: any, args: any) {
   const element = React.cloneElement(children, { ...args });
+  const { reconcilor } = module;
   const updateContainerSync = (reconcilor as any).updateContainerSync;
   if (typeof updateContainerSync === 'function') {
     updateContainerSync(element, currentContainer, null);

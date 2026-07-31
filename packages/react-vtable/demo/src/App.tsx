@@ -1,4 +1,5 @@
 import listTable from './list-table/list-table';
+import issue5203ViteReact19 from './list-table/issue-5203-vite-react19';
 import listOptionRecord from './list-table/list-option-records';
 import listComponent from './list-table/list-component';
 import listCustomLayout from './list-table/list-custom-layout';
@@ -32,6 +33,7 @@ import { Component, useEffect, useMemo, useState } from 'react';
 declare const globalThis: any;
 
 const demoList = [
+  { key: 'issue5203ViteReact19', Comp: issue5203ViteReact19 },
   { key: 'listTable', Comp: listTable },
   { key: 'listEditor', Comp: listEditor },
   { key: 'listOptionRecord', Comp: listOptionRecord },
