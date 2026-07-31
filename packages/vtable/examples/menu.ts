@@ -36,6 +36,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5115-auto-height-zero-row'
+      },
+      {
+        path: 'debug',
         name: 'issue-5117-auto-height-real-height'
       },
       {
@@ -73,6 +77,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'issue-4904-frozen-row-gap'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4798-sort-icon-visible-time'
       },
       {
         path: 'debug',
