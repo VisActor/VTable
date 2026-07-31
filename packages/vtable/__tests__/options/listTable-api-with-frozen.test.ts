@@ -248,6 +248,38 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable bottom corner rows should stay below header when body is empty', () => {
+    const twoColumns = columns.slice(0, 2).map(column => ({
+      ...column,
+      width: 150
+    }));
+    const optionWithOnlyCornerRows = {
+      ...option,
+      columns: twoColumns,
+      frozenColCount: 1,
+      rightFrozenColCount: 1,
+      bottomFrozenRowCount: 1,
+      container: createDiv(),
+      records: records.slice(0, 1)
+    };
+    optionWithOnlyCornerRows.container.style.position = 'relative';
+    optionWithOnlyCornerRows.container.style.width = '1000px';
+    optionWithOnlyCornerRows.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithOnlyCornerRows);
+    const { scenegraph } = frozenTable;
+    const headerBottom = Math.max(
+      scenegraph.cornerHeaderGroup.attribute.y + scenegraph.cornerHeaderGroup.attribute.height,
+      scenegraph.rightTopCornerGroup.attribute.y + scenegraph.rightTopCornerGroup.attribute.height
+    );
+
+    expect(scenegraph.bodyGroup.attribute.height).toBe(0);
+    expect(scenegraph.leftBottomCornerGroup.attribute.y).toBe(headerBottom);
+    expect(scenegraph.rightBottomCornerGroup.attribute.y).toBe(headerBottom);
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,

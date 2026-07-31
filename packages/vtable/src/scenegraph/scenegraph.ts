@@ -1442,10 +1442,16 @@ export class Scenegraph {
 
     if (hasBottomFrozenRows) {
       const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
-      const bottomFrozenY = Math.min(
-        this.tableGroup.attribute.height - bottomFrozenRowsHeight,
-        this.bodyGroup.attribute.y + this.bodyGroup.attribute.height
+      const topFrozenBottom = Math.max(
+        this.colHeaderGroup.attribute.y + this.colHeaderGroup.attribute.height,
+        this.cornerHeaderGroup.attribute.y + this.cornerHeaderGroup.attribute.height,
+        this.rightTopCornerGroup.attribute.y + this.rightTopCornerGroup.attribute.height
       );
+      const middleContentBottom = Math.max(
+        this.bodyGroup.attribute.y + this.bodyGroup.attribute.height,
+        topFrozenBottom
+      );
+      const bottomFrozenY = Math.min(this.tableGroup.attribute.height - bottomFrozenRowsHeight, middleContentBottom);
       this.bottomFrozenGroup.setAttribute('y', bottomFrozenY);
       this.leftBottomCornerGroup.setAttributes({
         visible: hasFrozenCols,
