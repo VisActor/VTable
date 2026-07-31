@@ -280,6 +280,31 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable bottom corner rows should stay below right frozen body when only right frozen column exists', () => {
+    const optionWithOnlyRightFrozenColumn = {
+      ...option,
+      columns: columns.slice(0, 1),
+      frozenColCount: 0,
+      rightFrozenColCount: 1,
+      bottomFrozenRowCount: 3,
+      container: createDiv(),
+      records: records.slice(0, 4)
+    };
+    optionWithOnlyRightFrozenColumn.container.style.position = 'relative';
+    optionWithOnlyRightFrozenColumn.container.style.width = '1000px';
+    optionWithOnlyRightFrozenColumn.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithOnlyRightFrozenColumn);
+    const { scenegraph } = frozenTable;
+    const rightFrozenBottom = scenegraph.rightFrozenGroup.attribute.y + scenegraph.rightFrozenGroup.attribute.height;
+
+    expect(scenegraph.bodyGroup.attribute.height).toBe(0);
+    expect(scenegraph.rightFrozenGroup.attribute.height).toBeGreaterThan(0);
+    expect(scenegraph.rightBottomCornerGroup.attribute.y).toBe(rightFrozenBottom);
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,

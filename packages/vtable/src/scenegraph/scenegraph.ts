@@ -1448,7 +1448,9 @@ export class Scenegraph {
         this.rightTopCornerGroup.attribute.y + this.rightTopCornerGroup.attribute.height
       );
       const middleContentBottom = Math.max(
+        this.rowHeaderGroup.attribute.y + this.rowHeaderGroup.attribute.height,
         this.bodyGroup.attribute.y + this.bodyGroup.attribute.height,
+        this.rightFrozenGroup.attribute.y + this.rightFrozenGroup.attribute.height,
         topFrozenBottom
       );
       const bottomFrozenY = Math.min(this.tableGroup.attribute.height - bottomFrozenRowsHeight, middleContentBottom);
