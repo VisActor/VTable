@@ -224,6 +224,30 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable right frozen header should stay on the right side without records', () => {
+    const optionWithRightFrozenHeader = {
+      ...option,
+      frozenColCount: 2,
+      rightFrozenColCount: 2,
+      bottomFrozenRowCount: 0,
+      container: createDiv(),
+      records: []
+    };
+    optionWithRightFrozenHeader.container.style.position = 'relative';
+    optionWithRightFrozenHeader.container.style.width = '1000px';
+    optionWithRightFrozenHeader.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithRightFrozenHeader);
+    const { scenegraph } = frozenTable;
+    const rightFrozenColsWidth = frozenTable.getRightFrozenColsWidth();
+
+    expect(scenegraph.rightTopCornerGroup.attribute.visible).toBe(true);
+    expect(scenegraph.rightFrozenGroup.attribute.x).toBe(scenegraph.tableGroup.attribute.width - rightFrozenColsWidth);
+    expect(scenegraph.rightTopCornerGroup.attribute.x).toBe(scenegraph.rightFrozenGroup.attribute.x);
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,

@@ -1475,10 +1475,12 @@ export class Scenegraph {
 
     if (hasRightFrozenCols) {
       const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
-      const rightFrozenX = Math.min(
-        this.tableGroup.attribute.width - rightFrozenColsWidth,
-        this.bodyGroup.attribute.x + this.bodyGroup.attribute.width
+      const middleContentRight = Math.max(
+        this.colHeaderGroup.attribute.x + this.colHeaderGroup.attribute.width,
+        this.bodyGroup.attribute.x + this.bodyGroup.attribute.width,
+        this.bottomFrozenGroup.attribute.x + this.bottomFrozenGroup.attribute.width
       );
+      const rightFrozenX = Math.min(this.tableGroup.attribute.width - rightFrozenColsWidth, middleContentRight);
       this.rightFrozenGroup.setAttribute('x', rightFrozenX);
       this.rightTopCornerGroup.setAttributes({
         visible: hasFrozenRows,
