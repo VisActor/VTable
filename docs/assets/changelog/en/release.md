@@ -1,3 +1,20 @@
+# v1.26.6
+
+2026-08-03
+
+**🐛 Bug Fixes**
+
+- **@visactor/vtable**: refresh rows when updateRecords is called without record indexes
+- **@visactor/vtable**: refresh functional icons after theme updates
+- **@visactor/vtable**: hide row series number in aggregation rows
+- **@visactor/vtable**: delete reverse-selected rows from context menu
+- **@visactor/vtable**: allow plugins to initialize before first render
+- **@visactor/vtable**: support updating checkbox state by record index
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.5...v1.26.6
+
+[more detail about v1.26.6](https://github.com/VisActor/VTable/releases/tag/v1.26.6)
+
 # v1.26.5
 
 2026-07-15

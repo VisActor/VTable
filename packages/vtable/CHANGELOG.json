@@ -2,6 +2,35 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.6",
+      "tag": "@visactor/vtable_v1.26.6",
+      "date": "Mon, 03 Aug 2026 11:18:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: refresh rows when updateRecords is called without record indexes"
+          },
+          {
+            "comment": "fix: refresh functional icons after theme updates"
+          },
+          {
+            "comment": "fix: allow plugins to initialize before first render"
+          },
+          {
+            "comment": "fix: support updating checkbox state by record index"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: hide row series number in aggregation rows"
+          },
+          {
+            "comment": "fix: delete reverse-selected rows from context menu"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.5",
       "tag": "@visactor/vtable_v1.26.5",
       "date": "Wed, 15 Jul 2026 10:41:26 GMT",
