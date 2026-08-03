@@ -84,6 +84,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-celltype-function-undefined'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
