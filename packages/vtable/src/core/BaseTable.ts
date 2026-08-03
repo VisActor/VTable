@@ -168,6 +168,10 @@ const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
 
+function normalizeCellType(cellType: ColumnTypeOption | undefined | null): ColumnTypeOption {
+  return isValid(cellType) ? cellType : 'text';
+}
+
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
@@ -3838,7 +3842,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
     const cellType = this.internalProps.layoutMap.getBody(col, row)?.cellType ?? 'text';
-    return getProp('cellType', { cellType }, col, row, this);
+    return normalizeCellType(getProp('cellType', { cellType }, col, row, this));
   }
 
   getCellType(col: number, row: number): ColumnTypeOption {
@@ -3848,13 +3852,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         col,
         row
       ).cellType;
-      return seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType;
+      return normalizeCellType(seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType);
     } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
       cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
     }
-    return getProp('cellType', { cellType }, col, row, this);
+    return normalizeCellType(getProp('cellType', { cellType }, col, row, this));
   }
 
   /**
