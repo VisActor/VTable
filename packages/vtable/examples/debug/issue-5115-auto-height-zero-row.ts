@@ -73,7 +73,9 @@ export function createTable() {
     const proxy = tableInstance.scenegraph.proxy;
     const bodyStart = tableInstance.frozenRowCount;
     const bodyHeight =
-      tableInstance.tableNoFrameHeight - tableInstance.getFrozenRowsHeight() - tableInstance.getBottomFrozenRowsHeight();
+      tableInstance.tableNoFrameHeight -
+      tableInstance.getFrozenRowsHeight() -
+      tableInstance.getBottomFrozenRowsHeight();
     const renderedHeight = tableInstance.getRowsHeight(bodyStart, proxy.rowEnd);
     const firstFilteredRowHeight = tableInstance.getRowHeight(tableInstance.columnHeaderLevelCount + 1);
     const proxyRowsSynced =
