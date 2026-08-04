@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: support tooltip appear delay",
+      "type": "minor",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "github@visactor.io"
+}

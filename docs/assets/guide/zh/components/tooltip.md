@@ -110,6 +110,7 @@ const tableInstance = new VTable.ListTable({
             content: 'Order ID：'+tableInstance.getCellValue(col,row),
             referencePosition: { rect, placement: VTable.TYPES.Placement.right }, //TODO
             className: 'defineTooltip',
+            appearDelay: 500,
             style: {
               bgColor: 'black',
               color: 'white',
