@@ -1435,36 +1435,78 @@ export class Scenegraph {
       }
     }
 
-    if (this.table.bottomFrozenRowCount > 0) {
-      this.bottomFrozenGroup.setAttribute(
-        'y',
-        this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight()
+    const hasFrozenCols = this.table.frozenColCount > 0;
+    const hasRightFrozenCols = this.table.rightFrozenColCount > 0;
+    const hasFrozenRows = this.table.frozenRowCount > 0;
+    const hasBottomFrozenRows = this.table.bottomFrozenRowCount > 0;
+
+    if (hasBottomFrozenRows) {
+      const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
+      const topFrozenBottom = Math.max(
+        this.colHeaderGroup.attribute.y + this.colHeaderGroup.attribute.height,
+        this.cornerHeaderGroup.attribute.y + this.cornerHeaderGroup.attribute.height,
+        this.rightTopCornerGroup.attribute.y + this.rightTopCornerGroup.attribute.height
       );
+      const middleContentBottom = Math.max(
+        this.rowHeaderGroup.attribute.y + this.rowHeaderGroup.attribute.height,
+        this.bodyGroup.attribute.y + this.bodyGroup.attribute.height,
+        this.rightFrozenGroup.attribute.y + this.rightFrozenGroup.attribute.height,
+        topFrozenBottom
+      );
+      const bottomFrozenY = Math.min(this.tableGroup.attribute.height - bottomFrozenRowsHeight, middleContentBottom);
+      this.bottomFrozenGroup.setAttribute('y', bottomFrozenY);
       this.leftBottomCornerGroup.setAttributes({
-        visible: true,
-        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
-        height: this.table.getBottomFrozenRowsHeight(),
-        width: this.table.getFrozenColsWidth()
+        visible: hasFrozenCols,
+        y: bottomFrozenY,
+        height: bottomFrozenRowsHeight,
+        width: hasFrozenCols ? this.table.getFrozenColsWidth() : 0
       });
       this.rightBottomCornerGroup.setAttributes({
-        visible: true,
-        y: this.tableGroup.attribute.height - this.table.getBottomFrozenRowsHeight(),
-        height: this.table.getBottomFrozenRowsHeight()
+        visible: hasRightFrozenCols,
+        x: 0,
+        y: bottomFrozenY,
+        width: 0,
+        height: bottomFrozenRowsHeight
+      });
+    } else {
+      this.leftBottomCornerGroup.setAttributes({
+        visible: false,
+        width: 0,
+        height: 0
+      });
+      this.rightBottomCornerGroup.setAttributes({
+        visible: false,
+        width: 0,
+        height: 0
       });
     }
 
-    if (this.table.rightFrozenColCount > 0) {
-      this.rightFrozenGroup.setAttribute('x', this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth());
+    if (hasRightFrozenCols) {
+      const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+      const middleContentRight = Math.max(
+        this.colHeaderGroup.attribute.x + this.colHeaderGroup.attribute.width,
+        this.bodyGroup.attribute.x + this.bodyGroup.attribute.width,
+        this.bottomFrozenGroup.attribute.x + this.bottomFrozenGroup.attribute.width
+      );
+      const rightFrozenX = Math.min(this.tableGroup.attribute.width - rightFrozenColsWidth, middleContentRight);
+      this.rightFrozenGroup.setAttribute('x', rightFrozenX);
       this.rightTopCornerGroup.setAttributes({
-        visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth(),
-        height: this.table.getFrozenRowsHeight()
+        visible: hasFrozenRows,
+        x: rightFrozenX,
+        width: hasFrozenRows ? rightFrozenColsWidth : 0,
+        height: hasFrozenRows ? this.table.getFrozenRowsHeight() : 0
       });
       this.rightBottomCornerGroup.setAttributes({
-        visible: true,
-        x: this.tableGroup.attribute.width - this.table.getRightFrozenColsWidth(),
-        width: this.table.getRightFrozenColsWidth()
+        visible: hasBottomFrozenRows,
+        x: rightFrozenX,
+        width: hasBottomFrozenRows ? rightFrozenColsWidth : 0,
+        height: hasBottomFrozenRows ? this.table.getBottomFrozenRowsHeight() : 0
+      });
+    } else {
+      this.rightTopCornerGroup.setAttributes({
+        visible: false,
+        width: 0,
+        height: 0
       });
     }
 

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-plugins",
+      "comment": "fix: keep master detail expandable after list table setRecords",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "892739385@qq.com"
+}

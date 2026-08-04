@@ -274,6 +274,9 @@ export class CachedDataSource extends DataSource {
         continue;
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
+      if (!isValid(originRecordIndex)) {
+        continue;
+      }
 
       this.beforeChangedRecordsMap.delete(originRecordIndex.toString());
       this.dataSourceObj.records.splice(originRecordIndex, 1);
@@ -292,6 +295,9 @@ export class CachedDataSource extends DataSource {
         continue;
       }
       const originRecordIndex = this.getOriginRecordIndexForGroup(recordIndex);
+      if (!isValid(originRecordIndex)) {
+        continue;
+      }
       this.beforeChangedRecordsMap.delete(originRecordIndex.toString());
       this.dataSourceObj.records[originRecordIndex] = records[index];
     }

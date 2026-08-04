@@ -150,9 +150,16 @@ export async function parseWorksheetToSheetData(
   const sheetTitle = worksheet.name || `Sheet${sheetIndex + 1}`;
   const sheetKey = `sheet_${Date.now()}_${sheetIndex}`;
 
-  // 获取实际数据范围
-  const rowCount = worksheet.actualRowCount || 0;
-  const columnCount = worksheet.actualColumnCount || 0;
+  // 获取实际数据范围。actualRowCount/actualColumnCount 只统计非空行列的数量，
+  // 当数据前面或中间存在空白行列时，不能作为最后一个数据单元格的索引。
+  let rowCount = 0;
+  let columnCount = 0;
+  worksheet.eachRow((row, rowNumber) => {
+    rowCount = Math.max(rowCount, rowNumber);
+    row.eachCell((_cell, colNumber) => {
+      columnCount = Math.max(columnCount, colNumber);
+    });
+  });
 
   if (rowCount === 0 || columnCount === 0) {
     // 空 sheet，但仍需要解析合并单元格信息（可能只有合并单元格没有数据）

@@ -29,6 +29,10 @@ export interface ContextMenuOptions {
   headerCellMenuItems?: MenuItemOrSeparator[];
   /** 表体菜单项 */
   bodyCellMenuItems?: MenuItemOrSeparator[];
+  /** 空白画布区域菜单项。仅 contextMenuWorkOnlyCell 为 false 时生效。 */
+  canvasMenuItems?: MenuItemOrSeparator[];
+  /** 右键菜单是否只工作在单元格上。默认 true；配置 false 时空白画布区域也弹出菜单。 */
+  contextMenuWorkOnlyCell?: boolean;
   /** 自定义菜单样式 */
   customMenuAttributions?: MenuAttributions;
   /** 菜单点击回调。如果设置是函数，则忽略内部默认的菜单项处理逻辑。如果这里配置的是个对象（对象的key为menuKey），则有匹配的menuKey时忽略内部默认的菜单项处理逻辑，
@@ -56,7 +60,7 @@ export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => 
 export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   id = `context-menu`;
   name = 'Context Menu';
-  runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.PLUGIN_EVENT];
+  runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS, TABLE_EVENT_TYPE.PLUGIN_EVENT];
   pluginOptions: ContextMenuOptions;
   table: ListTable;
   /** 菜单管理器 */
@@ -157,6 +161,22 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   };
 
   /**
+   * 处理空白画布右键菜单事件
+   */
+  private handleContextMenuCanvas = (eventArgs: any, table: BaseTableAPI): void => {
+    let menuItems = this.pluginOptions.canvasMenuItems || [];
+    const { col = -1, row = -1 } = eventArgs;
+
+    if (this.pluginOptions.beforeShowAdjustMenuItems) {
+      menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, col, row);
+    }
+
+    if (menuItems.length > 0) {
+      this.showContextMenu(menuItems, eventArgs.event.clientX, eventArgs.event.clientY, col, row);
+    }
+  };
+
+  /**
    * 处理插件事件
    */
   private handlePluginEvent = (eventArgs: any, table: BaseTableAPI): void => {
@@ -191,6 +211,15 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   /**
    * 运行插件
    */
+  init(_table: BaseTableAPI, options: BaseTableAPI['options']) {
+    if (this.pluginOptions.contextMenuWorkOnlyCell === false) {
+      options.menu = {
+        ...options.menu,
+        contextMenuWorkOnlyCell: false
+      };
+    }
+  }
+
   run(...args: any[]) {
     const eventArgs = args[0];
     const runTime = args[1];
@@ -203,6 +232,8 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     // 根据事件类型处理不同的右键菜单
     if (runTime === TABLE_EVENT_TYPE.CONTEXTMENU_CELL) {
       this.handleContextMenuCell(eventArgs, table);
+    } else if (runTime === TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS) {
+      this.handleContextMenuCanvas(eventArgs, table);
     } else if (runTime === TABLE_EVENT_TYPE.PLUGIN_EVENT) {
       this.handlePluginEvent(eventArgs, table);
     }

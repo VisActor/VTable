@@ -34,6 +34,7 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
       file: minify
         ? `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.min.js`
         : `${dest}/${config.umdOutputFilename || packageNameToPath(rawPackageJson.name)}.js`,
+      inlineDynamicImports: true,
       exports: 'named',
       globals: { react: 'React', ...config.globals }
     }

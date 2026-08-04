@@ -479,9 +479,9 @@ export class StateManager {
         const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
         this._gantt._dragOrderTaskRecord(
           target.task_index,
-          target.sub_task_index,
+          target.sub_task_index as number,
           indexs.task_index,
-          indexs.sub_task_index
+          indexs.sub_task_index as number
         );
         clearRecordShowIndex(this._gantt.records);
         this._gantt.taskListTableInstance.renderWithRecreateCells();
@@ -494,18 +494,20 @@ export class StateManager {
           Math.abs(Math.round(deltaY / this._gantt.parsedOptions.rowHeight)) >= 1
         ) {
           const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
-          this._gantt._dragOrderTaskRecord(
-            target.task_index,
-            target.sub_task_index,
-            indexs.task_index,
-            indexs.sub_task_index
-          );
-          if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
-            this._gantt.taskListTableInstance.renderWithRecreateCells();
-            this._gantt.scenegraph.refreshTaskBarsAndGrid();
-          } else {
-            this._gantt.scenegraph.taskBar.refresh();
-            this._gantt.scenegraph.dependencyLink.refresh();
+          if (!Array.isArray(target.sub_task_index) && !Array.isArray(indexs.sub_task_index)) {
+            this._gantt._dragOrderTaskRecord(
+              target.task_index,
+              target.sub_task_index,
+              indexs.task_index,
+              indexs.sub_task_index
+            );
+            if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate) {
+              this._gantt.taskListTableInstance.renderWithRecreateCells();
+              this._gantt.scenegraph.refreshTaskBarsAndGrid();
+            } else {
+              this._gantt.scenegraph.taskBar.refresh();
+              this._gantt.scenegraph.dependencyLink.refresh();
+            }
           }
           // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
         } else {
@@ -1364,6 +1366,8 @@ export class StateManager {
             // 更新父任务的时间范围
             parent[startDateField] = formatDateValue(earliestStart);
             parent[endDateField] = formatDateValue(latestEnd);
+            const parentRecordIndex = parentPath.length === 0 ? childIndex : [...parentPath, childIndex];
+            this._gantt._updateRecordToListTable(parent, parentRecordIndex);
           }
         }
       }
@@ -1377,7 +1381,7 @@ export class StateManager {
   }
 }
 
-function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number, sub_task_index?: number) {
+function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number, sub_task_index?: number | number[]) {
   const taskBarCustomLayout = gantt.parsedOptions.taskBarCustomLayout;
   if (taskBarCustomLayout) {
     let customLayoutObj;

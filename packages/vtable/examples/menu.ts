@@ -36,6 +36,14 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5115-auto-height-zero-row'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5117-auto-height-real-height'
+      },
+      {
+        path: 'debug',
         name: 'issue-5146'
       },
       {
@@ -49,6 +57,34 @@ export const menus = [
       {
         path: 'debug',
         name: 'issue-5187-max-frozen-width'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5213-row-series-number-aggregation'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4761-update-records-edit-render'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4810-edit-cell-double-click-blank'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4816-functional-icons-theme'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4904-frozen-row-gap'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4798-sort-icon-visible-time'
+      },
+      {
+        path: 'debug',
+        name: 'issue-celltype-function-undefined'
       },
       {
         path: 'debug',
@@ -106,6 +142,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
+        name: 'issue-5211-tree-checkbox-record-index'
       },
       {
         path: 'list',

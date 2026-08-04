@@ -7,6 +7,7 @@ import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { deduplication } from '../../tools/util';
 import { checkHaveTextStick, resetTextStick } from '../stick-text';
+import { computeRowsHeight } from './compute-row-height';
 
 /**
  * add and remove rows in scenegraph
@@ -78,6 +79,11 @@ export function updateRow(
     updateAfter = updateAfter ?? needUpdateAfter;
     rowHeightsMap.insert(row);
   });
+  const filledVisibleRowStart = fillVisibleBodyRows(scene);
+  if (isNumber(filledVisibleRowStart)) {
+    updateAfter = updateAfter ?? filledVisibleRowStart;
+    rowUpdatePos = isValid(rowUpdatePos) ? Math.min(rowUpdatePos, filledVisibleRowStart) : filledVisibleRowStart;
+  }
 
   // reset attribute y and row number in CellGroup
   // const newTotalHeight = resetRowNumberAndY(scene);
@@ -277,6 +283,40 @@ function addRow(row: number, scene: Scenegraph, skipUpdateProxy?: boolean) {
   // scene.proxy.rowEnd++;
   // scene.proxy.currentRow++;
 }
+
+function fillVisibleBodyRows(scene: Scenegraph): number | undefined {
+  const { table, proxy } = scene;
+  if (table.heightMode !== 'autoHeight') {
+    return undefined;
+  }
+  const bodyBottomRow = table.rowCount - 1 - table.bottomFrozenRowCount;
+  const visibleBodyHeight = table.tableNoFrameHeight - table.getFrozenRowsHeight() - table.getBottomFrozenRowsHeight();
+  let targetRow = Math.min(proxy.rowEnd, bodyBottomRow);
+
+  computeRowsHeight(table, proxy.rowStart, targetRow, false);
+  while (targetRow < bodyBottomRow && table.getRowsHeight(table.frozenRowCount, targetRow) < visibleBodyHeight) {
+    const nextRow = targetRow + 1;
+    computeRowsHeight(table, nextRow, nextRow, false);
+    targetRow = nextRow;
+  }
+
+  if (targetRow <= proxy.rowEnd) {
+    return undefined;
+  }
+
+  const startRow = proxy.rowEnd + 1;
+  for (let row = startRow; row <= targetRow; row++) {
+    addRowCellGroup(row, scene);
+  }
+  proxy.rowEnd = targetRow;
+  proxy.currentRow = Math.max(proxy.currentRow, targetRow);
+  proxy.totalRow = Math.max(proxy.totalRow, targetRow);
+  proxy.totalActualBodyRowCount = Math.max(proxy.totalActualBodyRowCount, targetRow - proxy.rowStart + 1);
+  proxy.rowUpdatePos = Math.min(proxy.rowUpdatePos, startRow);
+
+  return startRow;
+}
+
 function resetRowNumber(scene: Scenegraph) {
   scene.bodyGroup.forEachChildren((colGroup: Group) => {
     let rowIndex = scene.bodyRowStart;

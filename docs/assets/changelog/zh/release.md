@@ -1,3 +1,20 @@
+# v1.26.6
+
+2026-08-03
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 在调用 updateRecords 且未传入记录索引时刷新行
+- **@visactor/vtable**: 主题更新后刷新功能图标
+- **@visactor/vtable**: 在聚合行中隐藏行序号
+- **@visactor/vtable**: 支持通过右键菜单删除反向选择的行
+- **@visactor/vtable**: 允许插件在首次渲染前完成初始化
+- **@visactor/vtable**: 支持通过记录索引更新 checkbox 状态
+
+**完整更新日志**: https://github.com/VisActor/VTable/compare/v1.26.5...v1.26.6
+
+[更多详情请查看 v1.26.6](https://github.com/VisActor/VTable/releases/tag/v1.26.6)
+
 # v1.26.5
 
 2026-07-15

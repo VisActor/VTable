@@ -168,6 +168,10 @@ const { isTouchEvent } = event;
 const rangeReg = /^\$(\d+)\$(\d+)$/;
 importStyle();
 
+function normalizeCellType(cellType: ColumnTypeOption | undefined | null): ColumnTypeOption {
+  return isValid(cellType) ? cellType : 'text';
+}
+
 export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
@@ -503,7 +507,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.focusedTable = false;
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT); //原来在listTable文件中
     internalProps.theme.isPivot = this.isPivotTable();
-    setIconColor(internalProps.theme.functionalIconsStyle);
+    this._updateFunctionalIcons();
     if (container) {
       // 先清空
       if (clearDOM) {
@@ -2938,7 +2942,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     internalProps.theme = themes.of(options.theme ?? themes.DEFAULT);
     internalProps.theme.isPivot = this.isPivotTable();
-    setIconColor(internalProps.theme.functionalIconsStyle);
+    this._updateFunctionalIcons();
     this.scenegraph.updateStageBackground();
     // this._updateSize();
     //设置是否自动撑开的配置
@@ -3783,6 +3787,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 获取当前使用的主题
    */
+  private _updateFunctionalIcons() {
+    setIconColor(this.internalProps.theme.functionalIconsStyle);
+    this.internalProps.headerHelper?.updateIcons();
+    this.internalProps.bodyHelper?.updateIcons();
+    this.internalProps.rowSeriesNumberHelper?.updateIcons();
+  }
   get theme(): TableTheme {
     return this.internalProps.theme;
   }
@@ -3790,7 +3800,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.internalProps.theme.isPivot = this.isPivotTable();
     this.options.theme = theme;
-    setIconColor(this.internalProps.theme.functionalIconsStyle);
+    this._updateFunctionalIcons();
   }
   /**
    * 设置主题
@@ -3799,7 +3809,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.theme = themes.of(theme ?? themes.DEFAULT);
     this.internalProps.theme.isPivot = this.isPivotTable();
-    setIconColor(this.internalProps.theme.functionalIconsStyle);
+    this._updateFunctionalIcons();
     this.options.theme = theme;
     this.scenegraph.updateComponent();
     this.scenegraph.updateStageBackground();
@@ -3832,7 +3842,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   getBodyColumnType(col: number, row: number): ColumnTypeOption {
     const cellType = this.internalProps.layoutMap.getBody(col, row)?.cellType ?? 'text';
-    return getProp('cellType', { cellType }, col, row, this);
+    return normalizeCellType(getProp('cellType', { cellType }, col, row, this));
   }
 
   getCellType(col: number, row: number): ColumnTypeOption {
@@ -3842,13 +3852,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         col,
         row
       ).cellType;
-      return seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType;
+      return normalizeCellType(seriesHeaderCellType === 'radio' ? 'text' : seriesHeaderCellType);
     } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
       cellType = this.internalProps.layoutMap.getBody(col, row).cellType;
     }
-    return getProp('cellType', { cellType }, col, row, this);
+    return normalizeCellType(getProp('cellType', { cellType }, col, row, this));
   }
 
   /**

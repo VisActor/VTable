@@ -39,7 +39,12 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
+import {
+  clearCheckboxState,
+  getGroupCheckboxState,
+  setCellCheckboxState,
+  setCheckboxStateByRecordIndex
+} from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
@@ -590,6 +595,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
+      }
       let value;
       if ((this.internalProps as ListTableProtected).groupBy) {
         const record = table.getCellRawRecord(col, row);
@@ -639,6 +647,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
+      }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
@@ -772,7 +783,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   ) {
     const internalProps = this.internalProps;
 
-    this.pluginManager.removeOrAddPlugins(options.plugins);
+    this.pluginManager.removeOrAddPlugins(options.plugins, options);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -1561,6 +1572,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
   setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
+  }
+  setCellCheckboxStateByRecordIndex(
+    recordIndex: number | number[],
+    field: FieldDef,
+    checked: boolean | 'indeterminate'
+  ) {
+    setCheckboxStateByRecordIndex(recordIndex, field, checked, this);
+  }
+  clearCheckboxState(field: FieldDef) {
+    clearCheckboxState(field, this);
+  }
+  clearAllCheckboxState(field: FieldDef) {
+    this.clearCheckboxState(field);
   }
   setCellRadioState(col: number, row: number, index?: number) {
     setCellRadioState(col, row, index, this);
@@ -2416,14 +2440,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
-    listTableUpdateRecords(records, recordIndexs, this);
+  updateRecords(records: any[], recordIndexs?: (number | number[])[], triggerEvent = true) {
+    const updateRecordIndexs = recordIndexs ?? records?.map((_, index) => index) ?? [];
+    listTableUpdateRecords(records, updateRecordIndexs, this);
 
-    // 触发更新数据记录事件 - 假设操作成功
     if (triggerEvent) {
       this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
         records,
-        recordIndexs,
+        recordIndexs: updateRecordIndexs,
         updateCount: records.length
       });
     }

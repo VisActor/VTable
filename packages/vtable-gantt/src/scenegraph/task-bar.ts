@@ -19,6 +19,23 @@ const LOCATE_ICON_BG_HOVER = '#4080ff';
 const LOCATE_ICON_ARROW = '#4e5969';
 const LOCATE_ICON_ARROW_HOVER = '#ffffff';
 
+const isSameSubTaskIndex = (source?: number | number[], target?: number | number[]) => {
+  if (!isValid(target)) {
+    return true;
+  }
+
+  if (Array.isArray(source) || Array.isArray(target)) {
+    return (
+      Array.isArray(source) &&
+      Array.isArray(target) &&
+      source.length === target.length &&
+      source.every((value, index) => value === target[index])
+    );
+  }
+
+  return source === target;
+};
+
 export class TaskBar {
   formatMilestoneText(text: string, record: any): string {
     if (!text) {
@@ -524,7 +541,7 @@ export class TaskBar {
     }
     return { barGroupBox, baselineBar };
   }
-  updateTaskBarNode(index: number, sub_task_index?: number) {
+  updateTaskBarNode(index: number, sub_task_index?: number | number[]) {
     const taskbarGroup = this.getTaskBarNodeByIndex(index, sub_task_index);
     if (taskbarGroup) {
       this.barContainer.removeChild(taskbarGroup);
@@ -1054,16 +1071,13 @@ export class TaskBar {
     this.selectedBorders[0].appendChild(line);
   }
 
-  getTaskBarNodeByIndex(index: number, sub_task_index?: number): GanttTaskBarNode {
+  getTaskBarNodeByIndex(index: number, sub_task_index?: number | number[]): GanttTaskBarNode {
     let c = this.barContainer.firstChild as GanttTaskBarNode;
     if (!c) {
       return null;
     }
     for (let i = 0; i < this.barContainer.childrenCount; i++) {
-      if (
-        c.task_index === index &&
-        (!isValid(sub_task_index) || (isValid(sub_task_index) && c.sub_task_index === sub_task_index))
-      ) {
+      if (c.task_index === index && isSameSubTaskIndex(c.sub_task_index, sub_task_index)) {
         return c;
       }
       c = c._next as GanttTaskBarNode;

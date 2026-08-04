@@ -458,6 +458,25 @@ export interface ListTableAPI extends BaseTableAPI {
     reapplySort?: boolean;
     clearRowHeightCache?: boolean;
   }) => void;
+  /** 获取某个字段下 checkbox 全部数据的选中状态，顺序对应原始 records。 */
+  getCheckboxState: (field?: string | number) => any[];
+  /** 获取某个单元格 checkbox 的状态。 */
+  getCellCheckboxState: (col: number, row: number) => boolean | 'indeterminate' | undefined;
+  /** 设置某个可见单元格 checkbox 的状态。 */
+  setCellCheckboxState: (col: number, row: number, checked: boolean | 'indeterminate') => void;
+  /**
+   * 根据源数据 records 的 index + field 设置 checkbox 状态。
+   * recordIndex 为源数据中的索引：普通表格为 number；树形表格为 number[]（children 路径）。
+   */
+  setCellCheckboxStateByRecordIndex: (
+    recordIndex: number | number[],
+    field: FieldDef,
+    checked: boolean | 'indeterminate'
+  ) => void;
+  /** 清除指定 field 的全部 checkbox 选中状态。 */
+  clearCheckboxState: (field: FieldDef) => void;
+  /** clearCheckboxState 的别名，兼容 issue 中提出的 API 命名。 */
+  clearAllCheckboxState: (field: FieldDef) => void;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */
@@ -478,7 +497,7 @@ export interface ListTableAPI extends BaseTableAPI {
   addRecord: (record: any, recordIndex?: number | number[], triggerEvent?: boolean) => void;
   addRecords: (records: any[], recordIndex?: number | number[], triggerEvent?: boolean) => void;
   deleteRecords: (recordIndexs: number[] | number[][], triggerEvent?: boolean) => void;
-  updateRecords: (records: any[], recordIndexs: (number | number[])[], triggerEvent?: boolean) => void;
+  updateRecords: (records: any[], recordIndexs?: (number | number[])[], triggerEvent?: boolean) => void;
   updateFilterRules: (filterRules: FilterRules, options: { clearRowHeightCache?: boolean }) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;

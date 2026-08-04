@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 15 Jul 2026 10:41:26 GMT and should not be manually modified.
+This log was last generated on Mon, 03 Aug 2026 11:18:03 GMT and should not be manually modified.
+
+## 1.26.6
+Mon, 03 Aug 2026 11:18:03 GMT
+
+### Patches
+
+- fix: refresh rows when updateRecords is called without record indexes
+- fix: refresh functional icons after theme updates
+- fix: allow plugins to initialize before first render
+- fix: support updating checkbox state by record index
+
+### Updates
+
+- fix: hide row series number in aggregation rows
+- fix: delete reverse-selected rows from context menu
 
 ## 1.26.5
 Wed, 15 Jul 2026 10:41:26 GMT
