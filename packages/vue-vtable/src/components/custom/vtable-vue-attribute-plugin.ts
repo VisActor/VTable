@@ -842,6 +842,12 @@ function checkFrozenContainer(graphic: IGraphic) {
       container = table.rightFrozenBottomDomContainer;
     } else if (row >= table.rowCount - table.bottomFrozenRowCount) {
       container = table.bottomFrozenBodyDomContainer;
+    } else if (row < table.frozenRowCount && col < table.frozenColCount) {
+      container = table.frozenHeaderDomContainer;
+    } else if (row < table.frozenRowCount && col >= table.colCount - table.rightFrozenColCount) {
+      container = table.rightFrozenHeaderDomContainer;
+    } else if (row < table.frozenRowCount) {
+      container = table.headerDomContainer;
     } else if (col < table.frozenColCount) {
       container = table.frozenBodyDomContainer;
     } else if (col >= table.colCount - table.rightFrozenColCount) {
