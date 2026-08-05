@@ -110,6 +110,43 @@ describe('listTable-tooltip init test', () => {
       }
     });
   });
+  test('listTable-tooltip supports appearDelay', async () => {
+    const col = 0;
+    const row = 2;
+    const rect = listTable.getVisibleCellRangeRelativeRect({ col, row });
+
+    listTable.internalProps.tooltipHandler._unbindFromCell();
+    listTable.showTooltip(col, row, {
+      content: 'Order ID：' + listTable.getCellValue(col, row),
+      referencePosition: { rect, placement: VTable.TYPES.Placement.right },
+      appearDelay: 30
+    });
+
+    expect(listTable.internalProps.tooltipHandler._attachInfo).toBeNull();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(listTable.internalProps.tooltipHandler._attachInfo).toBeNull();
+    await new Promise(resolve => setTimeout(resolve, 30));
+    expect(listTable.internalProps.tooltipHandler._attachInfo.range).toStrictEqual({
+      start: {
+        col: 0,
+        row: 2
+      },
+      end: {
+        col: 0,
+        row: 2
+      }
+    });
+
+    listTable.internalProps.tooltipHandler._unbindFromCell();
+    listTable.showTooltip(col, row, {
+      content: 'Order ID：' + listTable.getCellValue(col, row),
+      referencePosition: { rect, placement: VTable.TYPES.Placement.right },
+      appearDelay: 30
+    });
+    listTable.internalProps.tooltipHandler._unbindFromCell();
+    await new Promise(resolve => setTimeout(resolve, 40));
+    expect(listTable.internalProps.tooltipHandler._attachInfo).toBeNull();
+  });
   // setTimeout(() => {
   //   listTable.release();
   // }, 1000);

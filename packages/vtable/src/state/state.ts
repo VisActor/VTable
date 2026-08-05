@@ -746,6 +746,7 @@ export class StateManager {
             inlineIcon.tooltip?.style,
             inlineIcon.attribute?.tooltip?.style
           ),
+          appearDelay: inlineIcon.attribute.tooltip.appearDelay,
           disappearDelay: inlineIcon.attribute.tooltip.disappearDelay
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {

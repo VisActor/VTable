@@ -1492,6 +1492,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** Set tooltip appearance delay time */
+  appearDelay?: number;
   /** Set tooltip disappearance time */
   disappearDelay?: number;
 };

@@ -88,6 +88,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5112-tooltip-appear-delay'
+      },
+      {
+        path: 'debug',
         name: 'header-frame-border-null-color'
       }
     ]
