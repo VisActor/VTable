@@ -80,6 +80,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4964-custom-render-async-value'
+      },
+      {
+        path: 'debug',
         name: 'issue-4798-sort-icon-visible-time'
       },
       {
