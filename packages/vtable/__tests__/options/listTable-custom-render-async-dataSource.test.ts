@@ -49,8 +49,8 @@ describe('ListTable customRender with lazy dataSource', () => {
       heightMode: 'autoHeight',
       limitMaxAutoWidth: 600,
       customRender(args) {
-        const { row, value, forComputation } = args;
-        if (row === 0) {
+        const { col, row, value, forComputation } = args;
+        if (row === 0 || col !== 0) {
           return null;
         }
         if (forComputation && value !== undefined) {

@@ -74,10 +74,10 @@ export function createTable() {
     heightMode: 'autoHeight',
     limitMaxAutoWidth: 600,
     customRender(args) {
-      const { row, value, forComputation } = args;
+      const { col, row, value, forComputation } = args;
       customRenderCallCount++;
 
-      if (row === 0) {
+      if (row === 0 || col !== 0) {
         return null;
       }
 
