@@ -41,6 +41,7 @@
     "start:react19": "npm run setup:react19-deps && vite --config ./demo/vite.config.react19.ts ./demo",
     "build": "npm run fix-memory-limit && bundle --clean",
     "compile": "tsc --noEmit",
+    "test": "jest --config jest.config.js",
     "eslint": "eslint --debug --fix src/",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
