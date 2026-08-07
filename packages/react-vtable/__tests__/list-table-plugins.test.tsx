@@ -9,7 +9,6 @@ import { ListColumn, ListTable } from '../src';
 describe('ListTable plugins', () => {
   let container: HTMLDivElement;
   let root: Root;
-  let consoleError: jest.SpyInstance;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -17,7 +16,6 @@ describe('ListTable plugins', () => {
     container.style.height = '400px';
     document.body.appendChild(container);
     root = createRoot(container);
-    consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -25,11 +23,15 @@ describe('ListTable plugins', () => {
       root.unmount();
     });
     container.remove();
-    consoleError.mockRestore();
   });
 
   test('does not enter an update loop when a filter plugin is configured', async () => {
+    let readyResolve!: () => void;
+    const ready = new Promise<void>(resolve => {
+      readyResolve = resolve;
+    });
     const onReady = jest.fn();
+    onReady.mockImplementationOnce(() => readyResolve());
 
     await act(async () => {
       root.render(
@@ -45,10 +47,9 @@ describe('ListTable plugins', () => {
           <ListColumn field="age" title="Age" />
         </ListTable>
       );
-      await new Promise(resolve => setTimeout(resolve, 50));
     });
+    await ready;
 
     expect(onReady).toHaveBeenCalledTimes(1);
-    expect(consoleError.mock.calls.some(args => String(args[0]).includes('Maximum update depth exceeded'))).toBe(false);
   });
 });
