@@ -11,6 +11,7 @@
 - 支持自定义菜单项和分隔线
 - 支持菜单项分组和子菜单
 - 支持自定义菜单项点击回调
+- 支持监听菜单项点击事件，获取菜单项和单元格位置信息
 - 支持菜单项图标和快捷键提示
 - 支持菜单项中的数字输入（如插入多行/列）
 
@@ -132,6 +133,48 @@ const contextMenuPlugin = new ContextMenuPlugin({
   });
 ```
 
+## 监听菜单项点击事件
+
+如果需要在右键菜单项点击后统一感知用户操作，可以监听 `ContextMenuPlugin` 触发的 `context_menu_click` 事件。该事件只有安装并启用右键菜单插件后才会触发，并且会在插件完成菜单项处理后触发，因此内置的冻结、插入、删除等菜单操作已经生效。
+
+```typescript
+import * as VTable from '@visactor/vtable';
+import { ContextMenuPlugin } from '@visactor/vtable-plugins';
+
+const contextMenuPlugin = new ContextMenuPlugin();
+
+const tableInstance = new VTable.ListTable({
+  container: document.getElementById('container'),
+  columns,
+  records,
+  plugins: [contextMenuPlugin]
+});
+
+tableInstance.on(VTable.TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, args => {
+  const { col, row, contextMenu } = args;
+
+  console.log('右键菜单点击位置:', col, row);
+  console.log('菜单项信息:', contextMenu.menuKey, contextMenu.menuText);
+
+  if (contextMenu.menuKey === 'freeze_to_this_row_and_column') {
+    console.log('当前冻结行列数:', tableInstance.frozenRowCount, tableInstance.frozenColCount);
+  }
+});
+```
+
+事件参数说明：
+
+| 参数 | 类型 | 描述 |
+| --- | --- | --- |
+| `col` | number | 菜单触发位置对应的列号；没有对应单元格时为 `-1` |
+| `row` | number | 菜单触发位置对应的行号；没有对应单元格时为 `-1` |
+| `contextMenu.menuKey` | string | 被点击菜单项的唯一标识 |
+| `contextMenu.menuText` | string | 被点击菜单项的展示文本 |
+| `contextMenu.rowIndex` | number | 菜单触发位置对应的行号 |
+| `contextMenu.colIndex` | number | 菜单触发位置对应的列号 |
+| `contextMenu.cellValue` | any | 菜单触发位置对应的单元格值 |
+| `contextMenu.inputValue` | number \| string | 输入型菜单项中的输入值 |
+
 ## 完整示例
 
 以下是一个完整的示例，展示了如何创建具有右键菜单功能的表格：
@@ -244,6 +287,10 @@ const generateTestData = (count) => {
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+
+  tableInstance.on(VTable.TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, args => {
+    console.log('右键菜单项点击:', args.contextMenu);
+  });
 ```
 
 

@@ -249,7 +249,21 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       // 菜单项处理逻辑
       this.handleMenuClick(args, table);
     }
+    this.fireContextMenuClick(args, table);
   };
+
+  private fireContextMenuClick(args: MenuClickEventArgs, table: ListTable): void {
+    const { colIndex, rowIndex, ...contextMenu } = args;
+    table.fireListeners(TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: colIndex ?? -1,
+      row: rowIndex ?? -1,
+      contextMenu: {
+        ...contextMenu,
+        colIndex,
+        rowIndex
+      }
+    });
+  }
 
   private showContextMenu(menuItems: MenuItemOrSeparator[], x: number, y: number, col: number, row: number): void {
     // 显示菜单

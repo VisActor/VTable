@@ -134,6 +134,45 @@ describe('Context menu canvas option', () => {
     );
   });
 
+  test('ContextMenuPlugin emits context_menu_click after menu item click', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin();
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [contextMenuPlugin]
+    });
+
+    const fireListeners = jest.spyOn(table, 'fireListeners');
+
+    contextMenuPlugin['handleMenuClickCallback'](
+      {
+        menuKey: 'freeze_to_this_row_and_column',
+        menuText: '冻结到本行本列',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: 1
+      },
+      table
+    );
+
+    expect(table.frozenRowCount).toBe(2);
+    expect(table.frozenColCount).toBe(1);
+    expect(fireListeners).toHaveBeenCalledWith(ListTable.EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: 0,
+      row: 1,
+      contextMenu: {
+        menuKey: 'freeze_to_this_row_and_column',
+        menuText: '冻结到本行本列',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: 1
+      }
+    });
+  });
+
   test('ContextMenuPlugin init uses new options when added through updateOption', () => {
     const container = createDiv();
     const contextMenuPlugin = new ContextMenuPlugin({

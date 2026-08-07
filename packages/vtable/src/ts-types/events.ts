@@ -7,7 +7,7 @@ import type {
   ListTableConstructorOptions,
   PivotTableConstructorOptions
 } from './table-engine';
-import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
+import type { ContextMenuClickEventArgs, DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState, ColumnsDefine } from '.';
@@ -84,6 +84,7 @@ export interface TableEventHandlersEventArgumentMap {
   mouseup_cell: MousePointerCellEvent;
   contextmenu_cell: MousePointerMultiCellEvent;
   contextmenu_canvas: MousePointerCellEvent;
+  context_menu_click: ContextMenuClickEventArgs;
   before_keydown: KeydownEvent;
   keydown: KeydownEvent;
   scroll: {
@@ -395,6 +396,7 @@ export interface TableEventHandlersReturnMap {
   mouseup_cell: void;
   contextmenu_cell: void;
   contextmenu_canvas: void;
+  context_menu_click: void;
   before_keydown: void;
   keydown: void;
   scroll: void;
