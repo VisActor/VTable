@@ -135,7 +135,7 @@ const contextMenuPlugin = new ContextMenuPlugin({
 
 ## Listen to Menu Item Click Events
 
-If you need to observe user actions after a right-click menu item is clicked, listen to the `context_menu_click` event fired by `ContextMenuPlugin`. This event is only fired after the right-click menu plugin is installed and enabled. It is fired after the plugin finishes handling the menu item, so built-in operations such as freeze, insert, and delete have already taken effect.
+If you need to observe user actions after a right-click menu item is clicked, listen to the `context_menu_click` event fired by `ContextMenuPlugin`. This event is only fired after the right-click menu plugin is installed and enabled, and it is fired after the corresponding menu item handling logic finishes. Note that when `menuClickCallback` is configured as a function, the plugin runs that callback and skips the built-in menu handling. Built-in operations such as freeze, insert, and delete are only executed when `menuClickCallback` is not configured, or when it is configured as an object and the current `menuKey` does not match a custom callback.
 
 ```typescript
 import * as VTable from '@visactor/vtable';
@@ -170,8 +170,8 @@ Event argument description:
 | `row` | number | Row index of the menu trigger position; `-1` when there is no corresponding cell |
 | `contextMenu.menuKey` | string | Unique key of the clicked menu item |
 | `contextMenu.menuText` | string | Display text of the clicked menu item |
-| `contextMenu.rowIndex` | number | Row index of the menu trigger position |
-| `contextMenu.colIndex` | number | Column index of the menu trigger position |
+| `contextMenu.rowIndex` | number \| undefined | Row index of the menu trigger position; may be `undefined` when no row context exists |
+| `contextMenu.colIndex` | number \| undefined | Column index of the menu trigger position; may be `undefined` when no column context exists |
 | `contextMenu.cellValue` | any | Cell value at the menu trigger position |
 | `contextMenu.inputValue` | number \| string | Input value of an input menu item |
 

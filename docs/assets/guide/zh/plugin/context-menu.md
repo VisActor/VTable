@@ -135,7 +135,7 @@ const contextMenuPlugin = new ContextMenuPlugin({
 
 ## 监听菜单项点击事件
 
-如果需要在右键菜单项点击后统一感知用户操作，可以监听 `ContextMenuPlugin` 触发的 `context_menu_click` 事件。该事件只有安装并启用右键菜单插件后才会触发，并且会在插件完成菜单项处理后触发，因此内置的冻结、插入、删除等菜单操作已经生效。
+如果需要在右键菜单项点击后统一感知用户操作，可以监听 `ContextMenuPlugin` 触发的 `context_menu_click` 事件。该事件只有安装并启用右键菜单插件后才会触发，并且会在菜单项对应的处理逻辑完成后触发。需要注意的是，如果 `menuClickCallback` 配置为函数，插件会执行该回调并跳过内置菜单处理；如果未配置 `menuClickCallback`，或配置为对象但当前 `menuKey` 未命中自定义回调，才会执行内置的冻结、插入、删除等菜单操作。
 
 ```typescript
 import * as VTable from '@visactor/vtable';
@@ -170,8 +170,8 @@ tableInstance.on(VTable.TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, args => {
 | `row` | number | 菜单触发位置对应的行号；没有对应单元格时为 `-1` |
 | `contextMenu.menuKey` | string | 被点击菜单项的唯一标识 |
 | `contextMenu.menuText` | string | 被点击菜单项的展示文本 |
-| `contextMenu.rowIndex` | number | 菜单触发位置对应的行号 |
-| `contextMenu.colIndex` | number | 菜单触发位置对应的列号 |
+| `contextMenu.rowIndex` | number \| undefined | 菜单触发位置对应的行号；没有对应行时可能为 `undefined` |
+| `contextMenu.colIndex` | number \| undefined | 菜单触发位置对应的列号；没有对应列时可能为 `undefined` |
 | `contextMenu.cellValue` | any | 菜单触发位置对应的单元格值 |
 | `contextMenu.inputValue` | number \| string | 输入型菜单项中的输入值 |
 
