@@ -14,7 +14,7 @@ Demonstrate multiple ways to use stripe types
 
 ## Key Configurations
 
-headerType: 'text' | 'link' | 'image' | 'video';
+headerType: 'text' | 'link' | 'image' | 'video' | 'audio';
 
 cellType:
 'Text'

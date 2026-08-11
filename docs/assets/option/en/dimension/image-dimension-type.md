@@ -6,7 +6,7 @@ Specify the column type as `'image'`, headerType can be omitted and defaults to 
 
 ##${prefix} headerType(string) = 'image'
 
-Specify the column type as `'image'`, headerType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to type 'video'):
+Specify the column type as `'image'`, headerType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to 'video' and 'audio' types):
 
 {{ use: base-dimension-type(
     prefix = '##'+${prefix},

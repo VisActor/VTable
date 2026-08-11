@@ -153,8 +153,8 @@ export interface IRowSeriesNumber {
   title?: string;
   field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  headerType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
+  headerType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
@@ -184,7 +184,7 @@ export interface ColumnSeriesNumber {
   title?: string;
   field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   icon?:

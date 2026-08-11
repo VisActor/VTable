@@ -6,6 +6,7 @@ import { createRadioCellGroup } from './radio-cell';
 import { createSwitchCellGroup } from './switch-cell';
 import { createSparkLineCellGroup } from './spark-line-cell';
 import { createVideoCellGroup } from './video-cell';
+import { createAudioCellGroup } from './audio-cell';
 import { createCellGroup as createTextCellGroup } from './text-cell';
 import { createProgressBarCell } from './progress-bar-cell';
 import { getAxisDomainRangeAndLabels } from '../../../layout/chart-helper/get-axis-domain';
@@ -50,4 +51,8 @@ export const registerTextCell = () => {
 
 export const registerVideoCell = () => {
   Factory.registerFunction('createVideoCellGroup', createVideoCellGroup);
+};
+
+export const registerAudioCell = () => {
+  Factory.registerFunction('createAudioCellGroup', createAudioCellGroup);
 };

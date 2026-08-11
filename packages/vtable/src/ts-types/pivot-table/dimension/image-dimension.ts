@@ -3,7 +3,7 @@ import type { StylePropertyFunctionArg } from '../../style-define';
 import type { IBasicDimension } from './basic-dimension';
 
 export interface IImageDimension extends IBasicDimension {
-  headerType: 'image' | 'video';
+  headerType: 'image' | 'video' | 'audio';
   headerStyle?:
     | IImageStyleOption //表头可以配置吸附;
     | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); //该维度层级表头部分的样式

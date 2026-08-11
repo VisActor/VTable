@@ -20,6 +20,8 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { getQuadProps } from '../../utils/padding';
 import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
+import { isAudioUrl } from '../../../tools/media';
+import { audioIconSvg } from './audio-cell';
 
 const regedIcons = icons.get();
 
@@ -51,6 +53,8 @@ function snapshotVideoFirstFrame(video: HTMLVideoElement, image: IImage, table: 
   const displayWidth = image.attribute.width;
   const displayHeight = image.attribute.height;
   if (
+    video.videoWidth <= 0 ||
+    video.videoHeight <= 0 ||
     typeof displayWidth !== 'number' ||
     typeof displayHeight !== 'number' ||
     displayWidth <= 0 ||
@@ -244,6 +248,26 @@ export function createVideoCellGroup(
 
   // video
   const value = table.getCellValue(col, row);
+  if (isAudioUrl(value)) {
+    const availableWidth = Math.max(1, width - padding[1] - padding[3]);
+    const availableHeight = Math.max(1, height - padding[0] - padding[2]);
+    const iconSize = Math.max(1, Math.min(availableWidth, availableHeight, 32));
+    const pos = calcStartPosition(0, 0, width, height, iconSize, iconSize, textAlign, textBaseline, padding);
+    const image: IImage = createImage({
+      x: pos.x,
+      y: pos.y,
+      width: iconSize,
+      height: iconSize,
+      image: audioIconSvg,
+      cursor: 'pointer' as Cursor
+    });
+    image.name = 'image';
+    image.keepAspectRatio = true;
+    image.textAlign = textAlign;
+    image.textBaseline = textBaseline;
+    cellGroup.appendChild(image);
+    return cellGroup;
+  }
   const video = document.createElement('video');
   video.muted = true;
   video.playsInline = true;
@@ -343,6 +367,10 @@ export function createVideoCellGroup(
     if (!scenegraph) {
       return;
     }
+    if (video.videoWidth <= 0 || video.videoHeight <= 0) {
+      handleVideoLoadFail();
+      return;
+    }
     if (imageAutoSizing) {
       _adjustWidthHeight(col, row, video.videoWidth, video.videoHeight, scenegraph, padding, cellGroup);
     }
@@ -440,8 +468,8 @@ export function createVideoCellGroup(
   const image: IImage = createImage({
     x: padding[3],
     y: padding[0],
-    width: width - padding[1] - padding[3],
-    height: height - padding[2] - padding[0],
+    width: Math.max(1, width - padding[1] - padding[3]),
+    height: Math.max(1, height - padding[2] - padding[0]),
     image: video as any,
     cursor: 'pointer' as Cursor
   });

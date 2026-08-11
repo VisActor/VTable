@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { createVideoCellGroup } from '../../src/scenegraph/group-creater/cell-type/video-cell';
+import { audioIconSvg } from '../../src/scenegraph/group-creater/cell-type/audio-cell';
 import { updateImageCellContentWhileResize } from '../../src/scenegraph/group-creater/cell-type/image-cell';
-import { registerForVrender } from '../../src/vrender';
+import { application, registerForVrender } from '../../src/vrender';
 import * as icons from '../../src/icons';
 
 global.__VERSION__ = 'none';
@@ -10,16 +11,16 @@ registerForVrender();
 
 describe('video cell first frame snapshot', () => {
   const originalCreateElement = document.createElement.bind(document);
-  let createdVideo: HTMLVideoElement;
+  let createdVideo: HTMLVideoElement | undefined;
   let drawImage: jest.Mock;
 
-  function createTable(customConfig?: Record<string, unknown>) {
+  function createTable(customConfig?: Record<string, unknown>, value = 'https://example.com/video.mp4') {
     return {
       options: {
         customConfig
       },
       _getCellStyle: jest.fn(() => ({})),
-      getCellValue: jest.fn(() => 'https://example.com/video.mp4'),
+      getCellValue: jest.fn(() => value),
       colCount: 1,
       rowCount: 1,
       theme: {
@@ -35,8 +36,12 @@ describe('video cell first frame snapshot', () => {
     };
   }
 
-  function createCell(customConfig?: Record<string, unknown>, size = { width: 200, height: 120 }) {
-    const table = createTable(customConfig);
+  function createCell(
+    customConfig?: Record<string, unknown>,
+    size = { width: 200, height: 120 },
+    value = 'https://example.com/video.mp4'
+  ) {
+    const table = createTable(customConfig, value);
     const cellGroup = createVideoCellGroup(
       undefined,
       0,
@@ -70,6 +75,16 @@ describe('video cell first frame snapshot', () => {
   }
 
   beforeEach(() => {
+    createdVideo = undefined;
+    (application.global as any).loadSvg = jest.fn(() =>
+      Promise.resolve({
+        data: {
+          width: 24,
+          height: 24
+        }
+      })
+    );
+    (application.global as any).getRequestAnimationFrame = () => (cb: FrameRequestCallback) => cb(0);
     drawImage = jest.fn();
     jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
       drawImage
@@ -116,6 +131,15 @@ describe('video cell first frame snapshot', () => {
     expect(video.load).not.toHaveBeenCalled();
   });
 
+  it('renders an audio placeholder when a video cell receives an audio url', () => {
+    const { image, video } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/audio.mp3');
+
+    expect(video).toBeUndefined();
+    expect(image.attribute.image).toBe(audioIconSvg);
+    expect(image.attribute.width).toBe(32);
+    expect(image.attribute.height).toBe(32);
+  });
+
   it('uses a canvas snapshot and releases the video when enabled', () => {
     const { image, table, video } = createCell({
       videoFirstFrameSnapshot: true,
@@ -147,6 +171,32 @@ describe('video cell first frame snapshot', () => {
     expect(video.pause).toHaveBeenCalledTimes(1);
     expect(video.hasAttribute('src')).toBe(false);
     expect(video.load).toHaveBeenCalledTimes(1);
+    expect(table.scenegraph.updateNextFrame).toHaveBeenCalled();
+  });
+
+  it('shows the damage image instead of drawing a zero-size video frame', () => {
+    const { image, table, video } = createCell({
+      videoFirstFrameSnapshot: true
+    });
+    Object.defineProperties(video, {
+      videoWidth: {
+        value: 0,
+        configurable: true
+      },
+      videoHeight: {
+        value: 0,
+        configurable: true
+      }
+    });
+    const regedIcons = icons.get();
+    const damageImage = regedIcons.video_damage_pic
+      ? (regedIcons.video_damage_pic as any).svg
+      : (regedIcons.damage_pic as any).svg;
+
+    video.dispatchEvent(new Event('loadeddata'));
+
+    expect(drawImage).not.toHaveBeenCalled();
+    expect(image.attribute.image).toBe(damageImage);
     expect(table.scenegraph.updateNextFrame).toHaveBeenCalled();
   });
 

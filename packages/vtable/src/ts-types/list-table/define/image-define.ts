@@ -4,7 +4,7 @@ import type { IBasicColumnBodyDefine, IBasicHeaderDefine } from './basic-define'
 
 export interface IImageHeaderDefine extends IBasicHeaderDefine {
   headerStyle?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption);
-  headerType: 'image' | 'video';
+  headerType: 'image' | 'video' | 'audio';
 
   /** 是否保持横纵比 默认false */
   keepAspectRatio?: boolean;
@@ -17,7 +17,7 @@ export interface IImageHeaderDefine extends IBasicHeaderDefine {
 
 export interface IImageColumnBodyDefine extends IBasicColumnBodyDefine {
   style?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption);
-  cellType: 'image' | 'video';
+  cellType: 'image' | 'video' | 'audio';
 
   /** 是否保持横纵比 默认false */
   keepAspectRatio?: boolean;

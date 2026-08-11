@@ -24,6 +24,7 @@ import type { CreateProgressBarCell } from './cell-type/progress-bar-cell';
 import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
 import type { CreateTextCellGroup } from './cell-type/text-cell';
 import type { CreateVideoCellGroup } from './cell-type/video-cell';
+import type { CreateAudioCellGroup } from './cell-type/audio-cell';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { getOrApply, isPromise } from '../../tools/helper';
@@ -41,6 +42,7 @@ import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
 import type { CreateButtonCellGroup } from './cell-type/button-cell';
+import { isAudioUrl } from '../../tools/media';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -246,6 +248,24 @@ export function createCell(
       textAlign,
       textBaseline,
       mayHaveIcon,
+      table,
+      cellTheme,
+      range,
+      isAsync
+    );
+  } else if (type === 'audio' || (type === 'video' && isAudioUrl(value))) {
+    const createAudioCellGroup = Factory.getFunction('createAudioCellGroup') as CreateAudioCellGroup;
+    cellGroup = createAudioCellGroup(
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
       table,
       cellTheme,
       range,

@@ -10,6 +10,7 @@ import {
 } from './components';
 import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import {
+  registerAudioCell,
   registerChartCell,
   registerCheckboxCell,
   registerImageCell,
@@ -28,6 +29,7 @@ registerTitle();
 registerTooltip();
 registerCustomCellStylePlugin();
 registerAnimation();
+registerAudioCell();
 registerCheckboxCell();
 registerImageCell();
 registerProgressBarCell();

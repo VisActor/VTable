@@ -41,7 +41,7 @@ Minimum width of the indicator column
 
 ${prefix} headerType(string) = 'text'
 
-Specify the header type, options: `'text'|'link'|'image'|'video'`, default `'text'`.
+Specify the header type, options: `'text'|'link'|'image'|'video'|'audio'`, default `'text'`.
 
 ${prefix} headerStyle(TODO)
 

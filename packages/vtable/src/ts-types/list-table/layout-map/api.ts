@@ -153,7 +153,7 @@ export interface IndicatorData extends WidthData {
   indicatorKey: string;
   // fieldKey: FieldKeyDef;
   fieldFormat?: FieldFormat;
-  cellType: 'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
+  cellType: 'text' | 'link' | 'image' | 'video' | 'audio' | 'sparkline' | 'progressbar' | 'chart'; //BaseColumn<T, any>;
   chartModule?: string;
   chartSpec?: any | ((arg0: CustomRenderFunctionArg) => any);
   chartInstance?: any;
@@ -191,8 +191,8 @@ export interface SeriesNumberColumnData extends WidthData {
     | (string | ColumnIconOption)[]
     | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
-  cellType: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
-  headerType: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox' | 'radio';
+  headerType: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
   style: ColumnStyleOption | null | undefined;
   define: IRowSeriesNumber;
   isChildNode?: false;

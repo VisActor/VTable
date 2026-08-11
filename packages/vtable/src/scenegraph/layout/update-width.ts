@@ -330,7 +330,7 @@ function updateCellWidth(
       getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
       false
     );
-  } else if (type === 'image' || type === 'video') {
+  } else if (type === 'image' || type === 'video' || type === 'audio') {
     // // 只更新背景边框
     // const rect = cell.firstChild as Rect;
     // rect.setAttribute('width', cell.attribute.width);
