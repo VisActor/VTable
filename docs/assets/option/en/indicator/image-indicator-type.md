@@ -6,7 +6,7 @@ Specifies the column type as `'image'`, cellType can be omitted and defaults to 
 
 ##${prefix} cellType(string) = 'image'
 
-Specifies the column type as `'image'`, cellType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to 'video' and 'audio' types):
+Specifies the column type as `'image'`, cellType can be omitted and defaults to `'text'`. Other configuration items are as follows; media preview options such as `clickToPreview` are also applicable to 'video' and 'audio' types:
 
 {{ use: base-indicator-type(
     prefix = '##'+${prefix},
@@ -23,4 +23,4 @@ Specifies the column type as `'image'`, cellType can be omitted and defaults to 
 
 ##${prefix} clickToPreview(boolean) = true
 
-**Configuration specific to image type** Whether to enable click preview.
+Whether to enable click preview.

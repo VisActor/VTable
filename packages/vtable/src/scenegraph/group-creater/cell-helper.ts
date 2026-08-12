@@ -42,7 +42,6 @@ import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
 import type { CreateButtonCellGroup } from './cell-type/button-cell';
-import { isAudioUrl } from '../../tools/media';
 
 export function createCell(
   type: ColumnTypeOption,
@@ -253,7 +252,7 @@ export function createCell(
       range,
       isAsync
     );
-  } else if (type === 'audio' || (type === 'video' && isAudioUrl(value))) {
+  } else if (type === 'audio') {
     const createAudioCellGroup = Factory.getFunction('createAudioCellGroup') as CreateAudioCellGroup;
     cellGroup = createAudioCellGroup(
       columnGroup,
@@ -266,6 +265,7 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
+      mayHaveIcon,
       table,
       cellTheme,
       range,

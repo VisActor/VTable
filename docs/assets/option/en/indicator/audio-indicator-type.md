@@ -6,7 +6,7 @@ Specifies the column type as `'audio'`, cellType can be omitted with default as 
 
 ##${prefix} cellType(string) = 'audio'
 
-Specifies the column type as `'audio'`, cellType can be omitted with default as `'text'`. All configuration options are the same as the image type, refer to the image type configuration options for details.
+Specifies the column type as `'audio'`, cellType can be omitted with default as `'text'`. Audio shares media preview options such as `clickToPreview`; image-specific options such as `keepAspectRatio` and `imageAutoSizing` do not apply.
 
 ##${prefix} clickToPreview(boolean) = true
 

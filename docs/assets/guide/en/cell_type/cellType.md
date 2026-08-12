@@ -6,7 +6,7 @@ Next, this article will focus on the various column types and their usage and ch
 
 ## Support type
 
-There are 8 data types supported by VTable, namely:
+There are 12 data types supported by VTable, namely:
 
 1.  Text
 2.  Link
@@ -16,6 +16,10 @@ There are 8 data types supported by VTable, namely:
 6.  progressbar
 7.  Sparkline
 8.  Chart
+9.  Checkbox
+10. Radio
+11. Switch
+12. Button
 
 Next, we'll cover each column type one by one.
 
@@ -122,7 +126,7 @@ When the column type is "video", it is used to display the data of the video typ
 
 ## Audio
 
-When the column type is "audio", it is used to display audio data. The cell displays an audio icon, and clicking it opens the preview window with the browser audio controls. All configuration items of "audio" are the same as image and video, you can refer to the image type configuration item.
+When the column type is "audio", it is used to display audio data. The cell displays an audio icon, and clicking it opens the preview window with audio playback controls. Audio shares media preview options such as `clickToPreview`; image-specific options such as `keepAspectRatio` and `imageAutoSizing` do not apply.
 
 ## progressbar
 

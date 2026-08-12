@@ -6,7 +6,7 @@
 
 ##${prefix} headerType(string) = 'audio'
 
-指定列类型为`'audio'`，headerType 可缺省默认为`'text'`。所有配置项和 image 一样，可参考 image 类型配置项。
+指定列类型为`'audio'`，headerType 可缺省默认为`'text'`。audio 共享 `clickToPreview` 等媒体预览配置；`keepAspectRatio`、`imageAutoSizing` 等 image 专属配置不适用于 audio。
 
 ##${prefix} clickToPreview(boolean) = true
 

@@ -321,7 +321,7 @@ export function updateImageCellContentWhileResize(
     (typeof image.attribute.image !== 'string' && image.attribute.image) ||
     image.resources?.get(image.attribute.image as string).data;
 
-  if (!originImage) {
+  if (!originImage && !(image as any).isAudioIcon) {
     return;
   }
 
@@ -343,6 +343,38 @@ export function updateImageCellContentWhileResize(
 
   const leftIconWidth = (cellGroup as any)._cellLeftIconWidth ?? 0;
   const rightIconWidth = (cellGroup as any)._cellRightIconWidth ?? 0;
+
+  if ((image as any).isAudioIcon) {
+    const availableWidth = Math.max(1, cellWidth - padding[1] - padding[3] - leftIconWidth - rightIconWidth);
+    const availableHeight = Math.max(1, cellHeight - padding[0] - padding[2]);
+    const iconSize = Math.max(1, Math.min(availableWidth, availableHeight, 32));
+    const pos = calcStartPosition(
+      leftIconWidth,
+      0,
+      cellWidth - leftIconWidth - rightIconWidth,
+      cellHeight,
+      iconSize,
+      iconSize,
+      textAlign,
+      textBaseline,
+      padding
+    );
+
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const cellGroup = table.scenegraph.getCell(col, row);
+        const image = cellGroup.getChildByName('image') as Image;
+        image?.setAttributes({
+          x: pos.x,
+          y: pos.y,
+          width: iconSize,
+          height: iconSize
+        });
+      }
+    }
+
+    return;
+  }
 
   if ((image as any).keepAspectRatio || isDamagePic(image)) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(

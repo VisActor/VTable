@@ -71,10 +71,18 @@ const themeMap = {
 
 function applyPageTheme(theme: DemoTheme) {
   const isDark = theme === 'dark';
-  document.body.style.background = isDark ? '#0F172A' : '#ffffff';
   const container = document.getElementById(CONTAINER_ID);
   if (container) {
     container.style.background = isDark ? '#111827' : '#ffffff';
+    container.parentElement?.style.setProperty('background', isDark ? '#0F172A' : '#ffffff');
+  }
+}
+
+function clearPageTheme() {
+  const container = document.getElementById(CONTAINER_ID);
+  if (container) {
+    container.style.background = '';
+    container.parentElement?.style.removeProperty('background');
   }
 }
 
@@ -175,7 +183,6 @@ export function createTable() {
         title: 'Audio',
         cellType: 'audio',
         width: 180,
-        keepAspectRatio: true,
         style: {
           padding: 8
         }
@@ -201,6 +208,13 @@ export function createTable() {
 
   const instance = new ListTable(option);
   createToolbar(instance, currentTheme);
+
+  const release = instance.release.bind(instance);
+  instance.release = () => {
+    document.getElementById(TOOLBAR_ID)?.remove();
+    clearPageTheme();
+    release();
+  };
 
   VTable.bindDebugTool(instance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']

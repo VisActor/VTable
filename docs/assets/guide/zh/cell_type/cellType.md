@@ -6,7 +6,7 @@
 
 ## 支持类型
 
-VTable 所支持的数据类型共有 8 种，分别为：
+VTable 所支持的数据类型共有 12 种，分别为：
 
 1. text
 2. link
@@ -16,6 +16,10 @@ VTable 所支持的数据类型共有 8 种，分别为：
 6. progressbar
 7. sparkline
 8. chart
+9. checkbox
+10. radio
+11. switch
+12. button
 
 接下来，我们将逐一介绍每一种列类型的相关内容。
 
@@ -120,7 +124,7 @@ VTable 所支持的数据类型共有 8 种，分别为：
 
 ## audio
 
-当列类型为 "audio" 时，用于显示音频类型的数据。单元格会展示音频图标，点击后会弹出预览窗口并使用浏览器音频控件播放。audio 的配置项和 image、video 一样，可参考 image 类型配置项。
+当列类型为 "audio" 时，用于显示音频类型的数据。单元格会展示音频图标，点击后会弹出预览窗口并使用音频播放控件播放。audio 共享 `clickToPreview` 等媒体预览配置；`keepAspectRatio`、`imageAutoSizing` 等 image 专属配置不适用于 audio。
 
 
 ## progressbar

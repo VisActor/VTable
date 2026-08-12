@@ -9,6 +9,7 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { getQuadProps } from '../../utils/padding';
 import type { CellRange } from '../../../ts-types';
+import { dealWithIconLayout } from '../../utils/text-icon-layout';
 
 export const audioIconSvg =
   '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="42" height="42" rx="10" fill="#F8FAFF" fill-opacity="0.92"/><rect x="3.75" y="3.75" width="40.5" height="40.5" rx="9.25" stroke="#1D4ED8" stroke-opacity="0.22" stroke-width="1.5"/><path d="M16 30H12C10.8954 30 10 29.1046 10 28V20C10 18.8954 10.8954 18 12 18H16L26 10V38L16 30Z" fill="#EAF1FF" stroke="#0F172A" stroke-opacity="0.24" stroke-width="5.5" stroke-linejoin="round"/><path d="M31.5 18.5C33.3 21.3 33.3 26.7 31.5 29.5" stroke="#0F172A" stroke-opacity="0.24" stroke-width="5.5" stroke-linecap="round"/><path d="M36 15C39.2 20.4 39.2 27.6 36 33" stroke="#0F172A" stroke-opacity="0.24" stroke-width="5.5" stroke-linecap="round"/><path d="M16 30H12C10.8954 30 10 29.1046 10 28V20C10 18.8954 10.8954 18 12 18H16L26 10V38L16 30Z" fill="#EAF1FF" stroke="#2563EB" stroke-width="3.2" stroke-linejoin="round"/><path d="M31.5 18.5C33.3 21.3 33.3 26.7 31.5 29.5" stroke="#2563EB" stroke-width="3.2" stroke-linecap="round"/><path d="M36 15C39.2 20.4 39.2 27.6 36 33" stroke="#2563EB" stroke-width="3.2" stroke-linecap="round"/></svg>';
@@ -24,9 +25,10 @@ export function createAudioCellGroup(
   padding: [number, number, number, number],
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
+  mayHaveIcon: boolean,
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
-  _range: CellRange | undefined,
+  range: CellRange | undefined,
   isAsync: boolean
 ) {
   const headerStyle = table._getCellStyle(col, row);
@@ -89,10 +91,68 @@ export function createAudioCellGroup(
     cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
   }
 
-  const availableWidth = Math.max(1, width - padding[1] - padding[3]);
+  let cellIcons;
+  if (mayHaveIcon) {
+    let iconCol = col;
+    let iconRow = row;
+    if (range) {
+      iconCol = range.start.col;
+      iconRow = range.start.row;
+    }
+    cellIcons = table.getCellIcons(iconCol, iconRow);
+  }
+
+  let cellLeftIconWidth = 0;
+  let cellRightIconWidth = 0;
+  if (Array.isArray(cellIcons) && cellIcons.length !== 0) {
+    const { leftIconWidth, rightIconWidth, absoluteRightIconWidth } = dealWithIconLayout(
+      cellIcons,
+      cellGroup,
+      range,
+      table
+    );
+
+    cellLeftIconWidth = leftIconWidth;
+    cellRightIconWidth = rightIconWidth;
+
+    cellGroup.forEachChildren((child: any) => {
+      if (child.role === 'icon-left') {
+        child.setAttribute('x', child.attribute.x + padding[3]);
+      } else if (child.role === 'icon-right') {
+        child.setAttribute('x', child.attribute.x + width - rightIconWidth - padding[1]);
+      } else if (child.role === 'icon-absolute-right') {
+        child.setAttribute('x', child.attribute.x + width - absoluteRightIconWidth - padding[1]);
+      }
+    });
+
+    cellGroup.forEachChildren((child: any) => {
+      if (textBaseline === 'middle') {
+        child.setAttribute('y', (height - child.AABBBounds.height()) / 2);
+      } else if (textBaseline === 'bottom') {
+        child.setAttribute('y', height - child.AABBBounds.height() - padding[2]);
+      } else {
+        child.setAttribute('y', padding[0]);
+      }
+    });
+
+    (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
+    (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
+  }
+
+  const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);
   const availableHeight = Math.max(1, height - padding[0] - padding[2]);
   const iconSize = Math.max(1, Math.min(availableWidth, availableHeight, 32));
-  const pos = calcStartPosition(0, 0, width, height, iconSize, iconSize, textAlign, textBaseline, padding);
+  const pos = calcStartPosition(
+    cellLeftIconWidth,
+    0,
+    width - cellLeftIconWidth - cellRightIconWidth,
+    height,
+    iconSize,
+    iconSize,
+    textAlign,
+    textBaseline,
+    padding
+  );
   const image: IImage = createImage({
     x: pos.x,
     y: pos.y,
@@ -103,6 +163,7 @@ export function createAudioCellGroup(
   });
   image.name = 'image';
   image.keepAspectRatio = true;
+  (image as any).isAudioIcon = true;
   image.textAlign = textAlign;
   image.textBaseline = textBaseline;
   cellGroup.appendChild(image);

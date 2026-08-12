@@ -263,6 +263,7 @@ export function createVideoCellGroup(
     });
     image.name = 'image';
     image.keepAspectRatio = true;
+    (image as any).isAudioIcon = true;
     image.textAlign = textAlign;
     image.textBaseline = textBaseline;
     cellGroup.appendChild(image);
