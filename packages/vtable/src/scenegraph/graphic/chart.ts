@@ -61,6 +61,28 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
+function renderChartInstanceInConstructor(chartInstance: any) {
+  try {
+    chartInstance.renderSync();
+    chartInstance.getStage().enableDirtyBounds();
+  } catch (error) {
+    if (typeof setTimeout !== 'function') {
+      throw error;
+    }
+
+    // Some chart callbacks need the table instance that is assigned only after
+    // `new PivotChart(...)` returns. Retry once after construction completes.
+    setTimeout(() => {
+      try {
+        chartInstance.renderSync();
+        chartInstance.getStage().enableDirtyBounds();
+      } catch (retryError) {
+        console.error(retryError);
+      }
+    }, 0);
+  }
+}
+
 export class Chart extends Rect {
   type: GraphicType = 'chart' as any;
   declare attribute: IChartGraphicAttribute;
@@ -102,8 +124,7 @@ export class Chart extends Rect {
           autoFit: false
         })
       ));
-      chartInstance.renderSync();
-      chartInstance.getStage().enableDirtyBounds();
+      renderChartInstanceInConstructor(chartInstance);
       params.chartInstance = this.chartInstance = chartInstance;
       this.syncRuntimeAttributes({ chartInstance } as Partial<IChartGraphicAttribute>);
     } else {
