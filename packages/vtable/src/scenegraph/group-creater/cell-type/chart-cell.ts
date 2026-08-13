@@ -89,7 +89,8 @@ export function createChartCellGroup(
   // chart
   if ((isNoChartDataRenderNothing && Array.isArray(table.getCellValue(col, row))) || !isNoChartDataRenderNothing) {
     const spec = table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec;
-    const data = table.getCellValue(col, row) || [];
+    const cellValue = table.getCellValue(col, row);
+    const data: any[] = Array.isArray(cellValue) ? (cellValue as any[]) : [];
     const allowConstructorRenderRetry =
       table.isPivotChart() &&
       (table as any)._isConstructingPivotChart === true &&

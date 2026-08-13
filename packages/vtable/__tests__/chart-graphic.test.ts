@@ -306,7 +306,7 @@ describe('Chart graphic', () => {
       internalProps: {
         pixelRatio: 1,
         layoutMap: {
-          getChartAxes: () => [],
+          getChartAxes: (): any[] => [],
           setChartInstance: jest.fn()
         }
       },
@@ -337,7 +337,7 @@ describe('Chart graphic', () => {
       [0, 0, 0, 0],
       '',
       'mock-chart',
-      { type: 'bar', label: { dataFilter: () => [] } },
+      { type: 'bar', label: { dataFilter: (): any[] => [] } },
       undefined,
       'data',
       table as any,

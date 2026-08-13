@@ -7,6 +7,48 @@ const GET_CELL_ADDRESS_ERROR_MESSAGE =
 
 class BugserverChart {
   spec: any;
+  stage = {
+    viewWidth: 600,
+    viewHeight: 371,
+    window: {
+      dpr: 1,
+      getContext() {
+        return {};
+      },
+      getViewBoxTransform() {
+        return {
+          a: 1,
+          b: 0,
+          c: 0,
+          d: 1,
+          e: 0,
+          f: 0,
+          clone() {
+            return {
+              a: 1,
+              b: 0,
+              c: 0,
+              d: 1,
+              e: 0,
+              f: 0,
+              multiply() {
+                return this;
+              }
+            };
+          }
+        };
+      },
+      setViewBoxTransform() {
+        // noop
+      }
+    },
+    enableDirtyBounds() {
+      // noop
+    },
+    renderTo() {
+      // noop
+    }
+  };
 
   constructor(spec: any) {
     this.spec = spec;
@@ -17,11 +59,55 @@ class BugserverChart {
   }
 
   getStage() {
+    return this.stage;
+  }
+
+  getChart() {
     return {
-      enableDirtyBounds() {
+      setLayoutTag() {
         // noop
       }
     };
+  }
+
+  getSpec() {
+    return this.spec;
+  }
+
+  updateViewBox() {
+    // noop
+  }
+
+  updateDataSync() {
+    // noop
+  }
+
+  updateFullDataSync() {
+    // noop
+  }
+
+  updateSpecSync(spec: any) {
+    this.spec = spec;
+  }
+
+  updateModelSpec() {
+    // noop
+  }
+
+  updateModelSpecSync() {
+    // noop
+  }
+
+  updateState() {
+    // noop
+  }
+
+  on() {
+    // noop
+  }
+
+  disableTooltip() {
+    // noop
   }
 
   release() {
@@ -34,7 +120,7 @@ VTable.register.chartModule('bugserver-chart', BugserverChart);
 export function createTable() {
   const width = 600;
   const height = width / 1.618;
-  let instance: VTable.PivotChart | undefined;
+  const instanceRef: { current?: VTable.PivotChart } = {};
 
   const records = [
     {
@@ -50,6 +136,7 @@ export function createTable() {
 
   const option: VTable.PivotChartConstructorOptions = {
     records,
+    disableInteraction: true,
     rows: [],
     columns: [{ dimensionKey: '260811200516176', title: '体裁' }],
     indicatorsAsCol: false,
@@ -62,16 +149,18 @@ export function createTable() {
         chartModule: 'bugserver-chart',
         chartSpec: {
           type: 'bar',
+          xField: '260811200516176',
+          yField: '10002',
           data: {
             values: records
           },
           label: {
             dataFilter(labels: { data: Record<string, unknown> }[]) {
-              const cellAddress = instance?.getCellAddressByRecord(labels[0].data);
+              const cellAddress = instanceRef.current?.getCellAddressByRecord(labels[0].data);
               if (!cellAddress) {
                 throw new TypeError(GET_CELL_ADDRESS_ERROR_MESSAGE);
               }
-              return instance?.getCellValue(cellAddress.col, cellAddress.row) ?? labels;
+              return instanceRef.current?.getCellValue(cellAddress.col, cellAddress.row) ?? labels;
             }
           }
         }
@@ -83,9 +172,10 @@ export function createTable() {
   dom.style.width = `${width}px`;
   dom.style.height = `${height}px`;
 
-  instance = new VTable.PivotChart(dom, option);
-  instance.updateOption(option);
+  const instance = new VTable.PivotChart(dom, option);
+  instanceRef.current = instance;
   window.tableInstance = instance;
+  instance.updateOption(option);
 
   bindDebugTool(instance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }

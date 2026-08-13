@@ -67,10 +67,11 @@ function renderChartInstanceInConstructor(
   chartInstance: any,
   shouldDeferRenderError?: (error: unknown) => boolean,
   onRenderRetryFinish?: () => void
-) {
+): ReturnType<typeof setTimeout> | undefined {
   try {
     chartInstance.renderSync();
     chartInstance.getStage().enableDirtyBounds();
+    return undefined;
   } catch (error) {
     if (!shouldDeferRenderError?.(error)) {
       throw error;
