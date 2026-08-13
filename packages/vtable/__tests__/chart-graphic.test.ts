@@ -34,11 +34,7 @@ class ThrowOnceChart extends MockChart {
   renderSync() {
     this.renderCount++;
     if (this.renderCount === 1) {
-      const error = new TypeError(GET_CELL_ADDRESS_ERROR_MESSAGE);
-      error.stack =
-        "TypeError: Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined.\n" +
-        '    at https://sf-unpkg-src.bytedance.net/@aeolus/chart@0.0.11/dist/pipeline.js:32127:18';
-      throw error;
+      throw new TypeError(GET_CELL_ADDRESS_ERROR_MESSAGE);
     }
   }
 
@@ -132,7 +128,8 @@ describe('Chart graphic', () => {
         dpr: 1,
         axes: [],
         tableChartOption: {},
-        detectPickChartItem: false
+        detectPickChartItem: false,
+        deferRenderForTableConstructor: true
       } as any);
     }).not.toThrow();
 

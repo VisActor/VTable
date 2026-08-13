@@ -268,23 +268,28 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.useOneRowHeightFillAll = false;
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
-    this.scenegraph.createSceneGraph();
-    if (options.title) {
-      const Title = Factory.getComponent('title') as ITitleComponent;
-      this.internalProps.title = new Title(options.title, this);
-      // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
-    }
-    if (this.options.emptyTip) {
-      if (this.internalProps.emptyTip) {
-        this.internalProps.emptyTip?.resetVisible();
-      } else {
-        const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
-        this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
-        this.internalProps.emptyTip?.resetVisible();
+    (this as any)._isConstructingPivotChart = true;
+    try {
+      this.scenegraph.createSceneGraph();
+      if (options.title) {
+        const Title = Factory.getComponent('title') as ITitleComponent;
+        this.internalProps.title = new Title(options.title, this);
+        // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
       }
+      if (this.options.emptyTip) {
+        if (this.internalProps.emptyTip) {
+          this.internalProps.emptyTip?.resetVisible();
+        } else {
+          const EmptyTip = Factory.getComponent('emptyTip') as IEmptyTipComponent;
+          this.internalProps.emptyTip = new EmptyTip(this.options.emptyTip, this);
+          this.internalProps.emptyTip?.resetVisible();
+        }
+      }
+      // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
+      this.resize();
+    } finally {
+      (this as any)._isConstructingPivotChart = false;
     }
-    // 首次布局同样通过 BaseTable.resize() 完成，遵循 componentLayoutOrder 中的 title/legend 优先级
-    this.resize();
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
       if (this.isReleased) {

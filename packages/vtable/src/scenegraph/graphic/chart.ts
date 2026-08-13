@@ -43,6 +43,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   col?: number;
   row?: number;
   detectPickChartItem?: boolean;
+  deferRenderForTableConstructor?: boolean;
 }
 
 const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
@@ -56,30 +57,18 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
   'cellPadding',
   'axes',
   'tableChartOption',
-  'detectPickChartItem'
+  'detectPickChartItem',
+  'deferRenderForTableConstructor'
 ];
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
-function isPendingTableInstanceRenderError(error: unknown) {
-  const errorLike = error as { name?: string; message?: string; stack?: string };
-  return (
-    errorLike?.name === 'TypeError' &&
-    typeof errorLike.message === 'string' &&
-    typeof errorLike.stack === 'string' &&
-    errorLike.message.includes('getCellAddressByRecord') &&
-    errorLike.message.includes('undefined') &&
-    errorLike.stack.includes('@aeolus/chart') &&
-    errorLike.stack.includes('pipeline')
-  );
-}
-
-function renderChartInstanceInConstructor(chartInstance: any) {
+function renderChartInstanceInConstructor(chartInstance: any, deferRenderForTableConstructor?: boolean) {
   try {
     chartInstance.renderSync();
     chartInstance.getStage().enableDirtyBounds();
   } catch (error) {
-    if (!isPendingTableInstanceRenderError(error)) {
+    if (!deferRenderForTableConstructor) {
       throw error;
     }
 
@@ -87,8 +76,6 @@ function renderChartInstanceInConstructor(chartInstance: any) {
       throw error;
     }
 
-    // The Aeolus label callback may call getCellAddressByRecord before the
-    // external variable receives the newly constructed PivotChart instance.
     setTimeout(() => {
       chartInstance.renderSync();
       chartInstance.getStage().enableDirtyBounds();
@@ -137,7 +124,7 @@ export class Chart extends Rect {
           autoFit: false
         })
       ));
-      renderChartInstanceInConstructor(chartInstance);
+      renderChartInstanceInConstructor(chartInstance, params.deferRenderForTableConstructor);
       params.chartInstance = this.chartInstance = chartInstance;
       this.syncRuntimeAttributes({ chartInstance } as Partial<IChartGraphicAttribute>);
     } else {

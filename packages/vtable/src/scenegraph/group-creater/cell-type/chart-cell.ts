@@ -88,6 +88,7 @@ export function createChartCellGroup(
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
   if ((isNoChartDataRenderNothing && Array.isArray(table.getCellValue(col, row))) || !isNoChartDataRenderNothing) {
+    const spec = table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec;
     const chartGroup = new Chart(isShareChartSpec, {
       stroke: false,
       x: padding[3],
@@ -96,7 +97,7 @@ export function createChartCellGroup(
       canvas: table.canvas ?? (table.scenegraph.stage.window.getContext().canvas as unknown as HTMLCanvasElement),
       mode: table.options.mode,
       modeParams: table.options.modeParams,
-      spec: table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec,
+      spec,
       ClassType,
       width: width - padding[3] - padding[1],
       height: height - padding[2] - padding[0],
@@ -121,7 +122,11 @@ export function createChartCellGroup(
       // },
       tableChartOption: table.options.chartOption,
       col,
-      row
+      row,
+      deferRenderForTableConstructor:
+        table.isPivotChart() &&
+        (table as any)._isConstructingPivotChart === true &&
+        typeof spec?.label?.dataFilter === 'function'
     });
     cellGroup.appendChild(chartGroup);
     // 将生成的实例存到layoutMap中 共享
