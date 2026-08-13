@@ -43,7 +43,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   col?: number;
   row?: number;
   detectPickChartItem?: boolean;
-  deferRenderForTableConstructor?: boolean;
+  shouldDeferRenderError?: (error: unknown) => boolean;
 }
 
 const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
@@ -58,17 +58,17 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
   'axes',
   'tableChartOption',
   'detectPickChartItem',
-  'deferRenderForTableConstructor'
+  'shouldDeferRenderError'
 ];
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
-function renderChartInstanceInConstructor(chartInstance: any, deferRenderForTableConstructor?: boolean) {
+function renderChartInstanceInConstructor(chartInstance: any, shouldDeferRenderError?: (error: unknown) => boolean) {
   try {
     chartInstance.renderSync();
     chartInstance.getStage().enableDirtyBounds();
   } catch (error) {
-    if (!deferRenderForTableConstructor) {
+    if (!shouldDeferRenderError?.(error)) {
       throw error;
     }
 
@@ -124,7 +124,7 @@ export class Chart extends Rect {
           autoFit: false
         })
       ));
-      renderChartInstanceInConstructor(chartInstance, params.deferRenderForTableConstructor);
+      renderChartInstanceInConstructor(chartInstance, params.shouldDeferRenderError);
       params.chartInstance = this.chartInstance = chartInstance;
       this.syncRuntimeAttributes({ chartInstance } as Partial<IChartGraphicAttribute>);
     } else {

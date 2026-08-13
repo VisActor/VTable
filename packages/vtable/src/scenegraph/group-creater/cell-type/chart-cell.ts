@@ -89,6 +89,27 @@ export function createChartCellGroup(
   // chart
   if ((isNoChartDataRenderNothing && Array.isArray(table.getCellValue(col, row))) || !isNoChartDataRenderNothing) {
     const spec = table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec;
+    const data = table.getCellValue(col, row) || [];
+    const allowConstructorRenderRetry =
+      table.isPivotChart() &&
+      (table as any)._isConstructingPivotChart === true &&
+      typeof spec?.label?.dataFilter === 'function';
+    const shouldDeferRenderError = allowConstructorRenderRetry
+      ? (error: unknown) => {
+          const errorLike = error as { name?: string; message?: string };
+          if (
+            errorLike?.name !== 'TypeError' ||
+            typeof errorLike.message !== 'string' ||
+            !errorLike.message.includes('getCellAddressByRecord') ||
+            !errorLike.message.includes('undefined') ||
+            !Array.isArray(data)
+          ) {
+            return false;
+          }
+
+          return data.some(record => !!(table as any).getCellAddressByRecord?.(record));
+        }
+      : undefined;
     const chartGroup = new Chart(isShareChartSpec, {
       stroke: false,
       x: padding[3],
@@ -103,7 +124,7 @@ export function createChartCellGroup(
       height: height - padding[2] - padding[0],
       chartInstance,
       dataId,
-      data: table.getCellValue(col, row) || [],
+      data,
       cellPadding: padding,
       dpr: table.internalProps.pixelRatio,
       detectPickChartItem: table.options.customConfig?.detectPickChartItem,
@@ -123,10 +144,7 @@ export function createChartCellGroup(
       tableChartOption: table.options.chartOption,
       col,
       row,
-      deferRenderForTableConstructor:
-        table.isPivotChart() &&
-        (table as any)._isConstructingPivotChart === true &&
-        typeof spec?.label?.dataFilter === 'function'
+      shouldDeferRenderError
     });
     cellGroup.appendChild(chartGroup);
     // 将生成的实例存到layoutMap中 共享

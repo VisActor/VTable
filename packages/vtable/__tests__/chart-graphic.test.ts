@@ -129,7 +129,7 @@ describe('Chart graphic', () => {
         axes: [],
         tableChartOption: {},
         detectPickChartItem: false,
-        deferRenderForTableConstructor: true
+        shouldDeferRenderError: () => true
       } as any);
     }).not.toThrow();
 
@@ -201,6 +201,39 @@ describe('Chart graphic', () => {
         axes: [],
         tableChartOption: {},
         detectPickChartItem: false
+      } as any);
+    }).toThrow(GET_CELL_ADDRESS_ERROR_MESSAGE);
+
+    expect(chart).toBeUndefined();
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  test('throws constructor render errors synchronously when the defer predicate rejects them', () => {
+    jest.useFakeTimers();
+    const canvas = document.createElement('canvas');
+
+    let chart: Chart | undefined;
+    expect(() => {
+      chart = new Chart(false, {
+        stroke: false,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 80,
+        canvas,
+        mode: 'desktop-browser',
+        modeParams: {},
+        spec: { type: 'bar' },
+        ClassType: MissingCellAddressChart,
+        chartInstance: undefined,
+        dataId: 'data',
+        data: [],
+        cellPadding: [0, 0, 0, 0],
+        dpr: 1,
+        axes: [],
+        tableChartOption: {},
+        detectPickChartItem: false,
+        shouldDeferRenderError: () => false
       } as any);
     }).toThrow(GET_CELL_ADDRESS_ERROR_MESSAGE);
 
