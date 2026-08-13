@@ -62,12 +62,15 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
 export const CHART_NUMBER_TYPE = genNumberType();
 
 function isPendingTableInstanceRenderError(error: unknown) {
-  const errorLike = error as { name?: string; message?: string };
+  const errorLike = error as { name?: string; message?: string; stack?: string };
   return (
     errorLike?.name === 'TypeError' &&
     typeof errorLike.message === 'string' &&
+    typeof errorLike.stack === 'string' &&
     errorLike.message.includes('getCellAddressByRecord') &&
-    errorLike.message.includes('undefined')
+    errorLike.message.includes('undefined') &&
+    errorLike.stack.includes('@aeolus/chart') &&
+    errorLike.stack.includes('pipeline')
   );
 }
 

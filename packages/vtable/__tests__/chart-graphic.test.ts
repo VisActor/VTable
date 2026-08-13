@@ -1,5 +1,8 @@
 import { Chart } from '../src/scenegraph/graphic/chart';
 
+const GET_CELL_ADDRESS_ERROR_MESSAGE =
+  "Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined.";
+
 class MockChart {
   static globalConfig = { uniqueTooltip: false };
 
@@ -31,9 +34,11 @@ class ThrowOnceChart extends MockChart {
   renderSync() {
     this.renderCount++;
     if (this.renderCount === 1) {
-      throw new TypeError(
-        "Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined."
-      );
+      const error = new TypeError(GET_CELL_ADDRESS_ERROR_MESSAGE);
+      error.stack =
+        "TypeError: Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined.\n" +
+        '    at https://sf-unpkg-src.bytedance.net/@aeolus/chart@0.0.11/dist/pipeline.js:32127:18';
+      throw error;
     }
   }
 
@@ -50,6 +55,13 @@ class InvalidSpecChart extends ThrowOnceChart {
   renderSync() {
     this.renderCount++;
     throw new Error('invalid chart spec');
+  }
+}
+
+class MissingCellAddressChart extends ThrowOnceChart {
+  renderSync() {
+    this.renderCount++;
+    throw new TypeError(GET_CELL_ADDRESS_ERROR_MESSAGE);
   }
 }
 
@@ -162,6 +174,38 @@ describe('Chart graphic', () => {
         detectPickChartItem: false
       } as any);
     }).toThrow('invalid chart spec');
+
+    expect(chart).toBeUndefined();
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  test('throws unmatched getCellAddressByRecord errors synchronously', () => {
+    jest.useFakeTimers();
+    const canvas = document.createElement('canvas');
+
+    let chart: Chart | undefined;
+    expect(() => {
+      chart = new Chart(false, {
+        stroke: false,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 80,
+        canvas,
+        mode: 'desktop-browser',
+        modeParams: {},
+        spec: { type: 'bar' },
+        ClassType: MissingCellAddressChart,
+        chartInstance: undefined,
+        dataId: 'data',
+        data: [],
+        cellPadding: [0, 0, 0, 0],
+        dpr: 1,
+        axes: [],
+        tableChartOption: {},
+        detectPickChartItem: false
+      } as any);
+    }).toThrow(GET_CELL_ADDRESS_ERROR_MESSAGE);
 
     expect(chart).toBeUndefined();
     expect(jest.getTimerCount()).toBe(0);
