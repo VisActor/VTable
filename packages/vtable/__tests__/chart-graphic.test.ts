@@ -284,7 +284,7 @@ describe('Chart graphic', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
-  test('uses createChartCellGroup production gates before deferring constructor render errors', () => {
+  test('uses pivot chart records before deferring constructor render errors', () => {
     jest.useFakeTimers();
     const canvas = document.createElement('canvas');
     const record = { indicator: 1 };
@@ -319,7 +319,8 @@ describe('Chart graphic', () => {
       },
       _isConstructingPivotChart: true,
       _getCellStyle: () => ({}),
-      getCellValue: () => [record],
+      records: [record],
+      getCellValue: (): any[] => [],
       getCellAddressByRecord: jest.fn(value => (value === record ? { col: 1, row: 1 } : undefined)),
       isPivotChart: () => true
     };

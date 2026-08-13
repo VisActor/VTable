@@ -91,6 +91,13 @@ export function createChartCellGroup(
     const spec = table.options.specTransformInCell ? table.options.specTransformInCell(chartSpec, col, row) : chartSpec;
     const cellValue = table.getCellValue(col, row);
     const data: any[] = Array.isArray(cellValue) ? (cellValue as any[]) : [];
+    const records = data.length
+      ? data
+      : Array.isArray((table as any).records)
+      ? ((table as any).records as any[])
+      : Array.isArray((table.options as any)?.records)
+      ? ((table.options as any).records as any[])
+      : [];
     const allowConstructorRenderRetry =
       table.isPivotChart() &&
       (table as any)._isConstructingPivotChart === true &&
@@ -103,12 +110,12 @@ export function createChartCellGroup(
             typeof errorLike.message !== 'string' ||
             !errorLike.message.includes('getCellAddressByRecord') ||
             !errorLike.message.includes('undefined') ||
-            !Array.isArray(data)
+            !records.length
           ) {
             return false;
           }
 
-          return data.some(record => !!(table as any).getCellAddressByRecord?.(record));
+          return records.some(record => !!(table as any).getCellAddressByRecord?.(record));
         }
       : undefined;
     const chartGroup = new Chart(isShareChartSpec, {
