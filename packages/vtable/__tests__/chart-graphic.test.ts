@@ -1,4 +1,8 @@
 import { Chart } from '../src/scenegraph/graphic/chart';
+import { createChartCellGroup } from '../src/scenegraph/group-creater/cell-type/chart-cell';
+import { Group } from '../src/scenegraph/graphic/group';
+import * as register from '../src/register';
+import { chartTypes } from '../src/chartModule';
 
 const GET_CELL_ADDRESS_ERROR_MESSAGE =
   "Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined.";
@@ -64,6 +68,7 @@ class MissingCellAddressChart extends ThrowOnceChart {
 describe('Chart graphic', () => {
   afterEach(() => {
     jest.useRealTimers();
+    delete chartTypes['mock-chart'];
   });
 
   test('keeps runtime refs when VRender builds static state snapshots', () => {
@@ -142,6 +147,44 @@ describe('Chart graphic', () => {
 
     expect(chartInstance.renderCount).toBe(2);
     expect(chartInstance.dirtyBoundsCount).toBe(1);
+    expect(chart?.renderRetryTimer).toBeUndefined();
+  });
+
+  test('clears deferred constructor render retry on release', () => {
+    jest.useFakeTimers();
+    const canvas = document.createElement('canvas');
+
+    const chart = new Chart(false, {
+      stroke: false,
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 80,
+      canvas,
+      mode: 'desktop-browser',
+      modeParams: {},
+      spec: { type: 'bar' },
+      ClassType: ThrowOnceChart,
+      chartInstance: undefined,
+      dataId: 'data',
+      data: [],
+      cellPadding: [0, 0, 0, 0],
+      dpr: 1,
+      axes: [],
+      tableChartOption: {},
+      detectPickChartItem: false,
+      shouldDeferRenderError: () => true
+    } as any);
+
+    const chartInstance = chart.chartInstance as ThrowOnceChart;
+    expect(chartInstance.renderCount).toBe(1);
+    expect(jest.getTimerCount()).toBe(1);
+
+    chart.release();
+
+    expect(jest.getTimerCount()).toBe(0);
+    jest.runOnlyPendingTimers();
+    expect(chartInstance.renderCount).toBe(1);
   });
 
   test('throws non-recoverable constructor render errors synchronously', () => {
@@ -239,5 +282,80 @@ describe('Chart graphic', () => {
 
     expect(chart).toBeUndefined();
     expect(jest.getTimerCount()).toBe(0);
+  });
+
+  test('uses createChartCellGroup production gates before deferring constructor render errors', () => {
+    jest.useFakeTimers();
+    const canvas = document.createElement('canvas');
+    const record = { indicator: 1 };
+    const columnGroup = new Group({});
+    register.chartModule('mock-chart', ThrowOnceChart);
+    const table = {
+      canvas,
+      colCount: 2,
+      rowCount: 2,
+      theme: {
+        cellInnerBorder: true,
+        frameStyle: {}
+      },
+      options: {
+        mode: 'desktop-browser',
+        modeParams: {},
+        chartOption: {}
+      },
+      internalProps: {
+        pixelRatio: 1,
+        layoutMap: {
+          getChartAxes: () => [],
+          setChartInstance: jest.fn()
+        }
+      },
+      scenegraph: {
+        stage: {
+          window: {
+            getContext: () => ({ canvas })
+          }
+        }
+      },
+      _isConstructingPivotChart: true,
+      _getCellStyle: () => ({}),
+      getCellValue: () => [record],
+      getCellAddressByRecord: jest.fn(value => (value === record ? { col: 1, row: 1 } : undefined)),
+      isPivotChart: () => true
+    };
+    const cellTheme = { group: {} };
+
+    const cellGroup = createChartCellGroup(
+      null,
+      columnGroup,
+      0,
+      0,
+      1,
+      1,
+      100,
+      80,
+      [0, 0, 0, 0],
+      '',
+      'mock-chart',
+      { type: 'bar', label: { dataFilter: () => [] } },
+      undefined,
+      'data',
+      table as any,
+      cellTheme as any,
+      true,
+      false,
+      false
+    );
+
+    const chart = cellGroup.lastChild as Chart;
+    const chartInstance = chart.chartInstance as ThrowOnceChart;
+    expect(chartInstance.renderCount).toBe(1);
+    expect(jest.getTimerCount()).toBe(1);
+
+    jest.runOnlyPendingTimers();
+
+    expect(chartInstance.renderCount).toBe(2);
+    expect(table.getCellAddressByRecord).toHaveBeenCalledWith(record);
+    expect(table.internalProps.layoutMap.setChartInstance).toHaveBeenCalledWith(1, 1, chartInstance);
   });
 });

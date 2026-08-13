@@ -63,7 +63,11 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
-function renderChartInstanceInConstructor(chartInstance: any, shouldDeferRenderError?: (error: unknown) => boolean) {
+function renderChartInstanceInConstructor(
+  chartInstance: any,
+  shouldDeferRenderError?: (error: unknown) => boolean,
+  onRenderRetryFinish?: () => void
+) {
   try {
     chartInstance.renderSync();
     chartInstance.getStage().enableDirtyBounds();
@@ -76,9 +80,13 @@ function renderChartInstanceInConstructor(chartInstance: any, shouldDeferRenderE
       throw error;
     }
 
-    setTimeout(() => {
-      chartInstance.renderSync();
-      chartInstance.getStage().enableDirtyBounds();
+    return setTimeout(() => {
+      try {
+        chartInstance.renderSync();
+        chartInstance.getStage().enableDirtyBounds();
+      } finally {
+        onRenderRetryFinish?.();
+      }
     }, 0);
   }
 }
@@ -93,6 +101,7 @@ export class Chart extends Rect {
   justShowMarkTooltip: boolean = undefined;
   justShowMarkTooltipTimer: number = Date.now();
   delayRunDimensionHoverTimer: any = undefined;
+  renderRetryTimer: any = undefined;
   cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
   isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
   constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
@@ -124,7 +133,9 @@ export class Chart extends Rect {
           autoFit: false
         })
       ));
-      renderChartInstanceInConstructor(chartInstance, params.shouldDeferRenderError);
+      this.renderRetryTimer = renderChartInstanceInConstructor(chartInstance, params.shouldDeferRenderError, () => {
+        this.renderRetryTimer = undefined;
+      });
       params.chartInstance = this.chartInstance = chartInstance;
       this.syncRuntimeAttributes({ chartInstance } as Partial<IChartGraphicAttribute>);
     } else {
@@ -623,6 +634,17 @@ export class Chart extends Rect {
     clearTimeout(this.delayRunDimensionHoverTimer);
     this.delayRunDimensionHoverTimer = undefined;
   }
+
+  clearRenderRetryTimer() {
+    clearTimeout(this.renderRetryTimer);
+    this.renderRetryTimer = undefined;
+  }
+
+  release(...args: any[]) {
+    this.clearRenderRetryTimer();
+    return (super.release as any)(...args);
+  }
+
   /**
    * 图表失去焦点
    * @param table
@@ -648,6 +670,7 @@ export class Chart extends Rect {
     this.justShowMarkTooltip = undefined;
     this.justShowMarkTooltipTimer = Date.now();
     this.clearDelayRunDimensionHoverTimer();
+    this.clearRenderRetryTimer();
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd

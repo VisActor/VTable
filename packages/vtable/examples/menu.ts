@@ -12,6 +12,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'bugserver-6a7b16f-pivot-chart'
+      },
+      {
+        path: 'debug',
         name: 'site'
       },
       {
