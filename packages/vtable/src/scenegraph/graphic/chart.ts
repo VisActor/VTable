@@ -73,12 +73,8 @@ function renderChartInstanceInConstructor(chartInstance: any) {
     // Some chart callbacks need the table instance that is assigned only after
     // `new PivotChart(...)` returns. Retry once after construction completes.
     setTimeout(() => {
-      try {
-        chartInstance.renderSync();
-        chartInstance.getStage().enableDirtyBounds();
-      } catch (retryError) {
-        console.error(retryError);
-      }
+      chartInstance.renderSync();
+      chartInstance.getStage().enableDirtyBounds();
     }, 0);
   }
 }

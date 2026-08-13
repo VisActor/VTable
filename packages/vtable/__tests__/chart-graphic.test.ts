@@ -44,10 +44,16 @@ class ThrowOnceChart extends MockChart {
   }
 }
 
+class AlwaysThrowChart extends ThrowOnceChart {
+  renderSync() {
+    this.renderCount++;
+    throw new Error('persistent render failure');
+  }
+}
+
 describe('Chart graphic', () => {
   afterEach(() => {
     jest.useRealTimers();
-    jest.restoreAllMocks();
   });
 
   test('keeps runtime refs when VRender builds static state snapshots', () => {
@@ -90,7 +96,6 @@ describe('Chart graphic', () => {
 
   test('defers constructor render errors so chart instances can be assigned before retrying', () => {
     jest.useFakeTimers();
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const canvas = document.createElement('canvas');
 
     let chart: Chart | undefined;
@@ -126,6 +131,42 @@ describe('Chart graphic', () => {
 
     expect(chartInstance.renderCount).toBe(2);
     expect(chartInstance.dirtyBoundsCount).toBe(1);
-    expect(consoleError).not.toHaveBeenCalled();
+  });
+
+  test('throws persistent constructor render errors on retry', () => {
+    jest.useFakeTimers();
+    const canvas = document.createElement('canvas');
+
+    let chart: Chart | undefined;
+    expect(() => {
+      chart = new Chart(false, {
+        stroke: false,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 80,
+        canvas,
+        mode: 'desktop-browser',
+        modeParams: {},
+        spec: { type: 'bar' },
+        ClassType: AlwaysThrowChart,
+        chartInstance: undefined,
+        dataId: 'data',
+        data: [],
+        cellPadding: [0, 0, 0, 0],
+        dpr: 1,
+        axes: [],
+        tableChartOption: {},
+        detectPickChartItem: false
+      } as any);
+    }).not.toThrow();
+
+    const chartInstance = chart?.chartInstance as AlwaysThrowChart;
+    expect(chartInstance.renderCount).toBe(1);
+
+    expect(() => {
+      jest.runOnlyPendingTimers();
+    }).toThrow('persistent render failure');
+    expect(chartInstance.renderCount).toBe(2);
   });
 });
