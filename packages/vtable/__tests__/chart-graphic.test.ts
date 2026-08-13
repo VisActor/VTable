@@ -31,7 +31,9 @@ class ThrowOnceChart extends MockChart {
   renderSync() {
     this.renderCount++;
     if (this.renderCount === 1) {
-      throw new Error('render before table instance is assigned');
+      throw new TypeError(
+        "Cannot destructure property 'col' of 'getCellAddressByRecord(...)' as it is undefined."
+      );
     }
   }
 
@@ -44,10 +46,10 @@ class ThrowOnceChart extends MockChart {
   }
 }
 
-class AlwaysThrowChart extends ThrowOnceChart {
+class InvalidSpecChart extends ThrowOnceChart {
   renderSync() {
     this.renderCount++;
-    throw new Error('persistent render failure');
+    throw new Error('invalid chart spec');
   }
 }
 
@@ -133,7 +135,7 @@ describe('Chart graphic', () => {
     expect(chartInstance.dirtyBoundsCount).toBe(1);
   });
 
-  test('throws persistent constructor render errors on retry', () => {
+  test('throws non-recoverable constructor render errors synchronously', () => {
     jest.useFakeTimers();
     const canvas = document.createElement('canvas');
 
@@ -149,7 +151,7 @@ describe('Chart graphic', () => {
         mode: 'desktop-browser',
         modeParams: {},
         spec: { type: 'bar' },
-        ClassType: AlwaysThrowChart,
+        ClassType: InvalidSpecChart,
         chartInstance: undefined,
         dataId: 'data',
         data: [],
@@ -159,14 +161,9 @@ describe('Chart graphic', () => {
         tableChartOption: {},
         detectPickChartItem: false
       } as any);
-    }).not.toThrow();
+    }).toThrow('invalid chart spec');
 
-    const chartInstance = chart?.chartInstance as AlwaysThrowChart;
-    expect(chartInstance.renderCount).toBe(1);
-
-    expect(() => {
-      jest.runOnlyPendingTimers();
-    }).toThrow('persistent render failure');
-    expect(chartInstance.renderCount).toBe(2);
+    expect(chart).toBeUndefined();
+    expect(jest.getTimerCount()).toBe(0);
   });
 });

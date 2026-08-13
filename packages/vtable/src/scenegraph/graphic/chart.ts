@@ -61,17 +61,31 @@ const CHART_RUNTIME_ATTRIBUTE_KEYS: (keyof IChartGraphicAttribute)[] = [
 
 export const CHART_NUMBER_TYPE = genNumberType();
 
+function isPendingTableInstanceRenderError(error: unknown) {
+  const errorLike = error as { name?: string; message?: string };
+  return (
+    errorLike?.name === 'TypeError' &&
+    typeof errorLike.message === 'string' &&
+    errorLike.message.includes('getCellAddressByRecord') &&
+    errorLike.message.includes('undefined')
+  );
+}
+
 function renderChartInstanceInConstructor(chartInstance: any) {
   try {
     chartInstance.renderSync();
     chartInstance.getStage().enableDirtyBounds();
   } catch (error) {
+    if (!isPendingTableInstanceRenderError(error)) {
+      throw error;
+    }
+
     if (typeof setTimeout !== 'function') {
       throw error;
     }
 
-    // Some chart callbacks need the table instance that is assigned only after
-    // `new PivotChart(...)` returns. Retry once after construction completes.
+    // The Aeolus label callback may call getCellAddressByRecord before the
+    // external variable receives the newly constructed PivotChart instance.
     setTimeout(() => {
       chartInstance.renderSync();
       chartInstance.getStage().enableDirtyBounds();
