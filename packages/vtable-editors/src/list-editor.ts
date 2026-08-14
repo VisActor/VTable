@@ -41,14 +41,13 @@ export class ListEditor implements IEditor {
 
     // create option tags
     const { values } = this.editorConfig;
-    let opsStr = '';
     values.forEach(item => {
-      opsStr +=
-        item === value
-          ? `<option value="${item}" selected>${item}</option>`
-          : `<option value="${item}" >${item}</option>`;
+      const option = document.createElement('option');
+      option.value = item;
+      option.textContent = item;
+      option.selected = item === value;
+      select.appendChild(option);
     });
-    select.innerHTML = opsStr;
 
     this.container.appendChild(select);
     // this._bindSelectChangeEvent();
