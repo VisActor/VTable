@@ -155,6 +155,8 @@ export interface IRowSeriesNumber {
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   headerType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
   cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox' | 'radio';
+  /** 点击开启预览，仅在 image/video/audio 类型时生效 */
+  clickToPreview?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
@@ -185,6 +187,8 @@ export interface ColumnSeriesNumber {
   field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
+  /** 点击开启预览，仅在 image/video/audio 类型时生效 */
+  clickToPreview?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   icon?:

@@ -51,6 +51,7 @@ Header cell style. Configuration items vary slightly depending on the headerType
 - For headerType 'link', see [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
 - For headerType 'image', see [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 - For headerType 'video', see [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- For headerType 'audio', see [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 

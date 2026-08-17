@@ -4,7 +4,7 @@ import { Env } from '../tools/env';
 import { regUrl } from '../tools/global';
 import type { LinkColumnDefine, MousePointerCellEvent } from '../ts-types';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
-import type { IImageColumnBodyDefine } from '../ts-types/list-table/define/image-define';
+import type { IAudioColumnBodyDefine, IImageColumnBodyDefine } from '../ts-types/list-table/define/image-define';
 import { getOrApply } from '../tools/helper';
 import { isAudioUrl } from '../tools/media';
 
@@ -76,6 +76,7 @@ function createAudioPreview(cellValue: string) {
   const audio = document.createElement('audio');
   audio.src = cellValue;
   audio.preload = 'auto';
+  let released = false;
 
   const wrapper = document.createElement('div');
   wrapper.style.width = '80%';
@@ -125,9 +126,11 @@ function createAudioPreview(cellValue: string) {
   updateAudioProgressStyle(progress, 0);
 
   const updateProgress = () => {
-    const duration = audio.duration || 0;
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     const currentTime = audio.currentTime || 0;
     const value = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+    progress.disabled = duration <= 0;
+    progress.style.cursor = duration > 0 ? 'pointer' : 'default';
     progress.value = `${value}`;
     timeLabel.textContent = `${formatAudioTime(currentTime)} / ${formatAudioTime(duration)}`;
     updateAudioProgressStyle(progress, value);
@@ -136,7 +139,15 @@ function createAudioPreview(cellValue: string) {
   playButton.addEventListener('click', e => {
     e.stopPropagation();
     if (audio.paused) {
-      audio.play();
+      const playPromise = audio.play();
+      if (playPromise) {
+        playPromise.catch(error => {
+          if (released || error?.name === 'AbortError') {
+            return;
+          }
+          playButton.textContent = '▶';
+        });
+      }
     } else {
       audio.pause();
     }
@@ -147,7 +158,7 @@ function createAudioPreview(cellValue: string) {
   });
 
   progress.addEventListener('input', () => {
-    const duration = audio.duration || 0;
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     const value = Number(progress.value);
     if (duration > 0) {
       audio.currentTime = (duration * value) / 100;
@@ -177,6 +188,7 @@ function createAudioPreview(cellValue: string) {
   return {
     element: wrapper,
     destroy: () => {
+      released = true;
       audio.pause();
       audio.removeAttribute('src');
       audio.load();
@@ -187,6 +199,13 @@ function createAudioPreview(cellValue: string) {
 export function bindMediaClick(table: BaseTableAPI): void {
   if (Env.mode === 'browser') {
     // table.hasMedia = false;
+    let closeAudioPreview: (() => void) | null = null;
+    table.addReleaseObj({
+      release: () => {
+        closeAudioPreview?.();
+        closeAudioPreview = null;
+      }
+    });
 
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
@@ -315,7 +334,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         document.body.appendChild(overlay);
       } else if (cellType === 'audio' || (cellType === 'video' && isAudioUrl(cellValue))) {
         // 点击音频，弹出播放窗口
-        const { clickToPreview } = columnDefine as IImageColumnBodyDefine;
+        const { clickToPreview } = columnDefine as IAudioColumnBodyDefine;
         if (clickToPreview === false) {
           return;
         }
@@ -335,10 +354,15 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.style.zIndex = '9999';
 
         const audioPreview = createAudioPreview(cellValue);
+        closeAudioPreview?.();
         const closeOverlay = () => {
+          closeAudioPreview = null;
           audioPreview.destroy();
-          document.body.removeChild(overlay);
+          if (overlay.parentNode) {
+            document.body.removeChild(overlay);
+          }
         };
+        closeAudioPreview = closeOverlay;
 
         overlay.addEventListener('click', e => {
           if (e.target === overlay) {

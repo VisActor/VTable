@@ -51,6 +51,7 @@ ${prefix} headerStyle(TODO)
 - headerType 为'link'，对应[headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
 - headerType 为'image'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 - headerType 为'video'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- headerType 为'audio'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 

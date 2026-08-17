@@ -216,9 +216,5 @@ export function createTable() {
     release();
   };
 
-  VTable.bindDebugTool(instance.scenegraph.stage as any, {
-    customGrapicKeys: ['role', '_updateTag']
-  });
-
   window.tableInstance = instance;
 }

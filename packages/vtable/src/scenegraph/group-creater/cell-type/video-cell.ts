@@ -249,10 +249,20 @@ export function createVideoCellGroup(
   // video
   const value = table.getCellValue(col, row);
   if (isAudioUrl(value)) {
-    const availableWidth = Math.max(1, width - padding[1] - padding[3]);
+    const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);
     const availableHeight = Math.max(1, height - padding[0] - padding[2]);
     const iconSize = Math.max(1, Math.min(availableWidth, availableHeight, 32));
-    const pos = calcStartPosition(0, 0, width, height, iconSize, iconSize, textAlign, textBaseline, padding);
+    const pos = calcStartPosition(
+      cellLeftIconWidth,
+      0,
+      width - cellLeftIconWidth - cellRightIconWidth,
+      height,
+      iconSize,
+      iconSize,
+      textAlign,
+      textBaseline,
+      padding
+    );
     const image: IImage = createImage({
       x: pos.x,
       y: pos.y,

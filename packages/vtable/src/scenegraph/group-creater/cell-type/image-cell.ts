@@ -339,7 +339,7 @@ export function updateImageCellContentWhileResize(
   const colStart = cellGroup.mergeStartCol ?? cellGroup.col;
   const rowStart = cellGroup.mergeStartRow ?? cellGroup.row;
   const colEnd = cellGroup.mergeEndCol ?? cellGroup.col;
-  const rowEnd = cellGroup.mergeEndCol ?? cellGroup.row;
+  const rowEnd = cellGroup.mergeEndRow ?? cellGroup.row;
 
   const leftIconWidth = (cellGroup as any)._cellLeftIconWidth ?? 0;
   const rightIconWidth = (cellGroup as any)._cellRightIconWidth ?? 0;
@@ -372,11 +372,7 @@ export function updateImageCellContentWhileResize(
         });
       }
     }
-
-    return;
-  }
-
-  if ((image as any).keepAspectRatio || isDamagePic(image)) {
+  } else if ((image as any).keepAspectRatio || isDamagePic(image)) {
     const { width: imageWidth, height: imageHeight } = calcKeepAspectRatioSize(
       originImage.width || (originImage as any).videoWidth,
       originImage.height || (originImage as any).videoHeight,

@@ -134,10 +134,9 @@ export function createAudioCellGroup(
         child.setAttribute('y', padding[0]);
       }
     });
-
-    (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
-    (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
   }
+  (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
+  (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
 
   const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);
   const availableHeight = Math.max(1, height - padding[0] - padding[2]);

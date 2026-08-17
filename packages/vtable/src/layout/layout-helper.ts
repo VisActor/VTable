@@ -115,10 +115,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
           continue;
         }
         if (
-          (row.headerType === 'image' ||
-            row.headerType === 'video' ||
-            row.headerType === 'audio' ||
-            typeof row.headerType === 'function') &&
+          (row.headerType === 'image' || row.headerType === 'video' || typeof row.headerType === 'function') &&
           (row as IImageDimension).imageAutoSizing
         ) {
           return true;
@@ -134,12 +131,10 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
         if (
           ((indicator.cellType === 'image' ||
             indicator.cellType === 'video' ||
-            indicator.cellType === 'audio' ||
             typeof indicator.cellType === 'function') &&
             (indicator as IImageColumnIndicator).imageAutoSizing) ||
           ((indicator.headerType === 'image' ||
             indicator.headerType === 'video' ||
-            indicator.headerType === 'audio' ||
             typeof indicator.headerType === 'function') &&
             (indicator as IImageHeaderIndicator).imageAutoSizing)
         ) {
@@ -153,14 +148,10 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
       for (let i = 0; i < columns.length; i++) {
         const column = columns[i] as unknown as ListTableConstructorOptions['columns'][0];
         if (
-          ((column.cellType === 'image' ||
-            column.cellType === 'video' ||
-            column.cellType === 'audio' ||
-            typeof column.cellType === 'function') &&
+          ((column.cellType === 'image' || column.cellType === 'video' || typeof column.cellType === 'function') &&
             (column as IImageColumnBodyDefine).imageAutoSizing) ||
           ((column.headerType === 'image' ||
             column.headerType === 'video' ||
-            column.headerType === 'audio' ||
             typeof column.headerType === 'function') &&
             (column as IImageHeaderDefine).imageAutoSizing)
         ) {

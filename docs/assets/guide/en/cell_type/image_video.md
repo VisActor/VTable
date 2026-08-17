@@ -2,7 +2,7 @@
 
 Tables can display various types of data, such as text, numbers, charts, etc. Among them, the display of multimedia types (such as images, videos, and audio) in some scenes is particularly important, they can visually display information and help users quickly obtain key data. For example, e-commerce websites can display product pictures in tables, which is convenient for store owners to quickly view product information; video websites can display video preview diagrams in tables; audio libraries can display playable audio entries in tables. By displaying multimedia types in tables, the effect of data display and user experience can be effectively improved.
 
-Note: The following descriptions are based on image types, and video and audio types are also applicable.
+Note: The following descriptions are based on image types. Video and audio share media capabilities such as click preview; image-specific options such as `keepAspectRatio`, `imageAutoSizing`, and image styles do not apply to audio.
 
 ## Introduction to unique configuration items
 

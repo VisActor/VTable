@@ -3,7 +3,7 @@ import type { StylePropertyFunctionArg } from '../../style-define';
 import type { IBasicDimension } from './basic-dimension';
 
 export interface IImageDimension extends IBasicDimension {
-  headerType: 'image' | 'video' | 'audio';
+  headerType: 'image' | 'video';
   headerStyle?:
     | IImageStyleOption //表头可以配置吸附;
     | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); //该维度层级表头部分的样式
@@ -16,6 +16,16 @@ export interface IImageDimension extends IBasicDimension {
   keepAspectRatio?: boolean;
   /** 是否按图片尺寸自动撑开单元格尺寸 默认false */
   imageAutoSizing?: boolean; // 是否自动撑开单元格尺寸
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}
+
+export interface IAudioDimension extends IBasicDimension {
+  headerType: 'audio';
+  headerStyle?:
+    | IImageStyleOption //表头可以配置吸附;
+    | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); //该维度层级表头部分的样式
 
   /** 点击开启预览 */
   clickToPreview?: boolean;
