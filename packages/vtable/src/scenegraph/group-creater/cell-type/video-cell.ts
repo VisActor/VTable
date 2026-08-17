@@ -16,9 +16,9 @@ import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
 import { isAudioUrl } from '../../../tools/media';
 import { audioIconSvg } from './audio-cell';
+import { getVideoCellMediaImage, isVideoCellMedia, markVideoCellMedia } from './media-cell-helper';
 
 const regedIcons = icons.get();
-const VIDEO_CELL_MEDIA_KEY = '__vtable_video_cell_media__';
 
 function releaseVideoResource(video: HTMLVideoElement): void {
   try {
@@ -39,27 +39,6 @@ function releaseGraphicVideoResource(graphic: any): void {
   if (typeof HTMLVideoElement !== 'undefined' && source instanceof HTMLVideoElement) {
     releaseVideoResource(source);
   }
-}
-
-function markVideoCellMedia<T>(graphic: T): T {
-  (graphic as any)[VIDEO_CELL_MEDIA_KEY] = true;
-  return graphic;
-}
-
-function isVideoCellMedia(graphic: any): boolean {
-  return graphic?.[VIDEO_CELL_MEDIA_KEY] === true;
-}
-
-function getVideoCellMediaImage(cellGroup: Group): IImage | undefined {
-  let image: IImage | undefined;
-  cellGroup.forEachChildren((child: any) => {
-    if (isVideoCellMedia(child) && child.name === 'image') {
-      image = child;
-      return true;
-    }
-    return false;
-  });
-  return image;
 }
 
 function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number, endRow: number, table: BaseTableAPI) {
@@ -327,7 +306,8 @@ export function createVideoCellGroup(
         height: iconSize,
         image: audioIconSvg,
         cursor: 'pointer' as Cursor
-      })
+      }),
+      'image'
     );
     image.name = 'image';
     image.keepAspectRatio = true;
@@ -522,7 +502,7 @@ export function createVideoCellGroup(
       dx,
       dy
     });
-    markVideoCellMedia(playIcon);
+    markVideoCellMedia(playIcon, 'play-icon');
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
     if (shouldSnapshot && snapshotVideoFirstFrame(video, image, table)) {
@@ -542,7 +522,8 @@ export function createVideoCellGroup(
       height: Math.max(1, height - padding[2] - padding[0]),
       image: video as any,
       cursor: 'pointer' as Cursor
-    })
+    }),
+    'image'
   );
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;

@@ -13,6 +13,23 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
+import { getVideoCellMediaChildren, getVideoCellMediaImage, getVideoCellMediaPlayIcon } from './media-cell-helper';
+
+function hasVideoCellMedia(cellGroup: Group): boolean {
+  return getVideoCellMediaChildren(cellGroup).length > 0;
+}
+
+function getResizeImage(cellGroup: Group): Image | undefined {
+  return hasVideoCellMedia(cellGroup)
+    ? (getVideoCellMediaImage(cellGroup) as Image)
+    : (cellGroup.getChildByName('image') as Image);
+}
+
+function getResizePlayIcon(cellGroup: Group): Image | undefined {
+  return hasVideoCellMedia(cellGroup)
+    ? (getVideoCellMediaPlayIcon(cellGroup) as Image)
+    : (cellGroup.getChildByName('play-icon') as Image);
+}
 
 export function createImageCellGroup(
   columnGroup: Group,
@@ -313,7 +330,7 @@ export function updateImageCellContentWhileResize(
   deltaY: number,
   table: BaseTableAPI
 ) {
-  const image = cellGroup.getChildByName('image') as Image;
+  const image = getResizeImage(cellGroup);
   if (!image) {
     return;
   }
@@ -363,7 +380,7 @@ export function updateImageCellContentWhileResize(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const cellGroup = table.scenegraph.getCell(col, row);
-        const image = cellGroup.getChildByName('image') as Image;
+        const image = getResizeImage(cellGroup);
         image?.setAttributes({
           x: pos.x,
           y: pos.y,
@@ -399,7 +416,7 @@ export function updateImageCellContentWhileResize(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const cellGroup = table.scenegraph.getCell(col, row);
-        const image = cellGroup.getChildByName('image') as Image;
+        const image = getResizeImage(cellGroup);
         image?.setAttributes({
           x: pos.x,
           y: pos.y,
@@ -412,7 +429,7 @@ export function updateImageCellContentWhileResize(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const cellGroup = table.scenegraph.getCell(col, row);
-        const image = cellGroup.getChildByName('image') as Image;
+        const image = getResizeImage(cellGroup);
         image?.setAttributes({
           x: leftIconWidth + padding[3],
           y: padding[0],
@@ -426,7 +443,7 @@ export function updateImageCellContentWhileResize(
   }
 
   // update video play icon
-  const playIcon = cellGroup.getChildByName('play-icon');
+  const playIcon = getResizePlayIcon(cellGroup);
   if (playIcon) {
     const left = 0;
     const top = 0;
@@ -442,8 +459,8 @@ export function updateImageCellContentWhileResize(
     for (let col = colStart; col <= colEnd; col++) {
       for (let row = rowStart; row <= rowEnd; row++) {
         const cellGroup = table.scenegraph.getCell(col, row);
-        const playIcon = cellGroup.getChildByName('play-icon') as Image;
-        playIcon.setAttributes({
+        const playIcon = getResizePlayIcon(cellGroup);
+        playIcon?.setAttributes({
           x: anchorX - iconSize / 2,
           y: anchorY - iconSize / 2,
           width: iconSize,
@@ -520,14 +537,14 @@ export function updateImageDxDy(
     for (let row = startRow; row <= endRow; row++) {
       const cellGroup = table.scenegraph.getCell(col, row);
       if (cellGroup) {
-        const image = cellGroup.getChildByName('image');
+        const image = getResizeImage(cellGroup);
         if (image) {
           image.setAttributes({
             dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
             dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
           });
         }
-        const playIcon = cellGroup.getChildByName('play-icon');
+        const playIcon = getResizePlayIcon(cellGroup);
         if (playIcon) {
           playIcon.setAttributes({
             dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
