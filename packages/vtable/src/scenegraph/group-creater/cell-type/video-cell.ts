@@ -6,13 +6,7 @@ import { Group } from '../../graphic/group';
 import { calcKeepAspectRatioSize } from '../../utils/keep-aspect-ratio';
 import { Icon } from '../../graphic/icon';
 import { calcStartPosition } from '../../utils/cell-pos';
-import {
-  _adjustWidthHeight,
-  getCellRange,
-  isDamagePic,
-  updateAutoSizingAndKeepAspectRatio,
-  updateImageDxDy
-} from './image-cell';
+import { _adjustWidthHeight, getCellRange, isDamagePic, updateAutoSizingAndKeepAspectRatio } from './image-cell';
 import { getFunctionalProp, getProp } from '../../utils/get-prop';
 import { isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
@@ -24,6 +18,7 @@ import { isAudioUrl } from '../../../tools/media';
 import { audioIconSvg } from './audio-cell';
 
 const regedIcons = icons.get();
+const VIDEO_CELL_MEDIA_KEY = '__vtable_video_cell_media__';
 
 function releaseVideoResource(video: HTMLVideoElement): void {
   try {
@@ -46,10 +41,49 @@ function releaseGraphicVideoResource(graphic: any): void {
   }
 }
 
+function markVideoCellMedia<T>(graphic: T): T {
+  (graphic as any)[VIDEO_CELL_MEDIA_KEY] = true;
+  return graphic;
+}
+
+function isVideoCellMedia(graphic: any): boolean {
+  return graphic?.[VIDEO_CELL_MEDIA_KEY] === true;
+}
+
+function getVideoCellMediaImage(cellGroup: Group): IImage | undefined {
+  let image: IImage | undefined;
+  cellGroup.forEachChildren((child: any) => {
+    if (isVideoCellMedia(child) && child.name === 'image') {
+      image = child;
+      return true;
+    }
+    return false;
+  });
+  return image;
+}
+
+function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number, endRow: number, table: BaseTableAPI) {
+  for (let col = startCol; col <= endCol; col++) {
+    for (let row = startRow; row <= endRow; row++) {
+      const cellGroup = table.scenegraph.getCell(col, row);
+      if (cellGroup) {
+        cellGroup.forEachChildren((child: any) => {
+          if (isVideoCellMedia(child)) {
+            child.setAttributes({
+              dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
+              dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
+            });
+          }
+        });
+      }
+    }
+  }
+}
+
 function removeMediaChildren(cellGroup: Group): void {
   const mediaChildren: any[] = [];
   cellGroup.forEachChildren((child: any) => {
-    if (child.name === 'image' || child.name === 'play-icon') {
+    if (isVideoCellMedia(child)) {
       mediaChildren.push(child);
     }
   });
@@ -285,14 +319,16 @@ export function createVideoCellGroup(
       textBaseline,
       padding
     );
-    const image: IImage = createImage({
-      x: pos.x,
-      y: pos.y,
-      width: iconSize,
-      height: iconSize,
-      image: audioIconSvg,
-      cursor: 'pointer' as Cursor
-    });
+    const image: IImage = markVideoCellMedia(
+      createImage({
+        x: pos.x,
+        y: pos.y,
+        width: iconSize,
+        height: iconSize,
+        image: audioIconSvg,
+        cursor: 'pointer' as Cursor
+      })
+    );
     image.name = 'image';
     image.keepAspectRatio = true;
     (image as any).isAudioIcon = true;
@@ -322,7 +358,7 @@ export function createVideoCellGroup(
     clearVideoLoadTimer();
     releaseVideoResource(video);
   };
-  const isCurrentImage = (): boolean => cellGroup.getChildByName('image', true) === image;
+  const isCurrentImage = (): boolean => getVideoCellMediaImage(cellGroup) === image;
   const setVideoDamageImage = (): void => {
     const regedIcons = icons.get();
     const damageIcon = regedIcons.video_damage_pic || regedIcons.damage_pic;
@@ -365,7 +401,7 @@ export function createVideoCellGroup(
       });
 
       if (isMerge) {
-        updateImageDxDy(
+        updateVideoMediaDxDy(
           cellGroup.mergeStartCol,
           cellGroup.mergeEndCol,
           cellGroup.mergeStartRow,
@@ -449,7 +485,7 @@ export function createVideoCellGroup(
     }
 
     if (isMerge) {
-      updateImageDxDy(
+      updateVideoMediaDxDy(
         cellGroup.mergeStartCol,
         cellGroup.mergeEndCol,
         cellGroup.mergeStartRow,
@@ -474,8 +510,7 @@ export function createVideoCellGroup(
       top + (height > image.attribute.height ? image.attribute.y - top + image.attribute.height / 2 : height / 2);
 
     // get dx dy of image graphic for merge cell
-    const imageGraphic = cellGroup.getChildByName('image', true);
-    const { dx, dy } = imageGraphic.attribute;
+    const { dx, dy } = image.attribute;
 
     const playIcon: Icon = new Icon({
       x: anchorX - iconSize / 2,
@@ -487,6 +522,7 @@ export function createVideoCellGroup(
       dx,
       dy
     });
+    markVideoCellMedia(playIcon);
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
     if (shouldSnapshot && snapshotVideoFirstFrame(video, image, table)) {
@@ -498,14 +534,16 @@ export function createVideoCellGroup(
   video.addEventListener('error', handleVideoLoadFail);
   video.addEventListener('abort', handleVideoLoadFail);
 
-  const image: IImage = createImage({
-    x: padding[3],
-    y: padding[0],
-    width: Math.max(1, width - padding[1] - padding[3]),
-    height: Math.max(1, height - padding[2] - padding[0]),
-    image: video as any,
-    cursor: 'pointer' as Cursor
-  });
+  const image: IImage = markVideoCellMedia(
+    createImage({
+      x: padding[3],
+      y: padding[0],
+      width: Math.max(1, width - padding[1] - padding[3]),
+      height: Math.max(1, height - padding[2] - padding[0]),
+      image: video as any,
+      cursor: 'pointer' as Cursor
+    })
+  );
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
   image.textAlign = textAlign;

@@ -2,7 +2,7 @@
 import { createVideoCellGroup } from '../../src/scenegraph/group-creater/cell-type/video-cell';
 import { audioIconSvg } from '../../src/scenegraph/group-creater/cell-type/audio-cell';
 import { updateImageCellContentWhileResize } from '../../src/scenegraph/group-creater/cell-type/image-cell';
-import { application, registerForVrender } from '../../src/vrender';
+import { application, createImage, registerForVrender } from '../../src/vrender';
 import * as icons from '../../src/icons';
 
 global.__VERSION__ = 'none';
@@ -138,6 +138,50 @@ describe('video cell first frame snapshot', () => {
     expect(image.attribute.image).toBe(audioIconSvg);
     expect(image.attribute.width).toBe(32);
     expect(image.attribute.height).toBe(32);
+  });
+
+  it('keeps custom icons named image or play-icon when reusing a video cell for audio', () => {
+    const { cellGroup, table } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/video.mp4');
+    const customImageIcon = createImage({ x: 1, y: 1, width: 10, height: 10, image: audioIconSvg });
+    customImageIcon.name = 'image';
+    const customPlayIcon = createImage({ x: 2, y: 2, width: 10, height: 10, image: audioIconSvg });
+    customPlayIcon.name = 'play-icon';
+    cellGroup.appendChild(customImageIcon);
+    cellGroup.appendChild(customPlayIcon);
+    table.getCellValue.mockReturnValue('https://example.com/audio.mp3');
+    table.scenegraph.highPerformanceGetCell.mockReturnValue(cellGroup);
+
+    createVideoCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      200,
+      120,
+      false,
+      false,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      true
+    );
+    const children = [];
+    cellGroup.forEachChildren(child => {
+      children.push(child);
+    });
+
+    expect(children).toContain(customImageIcon);
+    expect(children).toContain(customPlayIcon);
+    expect(children.filter(child => child.name === 'image')).toHaveLength(2);
+    expect(children.filter(child => child.name === 'play-icon')).toHaveLength(1);
   });
 
   it('uses a canvas snapshot and releases the video when enabled', () => {
