@@ -16,7 +16,7 @@ import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
 import { isAudioUrl } from '../../../tools/media';
 import { audioIconSvg } from './audio-cell';
-import { getVideoCellMediaImage, isVideoCellMedia, markVideoCellMedia } from './media-cell-helper';
+import { getCellMediaImage, isCellMedia, markCellMedia } from './media-cell-helper';
 
 const regedIcons = icons.get();
 
@@ -47,7 +47,7 @@ function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number
       const cellGroup = table.scenegraph.getCell(col, row);
       if (cellGroup) {
         cellGroup.forEachChildren((child: any) => {
-          if (isVideoCellMedia(child)) {
+          if (isCellMedia(child)) {
             child.setAttributes({
               dx: -table.getColsWidth(cellGroup.mergeStartCol, col - 1),
               dy: -table.getRowsHeight(cellGroup.mergeStartRow, row - 1)
@@ -62,7 +62,7 @@ function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number
 function removeMediaChildren(cellGroup: Group): void {
   const mediaChildren: any[] = [];
   cellGroup.forEachChildren((child: any) => {
-    if (isVideoCellMedia(child)) {
+    if (isCellMedia(child)) {
       mediaChildren.push(child);
     }
   });
@@ -298,7 +298,7 @@ export function createVideoCellGroup(
       textBaseline,
       padding
     );
-    const image: IImage = markVideoCellMedia(
+    const image: IImage = markCellMedia(
       createImage({
         x: pos.x,
         y: pos.y,
@@ -338,7 +338,7 @@ export function createVideoCellGroup(
     clearVideoLoadTimer();
     releaseVideoResource(video);
   };
-  const isCurrentImage = (): boolean => getVideoCellMediaImage(cellGroup) === image;
+  const isCurrentImage = (): boolean => getCellMediaImage(cellGroup) === image;
   const setVideoDamageImage = (): void => {
     const regedIcons = icons.get();
     const damageIcon = regedIcons.video_damage_pic || regedIcons.damage_pic;
@@ -502,7 +502,7 @@ export function createVideoCellGroup(
       dx,
       dy
     });
-    markVideoCellMedia(playIcon, 'play-icon');
+    markCellMedia(playIcon, 'play-icon');
     playIcon.name = 'play-icon';
     cellGroup.appendChild(playIcon);
     if (shouldSnapshot && snapshotVideoFirstFrame(video, image, table)) {
@@ -514,7 +514,7 @@ export function createVideoCellGroup(
   video.addEventListener('error', handleVideoLoadFail);
   video.addEventListener('abort', handleVideoLoadFail);
 
-  const image: IImage = markVideoCellMedia(
+  const image: IImage = markCellMedia(
     createImage({
       x: padding[3],
       y: padding[0],

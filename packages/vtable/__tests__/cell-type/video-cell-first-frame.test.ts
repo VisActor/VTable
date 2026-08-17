@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { createVideoCellGroup } from '../../src/scenegraph/group-creater/cell-type/video-cell';
-import { audioIconSvg } from '../../src/scenegraph/group-creater/cell-type/audio-cell';
+import { audioIconSvg, createAudioCellGroup } from '../../src/scenegraph/group-creater/cell-type/audio-cell';
+import { createImageCellGroup } from '../../src/scenegraph/group-creater/cell-type/image-cell';
 import { updateImageCellContentWhileResize } from '../../src/scenegraph/group-creater/cell-type/image-cell';
+import { Group } from '../../src/scenegraph/graphic/group';
 import { application, createImage, registerForVrender } from '../../src/vrender';
 import * as icons from '../../src/icons';
 
@@ -182,6 +184,125 @@ describe('video cell first frame snapshot', () => {
     expect(children).toContain(customPlayIcon);
     expect(children.filter(child => child.name === 'image')).toHaveLength(2);
     expect(children.filter(child => child.name === 'play-icon')).toHaveLength(1);
+  });
+
+  it('resizes an image cell media node without touching custom icons with media names', () => {
+    const table = createTable(undefined, '<svg width="20" height="10" xmlns="http://www.w3.org/2000/svg"></svg>');
+    const cellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 120
+    });
+    cellGroup.role = 'cell';
+    cellGroup.col = 0;
+    cellGroup.row = 0;
+    const customImageIcon = createImage({ x: 7, y: 8, width: 9, height: 10, image: audioIconSvg });
+    customImageIcon.name = 'image';
+    const customPlayIcon = createImage({ x: 11, y: 12, width: 13, height: 14, image: audioIconSvg });
+    customPlayIcon.name = 'play-icon';
+    cellGroup.appendChild(customImageIcon);
+    cellGroup.appendChild(customPlayIcon);
+    table.scenegraph.highPerformanceGetCell.mockReturnValue(cellGroup);
+    table.scenegraph.getCell.mockReturnValue(cellGroup);
+
+    createImageCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      200,
+      120,
+      false,
+      false,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      true
+    );
+
+    const children = [];
+    cellGroup.forEachChildren(child => {
+      children.push(child);
+    });
+    const mediaImage = children.find(child => child.name === 'image' && child !== customImageIcon);
+    mediaImage.resources.set(mediaImage.attribute.image, {
+      state: 'success',
+      data: {
+        width: 20,
+        height: 10
+      }
+    });
+    cellGroup.setAttribute('width', 260);
+    updateImageCellContentWhileResize(cellGroup, 0, 0, 60, 0, table);
+
+    expect(mediaImage.attribute.width).toBe(260);
+    expect(mediaImage.attribute.height).toBe(120);
+    expect(customImageIcon.attribute).toMatchObject({ x: 7, y: 8, width: 9, height: 10 });
+    expect(customPlayIcon.attribute).toMatchObject({ x: 11, y: 12, width: 13, height: 14 });
+  });
+
+  it('resizes an audio cell media node without touching custom icons with media names', () => {
+    const table = createTable(undefined, 'https://example.com/audio.mp3');
+    const cellGroup = new Group({
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 120
+    });
+    cellGroup.role = 'cell';
+    cellGroup.col = 0;
+    cellGroup.row = 0;
+    const customImageIcon = createImage({ x: 7, y: 8, width: 9, height: 10, image: audioIconSvg });
+    customImageIcon.name = 'image';
+    const customPlayIcon = createImage({ x: 11, y: 12, width: 13, height: 14, image: audioIconSvg });
+    customPlayIcon.name = 'play-icon';
+    cellGroup.appendChild(customImageIcon);
+    cellGroup.appendChild(customPlayIcon);
+    table.scenegraph.highPerformanceGetCell.mockReturnValue(cellGroup);
+    table.scenegraph.getCell.mockReturnValue(cellGroup);
+
+    createAudioCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      200,
+      120,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      true
+    );
+
+    const children = [];
+    cellGroup.forEachChildren(child => {
+      children.push(child);
+    });
+    const mediaImage = children.find(child => child.name === 'image' && child !== customImageIcon);
+    cellGroup.setAttribute('width', 260);
+    updateImageCellContentWhileResize(cellGroup, 0, 0, 60, 0, table);
+
+    expect(mediaImage.attribute.width).toBe(32);
+    expect(mediaImage.attribute.height).toBe(32);
+    expect(customImageIcon.attribute).toMatchObject({ x: 7, y: 8, width: 9, height: 10 });
+    expect(customPlayIcon.attribute).toMatchObject({ x: 11, y: 12, width: 13, height: 14 });
   });
 
   it('uses a canvas snapshot and releases the video when enabled', () => {

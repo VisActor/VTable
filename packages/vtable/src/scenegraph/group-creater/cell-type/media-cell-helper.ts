@@ -1,34 +1,34 @@
 import type { IImage } from '@src/vrender';
 import type { Group } from '../../graphic/group';
 
-export const VIDEO_CELL_MEDIA_KEY = '__vtable_video_cell_media__';
-export const VIDEO_CELL_MEDIA_KIND_KEY = '__vtable_video_cell_media_kind__';
-export type VideoCellMediaKind = 'image' | 'play-icon';
+export const CELL_MEDIA_KEY = '__vtable_cell_media__';
+export const CELL_MEDIA_KIND_KEY = '__vtable_cell_media_kind__';
+export type CellMediaKind = 'image' | 'play-icon';
 
-export function markVideoCellMedia<T>(graphic: T, kind: VideoCellMediaKind): T {
-  (graphic as any)[VIDEO_CELL_MEDIA_KEY] = true;
-  (graphic as any)[VIDEO_CELL_MEDIA_KIND_KEY] = kind;
+export function markCellMedia<T>(graphic: T, kind: CellMediaKind): T {
+  (graphic as any)[CELL_MEDIA_KEY] = true;
+  (graphic as any)[CELL_MEDIA_KIND_KEY] = kind;
   return graphic;
 }
 
-export function isVideoCellMedia(graphic: any): boolean {
-  return graphic?.[VIDEO_CELL_MEDIA_KEY] === true;
+export function isCellMedia(graphic: any): boolean {
+  return graphic?.[CELL_MEDIA_KEY] === true;
 }
 
-export function getVideoCellMediaChildren(cellGroup: Group): any[] {
+export function getCellMediaChildren(cellGroup: Group): any[] {
   const mediaChildren: any[] = [];
   cellGroup.forEachChildren((child: any) => {
-    if (isVideoCellMedia(child)) {
+    if (isCellMedia(child)) {
       mediaChildren.push(child);
     }
   });
   return mediaChildren;
 }
 
-function getVideoCellMediaByKind(cellGroup: Group, kind: VideoCellMediaKind): any {
+function getCellMediaByKind(cellGroup: Group, kind: CellMediaKind): any {
   let graphic: any;
   cellGroup.forEachChildren((child: any) => {
-    if (isVideoCellMedia(child) && child[VIDEO_CELL_MEDIA_KIND_KEY] === kind) {
+    if (isCellMedia(child) && child[CELL_MEDIA_KIND_KEY] === kind) {
       graphic = child;
       return true;
     }
@@ -37,10 +37,10 @@ function getVideoCellMediaByKind(cellGroup: Group, kind: VideoCellMediaKind): an
   return graphic;
 }
 
-export function getVideoCellMediaImage(cellGroup: Group): IImage | undefined {
-  return getVideoCellMediaByKind(cellGroup, 'image');
+export function getCellMediaImage(cellGroup: Group): IImage | undefined {
+  return getCellMediaByKind(cellGroup, 'image');
 }
 
-export function getVideoCellMediaPlayIcon(cellGroup: Group): any {
-  return getVideoCellMediaByKind(cellGroup, 'play-icon');
+export function getCellMediaPlayIcon(cellGroup: Group): any {
+  return getCellMediaByKind(cellGroup, 'play-icon');
 }

@@ -13,22 +13,18 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
-import { getVideoCellMediaChildren, getVideoCellMediaImage, getVideoCellMediaPlayIcon } from './media-cell-helper';
+import { getCellMediaChildren, getCellMediaImage, getCellMediaPlayIcon, markCellMedia } from './media-cell-helper';
 
-function hasVideoCellMedia(cellGroup: Group): boolean {
-  return getVideoCellMediaChildren(cellGroup).length > 0;
+function hasCellMedia(cellGroup: Group): boolean {
+  return getCellMediaChildren(cellGroup).length > 0;
 }
 
 function getResizeImage(cellGroup: Group): Image | undefined {
-  return hasVideoCellMedia(cellGroup)
-    ? (getVideoCellMediaImage(cellGroup) as Image)
-    : (cellGroup.getChildByName('image') as Image);
+  return hasCellMedia(cellGroup) ? (getCellMediaImage(cellGroup) as Image) : undefined;
 }
 
 function getResizePlayIcon(cellGroup: Group): Image | undefined {
-  return hasVideoCellMedia(cellGroup)
-    ? (getVideoCellMediaPlayIcon(cellGroup) as Image)
-    : (cellGroup.getChildByName('play-icon') as Image);
+  return hasCellMedia(cellGroup) ? (getCellMediaPlayIcon(cellGroup) as Image) : undefined;
 }
 
 export function createImageCellGroup(
@@ -169,14 +165,17 @@ export function createImageCellGroup(
 
   // image
   const value = table.getCellValue(col, row);
-  const image: IImage = createImage({
-    x: padding[3],
-    y: padding[0],
-    width: width - padding[1] - padding[3] - iconWidth,
-    height: height - padding[0] - padding[2],
-    image: value,
-    cursor: 'pointer' as Cursor
-  });
+  const image: IImage = markCellMedia(
+    createImage({
+      x: padding[3],
+      y: padding[0],
+      width: width - padding[1] - padding[3] - iconWidth,
+      height: height - padding[0] - padding[2],
+      image: value,
+      cursor: 'pointer' as Cursor
+    }),
+    'image'
+  );
   image.name = 'image';
   image.keepAspectRatio = keepAspectRatio;
   image.textAlign = textAlign;
