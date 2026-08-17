@@ -140,8 +140,11 @@ describe('Context menu canvas option', () => {
 
     table = new ListTable({
       container,
-      columns: [{ field: 'id', title: 'ID' }],
-      records: [{ id: 1 }],
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records: [{ id: 1, name: 'Alice' }],
       plugins: [contextMenuPlugin]
     });
 
