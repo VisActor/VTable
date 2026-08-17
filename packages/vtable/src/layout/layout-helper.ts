@@ -98,10 +98,7 @@ export function hasAutoImageColumn(table: BaseTableAPI) {
           continue;
         }
         if (
-          (column.headerType === 'image' ||
-            column.headerType === 'video' ||
-            column.headerType === 'audio' ||
-            typeof column.headerType === 'function') &&
+          (column.headerType === 'image' || column.headerType === 'video' || typeof column.headerType === 'function') &&
           (column as IImageDimension).imageAutoSizing
         ) {
           return true;

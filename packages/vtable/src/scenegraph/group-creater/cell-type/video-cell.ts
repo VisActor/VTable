@@ -39,6 +39,27 @@ function releaseVideoResource(video: HTMLVideoElement): void {
   }
 }
 
+function releaseGraphicVideoResource(graphic: any): void {
+  const source = graphic?.attribute?.image;
+  if (typeof HTMLVideoElement !== 'undefined' && source instanceof HTMLVideoElement) {
+    releaseVideoResource(source);
+  }
+}
+
+function removeMediaChildren(cellGroup: Group): void {
+  const mediaChildren: any[] = [];
+  cellGroup.forEachChildren((child: any) => {
+    if (child.name === 'image' || child.name === 'play-icon') {
+      mediaChildren.push(child);
+    }
+  });
+  mediaChildren.forEach(child => {
+    releaseGraphicVideoResource(child);
+    cellGroup.removeChild(child);
+    child.release?.();
+  });
+}
+
 function getVideoFirstFrameTimeout(table: BaseTableAPI): number {
   const timeout = table.options.customConfig?.videoFirstFrameTimeout;
   return typeof timeout === 'number' && timeout >= 0 ? timeout : 8000;
@@ -248,6 +269,7 @@ export function createVideoCellGroup(
 
   // video
   const value = table.getCellValue(col, row);
+  removeMediaChildren(cellGroup);
   if (isAudioUrl(value)) {
     const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);
     const availableHeight = Math.max(1, height - padding[0] - padding[2]);

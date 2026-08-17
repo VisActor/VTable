@@ -5,7 +5,7 @@ import type { ITextDimension } from './multilinetext-dimension';
 
 export type IDimension = IRowDimension | IColumnDimension;
 export type IRowDimension = ILinkDimension | IImageDimension | IAudioDimension | ITextDimension | ICompositeDimension;
-export type IColumnDimension = Omit<
-  ILinkDimension | IImageDimension | IAudioDimension | ITextDimension | ICompositeDimension,
-  'width' | 'minWidth' | 'maxWidth'
+type OmitColumnWidth<T> = T extends unknown ? Omit<T, 'width' | 'minWidth' | 'maxWidth'> : never;
+export type IColumnDimension = OmitColumnWidth<
+  ILinkDimension | IImageDimension | IAudioDimension | ITextDimension | ICompositeDimension
 >;
