@@ -2,6 +2,8 @@ import * as VTable from '@visactor/vtable';
 import { ContextMenuPlugin } from '../../src/context-menu';
 
 const CONTAINER_ID = 'vTable';
+const INFO_ID = 'context-menu-click-info';
+const STATUS_ID = 'context-menu-click-status';
 
 function createRecords() {
   return Array.from({ length: 12 }, (_, index) => ({
@@ -54,7 +56,19 @@ export function createTableInstance(status: HTMLElement) {
 }
 
 export function createTable() {
+  document.getElementById(INFO_ID)?.remove();
+  document.getElementById(STATUS_ID)?.remove();
+
+  const container = document.getElementById(CONTAINER_ID) ?? document.createElement('div');
+  container.id = CONTAINER_ID;
+  container.style.width = '100%';
+  container.style.height = '460px';
+  if (!container.parentNode) {
+    document.body.appendChild(container);
+  }
+
   const info = document.createElement('div');
+  info.id = INFO_ID;
   info.style.margin = '10px';
   info.style.padding = '10px';
   info.style.border = '1px solid #ddd';
@@ -68,6 +82,7 @@ export function createTable() {
   document.body.appendChild(info);
 
   const status = document.createElement('pre');
+  status.id = STATUS_ID;
   status.style.margin = '10px';
   status.style.padding = '10px';
   status.style.border = '1px solid #ddd';
@@ -75,11 +90,13 @@ export function createTable() {
   status.style.backgroundColor = '#fff';
   document.body.appendChild(status);
 
-  const container = document.createElement('div');
-  container.id = CONTAINER_ID;
-  container.style.width = '100%';
-  container.style.height = '460px';
-  document.body.appendChild(container);
+  const tableInstance = createTableInstance(status);
+  const release = tableInstance.release.bind(tableInstance);
+  tableInstance.release = () => {
+    document.getElementById(INFO_ID)?.remove();
+    document.getElementById(STATUS_ID)?.remove();
+    release();
+  };
 
-  return createTableInstance(status);
+  return tableInstance;
 }

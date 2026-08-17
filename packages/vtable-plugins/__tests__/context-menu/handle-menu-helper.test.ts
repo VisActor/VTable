@@ -152,8 +152,7 @@ describe('Context menu canvas option', () => {
         menuKey: 'freeze_to_this_row_and_column',
         menuText: '冻结到本行本列',
         rowIndex: 1,
-        colIndex: 0,
-        cellValue: 1
+        colIndex: 0
       },
       table
     );

@@ -135,7 +135,7 @@ const contextMenuPlugin = new ContextMenuPlugin({
 
 ## Listen to Menu Item Click Events
 
-If you need to observe user actions after a right-click menu item is clicked, listen to the `context_menu_click` event fired by `ContextMenuPlugin`. This event is only fired after the right-click menu plugin is installed and enabled, and it is fired after the corresponding menu item handling logic finishes. Note that when `menuClickCallback` is configured as a function, the plugin runs that callback and skips the built-in menu handling. Built-in operations such as freeze, insert, and delete are only executed when `menuClickCallback` is not configured, or when it is configured as an object and the current `menuKey` does not match a custom callback.
+If you need to observe user actions after a right-click menu item is clicked, listen to the `context_menu_click` event fired by `ContextMenuPlugin`. This event is only fired after the right-click menu plugin is installed and enabled, and it is fired after the corresponding menu item handling logic is called. Note that when `menuClickCallback` is configured as a function, the plugin runs that callback and skips the built-in menu handling. Built-in operations such as freeze, insert, and delete are only executed when `menuClickCallback` is not configured, or when it is configured as an object and the current `menuKey` does not match a custom callback.
 
 ```typescript
 import * as VTable from '@visactor/vtable';
@@ -172,8 +172,8 @@ Event argument description:
 | `contextMenu.menuText` | string | Display text of the clicked menu item |
 | `contextMenu.rowIndex` | number \| undefined | Row index of the menu trigger position; may be `undefined` when no row context exists |
 | `contextMenu.colIndex` | number \| undefined | Column index of the menu trigger position; may be `undefined` when no column context exists |
-| `contextMenu.cellValue` | any | Cell value at the menu trigger position |
-| `contextMenu.inputValue` | number \| string | Input value of an input menu item |
+| `contextMenu.cellValue` | any \| undefined | Cell value at the menu trigger position; `undefined` when there is no corresponding cell |
+| `contextMenu.inputValue` | number \| string \| undefined | Input value of an input menu item; only exists when an input menu item is submitted |
 
 ## Complete Example
 
