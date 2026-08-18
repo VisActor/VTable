@@ -44,3 +44,33 @@ export function getCellMediaImage(cellGroup: Group): IImage | undefined {
 export function getCellMediaPlayIcon(cellGroup: Group): any {
   return getCellMediaByKind(cellGroup, 'play-icon');
 }
+
+export function releaseVideoResource(video: HTMLVideoElement): void {
+  try {
+    video.pause();
+  } catch (err) {
+    // ignore media cleanup errors
+  }
+  video.removeAttribute('src');
+  try {
+    video.load();
+  } catch (err) {
+    // ignore media cleanup errors
+  }
+}
+
+export function releaseGraphicMediaResource(graphic: any): void {
+  const source = graphic?.attribute?.image;
+  if (typeof HTMLVideoElement !== 'undefined' && source instanceof HTMLVideoElement) {
+    releaseVideoResource(source);
+  }
+}
+
+export function removeCellMediaChildren(cellGroup: Group): void {
+  const mediaChildren = getCellMediaChildren(cellGroup);
+  mediaChildren.forEach(child => {
+    releaseGraphicMediaResource(child);
+    cellGroup.removeChild(child);
+    child.release?.();
+  });
+}

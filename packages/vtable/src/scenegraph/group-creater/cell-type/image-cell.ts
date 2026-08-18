@@ -13,7 +13,13 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
-import { getCellMediaChildren, getCellMediaImage, getCellMediaPlayIcon, markCellMedia } from './media-cell-helper';
+import {
+  getCellMediaChildren,
+  getCellMediaImage,
+  getCellMediaPlayIcon,
+  markCellMedia,
+  removeCellMediaChildren
+} from './media-cell-helper';
 
 function hasCellMedia(cellGroup: Group): boolean {
   return getCellMediaChildren(cellGroup).length > 0;
@@ -165,6 +171,7 @@ export function createImageCellGroup(
 
   // image
   const value = table.getCellValue(col, row);
+  removeCellMediaChildren(cellGroup);
   const image: IImage = markCellMedia(
     createImage({
       x: padding[3],

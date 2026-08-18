@@ -8,6 +8,17 @@ import type { IAudioColumnBodyDefine, IImageColumnBodyDefine } from '../ts-types
 import { getOrApply } from '../tools/helper';
 import { isAudioUrl } from '../tools/media';
 
+const MEDIA_PREVIEW_MANAGER_KEY = '__vtable_media_preview_manager__';
+
+interface MediaPreviewManager {
+  closePreview: (() => void) | null;
+  registered: boolean;
+  close: () => void;
+  open: (closePreview: () => void) => void;
+  release: () => void;
+  ensureRegistered: () => void;
+}
+
 function formatAudioTime(time: number) {
   if (!Number.isFinite(time) || time < 0) {
     return '0:00';
@@ -167,6 +178,7 @@ function createAudioPreview(cellValue: string) {
   });
 
   audio.addEventListener('loadedmetadata', updateProgress);
+  audio.addEventListener('durationchange', updateProgress);
   audio.addEventListener('timeupdate', updateProgress);
   audio.addEventListener('play', () => {
     playButton.textContent = '❚❚';
@@ -196,16 +208,48 @@ function createAudioPreview(cellValue: string) {
   };
 }
 
+function createMediaPreviewManager(table: BaseTableAPI): MediaPreviewManager {
+  const manager: MediaPreviewManager = {
+    closePreview: null,
+    registered: false,
+    close() {
+      const closePreview = manager.closePreview;
+      manager.closePreview = null;
+      closePreview?.();
+    },
+    open(closePreview: () => void) {
+      manager.close();
+      manager.closePreview = closePreview;
+    },
+    release() {
+      manager.close();
+      manager.registered = false;
+    },
+    ensureRegistered() {
+      if (manager.registered) {
+        return;
+      }
+      table.addReleaseObj(manager);
+      manager.registered = true;
+    }
+  };
+  return manager;
+}
+
+function getMediaPreviewManager(table: BaseTableAPI): MediaPreviewManager {
+  const tableWithManager = table as any;
+  if (!tableWithManager[MEDIA_PREVIEW_MANAGER_KEY]) {
+    tableWithManager[MEDIA_PREVIEW_MANAGER_KEY] = createMediaPreviewManager(table);
+  }
+  const manager = tableWithManager[MEDIA_PREVIEW_MANAGER_KEY] as MediaPreviewManager;
+  manager.ensureRegistered();
+  return manager;
+}
+
 export function bindMediaClick(table: BaseTableAPI): void {
   if (Env.mode === 'browser') {
     // table.hasMedia = false;
-    let closeAudioPreview: (() => void) | null = null;
-    table.addReleaseObj({
-      release: () => {
-        closeAudioPreview?.();
-        closeAudioPreview = null;
-      }
-    });
+    getMediaPreviewManager(table);
 
     table.on(TABLE_EVENT_TYPE.CLICK_CELL, (e: MousePointerCellEvent) => {
       //如果目前是在某个icon上，如收起展开按钮 则不进行其他点击逻辑
@@ -295,6 +339,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (clickToPreview === false) {
           return;
         }
+        const previewManager = getMediaPreviewManager(table);
 
         // 开启蒙版
         const overlay = document.createElement('div');
@@ -310,9 +355,16 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.style.overflow = 'hidden';
         overlay.style.zIndex = '9999';
 
+        const closeOverlay = () => {
+          if (overlay.parentNode) {
+            document.body.removeChild(overlay);
+          }
+        };
+        previewManager.open(closeOverlay);
+
         overlay.addEventListener('click', e => {
           if (e.target === overlay) {
-            document.body.removeChild(overlay);
+            previewManager.close();
           }
         });
         // overlay.addEventListener('pointermove', (e) => {
@@ -338,6 +390,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (clickToPreview === false) {
           return;
         }
+        const previewManager = getMediaPreviewManager(table);
 
         // 开启蒙版
         const overlay = document.createElement('div');
@@ -354,19 +407,17 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.style.zIndex = '9999';
 
         const audioPreview = createAudioPreview(cellValue);
-        closeAudioPreview?.();
         const closeOverlay = () => {
-          closeAudioPreview = null;
           audioPreview.destroy();
           if (overlay.parentNode) {
             document.body.removeChild(overlay);
           }
         };
-        closeAudioPreview = closeOverlay;
+        previewManager.open(closeOverlay);
 
         overlay.addEventListener('click', e => {
           if (e.target === overlay) {
-            closeOverlay();
+            previewManager.close();
           }
         });
 
@@ -380,6 +431,7 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (clickToPreview === false) {
           return;
         }
+        const previewManager = getMediaPreviewManager(table);
 
         // 开启蒙版
         const overlay = document.createElement('div');
@@ -395,19 +447,38 @@ export function bindMediaClick(table: BaseTableAPI): void {
         overlay.style.overflow = 'hidden';
         overlay.style.zIndex = '9999';
 
-        overlay.addEventListener('click', e => {
-          if (e.target === overlay) {
-            document.body.removeChild(overlay);
-          }
-        });
-
         const video = document.createElement('video');
         video.src = cellValue;
         video.style.maxWidth = '80%';
         video.style.maxHeight = '80%';
         video.setAttribute('preload', 'auto');
         video.setAttribute('controls', 'true');
+
+        const closeOverlay = () => {
+          try {
+            video.pause();
+          } catch (err) {
+            // ignore media cleanup errors
+          }
+          video.removeAttribute('src');
+          try {
+            video.load();
+          } catch (err) {
+            // ignore media cleanup errors
+          }
+          if (overlay.parentNode) {
+            document.body.removeChild(overlay);
+          }
+        };
+        previewManager.open(closeOverlay);
+
         overlay.appendChild(video);
+
+        overlay.addEventListener('click', e => {
+          if (e.target === overlay) {
+            previewManager.close();
+          }
+        });
 
         document.body.appendChild(overlay);
       }

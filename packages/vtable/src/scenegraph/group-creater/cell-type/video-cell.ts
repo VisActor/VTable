@@ -16,30 +16,15 @@ import type { CellRange } from '../../../ts-types';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
 import { isAudioUrl } from '../../../tools/media';
 import { audioIconSvg } from './audio-cell';
-import { getCellMediaImage, isCellMedia, markCellMedia } from './media-cell-helper';
+import {
+  getCellMediaImage,
+  isCellMedia,
+  markCellMedia,
+  removeCellMediaChildren,
+  releaseVideoResource
+} from './media-cell-helper';
 
 const regedIcons = icons.get();
-
-function releaseVideoResource(video: HTMLVideoElement): void {
-  try {
-    video.pause();
-  } catch (err) {
-    // ignore media cleanup errors
-  }
-  video.removeAttribute('src');
-  try {
-    video.load();
-  } catch (err) {
-    // ignore media cleanup errors
-  }
-}
-
-function releaseGraphicVideoResource(graphic: any): void {
-  const source = graphic?.attribute?.image;
-  if (typeof HTMLVideoElement !== 'undefined' && source instanceof HTMLVideoElement) {
-    releaseVideoResource(source);
-  }
-}
 
 function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number, endRow: number, table: BaseTableAPI) {
   for (let col = startCol; col <= endCol; col++) {
@@ -57,20 +42,6 @@ function updateVideoMediaDxDy(startCol: number, endCol: number, startRow: number
       }
     }
   }
-}
-
-function removeMediaChildren(cellGroup: Group): void {
-  const mediaChildren: any[] = [];
-  cellGroup.forEachChildren((child: any) => {
-    if (isCellMedia(child)) {
-      mediaChildren.push(child);
-    }
-  });
-  mediaChildren.forEach(child => {
-    releaseGraphicVideoResource(child);
-    cellGroup.removeChild(child);
-    child.release?.();
-  });
 }
 
 function getVideoFirstFrameTimeout(table: BaseTableAPI): number {
@@ -282,7 +253,7 @@ export function createVideoCellGroup(
 
   // video
   const value = table.getCellValue(col, row);
-  removeMediaChildren(cellGroup);
+  removeCellMediaChildren(cellGroup);
   if (isAudioUrl(value)) {
     const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);
     const availableHeight = Math.max(1, height - padding[0] - padding[2]);

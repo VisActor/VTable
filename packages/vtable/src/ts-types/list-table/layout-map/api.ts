@@ -40,6 +40,7 @@ export type {
   LinkColumnDefine,
   ChartColumnDefine,
   ImageColumnDefine,
+  AudioColumnDefine,
   SparklineColumnDefine,
   ProgressbarColumnDefine,
   TextColumnDefine,
