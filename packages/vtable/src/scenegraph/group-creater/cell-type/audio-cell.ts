@@ -30,7 +30,8 @@ export function createAudioCellGroup(
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  _cellValue?: any
 ) {
   const headerStyle = table._getCellStyle(col, row);
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);

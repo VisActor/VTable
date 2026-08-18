@@ -222,7 +222,8 @@ export function createComplexColumn(
           cellLocation,
           range,
           customResult,
-          defaultRowHeight
+          defaultRowHeight,
+          promiseValue: value
         })
       );
       columnGroup.updateColumnRowNumber(row);
@@ -355,7 +356,8 @@ function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) 
     customStyle,
     range,
     customResult,
-    defaultRowHeight
+    defaultRowHeight,
+    promiseValue
   } = createCellArgs;
   const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const cellTheme = getStyleTheme(
@@ -384,7 +386,7 @@ function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) 
   }
   createCell(
     type,
-    resolvedValue,
+    promiseValue,
     define,
     table,
     col,
@@ -400,7 +402,8 @@ function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) 
     mayHaveIcon,
     cellTheme,
     range,
-    customResult
+    customResult,
+    resolvedValue
   );
 }
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {

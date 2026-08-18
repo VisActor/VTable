@@ -28,8 +28,10 @@ export function createButtonCellGroup(
   cellTheme: IThemeSpec,
   define: ButtonColumnDefine,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  cellValue?: any
 ) {
+  const value = arguments.length >= 19 ? cellValue : table.getCellValue(col, row);
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
@@ -139,7 +141,8 @@ export function createButtonCellGroup(
     padding,
     cellTheme,
     define,
-    table
+    table,
+    value
   );
   if (buttonComponent) {
     cellGroup.appendChild(buttonComponent);
@@ -180,7 +183,8 @@ function createButton(
   padding: number[],
   cellTheme: IThemeSpec,
   define: ButtonColumnDefine,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellValue: any
 ) {
   const style = table._getCellStyle(col, row) as ButtonStyle;
   const buttonColor = getProp('buttonColor', style, col, row, table);
@@ -195,7 +199,7 @@ function createButton(
   const buttonDisableBorderColor = getProp('buttonDisableBorderColor', style, col, row, table);
   const buttonTextDisableColor = getProp('buttonTextDisableColor', style, col, row, table);
 
-  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
+  const value = cellValue as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
   const hierarchyOffset = getHierarchyOffset(col, row, table);
   const cellStyle = table._getCellStyle(col, row) as ButtonStyleOption; // to be fixed

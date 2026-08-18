@@ -65,7 +65,7 @@ function isPromiseCellUpdateCurrent(
 
 export function createCell(
   type: ColumnTypeOption,
-  value: string,
+  value: any,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -84,18 +84,24 @@ export function createCell(
   customResult?: {
     elementsGroup?: VGroup;
     renderDefault: boolean;
-  }
+  },
+  cellValue?: any
 ): Group {
   let isAsync = false;
   let cellGroup: Group;
+  const hasCellValue = arguments.length >= 19;
+  let renderValue = hasCellValue ? cellValue : value;
   if (isPromise(value)) {
     if (table.scenegraph.highPerformanceGetCell(col, row).role !== 'cell') {
       // avoid nouse async create cell
       return cellGroup;
     }
-    value = table.getCellValue(col, row);
+    if (!hasCellValue) {
+      renderValue = table.getCellValue(col, row);
+    }
     isAsync = true;
   }
+  value = renderValue;
   // let bgColorFunc: Function;
   // // 判断是否有mapping  遍历dataset中mappingRules
   // if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
@@ -134,7 +140,8 @@ export function createCell(
       define as CheckboxColumnDefine,
       range,
       isAsync,
-      true
+      true,
+      value
     );
   } else if (type === 'text' || type === 'link' || customResult) {
     // customMerge&customLayout cell as text cell
@@ -290,7 +297,8 @@ export function createCell(
       table,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'video') {
     // 创建视频单元格
@@ -411,7 +419,8 @@ export function createCell(
       padding,
       table,
       cellTheme,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'checkbox') {
     const isAggregation =
@@ -460,7 +469,8 @@ export function createCell(
         define as CheckboxColumnDefine,
         range,
         isAsync,
-        false
+        false,
+        value
       );
     }
   } else if (type === 'radio') {
@@ -507,7 +517,9 @@ export function createCell(
         table,
         cellTheme,
         define as RadioColumnDefine,
-        range
+        range,
+        isAsync,
+        value
       );
     }
   } else if (type === 'switch') {
@@ -530,7 +542,8 @@ export function createCell(
       cellTheme,
       define as SwitchColumnDefine,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'button') {
     const createButtonCellGroup = Factory.getFunction('createButtonCellGroup') as CreateButtonCellGroup;
@@ -552,7 +565,8 @@ export function createCell(
       cellTheme,
       define as ButtonColumnDefine,
       range,
-      isAsync
+      isAsync,
+      value
     );
   }
 
@@ -921,6 +935,7 @@ export function updateCell(
         range,
         customResult,
         customStyle,
+        promiseValue: value,
         updateToken
       })
     );
@@ -977,7 +992,7 @@ export function updateCell(
 
 function updateCellContent(
   type: ColumnTypeOption,
-  value: string,
+  value: any,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -996,11 +1011,10 @@ function updateCellContent(
   customResult?: {
     elementsGroup?: VGroup;
     renderDefault: boolean;
-  }
+  },
+  cellValue?: any
 ) {
-  if (isPromise(value)) {
-    value = table.getCellValue(col, row);
-  }
+  const hasCellValue = arguments.length >= 18;
   //解决报错 getCellByCache递归调用 死循环问题
   if (!addNew && (oldCellGroup.row !== row || oldCellGroup.col !== col)) {
     return null;
@@ -1017,7 +1031,7 @@ function updateCellContent(
       }
     }
   }
-  const newCellGroup = createCell(
+  const createCellArgs: Parameters<typeof createCell> = [
     type,
     value,
     define,
@@ -1038,7 +1052,11 @@ function updateCellContent(
     cellTheme,
     range,
     customResult
-  );
+  ];
+  if (hasCellValue) {
+    createCellArgs.push(cellValue);
+  }
+  const newCellGroup = createCell(...createCellArgs);
   if (!addNew && oldCellGroup.parent) {
     // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
@@ -1101,6 +1119,7 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any, resolvedValue
     range,
     customResult,
     customStyle,
+    promiseValue,
     updateToken
   } = updateCellArgs;
   if (!isPromiseCellUpdateCurrent(table, col, row, oldCellGroup, updateToken)) {
@@ -1118,7 +1137,7 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any, resolvedValue
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
   updateCellContent(
     type,
-    resolvedValue,
+    promiseValue,
     define,
     table,
     col,
@@ -1134,7 +1153,8 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any, resolvedValue
     addNew,
     cellTheme,
     range,
-    customResult
+    customResult,
+    resolvedValue
   );
 }
 export function dealWithMergeCellSize(
