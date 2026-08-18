@@ -246,10 +246,9 @@ export function createVideoCellGroup(
         child.setAttribute('y', padding[0]);
       }
     });
-
-    (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
-    (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
   }
+  (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
+  (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
 
   // video
   const value = table.getCellValue(col, row);

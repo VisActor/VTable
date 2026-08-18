@@ -25,6 +25,7 @@ import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
 import type { CreateTextCellGroup } from './cell-type/text-cell';
 import type { CreateVideoCellGroup } from './cell-type/video-cell';
 import type { CreateAudioCellGroup } from './cell-type/audio-cell';
+import { removeCellMediaChildren } from './cell-type/media-cell-helper';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { getOrApply, isPromise } from '../../tools/helper';
@@ -42,6 +43,25 @@ import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
 import type { CreateButtonCellGroup } from './cell-type/button-cell';
+
+const PROMISE_CELL_UPDATE_TOKEN_KEY = '__vtable_promise_cell_update_token__';
+
+function nextPromiseCellUpdateToken(cellGroup: Group): number {
+  const token = ((cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] ?? 0) + 1;
+  (cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] = token;
+  return token;
+}
+
+function isPromiseCellUpdateCurrent(
+  table: BaseTableAPI,
+  col: number,
+  row: number,
+  cellGroup: Group,
+  token: number
+): boolean {
+  const currentCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+  return currentCellGroup === cellGroup && (cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] === token;
+}
 
 export function createCell(
   type: ColumnTypeOption,
@@ -872,7 +892,9 @@ export function updateCell(
 
   // deal with promise data
   if (isPromise(value)) {
+    const updateToken = nextPromiseCellUpdateToken(oldCellGroup);
     // clear cell content sync
+    removeCellMediaChildren(oldCellGroup);
     oldCellGroup.removeAllChild();
 
     // update cell content async
@@ -897,7 +919,8 @@ export function updateCell(
         addNew,
         range,
         customResult,
-        customStyle
+        customStyle,
+        updateToken
       })
     );
   } else {
@@ -1019,6 +1042,7 @@ function updateCellContent(
     // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
+    removeCellMediaChildren(oldCellGroup);
     oldCellGroup.release(true);
 
     // update cache
@@ -1076,8 +1100,12 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
     addNew,
     range,
     customResult,
-    customStyle
+    customStyle,
+    updateToken
   } = updateCellArgs;
+  if (!isPromiseCellUpdateCurrent(table, col, row, oldCellGroup, updateToken)) {
+    return;
+  }
   const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const cellTheme = getStyleTheme(
     cellStyle,

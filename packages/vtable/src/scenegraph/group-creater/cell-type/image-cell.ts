@@ -164,10 +164,9 @@ export function createImageCellGroup(
         child.setAttribute('y', padding[0]);
       }
     });
-
-    (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
-    (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
   }
+  (cellGroup as any)._cellLeftIconWidth = cellLeftIconWidth;
+  (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
 
   // image
   const value = table.getCellValue(col, row);

@@ -142,6 +142,13 @@ describe('video cell first frame snapshot', () => {
     expect(image.attribute.height).toBe(32);
   });
 
+  it('keeps ogg in a video cell as video because the container can carry video', () => {
+    const { image, video } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/video.ogg');
+
+    expect(video).toBeDefined();
+    expect(image.attribute.image).toBe(video);
+  });
+
   it('keeps custom icons named image or play-icon when reusing a video cell for audio', () => {
     const { cellGroup, table } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/video.mp4');
     const customImageIcon = createImage({ x: 1, y: 1, width: 10, height: 10, image: audioIconSvg });
@@ -184,6 +191,78 @@ describe('video cell first frame snapshot', () => {
     expect(children).toContain(customPlayIcon);
     expect(children.filter(child => child.name === 'image')).toHaveLength(2);
     expect(children.filter(child => child.name === 'play-icon')).toHaveLength(1);
+  });
+
+  it('releases the old video resource when reusing a video cell for audio', () => {
+    const { cellGroup, table, video } = createCell(
+      undefined,
+      { width: 200, height: 120 },
+      'https://example.com/video.mp4'
+    );
+    table.getCellValue.mockReturnValue('https://example.com/audio.mp3');
+    table.scenegraph.highPerformanceGetCell.mockReturnValue(cellGroup);
+
+    createVideoCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      200,
+      120,
+      false,
+      false,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      true
+    );
+
+    expect(video.pause).toHaveBeenCalledTimes(1);
+    expect(video.hasAttribute('src')).toBe(false);
+    expect(video.load).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears stale icon width when reusing a video cell without icons', () => {
+    const { cellGroup, table } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/video.mp4');
+    (cellGroup as any)._cellLeftIconWidth = 24;
+    (cellGroup as any)._cellRightIconWidth = 16;
+    table.getCellValue.mockReturnValue('https://example.com/audio.mp3');
+    table.scenegraph.highPerformanceGetCell.mockReturnValue(cellGroup);
+
+    createVideoCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      40,
+      120,
+      false,
+      false,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      true
+    );
+
+    expect((cellGroup as any)._cellLeftIconWidth).toBe(0);
+    expect((cellGroup as any)._cellRightIconWidth).toBe(0);
+    expect(cellGroup.getChildByName('image', true).attribute.width).toBe(32);
   });
 
   it('resizes an image cell media node without touching custom icons with media names', () => {

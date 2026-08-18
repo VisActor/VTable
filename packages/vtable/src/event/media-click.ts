@@ -171,10 +171,10 @@ function createAudioPreview(cellValue: string) {
   progress.addEventListener('input', () => {
     const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     const value = Number(progress.value);
-    if (duration > 0) {
+    if (duration > 0 && Number.isFinite(value)) {
       audio.currentTime = (duration * value) / 100;
     }
-    updateAudioProgressStyle(progress, value);
+    updateProgress();
   });
 
   audio.addEventListener('loadedmetadata', updateProgress);

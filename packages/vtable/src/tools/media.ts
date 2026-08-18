@@ -1,4 +1,4 @@
-const AUDIO_EXTENSIONS = new Set(['mp3', 'wav', 'ogg', 'oga', 'm4a', 'aac', 'flac', 'opus']);
+const AUDIO_EXTENSIONS = new Set(['mp3', 'wav', 'oga', 'm4a', 'aac', 'flac', 'opus']);
 
 export function isAudioUrl(value: unknown): boolean {
   if (typeof value !== 'string') {
