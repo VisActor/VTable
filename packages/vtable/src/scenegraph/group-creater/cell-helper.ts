@@ -270,7 +270,8 @@ export function createCell(
       table,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'audio') {
     const createAudioCellGroup = Factory.getFunction('createAudioCellGroup') as CreateAudioCellGroup;
@@ -311,7 +312,8 @@ export function createCell(
       table,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
@@ -903,7 +905,6 @@ export function updateCell(
       table,
       callUpdateCellContentForPromiseValue.bind(null, {
         type,
-        value,
         define,
         table,
         col,
@@ -1082,10 +1083,9 @@ function canUseFastUpdate(
   }
   return false;
 }
-function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
+function callUpdateCellContentForPromiseValue(updateCellArgs: any, resolvedValue: any) {
   const {
     type,
-    value,
     define,
     table,
     col,
@@ -1118,7 +1118,7 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
   updateCellContent(
     type,
-    value,
+    resolvedValue,
     define,
     table,
     col,

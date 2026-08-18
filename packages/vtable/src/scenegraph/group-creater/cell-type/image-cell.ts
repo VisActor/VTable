@@ -50,7 +50,8 @@ export function createImageCellGroup(
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  cellValue?: any
 ) {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -169,7 +170,7 @@ export function createImageCellGroup(
   (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
 
   // image
-  const value = table.getCellValue(col, row);
+  const value = arguments.length >= 18 ? cellValue : table.getCellValue(col, row);
   removeCellMediaChildren(cellGroup);
   const image: IImage = markCellMedia(
     createImage({

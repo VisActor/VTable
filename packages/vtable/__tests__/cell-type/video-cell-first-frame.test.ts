@@ -142,6 +142,37 @@ describe('video cell first frame snapshot', () => {
     expect(image.attribute.height).toBe(32);
   });
 
+  it('uses the resolved async value instead of rereading a stale table value', () => {
+    const table = createTable(undefined, 'https://example.com/stale-video.mp4');
+    const cellGroup = createVideoCellGroup(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      200,
+      120,
+      false,
+      false,
+      [0, 0, 0, 0],
+      'left',
+      'middle',
+      false,
+      table,
+      {
+        group: {},
+        text: {}
+      },
+      undefined,
+      false,
+      'https://example.com/resolved-audio.mp3'
+    );
+
+    const image = cellGroup.getChildByName('image', true);
+    expect(createdVideo).toBeUndefined();
+    expect(image.attribute.image).toBe(audioIconSvg);
+  });
+
   it('keeps ogg in a video cell as video because the container can carry video', () => {
     const { image, video } = createCell(undefined, { width: 200, height: 120 }, 'https://example.com/video.ogg');
 

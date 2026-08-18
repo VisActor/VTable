@@ -132,7 +132,8 @@ export function createVideoCellGroup(
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  cellValue?: any
 ) {
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -251,7 +252,7 @@ export function createVideoCellGroup(
   (cellGroup as any)._cellRightIconWidth = cellRightIconWidth;
 
   // video
-  const value = table.getCellValue(col, row);
+  const value = arguments.length >= 18 ? cellValue : table.getCellValue(col, row);
   removeCellMediaChildren(cellGroup);
   if (isAudioUrl(value)) {
     const availableWidth = Math.max(1, width - padding[1] - padding[3] - cellLeftIconWidth - cellRightIconWidth);

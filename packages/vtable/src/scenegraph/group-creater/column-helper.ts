@@ -208,7 +208,6 @@ export function createComplexColumn(
         table,
         callCreateCellForPromiseValue.bind(null, {
           type,
-          value,
           define,
           table,
           col,
@@ -336,13 +335,12 @@ export function getColumnGroupTheme(
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
 }
-function callCreateCellForPromiseValue(createCellArgs: any) {
+function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) {
   let padding;
   let textAlign;
   let textBaseline;
   const {
     type,
-    value,
     define,
     table,
     col,
@@ -386,7 +384,7 @@ function callCreateCellForPromiseValue(createCellArgs: any) {
   }
   createCell(
     type,
-    value,
+    resolvedValue,
     define,
     table,
     col,
