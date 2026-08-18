@@ -46,13 +46,13 @@ import type { CreateButtonCellGroup } from './cell-type/button-cell';
 
 const PROMISE_CELL_UPDATE_TOKEN_KEY = '__vtable_promise_cell_update_token__';
 
-function nextPromiseCellUpdateToken(cellGroup: Group): number {
+export function nextPromiseCellUpdateToken(cellGroup: Group): number {
   const token = ((cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] ?? 0) + 1;
   (cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] = token;
   return token;
 }
 
-function isPromiseCellUpdateCurrent(
+export function isPromiseCellUpdateCurrent(
   table: BaseTableAPI,
   col: number,
   row: number,
@@ -1057,7 +1057,7 @@ function updateCellContent(
     createCellArgs.push(cellValue);
   }
   const newCellGroup = createCell(...createCellArgs);
-  if (!addNew && oldCellGroup.parent) {
+  if (!addNew && oldCellGroup.parent && newCellGroup !== oldCellGroup) {
     // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);

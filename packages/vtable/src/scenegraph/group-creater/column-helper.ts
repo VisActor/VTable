@@ -11,7 +11,13 @@ import type {
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
+import {
+  createCell,
+  dealWithMergeCellSize,
+  isPromiseCellUpdateCurrent,
+  nextPromiseCellUpdateToken,
+  resizeCellGroup
+} from './cell-helper';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
@@ -202,7 +208,8 @@ export function createComplexColumn(
     const type = isVtableMerge || isCustomMerge ? 'text' : table.getCellType(col, row);
     // deal with promise data
     if (isPromise(value)) {
-      createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
+      const cellGroup = createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
+      const updateToken = nextPromiseCellUpdateToken(cellGroup);
       dealPromiseData(
         value,
         table,
@@ -223,7 +230,9 @@ export function createComplexColumn(
           range,
           customResult,
           defaultRowHeight,
-          promiseValue: value
+          promiseValue: value,
+          oldCellGroup: cellGroup,
+          updateToken
         })
       );
       columnGroup.updateColumnRowNumber(row);
@@ -357,8 +366,13 @@ function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) 
     range,
     customResult,
     defaultRowHeight,
-    promiseValue
+    promiseValue,
+    oldCellGroup,
+    updateToken
   } = createCellArgs;
+  if (!isPromiseCellUpdateCurrent(table, col, row, oldCellGroup, updateToken)) {
+    return;
+  }
   const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const cellTheme = getStyleTheme(
     cellStyle,
@@ -453,4 +467,5 @@ function createEmptyCellGroup(
   cellGroup.col = col;
   cellGroup.row = row;
   columnGroup.addChild(cellGroup);
+  return cellGroup;
 }
