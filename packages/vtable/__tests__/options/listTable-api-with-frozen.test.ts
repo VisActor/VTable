@@ -305,6 +305,41 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable frame border should match short content with frozen rows', () => {
+    const optionWithShortFrozenRows = {
+      ...option,
+      columns: columns.slice(0, 5).map(column => ({
+        ...column,
+        width: 180
+      })),
+      frozenColCount: 0,
+      rightFrozenColCount: 0,
+      frozenRowCount: 3,
+      bottomFrozenRowCount: 1,
+      container: createDiv(),
+      records: records.slice(0, 6),
+      widthMode: 'standard',
+      theme: {
+        frameStyle: {
+          borderLineWidth: [1, 1, 1, 1],
+          borderColor: 'red'
+        }
+      }
+    };
+    optionWithShortFrozenRows.container.style.position = 'relative';
+    optionWithShortFrozenRows.container.style.width = '900px';
+    optionWithShortFrozenRows.container.style.height = '500px';
+
+    const frozenTable = new ListTable(optionWithShortFrozenRows);
+    const { scenegraph } = frozenTable;
+    const contentBottom = scenegraph.bottomFrozenGroup.attribute.y + scenegraph.bottomFrozenGroup.attribute.height;
+
+    expect(scenegraph.tableGroup.attribute.height).toBe(contentBottom);
+    expect(scenegraph.tableGroup.border.attribute.height).toBe(contentBottom + 1);
+
+    frozenTable.release();
+  });
+
   test('listTable should support decreasing rightFrozenColCount by setter with row series number', () => {
     const optionWithRightFrozen = {
       ...option,
