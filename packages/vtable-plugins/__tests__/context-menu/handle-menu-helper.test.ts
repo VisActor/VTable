@@ -175,6 +175,75 @@ describe('Context menu canvas option', () => {
     });
   });
 
+  test('ContextMenuPlugin emits the right-click cell value after a row deletion menu action', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin({
+      bodyCellMenuItems: [{ text: '删除行', menuKey: 'delete_row' }]
+    });
+
+    table = new ListTable({
+      container,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records: [
+        { id: 1, name: 'Alice' },
+        { id: 2, name: 'Bob' }
+      ],
+      syncRecordOperationsToSourceRecords: true,
+      plugins: [contextMenuPlugin]
+    });
+
+    table.stateManager.select.ranges = [
+      {
+        start: { col: 0, row: 1 },
+        end: { col: 0, row: 1 }
+      }
+    ];
+    const showMenu = jest.spyOn(contextMenuPlugin['menuManager'], 'showMenu');
+    const fireListeners = jest.spyOn(table, 'fireListeners');
+
+    contextMenuPlugin.run(
+      {
+        col: 0,
+        row: 1,
+        event: {
+          clientX: 10,
+          clientY: 20,
+          preventDefault: jest.fn()
+        }
+      },
+      ListTable.EVENT_TYPE.CONTEXTMENU_CELL,
+      table
+    );
+
+    const contextSnapshot = showMenu.mock.calls[0][3];
+    expect(contextSnapshot.cellValue).toBe(1);
+
+    contextMenuPlugin['handleMenuClickCallback'](
+      {
+        menuKey: 'delete_row',
+        menuText: '删除行',
+        ...contextSnapshot
+      },
+      table
+    );
+
+    expect(table.records.map(record => record.id)).toEqual([2]);
+    expect(fireListeners).toHaveBeenCalledWith(ListTable.EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: 0,
+      row: 1,
+      contextMenu: {
+        menuKey: 'delete_row',
+        menuText: '删除行',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: 1
+      }
+    });
+  });
+
   test('ContextMenuPlugin init uses new options when added through updateOption', () => {
     const container = createDiv();
     const contextMenuPlugin = new ContextMenuPlugin({

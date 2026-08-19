@@ -156,7 +156,7 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       }
 
       // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, col, row);
+      this.showContextMenu(menuItems, mouseX, mouseY, col, row, table.getCellValue(col, row));
     }
   };
 
@@ -172,7 +172,14 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     if (menuItems.length > 0) {
-      this.showContextMenu(menuItems, eventArgs.event.clientX, eventArgs.event.clientY, col, row);
+      this.showContextMenu(
+        menuItems,
+        eventArgs.event.clientX,
+        eventArgs.event.clientY,
+        col,
+        row,
+        col >= 0 && row >= 0 ? table.getCellValue(col, row) : undefined
+      );
     }
   };
 
@@ -204,7 +211,14 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       }
 
       // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
+      this.showContextMenu(
+        menuItems,
+        mouseX,
+        mouseY,
+        colIndex,
+        rowIndex,
+        colIndex >= 0 && rowIndex >= 0 ? table.getCellValue(colIndex, rowIndex) : undefined
+      );
     }
   };
 
@@ -269,7 +283,14 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     });
   }
 
-  private showContextMenu(menuItems: MenuItemOrSeparator[], x: number, y: number, col: number, row: number): void {
+  private showContextMenu(
+    menuItems: MenuItemOrSeparator[],
+    x: number,
+    y: number,
+    col: number,
+    row: number,
+    cellValue?: any
+  ): void {
     // 显示菜单
     this.menuManager.showMenu(
       menuItems,
@@ -277,7 +298,8 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       y,
       {
         rowIndex: row,
-        colIndex: col
+        colIndex: col,
+        cellValue
       },
       this.table
     );
