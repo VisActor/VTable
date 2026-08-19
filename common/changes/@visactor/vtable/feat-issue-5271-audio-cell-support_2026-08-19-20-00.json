@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add audio cell type support (GitHub #5271)",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
