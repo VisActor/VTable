@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: keep large merged auto-height rows visible (GitHub #3752)",
+      "comment": "fix: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)",
       "type": "patch"
     }
   ],
