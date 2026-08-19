@@ -64,6 +64,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5278-set-records-header-blank'
+      },
+      {
+        path: 'debug',
         name: 'issue-5277-frozen-row-border'
       },
       {
