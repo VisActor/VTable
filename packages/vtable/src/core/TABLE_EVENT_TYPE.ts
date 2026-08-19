@@ -69,6 +69,10 @@ export interface TableEvents {
    */
   CONTEXTMENU_CANVAS: 'contextmenu_canvas';
   /**
+   * 右键菜单项点击事件
+   */
+  CONTEXT_MENU_CLICK: 'context_menu_click';
+  /**
    * 列宽调整事件
    */
   RESIZE_COLUMN: 'resize_column';
@@ -287,6 +291,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
   CONTEXTMENU_CANVAS: 'contextmenu_canvas',
+  CONTEXT_MENU_CLICK: 'context_menu_click',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',

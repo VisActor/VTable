@@ -11,6 +11,7 @@ ContextMenu provides rich right-click menu features for VTable tables, supportin
 - Support custom menu items and separators
 - Support menu item grouping and submenus
 - Support custom menu item click callbacks
+- Support listening to menu item click events with menu item and cell position details
 - Support menu item icons and shortcut hints
 - Support numeric input in menu items (e.g., insert multiple rows/columns)
 
@@ -132,6 +133,48 @@ const contextMenuPlugin = new ContextMenuPlugin({
   });
 ```
 
+## Listen to Menu Item Click Events
+
+If you need to observe user actions after a right-click menu item is clicked, listen to the `context_menu_click` event fired by `ContextMenuPlugin`. This event is only fired after the right-click menu plugin is installed and enabled, and it is fired after the corresponding menu item handling logic is called. Note that when `menuClickCallback` is configured as a function, the plugin runs that callback and skips the built-in menu handling. Built-in operations such as freeze, insert, and delete are only executed when `menuClickCallback` is not configured, or when it is configured as an object and the current `menuKey` does not match a custom callback.
+
+```typescript
+import * as VTable from '@visactor/vtable';
+import { ContextMenuPlugin } from '@visactor/vtable-plugins';
+
+const contextMenuPlugin = new ContextMenuPlugin();
+
+const tableInstance = new VTable.ListTable({
+  container: document.getElementById('container'),
+  columns,
+  records,
+  plugins: [contextMenuPlugin]
+});
+
+tableInstance.on(VTable.TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, args => {
+  const { col, row, contextMenu } = args;
+
+  console.log('Context menu click position:', col, row);
+  console.log('Menu item:', contextMenu.menuKey, contextMenu.menuText);
+
+  if (contextMenu.menuKey === 'freeze_to_this_row_and_column') {
+    console.log('Current frozen counts:', tableInstance.frozenRowCount, tableInstance.frozenColCount);
+  }
+});
+```
+
+Event argument description:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `col` | number | Column index of the menu trigger position; `-1` when there is no corresponding cell |
+| `row` | number | Row index of the menu trigger position; `-1` when there is no corresponding cell |
+| `contextMenu.menuKey` | string | Unique key of the clicked menu item |
+| `contextMenu.menuText` | string | Display text of the clicked menu item |
+| `contextMenu.rowIndex` | number \| undefined | Row index of the menu trigger position; may be `undefined` when no row context exists |
+| `contextMenu.colIndex` | number \| undefined | Column index of the menu trigger position; may be `undefined` when no column context exists |
+| `contextMenu.cellValue` | any \| undefined | Cell value at the menu trigger position; `undefined` when there is no corresponding cell |
+| `contextMenu.inputValue` | number \| string \| undefined | Input value of an input menu item; only exists when an input menu item is submitted |
+
 ## Complete Example
 
 Here is a complete example showing how to create a table with right-click menu functionality:
@@ -244,6 +287,10 @@ const generateTestData = (count) => {
 
   // Create table instance
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+
+  tableInstance.on(VTable.TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, args => {
+    console.log('Context menu item clicked:', args.contextMenu);
+  });
 ```
 
 

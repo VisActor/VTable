@@ -17,6 +17,7 @@ import type { MenuClickEventArgs } from './types';
 interface MenuContext {
   rowIndex?: number;
   colIndex?: number;
+  cellValue?: any;
 }
 
 /**

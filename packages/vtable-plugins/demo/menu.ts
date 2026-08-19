@@ -158,6 +158,10 @@ export const menus = [
   },
   {
     path: 'context-menu',
+    name: 'issue-4655-context-menu-click'
+  },
+  {
+    path: 'context-menu',
     name: 'issue-5215-context-menu-canvas'
   },
   {
