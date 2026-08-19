@@ -270,7 +270,12 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     const { colIndex, rowIndex, ...contextMenu } = args;
     const hasCellPosition =
       typeof colIndex === 'number' && typeof rowIndex === 'number' && colIndex >= 0 && rowIndex >= 0;
-    const cellValue = contextMenu.cellValue ?? (hasCellPosition ? table.getCellValue(colIndex, rowIndex) : undefined);
+    const hasCellValueSnapshot = Object.prototype.hasOwnProperty.call(contextMenu, 'cellValue');
+    const cellValue = hasCellValueSnapshot
+      ? contextMenu.cellValue
+      : hasCellPosition
+      ? table.getCellValue(colIndex, rowIndex)
+      : undefined;
     table.fireListeners(TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, {
       col: colIndex ?? -1,
       row: rowIndex ?? -1,

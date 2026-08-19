@@ -244,6 +244,68 @@ describe('Context menu canvas option', () => {
     });
   });
 
+  test('ContextMenuPlugin preserves null and undefined cell value snapshots', () => {
+    const container = createDiv();
+    const contextMenuPlugin = new ContextMenuPlugin({
+      menuClickCallback: jest.fn()
+    });
+
+    table = new ListTable({
+      container,
+      columns: [{ field: 'id', title: 'ID' }],
+      records: [{ id: 1 }],
+      plugins: [contextMenuPlugin]
+    });
+
+    const getCellValue = jest.spyOn(table, 'getCellValue');
+    const fireListeners = jest.spyOn(table, 'fireListeners');
+
+    contextMenuPlugin['handleMenuClickCallback'](
+      {
+        menuKey: 'custom_null',
+        menuText: 'Null Value',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: null
+      },
+      table
+    );
+    contextMenuPlugin['handleMenuClickCallback'](
+      {
+        menuKey: 'custom_undefined',
+        menuText: 'Undefined Value',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: undefined
+      },
+      table
+    );
+
+    expect(getCellValue).not.toHaveBeenCalled();
+    expect(fireListeners).toHaveBeenCalledWith(ListTable.EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: 0,
+      row: 1,
+      contextMenu: {
+        menuKey: 'custom_null',
+        menuText: 'Null Value',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: null
+      }
+    });
+    expect(fireListeners).toHaveBeenCalledWith(ListTable.EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: 0,
+      row: 1,
+      contextMenu: {
+        menuKey: 'custom_undefined',
+        menuText: 'Undefined Value',
+        rowIndex: 1,
+        colIndex: 0,
+        cellValue: undefined
+      }
+    });
+  });
+
   test('ContextMenuPlugin init uses new options when added through updateOption', () => {
     const container = createDiv();
     const contextMenuPlugin = new ContextMenuPlugin({
