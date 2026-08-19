@@ -14,7 +14,7 @@ option: ListTable-columns-progressbar#cellType
 
 ## 关键配置
 
-headerType: 'text' | 'link' | 'image' | 'video';
+headerType: 'text' | 'link' | 'image' | 'video' | 'audio';
 
 cellType:
 'text'

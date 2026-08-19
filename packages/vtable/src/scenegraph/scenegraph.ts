@@ -2342,7 +2342,7 @@ export class Scenegraph {
 
     const type = isVtableMerge ? 'text' : this.table.getCellType(col, row);
     const cellGroup = this.getCell(col, row);
-    if (type === 'image' || type === 'video') {
+    if (type === 'image' || type === 'video' || type === 'audio') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
     }
   }

@@ -1,20 +1,25 @@
 # 数据类型
 
-在数据分析和可视化领域，VTable 的典型应用之一便是显示和呈现各种类型的数据，这里所谓的类型包括：文本、链接、图片、视频、进度条以及图表等。通过支持多种列类型，VTable 可以为用户现更丰富、更多样化的数据体验，便于用户从不同视角和维度来观察和理解数据。
+在数据分析和可视化领域，VTable 的典型应用之一便是显示和呈现各种类型的数据，这里所谓的类型包括：文本、链接、图片、视频、音频、进度条以及图表等。通过支持多种列类型，VTable 可以为用户现更丰富、更多样化的数据体验，便于用户从不同视角和维度来观察和理解数据。
 
 接下来，本文将重点讨论各类列类型及其用法和特点，以帮助您深入了解使用 VTable 进行数据可视化的方法。
 
 ## 支持类型
 
-VTable 所支持的数据类型共有 7 种，分别为：
+VTable 所支持的数据类型共有 12 种，分别为：
 
 1. text
 2. link
 3. image
 4. video
-5. progressbar
-6. sparkline
-7. chart
+5. audio
+6. progressbar
+7. sparkline
+8. chart
+9. checkbox
+10. radio
+11. switch
+12. button
 
 接下来，我们将逐一介绍每一种列类型的相关内容。
 
@@ -116,6 +121,10 @@ VTable 所支持的数据类型共有 7 种，分别为：
 ## video
 
 当列类型为 "video" 时，用于显示视频类型的数据。"video"所有配置项和image一样，可参考image类型配置项。
+
+## audio
+
+当列类型为 "audio" 时，用于显示音频类型的数据。单元格会展示音频图标，点击后会弹出预览窗口并使用音频播放控件播放。audio 共享 `clickToPreview` 等媒体预览配置；`keepAspectRatio`、`imageAutoSizing` 等 image 专属配置不适用于 audio。
 
 
 ## progressbar
@@ -260,7 +269,7 @@ VTable 所支持的数据类型共有 7 种，分别为：
 
 ## 扩展：自定义列类型（TypeScript）
 
-在实际业务中，除了 VTable 内置的 `cellType`（text/link/image/video/progressbar/sparkline/chart 等），我们常常还需要在列定义里附加一些 **业务侧专用配置**，例如：
+在实际业务中，除了 VTable 内置的 `cellType`（text、link、image、video、audio、progressbar、sparkline、chart 等），我们常常还需要在列定义里附加一些 **业务侧专用配置**，例如：
 
 - 权限/可见性控制：`permissionKey`
 - 埋点信息：`trackId` / `trackParams`

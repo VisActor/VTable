@@ -642,6 +642,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'audio'
+      },
+      {
+        path: 'type',
         name: 'progress-bar'
       },
       {

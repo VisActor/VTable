@@ -14,13 +14,14 @@ option: ListTable-columns-text#cellType
 
 ## 关键配置
 
-headerType: 'text' | 'link' | 'image' | 'video';
+headerType: 'text' | 'link' | 'image' | 'video' | 'audio';
 
 cellType:
 'text'
 | 'link'
 | 'image'
 | 'video'
+| 'audio'
 | 'sparkline'
 | 'progressbar'
 | 'chart';
@@ -28,12 +29,19 @@ cellType:
 ## 代码演示
 
 ```javascript livedemo template=vtable
+const audioFiles = [
+  'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/vtable-demo-bright-melody.mp3',
+  'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/vtable-demo-soft-loop.mp3',
+  'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/vtable-demo-calm-theme.mp3'
+];
+
 const records = [
   {
     name: 'pigeon',
     introduction: 'The pigeon is a common urban bird with gray plumage and a short, stout beak',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.mp4',
+    audio: audioFiles[0],
     YoY: 50,
     QoQ: 10,
     trend: [
@@ -50,6 +58,7 @@ const records = [
     introduction: 'Swallow is a kind of bird that is good at flying, usually perches near houses and buildings.',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.mp4',
+    audio: audioFiles[1],
     YoY: 10,
     QoQ: -10,
     trend: [
@@ -66,6 +75,7 @@ const records = [
       'The magpie is a common small bird mainly found in Asia. They are small in size with a black head and throat, gray back and white belly. Magpies are social animals and often live in woods Breeding nests in China or in urban parks, feeding on insects, fruit and seeds. They are also highly intelligent and social, and are considered an intelligent, playful bird.',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.mp4',
+    audio: audioFiles[2],
     YoY: -10,
     QoQ: -10,
     trend: [
@@ -82,6 +92,7 @@ const records = [
       'The peacock is a large, beautiful bird with brilliant blue-green plumage and a long tail. Native to South Asia, it feeds on insects, fruit, and seeds.',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.mp4',
+    audio: audioFiles[0],
     YoY: -10,
     QoQ: -10,
     trend: [
@@ -98,6 +109,7 @@ const records = [
       'The flamingo is a beautiful pink bird with long legs and neck, good at swimming, and is a common bird in tropical areas.',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/flamingo.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/flamingo.mp4',
+    audio: audioFiles[1],
     YoY: -1,
     QoQ: -6,
     trend: [
@@ -114,6 +126,7 @@ const records = [
       'The ostrich is a large bird that cannot fly and runs fast. It is one of the largest birds in the world',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/ostrich.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/ostrich.mp4',
+    audio: audioFiles[2],
     YoY: -3,
     QoQ: 10,
     trend: [
@@ -130,6 +143,7 @@ const records = [
       'Mandarin duck is a kind of two-winged bird. The head of the male bird is blue and the head of the female bird is brown. It usually perches and mates in pairs. It is one of the symbols in Chinese culture.',
     image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Mandarin.jpeg',
     video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Mandarin.mp4',
+    audio: audioFiles[0],
     YoY: 10,
     QoQ: 16,
     trend: [
@@ -170,6 +184,12 @@ const columns = [
     cellType: 'video',
     width: 150
     // imageSizing : 'keep-aspect-ratio',
+  },
+  {
+    field: 'audio',
+    title: 'bird audio',
+    cellType: 'audio',
+    width: 150
   },
   {
     field: 'YoY',

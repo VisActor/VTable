@@ -6,7 +6,7 @@
 
 ##${prefix} cellType(string) = 'image'
 
-指定该列或该行单元格类型为`'image'`，cellType 可缺省默认为`'text'`。其他配置项如下（同样适用于类型为'video'）：
+指定该列或该行单元格类型为`'image'`，cellType 可缺省默认为`'text'`。其他配置项如下；`clickToPreview` 等媒体预览配置同样适用于类型为 'video' 和 'audio'：
 
 {{ use: base-cell-type(
     prefix = '##'+${prefix},
@@ -23,4 +23,4 @@
 
 ##${prefix} clickToPreview(boolean) = true
 
-**image 类型专属配置项** 是否开启点击预览
+是否开启点击预览

@@ -29,3 +29,21 @@ export interface IImageColumnIndicator extends IBasicColumnIndicator {
   /** 点击开启预览 */
   clickToPreview?: boolean;
 }
+
+export interface IAudioHeaderIndicator extends IBasicHeaderIndicator {
+  headerType: 'audio'; // 指标表头类型
+  headerStyle?:
+    | IImageStyleOption //表头可以配置吸附;
+    | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); // 指标名称在表头部分显示类型
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}
+
+export interface IAudioColumnIndicator extends IBasicColumnIndicator {
+  cellType: 'audio'; // body指标值显示类型
+  style?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); // body部分指标值显示样式
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}

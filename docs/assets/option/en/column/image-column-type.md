@@ -6,7 +6,7 @@ Specify the column type as `'image'`, the default cellType is 'text'.
 
 ##${prefix} cellType(string) = 'image'
 
-Specify the column type as `'image'`, the default cellType is `'text'`. Other configuration options are as follows (also applicable to types with 'video'):
+Specify the column type as `'image'`, the default cellType is `'text'`. Other configuration options are as follows; media preview options such as `clickToPreview` are also applicable to 'video' and 'audio' types:
 
 {{ use: base-cell-type(
     prefix = '##'+${prefix},
@@ -23,4 +23,4 @@ Specify the column type as `'image'`, the default cellType is `'text'`. Other co
 
 ##${prefix} clickToPreview(boolean) = true
 
-**Configuration specific to image type** Whether to enable click preview.
+Whether to enable click preview.
