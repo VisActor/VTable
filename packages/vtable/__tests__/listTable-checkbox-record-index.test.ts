@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { ListTable, TYPES } from '../src';
+import { changeCheckboxOrder } from '../src/state/checkbox/checkbox';
 import { createDiv } from './dom';
 
 global.__VERSION__ = 'none';
@@ -159,5 +160,55 @@ describe('ListTable checkbox record index api', () => {
     expect(table.stateManager.checkedState.get('0').task).toBe(false);
     expect(table.stateManager.checkedState.get('0,0').task).toBe(false);
     expect(table.stateManager.checkedState.get('0,1').task).toBe(false);
+  });
+
+  test('moves checkbox state for a tree subtree by record path', () => {
+    const checkedState = new Map([
+      ['0', { task: 'source' }],
+      ['0,0', { task: 'source-child' }],
+      ['1', { task: 'sibling-1' }],
+      ['1,0', { task: 'sibling-1-child' }],
+      ['2', { task: 'sibling-2' }]
+    ]);
+
+    changeCheckboxOrder(0, 2, { checkedState });
+
+    expect(checkedState.get('2').task).toBe('source');
+    expect(checkedState.get('2,0').task).toBe('source-child');
+    expect(checkedState.get('0').task).toBe('sibling-1');
+    expect(checkedState.get('0,0').task).toBe('sibling-1-child');
+    expect(checkedState.get('1').task).toBe('sibling-2');
+    expect(checkedState.size).toBe(5);
+  });
+
+  test('moves nested checkbox state without matching sibling prefix numbers', () => {
+    const checkedState = new Map([
+      ['0,1', { task: 'source' }],
+      ['0,1,0', { task: 'source-child' }],
+      ['0,2', { task: 'sibling-2' }],
+      ['0,10', { task: 'sibling-10' }],
+      ['0,10,0', { task: 'sibling-10-child' }]
+    ]);
+
+    changeCheckboxOrder([0, 1], [0, 2], { checkedState });
+
+    expect(checkedState.get('0,2').task).toBe('source');
+    expect(checkedState.get('0,2,0').task).toBe('source-child');
+    expect(checkedState.get('0,1').task).toBe('sibling-2');
+    expect(checkedState.get('0,10').task).toBe('sibling-10');
+    expect(checkedState.get('0,10,0').task).toBe('sibling-10-child');
+    expect(checkedState.size).toBe(5);
+  });
+
+  test('does not move checkbox state across different parent paths', () => {
+    const checkedState = new Map([
+      ['0,0', { task: 'source' }],
+      ['1,0', { task: 'target-parent-child' }]
+    ]);
+
+    changeCheckboxOrder([0, 0], [1, 0], { checkedState });
+
+    expect(checkedState.get('0,0').task).toBe('source');
+    expect(checkedState.get('1,0').task).toBe('target-parent-child');
   });
 });

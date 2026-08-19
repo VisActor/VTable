@@ -161,6 +161,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'issue-3975-tree-checkbox-row-move'
+      },
+      {
+        path: 'list',
         name: 'list-tree-20000'
       },
       {
