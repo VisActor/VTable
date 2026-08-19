@@ -413,6 +413,7 @@ export function changeCheckboxOrder(sourceRecordPath: RecordPath, targetRecordPa
   const sourcePath = normalizeRecordPath(sourceRecordPath);
   const targetPath = normalizeRecordPath(targetRecordPath);
 
+  // DataSource.changeOrder only reorders records under the same parent; cross-parent drops are ignored here.
   if (isSameRecordPath(sourcePath, targetPath) || !isSameParentPath(sourcePath, targetPath)) {
     return;
   }

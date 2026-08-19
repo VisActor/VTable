@@ -244,7 +244,7 @@ export function endMoveCol(state: StateManager): boolean {
         const targetRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.targetIndex);
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
         state.changeCheckboxOrder(sourceRecordPath, targetRecordPath);
-        state.changeRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        state.changeRadioOrder(sourceRecordPath, targetRecordPath);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {

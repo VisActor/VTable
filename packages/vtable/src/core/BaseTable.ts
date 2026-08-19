@@ -3612,7 +3612,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         const targetRecordPath = (this as any).getRecordIndexByCell(0, moveContext.targetIndex);
         this.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
         this.stateManager.changeCheckboxOrder(sourceRecordPath, targetRecordPath);
-        this.stateManager.changeRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        this.stateManager.changeRadioOrder(sourceRecordPath, targetRecordPath);
       }
 
       if (moveContext.moveType === 'column') {
