@@ -2,7 +2,7 @@
 
 #${prefix} columns
 
-表格列配置，每一列需要分别设置配置项，配置项根据 cellType 不同有略微差别，cellType 可支持：`'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， 每种 cellType 的配置项具体如下：
+表格列配置，每一列需要分别设置配置项，配置项根据 cellType 不同有略微差别，cellType 可支持：`'text' | 'link' | 'image' | 'video' | 'audio' | 'sparkline' | 'progressbar' | 'chart'`， 每种 cellType 的配置项具体如下：
 
 {{ use: text-cell-type(
     prefix = ${prefix}
@@ -17,6 +17,10 @@
 ) }}
 
 {{ use: video-cell-type(
+    prefix = ${prefix}
+) }}
+
+{{ use: audio-cell-type(
     prefix = ${prefix}
 ) }}
 

@@ -84,6 +84,7 @@
     "vite": "3.2.6",
     "typescript": "4.9.5",
     "@babel/core": "7.20.12",
+    "@babel/plugin-transform-react-jsx": "7.28.6",
     "@babel/preset-env": "7.20.2",
     "@types/chai": "4.2.22",
     "@types/jest": "^26.0.0",

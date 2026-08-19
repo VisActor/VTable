@@ -1,20 +1,25 @@
 # data type
 
-In the field of data analytics and visualization, one of the typical applications of VTable is to display and present various types of data. The so-called types here include: text, links, pictures, videos, progress bars, and charts. By supporting multiple column types, VTable can provide users with a richer and more diverse data experience, allowing users to observe and understand data from different perspectives and Dimensions.
+In the field of data analytics and visualization, one of the typical applications of VTable is to display and present various types of data. The so-called types here include: text, links, pictures, videos, audio, progress bars, and charts. By supporting multiple column types, VTable can provide users with a richer and more diverse data experience, allowing users to observe and understand data from different perspectives and Dimensions.
 
 Next, this article will focus on the various column types and their usage and characteristics to help you gain insight into data lake visualization using VTable.
 
 ## Support type
 
-There are 7 data types supported by VTable, namely:
+There are 12 data types supported by VTable, namely:
 
 1.  Text
 2.  Link
 3.  Image
 4.  Video
-5.  progressbar
-6.  Sparkline
-7.  Chart
+5.  Audio
+6.  progressbar
+7.  Sparkline
+8.  Chart
+9.  Checkbox
+10. Radio
+11. Switch
+12. Button
 
 Next, we'll cover each column type one by one.
 
@@ -118,6 +123,10 @@ Through the above settings, we can customize the columns of the "image" type to 
 ## Video
 
 When the column type is "video", it is used to display the data of the video type. All configuration items of "video" are the same as image, you can refer to the image type configuration item.
+
+## Audio
+
+When the column type is "audio", it is used to display audio data. The cell displays an audio icon, and clicking it opens the preview window with audio playback controls. Audio shares media preview options such as `clickToPreview`; image-specific options such as `keepAspectRatio` and `imageAutoSizing` do not apply.
 
 ## progressbar
 
@@ -258,7 +267,7 @@ The headerType in the rows and columns of the pivot table, and the cellType in t
 
 ## Extension: Custom Column Types (TypeScript)
 
-In real-world applications, in addition to VTable’s built-in `cellType` values (such as `text`, `link`, `image`, `video`, `progressbar`, `sparkline`, and `chart`), it is often necessary to attach **business-specific configurations** to column definitions, for example:
+In real-world applications, in addition to VTable’s built-in `cellType` values (such as `text`, `link`, `image`, `video`, `audio`, `progressbar`, `sparkline`, and `chart`), it is often necessary to attach **business-specific configurations** to column definitions, for example:
 
 - Permission or visibility control: `permissionKey`
 - Tracking and analytics metadata: `trackId` / `trackParams`

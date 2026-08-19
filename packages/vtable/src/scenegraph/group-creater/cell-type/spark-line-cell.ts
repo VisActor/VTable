@@ -23,8 +23,10 @@ export function createSparkLineCellGroup(
   padding: number[],
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
-  isAsync: boolean
+  isAsync: boolean,
+  cellValue?: any
 ) {
+  const value = arguments.length >= 13 ? cellValue : table.getCellValue(col, row);
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
@@ -77,7 +79,7 @@ export function createSparkLineCellGroup(
   }
 
   // chart
-  const chartGroup = createSparkLine(col, row, width, height, padding, table);
+  const chartGroup = createSparkLine(col, row, width, height, padding, table, value);
   if (chartGroup) {
     cellGroup.appendChild(chartGroup);
   }
@@ -93,14 +95,15 @@ function createSparkLine(
   width: number,
   height: number,
   padding: number[],
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellValue: any
 ): Group | undefined {
   //获取场景树对象，根据当前单元格位置更改其位置
   //待定 TODO group需要设置shape属性吗
   let sparklineSpec: SparklineSpec;
   let chartGroup: Group;
   const chartSpecRaw = (table.internalProps.layoutMap.getBody(col, row) as ColumnData).sparklineSpec;
-  const dataValue = table.getCellValue(col, row) as unknown as any[];
+  const dataValue = cellValue as unknown as any[];
 
   if (!Array.isArray(dataValue)) {
     return undefined;
@@ -120,7 +123,7 @@ function createSparkLine(
       col,
       row,
       dataValue: table.getCellOriginValue(col, row) || '',
-      value: table.getCellValue(col, row) || '',
+      value: dataValue || '',
       rect: table.getCellRangeRelativeRect(table.getCellRange(col, row)),
       table
     };

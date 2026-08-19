@@ -68,6 +68,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5277-frozen-row-border'
+      },
+      {
+        path: 'debug',
         name: 'issue-4761-update-records-edit-render'
       },
       {
@@ -639,6 +643,10 @@ export const menus = [
       {
         path: 'type',
         name: 'video'
+      },
+      {
+        path: 'type',
+        name: 'audio'
       },
       {
         path: 'type',

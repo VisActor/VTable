@@ -11,7 +11,13 @@ import type {
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
-import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
+import {
+  createCell,
+  dealWithMergeCellSize,
+  isPromiseCellUpdateCurrent,
+  nextPromiseCellUpdateToken,
+  resizeCellGroup
+} from './cell-helper';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
@@ -202,13 +208,13 @@ export function createComplexColumn(
     const type = isVtableMerge || isCustomMerge ? 'text' : table.getCellType(col, row);
     // deal with promise data
     if (isPromise(value)) {
-      createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
+      const cellGroup = createEmptyCellGroup(col, row, 0, y, cellWidth, cellHeight, columnGroup);
+      const updateToken = nextPromiseCellUpdateToken(cellGroup);
       dealPromiseData(
         value,
         table,
         callCreateCellForPromiseValue.bind(null, {
           type,
-          value,
           define,
           table,
           col,
@@ -223,7 +229,10 @@ export function createComplexColumn(
           cellLocation,
           range,
           customResult,
-          defaultRowHeight
+          defaultRowHeight,
+          promiseValue: value,
+          oldCellGroup: cellGroup,
+          updateToken
         })
       );
       columnGroup.updateColumnRowNumber(row);
@@ -336,13 +345,12 @@ export function getColumnGroupTheme(
   columnTheme.group.height = 0;
   return { theme: columnTheme, hasFunctionPros };
 }
-function callCreateCellForPromiseValue(createCellArgs: any) {
+function callCreateCellForPromiseValue(createCellArgs: any, resolvedValue: any) {
   let padding;
   let textAlign;
   let textBaseline;
   const {
     type,
-    value,
     define,
     table,
     col,
@@ -357,8 +365,14 @@ function callCreateCellForPromiseValue(createCellArgs: any) {
     customStyle,
     range,
     customResult,
-    defaultRowHeight
+    defaultRowHeight,
+    promiseValue,
+    oldCellGroup,
+    updateToken
   } = createCellArgs;
+  if (!isPromiseCellUpdateCurrent(table, col, row, oldCellGroup, updateToken)) {
+    return;
+  }
   const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const cellTheme = getStyleTheme(
     cellStyle,
@@ -386,7 +400,7 @@ function callCreateCellForPromiseValue(createCellArgs: any) {
   }
   createCell(
     type,
-    value,
+    promiseValue,
     define,
     table,
     col,
@@ -402,7 +416,8 @@ function callCreateCellForPromiseValue(createCellArgs: any) {
     mayHaveIcon,
     cellTheme,
     range,
-    customResult
+    customResult,
+    resolvedValue
   );
 }
 function dealMerge(range: CellRange, mergeMap: MergeMap, table: BaseTableAPI, forceUpdate: boolean) {
@@ -452,4 +467,5 @@ function createEmptyCellGroup(
   cellGroup.col = col;
   cellGroup.row = row;
   columnGroup.addChild(cellGroup);
+  return cellGroup;
 }
