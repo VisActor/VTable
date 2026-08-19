@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-sheet",
+      "comment": "fix: keep vtable-sheet package tests runnable without prebuilt workspace dependencies",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-sheet",
+  "email": "892739385@qq.com"
+}
