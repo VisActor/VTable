@@ -686,7 +686,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       height += padding[0] + padding[2];
     }
     return {
-      height: height / spanRow,
+      height: getMergedCellSingleRowHeight(height / spanRow, spanRow, table),
       renderDefault
     };
   }
@@ -695,9 +695,7 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
 
 function shouldSkipCustomRenderCellValueForComputation(col: number, row: number, table: BaseTableAPI) {
   return (
-    table.isListTable() &&
-    !table.isHeader(col, row) &&
-    !(table.internalProps.dataSource as any)?.dataSourceObj?.records
+    table.isListTable() && !table.isHeader(col, row) && !(table.internalProps.dataSource as any)?.dataSourceObj?.records
   );
 }
 
@@ -934,7 +932,20 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       }
     }
   }
-  return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
+  return getMergedCellSingleRowHeight(
+    (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow,
+    spanRow,
+    table
+  );
+}
+
+function getMergedCellSingleRowHeight(height: number, spanRow: number, table: BaseTableAPI) {
+  if (spanRow <= 1) {
+    return height;
+  }
+  const configuredMinHeight = table.options.customConfig?.minSingleRowHeight;
+  const minSingleRowHeight = isNumber(configuredMinHeight) && configuredMinHeight > 0 ? configuredMinHeight : 2;
+  return Math.max(height, minSingleRowHeight);
 }
 
 function getCellRect(col: number, row: number, table: BaseTableAPI) {

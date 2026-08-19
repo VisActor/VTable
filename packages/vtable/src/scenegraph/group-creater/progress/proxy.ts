@@ -69,14 +69,15 @@ export class SceneProxy {
   constructor(table: BaseTableAPI) {
     this.table = table;
 
+    const defaultRowHeight = this.getEstimatedRowHeightForProxy();
     if (this.table.isPivotChart()) {
       // this.rowLimit = 100;
       // this.colLimit = 100;
-      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / defaultRowHeight));
       this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
     } else if (this.table.isAutoRowHeight(table.columnHeaderLevelCount)) {
       // this.rowLimit = 100;
-      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / table.defaultRowHeight));
+      this.rowLimit = Math.max(100, Math.ceil((table.tableNoFrameHeight * 2) / defaultRowHeight));
     } else if (this.table.widthMode === 'autoWidth') {
       // this.colLimit = 100;
       this.colLimit = Math.max(100, Math.ceil((table.tableNoFrameWidth * 2) / table.defaultColWidth));
@@ -155,7 +156,7 @@ export class SceneProxy {
     this.totalRow = this.bodyTopRow + totalActualBodyRowCount - 1; // 目标渐进完成的row
     this.rowStart = this.bodyTopRow;
     this.rowEnd = this.totalRow; // temp for first screen, will replace in createGroupForFirstScreen()
-    const defaultRowHeight = this.table.defaultRowHeight;
+    const defaultRowHeight = this.getEstimatedRowHeightForProxy();
     // const defaultRowHeight = getDefaultWidth(this.table);
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
 
@@ -206,11 +207,19 @@ export class SceneProxy {
     this.screenColCount = Math.ceil(this.table.tableNoFrameWidth / defaultColWidth);
     this.firstScreenColLimit = this.bodyLeftCol + Math.min(this.colLimit, Math.ceil(widthLimit / defaultColWidth));
 
-    const defaultRowHeight = this.table.defaultRowHeight;
+    const defaultRowHeight = this.getEstimatedRowHeightForProxy();
     this.taskRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight) * 1;
     const heightLimit = this.table.tableNoFrameHeight * 5;
     this.screenRowCount = Math.ceil(this.table.tableNoFrameHeight / defaultRowHeight);
     this.firstScreenRowLimit = this.bodyTopRow + Math.min(this.rowLimit, Math.ceil(heightLimit / defaultRowHeight));
+  }
+
+  getEstimatedRowHeightForProxy() {
+    const minSingleRowHeight = this.table.options.customConfig?.minSingleRowHeight;
+    if (this.table.heightMode === 'autoHeight') {
+      return isNumber(minSingleRowHeight) && minSingleRowHeight > 0 ? minSingleRowHeight : 2;
+    }
+    return this.table.defaultRowHeight;
   }
 
   createGroupForFirstScreen(
