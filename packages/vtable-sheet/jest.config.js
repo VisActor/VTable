@@ -18,6 +18,10 @@ module.exports = {
         resolveJsonModule: true,
         esModuleInterop: true,
         paths: {
+          '@visactor/vtable-editors': ['../vtable-editors/src/index.ts'],
+          '@visactor/vtable-plugins': ['../vtable-plugins/src/index.ts'],
+          '@visactor/vtable-plugins/src/*': ['../vtable-plugins/src/*'],
+          '@visactor/vtable-gantt': ['../vtable-gantt/src/index.ts'],
           '@src/vrender': ['../vtable/src/vrender.ts'],
           '@src/*': ['../vtable/src/*']
         }
@@ -68,8 +72,10 @@ module.exports = {
       '../../common/temp/node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/dist/d3-hierarchy.min.js'
     ),
     ...createVRenderModuleNameMapper('<rootDir>/../vtable/node_modules'),
-    '@visactor/vtable-editors': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
-    '@visactor/vtable-plugins': path.resolve(__dirname, '../vtable-plugins/src/index.ts'),
+    '^@visactor/vtable-editors$': path.resolve(__dirname, '../vtable-editors/src/index.ts'),
+    '^@visactor/vtable-plugins$': path.resolve(__dirname, '../vtable-plugins/src/index.ts'),
+    '^@visactor/vtable-plugins/src/(.*)$': '<rootDir>/../vtable-plugins/src/$1',
+    '^@visactor/vtable-gantt$': path.resolve(__dirname, '../vtable-gantt/src/index.ts'),
     // 子路径映射需放在 @visactor/vtable 之前，确保精确匹配优先生效
     '^@visactor/vtable/es/(.*)$': '<rootDir>/../vtable/src/$1',
     '@visactor/vtable': path.resolve(__dirname, '../vtable/src/index.ts'),
