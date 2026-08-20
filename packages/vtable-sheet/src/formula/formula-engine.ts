@@ -1545,6 +1545,10 @@ export class FormulaEngine {
 
   private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
     try {
+      if (/[+\-*/]\+/.test(expr)) {
+        return { value: null, error: 'Basic arithmetic evaluation failed' };
+      }
+
       let index = 0;
 
       const skipWhitespace = () => {
@@ -1633,7 +1637,7 @@ export class FormulaEngine {
       const result = parseAdditive();
       skipWhitespace();
 
-      if (index !== expr.length || !Number.isFinite(result)) {
+      if (index !== expr.length || Number.isNaN(result)) {
         return { value: null, error: 'Basic arithmetic evaluation failed' };
       }
 

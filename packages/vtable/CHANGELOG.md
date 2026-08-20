@@ -1,6 +1,27 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 03 Aug 2026 11:18:03 GMT and should not be manually modified.
+This log was last generated on Thu, 20 Aug 2026 08:02:48 GMT and should not be manually modified.
+
+## 1.26.7
+Thu, 20 Aug 2026 08:02:48 GMT
+
+### Minor changes
+
+- feat: support tooltip appear delay
+- feat: add audio cell type support (GitHub #5271)
+
+### Patches
+
+- fix: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)
+- fix: preserve tree checkbox state after row drag reorder (GitHub #3975)
+- fix: add context menu click event typing (GitHub #4655)
+- fix: avoid loading all lazy dataSource records during customRender auto size computation (GitHub #4964)
+- fix: align frame border with short frozen rows (GitHub #5277)
+- fix: keep headers after setRecords at scroll edge (GitHub #5278)
+
+### Updates
+
+- fix: render vue components in top frozen rows
 
 ## 1.26.6
 Mon, 03 Aug 2026 11:18:03 GMT
