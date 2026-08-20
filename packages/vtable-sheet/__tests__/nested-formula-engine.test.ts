@@ -220,6 +220,10 @@ describe('FormulaEngine', () => {
         value: null,
         error: 'Basic arithmetic evaluation failed'
       });
+      expect(engine.calculateFormula('=1+ +1')).toEqual({
+        value: 2,
+        error: undefined
+      });
     });
 
     test('应该正确处理除以零', () => {
@@ -234,6 +238,7 @@ describe('FormulaEngine', () => {
     test('应该正确验证有效公式', () => {
       expect(engine.validateFormula('=SUM(1,2,3)')).toEqual({ isValid: true, error: undefined });
       expect(engine.validateFormula('=A1+B1')).toEqual({ isValid: true, error: undefined });
+      expect(engine.validateFormula('=1+ +1')).toEqual({ isValid: true, error: undefined });
       expect(engine.validateFormula('=IF(1>0,1,0)')).toEqual({ isValid: true, error: undefined });
     });
 

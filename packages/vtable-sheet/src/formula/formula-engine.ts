@@ -1545,7 +1545,7 @@ export class FormulaEngine {
 
   private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
     try {
-      if (/[+\-*/]\s*\+/.test(expr)) {
+      if (/[+\-*/]\+/.test(expr)) {
         return { value: null, error: 'Basic arithmetic evaluation failed' };
       }
 
