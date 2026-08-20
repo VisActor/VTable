@@ -41,7 +41,7 @@ ${prefix} minWidth(number|string)
 
 ${prefix} headerType(string) = 'text'
 
-指定表头类型，可选：`'text'|'link'|'image'|'video'`，默认 `'text'`。
+指定表头类型，可选：`'text'|'link'|'image'|'video'|'audio'`，默认 `'text'`。
 
 ${prefix} headerStyle(TODO)
 
@@ -51,6 +51,7 @@ ${prefix} headerStyle(TODO)
 - headerType 为'link'，对应[headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
 - headerType 为'image'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 - headerType 为'video'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- headerType 为'audio'，对应[headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
 
 ${prefix} style
 

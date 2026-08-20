@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-editors",
+      "comment": "fix: avoid HTML injection in list editor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-editors",
+  "email": "892739385@qq.com"
+}

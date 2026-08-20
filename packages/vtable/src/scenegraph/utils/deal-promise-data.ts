@@ -1,9 +1,9 @@
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
-export function dealPromiseData(dataPromise: Promise<null>, tabel: BaseTableAPI, callback: () => void) {
+export function dealPromiseData<T>(dataPromise: Promise<T>, tabel: BaseTableAPI, callback: (value: T) => void) {
   dataPromise
-    .then(() => {
-      callback();
+    .then(value => {
+      callback(value);
       tabel.scenegraph.updateNextFrame();
     })
     .catch((err: Error) => {

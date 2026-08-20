@@ -2,6 +2,46 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.7",
+      "tag": "@visactor/vtable_v1.26.7",
+      "date": "Thu, 20 Aug 2026 08:02:48 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: support tooltip appear delay"
+          },
+          {
+            "comment": "feat: add audio cell type support (GitHub #5271)"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)"
+          },
+          {
+            "comment": "fix: preserve tree checkbox state after row drag reorder (GitHub #3975)"
+          },
+          {
+            "comment": "fix: add context menu click event typing (GitHub #4655)"
+          },
+          {
+            "comment": "fix: avoid loading all lazy dataSource records during customRender auto size computation (GitHub #4964)"
+          },
+          {
+            "comment": "fix: align frame border with short frozen rows (GitHub #5277)"
+          },
+          {
+            "comment": "fix: keep headers after setRecords at scroll edge (GitHub #5278)"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: render vue components in top frozen rows"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.6",
       "tag": "@visactor/vtable_v1.26.6",
       "date": "Mon, 03 Aug 2026 11:18:03 GMT",

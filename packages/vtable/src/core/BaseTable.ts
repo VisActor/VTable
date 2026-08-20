@@ -3604,11 +3604,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
 
       if (
-        !(this as any).transpose &&
+        this.isListTable() &&
+        !(this as unknown as ListTableAPI).transpose &&
         (this.isSeriesNumberInBody(args.source.col, args.source.row) || args.movingColumnOrRow === 'row')
       ) {
+        const listTable = this as unknown as ListTableAPI;
+        const sourceRecordPath = listTable.getRecordIndexByCell(args.source.col, moveContext.sourceIndex);
+        const targetRecordPath = listTable.getRecordIndexByCell(args.target.col, moveContext.targetIndex);
         this.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
-        this.stateManager.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        this.stateManager.changeCheckboxOrder(sourceRecordPath, targetRecordPath);
+        this.stateManager.changeRadioOrder(sourceRecordPath, targetRecordPath);
       }
 
       if (moveContext.moveType === 'column') {

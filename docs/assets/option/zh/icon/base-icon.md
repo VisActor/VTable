@@ -113,6 +113,9 @@ Placement 枚举类型定义：
 }
 ```
 
+#${prefix} appearDelay (number)
+提示框显示延迟时间。
+
 #${prefix} disappearDelay (number)
 提示框消失延迟时间，如果有需要鼠标移动到 tooltip 上的需求，请配置上这个参数。
 

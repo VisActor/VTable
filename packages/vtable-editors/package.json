@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-editors",
-  "version": "1.26.6",
+  "version": "1.26.7",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -28,6 +28,7 @@
     "eslint": "eslint --debug --fix src/",
     "build": "npm run fix-memory-limit && bundle",
     "dev": "bundle --clean -f es -w",
+    "test": "jest --silent",
     "test-cov": "jest -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch",

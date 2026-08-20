@@ -67,6 +67,9 @@ export interface IIconBase {
       maxWidth?: number;
       maxHeight?: number;
     };
+    /** tooltip 延迟多久显示 */
+    appearDelay?: number;
+    /** tooltip 延迟多久消失 */
     disappearDelay?: number;
   };
   /**

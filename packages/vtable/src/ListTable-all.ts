@@ -11,6 +11,7 @@ import {
 import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import {
+  registerAudioCell,
   registerButtonCell,
   registerChartCell,
   registerCheckboxCell,
@@ -32,6 +33,7 @@ registerTooltip();
 registerListTreeStickCellPlugin();
 registerCustomCellStylePlugin();
 registerAnimation();
+registerAudioCell();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();

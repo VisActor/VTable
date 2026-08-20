@@ -64,6 +64,7 @@ import {
   registerAnimation
 } from './components';
 import {
+  registerAudioCell,
   registerChartCell,
   registerCheckboxCell,
   registerImageCell,
@@ -87,6 +88,7 @@ registerMenu();
 registerTitle();
 registerTooltip();
 registerAnimation();
+registerAudioCell();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();

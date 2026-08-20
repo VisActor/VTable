@@ -461,8 +461,8 @@ export class HeaderHelper {
       case 'text':
         return TextHeaderStyle;
       case 'image':
-        return ImageStyle;
       case 'video':
+      case 'audio':
         return ImageStyle;
       case 'link':
         return TextHeaderStyle;

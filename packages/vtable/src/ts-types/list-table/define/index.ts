@@ -2,7 +2,12 @@ import type { Either } from '../../../tools/helper';
 import type { ICompositeColumnBodyDefine } from './composite-define';
 import type { IChartColumnBodyDefine } from './chart-define';
 import type { ICheckboxColumnBodyDefine, ICheckboxHeaderDefine } from './checkbox-define';
-import type { IImageColumnBodyDefine, IImageHeaderDefine } from './image-define';
+import type {
+  IAudioColumnBodyDefine,
+  IAudioHeaderDefine,
+  IImageColumnBodyDefine,
+  IImageHeaderDefine
+} from './image-define';
 import type { ILinkColumnBodyDefine, ILinkHeaderDefine } from './link-define';
 import type { ITextColumnBodyDefine, ITextHeaderDefine } from './multilinetext-define';
 import type { IProgressbarColumnBodyDefine } from './progressbar-define';
@@ -11,7 +16,12 @@ import type { IRadioColumnBodyDefine } from './radio-define';
 import type { ISwitchColumnBodyDefine } from './switch-define';
 import type { IButtonColumnBodyDefine } from './button-define';
 
-export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ICheckboxHeaderDefine | ITextHeaderDefine;
+export type HeaderDefine =
+  | IImageHeaderDefine
+  | IAudioHeaderDefine
+  | ILinkHeaderDefine
+  | ICheckboxHeaderDefine
+  | ITextHeaderDefine;
 
 /**
  * 内置列 body 类型联合
@@ -20,6 +30,7 @@ export type HeaderDefine = IImageHeaderDefine | ILinkHeaderDefine | ICheckboxHea
 export type BuiltinColumnBodyDefine =
   | ILinkColumnBodyDefine
   | IImageColumnBodyDefine
+  | IAudioColumnBodyDefine
   | ISparklineColumnBodyDefine
   | IProgressbarColumnBodyDefine
   | ICheckboxColumnBodyDefine
@@ -54,6 +65,7 @@ export type ColumnBodyDefine = BuiltinColumnBodyDefine | CustomColumnBodyDefineM
 export type TextColumnDefine = ITextColumnBodyDefine & HeaderDefine;
 export type LinkColumnDefine = ILinkColumnBodyDefine & HeaderDefine;
 export type ImageColumnDefine = IImageColumnBodyDefine & HeaderDefine;
+export type AudioColumnDefine = IAudioColumnBodyDefine & HeaderDefine;
 export type SparklineColumnDefine = ISparklineColumnBodyDefine & HeaderDefine;
 export type ProgressbarColumnDefine = IProgressbarColumnBodyDefine & HeaderDefine;
 export type CheckboxColumnDefine = ICheckboxColumnBodyDefine & HeaderDefine;
@@ -69,6 +81,7 @@ export type ButtonColumnDefine = IButtonColumnBodyDefine & HeaderDefine;
 export type BuiltinSimpleColumnDefine =
   | LinkColumnDefine
   | ImageColumnDefine
+  | AudioColumnDefine
   | SparklineColumnDefine
   | ProgressbarColumnDefine
   | CheckboxColumnDefine

@@ -1626,6 +1626,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+    const oldScrollLeft = this.stateManager.scroll.horizontalBarPos;
+    const oldScrollTop = this.stateManager.scroll.verticalBarPos;
     // 清空单元格内容
     this.scenegraph.clearCells();
 
@@ -1671,6 +1673,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.clearCellStyleCache();
+    this.stateManager.scroll.horizontalBarPos = 0;
+    this.stateManager.scroll.verticalBarPos = 0;
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
 
@@ -1691,6 +1695,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     });
 
     this.scenegraph.resize();
+    if (oldScrollLeft) {
+      this.stateManager.setScrollLeft(oldScrollLeft, undefined, false);
+    }
+    if (oldScrollTop) {
+      this.stateManager.setScrollTop(oldScrollTop, undefined, false);
+    }
 
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {

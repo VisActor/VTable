@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "1.26.6",
+  "version": "1.26.7",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -41,6 +41,7 @@
     "start:react19": "npm run setup:react19-deps && vite --config ./demo/vite.config.react19.ts ./demo",
     "build": "npm run fix-memory-limit && bundle --clean",
     "compile": "tsc --noEmit",
+    "test": "jest --config jest.config.js",
     "eslint": "eslint --debug --fix src/",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
@@ -57,7 +58,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:1.26.6",
+    "@visactor/vtable": "workspace:1.26.7",
     "@visactor/vutils": "~1.0.17",
     "react-is": "^18.2.0",
     "react-reconciler": "0.29.0"

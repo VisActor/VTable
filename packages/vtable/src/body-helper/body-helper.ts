@@ -97,6 +97,7 @@ export class BodyHelper {
       | 'link'
       | 'image'
       | 'video'
+      | 'audio'
       | 'chart'
       | 'sparkline'
       | 'progressbar'
@@ -110,8 +111,8 @@ export class BodyHelper {
       case 'text':
         return TextStyle;
       case 'image':
-        return ImageStyle;
       case 'video':
+      case 'audio':
         return ImageStyle;
       case 'link':
         return TextStyle;

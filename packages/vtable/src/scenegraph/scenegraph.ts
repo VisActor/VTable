@@ -1363,78 +1363,6 @@ export class Scenegraph {
       height: tableHeight
     } as any);
 
-    if (this.tableGroup.border) {
-      const rectAttributes = this.tableGroup.border?.attribute;
-      let borderTop;
-      let borderRight;
-      let borderBottom;
-      let borderLeft;
-      if ((rectAttributes as any)?.strokeArrayWidth) {
-        borderTop = (rectAttributes as any).strokeArrayWidth
-          ? (rectAttributes as any).strokeArrayWidth[0]
-          : (rectAttributes.lineWidth as number) ?? 0;
-        borderRight = (rectAttributes as any).strokeArrayWidth
-          ? (rectAttributes as any).strokeArrayWidth[1]
-          : (rectAttributes.lineWidth as number) ?? 0;
-        borderBottom = (rectAttributes as any).strokeArrayWidth
-          ? (rectAttributes as any).strokeArrayWidth[2]
-          : (rectAttributes.lineWidth as number) ?? 0;
-        borderLeft = (rectAttributes as any).strokeArrayWidth
-          ? (rectAttributes as any).strokeArrayWidth[3]
-          : (rectAttributes.lineWidth as number) ?? 0;
-      } else {
-        borderTop = (rectAttributes?.lineWidth as number) ?? 0;
-        borderRight = (rectAttributes?.lineWidth as number) ?? 0;
-        borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
-        borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
-      }
-      if (this.tableGroup.border.type === 'rect') {
-        if (this.table.theme.frameStyle?.innerBorder) {
-          this.tableGroup.border.setAttributes({
-            x: this.table.tableX + borderLeft / 2,
-            y: this.table.tableY + borderTop / 2,
-            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
-            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
-          });
-        } else {
-          this.tableGroup.border.setAttributes({
-            x: this.table.tableX - borderLeft / 2,
-            y: this.table.tableY - borderTop / 2,
-            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
-            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
-          });
-        }
-      } else if (this.tableGroup.border.type === 'group') {
-        if (this.table.theme.frameStyle?.innerBorder) {
-          this.tableGroup.border.setAttributes({
-            x: this.table.tableX + borderLeft / 2,
-            y: this.table.tableY + borderTop / 2,
-            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
-            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
-          });
-          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-            x: 0,
-            y: 0,
-            width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
-            height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
-          });
-        } else {
-          this.tableGroup.border.setAttributes({
-            x: this.table.tableX - borderLeft / 2,
-            y: this.table.tableY - borderTop / 2,
-            width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
-            height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
-          });
-          (this.tableGroup.border.firstChild as IRect)?.setAttributes({
-            x: borderLeft / 2,
-            y: borderTop / 2,
-            width: this.tableGroup.attribute.width,
-            height: this.tableGroup.attribute.height
-          });
-        }
-      }
-    }
-
     const hasFrozenCols = this.table.frozenColCount > 0;
     const hasRightFrozenCols = this.table.rightFrozenColCount > 0;
     const hasFrozenRows = this.table.frozenRowCount > 0;
@@ -1510,8 +1438,104 @@ export class Scenegraph {
       });
     }
 
+    if (hasBottomFrozenRows && !this.table.containerFit?.height) {
+      const actualContentBottom = Math.max(
+        this.colHeaderGroup.attribute.y + this.colHeaderGroup.attribute.height,
+        this.cornerHeaderGroup.attribute.y + this.cornerHeaderGroup.attribute.height,
+        this.rightTopCornerGroup.attribute.y + this.rightTopCornerGroup.attribute.height,
+        this.rowHeaderGroup.attribute.y + this.rowHeaderGroup.attribute.height,
+        this.bodyGroup.attribute.y + this.bodyGroup.attribute.height,
+        this.rightFrozenGroup.attribute.y + this.rightFrozenGroup.attribute.height,
+        this.leftBottomCornerGroup.attribute.y + this.leftBottomCornerGroup.attribute.height,
+        this.bottomFrozenGroup.attribute.y + this.bottomFrozenGroup.attribute.height,
+        this.rightBottomCornerGroup.attribute.y + this.rightBottomCornerGroup.attribute.height
+      );
+
+      if (actualContentBottom > 0 && actualContentBottom < this.tableGroup.attribute.height) {
+        this.tableGroup.setAttribute('height', actualContentBottom);
+      }
+    }
+
+    this.updateTableGroupBorder();
+
     // update dom container size
     this.updateDomContainer();
+  }
+
+  updateTableGroupBorder() {
+    if (!this.tableGroup.border) {
+      return;
+    }
+
+    const rectAttributes = this.tableGroup.border?.attribute;
+    let borderTop;
+    let borderRight;
+    let borderBottom;
+    let borderLeft;
+    if ((rectAttributes as any)?.strokeArrayWidth) {
+      borderTop = (rectAttributes as any).strokeArrayWidth
+        ? (rectAttributes as any).strokeArrayWidth[0]
+        : (rectAttributes.lineWidth as number) ?? 0;
+      borderRight = (rectAttributes as any).strokeArrayWidth
+        ? (rectAttributes as any).strokeArrayWidth[1]
+        : (rectAttributes.lineWidth as number) ?? 0;
+      borderBottom = (rectAttributes as any).strokeArrayWidth
+        ? (rectAttributes as any).strokeArrayWidth[2]
+        : (rectAttributes.lineWidth as number) ?? 0;
+      borderLeft = (rectAttributes as any).strokeArrayWidth
+        ? (rectAttributes as any).strokeArrayWidth[3]
+        : (rectAttributes.lineWidth as number) ?? 0;
+    } else {
+      borderTop = (rectAttributes?.lineWidth as number) ?? 0;
+      borderRight = (rectAttributes?.lineWidth as number) ?? 0;
+      borderBottom = (rectAttributes?.lineWidth as number) ?? 0;
+      borderLeft = (rectAttributes?.lineWidth as number) ?? 0;
+    }
+    if (this.tableGroup.border.type === 'rect') {
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + borderLeft / 2,
+          y: this.table.tableY + borderTop / 2,
+          width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+          height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - borderLeft / 2,
+          y: this.table.tableY - borderTop / 2,
+          width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+          height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+        });
+      }
+    } else if (this.tableGroup.border.type === 'group') {
+      if (this.table.theme.frameStyle?.innerBorder) {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX + borderLeft / 2,
+          y: this.table.tableY + borderTop / 2,
+          width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+          height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: 0,
+          y: 0,
+          width: this.tableGroup.attribute.width - borderLeft / 2 - borderRight / 2,
+          height: this.tableGroup.attribute.height - borderTop / 2 - borderBottom / 2
+        });
+      } else {
+        this.tableGroup.border.setAttributes({
+          x: this.table.tableX - borderLeft / 2,
+          y: this.table.tableY - borderTop / 2,
+          width: this.tableGroup.attribute.width + borderLeft / 2 + borderRight / 2,
+          height: this.tableGroup.attribute.height + borderTop / 2 + borderBottom / 2
+        });
+        (this.tableGroup.border.firstChild as IRect)?.setAttributes({
+          x: borderLeft / 2,
+          y: borderTop / 2,
+          width: this.tableGroup.attribute.width,
+          height: this.tableGroup.attribute.height
+        });
+      }
+    }
   }
 
   updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
@@ -2318,7 +2342,7 @@ export class Scenegraph {
 
     const type = isVtableMerge ? 'text' : this.table.getCellType(col, row);
     const cellGroup = this.getCell(col, row);
-    if (type === 'image' || type === 'video') {
+    if (type === 'image' || type === 'video' || type === 'audio') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
     }
   }

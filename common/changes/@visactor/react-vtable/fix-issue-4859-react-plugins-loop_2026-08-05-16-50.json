@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vtable",
+      "comment": "fix: prevent plugin options from causing a React render loop (GitHub #4859)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/react-vtable",
+  "email": "biukam.w@gmail.com"
+}

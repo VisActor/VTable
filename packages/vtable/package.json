@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.26.6",
+  "version": "1.26.7",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -52,7 +52,7 @@
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "dependencies": {
-    "@visactor/vtable-editors": "workspace:1.26.6",
+    "@visactor/vtable-editors": "workspace:1.26.7",
     "@visactor/vrender": "1.1.4",
     "@visactor/vrender-core": "1.1.4",
     "@visactor/vrender-kits": "1.1.4",
@@ -84,6 +84,7 @@
     "vite": "3.2.6",
     "typescript": "4.9.5",
     "@babel/core": "7.20.12",
+    "@babel/plugin-transform-react-jsx": "7.28.6",
     "@babel/preset-env": "7.20.2",
     "@types/chai": "4.2.22",
     "@types/jest": "^26.0.0",

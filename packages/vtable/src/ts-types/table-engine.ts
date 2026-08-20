@@ -153,8 +153,10 @@ export interface IRowSeriesNumber {
   title?: string;
   field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  headerType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
+  headerType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox' | 'radio';
+  /** 点击开启预览，仅在 image/video/audio 类型时生效 */
+  clickToPreview?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
@@ -184,7 +186,9 @@ export interface ColumnSeriesNumber {
   title?: string;
   field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+  cellType?: 'text' | 'link' | 'image' | 'video' | 'audio' | 'checkbox';
+  /** 点击开启预览，仅在 image/video/audio 类型时生效 */
+  clickToPreview?: boolean;
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   icon?:
@@ -360,6 +364,8 @@ export interface ListTableAPI extends BaseTableAPI {
   internalProps: ListTableProtected;
   isListTable: () => true;
   isPivotTable: () => false;
+  /** 获取当前单元格对应源数据 records 的 index；树形表格返回 children 路径。 */
+  getRecordIndexByCell: (col: number, row: number) => number | number[];
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (
     col: number,

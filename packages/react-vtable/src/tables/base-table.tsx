@@ -139,6 +139,8 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   const optionFromChildren = useRef<Omit<IOption, 'records'>>(null);
   const prevRecords = useRef(props.records);
   const eventsBinded = React.useRef<BaseTableProps>(null);
+  const latestProps = useRef(props);
+  const isInitialReady = useRef(true);
   const skipFunctionDiff = !!props.skipFunctionDiff;
   const keepColumnWidthChange = !!props.keepColumnWidthChange;
   const columnWidths = useRef<Map<string, number>>(new Map());
@@ -148,6 +150,7 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
   if (tableContext.current) {
     tableContext.current.onError = props.onError;
   }
+  latestProps.current = props;
 
   const parseOption = useCallback(
     (props: Props) => {
@@ -235,17 +238,17 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
       if (!tableContext.current || !tableContext.current.table) {
         return;
       }
+      const currentProps = latestProps.current;
       // rebind events after render
-      bindEventsToTable(tableContext.current.table, props, eventsBinded.current, TABLE_EVENTS);
+      bindEventsToTable(tableContext.current.table, currentProps, eventsBinded.current, TABLE_EVENTS);
 
-      // to be fixed
-      // will cause another useEffect
-      setUpdateId(updateId + 1);
-      if (props.onReady) {
-        props.onReady(tableContext.current.table, updateId === 0);
+      setUpdateId(currentUpdateId => currentUpdateId + 1);
+      if (currentProps.onReady) {
+        currentProps.onReady(tableContext.current.table, isInitialReady.current);
       }
+      isInitialReady.current = false;
     }
-  }, [updateId, setUpdateId, props]);
+  }, []);
 
   const renderTable = useCallback(() => {
     if (tableContext.current.table) {

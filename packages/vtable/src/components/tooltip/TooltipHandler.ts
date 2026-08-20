@@ -22,6 +22,12 @@ type AttachInfo = {
   range: CellRange;
   tooltipOptions: TooltipOptions;
 };
+type PendingInfo = {
+  id: ReturnType<typeof setTimeout>;
+  col: number;
+  row: number;
+  tooltipOptions: TooltipOptions;
+};
 export interface ITooltipHandler {
   new (table: BaseTableAPI, confine: boolean): TooltipHandler;
 }
@@ -30,6 +36,7 @@ export class TooltipHandler {
   private _table: BaseTableAPI;
   private _tooltipInstances?: { [type: string]: BaseTooltip };
   private _attachInfo?: AttachInfo | null;
+  private _pendingInfo?: PendingInfo | null;
   private confine?: boolean; //弹出框是否需要限定在canvas区域
   constructor(table: BaseTableAPI, confine: boolean) {
     this._table = table;
@@ -38,14 +45,39 @@ export class TooltipHandler {
     this.confine = confine;
   }
   release(): void {
+    this._clearPendingBind();
     const tooltipInstances = this._tooltipInstances;
     for (const k in tooltipInstances) {
       tooltipInstances[k]?.release?.();
     }
     delete this._tooltipInstances;
     this._attachInfo = null;
+    this._pendingInfo = null;
   }
   _bindToCell(col: number, row: number, tooltipOptions?: TooltipOptions): void {
+    this._clearPendingBind();
+    const appearDelay = tooltipOptions?.appearDelay;
+    if (tooltipOptions && appearDelay && appearDelay > 0) {
+      this._unbindAttachedTooltip();
+      const id = setTimeout(() => {
+        this._pendingInfo = null;
+        this._bindToCellImmediately(col, row, tooltipOptions);
+      }, appearDelay);
+      this._pendingInfo = {
+        id,
+        col,
+        row,
+        tooltipOptions
+      };
+      return;
+    }
+    this._bindToCellImmediately(col, row, tooltipOptions);
+  }
+  _bindToCellImmediately(col: number, row: number, tooltipOptions?: TooltipOptions): void {
+    if (!tooltipOptions) {
+      this._unbindAttachedTooltip();
+      return;
+    }
     const info = this._attachInfo;
     const instance = this._getTooltipInstanceInfo(col, row);
     if (info && (!instance || info.instance !== instance)) {
@@ -61,6 +93,21 @@ export class TooltipHandler {
       const range = this._table.getCellRange(col, row);
       this._attachInfo = { range, instance, tooltipOptions };
     }
+  }
+  _clearPendingBind(): void {
+    if (this._pendingInfo) {
+      clearTimeout(this._pendingInfo.id);
+      this._pendingInfo = null;
+    }
+  }
+  _unbindAttachedTooltip(): void {
+    const info = this._attachInfo;
+    if (!info) {
+      return;
+    }
+    const { instance } = info;
+    instance?.unbindTooltipElement();
+    this._attachInfo = null;
   }
   _move(col: number, row: number, tooltipOptions: TooltipOptions): void {
     const info = this._attachInfo;
@@ -89,15 +136,13 @@ export class TooltipHandler {
     instance?.locateTooltipElement(col, row, position, referencePosition, this.confine);
   }
   _unbindFromCell(): void {
-    const info = this._attachInfo;
-    if (!info) {
-      return;
-    }
-    const { instance } = info;
-    instance?.unbindTooltipElement();
-    this._attachInfo = null;
+    this._clearPendingBind();
+    this._unbindAttachedTooltip();
   }
   _isBindCell(col: number, row: number): boolean {
+    if (this._pendingInfo && this._pendingInfo.col === col && this._pendingInfo.row === row) {
+      return true;
+    }
     const info = this._attachInfo;
     if (!info) {
       return false;
@@ -245,7 +290,10 @@ export class TooltipHandler {
     return instance;
   }
   isBinded(tooltipOptions: TooltipOptions) {
-    if (JSON.stringify(tooltipOptions) === JSON.stringify(this._attachInfo?.tooltipOptions)) {
+    if (
+      JSON.stringify(tooltipOptions) === JSON.stringify(this._attachInfo?.tooltipOptions) ||
+      JSON.stringify(tooltipOptions) === JSON.stringify(this._pendingInfo?.tooltipOptions)
+    ) {
       return true;
     }
     return false;

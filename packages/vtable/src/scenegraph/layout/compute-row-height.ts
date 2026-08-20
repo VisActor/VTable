@@ -640,11 +640,12 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       cellRange = table.getCellRange(col, row);
       spanRow = cellRange.end.row - cellRange.start.row + 1;
     }
+    const skipCellValue = shouldSkipCustomRenderCellValueForComputation(col, row, table);
     const arg = {
       col: cellRange?.start.col ?? col,
       row: cellRange?.start.row ?? row,
-      dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row),
+      dataValue: skipCellValue ? undefined : table.getCellOriginValue(col, row),
+      value: skipCellValue ? undefined : table.getCellValue(col, row),
       rect: getCellRect(col, row, table),
       table,
       originCol: col,
@@ -685,11 +686,17 @@ function computeCustomRenderHeight(col: number, row: number, table: BaseTableAPI
       height += padding[0] + padding[2];
     }
     return {
-      height: height / spanRow,
+      height: getMergedCellSingleRowHeight(height / spanRow, spanRow, table),
       renderDefault
     };
   }
   return undefined;
+}
+
+function shouldSkipCustomRenderCellValueForComputation(col: number, row: number, table: BaseTableAPI) {
+  return (
+    table.isListTable() && !table.isHeader(col, row) && !(table.internalProps.dataSource as any)?.dataSourceObj?.records
+  );
 }
 
 /**
@@ -925,7 +932,20 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
       }
     }
   }
-  return (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow;
+  return getMergedCellSingleRowHeight(
+    (Math.max(maxHeight, iconHeight) + padding[0] + padding[2]) / spanRow,
+    spanRow,
+    table
+  );
+}
+
+function getMergedCellSingleRowHeight(height: number, spanRow: number, table: BaseTableAPI) {
+  if (spanRow <= 1) {
+    return height;
+  }
+  const configuredMinHeight = table.options.customConfig?.minSingleRowHeight;
+  const minSingleRowHeight = isNumber(configuredMinHeight) && configuredMinHeight > 0 ? configuredMinHeight : 2;
+  return Math.max(height, minSingleRowHeight);
 }
 
 function getCellRect(col: number, row: number, table: BaseTableAPI) {

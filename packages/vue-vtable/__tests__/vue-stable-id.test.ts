@@ -28,6 +28,8 @@ jest.mock('@visactor/vtable', () => {
     addEventListener() {}
   }
   return {
+    CUSTOM_CONTAINER_NAME: 'custom-container',
+    CUSTOM_MERGE_PRE_NAME: '_custom_',
     CustomLayout: {
       Group: MockGroup,
       Image: MockGroup,
@@ -42,7 +44,8 @@ jest.mock('@visactor/vtable', () => {
 // Mock vue 的 isVNode / cloneVNode
 jest.mock('vue', () => ({
   isVNode: (val: any) => val && val.__v_isVNode === true,
-  cloneVNode: (vnode: any, extra: any) => ({ ...vnode, ...extra })
+  cloneVNode: (vnode: any, extra: any) => ({ ...vnode, ...extra }),
+  render: jest.fn()
 }));
 
 function makeGroupChild(vueProps: any = {}, typeName = 'Group') {
@@ -233,5 +236,70 @@ describe('VTableVueAttributePlugin 缓存命中同步渲染', () => {
     // 无缓存 → 加入异步队列并调用 scheduleRender
     expect(plugin.renderQueue.size).toBe(1);
     expect(plugin.scheduleRender).toHaveBeenCalled();
+  });
+});
+
+describe('VTableVueAttributePlugin 顶部冻结行容器', () => {
+  test.each([
+    ['普通列', 1, 'headerDomContainer'],
+    ['左冻结列', 0, 'frozenHeaderDomContainer'],
+    ['右冻结列', 3, 'rightFrozenHeaderDomContainer']
+  ])('顶部冻结行的%s应挂载到顶部冻结容器', (_name, col, expectedContainerKey) => {
+    const { VTableVueAttributePlugin } = jest.requireActual('../src/components/custom/vtable-vue-attribute-plugin');
+    const plugin = new VTableVueAttributePlugin();
+    plugin.htmlMap = {};
+    plugin.renderId = 1;
+
+    const table = {
+      bodyDomContainer: document.createElement('div'),
+      headerDomContainer: document.createElement('div'),
+      frozenBodyDomContainer: document.createElement('div'),
+      frozenHeaderDomContainer: document.createElement('div'),
+      rightFrozenBodyDomContainer: document.createElement('div'),
+      rightFrozenHeaderDomContainer: document.createElement('div'),
+      bottomFrozenBodyDomContainer: document.createElement('div'),
+      rightFrozenBottomDomContainer: document.createElement('div'),
+      frozenColCount: 1,
+      rightFrozenColCount: 1,
+      frozenRowCount: 2,
+      bottomFrozenRowCount: 0,
+      colCount: 4,
+      rowCount: 10,
+      options: {}
+    };
+    const stage = {
+      table,
+      window: { getContainer: () => document.body }
+    };
+    const targetGroup = {
+      name: 'custom-container',
+      col,
+      row: 1,
+      stage,
+      parent: {}
+    };
+    const graphic = {
+      attribute: {
+        vue: {
+          id: `top-frozen-${col}`,
+          element: { __v_isVNode: true },
+          container: table.bodyDomContainer
+        }
+      },
+      stage,
+      parent: targetGroup
+    };
+    const wrapContainer = document.createElement('div');
+    plugin.getWrapContainer = jest.fn((_stage, container) => ({
+      wrapContainer,
+      nativeContainer: container
+    }));
+    plugin.updateStyleOfWrapContainer = jest.fn();
+
+    plugin.doRenderGraphic(graphic);
+
+    const actualContainer = plugin.getWrapContainer.mock.calls[0][1];
+    expect(actualContainer).toBe(table[expectedContainerKey]);
+    expect(actualContainer).not.toBe(table.bodyDomContainer);
   });
 });

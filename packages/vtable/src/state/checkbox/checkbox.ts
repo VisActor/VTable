@@ -356,68 +356,90 @@ export function setCellCheckboxStateByAttribute(
   }
 }
 
-export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, state: StateManager) {
-  const { checkedState, table } = state;
-  let source;
-  let target;
-  if (table.internalProps.transpose) {
-    sourceIndex = table.getRecordShowIndexByCell(sourceIndex, 0);
-    targetIndex = table.getRecordShowIndexByCell(targetIndex, 0);
-  } else {
-    // sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
-    // targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
+type RecordPath = number | number[];
 
-    source = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, sourceIndex);
-    target = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, targetIndex);
+function normalizeRecordPath(recordPath: RecordPath): number[] {
+  return isArray(recordPath) ? recordPath : [recordPath];
+}
+
+function parseCheckboxStateKey(key: string | number): number[] {
+  return isNumber(key) ? [key] : key.split(',').map(item => Number(item));
+}
+
+function stringifyRecordPath(recordPath: number[]): string {
+  return recordPath.toString();
+}
+
+function isSameRecordPath(source: number[], target: number[]): boolean {
+  return source.length === target.length && source.every((item, index) => item === target[index]);
+}
+
+function isSameParentPath(source: number[], target: number[]): boolean {
+  if (source.length !== target.length) {
+    return false;
+  }
+  return source.slice(0, -1).every((item, index) => item === target[index]);
+}
+
+function isDescendantPath(path: number[], ancestor: number[]): boolean {
+  return ancestor.length <= path.length && ancestor.every((item, index) => item === path[index]);
+}
+
+function getMovedRecordPath(path: number[], source: number[], target: number[]): number[] {
+  return target.concat(path.slice(source.length));
+}
+
+function getShiftedSiblingPath(path: number[], parent: number[], sourceIndex: number, targetIndex: number): number[] {
+  if (path.length <= parent.length || !isDescendantPath(path.slice(0, parent.length), parent)) {
+    return path;
   }
 
-  if (isNumber(source) && isNumber(target)) {
-    sourceIndex = source;
-    targetIndex = target;
-    if (sourceIndex > targetIndex) {
-      const sourceRecord = checkedState.get(sourceIndex.toString());
-      for (let i = sourceIndex; i > targetIndex; i--) {
-        // checkedState[i] = checkedState[i - 1];
-        checkedState.set(i.toString(), checkedState.get((i - 1).toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(targetIndex.toString(), sourceRecord);
-    } else if (sourceIndex < targetIndex) {
-      const sourceRecord = checkedState.get(sourceIndex.toString());
-      for (let i = sourceIndex; i < targetIndex; i++) {
-        // checkedState[i] = checkedState[i + 1];
-        checkedState.set(i.toString(), checkedState.get((i + 1).toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(targetIndex.toString(), sourceRecord);
-    }
-  } else if (isArray(source) && isArray(target)) {
-    sourceIndex = source[source.length - 1];
-    targetIndex = target[target.length - 1];
-    if (sourceIndex > targetIndex) {
-      const sourceRecord = checkedState.get(source.toString());
-      for (let i = sourceIndex; i > targetIndex; i--) {
-        const now = [...source];
-        now[now.length - 1] = i;
-        const last = [...source];
-        last[last.length - 1] = i - 1;
-        checkedState.set(now.toString(), checkedState.get(last.toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(target.toString(), sourceRecord);
-    } else if (sourceIndex < targetIndex) {
-      const sourceRecord = checkedState.get(source.toString());
-      for (let i = sourceIndex; i < targetIndex; i++) {
-        const now = [...source];
-        now[now.length - 1] = i;
-        const next = [...source];
-        next[next.length - 1] = i + 1;
-        checkedState.set(now.toString(), checkedState.get(next.toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(target.toString(), sourceRecord);
-    }
+  const siblingIndex = path[parent.length];
+  if (sourceIndex < targetIndex && siblingIndex > sourceIndex && siblingIndex <= targetIndex) {
+    const shifted = [...path];
+    shifted[parent.length] = siblingIndex - 1;
+    return shifted;
   }
+  if (sourceIndex > targetIndex && siblingIndex >= targetIndex && siblingIndex < sourceIndex) {
+    const shifted = [...path];
+    shifted[parent.length] = siblingIndex + 1;
+    return shifted;
+  }
+  return path;
+}
+
+export function changeCheckboxOrder(sourceRecordPath: RecordPath, targetRecordPath: RecordPath, state: StateManager) {
+  const { checkedState } = state;
+  const sourcePath = normalizeRecordPath(sourceRecordPath);
+  const targetPath = normalizeRecordPath(targetRecordPath);
+
+  // DataSource.changeOrder only reorders records under the same parent; cross-parent drops are ignored here.
+  if (isSameRecordPath(sourcePath, targetPath) || !isSameParentPath(sourcePath, targetPath)) {
+    return;
+  }
+
+  const parentPath = sourcePath.slice(0, -1);
+  const sourceIndex = sourcePath[sourcePath.length - 1];
+  const targetIndex = targetPath[targetPath.length - 1];
+  const nextCheckedState = new Map<string | number, Record<string | number, boolean | 'indeterminate'>>();
+
+  checkedState.forEach((value, key) => {
+    const keyPath = parseCheckboxStateKey(key);
+    let nextPath: number[];
+
+    if (isDescendantPath(keyPath, sourcePath)) {
+      nextPath = getMovedRecordPath(keyPath, sourcePath, targetPath);
+    } else {
+      nextPath = getShiftedSiblingPath(keyPath, parentPath, sourceIndex, targetIndex);
+    }
+
+    nextCheckedState.set(stringifyRecordPath(nextPath), value);
+  });
+
+  checkedState.clear();
+  nextCheckedState.forEach((value, key) => {
+    checkedState.set(key, value);
+  });
 }
 
 export function getGroupCheckboxState(table: BaseTableAPI) {

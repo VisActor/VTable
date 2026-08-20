@@ -2,6 +2,7 @@ export type ColumnTypeOption =
   | 'text'
   | 'image'
   | 'video'
+  | 'audio'
   | 'link'
   | 'chart'
   | 'sparkline'
@@ -10,4 +11,4 @@ export type ColumnTypeOption =
   | 'radio'
   | 'switch'
   | 'button';
-export type HeaderTypeOption = 'text' | 'image' | 'video' | 'link' | 'checkbox';
+export type HeaderTypeOption = 'text' | 'image' | 'video' | 'audio' | 'link' | 'checkbox';

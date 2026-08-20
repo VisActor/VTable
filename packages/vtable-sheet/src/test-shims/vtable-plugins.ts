@@ -1,4 +1,4 @@
-export * from '@visactor/vtable-plugins/cjs/index.js';
+export * from '../../../vtable-plugins/src/index';
 
 const { HistoryPlugin } = require('../../../vtable-plugins/src/history');
 const { FilterPlugin } = require('../../../vtable-plugins/src/filter');
