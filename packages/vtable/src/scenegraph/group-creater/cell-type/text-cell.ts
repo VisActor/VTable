@@ -48,6 +48,12 @@ export function createCellGroup(
   range: CellRange | undefined,
   isAsync: boolean
 ): Group {
+  const isCornerCustomMergeContentCell =
+    !!customElementsGroup &&
+    !!range?.isCustom &&
+    table.isCornerHeader(range.start.col, range.start.row) &&
+    col === range.end.col &&
+    row === range.end.row;
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -84,7 +90,7 @@ export function createCellGroup(
         cursor: (cellTheme?.group as any)?.cursor ?? undefined,
         lineDash: cellTheme?.group?.lineDash ?? undefined,
         lineCap: 'butt',
-        clip: true,
+        clip: !isCornerCustomMergeContentCell,
         cornerRadius: cellTheme.group.cornerRadius
       } as any);
     }
@@ -106,7 +112,7 @@ export function createCellGroup(
 
       lineCap: 'butt',
 
-      clip: true,
+      clip: !isCornerCustomMergeContentCell,
 
       cornerRadius: cellTheme.group.cornerRadius
     } as any);

@@ -10,7 +10,12 @@ import type { Group } from '../graphic/group';
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import type { CreateProgressBarCell } from '../group-creater/cell-type/progress-bar-cell';
 import type { CreateSparkLineCellGroup } from '../group-creater/cell-type/spark-line-cell';
-import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
+import {
+  resizeCellGroup,
+  getCustomCellMergeCustom,
+  isCornerCustomMergeRange,
+  shouldRenderCornerCustomMergeContent
+} from '../group-creater/cell-helper';
 import type { Scenegraph } from '../scenegraph';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { getProp } from '../utils/get-prop';
@@ -417,6 +422,9 @@ function updateCellWidth(
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
           let width = cellGroup.attribute.width;
           let height = cellGroup.attribute.height;
+          const mergeRange = isMergeCellGroup(cellGroup)
+            ? scene.table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow)
+            : undefined;
           if (isMergeCellGroup(cellGroup)) {
             width = scene.table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol);
             height = scene.table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow);
@@ -431,15 +439,12 @@ function updateCellWidth(
             false,
             scene.table.isAutoRowHeight(row),
             padding,
-            isMergeCellGroup(cellGroup)
-              ? {
-                  start: { col: cellGroup.mergeStartCol, row: cellGroup.mergeStartRow },
-                  end: { col: cellGroup.mergeEndCol, row: cellGroup.mergeEndRow }
-                }
-              : undefined,
+            mergeRange,
             scene.table
           );
-          customElementsGroup = customResult.elementsGroup;
+          customElementsGroup = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table)
+            ? customResult.elementsGroup
+            : undefined;
           renderDefault = customResult.renderDefault;
           isHeightChange = true;
         }
@@ -448,6 +453,12 @@ function updateCellWidth(
           cell.insertBefore(customElementsGroup, cell.firstChild);
         } else if (customElementsGroup) {
           cell.appendChild(customElementsGroup);
+        }
+        if (isMergeCellGroup(cellGroup)) {
+          const mergeRange = scene.table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
+          if (isCornerCustomMergeRange(mergeRange, scene.table)) {
+            cell.setAttribute('clip', !shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table));
+          }
         }
       }
     }
@@ -566,6 +577,10 @@ function updateMergeCellContentWidth(
 
         isHeightChange = isHeightChange || changed;
       }
+    }
+    const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
+    if (isCornerCustomMergeRange(mergeRange, table)) {
+      table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
     }
     return isHeightChange;
   }

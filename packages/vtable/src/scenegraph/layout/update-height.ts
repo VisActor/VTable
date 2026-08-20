@@ -13,7 +13,12 @@ import { updateImageCellContentWhileResize } from '../group-creater/cell-type/im
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
-import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
+import {
+  resizeCellGroup,
+  getCustomCellMergeCustom,
+  isCornerCustomMergeRange,
+  shouldRenderCornerCustomMergeContent
+} from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
 import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
@@ -254,6 +259,9 @@ export function updateCellHeight(
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
           let width = cell.attribute.width;
           let height = cell.attribute.height;
+          const mergeRange = isMergeCellGroup(cell)
+            ? scene.table.getCellRange(cell.mergeStartCol, cell.mergeStartRow)
+            : undefined;
           if (isMergeCellGroup(cell)) {
             width = scene.table.getColsWidth(cell.mergeStartCol, cell.mergeEndCol);
             height = scene.table.getRowsHeight(cell.mergeStartRow, cell.mergeEndRow);
@@ -268,15 +276,12 @@ export function updateCellHeight(
             false,
             scene.table.isAutoRowHeight(row),
             padding,
-            isMergeCellGroup(cell)
-              ? {
-                  start: { col: cell.mergeStartCol, row: cell.mergeStartRow },
-                  end: { col: cell.mergeEndCol, row: cell.mergeEndRow }
-                }
-              : undefined,
+            mergeRange,
             scene.table
           );
-          customElementsGroup = customResult.elementsGroup;
+          customElementsGroup = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table)
+            ? customResult.elementsGroup
+            : undefined;
           renderDefault = customResult.renderDefault;
         }
 
@@ -284,6 +289,12 @@ export function updateCellHeight(
           cell.insertBefore(customElementsGroup, cell.firstChild);
         } else if (customElementsGroup) {
           cell.appendChild(customElementsGroup);
+        }
+        if (isMergeCellGroup(cell)) {
+          const mergeRange = scene.table.getCellRange(cell.mergeStartCol, cell.mergeStartRow);
+          if (isCornerCustomMergeRange(mergeRange, scene.table)) {
+            cell.setAttribute('clip', !shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table));
+          }
         }
       }
     }
@@ -374,6 +385,10 @@ function updateMergeCellContentHeight(
           singleCellGroup.needUpdateWidth = true;
         }
       }
+    }
+    const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
+    if (isCornerCustomMergeRange(mergeRange, table)) {
+      table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
     }
   } else {
     const style = table._getCellStyle(cellGroup.col, cellGroup.row);
