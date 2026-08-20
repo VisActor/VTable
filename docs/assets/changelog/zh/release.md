@@ -1,3 +1,26 @@
+# v1.26.7
+
+2026-08-20
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持 Tooltip appear delay
+- **@visactor/vtable**: 新增 audio cell type support （GitHub #5271）
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)
+- **@visactor/vtable**: preserve tree checkbox state after row drag reorder (GitHub #3975)
+- **@visactor/vtable**: 新增 context menu click event typing （GitHub #4655）
+- **@visactor/vtable**: avoid loading all lazy dataSource records during customRender auto size computation (GitHub #4964)
+- **@visactor/vtable**: render vue components in top frozen rows
+- **@visactor/vtable**: align frame border with short frozen rows (GitHub #5277)
+- **@visactor/vtable**: keep headers after setRecords at scroll edge (GitHub #5278)
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.6...v1.26.7
+
+[更多详情请查看 v1.26.7](https://github.com/VisActor/VTable/releases/tag/v1.26.7)
+
 # v1.26.6
 
 2026-08-03
