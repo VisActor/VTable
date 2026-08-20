@@ -678,6 +678,9 @@ export interface BaseTableConstructorOptions {
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
 
+    /** 多行合并行高自动计算时单行最小行高，用在大量行合并的情况下，避免行高自动计算过小导致内容无法显示 */
+    minSingleRowHeight?: number;
+
     /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
     cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
 
