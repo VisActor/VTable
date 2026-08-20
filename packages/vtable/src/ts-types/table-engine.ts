@@ -364,6 +364,8 @@ export interface ListTableAPI extends BaseTableAPI {
   internalProps: ListTableProtected;
   isListTable: () => true;
   isPivotTable: () => false;
+  /** 获取当前单元格对应源数据 records 的 index；树形表格返回 children 路径。 */
+  getRecordIndexByCell: (col: number, row: number) => number | number[];
   /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
   changeCellValue: (
     col: number,
