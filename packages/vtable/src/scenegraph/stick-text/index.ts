@@ -1,10 +1,18 @@
 import type { IGraphic, Image, Text } from '@src/vrender';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { Group } from '../graphic/group';
-import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ITextStyleOption, StickCell } from '../../ts-types';
 import { isNumber, min } from '@visactor/vutils';
 import { getCellMergeRange } from '../../tools/merge-range';
+
+let stickTextUpdateId = 0;
+
+type VisibleCellRange = {
+  colStart: number;
+  colEnd: number;
+  rowStart: number;
+  rowEnd: number;
+};
 
 export function resetTextStick(table: BaseTableAPI) {
   // reset
@@ -24,6 +32,8 @@ export function resetTextStick(table: BaseTableAPI) {
 
 export function handleTextStick(table: BaseTableAPI) {
   const changedCells = resetTextStick(table);
+  const horizontalUpdateId = ++stickTextUpdateId;
+  const verticalUpdateId = ++stickTextUpdateId;
 
   const { scrollTop, scrollLeft, frozenRowCount, frozenColCount } = table;
   const frozenRowsHeight = table.getFrozenRowsHeight();
@@ -61,7 +71,9 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          horizontalUpdateId,
+          { colStart, colEnd, rowStart: row, rowEnd: row }
         );
       }
     });
@@ -74,11 +86,7 @@ export function handleTextStick(table: BaseTableAPI) {
     }
     [rowStart, rowEnd].forEach((row: number) => {
       const style = table._getCellStyle(col, row);
-      if (
-        style?.textStick &&
-        // (table.internalProps.layoutMap as PivotHeaderLayoutMap).rowHierarchyType !== 'tree' &&
-        style?.textStick !== 'horizontal'
-      ) {
+      if (style?.textStick && style?.textStick !== 'horizontal') {
         const cellGroup = table.scenegraph.getCell(col, row);
         // adjust cell vertical
         adjustCellContentVerticalLayout(
@@ -87,7 +95,9 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          verticalUpdateId,
+          { colStart: col, colEnd: col, rowStart, rowEnd }
         );
       }
     });
@@ -109,7 +119,9 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameHeight - table.getBottomFrozenRowsHeight() + table.tableY,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          verticalUpdateId,
+          { colStart: col, colEnd: col, rowStart, rowEnd }
         );
       }
     });
@@ -129,7 +141,9 @@ export function handleTextStick(table: BaseTableAPI) {
           table.tableNoFrameWidth - table.getRightFrozenColsWidth() + table.tableX,
           changedCells,
           style?.textStickBaseOnAlign,
-          table
+          table,
+          horizontalUpdateId,
+          { colStart, colEnd, rowStart: row, rowEnd: row }
         );
       }
     });
@@ -147,27 +161,13 @@ function adjustCellContentVerticalLayout(
   maxTop: number,
   changedCells: Map<string, StickCell>,
   textStickBaseOnAlign: boolean | undefined,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  updateId: number,
+  visibleRange: VisibleCellRange
 ) {
-  if (
-    isNumber(cellGroup.mergeStartCol) &&
-    isNumber(cellGroup.mergeStartRow) &&
-    isNumber(cellGroup.mergeEndCol) &&
-    isNumber(cellGroup.mergeEndRow)
-  ) {
-    const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
-    for (let col = colStart; col <= colEnd; col++) {
-      for (let row = rowStart; row <= rowEnd; row++) {
-        const singleCellGroup = table.scenegraph.getCell(col, row);
-        if (singleCellGroup.role !== 'cell') {
-          continue;
-        }
-        dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
-      }
-    }
-  } else {
-    dealVertical(cellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
-  }
+  dealMergedCellGroups(cellGroup, table, visibleRange, updateId, 'verticalStickUpdateId', singleCellGroup => {
+    dealVertical(singleCellGroup, minTop, maxTop, changedCells, textStickBaseOnAlign);
+  });
 }
 
 function dealVertical(
@@ -260,7 +260,22 @@ function adjustCellContentHorizontalLayout(
   maxLeft: number,
   changedCells: Map<string, StickCell>,
   textStickBaseOnAlign: boolean | undefined,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  updateId: number,
+  visibleRange: VisibleCellRange
+) {
+  dealMergedCellGroups(cellGroup, table, visibleRange, updateId, 'horizontalStickUpdateId', singleCellGroup => {
+    dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
+  });
+}
+
+function dealMergedCellGroups(
+  cellGroup: Group,
+  table: BaseTableAPI,
+  visibleRange: VisibleCellRange,
+  updateId: number,
+  updateIdKey: 'verticalStickUpdateId' | 'horizontalStickUpdateId',
+  dealCell: (cellGroup: Group) => void
 ) {
   if (
     isNumber(cellGroup.mergeStartCol) &&
@@ -269,17 +284,27 @@ function adjustCellContentHorizontalLayout(
     isNumber(cellGroup.mergeEndRow)
   ) {
     const { colStart, colEnd, rowStart, rowEnd } = getCellMergeRange(cellGroup, table.scenegraph);
-    for (let col = colStart; col <= colEnd; col++) {
-      for (let row = rowStart; row <= rowEnd; row++) {
+    const visibleColStart = Math.max(colStart, visibleRange.colStart);
+    const visibleColEnd = Math.min(colEnd, visibleRange.colEnd);
+    const visibleRowStart = Math.max(rowStart, visibleRange.rowStart);
+    const visibleRowEnd = Math.min(rowEnd, visibleRange.rowEnd);
+
+    for (let col = visibleColStart; col <= visibleColEnd; col++) {
+      for (let row = visibleRowStart; row <= visibleRowEnd; row++) {
         const singleCellGroup = table.scenegraph.getCell(col, row);
-        if (singleCellGroup.role !== 'cell') {
+        if (singleCellGroup.role !== 'cell' || (singleCellGroup as any)[updateIdKey] === updateId) {
           continue;
         }
-        dealHorizontal(singleCellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
+        (singleCellGroup as any)[updateIdKey] = updateId;
+        dealCell(singleCellGroup);
       }
     }
   } else {
-    dealHorizontal(cellGroup, minLeft, maxLeft, changedCells, textStickBaseOnAlign);
+    if ((cellGroup as any)[updateIdKey] === updateId) {
+      return;
+    }
+    (cellGroup as any)[updateIdKey] = updateId;
+    dealCell(cellGroup);
   }
 }
 

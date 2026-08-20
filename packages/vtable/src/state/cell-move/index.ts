@@ -232,6 +232,7 @@ export function endMoveCol(state: StateManager): boolean {
         }
       }
       if (
+        state.table.isListTable() &&
         !(state.table as ListTable).transpose &&
         ((state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
           state.columnMove.colSource,
@@ -239,8 +240,11 @@ export function endMoveCol(state: StateManager): boolean {
         ) ||
           state.columnMove.movingColumnOrRow === 'row')
       ) {
+        const sourceRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.sourceIndex);
+        const targetRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.targetIndex);
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
-        state.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+        state.changeCheckboxOrder(sourceRecordPath, targetRecordPath);
+        state.changeRadioOrder(sourceRecordPath, targetRecordPath);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {
