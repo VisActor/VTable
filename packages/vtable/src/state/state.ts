@@ -222,7 +222,10 @@ export class StateManager {
 
   _headerCheckFuncs: Record<string | number, Function> = {};
 
-  radioState: Record<string | number, boolean | number | Record<number, number>> = {};
+  radioState: Record<
+    string | number,
+    boolean | number | string | number[] | Record<string | number, boolean | number>
+  > = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce((state?: InteractionState) => {
     this.updateInteractionState(state ?? InteractionState.default);
@@ -1955,12 +1958,15 @@ export class StateManager {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
   }
 
-  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+  changeCheckboxOrder(sourceRecordPath: number | number[], targetRecordPath: number | number[]) {
     if (this.checkedState.size) {
-      changeCheckboxOrder(sourceIndex, targetIndex, this);
+      changeCheckboxOrder(sourceRecordPath, targetRecordPath, this);
     }
-    if (this.radioState.length) {
-      changeRadioOrder(sourceIndex, targetIndex, this);
+  }
+
+  changeRadioOrder(sourceRecordPath: number | number[], targetRecordPath: number | number[]) {
+    if (Object.keys(this.radioState).length) {
+      changeRadioOrder(sourceRecordPath, targetRecordPath, this);
     }
   }
 
