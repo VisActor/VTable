@@ -222,7 +222,10 @@ export class StateManager {
 
   _headerCheckFuncs: Record<string | number, Function> = {};
 
-  radioState: Record<string | number, boolean | number | number[] | Record<string | number, boolean | number>> = {};
+  radioState: Record<
+    string | number,
+    boolean | number | string | number[] | Record<string | number, boolean | number>
+  > = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce((state?: InteractionState) => {
     this.updateInteractionState(state ?? InteractionState.default);

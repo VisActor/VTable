@@ -1,11 +1,11 @@
-import { isBoolean, isNumber, isObject, isValid } from '@visactor/vutils';
+import { isBoolean, isNumber, isObject, isString, isValid } from '@visactor/vutils';
 import type { StateManager } from '../state';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ColumnDefine } from '../../ts-types';
 import type { Radio } from '@src/vrender';
 
 type RecordPath = number | number[];
-type RadioStateValue = boolean | number | number[] | Record<string | number, boolean | number>;
+type RadioStateValue = boolean | number | string | number[] | Record<string | number, boolean | number>;
 
 export function setRadioState(
   col: number,
@@ -213,6 +213,9 @@ function changeRadioStateValue(value: RadioStateValue, sourcePath: number[], tar
   }
   if (Array.isArray(value)) {
     return getRadioStateValue(getChangedRecordPath(value, sourcePath, targetPath));
+  }
+  if (isString(value)) {
+    return getRadioStateKey(getChangedRecordPath(parseRecordPathKey(value), sourcePath, targetPath));
   }
   if (isObject(value)) {
     const nextValue: Record<string | number, boolean | number> = {};

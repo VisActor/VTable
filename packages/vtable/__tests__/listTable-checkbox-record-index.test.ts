@@ -249,6 +249,16 @@ describe('ListTable checkbox record index api', () => {
     expect(radioState.cellRadio['0,10']).toBe(true);
   });
 
+  test('moves serialized radio record path state', () => {
+    const radioState = {
+      columnRadio: '0,1'
+    };
+
+    changeRadioOrder([0, 1], [0, 2], { radioState });
+
+    expect(radioState.columnRadio).toBe('0,2');
+  });
+
   test('keeps radio state unchanged for unsupported cross-parent row moves', () => {
     const radioState = {
       cellRadio: {
