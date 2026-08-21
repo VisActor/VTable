@@ -13,16 +13,16 @@ import { updateImageCellContentWhileResize } from '../group-creater/cell-type/im
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
-import {
-  resizeCellGroup,
-  getCustomCellMergeCustom,
-  isCornerCustomMergeRange,
-  shouldRenderCornerCustomMergeContent
-} from '../group-creater/cell-helper';
+import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
 import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
 import { Factory } from '../../core/factory';
+import {
+  createCornerCustomMergeContainer,
+  isCornerCustomMergeRange,
+  shouldRenderCornerCustomMergeContent
+} from '../utils/corner-custom-merge';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
@@ -221,8 +221,10 @@ export function updateCellHeight(
           const customContainer =
             (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
             (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
-          customContainer.removeAllChild();
-          mergedCell.removeChild(customContainer);
+          if (customContainer) {
+            customContainer.removeAllChild();
+            mergedCell.removeChild(customContainer);
+          }
           getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
         }
       } else {
@@ -279,10 +281,11 @@ export function updateCellHeight(
             mergeRange,
             scene.table
           );
-          customElementsGroup = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table)
-            ? customResult.elementsGroup
+          const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
+          customElementsGroup = shouldRenderContent
+            ? createCornerCustomMergeContainer(customResult.elementsGroup, width, height, mergeRange, scene.table)
             : undefined;
-          renderDefault = customResult.renderDefault;
+          renderDefault = shouldRenderContent ? customResult.renderDefault : false;
         }
 
         if (cell.childrenCount > 0 && customElementsGroup) {

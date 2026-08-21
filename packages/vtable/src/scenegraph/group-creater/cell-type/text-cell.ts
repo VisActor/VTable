@@ -9,6 +9,7 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { CellRange } from '../../../ts-types';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { createMark } from '../../graphic/mark';
+import { isCornerCustomMergeRange } from '../../utils/corner-custom-merge';
 
 /**
  * @description: 创建单元格场景节点
@@ -49,11 +50,8 @@ export function createCellGroup(
   isAsync: boolean
 ): Group {
   const isCornerCustomMergeContentCell =
-    !!customElementsGroup &&
-    !!range?.isCustom &&
-    table.isCornerHeader(range.start.col, range.start.row) &&
-    col === range.end.col &&
-    row === range.end.row;
+    !!customElementsGroup && isCornerCustomMergeRange(range, table) && col === range.end.col && row === range.end.row;
+  // The carrier cell must allow the clipped merge container to span internal cell bounds.
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -123,6 +121,12 @@ export function createCellGroup(
   }
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
+  }
+  if (isCornerCustomMergeContentCell) {
+    cellGroup.setAttributes({
+      width: Math.max(cellGroup.attribute.width, customElementsGroup.attribute.width ?? 0),
+      height: Math.max(cellGroup.attribute.height, customElementsGroup.attribute.height ?? 0)
+    });
   }
   if (renderDefault) {
     const textStr: string = value;
