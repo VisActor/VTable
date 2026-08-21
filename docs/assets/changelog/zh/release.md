@@ -5,17 +5,17 @@
 **🆕 新增功能**
 
 - **@visactor/vtable**: 支持配置 Tooltip 展示延迟
-- **@visactor/vtable**: 新增音频单元格类型支持（GitHub #5271）
+- **@visactor/vtable**: 新增音频单元格类型支持 [#5271](https://github.com/VisActor/VTable/issues/5271)
 
 **🐛 问题修复**
 
-- **@visactor/vtable**: 通过保留足够的虚拟行，避免大范围合并单元格在自动行高下滚动出现空白（GitHub #3752）
-- **@visactor/vtable**: 行拖拽重排后保持树形 checkbox 状态（GitHub #3975）
-- **@visactor/vtable**: 新增右键菜单点击事件类型定义（GitHub #4655）
-- **@visactor/vtable**: customRender 自动尺寸计算时避免加载全部懒加载 dataSource 记录（GitHub #4964）
+- **@visactor/vtable**: 通过保留足够的虚拟行，避免大范围合并单元格在自动行高下滚动出现空白 [#3752](https://github.com/VisActor/VTable/issues/3752)
+- **@visactor/vtable**: 行拖拽重排后保持树形 checkbox 状态 [#3975](https://github.com/VisActor/VTable/issues/3975)
+- **@visactor/vtable**: 新增右键菜单点击事件类型定义 [#4655](https://github.com/VisActor/VTable/issues/4655)
+- **@visactor/vtable**: customRender 自动尺寸计算时避免加载全部懒加载 dataSource 记录 [#4964](https://github.com/VisActor/VTable/issues/4964)
 - **@visactor/vtable**: 支持在顶部冻结行中渲染 Vue 组件
-- **@visactor/vtable**: 短数据且存在底部冻结行时，表格外框边框与内容高度对齐（GitHub #5277）
-- **@visactor/vtable**: 在滚动边界调用 setRecords 后保持表头显示（GitHub #5278）
+- **@visactor/vtable**: 短数据且存在底部冻结行时，表格外框边框与内容高度对齐 [#5277](https://github.com/VisActor/VTable/issues/5277)
+- **@visactor/vtable**: 在滚动边界调用 setRecords 后保持表头显示 [#5278](https://github.com/VisActor/VTable/issues/5278)
 
 **完整更新日志**: https://github.com/VisActor/VTable/compare/v1.26.6...v1.26.7
 
