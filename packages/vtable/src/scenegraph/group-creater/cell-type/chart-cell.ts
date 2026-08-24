@@ -82,12 +82,12 @@ export function createChartCellGroup(
       cellGroup.role = 'cell';
       cellGroup.col = col;
       cellGroup.row = row;
-      columnGroup?.addCellGroup(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
   }
   cellGroup.AABBBounds.width(); // TODO 需要底层VRender修改
   // chart
-  if ((isNoChartDataRenderNothing && Array.isArray(table.getCellValue(col, row))) || !isNoChartDataRenderNothing) {
+  if ((isNoChartDataRenderNothing && Array.isArray(dataValue)) || !isNoChartDataRenderNothing) {
     const chartGroup = new Chart(isShareChartSpec, {
       stroke: false,
       x: padding[3],
@@ -102,7 +102,7 @@ export function createChartCellGroup(
       height: height - padding[2] - padding[0],
       chartInstance,
       dataId,
-      data: table.getCellValue(col, row) || [],
+      data: dataValue || [],
       cellPadding: padding,
       dpr: table.internalProps.pixelRatio,
       detectPickChartItem: table.options.customConfig?.detectPickChartItem,

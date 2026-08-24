@@ -113,6 +113,9 @@ Placement enumeration definition:
 }
 ```
 
+#${prefix} appearDelay (number)
+The delay time for the tooltip to appear.
+
 #${prefix} disappearDelay (number)
 The delay time for the tooltip to disappear. If you need to move the mouse to the tooltip, please configure this parameter.
 

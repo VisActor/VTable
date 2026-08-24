@@ -38,6 +38,10 @@ export class HeaderHelper {
   _table: BaseTableAPI;
   constructor(_table: BaseTableAPI) {
     this._table = _table;
+    this.updateIcons();
+  }
+
+  updateIcons() {
     const regedIcons = registerIcons.get();
     //pin默认值
     this.freezeIcon = regedIcons[InternalIconName.freezeIconName] as SvgIcon;
@@ -457,8 +461,8 @@ export class HeaderHelper {
       case 'text':
         return TextHeaderStyle;
       case 'image':
-        return ImageStyle;
       case 'video':
+      case 'audio':
         return ImageStyle;
       case 'link':
         return TextHeaderStyle;

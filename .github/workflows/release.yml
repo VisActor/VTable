@@ -3,128 +3,503 @@ name: Release CI
 on:
   push:
     branches:
-      - 'release/[0-9]+.[0-9]+.[0-9]+'
+      - 'release/[0-9]+\.[0-9]+\.[0-9]+'
+      - 'hotfix/[0-9]+\.[0-9]+\.[0-9]+'
+      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+'
+      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+'
+      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+'
+      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-hotfix\.[0-9]+'
 
 jobs:
-  build:
-    runs-on: macOS-latest # 如果用了electron，记得改成 macOS-latest
+  release:
+    runs-on: macos-latest
     permissions:
-      contents: write
-      pull-requests: write
+      id-token: write # OIDC for npm publish (single entry)
+      contents: write # push commits / tags
+      pull-requests: write # create PR from release/* to main
 
     strategy:
       matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [20.x]
+
+    concurrency:
+      group: vtable-release-${{ github.ref_name }}
+      cancel-in-progress: false
 
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
-          # Install rush
+      - name: Update npm
+        run: npm install -g npm@11.18.0
+
+      - name: Install latest pnpm
+        run: npm install -g pnpm@10.7.0
+
+      - name: Install Python distutils (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          python3 -m pip install setuptools --break-system-packages
+
+      - name: Install Python distutils (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-distutils
+          python3 -m pip install setuptools --break-system-packages
+
+      - name: Install native deps for node-canvas (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install pkg-config cairo pango libpng jpeg giflib librsvg
+
+      - name: Install native deps for node-canvas (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
+
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
-      - name: Parse semver version from branch name
-        id: semver_parser
+      # ===== Release flow (stable) =====
+      - name: Parse semver (release)
+        if: startsWith(github.ref_name, 'release/')
+        id: semver_release
         uses: xile611/read-package-version-action@main
         with:
           path: packages/vtable
           semver_string: ${{ github.ref_name }}
-          semver_pattern: '^release/(.*)$' # ^v?(.*)$ by default
+          semver_pattern: '^release/(.*)$'
 
-      - name: update nextBump of version policies
+      - name: Check version-policy version (release)
+        if: startsWith(github.ref_name, 'release/')
+        id: release_version_policy
+        env:
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.full }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const policies = JSON.parse(fs.readFileSync('common/config/rush/version-policies.json', 'utf8'));
+          const policyVersion = policies[0] && policies[0].version;
+          const releaseVersion = process.env.RELEASE_VERSION;
+
+          const parseVersion = version => String(version).split('-')[0].split('.').map(Number);
+          const compareVersion = (a, b) => {
+            const av = parseVersion(a);
+            const bv = parseVersion(b);
+            for (let i = 0; i < Math.max(av.length, bv.length); i++) {
+              const diff = (av[i] || 0) - (bv[i] || 0);
+              if (diff !== 0) {
+                return diff;
+              }
+            }
+            return 0;
+          };
+
+          if (!releaseVersion || !policyVersion) {
+            console.error('Missing release version or version-policy version.', { releaseVersion, policyVersion });
+            process.exit(1);
+          }
+
+          const result = compareVersion(releaseVersion, policyVersion);
+          if (result < 0) {
+            console.error(
+              `Release version ${releaseVersion} is lower than version-policy version ${policyVersion}.`
+            );
+            process.exit(1);
+          }
+
+          const shouldSkip = result === 0 ? 'true' : 'false';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `skip_next_bump=${shouldSkip}\n`);
+          console.log(
+            result === 0
+              ? `Release version ${releaseVersion} equals version-policy version ${policyVersion}, skip nextBump update.`
+              : `Release version ${releaseVersion} is greater than version-policy version ${policyVersion}, update nextBump.`
+          );
+          NODE
+
+      - name: update nextBump (release)
+        if: startsWith(github.ref_name, 'release/') && steps.release_version_policy.outputs.skip_next_bump != 'true'
         uses: xile611/set-next-bump-of-rush@main
         with:
-          release_version: ${{ steps.semver_parser.outputs.full }}
+          release_version: ${{ steps.semver_release.outputs.full }}
           write_next_bump: true
 
-      - name: Update version
+      - name: Generate changelog blocks from changefiles (release)
+        if: startsWith(github.ref_name, 'release/')
+        env:
+          CHANGELOG_API_URL: ${{ secrets.VCHART_CHANGELOG_API_URL }}
+          CHANGELOG_API_TOKEN: ${{ secrets.VCHART_CHANGELOG_API_TOKEN }}
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+
+          const baseDir = path.join(process.cwd(), 'common', 'changes', '@visactor', 'vtable');
+          let changefiles = [];
+
+          try {
+            const files = fs.readdirSync(baseDir).filter((name) => name.endsWith('.json'));
+            for (const file of files) {
+              const fullPath = path.join(baseDir, file);
+              const json = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+              changefiles.push(json);
+            }
+            console.log('Collected changefiles:', changefiles.length);
+          } catch (e) {
+            console.log('No changefiles found or unable to read, fallback to empty list.', e.message || e);
+          }
+
+          const version = process.env.RELEASE_VERSION;
+          if (!version) {
+            console.error('Missing RELEASE_VERSION env.');
+            process.exit(1);
+          }
+
+          let prevVersion = process.env.PREV_VERSION || '';
+          try {
+            if (!prevVersion) {
+              const out = execSync('git tag --list "v*.*.*" --sort=-v:refname', { encoding: 'utf8' });
+              const tags = out.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+              if (tags.length > 0) {
+                const first = tags[0].replace(/^v/i, '');
+                if (first !== version && !first.startsWith(version + '-')) {
+                  prevVersion = first;
+                } else if (tags.length > 1) {
+                  prevVersion = tags[1].replace(/^v/i, '');
+                }
+              }
+            }
+          } catch (e) {
+            console.log('Failed to detect previous version from tags, continue without it:', e.message || e);
+          }
+
+          const payload = {
+            version,
+            prevVersion: prevVersion || undefined,
+            date: new Date().toISOString().slice(0, 10),
+            changefiles,
+            langs: ['en', 'zh'],
+            template: 'default',
+          };
+
+          const baseUrl = process.env.CHANGELOG_API_URL;
+          const token = process.env.CHANGELOG_API_TOKEN;
+
+          function failChangelog(message) {
+            console.error(message);
+            process.exit(1);
+          }
+
+          function validateBlock(block, lang) {
+            if (!block || /TODO/i.test(block)) {
+              throw new Error(`Invalid ${lang} changelog block: empty or contains TODO`);
+            }
+          }
+
+          if (!baseUrl || !token) {
+            failChangelog('CHANGELOG_API_URL or CHANGELOG_API_TOKEN not configured.');
+          }
+
+          const url = new URL('/api/changelog/vtable/generate', baseUrl);
+          const body = JSON.stringify(payload);
+
+          const isHttps = url.protocol === 'https:';
+          const httpModule = isHttps ? require('https') : require('http');
+
+          const options = {
+            method: 'POST',
+            hostname: url.hostname,
+            port: url.port || (isHttps ? 443 : 80),
+            path: url.pathname + url.search,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+              'Content-Length': Buffer.byteLength(body),
+            },
+          };
+
+          const req = httpModule.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => (data += chunk));
+            res.on('end', () => {
+              if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+                try {
+                  const parsed = JSON.parse(data || '{}');
+                  const en = parsed.blocks && parsed.blocks.en;
+                  const zh = parsed.blocks && parsed.blocks.zh;
+                  if (!en || !zh) {
+                    throw new Error('Missing en/zh blocks in response');
+                  }
+                  validateBlock(String(en), 'en');
+                  validateBlock(String(zh), 'zh');
+                  fs.mkdirSync('.changelog', { recursive: true });
+                  fs.writeFileSync('.changelog/en.md', String(en).trimEnd() + '\n', 'utf8');
+                  fs.writeFileSync('.changelog/zh.md', String(zh).trimEnd() + '\n', 'utf8');
+                  console.log('Changelog blocks generated via API. traceId:', parsed.traceId || '(none)');
+                } catch (e) {
+                  failChangelog(`Failed to parse API response: ${e.message || e}`);
+                }
+              } else {
+                failChangelog(`Changelog API returned non-2xx status: ${res.statusCode} ${data}`);
+              }
+            });
+          });
+
+          req.on('error', (err) => {
+            failChangelog(`Changelog API request failed: ${err.message || err}`);
+          });
+
+          req.write(body);
+          req.end();
+          NODE
+
+      - name: Prepend changelog blocks into release docs (release)
+        if: startsWith(github.ref_name, 'release/')
+        env:
+          RELEASE_VERSION: ${{ steps.semver_release.outputs.main }}
+        run: |
+          set -euo pipefail
+          mkdir -p docs/assets/changelog/en docs/assets/changelog/zh
+
+          for lang in en zh; do
+            block_file=".changelog/${lang}.md"
+            target_file="docs/assets/changelog/${lang}/release.md"
+            if [ -f "$block_file" ]; then
+              node -e '
+                const fs = require("fs");
+                const [blockFile, targetFile, version] = process.argv.slice(1);
+                const block = fs.readFileSync(blockFile, "utf8").trimEnd() + "\n\n";
+                const oldContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, "utf8") : "";
+                const heading = `# v${version}`;
+                let contentWithoutSameVersion = oldContent;
+                if (oldContent.startsWith(`${heading}\n`) || oldContent.startsWith(`${heading}\r\n`)) {
+                  const nextVersionIndex = oldContent.slice(1).search(/\n# v\d/);
+                  contentWithoutSameVersion = nextVersionIndex >= 0 ? oldContent.slice(nextVersionIndex + 2) : "";
+                }
+                fs.writeFileSync(targetFile, block + contentWithoutSameVersion.replace(/^\n+/, ""), "utf8");
+              ' "$block_file" "$target_file" "$RELEASE_VERSION"
+            else
+              echo "Missing changelog block for $lang, skip."
+            fi
+          done
+
+      - name: Reset version-policy base version (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const packageJson = JSON.parse(fs.readFileSync('packages/vtable/package.json', 'utf8'));
+          const policiesPath = 'common/config/rush/version-policies.json';
+          const policies = JSON.parse(fs.readFileSync(policiesPath, 'utf8'));
+
+          if (!policies[0]) {
+            throw new Error('Missing version policy.');
+          }
+
+          policies[0].version = packageJson.version;
+          fs.writeFileSync(policiesPath, JSON.stringify(policies));
+          NODE
+
+      - name: Generate rush version (release)
+        if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/install-run-rush.js version --bump
 
       - name: Build packages
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-          NO_EMIT_ON_ERROR: "true"
+          NODE_OPTIONS: '--max_old_space_size=4096'
         run: |
-          # 设置环境变量确保错误信息完整输出
-          export NODE_OPTIONS="--max_old_space_size=4096"
-          export NO_EMIT_ON_ERROR="true"
-          # 运行构建，并将输出保存到文件
-          node common/scripts/install-run-rush.js build --only tag:package 2>&1 | tee build.log || {
-            echo "=== Build failed, showing last 1000 lines of build.log ==="
-            tail -n 1000 build.log
-            echo "=== Full error details ==="
-            # 尝试从日志中提取错误信息
-            grep -A 50 "TypeScript Compilation Errors" build.log || true
-            grep -A 50 "Build Error" build.log || true
-            exit 1
-          }
+          set -euo pipefail
+          package_names=()
+          while IFS= read -r package_name; do
+            [ -n "$package_name" ] && package_names+=("$package_name")
+          done < <(node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-      # - name: Run Bugserver
-      #   working-directory: ./packages/vtable
-      #   env:
-      #     BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
-      #   run: node ../../common/scripts/install-run-rushx.js ci
+          const packagesDir = path.join(process.cwd(), 'packages');
+          const packageNames = fs
+            .readdirSync(packagesDir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => path.join(packagesDir, entry.name, 'package.json'))
+            .filter((packageJsonPath) => fs.existsSync(packageJsonPath))
+            .map((packageJsonPath) => JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name)
+            .filter(Boolean)
+            .sort();
 
-      - name: Publish to npm
+          console.log(packageNames.join('\n'));
+          NODE
+          )
+
+          build_args=()
+          for package_name in "${package_names[@]}"; do
+            build_args+=(--to "$package_name")
+          done
+
+          echo "Build packages: ${package_names[*]}"
+          node common/scripts/install-run-rush.js build "${build_args[@]}"
+
+      - name: Check npm version (release)
+        if: startsWith(github.ref_name, 'release/')
+        id: npm_version_release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: node common/scripts/install-run-rush.js publish --publish --include-all
+          PACKAGE_VERSION: ${{ steps.semver_release.outputs.main }}
+        run: |
+          set -euo pipefail
+          if npm view "@visactor/vtable@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "Version $PACKAGE_VERSION already exists on npm, skip publish."
+            echo "skip_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version $PACKAGE_VERSION does not exist on npm, continue publish."
+            echo "skip_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm (release)
+        if: startsWith(github.ref_name, 'release/') && steps.npm_version_release.outputs.skip_publish != 'true'
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get npm version
-        id: package-version
-        uses: xile611/read-package-version-action@v2.1
+      - name: Get npm version (release)
+        if: startsWith(github.ref_name, 'release/')
+        id: package_version_release
+        uses: xile611/read-package-version-action@main
         with:
           path: packages/vtable
 
-      - name: Commit & Push changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
-          branch: ${{ github.ref_name }}
+      - name: Commit & Push changes (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No changes to commit for release branch.'
+          else
+            rm -rf .changelog
+            find docs/assets/changelog -name '*.bak' -delete
+            git add .
+            git commit -m "build: release version ${{ steps.package_version_release.outputs.current_version }} [skip ci]" -n
+            git push --no-verify origin ${{ github.ref_name }}
+          fi
 
-      - name: Collect changelog of rush
-        uses: xile611/collect-rush-changlog@main
-        id: changelog
-        with:
-          version: ${{ steps.package-version.outputs.current_version }}
-
-      - name: Create Release for Tag
-        id: release_tag
-        uses: ncipollo/release-action@v1.12.0
+      - name: Create Pull Request to main (release)
+        if: startsWith(github.ref_name, 'release/')
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: v${{ steps.package-version.outputs.current_version }}
-          commit: main
-          prerelease: false
-          body: |
-            ${{ steps.changelog.outputs.markdown }}
-          draft: true #
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="${GITHUB_REF_NAME}"
+          echo "Source branch: $BRANCH"
+          # Check if PR already exists
+          if gh pr list --base main --head "$BRANCH" --state open --json number --limit 1 | grep -q '"number"'; then
+            echo "PR from $BRANCH to main already exists, skip creating.";
+            exit 0;
+          fi
+          TITLE="[Auto release] release ${{ steps.package_version_release.outputs.current_version }}"
+          BODY="This PR merges release branch $BRANCH into main."
+          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
 
-      - name: Create Pull Request
-        uses: dustinirving/create-pr@v1.0.2
+      # ===== Hotfix flow =====
+      - name: Parse semver (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        id: semver_hotfix
+        uses: xile611/read-package-version-action@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: '[Auto release] release ${{ steps.package-version.outputs.current_version }}'
-          base: main
-          head: ${{ github.ref_name }}
-          labels: release # default labels, the action will throw error if not specified
-          reviewers: fangsmile,Rui-Sun # default reviewers, the action will throw error if not specified
-          body: |
-            ${{ steps.changelog.outputs.markdown }}
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^hotfix/(.*)$'
+
+      - name: update nextBump (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        uses: xile611/set-next-bump-of-rush@main
+        with:
+          release_version: ${{ steps.semver_hotfix.outputs.full }}
+          write_next_bump: true
+
+      - name: Generate rush version (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js version --bump
+
+      - name: Update version (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_hotfix.outputs.main }}
+
+      - name: Publish to npm (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag hotfix
+
+      - name: Get npm version (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        id: package_version_hotfix
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+
+      - name: Commit & Push changes (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No changes to commit for hotfix branch.'
+          else
+            git add .
+            git commit -m "build: hotfix version ${{ steps.package_version_hotfix.outputs.current_version }} [skip ci]" -n
+            git push --no-verify origin ${{ github.ref_name }}
+          fi
+
+      # ===== Pre-release flow =====
+      - name: Parse semver (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        id: semver_prerelease
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^pre-release/(.*)$'
+
+      - name: Apply prereleaseName (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: node common/scripts/apply-release-version.js ${{ steps.semver_prerelease.outputs.pre_release_name }} ${{ steps.semver_prerelease.outputs.main }}
+
+      - name: Publish to npm (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}
+
+      - name: Get npm version (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        id: package_version_prerelease
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+
+      - name: Commit & Push changes (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No changes to commit for pre-release branch.'
+          else
+            git add .
+            git commit -m "build: prerelease version ${{ steps.package_version_prerelease.outputs.current_version }} [skip ci]" -n
+            git push --no-verify origin ${{ github.ref_name }}
+          fi

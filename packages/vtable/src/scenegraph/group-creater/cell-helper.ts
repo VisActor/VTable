@@ -24,6 +24,8 @@ import type { CreateProgressBarCell } from './cell-type/progress-bar-cell';
 import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
 import type { CreateTextCellGroup } from './cell-type/text-cell';
 import type { CreateVideoCellGroup } from './cell-type/video-cell';
+import type { CreateAudioCellGroup } from './cell-type/audio-cell';
+import { removeCellMediaChildren } from './cell-type/media-cell-helper';
 import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { getOrApply, isPromise } from '../../tools/helper';
@@ -42,9 +44,28 @@ import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
 import type { CreateButtonCellGroup } from './cell-type/button-cell';
 
+const PROMISE_CELL_UPDATE_TOKEN_KEY = '__vtable_promise_cell_update_token__';
+
+export function nextPromiseCellUpdateToken(cellGroup: Group): number {
+  const token = ((cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] ?? 0) + 1;
+  (cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] = token;
+  return token;
+}
+
+export function isPromiseCellUpdateCurrent(
+  table: BaseTableAPI,
+  col: number,
+  row: number,
+  cellGroup: Group,
+  token: number
+): boolean {
+  const currentCellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+  return currentCellGroup === cellGroup && (cellGroup as any)[PROMISE_CELL_UPDATE_TOKEN_KEY] === token;
+}
+
 export function createCell(
   type: ColumnTypeOption,
-  value: string,
+  value: any,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -63,18 +84,24 @@ export function createCell(
   customResult?: {
     elementsGroup?: VGroup;
     renderDefault: boolean;
-  }
+  },
+  cellValue?: any
 ): Group {
   let isAsync = false;
   let cellGroup: Group;
+  const hasCellValue = arguments.length >= 19;
+  let renderValue = hasCellValue ? cellValue : value;
   if (isPromise(value)) {
     if (table.scenegraph.highPerformanceGetCell(col, row).role !== 'cell') {
       // avoid nouse async create cell
       return cellGroup;
     }
-    value = table.getCellValue(col, row);
+    if (!hasCellValue) {
+      renderValue = table.getCellValue(col, row);
+    }
     isAsync = true;
   }
+  value = renderValue;
   // let bgColorFunc: Function;
   // // 判断是否有mapping  遍历dataset中mappingRules
   // if ((table.internalProps as PivotTableProtected)?.dataConfig?.mappingRules && !table.isHeader(col, row)) {
@@ -113,7 +140,8 @@ export function createCell(
       define as CheckboxColumnDefine,
       range,
       isAsync,
-      true
+      true,
+      value
     );
   } else if (type === 'text' || type === 'link' || customResult) {
     // customMerge&customLayout cell as text cell
@@ -249,7 +277,28 @@ export function createCell(
       table,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      value
+    );
+  } else if (type === 'audio') {
+    const createAudioCellGroup = Factory.getFunction('createAudioCellGroup') as CreateAudioCellGroup;
+    cellGroup = createAudioCellGroup(
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      table,
+      cellTheme,
+      range,
+      isAsync,
+      value
     );
   } else if (type === 'video') {
     // 创建视频单元格
@@ -271,7 +320,8 @@ export function createCell(
       table,
       cellTheme,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'chart') {
     const chartInstance = table.internalProps.layoutMap.getChartInstance(col, row);
@@ -369,7 +419,8 @@ export function createCell(
       padding,
       table,
       cellTheme,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'checkbox') {
     const isAggregation =
@@ -418,7 +469,8 @@ export function createCell(
         define as CheckboxColumnDefine,
         range,
         isAsync,
-        false
+        false,
+        value
       );
     }
   } else if (type === 'radio') {
@@ -465,7 +517,9 @@ export function createCell(
         table,
         cellTheme,
         define as RadioColumnDefine,
-        range
+        range,
+        isAsync,
+        value
       );
     }
   } else if (type === 'switch') {
@@ -488,7 +542,8 @@ export function createCell(
       cellTheme,
       define as SwitchColumnDefine,
       range,
-      isAsync
+      isAsync,
+      value
     );
   } else if (type === 'button') {
     const createButtonCellGroup = Factory.getFunction('createButtonCellGroup') as CreateButtonCellGroup;
@@ -510,7 +565,8 @@ export function createCell(
       cellTheme,
       define as ButtonColumnDefine,
       range,
-      isAsync
+      isAsync,
+      value
     );
   }
 
@@ -666,12 +722,12 @@ export function updateCell(
     isMerge = range.start.col !== range.end.col || range.start.row !== range.end.row;
   }
   let isVtableMerge = false;
-  if (table.internalProps.enableTreeNodeMerge && isMerge) {
+  if (table.internalProps.enableTreeNodeMerge && range) {
     const rawRecord = table.getCellRawRecord(range.start.col, range.start.row);
     const { vtableMergeName, vtableMerge } = rawRecord ?? {};
 
-    isVtableMerge = vtableMerge;
-    if (vtableMerge) {
+    isVtableMerge = vtableMerge && (isMerge || !table.isSeriesNumberInBody(col, row));
+    if (isVtableMerge) {
       mayHaveIcon = true;
       if ((table.internalProps as ListTableProtected).groupTitleCustomLayout) {
         customResult = dealWithCustom(
@@ -712,6 +768,7 @@ export function updateCell(
   if (
     !addNew &&
     !isMerge &&
+    !isVtableMerge &&
     !(define?.customLayout || define?.customRender || define?.headerCustomLayout || define?.headerCustomRender) &&
     (forceFastUpdate || canUseFastUpdate(col, row, oldCellGroup, autoWrapText, mayHaveIcon, table))
   ) {
@@ -851,7 +908,9 @@ export function updateCell(
 
   // deal with promise data
   if (isPromise(value)) {
+    const updateToken = nextPromiseCellUpdateToken(oldCellGroup);
     // clear cell content sync
+    removeCellMediaChildren(oldCellGroup);
     oldCellGroup.removeAllChild();
 
     // update cell content async
@@ -860,7 +919,6 @@ export function updateCell(
       table,
       callUpdateCellContentForPromiseValue.bind(null, {
         type,
-        value,
         define,
         table,
         col,
@@ -876,7 +934,9 @@ export function updateCell(
         addNew,
         range,
         customResult,
-        customStyle
+        customStyle,
+        promiseValue: value,
+        updateToken
       })
     );
   } else {
@@ -932,7 +992,7 @@ export function updateCell(
 
 function updateCellContent(
   type: ColumnTypeOption,
-  value: string,
+  value: any,
   define: ColumnDefine,
   table: BaseTableAPI,
   col: number,
@@ -951,11 +1011,10 @@ function updateCellContent(
   customResult?: {
     elementsGroup?: VGroup;
     renderDefault: boolean;
-  }
+  },
+  cellValue?: any
 ) {
-  if (isPromise(value)) {
-    value = table.getCellValue(col, row);
-  }
+  const hasCellValue = arguments.length >= 18;
   //解决报错 getCellByCache递归调用 死循环问题
   if (!addNew && (oldCellGroup.row !== row || oldCellGroup.col !== col)) {
     return null;
@@ -972,7 +1031,7 @@ function updateCellContent(
       }
     }
   }
-  const newCellGroup = createCell(
+  const createCellArgs: Parameters<typeof createCell> = [
     type,
     value,
     define,
@@ -993,11 +1052,16 @@ function updateCellContent(
     cellTheme,
     range,
     customResult
-  );
-  if (!addNew && oldCellGroup.parent) {
+  ];
+  if (hasCellValue) {
+    createCellArgs.push(cellValue);
+  }
+  const newCellGroup = createCell(...createCellArgs);
+  if (!addNew && oldCellGroup.parent && newCellGroup !== oldCellGroup) {
     // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
+    removeCellMediaChildren(oldCellGroup);
     oldCellGroup.release(true);
 
     // update cache
@@ -1037,10 +1101,9 @@ function canUseFastUpdate(
   }
   return false;
 }
-function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
+function callUpdateCellContentForPromiseValue(updateCellArgs: any, resolvedValue: any) {
   const {
     type,
-    value,
     define,
     table,
     col,
@@ -1055,8 +1118,13 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
     addNew,
     range,
     customResult,
-    customStyle
+    customStyle,
+    promiseValue,
+    updateToken
   } = updateCellArgs;
+  if (!isPromiseCellUpdateCurrent(table, col, row, oldCellGroup, updateToken)) {
+    return;
+  }
   const cellStyle = customStyle || table._getCellStyle(range ? range.start.col : col, range ? range.start.row : row);
   const cellTheme = getStyleTheme(
     cellStyle,
@@ -1069,7 +1137,7 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
   updateCellContent(
     type,
-    value,
+    promiseValue,
     define,
     table,
     col,
@@ -1085,7 +1153,8 @@ function callUpdateCellContentForPromiseValue(updateCellArgs: any) {
     addNew,
     cellTheme,
     range,
-    customResult
+    customResult,
+    resolvedValue
   );
 }
 export function dealWithMergeCellSize(

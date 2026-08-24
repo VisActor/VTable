@@ -1,3 +1,129 @@
+# v1.26.7
+
+2026-08-20
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持配置 Tooltip 展示延迟
+- **@visactor/vtable**: 新增音频单元格类型支持 [#5271](https://github.com/VisActor/VTable/issues/5271)
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 通过保留足够的虚拟行，避免大范围合并单元格在自动行高下滚动出现空白 [#3752](https://github.com/VisActor/VTable/issues/3752)
+- **@visactor/vtable**: 行拖拽重排后保持树形 checkbox 状态 [#3975](https://github.com/VisActor/VTable/issues/3975)
+- **@visactor/vtable**: 新增右键菜单点击事件类型定义 [#4655](https://github.com/VisActor/VTable/issues/4655)
+- **@visactor/vtable**: customRender 自动尺寸计算时避免加载全部懒加载 dataSource 记录 [#4964](https://github.com/VisActor/VTable/issues/4964)
+- **@visactor/vtable**: 支持在顶部冻结行中渲染 Vue 组件
+- **@visactor/vtable**: 短数据且存在底部冻结行时，表格外框边框与内容高度对齐 [#5277](https://github.com/VisActor/VTable/issues/5277)
+- **@visactor/vtable**: 在滚动边界调用 setRecords 后保持表头显示 [#5278](https://github.com/VisActor/VTable/issues/5278)
+
+**完整更新日志**: https://github.com/VisActor/VTable/compare/v1.26.6...v1.26.7
+
+[更多详情请查看 v1.26.7](https://github.com/VisActor/VTable/releases/tag/v1.26.7)
+
+# v1.26.6
+
+2026-08-03
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 在调用 updateRecords 且未传入记录索引时刷新行
+- **@visactor/vtable**: 主题更新后刷新功能图标
+- **@visactor/vtable**: 在聚合行中隐藏行序号
+- **@visactor/vtable**: 支持通过右键菜单删除反向选择的行
+- **@visactor/vtable**: 允许插件在首次渲染前完成初始化
+- **@visactor/vtable**: 支持通过记录索引更新 checkbox 状态
+
+**完整更新日志**: https://github.com/VisActor/VTable/compare/v1.26.5...v1.26.6
+
+[更多详情请查看 v1.26.6](https://github.com/VisActor/VTable/releases/tag/v1.26.6)
+
+# v1.26.5
+
+2026-07-15
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 处理表格容器为空的情况
+
+**🔨 维护与杂项**
+
+- **@visactor/vtable**: 支持单列列表表格渲染分组标题
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.4...v1.26.5
+
+[更多详情请查看 v1.26.5](https://github.com/VisActor/VTable/releases/tag/v1.26.5)
+
+# v1.26.4
+
+2026-07-06
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持通过首帧 canvas 快照渲染视频单元格，并在加载后释放视频资源。
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.3...v1.26.4
+
+[更多详情请查看 v1.26.4](https://github.com/VisActor/VTable/releases/tag/v1.26.4)
+
+# v1.26.3
+
+2026-06-25
+
+**🐛 功能修复**
+
+- **@visactor/vtable**：在调整尺寸交互结束后，跳过单元格点击事件的触发
+- **@visactor/vtable**：处理滚动时冻结列宽度
+- **@visactor/vtable**：在切换时保持透视表行树滚动位置
+- **@visactor/vtable**：保留自定义布局中的假值
+- **@visactor/vtable**：处理右侧冻结列数量更新
+- **@visactor/vtable**：保持带小数的行滚动目标位置
+- **@visactor/vtable**：在排序更新后同步甘特任务条
+- **@visactor/vtable**：保留四向边框样式值
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.2...v1.26.3
+
+[更多详情请查看 v1.26.3](https://github.com/VisActor/VTable/releases/tag/v1.26.3)
+
+# v1.26.2
+
+2026-06-16
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复分组展开或折叠后 sticky group 位置未正确保持的问题
+- **@visactor/vtable**: 修复筛选更新后隐藏列顺序被打乱的问题
+- **@visactor/vtable**: 修复 #5137 修复后引入的回归问题，避免嵌套表头拖拽异常并暴露内部状态
+- **@visactor/vtable**: 修复使用 `Shift` 配合方向键进行多选时，选区在第二个单元格后无法继续扩展的问题 [#5146](https://github.com/VisActor/VTable/issues/5146)
+- **@visactor/vtable**: 修复冻结列场景下出现选区空隙的问题
+- **@visactor/vtable**: 修复透视表在底部折叠或展开层级节点时滚动位置异常的问题
+
+[更多详情请查看 v1.26.2](https://github.com/VisActor/VTable/releases/tag/v1.26.2)
+
+# v1.26.1
+
+2026-05-11
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增 sheet 公式类型定义
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复填充柄获取单元格值的逻辑问题 [#5096](https://github.com/VisActor/VTable/issues/5096)
+- **@visactor/vtable**: 修复聚合计算中 precisionAdd 和 precisionSub 的精度问题
+- **@visactor/vtable**: 修复 dblclickHandler 未处理右键点击的问题
+- **@visactor/vtable**: 修复编辑单元格 invalidateNotExit 问题 [#5114](https://github.com/VisActor/VTable/issues/5114)
+- **@visactor/vtable**: 修复透视表行列维度相同时排序状态显示错误的问题 [#5055](https://github.com/VisActor/VTable/issues/5055)
+- **@visactor/vtable-sheet**: 修复使用右方向键移动选中单元格时出现空白的问题 [#5113](https://github.com/VisActor/VTable/issues/5113)
+- **@visactor/vtable-plugin**: 修复树形表搜索文本时结果错误的问题 [#5071](https://github.com/VisActor/VTable/issues/5071)
+- **@visactor/vue-vtable**: 修复 vue-vtable 包构建导出文件问题
+
+
+
+[更多详情请查看 v1.26.1](https://github.com/VisActor/VTable/releases/tag/v1.26.1)
+
 # v1.26.0
 
 2026-04-03

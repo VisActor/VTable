@@ -189,7 +189,7 @@ export function updateCellHeight(
       getStyleTheme(headerStyle, scene.table, col, row, getProp).theme,
       false
     );
-  } else if (type === 'image' || type === 'video') {
+  } else if (type === 'image' || type === 'video' || type === 'audio') {
     updateImageCellContentWhileResize(cell, col, row, 0, detaY, scene.table);
   } else if (cell.firstChild?.name === 'axis') {
     (cell.firstChild as any)?.originAxis.resize(cell.attribute.width, cell.attribute.height);

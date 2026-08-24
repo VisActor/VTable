@@ -35,6 +35,7 @@ import type { FederatedWheelEvent, IRectGraphicAttribute } from '@src/vrender';
 import type { TooltipOptions } from '../ts-types/tooltip';
 import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
+import { getBodyHorizontalScrollRange } from '../scenegraph/component/util';
 import { debounce } from '../tools/debounce';
 import { updateResizeColumn } from './resize/update-resize-column';
 import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
@@ -221,7 +222,10 @@ export class StateManager {
 
   _headerCheckFuncs: Record<string | number, Function> = {};
 
-  radioState: Record<string | number, boolean | number | Record<number, number>> = {};
+  radioState: Record<
+    string | number,
+    boolean | number | string | number[] | Record<string | number, boolean | number>
+  > = {};
   // 供滚动重置为default使用
   resetInteractionState = debounce((state?: InteractionState) => {
     this.updateInteractionState(state ?? InteractionState.default);
@@ -745,6 +749,7 @@ export class StateManager {
             inlineIcon.tooltip?.style,
             inlineIcon.attribute?.tooltip?.style
           ),
+          appearDelay: inlineIcon.attribute.tooltip.appearDelay,
           disappearDelay: inlineIcon.attribute.tooltip.disappearDelay
         };
         if (!this.table.internalProps.tooltipHandler.isBinded(tooltipOptions)) {
@@ -1215,11 +1220,8 @@ export class StateManager {
     }
   }
   updateHorizontalScrollBar(xRatio: number) {
-    const totalWidth = this.table.getAllColsWidth();
     const oldHorizontalBarPos = this.scroll.horizontalBarPos;
-    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
-    const rightFrozenOffset = this.table.getRightFrozenColsOffset?.() ?? 0;
-    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset - rightFrozenOffset);
+    const scrollRange = getBodyHorizontalScrollRange(this.table);
 
     let horizontalBarPos = Math.ceil(xRatio * scrollRange);
     if (!isValid(horizontalBarPos) || isNaN(horizontalBarPos)) {
@@ -1368,10 +1370,7 @@ export class StateManager {
     }
     const oldScrollLeft = this.table.scrollLeft;
     // 矫正left值范围
-    const totalWidth = this.table.getAllColsWidth();
-    const frozenOffset = this.table.getFrozenColsOffset?.() ?? 0;
-    const rightFrozenOffset = this.table.getRightFrozenColsOffset?.() ?? 0;
-    const scrollRange = Math.max(0, totalWidth - this.table.scenegraph.width - frozenOffset - rightFrozenOffset);
+    const scrollRange = getBodyHorizontalScrollRange(this.table);
 
     // _disableColumnAndRowSizeRound环境中，可能出现
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
@@ -1959,12 +1958,15 @@ export class StateManager {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
   }
 
-  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+  changeCheckboxOrder(sourceRecordPath: number | number[], targetRecordPath: number | number[]) {
     if (this.checkedState.size) {
-      changeCheckboxOrder(sourceIndex, targetIndex, this);
+      changeCheckboxOrder(sourceRecordPath, targetRecordPath, this);
     }
-    if (this.radioState.length) {
-      changeRadioOrder(sourceIndex, targetIndex, this);
+  }
+
+  changeRadioOrder(sourceRecordPath: number | number[], targetRecordPath: number | number[]) {
+    if (Object.keys(this.radioState).length) {
+      changeRadioOrder(sourceRecordPath, targetRecordPath, this);
     }
   }
 

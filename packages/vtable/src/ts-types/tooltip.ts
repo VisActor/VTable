@@ -29,6 +29,8 @@ export type TooltipOptions = {
     maxWidth?: number;
     maxHeight?: number;
   };
+  /** 设置tooltip的出现延迟时间 */
+  appearDelay?: number;
   /** 设置tooltip的消失时间 */
   disappearDelay?: number;
 };

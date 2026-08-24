@@ -12,7 +12,7 @@ interface chartRenderQueueItem {
 //每次消费的图表数量
 let batchRenderChartCount = 5;
 let isHandlingChartQueue = false;
-let requestAnimationFrameId: number;
+let requestAnimationFrameId: number | undefined;
 export function setBatchRenderChartCount(count: number) {
   if (isValid(count)) {
     batchRenderChartCount = count;
@@ -22,7 +22,10 @@ export function clearChartRenderQueue() {
   chartRenderKeys = [];
   chartRenderQueueList = [];
   isHandlingChartQueue = false;
-  vglobal.getCancelAnimationFrame()(requestAnimationFrameId);
+  if (requestAnimationFrameId != null) {
+    vglobal.getCancelAnimationFrame()(requestAnimationFrameId);
+    requestAnimationFrameId = undefined;
+  }
 }
 export function IsHandlingChartQueue() {
   return isHandlingChartQueue;

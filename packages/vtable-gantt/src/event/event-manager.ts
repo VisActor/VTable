@@ -114,12 +114,8 @@ function bindTableGroupListener(event: EventManager) {
       return false;
     });
     if (downBarNode) {
-      // 获取任务记录
-      // const { taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
-      //   downBarNode.task_index,
-      //   downBarNode.sub_task_index
-      // );
-      const taskRecord = downBarNode.record;
+      const taskRecord = scene._gantt.getRecordByIndex(downBarNode.task_index, downBarNode.sub_task_index);
+      downBarNode.record = taskRecord;
       // 检查是否是project类型
       const isProjectTask = taskRecord?.type === TaskType.PROJECT;
       if (!isProjectTask) {

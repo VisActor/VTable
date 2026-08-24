@@ -154,7 +154,6 @@ export function cancelTransform(this: ListTable, rotateDom: HTMLElement) {
   };
   const getMatrix = () => {
     const matrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-    matrix.translate(x1, y1);
     return matrix;
   };
   registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect as any, transformPointForCanvas);

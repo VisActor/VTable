@@ -1311,10 +1311,16 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         }
         //#endregion
         // #region 将_columns的列定义调整位置 同调整_headerCellIds逻辑
-        const sourceColumns = this._columns.splice(
-          sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
-          sourceSize
-        );
+        const sourceColIndex = sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount;
+        const targetColIndex =
+          target.col >= source.col
+            ? targetCellRange.end.col - this.leftRowSeriesNumberColumnCount
+            : targetCellRange.start.col - this.leftRowSeriesNumberColumnCount;
+
+        const sourceTotalIndex = (this._columns[sourceColIndex]?.define as any)?.startInTotal ?? sourceColIndex;
+        const targetTotalIndex = (this._columns[targetColIndex]?.define as any)?.startInTotal ?? targetColIndex;
+
+        const sourceColumns = this._columns.splice(sourceColIndex, sourceSize);
         sourceColumns.unshift((targetIndex - this.leftRowSeriesNumberColumnCount) as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
         //#region 设置了maintainArrayDataOrder 需要调整columnTree中的field值
@@ -1327,11 +1333,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         //#endregion
         //#endregion
         // #region 对表头columnTree调整节点位置
-        this.columnTree.movePosition(
-          sourceCellRange.start.row,
-          sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
-          targetIndex - this.leftRowSeriesNumberColumnCount
-        );
+        this.columnTree.movePosition(sourceCellRange.start.row, sourceTotalIndex, targetTotalIndex);
         //#region 设置了maintainArrayDataOrder 需要调整columnTree中的field值
         if (this._table.options.dragOrder?.maintainArrayDataOrder) {
           //重新整理column中的field值
@@ -1381,15 +1383,21 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           Array.prototype.splice.apply(this._headerCellIds[row], sourceIds);
         }
         //将_columns的列定义调整位置 同调整_headerCellIds逻辑
-        const sourceColumns = this._columns.splice(sourceCellRange.start.row, sourceSize);
+        const sourceRowIndex = sourceCellRange.start.row;
+        const targetRowIndex = target.row >= source.row ? targetCellRange.end.row : targetCellRange.start.row;
+
+        const sourceTotalIndex = (this._columns[sourceRowIndex]?.define as any)?.startInTotal ?? sourceRowIndex;
+        const targetTotalIndex = (this._columns[targetRowIndex]?.define as any)?.startInTotal ?? targetRowIndex;
+
+        const sourceColumns = this._columns.splice(sourceRowIndex, sourceSize);
         sourceColumns.unshift(targetIndex as any, 0 as any);
         Array.prototype.splice.apply(this._columns, sourceColumns);
 
         // 对表头columnTree调整节点位置
         this.columnTree.movePosition(
           sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
-          sourceCellRange.start.row,
-          targetIndex + (target.row > source.row ? sourceCellRange.end.row - sourceCellRange.start.row : 0)
+          sourceTotalIndex,
+          targetTotalIndex
         );
         this.columnTree.reset(this.columnTree.tree.children);
         this._cellRangeMap = new Map();

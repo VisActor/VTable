@@ -27,38 +27,64 @@ export function createRadioCellGroup(
   table: BaseTableAPI,
   cellTheme: IThemeSpec,
   define: RadioColumnDefine,
-  range: CellRange
+  range: CellRange,
+  isAsync: boolean,
+  cellValue?: any
 ) {
+  const value = arguments.length >= 18 ? cellValue : table.getCellValue(col, row);
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-    cellGroup = new Group({
-      x: xOrigin,
-      y: yOrigin,
-      width,
-      height,
+    if (isAsync) {
+      cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
+      if (cellGroup && cellGroup.role === 'cell') {
+        cellGroup.setAttributes({
+          x: xOrigin,
+          y: yOrigin,
+          width,
+          height,
+          lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+          fill: cellTheme?.group?.fill ?? undefined,
+          stroke: cellTheme?.group?.stroke ?? undefined,
+          strokeArrayWidth: strokeArrayWidth,
+          strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+          cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+          lineDash: cellTheme?.group?.lineDash ?? undefined,
+          lineCap: 'butt',
+          clip: true,
+          cornerRadius: cellTheme.group.cornerRadius
+        } as any);
+      }
+    }
+    if (!cellGroup || cellGroup.role !== 'cell') {
+      cellGroup = new Group({
+        x: xOrigin,
+        y: yOrigin,
+        width,
+        height,
 
-      // 背景相关，cell背景由cellGroup绘制
-      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
-      fill: cellTheme?.group?.fill ?? undefined,
-      stroke: cellTheme?.group?.stroke ?? undefined,
+        // 背景相关，cell背景由cellGroup绘制
+        lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+        fill: cellTheme?.group?.fill ?? undefined,
+        stroke: cellTheme?.group?.stroke ?? undefined,
 
-      strokeArrayWidth: strokeArrayWidth,
-      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
-      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
-      lineDash: cellTheme?.group?.lineDash ?? undefined,
+        strokeArrayWidth: strokeArrayWidth,
+        strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+        cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+        lineDash: cellTheme?.group?.lineDash ?? undefined,
 
-      lineCap: 'butt',
+        lineCap: 'butt',
 
-      clip: true,
+        clip: true,
 
-      cornerRadius: cellTheme.group.cornerRadius
-    } as any);
-    cellGroup.role = 'cell';
-    cellGroup.col = col;
-    cellGroup.row = row;
-    // columnGroup?.addChild(cellGroup);
-    columnGroup?.addCellGroup(cellGroup);
+        cornerRadius: cellTheme.group.cornerRadius
+      } as any);
+      cellGroup.role = 'cell';
+      cellGroup.col = col;
+      cellGroup.row = row;
+      // columnGroup?.addChild(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
+    }
   }
 
   // radio
@@ -73,7 +99,8 @@ export function createRadioCellGroup(
     define,
     cellGroup,
     range,
-    table
+    table,
+    value
   );
 
   // align in cell
@@ -113,7 +140,8 @@ function createRadio(
   define: RadioColumnDefine,
   cellGroup: Group,
   range: CellRange,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellValue: any
 ) {
   const style = table._getCellStyle(col, row) as RadioStyle;
   let size = getProp('size', style, col, row, table);
@@ -139,7 +167,7 @@ function createRadio(
     innerRadius = Math.round((outerRadius / 7) * 3);
   }
 
-  const value = table.getCellValue(col, row) as
+  const value = cellValue as
     | string
     | boolean
     | string[]

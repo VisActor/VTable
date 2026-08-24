@@ -2,6 +2,202 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.7",
+      "tag": "@visactor/vtable_v1.26.7",
+      "date": "Thu, 20 Aug 2026 08:02:48 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: support tooltip appear delay"
+          },
+          {
+            "comment": "feat: add audio cell type support (GitHub #5271)"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)"
+          },
+          {
+            "comment": "fix: preserve tree checkbox state after row drag reorder (GitHub #3975)"
+          },
+          {
+            "comment": "fix: add context menu click event typing (GitHub #4655)"
+          },
+          {
+            "comment": "fix: avoid loading all lazy dataSource records during customRender auto size computation (GitHub #4964)"
+          },
+          {
+            "comment": "fix: align frame border with short frozen rows (GitHub #5277)"
+          },
+          {
+            "comment": "fix: keep headers after setRecords at scroll edge (GitHub #5278)"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: render vue components in top frozen rows"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.6",
+      "tag": "@visactor/vtable_v1.26.6",
+      "date": "Mon, 03 Aug 2026 11:18:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: refresh rows when updateRecords is called without record indexes"
+          },
+          {
+            "comment": "fix: refresh functional icons after theme updates"
+          },
+          {
+            "comment": "fix: allow plugins to initialize before first render"
+          },
+          {
+            "comment": "fix: support updating checkbox state by record index"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: hide row series number in aggregation rows"
+          },
+          {
+            "comment": "fix: delete reverse-selected rows from context menu"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.5",
+      "tag": "@visactor/vtable_v1.26.5",
+      "date": "Wed, 15 Jul 2026 10:41:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Render group title for single-column list tables."
+          },
+          {
+            "comment": "fix: handle null table container"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.4",
+      "tag": "@visactor/vtable_v1.26.4",
+      "date": "Mon, 06 Jul 2026 09:35:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Support rendering video cells from a first-frame canvas snapshot to release video resources after loading."
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.3",
+      "tag": "@visactor/vtable_v1.26.3",
+      "date": "Thu, 25 Jun 2026 03:15:59 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: skip click cell after resize interaction ends"
+          },
+          {
+            "comment": "fix: handle scroll frozen columns width"
+          },
+          {
+            "comment": "fix: keep pivot row tree scroll position on toggle"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: preserve custom layout falsy values"
+          },
+          {
+            "comment": "fix: handle right frozen column count update"
+          },
+          {
+            "comment": "fix: keep fractional row scroll target"
+          },
+          {
+            "comment": "fix: sync gantt task bars after sorted updates\n\n"
+          },
+          {
+            "comment": "fix: preserve quad style values"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.2",
+      "tag": "@visactor/vtable_v1.26.2",
+      "date": "Tue, 16 Jun 2026 06:22:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Merge pull request #5144 from VisActor/fix/issue-5027\n\nfix: avoid selection gap with frozen rows\n"
+          },
+          {
+            "comment": "fix: preserve sticky group position after toggle\n\n"
+          },
+          {
+            "comment": "fix: avoid selection gap with frozen rows\n\n"
+          },
+          {
+            "comment": "fix: preserve hidden column order after filter update\n\n"
+          },
+          {
+            "comment": "fix: resolve regression from #5137 fix which broke nested header drag and exposed internal state\n\n"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.26.1",
+      "tag": "@visactor/vtable_v1.26.1",
+      "date": "Mon, 11 May 2026 08:51:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fill handle logic about get cell value #5096\n\n"
+          },
+          {
+            "comment": "fix: aggregation precisionAdd precisionSub\n\n"
+          },
+          {
+            "comment": "feat: add sheet formula type\n\n"
+          },
+          {
+            "comment": "fix: dblclickHandler not handle rightClick\n\n"
+          },
+          {
+            "comment": "fix: edit cell invalidateNotExit #5114\n\n"
+          },
+          {
+            "comment": "fix: pivot sort state show error when rows and columns have same dimension #5055\n\n"
+          },
+          {
+            "comment": "fix: arrow right to move select cell occor blank #5113\n\n"
+          },
+          {
+            "comment": "fix: when search text with tree table results error #5071\n\n"
+          },
+          {
+            "comment": "fix: update vue vtable packages build export files\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.0",
       "tag": "@visactor/vtable_v1.26.0",
       "date": "Fri, 03 Apr 2026 03:30:13 GMT",

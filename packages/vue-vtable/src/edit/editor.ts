@@ -182,8 +182,6 @@ export class DynamicRenderEditor {
     wrapContainer.style.position = 'absolute';
     wrapContainer.style.width = '100%';
     wrapContainer.style.boxSizing = 'border-box';
-    const { bgColor } = table.getCellStyle(col, row) || {};
-    wrapContainer.style.backgroundColor = bgColor || '#FFFFFF';
     this.wrapContainer = wrapContainer;
     this.tableContainer = container;
     this.tableContainer.appendChild(wrapContainer);

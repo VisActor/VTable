@@ -3,6 +3,8 @@ import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { pluginsDefinition } from '@visactor/vtable';
 import { MenuManager } from './contextmenu/menu-manager';
 import { MenuHandler } from './contextmenu/handle-menu-helper';
+import { mergeClasses, mergeStyles } from './contextmenu/styles';
+import type { MenuAttributions } from './contextmenu/styles';
 import type { MenuItemOrSeparator, MenuClickEventArgs } from './contextmenu/types';
 import {
   DEFAULT_BODY_MENU_ITEMS,
@@ -27,6 +29,12 @@ export interface ContextMenuOptions {
   headerCellMenuItems?: MenuItemOrSeparator[];
   /** 表体菜单项 */
   bodyCellMenuItems?: MenuItemOrSeparator[];
+  /** 空白画布区域菜单项。仅 contextMenuWorkOnlyCell 为 false 时生效。 */
+  canvasMenuItems?: MenuItemOrSeparator[];
+  /** 右键菜单是否只工作在单元格上。默认 true；配置 false 时空白画布区域也弹出菜单。 */
+  contextMenuWorkOnlyCell?: boolean;
+  /** 自定义菜单样式 */
+  customMenuAttributions?: MenuAttributions;
   /** 菜单点击回调。如果设置是函数，则忽略内部默认的菜单项处理逻辑。如果这里配置的是个对象（对象的key为menuKey），则有匹配的menuKey时忽略内部默认的菜单项处理逻辑，
    * 以这里配置的为准 ，没有匹配的menuKey时，则使用内部默认的菜单项处理逻辑。*/
   menuClickCallback?:
@@ -52,7 +60,7 @@ export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => 
 export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   id = `context-menu`;
   name = 'Context Menu';
-  runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.PLUGIN_EVENT];
+  runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS, TABLE_EVENT_TYPE.PLUGIN_EVENT];
   pluginOptions: ContextMenuOptions;
   table: ListTable;
   /** 菜单管理器 */
@@ -63,7 +71,10 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   constructor(pluginOptions: ContextMenuOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
-    this.menuManager = new MenuManager();
+    this.menuManager = new MenuManager(
+      mergeStyles(pluginOptions.customMenuAttributions?.style),
+      mergeClasses(pluginOptions.customMenuAttributions?.class)
+    );
     this.menuHandler = new MenuHandler();
     this.initDefaultMenuItems();
   }
@@ -145,7 +156,30 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       }
 
       // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, col, row);
+      this.showContextMenu(menuItems, mouseX, mouseY, col, row, table.getCellValue(col, row));
+    }
+  };
+
+  /**
+   * 处理空白画布右键菜单事件
+   */
+  private handleContextMenuCanvas = (eventArgs: any, table: BaseTableAPI): void => {
+    let menuItems = this.pluginOptions.canvasMenuItems || [];
+    const { col = -1, row = -1 } = eventArgs;
+
+    if (this.pluginOptions.beforeShowAdjustMenuItems) {
+      menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, col, row);
+    }
+
+    if (menuItems.length > 0) {
+      this.showContextMenu(
+        menuItems,
+        eventArgs.event.clientX,
+        eventArgs.event.clientY,
+        col,
+        row,
+        col >= 0 && row >= 0 ? table.getCellValue(col, row) : undefined
+      );
     }
   };
 
@@ -177,13 +211,29 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       }
 
       // 显示右键菜单
-      this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
+      this.showContextMenu(
+        menuItems,
+        mouseX,
+        mouseY,
+        colIndex,
+        rowIndex,
+        colIndex >= 0 && rowIndex >= 0 ? table.getCellValue(colIndex, rowIndex) : undefined
+      );
     }
   };
 
   /**
    * 运行插件
    */
+  init(_table: BaseTableAPI, options: BaseTableAPI['options']) {
+    if (this.pluginOptions.contextMenuWorkOnlyCell === false) {
+      options.menu = {
+        ...options.menu,
+        contextMenuWorkOnlyCell: false
+      };
+    }
+  }
+
   run(...args: any[]) {
     const eventArgs = args[0];
     const runTime = args[1];
@@ -196,6 +246,8 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
     // 根据事件类型处理不同的右键菜单
     if (runTime === TABLE_EVENT_TYPE.CONTEXTMENU_CELL) {
       this.handleContextMenuCell(eventArgs, table);
+    } else if (runTime === TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS) {
+      this.handleContextMenuCanvas(eventArgs, table);
     } else if (runTime === TABLE_EVENT_TYPE.PLUGIN_EVENT) {
       this.handlePluginEvent(eventArgs, table);
     }
@@ -211,9 +263,39 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       // 菜单项处理逻辑
       this.handleMenuClick(args, table);
     }
+    this.fireContextMenuClick(args, table);
   };
 
-  private showContextMenu(menuItems: MenuItemOrSeparator[], x: number, y: number, col: number, row: number): void {
+  private fireContextMenuClick(args: MenuClickEventArgs, table: ListTable): void {
+    const { colIndex, rowIndex, ...contextMenu } = args;
+    const hasCellPosition =
+      typeof colIndex === 'number' && typeof rowIndex === 'number' && colIndex >= 0 && rowIndex >= 0;
+    const hasCellValueSnapshot = Object.prototype.hasOwnProperty.call(contextMenu, 'cellValue');
+    const cellValue = hasCellValueSnapshot
+      ? contextMenu.cellValue
+      : hasCellPosition
+      ? table.getCellValue(colIndex, rowIndex)
+      : undefined;
+    table.fireListeners(TABLE_EVENT_TYPE.CONTEXT_MENU_CLICK, {
+      col: colIndex ?? -1,
+      row: rowIndex ?? -1,
+      contextMenu: {
+        ...contextMenu,
+        colIndex,
+        rowIndex,
+        cellValue
+      }
+    });
+  }
+
+  private showContextMenu(
+    menuItems: MenuItemOrSeparator[],
+    x: number,
+    y: number,
+    col: number,
+    row: number,
+    cellValue?: any
+  ): void {
     // 显示菜单
     this.menuManager.showMenu(
       menuItems,
@@ -221,7 +303,8 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
       y,
       {
         rowIndex: row,
-        colIndex: col
+        colIndex: col,
+        cellValue
       },
       this.table
     );

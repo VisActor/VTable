@@ -1,5 +1,5 @@
 import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
-import { ListTable } from '@visactor/vtable';
+import { ListTable, TABLE_EVENT_TYPE } from '@visactor/vtable';
 import { isValid } from '@visactor/vutils';
 import type {
   IWorkSheetOptions,
@@ -11,7 +11,7 @@ import type {
   IThemeDefine,
   IFilterConfig,
   IFilterState,
-  ISheetDefine,
+  SheetData,
   IVTableSheetUpdateOptions
 } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
@@ -27,7 +27,7 @@ import type { IWorksheetEventSource } from '../event/event-interfaces';
  */
 export type WorkSheetConstructorOptions = {
   /** 表格数据 */
-  data?: any[][];
+  data?: SheetData;
   /** 公式计算选项 */
   formula?: IFormulaManagerOptions;
   /** Sheet 唯一标识 */
@@ -46,6 +46,122 @@ type WorkSheetUpdateOptions = Pick<
   'defaultRowHeight' | 'defaultColWidth' | 'dragOrder' | 'VTablePluginModules'
 > & {
   theme?: TYPES.VTableThemes.ITableThemeDefine;
+};
+
+type WorkSheetColumn = IWorkSheetOptions['columns'][number] & {
+  columns?: IWorkSheetOptions['columns'];
+  children?: IWorkSheetOptions['columns'];
+};
+
+const getChildColumns = (column: IWorkSheetOptions['columns'][number]): IWorkSheetOptions['columns'] | undefined =>
+  (column as WorkSheetColumn).columns ?? (column as WorkSheetColumn).children;
+
+const normalizeColumnsField = (columns: IWorkSheetOptions['columns'], startFieldIndex = 0): number => {
+  if (!columns?.length) {
+    return startFieldIndex;
+  }
+
+  let fieldIndex = startFieldIndex;
+
+  columns.forEach(column => {
+    const childColumns = getChildColumns(column);
+
+    if (childColumns?.length) {
+      fieldIndex = normalizeColumnsField(childColumns, fieldIndex);
+      return;
+    }
+
+    if (!isValid(column.field)) {
+      column.field = fieldIndex;
+    }
+    if (!isValid(column.key)) {
+      column.key = column.field as any;
+    }
+    fieldIndex++;
+  });
+
+  return fieldIndex;
+};
+
+const collectLeafColumns = (columns: IWorkSheetOptions['columns'] = []): IWorkSheetOptions['columns'] => {
+  const leafColumns: IWorkSheetOptions['columns'] = [];
+
+  columns.forEach(column => {
+    const childColumns = getChildColumns(column);
+    if (childColumns?.length) {
+      leafColumns.push(...collectLeafColumns(childColumns));
+      return;
+    }
+    leafColumns.push(column);
+  });
+
+  return leafColumns;
+};
+
+const hasObjectFieldColumn = (columns: IWorkSheetOptions['columns'] = []): boolean =>
+  columns.some(column => {
+    const childColumns = getChildColumns(column);
+    if (childColumns?.length) {
+      return hasObjectFieldColumn(childColumns);
+    }
+    return isValid(column.field) && typeof column.field !== 'number';
+  });
+
+const getAddRecordRule = (options: IWorkSheetOptions): ListTableConstructorOptions['addRecordRule'] => {
+  if (options.addRecordRule) {
+    return options.addRecordRule;
+  }
+
+  const hasObjectRecord = options.data?.some(record => record && typeof record === 'object' && !Array.isArray(record));
+  return hasObjectRecord || hasObjectFieldColumn(options.columns) ? 'Object' : 'Array';
+};
+
+const getValueByField = (record: Record<string, any>, field: any): any => {
+  if (Array.isArray(field)) {
+    return field.reduce((value, key) => value?.[key], record);
+  }
+  if (typeof field === 'string') {
+    if (Object.prototype.hasOwnProperty.call(record, field)) {
+      return record[field];
+    }
+    return field.split('.').reduce((value, key) => value?.[key], record);
+  }
+  return record[field];
+};
+
+const setValueByField = (record: Record<string, any>, field: any, value: any): void => {
+  if (Array.isArray(field)) {
+    let target = record;
+    field.forEach((key, index) => {
+      if (index === field.length - 1) {
+        target[key] = value;
+        return;
+      }
+      if (typeof target[key] !== 'object' || target[key] === null) {
+        target[key] = {};
+      }
+      target = target[key];
+    });
+    return;
+  }
+
+  if (typeof field === 'string' && !Object.prototype.hasOwnProperty.call(record, field) && field.includes('.')) {
+    const keys = field.split('.');
+    let target = record;
+    keys.forEach((key, index) => {
+      if (index === keys.length - 1) {
+        target[key] = value;
+        return;
+      }
+      if (typeof target[key] !== 'object' || target[key] === null) {
+        target[key] = {};
+      }
+      target = target[key];
+    });
+    return;
+  }
+
+  record[field] = value;
 };
 
 export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
@@ -194,6 +310,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     // 这里应该是实际的表格初始化逻辑
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
+    this._bindKeyboardSelectionVisibility();
     this.element.classList.add('vtable-excel-cursor');
     // 使用统一事件总线
     this.eventBus = this.vtableSheet.getEventBus();
@@ -214,6 +331,55 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
     }
   }
 
+  private _bindKeyboardSelectionVisibility(): void {
+    let isForcingKeyboardSelectionVisible = false;
+    let previousMakeSelectCellVisible: boolean | undefined;
+    let restoreTimer: number | undefined;
+
+    const isArrowKeyEvent = (event?: KeyboardEvent) =>
+      !!event && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key);
+
+    const restoreMakeSelectCellVisible = () => {
+      const tableInstance = this.tableInstance;
+      if (!tableInstance || !isForcingKeyboardSelectionVisible) {
+        return;
+      }
+
+      if (tableInstance.options.select) {
+        tableInstance.options.select.makeSelectCellVisible = previousMakeSelectCellVisible;
+      }
+      isForcingKeyboardSelectionVisible = false;
+      previousMakeSelectCellVisible = undefined;
+    };
+
+    this.tableInstance?.on(TABLE_EVENT_TYPE.BEFORE_KEYDOWN, ({ event }: { event?: KeyboardEvent }) => {
+      if (!isArrowKeyEvent(event)) {
+        return;
+      }
+
+      const tableInstance = this.tableInstance;
+      if (!tableInstance) {
+        return;
+      }
+
+      tableInstance.options.select ??= {};
+      previousMakeSelectCellVisible = tableInstance.options.select.makeSelectCellVisible;
+      tableInstance.options.select.makeSelectCellVisible = true;
+      isForcingKeyboardSelectionVisible = true;
+
+      if (restoreTimer !== undefined) {
+        window.clearTimeout(restoreTimer);
+      }
+      restoreTimer = window.setTimeout(restoreMakeSelectCellVisible, 0);
+    });
+
+    this.tableInstance?.on(TABLE_EVENT_TYPE.KEYDOWN, ({ event }: { event?: KeyboardEvent }) => {
+      if (isArrowKeyEvent(event)) {
+        restoreMakeSelectCellVisible();
+      }
+    });
+  }
+
   /**
    * 生成VTable选项
    */
@@ -224,10 +390,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       isShowTableHeader = isValid(isShowTableHeader) ? isShowTableHeader : false;
       this.options.columns = [];
     } else {
-      for (let i = 0; i < this.options.columns.length; i++) {
-        this.options.columns[i].field = i;
-        this.options.columns[i].key = i as any;
-      }
+      normalizeColumnsField(this.options.columns);
     }
     if (!this.options.data) {
       this.options.data = [];
@@ -258,12 +421,13 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       showCopyCellBorder: true,
       cutSelected: true
     };
+    const addRecordRule = getAddRecordRule(this.options);
     return {
       ...(this.options as any),
       dragOrder: {
         maintainArrayDataOrder: true
       },
-      addRecordRule: 'Array',
+      addRecordRule,
       syncRecordOperationsToSourceRecords: true,
       defaultCursor: 'cell',
       records: this.options.data,
@@ -707,14 +871,71 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
   /**
    * 获取表格数据
    */
-  getData(): any[][] {
+  getData(): SheetData {
     // 从表格实例获取数据
     return this.options.data || [];
   }
 
+  private getLeafColumns(): IWorkSheetOptions['columns'] {
+    return collectLeafColumns(this.options.columns);
+  }
+
+  private getDataCellByTableCell(col: number, row: number): { col: number; row: number } | null {
+    const bodyIndex = this.tableInstance?.getBodyIndexByTableIndex?.(col, row) ?? { col, row };
+    if (bodyIndex.col < 0 || bodyIndex.row < 0) {
+      return null;
+    }
+    return bodyIndex;
+  }
+
+  private getDataCellValue(col: number, row: number): any {
+    const rowData = this.getData()[row];
+    if (Array.isArray(rowData)) {
+      return rowData[col];
+    }
+    if (rowData && typeof rowData === 'object') {
+      const field = this.getLeafColumns()[col]?.field;
+      if (isValid(field)) {
+        return getValueByField(rowData as Record<string, any>, field);
+      }
+    }
+    return undefined;
+  }
+
+  private getDataColumnCount(rowData: any): number {
+    return Array.isArray(rowData) ? rowData.length : this.getLeafColumns().length;
+  }
+
+  private setDataCellValue(col: number, row: number, value: any, tableCol?: number, tableRow?: number): void {
+    const rowData = this.getData()[row];
+    if (Array.isArray(rowData)) {
+      rowData[col] = value;
+    } else if (rowData && typeof rowData === 'object') {
+      const field = this.getLeafColumns()[col]?.field;
+      if (isValid(field)) {
+        setValueByField(rowData as Record<string, any>, field, value);
+      }
+    }
+
+    if (this.tableInstance) {
+      const tableIndex =
+        isValid(tableCol) && isValid(tableRow)
+          ? { col: tableCol, row: tableRow }
+          : this.tableInstance.getTableIndexByBodyIndex(col, row);
+      this.tableInstance.changeCellValue(tableIndex.col, tableIndex.row, value);
+    }
+  }
+
   getCopiedData(): any[][] {
     // 为了避免影响当前数据，所以需要复制一份数据
-    return this.getData().map(row => (Array.isArray(row) ? row.slice() : []));
+    const leafColumns = this.getLeafColumns();
+    return this.getData().map(row =>
+      Array.isArray(row)
+        ? row.slice()
+        : leafColumns.map(column =>
+            row && typeof row === 'object' ? getValueByField(row as Record<string, any>, column.field) : undefined
+          )
+    );
   }
   /**
    * 获取指定坐标的单元格值
@@ -731,11 +952,12 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       }
     }
 
-    const data = this.getData();
-    if (data && data[row] && data[row][col] !== undefined) {
-      return data[row][col];
+    const rowData = this.getData()[row];
+    if (Array.isArray(rowData) && rowData[col] !== undefined) {
+      return rowData[col];
     }
-    return null;
+    const dataCell = this.getDataCellByTableCell(col, row);
+    return dataCell ? this.getDataCellValue(dataCell.col, dataCell.row) ?? null : null;
   }
   /**
    * 获取指定坐标的单元格值
@@ -773,14 +995,9 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
    * @param value 新值
    */
   setCellValue(col: number, row: number, value: any): void {
-    const data = this.getData();
-    if (data && data[row]) {
-      data[row][col] = value;
-
-      // 更新表格实例
-      if (this.tableInstance) {
-        this.tableInstance.changeCellValue(col, row, value);
-      }
+    const dataCell = this.getDataCellByTableCell(col, row);
+    if (dataCell) {
+      this.setDataCellValue(dataCell.col, dataCell.row, value, col, row);
     }
   }
 
@@ -999,7 +1216,6 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       return [];
     }
 
-    const data = this.getData();
     const result: string[][] = [];
 
     // 获取第一个选择范围
@@ -1012,8 +1228,9 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       for (let col = 0; col < cols; col++) {
         const actualRow = selection.startRow + row;
         const actualCol = selection.startCol + col;
+        const dataCell = this.getDataCellByTableCell(actualCol, actualRow);
 
-        if (data[actualRow] && data[actualRow][actualCol] !== undefined) {
+        if (dataCell && this.getData()[dataCell.row]) {
           // 如果是公式，返回公式字符串；否则返回值
           if (
             this.vtableSheet.formulaManager.isCellFormula({
@@ -1029,7 +1246,7 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
             });
             rowData.push(formula);
           } else {
-            rowData.push(data[actualRow][actualCol]);
+            rowData.push(this.getDataCellValue(dataCell.col, dataCell.row) ?? '');
           }
         } else {
           rowData.push('');
@@ -1074,15 +1291,18 @@ export class WorkSheet implements IWorkSheetAPI, IWorksheetEventSource {
       for (let col = 0; col < processedData[row].length; col++) {
         const targetRow = targetStartRow + row;
         const targetCol = targetStartCol + col;
+        const dataCell = this.getDataCellByTableCell(targetCol, targetRow);
+        const rowData = dataCell ? dataArray[dataCell.row] : undefined;
+        const columnCount = this.getDataColumnCount(rowData);
 
-        if (targetRow < dataArray.length && targetCol < dataArray[targetRow].length) {
+        if (rowData && dataCell && dataCell.col < columnCount) {
           const value = processedData[row][col];
 
           // 如果是公式，设置公式；否则设置普通值
           if (FormulaPasteProcessor.needsFormulaAdjustment(value)) {
             this.setCellFormula(targetRow, targetCol, value as string);
           } else {
-            this.setCellValue(targetRow, targetCol, value);
+            this.setDataCellValue(dataCell.col, dataCell.row, value, targetCol, targetRow);
           }
         }
       }

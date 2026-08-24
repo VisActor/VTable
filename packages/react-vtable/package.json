@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "1.26.0",
+  "version": "1.26.7",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -41,6 +41,7 @@
     "start:react19": "npm run setup:react19-deps && vite --config ./demo/vite.config.react19.ts ./demo",
     "build": "npm run fix-memory-limit && bundle --clean",
     "compile": "tsc --noEmit",
+    "test": "jest --config jest.config.js",
     "eslint": "eslint --debug --fix src/",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
@@ -57,7 +58,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.26.7",
     "@visactor/vutils": "~1.0.17",
     "react-is": "^18.2.0",
     "react-reconciler": "0.29.0"
@@ -65,7 +66,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
-    "@visactor/vchart": "2.0.13-alpha.10",
+    "@visactor/vchart": "2.1.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -110,5 +111,10 @@
     "@types/react-is": "^17.0.3",
     "@arco-design/web-react": "2.66.12",
     "@types/react-reconciler": "0.28.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/react-vtable"
   }
 }

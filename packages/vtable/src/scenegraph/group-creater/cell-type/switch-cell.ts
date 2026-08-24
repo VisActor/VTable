@@ -28,8 +28,10 @@ export function createSwitchCellGroup(
   cellTheme: IThemeSpec,
   define: SwitchColumnDefine,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  cellValue?: any
 ) {
+  const value = arguments.length >= 19 ? cellValue : table.getCellValue(col, row);
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
@@ -77,7 +79,7 @@ export function createSwitchCellGroup(
       cellGroup.role = 'cell';
       cellGroup.col = col;
       cellGroup.row = row;
-      columnGroup?.addCellGroup(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
   }
 
@@ -139,7 +141,8 @@ export function createSwitchCellGroup(
     padding,
     cellTheme,
     define,
-    table
+    table,
+    value
   );
   if (switchComponent) {
     cellGroup.appendChild(switchComponent);
@@ -180,7 +183,8 @@ function createSwitch(
   padding: number[],
   cellTheme: IThemeSpec,
   define: SwitchColumnDefine,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  cellValue: any
 ) {
   const style = table._getCellStyle(col, row) as SwitchStyle;
 
@@ -194,7 +198,7 @@ function createSwitch(
   const disableUncheckedFill = getProp('disableUncheckedFill', style, col, row, table);
   const circleFill = getProp('circleFill', style, col, row, table);
 
-  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
+  const value = cellValue as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
   let isChecked: boolean;
   let isDisabled;

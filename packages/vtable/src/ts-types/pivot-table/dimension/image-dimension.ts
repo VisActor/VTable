@@ -20,3 +20,13 @@ export interface IImageDimension extends IBasicDimension {
   /** 点击开启预览 */
   clickToPreview?: boolean;
 }
+
+export interface IAudioDimension extends IBasicDimension {
+  headerType: 'audio';
+  headerStyle?:
+    | IImageStyleOption //表头可以配置吸附;
+    | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption); //该维度层级表头部分的样式
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}

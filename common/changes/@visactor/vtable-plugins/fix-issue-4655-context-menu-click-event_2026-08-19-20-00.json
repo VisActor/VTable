@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-plugins",
+      "comment": "fix: emit context menu click event with snapshot cell value (GitHub #4655)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "892739385@qq.com"
+}

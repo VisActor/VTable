@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: export table event type from gantt package",
+      "type": "patch",
+      "packageName": "@visactor/vtable-gantt"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "biukam.w@gmail.com"
+}

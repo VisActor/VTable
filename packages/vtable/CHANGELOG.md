@@ -1,6 +1,135 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 03 Apr 2026 03:30:13 GMT and should not be manually modified.
+This log was last generated on Thu, 20 Aug 2026 08:02:48 GMT and should not be manually modified.
+
+## 1.26.7
+Thu, 20 Aug 2026 08:02:48 GMT
+
+### Minor changes
+
+- feat: support tooltip appear delay
+- feat: add audio cell type support (GitHub #5271)
+
+### Patches
+
+- fix: prevent blank scrolling for large merged auto-height cells by keeping enough virtual rows (GitHub #3752)
+- fix: preserve tree checkbox state after row drag reorder (GitHub #3975)
+- fix: add context menu click event typing (GitHub #4655)
+- fix: avoid loading all lazy dataSource records during customRender auto size computation (GitHub #4964)
+- fix: align frame border with short frozen rows (GitHub #5277)
+- fix: keep headers after setRecords at scroll edge (GitHub #5278)
+
+### Updates
+
+- fix: render vue components in top frozen rows
+
+## 1.26.6
+Mon, 03 Aug 2026 11:18:03 GMT
+
+### Patches
+
+- fix: refresh rows when updateRecords is called without record indexes
+- fix: refresh functional icons after theme updates
+- fix: allow plugins to initialize before first render
+- fix: support updating checkbox state by record index
+
+### Updates
+
+- fix: hide row series number in aggregation rows
+- fix: delete reverse-selected rows from context menu
+
+## 1.26.5
+Wed, 15 Jul 2026 10:41:26 GMT
+
+### Updates
+
+- Render group title for single-column list tables.
+- fix: handle null table container
+
+## 1.26.4
+Mon, 06 Jul 2026 09:35:12 GMT
+
+### Minor changes
+
+- Support rendering video cells from a first-frame canvas snapshot to release video resources after loading.
+
+## 1.26.3
+Thu, 25 Jun 2026 03:15:59 GMT
+
+### Patches
+
+- fix: skip click cell after resize interaction ends
+- fix: handle scroll frozen columns width
+- fix: keep pivot row tree scroll position on toggle
+
+### Updates
+
+- fix: preserve custom layout falsy values
+- fix: handle right frozen column count update
+- fix: keep fractional row scroll target
+- fix: sync gantt task bars after sorted updates
+
+
+- fix: preserve quad style values
+
+## 1.26.2
+Tue, 16 Jun 2026 06:22:51 GMT
+
+### Patches
+
+- Fix an issue where keyboard multi-selection with Shift plus arrow keys stopped expanding after the second cell (GitHub #5146)
+
+### Updates
+
+- Merge pull request #5144 from VisActor/fix/issue-5027
+
+fix: avoid selection gap with frozen rows
+
+- fix: preserve sticky group position after toggle
+
+
+- fix: avoid selection gap with frozen rows
+
+
+- fix: preserve hidden column order after filter update
+
+
+- fix: resolve regression from #5137 fix which broke nested header drag and exposed internal state
+
+
+
+## 1.26.1
+Mon, 11 May 2026 08:51:13 GMT
+
+### Updates
+
+- fix: fill handle logic about get cell value #5096
+
+
+- fix: aggregation precisionAdd precisionSub
+
+
+- feat: add sheet formula type
+
+
+- fix: dblclickHandler not handle rightClick
+
+
+- fix: edit cell invalidateNotExit #5114
+
+
+- fix: pivot sort state show error when rows and columns have same dimension #5055
+
+
+- fix: arrow right to move select cell occor blank #5113
+
+
+- fix: when search text with tree table results error #5071
+
+
+- fix: update vue vtable packages build export files
+
+
 
 ## 1.26.0
 Fri, 03 Apr 2026 03:30:13 GMT

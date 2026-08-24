@@ -42,8 +42,10 @@ export function createCheckboxCellGroup(
   define: CheckboxColumnDefine,
   range: CellRange | undefined,
   isAsync: boolean,
-  isCheckboxTree: boolean
+  isCheckboxTree: boolean,
+  cellValue?: any
 ) {
+  const value = arguments.length >= 20 ? cellValue : table.getCellValue(col, row);
   // cell
   if (!cellGroup) {
     const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
@@ -91,7 +93,7 @@ export function createCheckboxCellGroup(
       cellGroup.role = 'cell';
       cellGroup.col = col;
       cellGroup.row = row;
-      columnGroup?.addCellGroup(cellGroup);
+      cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
   }
 
@@ -163,7 +165,8 @@ export function createCheckboxCellGroup(
     cellTheme,
     define,
     table,
-    isCheckboxTree
+    isCheckboxTree,
+    value
   );
 
   // 目前只支持展示折叠或者展开icons
@@ -304,7 +307,8 @@ function createCheckbox(
   cellTheme: IThemeSpec,
   define: CheckboxColumnDefine,
   table: BaseTableAPI,
-  isCheckboxTree: boolean
+  isCheckboxTree: boolean,
+  cellValue: any
 ) {
   const style = table._getCellStyle(col, row) as CheckboxStyle;
   const size = getProp('size', style, col, row, table);
@@ -319,7 +323,7 @@ function createCheckbox(
   const checkIconImage = getProp('checkIconImage', style, col, row, table);
   const indeterminateIconImage = getProp('indeterminateIconImage', style, col, row, table);
 
-  const value = table.getCellValue(col, row) as string | { text: string; checked: boolean; disable: boolean } | boolean;
+  const value = cellValue as string | { text: string; checked: boolean; disable: boolean } | boolean;
   const dataValue = table.getCellOriginValue(col, row);
   let isChecked;
   let isDisabled;

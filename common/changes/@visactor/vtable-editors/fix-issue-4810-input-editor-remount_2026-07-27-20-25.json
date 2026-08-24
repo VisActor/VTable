@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-editors",
+      "comment": "fix: safely remount and reposition input editor when editing restarts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-editors",
+  "email": "892739385@qq.com"
+}

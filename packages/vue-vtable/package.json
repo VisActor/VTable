@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.26.0",
+  "version": "1.26.7",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
@@ -31,6 +31,7 @@
   ],
   "exports": {
     ".": {
+      "types": "./es/index.d.ts",
       "require": "./cjs/index.js",
       "import": "./es/index.js"
     },
@@ -58,14 +59,14 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable": "workspace:1.26.7",
     "@visactor/vutils": "~1.0.17"
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
     "increase-memory-limit": "^1.0.7",
     "cross-env": "^7.0.3",
-    "@visactor/vchart": "2.0.13-alpha.10",
+    "@visactor/vchart": "2.1.3",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -106,5 +107,10 @@
     "axios": "^1.4.0",
     "eslint-plugin-vue": "^9.26.0",
     "vue-eslint-parser": "^9.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/vue-vtable"
   }
 }

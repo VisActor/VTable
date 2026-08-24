@@ -4,7 +4,7 @@ import type { ListTableConstructorOptions, MousePointerMultiCellEvent } from '..
 import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
-import { browser, getPromiseValue } from '../../tools/helper';
+import { getPromiseValue } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
@@ -15,6 +15,18 @@ export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
   const handler: EventHandler = table.internalProps.handler;
+  const focusEditingInput = () => {
+    (table as ListTableAPI).editorManager?.editingEditor?.getInputElement?.()?.focus?.();
+  };
+  const afterCompleteEdit = (completeEditResult: boolean | Promise<boolean> | undefined, onSuccess: () => void) => {
+    getPromiseValue<boolean>(completeEditResult, (isCompleteEdit: boolean) => {
+      if (isCompleteEdit === false) {
+        focusEditingInput();
+        return;
+      }
+      onSuccess();
+    });
+  };
 
   // handler.on(table.getElement(), 'mousedown', (e: MouseEvent) => {
   // if (table.eventManager.isPointerDownOnTable) {
@@ -81,8 +93,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       // 如果不加这句话 外部监听了键盘事件 会影响表格本身的移动格子功能，例如自定义日历编辑器的日期选择pickday.js
       //可能会引起其他问题  例如自定义实现了日历编辑器 里面切换日期左右键可能失效，这个时候建议监听VTable实例的事件keydown
       e.stopPropagation();
-      let targetCol;
-      let targetRow;
+      let targetCol: number;
+      let targetRow: number;
 
       // 处理向上箭头键
       if (e.key === 'ArrowUp') {
@@ -139,16 +151,18 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
       const isEditingCell = !!(table as ListTableAPI).editorManager?.editingEditor;
       // 下面这句completeEdit代码和selectCell代码顺序很重要，不能颠倒，否则会导致编辑器失去焦点（selectCell会触发到edit-manager的selected_changed事件，getEditor会创建editor实例并缓存，completeEdit会清空缓存）
-      (table as ListTableAPI).editorManager?.completeEdit();
-      table.getElement().focus();
-      const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
-      table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
-      if ((table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) && isEditingCell) {
-        // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
-        if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-          (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
+      const completeEditResult = (table as ListTableAPI).editorManager?.completeEdit();
+      afterCompleteEdit(completeEditResult, () => {
+        table.getElement().focus();
+        const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+        table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
+        if ((table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) && isEditingCell) {
+          // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
+          if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+            (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
+          }
         }
-      }
+      });
     } else if (e.key === 'Escape') {
       (table as ListTableAPI).editorManager?.cancelEdit();
       table.getElement().focus();
@@ -157,20 +171,22 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
-        (table as ListTableAPI).editorManager?.completeEdit();
-        table.getElement().focus();
+        const completeEditResult = (table as ListTableAPI).editorManager?.completeEdit();
+        afterCompleteEdit(completeEditResult, () => {
+          table.getElement().focus();
 
-        if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
-          // 利用enter键选中下一个单元格
-          const targetCol = stateManager.select.cellPos.col;
-          const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
-          // 如果是不支持选中的单元格 则退出
-          if (isCellDisableSelect(table, targetCol, targetRow)) {
-            return;
+          if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
+            // 利用enter键选中下一个单元格
+            const targetCol = stateManager.select.cellPos.col;
+            const targetRow = Math.min(table.rowCount - 1, Math.max(0, stateManager.select.cellPos.row + 1));
+            // 如果是不支持选中的单元格 则退出
+            if (isCellDisableSelect(table, targetCol, targetRow)) {
+              return;
+            }
+            const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+            table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
           }
-          const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
-          table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
-        }
+        });
         // 直接返回，不再触发最后的keydown监听事件相关代码
         return;
       }
@@ -212,8 +228,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
           e.preventDefault();
 
-          let targetCol;
-          let targetRow;
+          let targetCol: number;
+          let targetRow: number;
           if (stateManager.select.cellPos.col === table.colCount - 1) {
             targetRow = Math.min(table.rowCount - 1, stateManager.select.cellPos.row + 1);
             targetCol = table.rowHeaderLevelCount;
@@ -227,14 +243,16 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
           const isEditingCell = !!(table as ListTableAPI).editorManager?.editingEditor;
           // 下面这句completeEdit代码和selectCell代码顺序很重要，不能颠倒，否则会导致编辑器失去焦点（selectCell会触发到edit-manager的selected_changed事件，getEditor会创建editor实例并缓存，completeEdit会清空缓存）
-          (table as ListTableAPI).editorManager?.completeEdit();
-          table.getElement().focus();
-          table.selectCell(targetCol, targetRow);
-          if (isEditingCell) {
-            if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-              (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
+          const completeEditResult = (table as ListTableAPI).editorManager?.completeEdit();
+          afterCompleteEdit(completeEditResult, () => {
+            table.getElement().focus();
+            table.selectCell(targetCol, targetRow);
+            if (isEditingCell) {
+              if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
+                (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
+              }
             }
-          }
+          });
         }
       }
     } else if (!(e.ctrlKey || e.metaKey)) {

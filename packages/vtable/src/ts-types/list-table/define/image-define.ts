@@ -27,3 +27,19 @@ export interface IImageColumnBodyDefine extends IBasicColumnBodyDefine {
   /** 点击开启预览 */
   clickToPreview?: boolean;
 }
+
+export interface IAudioHeaderDefine extends IBasicHeaderDefine {
+  headerStyle?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption);
+  headerType: 'audio';
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}
+
+export interface IAudioColumnBodyDefine extends IBasicColumnBodyDefine {
+  style?: IImageStyleOption | ((styleArg: StylePropertyFunctionArg) => IImageStyleOption);
+  cellType: 'audio';
+
+  /** 点击开启预览 */
+  clickToPreview?: boolean;
+}

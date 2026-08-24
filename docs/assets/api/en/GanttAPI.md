@@ -149,12 +149,12 @@ Get or set the horizontal scroll value to a specified position.
 Get the position of the task bar. The position relative to the top-left corner of the Gantt chart.
 
 ```
-  getTaskBarRelativeRect:(index: number) =>{
+  getTaskBarRelativeRect:(index: number, sub_task_index?: number) =>{
     left: number;
     top: number;
     width: number;
     height: number;
-  }
+  } | null
 ```
 
 ## Events

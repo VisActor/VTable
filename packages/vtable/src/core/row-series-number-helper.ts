@@ -17,6 +17,10 @@ export class RowSeriesNumberHelper {
   _table: BaseTableAPI;
   constructor(_table: BaseTableAPI) {
     this._table = _table;
+    this.updateIcons();
+  }
+
+  updateIcons() {
     const regedIcons = registerIcons.get();
 
     this.dragReorderIconName = regedIcons[InternalIconName.dragReorderIconName] as SvgIcon;

@@ -1,4 +1,4 @@
-import { isNode } from '../gantt-helper';
+const isNode = typeof window === 'undefined' || typeof window.window === 'undefined';
 
 export let defaultPixelRatio = 1;
 /*

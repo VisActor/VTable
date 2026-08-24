@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vue-vtable",
+      "comment": "fix: render vue components in top frozen rows (GitHub #5265)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vue-vtable",
+  "email": "892739385@qq.com"
+}

@@ -19,6 +19,10 @@ export class BodyHelper {
   _table: BaseTableAPI;
   constructor(_table: BaseTableAPI) {
     this._table = _table;
+    this.updateIcons();
+  }
+
+  updateIcons() {
     const regedIcons = registerIcons.get();
     //展开折叠按钮
     this.expandIcon = regedIcons[InternalIconName.expandIconName] as SvgIcon;
@@ -93,6 +97,7 @@ export class BodyHelper {
       | 'link'
       | 'image'
       | 'video'
+      | 'audio'
       | 'chart'
       | 'sparkline'
       | 'progressbar'
@@ -106,8 +111,8 @@ export class BodyHelper {
       case 'text':
         return TextStyle;
       case 'image':
-        return ImageStyle;
       case 'video':
+      case 'audio':
         return ImageStyle;
       case 'link':
         return TextStyle;

@@ -1492,6 +1492,8 @@ export type TooltipOptions = {
     padding?: number[];
     arrowMark?: boolean;
   };
+  /** Set tooltip appearance delay time */
+  appearDelay?: number;
   /** Set tooltip disappearance time */
   disappearDelay?: number;
 };
@@ -2016,9 +2018,9 @@ Modify data, supports multiple data items
   /**
    * Modify data, supports multiple data items
    * @param records Modified data items
-   * @param recordIndexs Corresponding index of modified data (index displayed in body, i.e., which row of data in the body part to modify), in tree (grouping) structures, recordIndex may be an array, representing the index position of each level from the root node for that node.
+   * @param recordIndexs Corresponding index of modified data (index displayed in body, i.e., which row of data in the body part to modify), in tree (grouping) structures, recordIndex may be an array, representing the index position of each level from the root node for that node. When omitted, the records are updated by their array order.
    */
-  updateRecords(records: any[], recordIndexs: number[]|number[][])
+  updateRecords(records: any[], recordIndexs?: number[]|number[][])
 ```
 
 ## getBodyVisibleCellRange(Function)
@@ -2107,13 +2109,20 @@ Get the selection state of all checkbox data under a field, the order correspond
 getCheckboxState(field?: string | number): Array
 ```
 
+- field: Optional checkbox field. If omitted, returns checkbox states for all fields
+- return: Checkbox state array. Tree data keeps state by children path
+
 ## getCellCheckboxState(Function)
 
 Get the state of a checkbox in a specific cell
 
 ```
-getCellCheckboxState(col: number, row: number): Array
+getCellCheckboxState(col: number, row: number): boolean | 'indeterminate' | undefined
 ```
+
+- col: Column number
+- row: Row number
+- return: Checkbox state of the cell
 
 ## getRadioState(Function)
 
@@ -2142,6 +2151,38 @@ setCellCheckboxState(col: number, row: number, checked: boolean) => void
 - col: Column number
 - row: Row number
 - checked: Whether selected
+
+## setCellCheckboxStateByRecordIndex(Function)
+
+Set the checkbox state by source records index and field. For tree tables, pass a children path such as `[0, 1]` for the second child of the first root record. The state is updated even when the target node is collapsed and not currently visible.
+
+```
+setCellCheckboxStateByRecordIndex(recordIndex: number | number[], field: string | number, checked: boolean | 'indeterminate') => void
+```
+
+- recordIndex: Source data index; number for normal tables, number[] for tree tables
+- field: Field of the checkbox column
+- checked: Checkbox state, including `'indeterminate'`
+
+## clearCheckboxState(Function)
+
+Clear all checkbox checked states under the specified field. `clearAllCheckboxState(field)` is an alias of this method.
+
+```
+clearCheckboxState(field: string | number) => void
+```
+
+- field: Field of the checkbox column
+
+## clearAllCheckboxState(Function)
+
+Alias of `clearCheckboxState(field)`. Clear all checkbox checked states under the specified field.
+
+```
+clearAllCheckboxState(field: string | number) => void
+```
+
+- field: Field of the checkbox column
 
 ## setCellRadioState(Function)
 

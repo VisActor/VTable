@@ -1,5 +1,6 @@
 import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from './Gantt';
+import { defaultPixelRatio } from './tools/pixel-ratio';
 import {
   TasksShowMode,
   type IMarkLine,
@@ -126,7 +127,7 @@ export { isNode };
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
   gantt.parsedOptions.tasksShowMode = options?.tasksShowMode ?? TasksShowMode.Tasks_Separate;
-  gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
+  gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? defaultPixelRatio;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
   gantt.parsedOptions.timelineColWidth = options?.timelineHeader?.colWidth ?? 60;
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';

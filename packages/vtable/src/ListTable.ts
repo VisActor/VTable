@@ -39,7 +39,12 @@ import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
-import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
+import {
+  clearCheckboxState,
+  getGroupCheckboxState,
+  setCellCheckboxState,
+  setCheckboxStateByRecordIndex
+} from './state/checkbox/checkbox';
 import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
@@ -83,6 +88,17 @@ import {
 //   registerTextCell,
 //   registerVideoCell
 // } from './scenegraph/group-creater/cell-type';
+
+const LAYOUT_COLUMN_STATE_KEYS = ['level', 'startIndex', 'id', 'levelSpan', 'size', 'startInTotal', 'hierarchyState'];
+
+function clearLayoutColumnState(columns: ColumnsDefine | undefined) {
+  columns?.forEach(column => {
+    LAYOUT_COLUMN_STATE_KEYS.forEach(key => {
+      delete (column as any)[key];
+    });
+    clearLayoutColumnState((column as any).children ?? (column as any).columns);
+  });
+}
 
 // registerAxis();
 // registerEmptyTip();
@@ -579,6 +595,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
+      }
       let value;
       if ((this.internalProps as ListTableProtected).groupBy) {
         const record = table.getCellRawRecord(col, row);
@@ -628,6 +647,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
         const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
+      }
+      if (table.internalProps.layoutMap.isAggregation(col, row)) {
+        return '';
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
@@ -761,7 +783,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   ) {
     const internalProps = this.internalProps;
 
-    this.pluginManager.removeOrAddPlugins(options.plugins);
+    this.pluginManager.removeOrAddPlugins(options.plugins, options);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -1056,9 +1078,35 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
         adjustHeightResizedRowMap(moveContext, this);
       }
+      this.syncColumnsStateFromLayoutMap();
       return moveContext;
     }
     return null;
+  }
+  private syncColumnsStateFromLayoutMap() {
+    const sourceColumns = this.options.columns ?? this.internalProps.columns;
+    const nextColumns = sourceColumns.some(column => column.hide === true)
+      ? this.mergeHiddenColumnsWithVisibleOrder(sourceColumns)
+      : this.columns;
+    const publicColumns = cloneDeepSpec(nextColumns, ['children']);
+    clearLayoutColumnState(publicColumns);
+    this.internalProps.columns = cloneDeepSpec(publicColumns, ['children']);
+    this.options.columns = publicColumns;
+    if (this.options.header) {
+      this.options.header = publicColumns;
+    }
+  }
+  private mergeHiddenColumnsWithVisibleOrder(sourceColumns: ColumnsDefine) {
+    const visibleColumns = this.internalProps.layoutMap.columnObjects.map(column => column.define);
+    let visibleIndex = 0;
+    return sourceColumns.map(column => {
+      if (column.hide === true) {
+        return column;
+      }
+      const nextVisibleColumn = visibleColumns[visibleIndex];
+      visibleIndex += 1;
+      return nextVisibleColumn ?? column;
+    });
   }
   changeRecordOrder(sourceIndex: number, targetIndex: number) {
     if (this.transpose) {
@@ -1525,6 +1573,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
   setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate') {
     setCellCheckboxState(col, row, checked, this);
   }
+  setCellCheckboxStateByRecordIndex(
+    recordIndex: number | number[],
+    field: FieldDef,
+    checked: boolean | 'indeterminate'
+  ) {
+    setCheckboxStateByRecordIndex(recordIndex, field, checked, this);
+  }
+  clearCheckboxState(field: FieldDef) {
+    clearCheckboxState(field, this);
+  }
+  clearAllCheckboxState(field: FieldDef) {
+    this.clearCheckboxState(field);
+  }
   setCellRadioState(col: number, row: number, index?: number) {
     setCellRadioState(col, row, index, this);
   }
@@ -1565,6 +1626,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const time = typeof window !== 'undefined' ? window.performance.now() : 0;
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+    const oldScrollLeft = this.stateManager.scroll.horizontalBarPos;
+    const oldScrollTop = this.stateManager.scroll.verticalBarPos;
     // 清空单元格内容
     this.scenegraph.clearCells();
 
@@ -1610,6 +1673,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.clearCellStyleCache();
+    this.stateManager.scroll.horizontalBarPos = 0;
+    this.stateManager.scroll.verticalBarPos = 0;
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
 
@@ -1630,6 +1695,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     });
 
     this.scenegraph.resize();
+    if (oldScrollLeft) {
+      this.stateManager.setScrollLeft(oldScrollLeft, undefined, false);
+    }
+    if (oldScrollTop) {
+      this.stateManager.setScrollTop(oldScrollTop, undefined, false);
+    }
 
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
@@ -2379,14 +2450,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
    * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[], triggerEvent = true) {
-    listTableUpdateRecords(records, recordIndexs, this);
+  updateRecords(records: any[], recordIndexs?: (number | number[])[], triggerEvent = true) {
+    const updateRecordIndexs = recordIndexs ?? records?.map((_, index) => index) ?? [];
+    listTableUpdateRecords(records, updateRecordIndexs, this);
 
-    // 触发更新数据记录事件 - 假设操作成功
     if (triggerEvent) {
       this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
         records,
-        recordIndexs,
+        recordIndexs: updateRecordIndexs,
         updateCount: records.length
       });
     }

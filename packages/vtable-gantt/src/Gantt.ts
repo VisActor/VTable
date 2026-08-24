@@ -84,6 +84,9 @@ export function createRootElement(padding: any, className: string = 'vtable-gant
 
   return element;
 }
+
+const DEFAULT_TIMELINE_SCALE: ITimelineScale = { unit: 'day', step: 1 };
+
 export class Gantt extends EventTarget {
   options: GanttConstructorOptions;
   container: HTMLElement;
@@ -689,45 +692,58 @@ export class Gantt extends EventTarget {
 
   _sortScales() {
     const { timelineHeader } = this.options;
-    if (timelineHeader) {
-      const timelineScales = timelineHeader.scales;
-      const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
-      if (timelineScales.length === 1) {
-        if (
-          timelineScales[0].unit === 'hour' ||
-          timelineScales[0].unit === 'minute' ||
-          timelineScales[0].unit === 'second'
-        ) {
-          this.parsedOptions.timeScaleIncludeHour = true;
-        }
-      }
-      const orderedScales = timelineScales.slice().sort((a, b) => {
-        if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
-          this.parsedOptions.timeScaleIncludeHour = true;
-        }
-        const indexA = sortOrder.indexOf(a.unit);
-        const indexB = sortOrder.indexOf(b.unit);
-        if (indexA === -1) {
-          return 1;
-        } else if (indexB === -1) {
-          return -1;
-        }
-        return indexA - indexB;
-      });
-      const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
-        const indexA = sortOrder.indexOf(a.unit);
-        const indexB = sortOrder.indexOf(b.unit);
-        if (indexA === -1) {
-          return 1;
-        } else if (indexB === -1) {
-          return -1;
-        }
-        return indexB - indexA;
-      });
-
-      this.parsedOptions.sortedTimelineScales = orderedScales;
-      this.parsedOptions.reverseSortedTimelineScales = reverseOrderedScales;
+    const zoomLevelScales = this.zoomScaleManager?.config.levels[this.zoomScaleManager.getCurrentLevel()];
+    const defaultTimelineScale: ITimelineScale = { ...DEFAULT_TIMELINE_SCALE };
+    let timelineScales: ITimelineScale[];
+    if (timelineHeader?.scales?.length > 0) {
+      timelineScales = timelineHeader.scales;
+    } else if (zoomLevelScales?.length > 0) {
+      timelineScales = zoomLevelScales;
+    } else {
+      timelineScales = [defaultTimelineScale];
     }
+
+    if (timelineHeader && (!timelineHeader.scales || timelineHeader.scales.length === 0)) {
+      timelineHeader.scales = timelineScales.map(scale => ({ ...scale }));
+    }
+
+    const sortOrder = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second'];
+    this.parsedOptions.timeScaleIncludeHour = false;
+    if (timelineScales.length === 1) {
+      if (
+        timelineScales[0].unit === 'hour' ||
+        timelineScales[0].unit === 'minute' ||
+        timelineScales[0].unit === 'second'
+      ) {
+        this.parsedOptions.timeScaleIncludeHour = true;
+      }
+    }
+    const orderedScales = timelineScales.slice().sort((a, b) => {
+      if (a.unit === 'hour' || a.unit === 'minute' || a.unit === 'second') {
+        this.parsedOptions.timeScaleIncludeHour = true;
+      }
+      const indexA = sortOrder.indexOf(a.unit);
+      const indexB = sortOrder.indexOf(b.unit);
+      if (indexA === -1) {
+        return 1;
+      } else if (indexB === -1) {
+        return -1;
+      }
+      return indexA - indexB;
+    });
+    const reverseOrderedScales = timelineScales.slice().sort((a, b) => {
+      const indexA = sortOrder.indexOf(a.unit);
+      const indexB = sortOrder.indexOf(b.unit);
+      if (indexA === -1) {
+        return 1;
+      } else if (indexB === -1) {
+        return -1;
+      }
+      return indexB - indexA;
+    });
+
+    this.parsedOptions.sortedTimelineScales = orderedScales;
+    this.parsedOptions.reverseSortedTimelineScales = reverseOrderedScales;
   }
 
   _generateTimeLineDateMap() {
@@ -1011,12 +1027,12 @@ export class Gantt extends EventTarget {
     return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(taskShowIndex: number, sub_task_index?: number) {
+  _refreshTaskBar(taskShowIndex: number, sub_task_index?: number | number[]) {
     // this.taskListTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex, sub_task_index);
     this.scenegraph.refreshRecordLinkNodes(
       taskShowIndex,
-      undefined,
+      sub_task_index,
       this.scenegraph.taskBar.getTaskBarNodeByIndex(taskShowIndex, sub_task_index) as GanttTaskBarNode
     );
     this.scenegraph.updateNextFrame();
@@ -1040,6 +1056,26 @@ export class Gantt extends EventTarget {
     //   );
     // }
     this.taskListTableInstance.updateRecords([record], [index]);
+  }
+  private _refreshSortedTaskBarsAfterRecordUpdate(recordIndex: number | number[], taskShowIndex: number) {
+    const sortState = this.taskListTableInstance?.sortState;
+    if (!sortState || (Array.isArray(sortState) && sortState.length === 0)) {
+      return false;
+    }
+
+    const nextTaskShowIndex = this.getTaskShowIndexByRecordIndex(recordIndex);
+    if (!isValid(nextTaskShowIndex) || nextTaskShowIndex === taskShowIndex) {
+      return false;
+    }
+
+    this._syncPropsFromTable();
+    this.scenegraph.refreshTaskBarsAndGrid();
+
+    const left = this.stateManager.scroll.horizontalBarPos;
+    const top = this.stateManager.scroll.verticalBarPos;
+    this.scenegraph.setX(-left);
+    this.scenegraph.setY(-top);
+    return true;
   }
   /**
    * 获取指定index处任务数据的具体信息
@@ -1218,19 +1254,21 @@ export class Gantt extends EventTarget {
 
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
-  _updateEndDateToTaskRecord(endDate: Date, index: number, sub_task_index?: number) {
+  _updateEndDateToTaskRecord(endDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const endDateField = this.parsedOptions.endDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[endDateField]);
@@ -1239,19 +1277,21 @@ export class Gantt extends EventTarget {
     taskRecord[endDateField] = newEndDate;
     if (!isValid(sub_task_index)) {
       //子任务不是独占左侧表格一行的情况
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
-  _updateStartEndDateToTaskRecord(startDate: Date, endDate: Date, index: number, sub_task_index?: number) {
+  _updateStartEndDateToTaskRecord(startDate: Date, endDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const endDateField = this.parsedOptions.endDateField;
@@ -1261,14 +1301,16 @@ export class Gantt extends EventTarget {
     const newEndDate = formatDate(endDate, dateFormat);
     taskRecord[endDateField] = newEndDate;
     if (!isValid(sub_task_index)) {
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
-      this._updateRecordToListTable(taskRecord, indexs);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
       // 递归更新父级project任务的时间范围
-      if (Array.isArray(indexs)) {
-        this.stateManager.updateProjectTaskTimes(indexs);
+      if (Array.isArray(recordIndex)) {
+        this.stateManager.updateProjectTaskTimes(recordIndex);
       }
+      this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index);
     } else if (Array.isArray(sub_task_index)) {
+      this._updateRecordToListTable(taskRecord, sub_task_index);
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
@@ -1280,14 +1322,21 @@ export class Gantt extends EventTarget {
    * @param index 对应的一定是左侧表格body的index
    * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
    */
-  _updateProgressToTaskRecord(progress: number, index: number, sub_task_index?: number) {
+  _updateProgressToTaskRecord(progress: number, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const progressField = this.parsedOptions.progressField;
     if (progressField) {
       taskRecord[progressField] = progress;
-      const indexs = this.getRecordIndexByTaskShowIndex(index);
-      this._updateRecordToListTable(taskRecord, indexs);
-      this._refreshTaskBar(index, sub_task_index);
+      if (Array.isArray(sub_task_index)) {
+        this._updateRecordToListTable(taskRecord, sub_task_index);
+        this._refreshTaskBar(index, sub_task_index);
+        return;
+      }
+      const recordIndex = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, Array.isArray(recordIndex) ? recordIndex : index);
+      if (!this._refreshSortedTaskBarsAfterRecordUpdate(recordIndex, index)) {
+        this._refreshTaskBar(index, sub_task_index);
+      }
     }
   }
 
@@ -1312,11 +1361,11 @@ export class Gantt extends EventTarget {
    * 如果TasksShowModes是 sub_tasks_*** 模式 则需要传入task_index和sub_task_index
    */
   updateTaskRecord(record: any, task_index: number | number[]): void;
-  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
-  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
+  updateTaskRecord(record: any, task_index: number, sub_task_index: number | number[]): void;
+  updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number | number[]) {
     if (isValid(sub_task_index)) {
       const index = typeof task_index === 'number' ? task_index : task_index[0];
-      this._updateRecordToListTable(record, [index, sub_task_index]);
+      this._updateRecordToListTable(record, Array.isArray(sub_task_index) ? sub_task_index : [index, sub_task_index]);
       this._refreshTaskBar(index, sub_task_index);
       return;
     }
@@ -1596,8 +1645,11 @@ export class Gantt extends EventTarget {
     this.stateManager.setScrollLeft(value);
   }
   /** 获取任务条的位置。相对应甘特图表左上角的位置。 */
-  getTaskBarRelativeRect(index: number) {
-    const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index);
+  getTaskBarRelativeRect(index: number, sub_task_index?: number | number[]) {
+    const taskBarNode = this.scenegraph.taskBar.getTaskBarNodeByIndex(index, sub_task_index);
+    if (!taskBarNode) {
+      return null;
+    }
     const left =
       taskBarNode.attribute.x +
       this.taskListTableInstance.tableNoFrameWidth +

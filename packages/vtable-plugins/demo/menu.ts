@@ -12,12 +12,24 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'excel-import',
+    name: 'issue-5227-leading-blank-row'
+  },
+  {
     path: 'filter',
     name: 'filter'
   },
   {
     path: 'filter',
     name: 'bug'
+  },
+  {
+    path: 'filter',
+    name: 'issue-5137'
+  },
+  {
+    path: 'filter',
+    name: 'issue-4625-filter-popup-position'
   },
   {
     path: 'filter',
@@ -80,6 +92,10 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'rotate-table',
+    name: 'issue-5235-rotate-wheel'
+  },
+  {
     path: 'table-series-number',
     name: 'table-series-number'
   },
@@ -124,6 +140,10 @@ export const menus = [
     name: 'master-detail-plugin9'
   },
   {
+    path: 'master-detail-plugin',
+    name: 'issue-5185-set-records-expand'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {
@@ -135,6 +155,18 @@ export const menus = [
   {
     path: 'context-menu',
     name: 'context-menu'
+  },
+  {
+    path: 'context-menu',
+    name: 'issue-4655-context-menu-click'
+  },
+  {
+    path: 'context-menu',
+    name: 'issue-5215-context-menu-canvas'
+  },
+  {
+    path: 'context-menu',
+    name: 'issue-5214-reverse-selected-row-delete'
   },
   {
     path: 'table-export',

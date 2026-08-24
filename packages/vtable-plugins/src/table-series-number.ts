@@ -3,6 +3,8 @@ import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vtable/es/vrender';
 import type { ILayer, TableSeriesNumberAttributes } from '@visactor/vtable/es/vrender';
 
+const FEDERATED_EVENT_API_ERROR = 'DisplayObject cannot propagate events outside of the Federated Events API';
+
 export type TableSeriesNumberOptions = {
   rowCount: number;
   colCount: number;
@@ -136,7 +138,64 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
         return this.pluginOptions.dragOrder?.enableDragRowOrder ? this.table.isRowSelected(rowIndex) : false;
       }
     });
+    this.patchSeriesNumberEventDispatch();
     this.listenComponentEvents();
+  }
+
+  private patchSeriesNumberEventDispatch() {
+    const component = this.seriesNumberComponent as any;
+    const originalDispatchEvent = component._dispatchEvent?.bind(component);
+    if (!originalDispatchEvent) {
+      return;
+    }
+
+    component._dispatchEvent = (eventName: string, detail?: any) => {
+      try {
+        return originalDispatchEvent(eventName, detail);
+      } catch (err) {
+        if (!(err instanceof Error) || !err.message.includes(FEDERATED_EVENT_API_ERROR)) {
+          throw err;
+        }
+        this.dispatchSeriesNumberEventToLocalListeners(eventName, detail);
+      }
+    };
+  }
+
+  private dispatchSeriesNumberEventToLocalListeners(eventName: string, detail?: any) {
+    const component = this.seriesNumberComponent as any;
+    const listeners = component?._events?.[eventName];
+    if (!listeners) {
+      return;
+    }
+
+    const event = {
+      type: eventName,
+      detail,
+      target: component,
+      currentTarget: component,
+      defaultPrevented: false,
+      propagationStopped: false,
+      propagationImmediatelyStopped: false,
+      preventDefault() {
+        this.defaultPrevented = true;
+      },
+      stopPropagation() {
+        this.propagationStopped = true;
+      },
+      stopImmediatePropagation() {
+        this.propagationImmediatelyStopped = true;
+      }
+    };
+    const listenerList = Array.isArray(listeners) ? listeners.slice() : [listeners];
+    listenerList.forEach(listener => {
+      if (typeof listener === 'function') {
+        listener(event);
+      } else if (typeof listener?.fn === 'function') {
+        listener.fn.call(listener.context, event);
+      } else if (typeof listener?.handleEvent === 'function') {
+        listener.handleEvent(event);
+      }
+    });
   }
 
   run(...args: any[]) {
@@ -289,9 +348,11 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
       const rowIndex = seriesNumberCell.id;
       //判断rowIndex整行是否被选中
       const isRowSelected = this.table.stateManager.select.ranges.some(range => {
+        const startRow = Math.min(range.start.row, range.end.row);
+        const endRow = Math.max(range.start.row, range.end.row);
         return (
-          range.start.row <= rowIndex &&
-          rowIndex <= range.end.row &&
+          startRow <= rowIndex &&
+          rowIndex <= endRow &&
           range.start.col === 0 &&
           range.end.col === this.table.colCount - 1
         );

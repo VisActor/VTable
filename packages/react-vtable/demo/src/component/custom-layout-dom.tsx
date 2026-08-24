@@ -94,11 +94,9 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
                 text: `${text}-${row}`,
                 fill: hover ? 'red' : '#000'
               }}
-              // stateProxy={(stateName: any) => {
-              //   if (stateName === 'hover') {
-              //     return {
-              //       fill: 'red'
-              //     };
+              // states={{
+              //   hover: {
+              //     fill: 'red'
               //   }
               // }}
               onMouseEnter={(event: any) => {

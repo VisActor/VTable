@@ -125,6 +125,84 @@ describe('listTable-cellType-function init test', () => {
     ]);
     listTable2.release();
   });
+  test('listTable changeHeaderPosition keeps options.columns in sync for follow-up updates', () => {
+    const containerDom2: HTMLElement = createDiv();
+    containerDom2.style.position = 'relative';
+    containerDom2.style.width = '1000px';
+    containerDom2.style.height = '800px';
+    const records2 = [
+      { a: 1, b: 2, c: 3 },
+      { a: 4, b: 5, c: 6 }
+    ];
+    const columns2 = [
+      { field: 'a', title: 'A' },
+      { field: 'b', title: 'B' },
+      { field: 'c', title: 'C' }
+    ];
+    const listTable2 = new ListTable(containerDom2, { records: records2, columns: columns2, dragHeaderMode: 'all' });
+    listTable2.changeHeaderPosition({
+      source: { col: 1, row: 0 },
+      target: { col: 2, row: 0 },
+      movingColumnOrRow: 'column'
+    });
+    expect(listTable2.options.columns).toEqual([
+      { field: 'a', title: 'A' },
+      { field: 'c', title: 'C' },
+      { field: 'b', title: 'B' }
+    ]);
+    listTable2.updateOption({
+      ...listTable2.options,
+      widthMode: 'standard'
+    });
+    expect(listTable2.columns).toEqual([
+      { field: 'a', title: 'A' },
+      { field: 'c', title: 'C' },
+      { field: 'b', title: 'B' }
+    ]);
+    listTable2.release();
+  });
+  test('listTable changeHeaderPosition keeps hidden-column order in sync for follow-up updates', () => {
+    const containerDom2: HTMLElement = createDiv();
+    containerDom2.style.position = 'relative';
+    containerDom2.style.width = '1000px';
+    containerDom2.style.height = '800px';
+    const records2 = [
+      { id: 1, name: 'A', gender: 'M', city: 'BJ', department: 'RD', status: 'on' },
+      { id: 2, name: 'B', gender: 'F', city: 'SH', department: 'Sales', status: 'off' }
+    ];
+    const columns2 = [
+      { field: 'id', title: 'ID' },
+      { field: 'name', title: 'Name' },
+      { field: 'gender', title: 'Gender', hide: true },
+      { field: 'city', title: 'City' },
+      { field: 'department', title: 'Department' },
+      { field: 'status', title: 'Status' }
+    ];
+    const listTable2 = new ListTable(containerDom2, { records: records2, columns: columns2, dragHeaderMode: 'all' });
+    listTable2.changeHeaderPosition({
+      source: { col: 2, row: 0 },
+      target: { col: 3, row: 0 },
+      movingColumnOrRow: 'column'
+    });
+    expect(listTable2.options.columns).toEqual([
+      { field: 'id', title: 'ID' },
+      { field: 'name', title: 'Name' },
+      { field: 'gender', title: 'Gender', hide: true },
+      { field: 'department', title: 'Department' },
+      { field: 'city', title: 'City' },
+      { field: 'status', title: 'Status' }
+    ]);
+    listTable2.updateOption({
+      ...listTable2.options,
+      widthMode: 'standard'
+    });
+    expect(listTable2.getHeaderField(0, 0)).toBe('id');
+    expect(listTable2.getHeaderField(1, 0)).toBe('name');
+    expect(listTable2.getHeaderField(2, 0)).toBe('department');
+    expect(listTable2.getHeaderField(3, 0)).toBe('city');
+    expect(listTable2.getHeaderField(4, 0)).toBe('status');
+    listTable2.release();
+  });
   test('listTable dragHeader interaction', () => {
     option.transpose = true;
     listTable.updateOption(option);

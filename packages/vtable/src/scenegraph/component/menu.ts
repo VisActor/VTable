@@ -175,16 +175,10 @@ export class MenuHandler {
       group.role = 'menu-item';
       this._menuInstance.appendChild(group);
 
-      // 处理背景hover效果
-      group.stateProxy = (stateName: string) => {
-        if (stateName === 'hover') {
-          return {
-            fill: menuStyle.hoverBgColor
-          };
+      group.states = {
+        hover: {
+          fill: menuStyle.hoverBgColor
         }
-        return {
-          fill: menuStyle.bgColor
-        };
       };
       group.addEventListener('pointerenter', (e: FederatedEvent) => {
         group.addState('hover', true, false);

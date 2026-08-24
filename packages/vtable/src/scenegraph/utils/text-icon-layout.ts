@@ -19,6 +19,32 @@ import { getTargetCell } from '../../event/util';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 // import { createLine } from '@src/vrender';
 
+type CellTextMark = Text | RichText;
+
+export function insertTextBeforeCellIcons<T extends CellTextMark>(cellGroup: Group, textMark: T): T {
+  const insertableTextMark = getInsertableTextMark(cellGroup, textMark);
+  if (cellGroup.firstChild) {
+    cellGroup.insertBefore(insertableTextMark, cellGroup.firstChild);
+  } else {
+    cellGroup.appendChild(insertableTextMark);
+  }
+  return insertableTextMark;
+}
+
+function getInsertableTextMark<T extends CellTextMark>(cellGroup: Group, textMark: T): T {
+  if (textMark.isAncestorsOf(cellGroup)) {
+    const clonedTextMark = textMark.clone() as T;
+    clonedTextMark.name = textMark.name;
+    (clonedTextMark as any).role = (textMark as any).role;
+    (clonedTextMark as any).onBeforeAttributeUpdate = (textMark as any).onBeforeAttributeUpdate;
+    if (clonedTextMark instanceof RichText) {
+      clonedTextMark.bindIconEvent();
+    }
+    return clonedTextMark;
+  }
+  return textMark;
+}
+
 /**
  * @description: 创建单元格内容
  * cellGroup
@@ -412,12 +438,7 @@ export function createCellContent(
       contentHeight = cellContent.AABBBounds.height();
     } else {
       // 没有content icon，cellGroup: CellIcons + wrapText/richtext
-      // cellGroup.appendChild(textMark);
-      if (cellGroup.firstChild) {
-        cellGroup.insertBefore(textMark, cellGroup.firstChild);
-      } else {
-        cellGroup.appendChild(textMark);
-      }
+      textMark = insertTextBeforeCellIcons(cellGroup, textMark);
       contentWidth = textMark.AABBBounds.width();
       contentHeight = textMark.AABBBounds.height();
     }
@@ -562,9 +583,21 @@ export function dealWithIcon(
     iconAttribute.shape = icon.shape;
   }
 
+  if (icon.type === 'text') {
+    iconAttribute.text = icon.content;
+    merge(iconAttribute, icon.style);
+  }
+
+  if (isNil(iconAttribute.opacity)) {
+    iconAttribute.opacity =
+      iconAttribute.visibleTime === 'mouseenter_cell' || iconAttribute.visibleTime === 'click_cell' ? 0 : 1;
+  }
+
   if (mark) {
     mark.setAttributes(iconAttribute);
-    mark.loadImage(iconAttribute.image);
+    if (iconAttribute.image) {
+      mark.loadImage(iconAttribute.image);
+    }
     mark.tooltip = icon.tooltip;
     mark.name = icon.name;
     return mark;
@@ -573,8 +606,6 @@ export function dealWithIcon(
 
   let iconMark: Icon | TextIcon;
   if (icon.type === 'text') {
-    iconAttribute.text = icon.content;
-    merge(iconAttribute, icon.style);
     iconMark = new TextIcon(iconAttribute);
     iconMark.tooltip = icon.tooltip;
     iconMark.name = icon.name;

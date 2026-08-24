@@ -29,6 +29,86 @@ export const menus = [
       {
         path: 'debug',
         name: 'mem'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5114'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5115-auto-height-zero-row'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5117-auto-height-real-height'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5146'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5027'
+      },
+      {
+        path: 'debug',
+        name: 'scroll-collapse-bottom'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5187-max-frozen-width'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5213-row-series-number-aggregation'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5278-set-records-header-blank'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5277-frozen-row-border'
+      },
+      {
+        path: 'debug',
+        name: 'issue-3752-large-merge-auto-height'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4761-update-records-edit-render'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4810-edit-cell-double-click-blank'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4816-functional-icons-theme'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4904-frozen-row-gap'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4964-custom-render-async-value'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4798-sort-icon-visible-time'
+      },
+      {
+        path: 'debug',
+        name: 'issue-celltype-function-undefined'
+      },
+      {
+        path: 'debug',
+        name: 'issue-5112-tooltip-appear-delay'
+      },
+      {
+        path: 'debug',
+        name: 'header-frame-border-null-color'
       }
     ]
   },
@@ -82,6 +162,14 @@ export const menus = [
       {
         path: 'list',
         name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
+        name: 'issue-5211-tree-checkbox-record-index'
+      },
+      {
+        path: 'list',
+        name: 'issue-3975-tree-checkbox-row-move'
       },
       {
         path: 'list',
@@ -566,6 +654,10 @@ export const menus = [
       },
       {
         path: 'type',
+        name: 'audio'
+      },
+      {
+        path: 'type',
         name: 'progress-bar'
       },
       {
@@ -878,6 +970,10 @@ export const menus = [
       {
         path: 'interactive',
         name: 'custom-scroll'
+      },
+      {
+        path: 'interactive',
+        name: 'arrow-key-scroll'
       }
     ]
   },

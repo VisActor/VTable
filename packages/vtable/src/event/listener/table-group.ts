@@ -617,15 +617,20 @@ export function bindTableGroupListener(eventManager: EventManager) {
       // 只处理左键
       return;
     }
+    const endedResizeCol = stateManager.isResizeCol();
+    const endedResizeRow = stateManager.isResizeRow();
+    const endedMoveCol = stateManager.isMoveCol();
+    // const endedDragSelect = stateManager.isSelecting() && table.eventManager.isDraging;
+    const shouldSkipClickCell = endedResizeCol || endedResizeRow;
     if (stateManager.interactionState === 'grabing') {
       // stateManager.interactionState = 'default';
       stateManager.updateInteractionState(InteractionState.default);
       // eventManager._resizing = false;
-      if (stateManager.isResizeCol()) {
+      if (endedResizeCol) {
         endResizeCol(table);
-      } else if (stateManager.isResizeRow()) {
+      } else if (endedResizeRow) {
         endResizeRow(table);
-      } else if (stateManager.isMoveCol()) {
+      } else if (endedMoveCol) {
         // const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
         const endMoveColSuccess = table.stateManager.endMoveCol();
         fireMoveColEventListeners(table, endMoveColSuccess, e.nativeEvent);
@@ -658,7 +663,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       // scroll end
     }
-    if (!table.eventManager.isDraging) {
+    if (!table.eventManager.isDraging && !shouldSkipClickCell) {
       // 从pointertap中挪过来的这段逻辑
       const eventArgsSet: SceneEvent = getEventArgsSet(e);
       if (
@@ -1330,6 +1335,10 @@ export function endResizeRow(table: BaseTableAPI) {
 }
 
 function dblclickHandler(e: FederatedPointerEvent, table: BaseTableAPI) {
+  if (typeof e.button === 'number' && e.button !== 0) {
+    return;
+  }
+
   const eventArgsSet: SceneEvent = getCellEventArgsSetWithTable(e, table);
   let col = -1;
   let row = -1;

@@ -13,6 +13,7 @@ import type {
   TextAlignType,
   TextBaselineType
 } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import { Gantt } from './Gantt';
 import * as tools from './tools';
 import * as VRender from './vrender';
@@ -37,6 +38,7 @@ export {
   GroupColumnDefine,
   TextAlignType,
   TextBaselineType,
+  TABLE_EVENT_TYPE,
   tools,
   VRender,
   VTable,

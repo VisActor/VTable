@@ -57,7 +57,7 @@ export function dealWithCustom(
       col: range?.start.col ?? col,
       row: range?.start.row ?? row,
       dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row) || '',
+      value: table.getCellValue(col, row),
       rect: {
         left: 0,
         top: 0,
@@ -96,7 +96,7 @@ export function dealWithCustom(
       col,
       row,
       dataValue: table.getCellOriginValue(col, row),
-      value: table.getCellValue(col, row) || '',
+      value: table.getCellValue(col, row),
       rect: {
         left: 0,
         top: 0,
@@ -455,11 +455,14 @@ export function decodeReactDom(dom: any, timeline?: ITimeline) {
     return dom;
   }
   const type = dom.type;
-  const { attribute, children, stateProxy, animation } = dom.props;
+  const { attribute, children, states, sharedStateDefinitions, animation } = dom.props;
   const g = type({ attribute });
   parseToGraphic(g, dom.props);
-  if (stateProxy) {
-    g.stateProxy = stateProxy;
+  if (states) {
+    g.states = states;
+  }
+  if (sharedStateDefinitions && g.type === 'group') {
+    g.sharedStateDefinitions = sharedStateDefinitions;
   }
 
   g.id = attribute.id;

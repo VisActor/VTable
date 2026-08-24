@@ -75,6 +75,19 @@ export type DropDownMenuEventArgs = {
   highlight: boolean;
 } & DropDownMenuEventInfo;
 
+export type ContextMenuClickEventArgs = {
+  col: number;
+  row: number;
+  contextMenu: {
+    menuKey: string;
+    menuText: string;
+    rowIndex?: number;
+    colIndex?: number;
+    cellValue?: any;
+    inputValue?: number | string;
+  };
+};
+
 export type DropDownMenuEventInfo = {
   field?: FieldDef;
   /**format之后的值 */
