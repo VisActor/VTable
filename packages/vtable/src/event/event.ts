@@ -794,6 +794,12 @@ export class EventManager {
     if (isValid(data)) {
       e.preventDefault();
 
+      const canUseAsyncClipboard = window.isSecureContext && !!navigator.clipboard?.writeText;
+      if (!canUseAsyncClipboard && this.setCopyDataToEventClipboard(data, e)) {
+        this.afterCopyData(data, isCut);
+        return;
+      }
+
       // 确保表格元素获得焦点，避免Document is not focused错误
       const element = table.getElement();
       if (element && element !== document.activeElement) {
@@ -863,11 +869,7 @@ export class EventManager {
           this.fallbackCopyToClipboard(data, e);
         }
 
-        table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
-          cellRange: table.stateManager.select.ranges,
-          copyData: data,
-          isCut
-        });
+        this.afterCopyData(data, isCut, false);
       } catch (error) {
         console.error('复制操作失败:', error);
         // 最后的降级方案
@@ -877,6 +879,34 @@ export class EventManager {
     if (table.keyboardOptions?.showCopyCellBorder) {
       setActiveCellRangeState(table);
       table.clearSelected();
+    }
+  }
+
+  private afterCopyData(data: string, isCut: boolean, updateCopyCellBorder: boolean = true): void {
+    const table = this.table;
+    table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
+      cellRange: table.stateManager.select.ranges,
+      copyData: data,
+      isCut
+    });
+    if (updateCopyCellBorder && table.keyboardOptions?.showCopyCellBorder) {
+      setActiveCellRangeState(table);
+      table.clearSelected();
+    }
+  }
+
+  private setCopyDataToEventClipboard(data: string, e: KeyboardEvent): boolean {
+    const clipboardData = (e as unknown as ClipboardEvent).clipboardData;
+    if (!clipboardData) {
+      return false;
+    }
+
+    try {
+      clipboardData.setData('text/plain', data);
+      return true;
+    } catch (error) {
+      console.warn('事件剪贴板写入失败，使用降级方案:', error);
+      return false;
     }
   }
 
