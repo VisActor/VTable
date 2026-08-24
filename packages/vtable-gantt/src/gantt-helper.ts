@@ -72,30 +72,38 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
     ];
   } else if (Array.isArray(markLine)) {
     return markLine.map((item, index) => {
+      const style = item.style;
       return {
         ...item,
         date: item.date,
         scrollToMarkLine: item.scrollToMarkLine,
         position: item.position ?? 'left',
-        style: {
-          lineColor: item.style?.lineColor || 'red',
-          lineWidth: item.style?.lineWidth || 1,
-          lineDash: item.style?.lineDash
-        }
+        style:
+          typeof style === 'function'
+            ? style
+            : {
+                lineColor: style?.lineColor || 'red',
+                lineWidth: style?.lineWidth ?? 1,
+                lineDash: style?.lineDash
+              }
       };
     });
   }
+  const style = (markLine as IMarkLine).style;
   return [
     {
       ...markLine,
       date: (markLine as IMarkLine).date,
       scrollToMarkLine: (markLine as IMarkLine).scrollToMarkLine ?? true,
       position: (markLine as IMarkLine).position ?? 'left',
-      style: {
-        lineColor: (markLine as IMarkLine).style?.lineColor || 'red',
-        lineWidth: (markLine as IMarkLine).style?.lineWidth || 1,
-        lineDash: (markLine as IMarkLine).style?.lineDash
-      }
+      style:
+        typeof style === 'function'
+          ? style
+          : {
+              lineColor: style?.lineColor || 'red',
+              lineWidth: style?.lineWidth ?? 1,
+              lineDash: style?.lineDash
+            }
     }
   ];
 }

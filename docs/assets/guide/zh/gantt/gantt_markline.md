@@ -15,10 +15,10 @@ IMarkLine 配置项如下：
 ```javascript
 export interface IMarkLine {
   date: string;
-  style?: ILineStyle;
+  style?: IMarkLineStyle | ((args: IMarkLineStyleArgumentType) => IMarkLineStyle);
   /** 标记线显示在日期列下的位置 默认为'left' */
   position?: 'left' | 'right' | 'middle' | 'date';
-  /** 自动将日期范围内 包括改标记线 */
+  /** 自动将日期范围内包括该标记线 */
   scrollToMarkLine?: boolean;
   content?: string; // markLine中内容
   /** markLine中内容的样式 */
@@ -31,6 +31,20 @@ export interface IMarkLine {
     cornerRadius?: string;
   }
 }
+
+export type IMarkLineStyle = Omit<ILineStyle, 'lineWidth'> & {
+  lineWidth?: number | ((args: IMarkLineStyleArgumentType) => number);
+};
+
+export type IMarkLineStyleArgumentType = {
+  date: Date;
+  dateIndex: number;
+  dateX: number;
+  cellStartX: number;
+  cellWidth: number;
+  timelineColWidth: number;
+  millisecondsPerPixel: number;
+};
 ```
 
 ## 标记线样式
@@ -43,17 +57,54 @@ const ganttOptions = {
     {
       date: '2024-01-01',
       style: {
-        color: 'red',
+        lineColor: 'red',
+        lineWidth: 1,
       },
     },
     {
       date: '2024-01-02',
       style: {
-        color: 'blue',
+        lineColor: 'blue',
+        lineWidth: 2,
       },
     },
   ],
 };
+```
+
+当标记线宽度需要跟随时间轴缩放变化时，可以将 `style.lineWidth` 配置为函数。函数会在标记线刷新时重新执行，参数中包含当前时间轴列宽、单元格宽度和毫秒/像素比例等信息：
+
+```javascript
+const ganttOptions = {
+  markLine: [
+    {
+      date: '2024-07-17',
+      content: '动态宽度',
+      style: {
+        lineWidth: ({ timelineColWidth }) => Math.max(1, Math.round(timelineColWidth / 20)),
+        lineColor: 'blue',
+        lineDash: [8, 4]
+      }
+    }
+  ]
+};
+```
+
+也可以将整个 `style` 配置为函数：
+
+```javascript
+const ganttOptions = {
+  markLine: [
+    {
+      date: '2024-07-17',
+      style: ({ millisecondsPerPixel }) => ({
+        lineWidth: millisecondsPerPixel > 86400000 ? 1 : 3,
+        lineColor: 'red'
+      })
+    }
+  ]
+};
+```
 
 ## 标记线位置
 

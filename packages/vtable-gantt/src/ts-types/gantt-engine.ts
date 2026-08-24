@@ -328,6 +328,27 @@ export type ILineStyle = {
   lineWidth?: number;
   lineDash?: number[];
 };
+/** markLine style function arguments, recalculated whenever markLine is refreshed, such as after zoom changes. */
+export type IMarkLineStyleArgumentType = {
+  /** The normalized markLine date. */
+  date: Date;
+  /** The date cell index where the markLine is located. */
+  dateIndex: number;
+  /** The markLine x position in the timeline coordinate system. */
+  dateX: number;
+  /** The start x position of the date cell containing the markLine. */
+  cellStartX: number;
+  /** The current width of the date cell containing the markLine. */
+  cellWidth: number;
+  /** The current timeline column width after zoom or scale changes. */
+  timelineColWidth: number;
+  /** Current milliseconds represented by one pixel. */
+  millisecondsPerPixel: number;
+};
+export type IMarkLineStyle = Omit<ILineStyle, 'lineWidth'> & {
+  lineWidth?: number | ((args: IMarkLineStyleArgumentType) => number);
+};
+export type IMarkLineStyleFunction = (args: IMarkLineStyleArgumentType) => IMarkLineStyle;
 export type IPointStyle = {
   strokeColor?: string;
   strokeWidth?: number;
@@ -345,7 +366,7 @@ export interface IMarkLine {
     backgroundColor?: string;
     cornerRadius?: number | number[];
   };
-  style?: ILineStyle;
+  style?: IMarkLineStyle | IMarkLineStyleFunction;
   /** 标记线显示在日期列下的位置 默认为'left' */
   position?: 'left' | 'right' | 'middle' | 'date';
   /** 自动将日期范围内 包括改标记线 */
