@@ -1,8 +1,17 @@
 import { createDateAtMidnight } from '../tools/util';
-import { DayTimes } from '../gantt-helper';
-//import type { IMarkLine } from '../ts-types';
+import type { ILineStyle, IMarkLine, IMarkLineStyleArgumentType } from '../ts-types';
 import type { Scenegraph } from './scenegraph';
 import { Group, createLine, Text } from '@visactor/vtable/es/vrender';
+
+function resolveMarkLineStyle(line: IMarkLine, args: IMarkLineStyleArgumentType): ILineStyle {
+  const style = typeof line.style === 'function' ? line.style(args) : line.style;
+  const lineWidth = typeof style?.lineWidth === 'function' ? style.lineWidth(args) : style?.lineWidth;
+  return {
+    lineColor: style?.lineColor || 'red',
+    lineWidth: lineWidth ?? 1,
+    lineDash: style?.lineDash
+  };
+}
 
 export class MarkLine {
   _scene: Scenegraph;
@@ -53,7 +62,6 @@ export class MarkLine {
     const minDate = this._scene._gantt.parsedOptions.minDate;
     minDate &&
       markLine.forEach(line => {
-        const style = line.style;
         const contentStyle = line.contentStyle || {};
         const date = this._scene._gantt.parsedOptions.timeScaleIncludeHour
           ? createDateAtMidnight(line.date)
@@ -76,6 +84,15 @@ export class MarkLine {
         } else if (line.position === 'middle') {
           dateX = cellStartX + cellWidth / 2;
         }
+        const style = resolveMarkLineStyle(line, {
+          date,
+          dateIndex: cellIndex,
+          dateX,
+          cellStartX,
+          cellWidth,
+          timelineColWidth: this._scene._gantt.parsedOptions.timelineColWidth,
+          millisecondsPerPixel: this._scene._gantt.getCurrentMillisecondsPerPixel()
+        });
         const markLineGroup = new Group({
           pickable: false,
           x: dateX - this.markLineContainerWidth / 2,

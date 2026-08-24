@@ -19,6 +19,7 @@ option: Gantt#zoomScale
 - API 获得当前缩放状态：使用 `getCurrentZoomState` 提供的方法
 - API 设置当前缩放状态：使用 `setZoomPosition` 提供的方法
 - API 缩放：使用 `zoomScaleManager` 提供的缩放方法
+- `markLine.style.lineWidth`: 可配置函数，根据当前缩放后的时间轴列宽动态计算标记线宽度
 
 ## 代码演示
 
@@ -700,6 +701,27 @@ const option = {
       lineColor: '#f1f3f4'
     }
   },
+  markLine: [
+    {
+      date: '2024-07-17',
+      content: '动态宽度',
+      style: {
+        lineWidth: ({ timelineColWidth }) => Math.max(1, Math.round(timelineColWidth / 20)),
+        lineColor: 'blue',
+        lineDash: [8, 4]
+      }
+    },
+    {
+      date: '2024-08-17',
+      content: '固定宽度',
+      position: 'middle',
+      style: {
+        lineWidth: 2,
+        lineColor: 'red',
+        lineDash: [8, 4]
+      }
+    }
+  ],
   headerRowHeight: 50,
   rowHeight: 40,
   overscrollBehavior: 'none'
