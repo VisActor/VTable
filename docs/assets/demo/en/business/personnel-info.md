@@ -14,7 +14,7 @@ Display personnel information with phone numbers masked by default (showing only
 
 - `fieldFormat` formats phone numbers: shows `138****5678` by default
 - `VTable.register.icon` registers eye-open / eye-close icons with `visibleTime: 'always'` to always show the toggle button
-- `click_cell` event listens for icon clicks, toggles per-row visibility state, and calls `updateRecords` to refresh the cell
+- `click_cell` event listens for icon clicks, toggles per-row visibility state, and recreates cells to keep the phone number and icon state in sync
 
 ## Code Demo
 
@@ -32,7 +32,7 @@ const eyeCloseSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="
   <path d="M9.76 9.76A3.2 3.2 0 0 0 14.24 14.24" stroke="#86909C" stroke-width="1.8" stroke-linecap="round"/>
 </svg>`;
 
-// Register "show full number" icon (eye open)
+// Register "click to show number" icon (eye open)
 VTable.register.icon('eye-open', {
   type: 'svg',
   name: 'eye-open',
@@ -43,13 +43,13 @@ VTable.register.icon('eye-open', {
   cursor: 'pointer',
   visibleTime: 'always',
   tooltip: {
-    title: 'Click to hide number',
+    title: 'Click to show number',
     placement: VTable.TYPES.Placement.top
   },
   svg: eyeOpenSvg
 });
 
-// Register "hide number" icon (eye closed)
+// Register "click to hide number" icon (eye closed)
 VTable.register.icon('eye-close', {
   type: 'svg',
   name: 'eye-close',
@@ -60,7 +60,7 @@ VTable.register.icon('eye-close', {
   cursor: 'pointer',
   visibleTime: 'always',
   tooltip: {
-    title: 'Click to show number',
+    title: 'Click to hide number',
     placement: VTable.TYPES.Placement.top
   },
   svg: eyeCloseSvg
@@ -122,10 +122,10 @@ const columns = [
       const rowId = record.id;
       return phoneVisible[rowId] ? record.phone : maskPhone(record.phone);
     },
-    // Show eye-open when full number is visible, eye-close when masked
+    // Show the next action: eye-open when masked, eye-close when the full number is visible
     icon(args) {
       const rowId = args.record?.id;
-      return phoneVisible[rowId] ? 'eye-open' : 'eye-close';
+      return phoneVisible[rowId] ? 'eye-close' : 'eye-open';
     }
   },
   {
@@ -162,8 +162,8 @@ tableInstance.on('click_cell', args => {
     const rowId = record.id;
     // Toggle visibility for this row
     phoneVisible[rowId] = !phoneVisible[rowId];
-    // Refresh the row to reflect the new state
-    tableInstance.updateRecords([record], [row - tableInstance.columnHeaderLevelCount]);
+    // Recreate cells to refresh both the phone number and icon state
+    tableInstance.renderWithRecreateCells();
   }
 });
 ```
