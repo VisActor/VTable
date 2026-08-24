@@ -13,7 +13,7 @@ import type {
   IColumnDefine,
   SheetData
 } from '../ts-types';
-import type { MultiSheetImportResult } from '@visactor/vtable-plugins/src/excel-import/types';
+import type { MultiSheetImportResult } from '@visactor/vtable-plugins';
 import type { TableEventHandlersEventArgumentMap } from '@visactor/vtable/es/ts-types/events';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { FormulaAutocomplete } from '../formula/formula-autocomplete';
