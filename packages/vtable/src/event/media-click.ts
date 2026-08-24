@@ -339,6 +339,9 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (clickToPreview === false) {
           return;
         }
+        if (!cellValue) {
+          return;
+        }
         const previewManager = getMediaPreviewManager(table);
 
         // 开启蒙版
