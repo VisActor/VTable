@@ -2,7 +2,7 @@
 category: examples
 group: Business
 title: 人员信息表
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/personnel-info.gif
 link: custom_define/custom_icon
 ---
 
@@ -19,6 +19,19 @@ link: custom_define/custom_icon
 ## 代码演示
 
 ```javascript livedemo template=vtable
+const eyeOpenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+  <path d="M2 12s3.8-7 10-7 10 7 10 7-3.8 7-10 7S2 12 2 12Z" stroke="#4E5969" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="12" cy="12" r="3.2" stroke="#4E5969" stroke-width="1.8"/>
+  <circle cx="12" cy="12" r="1.2" fill="#4E5969"/>
+</svg>`;
+
+const eyeCloseSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+  <path d="M3 3L21 21" stroke="#86909C" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M9.88 5.18A9.4 9.4 0 0 1 12 4.94C18.2 4.94 22 12 22 12a16.18 16.18 0 0 1-3.25 4.02" stroke="#86909C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14.12 18.82A9.4 9.4 0 0 1 12 19.06C5.8 19.06 2 12 2 12a16.18 16.18 0 0 1 3.25-4.02" stroke="#86909C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.76 9.76A3.2 3.2 0 0 0 14.24 14.24" stroke="#86909C" stroke-width="1.8" stroke-linecap="round"/>
+</svg>`;
+
 // 注册"显示完整号码"图标（眼睛张开）
 VTable.register.icon('eye-open', {
   type: 'svg',
@@ -33,10 +46,7 @@ VTable.register.icon('eye-open', {
     title: '点击隐藏号码',
     placement: VTable.TYPES.Placement.top
   },
-  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>`
+  svg: eyeOpenSvg
 });
 
 // 注册"隐藏号码"图标（眼睛闭合）
@@ -53,11 +63,7 @@ VTable.register.icon('eye-close', {
     title: '点击显示号码',
     placement: VTable.TYPES.Placement.top
   },
-  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-    <line x1="1" y1="1" x2="23" y2="23"/>
-  </svg>`
+  svg: eyeCloseSvg
 });
 
 // 脱敏电话号码：保留前3位和后4位，中间替换为 ****
