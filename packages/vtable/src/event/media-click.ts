@@ -393,6 +393,9 @@ export function bindMediaClick(table: BaseTableAPI): void {
         if (clickToPreview === false) {
           return;
         }
+        if (!cellValue) {
+          return;
+        }
         const previewManager = getMediaPreviewManager(table);
 
         // 开启蒙版
@@ -432,6 +435,9 @@ export function bindMediaClick(table: BaseTableAPI): void {
         // 点击视频，弹出播放窗口
         const { clickToPreview } = columnDefine as IImageColumnBodyDefine;
         if (clickToPreview === false) {
+          return;
+        }
+        if (!cellValue) {
           return;
         }
         const previewManager = getMediaPreviewManager(table);
