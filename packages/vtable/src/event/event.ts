@@ -1173,8 +1173,8 @@ export class EventManager {
 
   private decodeHTMLCellValue(cellHTML: string): string {
     const template = document.createElement('template');
-    template.innerHTML = cellHTML.replace(/<br\b[^>]*>[\r\n]?/gim, '\n');
-    return template.content.textContent ?? '';
+    template.innerHTML = cellHTML.replace(/<br\b[^>]*>(?:\r\n|\r|\n)?/gim, '\n');
+    return (template.content.textContent ?? '').replace(/\u00a0/g, ' ');
   }
 
   private async processPastedHTML(pastedData: string, pasteRange: PasteRange): Promise<boolean> {
@@ -1188,7 +1188,7 @@ export class EventManager {
     let pasteValuesRowCount = 0;
     let values: (string | number)[][] = [];
 
-    if (!pastedData || !/(<table)|(<TABLE)/g.test(pastedData)) {
+    if (!pastedData || !/<table\b/i.test(pastedData)) {
       return false;
     }
 
