@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vtable",
-      "comment": "fix: support copy through event clipboard data when async clipboard is unavailable (GitHub #5274)",
+      "comment": "fix: support copy and paste through event clipboard data when the async Clipboard API is unavailable, and normalize pasted HTML cell content (GitHub #5274)",
       "type": "patch"
     }
   ],
