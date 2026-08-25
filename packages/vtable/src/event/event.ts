@@ -54,11 +54,40 @@ type CopySnapshot = {
   ranges: ClipboardRange[];
   copySourceRange: { startCol: number; startRow: number } | null;
   cellInfos: CellInfo[][] | null;
+  sourceCells: SourceCell[];
+  clipboardSignature: string;
 };
 
 type EventClipboardData = {
   html: string;
   text: string;
+};
+
+type SourceCell = {
+  col: number;
+  row: number;
+  recordIndex?: number | number[];
+  field?: any;
+};
+
+type CutState = {
+  id: number;
+  ranges: ClipboardRange[];
+  cellInfos: CellInfo[][] | null;
+  sourceCells: SourceCell[];
+  clipboardSignature: string;
+  copySourceRange: { startCol: number; startRow: number } | null;
+};
+
+type PasteContext = {
+  pasteRange: PasteRange;
+  copySourceRange: { startCol: number; startRow: number } | null;
+};
+
+type PasteWriteResult = {
+  pasted: boolean;
+  changedCellResults: boolean[][];
+  changedCells: SourceCell[];
 };
 
 export class EventManager {
@@ -103,7 +132,9 @@ export class EventManager {
   /** 剪切后等待粘贴 */
   cutWaitPaste: boolean = false;
   private clipboardCheckTimer: number | null = null; // 剪贴板检测定时器
-  private cutOperationTime: number = 0; // 记录剪切操作的时间
+  private cutOperationId: number = 0;
+  private clipboardOperationId: number = 0;
+  private activeCutState: CutState | null = null;
   lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
   cutCellRange: CellInfo[][] | null = null;
   cutRanges: CellRange[] | null = null;
@@ -794,9 +825,12 @@ export class EventManager {
 
   async handleCopy(e: KeyboardEvent, isCut: boolean = false): Promise<CopySnapshot | null> {
     const table = this.table;
-    !isCut && (this.cutWaitPaste = false);
+    const operationId = ++this.clipboardOperationId;
+    if (!isCut) {
+      this.resetCutState();
+    }
     const copySnapshot = this.getCopySnapshot(isCut);
-    this.copySourceRange = copySnapshot?.copySourceRange ?? null;
+    this.copySourceRange = null;
     if (!copySnapshot) {
       this.copySourceRange = null;
       // 没有选中区域，直接返回，不进行复制操作
@@ -815,11 +849,17 @@ export class EventManager {
       const hasEventClipboard = !!(e as unknown as ClipboardEvent).clipboardData;
       const dataHTML =
         !canUseAsyncClipboard || canWriteRichClipboard || hasEventClipboard ? this.getCopyDataHTML(data) : null;
+      const plainClipboardData = canWriteRichClipboard || hasEventClipboard ? data : this.getCopyFormulaPlainData(data);
       if (hasEventClipboard && this.setCopyDataToEventClipboard(data, dataHTML, e)) {
         if (isCut) {
           this.lastClipboardContent = data;
+          copySnapshot.clipboardSignature = this.getClipboardSignature({ html: dataHTML ?? '', text: data });
         }
+        this.copySourceRange = copySnapshot.copySourceRange;
         this.afterCopyData(data, isCut, copySnapshot, !isCut);
+        if (operationId !== this.clipboardOperationId) {
+          return null;
+        }
         if (isCut && table.keyboardOptions?.showCopyCellBorder) {
           window.setTimeout(() => {
             setActiveCellRangeState(table, copySnapshot.ranges);
@@ -870,7 +910,7 @@ export class EventManager {
                 copySucceeded = true;
               } else {
                 // 降级到纯文本
-                await navigator.clipboard.writeText(data);
+                await navigator.clipboard.writeText(plainClipboardData);
                 copySucceeded = true;
               }
             } catch (clipboardError) {
@@ -892,9 +932,17 @@ export class EventManager {
         }
 
         if (isCut) {
-          this.lastClipboardContent = data;
+          this.lastClipboardContent = plainClipboardData;
+          copySnapshot.clipboardSignature = this.getClipboardSignature({
+            html: canWriteRichClipboard ? dataHTML ?? '' : '',
+            text: plainClipboardData
+          });
         }
+        this.copySourceRange = copySnapshot.copySourceRange;
         this.afterCopyData(data, isCut, copySnapshot, false);
+        if (operationId !== this.clipboardOperationId) {
+          return null;
+        }
       } catch (error) {
         console.error('复制操作失败:', error);
         // 最后的降级方案
@@ -903,8 +951,13 @@ export class EventManager {
         }
         if (isCut) {
           this.lastClipboardContent = data;
+          copySnapshot.clipboardSignature = this.getClipboardSignature({ html: '', text: data });
         }
+        this.copySourceRange = copySnapshot.copySourceRange;
         this.afterCopyData(data, isCut, copySnapshot, false);
+        if (operationId !== this.clipboardOperationId) {
+          return null;
+        }
       }
     } else {
       return null;
@@ -923,11 +976,15 @@ export class EventManager {
     updateCopyCellBorder: boolean = true
   ): void {
     const table = this.table;
-    table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
-      cellRange: copySnapshot.ranges,
-      copyData: data,
-      isCut
-    });
+    try {
+      table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
+        cellRange: this.cloneRanges(copySnapshot.ranges),
+        copyData: data,
+        isCut
+      });
+    } catch (error) {
+      console.warn('COPY_DATA listener failed:', error);
+    }
     if (updateCopyCellBorder && table.keyboardOptions?.showCopyCellBorder) {
       setActiveCellRangeState(table, copySnapshot.ranges);
       table.clearSelected();
@@ -954,8 +1011,58 @@ export class EventManager {
             startRow: Math.min(sourceRange.start.row, sourceRange.end.row)
           }
         : null,
-      cellInfos: includeCellInfos ? this.table.getSelectedCellInfos() : null
+      cellInfos: includeCellInfos ? this.table.getSelectedCellInfos() : null,
+      sourceCells: this.getSourceCells(clonedRanges),
+      clipboardSignature: ''
     };
+  }
+
+  private cloneRanges(ranges: ClipboardRange[]): ClipboardRange[] {
+    return ranges.map(range => ({
+      start: { col: range.start.col, row: range.start.row },
+      end: { col: range.end.col, row: range.end.row }
+    }));
+  }
+
+  private getSourceCells(ranges: ClipboardRange[]): SourceCell[] {
+    const table = this.table as ListTableAPI;
+    const sourceCells: SourceCell[] = [];
+    for (let i = 0; i < ranges.length; i++) {
+      const range = ranges[i];
+      const startCol = Math.min(range.start.col, range.end.col);
+      const endCol = Math.max(range.start.col, range.end.col);
+      const startRow = Math.min(range.start.row, range.end.row);
+      const endRow = Math.max(range.start.row, range.end.row);
+      for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) {
+          const recordShowIndex = table.getRecordShowIndexByCell?.(col, row);
+          const recordIndex =
+            recordShowIndex >= 0 ? (table as any).dataSource?.getIndexKey?.(recordShowIndex) : undefined;
+          const field = table.internalProps?.layoutMap?.getBody?.(col, row)?.field;
+          sourceCells.push({ col, row, recordIndex, field });
+        }
+      }
+    }
+    return sourceCells;
+  }
+
+  private getClipboardSignature(data: EventClipboardData | null): string {
+    return data ? `${data.html || ''}\n---vtable-clipboard---\n${data.text || ''}` : '';
+  }
+
+  private getCopyFormulaPlainData(data: string): string {
+    const table = this.table;
+    if (table.stateManager.select.ranges.length !== 1 || !table.options.keyboardOptions?.getCopyCellValue?.html) {
+      return data;
+    }
+    try {
+      return this.table.getCopyValue(
+        table.options.keyboardOptions.getCopyCellValue.html as (col: number, row: number) => string | number
+      );
+    } catch (error) {
+      console.warn('复制公式纯文本数据生成失败，使用显示值:', error);
+      return data;
+    }
   }
 
   private getCopyDataHTML(data: string): string | null {
@@ -1050,9 +1157,18 @@ export class EventManager {
     if (!copySnapshot) {
       return;
     }
+    const cutState: CutState = {
+      id: ++this.cutOperationId,
+      ranges: this.cloneRanges(copySnapshot.ranges),
+      cellInfos: copySnapshot.cellInfos,
+      sourceCells: copySnapshot.sourceCells,
+      clipboardSignature: copySnapshot.clipboardSignature,
+      copySourceRange: copySnapshot.copySourceRange
+    };
     this.cutWaitPaste = true;
-    this.cutCellRange = copySnapshot.cellInfos;
-    this.cutRanges = copySnapshot.ranges;
+    this.activeCutState = cutState;
+    this.cutCellRange = cutState.cellInfos;
+    this.cutRanges = cutState.ranges;
     // 设置自动超时，防止剪切状态无限期保持
     if (this.clipboardCheckTimer) {
       clearTimeout(this.clipboardCheckTimer);
@@ -1066,8 +1182,7 @@ export class EventManager {
       }
     }, 30000); // 30秒超时
 
-    // 保存剪贴板内容以便后续检测变化
-    this.saveClipboardContent();
+    this.lastClipboardContent = cutState.clipboardSignature;
   }
 
   // 执行实际的粘贴操作
@@ -1077,84 +1192,88 @@ export class EventManager {
       return;
     }
     const eventClipboardData = this.getEventClipboardData(e);
+    const pasteCopySourceRange = this.copySourceRange;
     if (!this.cutWaitPaste) {
       // 非剪切状态，直接粘贴
-      this.executePaste(pasteRange, eventClipboardData);
+      this.readClipboardDataForPaste(eventClipboardData).then(clipboardData => {
+        this.executePaste(clipboardData, {
+          pasteRange,
+          copySourceRange: pasteCopySourceRange
+        });
+      });
       return;
     }
 
-    this.checkClipboardChanged(eventClipboardData)
-      .then(async changed => {
-        // 执行粘贴操作，并根据剪贴板是否变化决定是否清空选中区域
-        const pasted = await this.executePaste(pasteRange, eventClipboardData);
-        if (!changed && pasted) {
-          this.clearCutArea(this.table as ListTableAPI);
-          this.resetCutState();
+    const cutState = this.activeCutState;
+    if (!cutState) {
+      this.executePaste(eventClipboardData, { pasteRange, copySourceRange: pasteCopySourceRange });
+      return;
+    }
+
+    this.readClipboardDataForPaste(eventClipboardData)
+      .then(async clipboardData => {
+        const changed = this.getClipboardSignature(clipboardData) !== cutState.clipboardSignature;
+        const pasteResult = await this.executePaste(clipboardData, {
+          pasteRange,
+          copySourceRange: changed ? null : cutState.copySourceRange
+        });
+        if (!changed && pasteResult.pasted && this.activeCutState?.id === cutState.id) {
+          await this.clearCutArea(cutState, pasteResult.changedCells);
         }
-        if (changed) {
+        if (this.activeCutState?.id === cutState.id) {
           this.resetCutState();
         }
       })
       .catch(async () => {
         // 如果无法检测剪贴板变化（例如权限问题），则保守地执行粘贴但不清空选中区域
-        await this.executePaste(pasteRange, eventClipboardData);
-        this.resetCutState();
+        await this.executePaste(eventClipboardData, {
+          pasteRange,
+          copySourceRange: pasteCopySourceRange
+        });
+        if (this.activeCutState?.id === cutState.id) {
+          this.resetCutState();
+        }
       });
   }
-  private async executePaste(pasteRange: PasteRange, eventClipboardData: EventClipboardData | null): Promise<boolean> {
+  private async executePaste(
+    clipboardData: EventClipboardData | null,
+    pasteContext: PasteContext
+  ): Promise<PasteWriteResult> {
     const table = this.table;
+    const emptyResult = this.getEmptyPasteResult();
     if ((table as ListTableAPI).editorManager?.editingEditor) {
-      return false;
+      return emptyResult;
     }
-    let pasted = false;
-    if ((table as ListTableAPI).changeCellValues) {
-      try {
-        // 优先使用现代剪贴板API
-        if (navigator.clipboard && navigator.clipboard.read) {
-          try {
-            // 读取剪切板数据
-            const clipboardItems = await navigator.clipboard.read();
-            let handled = false;
-
-            for (const item of clipboardItems) {
-              // 优先处理 html 格式数据
-              if (item.types.includes('text/html')) {
-                const pasted = await this.pasteHtmlToTable(item, pasteRange);
-                if (pasted) {
-                  handled = true;
-                  break;
-                }
+    let pasteResult = emptyResult;
+    try {
+      if ((table as ListTableAPI).changeCellValues) {
+        try {
+          if (clipboardData?.html) {
+            try {
+              const htmlResult = await this.processPastedHTML(clipboardData.html, pasteContext);
+              if (htmlResult.pasted) {
+                pasteResult = htmlResult;
+                return pasteResult;
               }
-              if (item.types.includes('text/plain')) {
-                handled = await this.pasteTextToTable(item, pasteRange);
-                break;
-              }
+            } catch (error) {
+              console.warn('粘贴HTML数据失败:', error);
+              return emptyResult;
             }
-
-            if (!handled) {
-              // 如果没有处理任何数据，使用降级方案
-              handled = await this.fallbackPasteFromClipboard(eventClipboardData, pasteRange);
-            }
-            pasted = handled;
-          } catch (clipboardError) {
-            console.warn('现代剪贴板API读取失败，使用降级方案:', clipboardError);
-            // 降级到传统方法
-            pasted = await this.fallbackPasteFromClipboard(eventClipboardData, pasteRange);
           }
-        } else {
-          // 不支持现代剪贴板API，使用降级方案
-          pasted = await this.fallbackPasteFromClipboard(eventClipboardData, pasteRange);
+          if (clipboardData?.text) {
+            pasteResult = await this.processPastedText(clipboardData.text, pasteContext);
+            return pasteResult;
+          }
+        } catch (error) {
+          console.error('粘贴操作失败:', error);
         }
-      } catch (error) {
-        console.error('粘贴操作失败:', error);
-        // 最后的降级方案
-        pasted = await this.fallbackPasteFromClipboard(eventClipboardData, pasteRange);
+      }
+      return pasteResult;
+    } finally {
+      if (table.keyboardOptions?.showCopyCellBorder) {
+        clearActiveCellRangeState(table);
       }
     }
-    if (table.keyboardOptions?.showCopyCellBorder) {
-      clearActiveCellRangeState(table);
-    }
-    return pasted;
   }
 
   private getPasteRange(): PasteRange | null {
@@ -1178,48 +1297,51 @@ export class EventManager {
     if (!clipboardData) {
       return null;
     }
-    return {
-      html: clipboardData.getData('text/html') || '',
-      text: clipboardData.getData('text/plain') || clipboardData.getData('text') || clipboardData.getData('Text') || ''
-    };
+    try {
+      return {
+        html: clipboardData.getData('text/html') || '',
+        text:
+          clipboardData.getData('text/plain') || clipboardData.getData('text') || clipboardData.getData('Text') || ''
+      };
+    } catch (error) {
+      console.warn('读取事件剪贴板数据失败:', error);
+      return null;
+    }
   }
 
-  // 降级粘贴方案
-  private async fallbackPasteFromClipboard(
-    eventClipboardData: EventClipboardData | null,
-    pasteRange: PasteRange
-  ): Promise<boolean> {
-    const table = this.table;
-
-    try {
-      // 确保表格元素获得焦点
-      const element = table.getElement();
-      if (element && element !== document.activeElement) {
-        element.focus();
-        // 短暂延迟，确保焦点设置完成
-        await new Promise(resolve => setTimeout(resolve, 10));
-      }
-
-      if (eventClipboardData) {
-        if (eventClipboardData.html) {
-          try {
-            const pasted = await this.processPastedHTML(eventClipboardData.html, pasteRange);
-            if (pasted) {
-              return true;
-            }
-          } catch (error) {
-            console.warn('降级粘贴HTML数据失败，尝试纯文本粘贴:', error);
+  private async readClipboardDataForPaste(
+    eventClipboardData: EventClipboardData | null
+  ): Promise<EventClipboardData | null> {
+    if (eventClipboardData?.html || eventClipboardData?.text) {
+      return eventClipboardData;
+    }
+    if (navigator.clipboard?.read) {
+      try {
+        const clipboardItems = await navigator.clipboard.read();
+        const clipboardData: EventClipboardData = { html: '', text: '' };
+        for (const item of clipboardItems) {
+          if (!clipboardData.html && item.types.includes('text/html')) {
+            clipboardData.html = await (await item.getType('text/html')).text();
+          }
+          if (!clipboardData.text && item.types.includes('text/plain')) {
+            clipboardData.text = await (await item.getType('text/plain')).text();
           }
         }
-
-        if (eventClipboardData.text) {
-          return await this.processPastedText(eventClipboardData.text, pasteRange);
+        if (clipboardData.html || clipboardData.text) {
+          return clipboardData;
         }
+      } catch (error) {
+        console.warn('现代剪贴板API读取失败，使用事件剪贴板数据:', error);
       }
-    } catch (error) {
-      console.error('降级粘贴方案失败:', error);
     }
-    return false;
+    if (navigator.clipboard?.readText) {
+      try {
+        return { html: '', text: await navigator.clipboard.readText() };
+      } catch (error) {
+        console.warn('剪贴板纯文本读取失败，使用事件剪贴板数据:', error);
+      }
+    }
+    return eventClipboardData;
   }
 
   private decodeHTMLCellValue(cellHTML: string): string {
@@ -1228,19 +1350,20 @@ export class EventManager {
     return template.content.textContent ?? '';
   }
 
-  private async processPastedHTML(pastedData: string, pasteRange: PasteRange): Promise<boolean> {
+  private async processPastedHTML(pastedData: string, pasteContext: PasteContext): Promise<PasteWriteResult> {
     // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
     const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi; // for webpack3
     // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
     const cellRegex = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi; // for webpack3
     const table = this.table;
+    const pasteRange = pasteContext.pasteRange;
     const { col, row, maxCol, maxRow } = pasteRange;
     let pasteValuesColCount = 0;
     let pasteValuesRowCount = 0;
     let values: (string | number)[][] = [];
 
     if (!pastedData || !/<table\b/i.test(pastedData)) {
-      return false;
+      return this.getEmptyPasteResult();
     }
 
     // 解析html数据
@@ -1261,7 +1384,7 @@ export class EventManager {
 
     pasteValuesRowCount = values.length ?? 0;
     if (!pasteValuesRowCount || !pasteValuesColCount) {
-      return false;
+      return this.getEmptyPasteResult();
     }
     values = this.handlePasteValues(
       values,
@@ -1272,30 +1395,32 @@ export class EventManager {
     );
     let processedValues;
     // 检查是否支持公式处理（针对vtable-sheet）
-    if (table.options.keyboardOptions?.processFormulaBeforePaste && this.copySourceRange) {
+    if (table.options.keyboardOptions?.processFormulaBeforePaste && pasteContext.copySourceRange) {
       // 使用复制时记录的源位置（而不是当前的选中位置）
       processedValues = table.options.keyboardOptions.processFormulaBeforePaste(
         values,
-        this.copySourceRange.startCol,
-        this.copySourceRange.startRow,
+        pasteContext.copySourceRange.startCol,
+        pasteContext.copySourceRange.startRow,
         col,
         row
       );
     }
 
-    const changedCellResults = await (table as ListTableAPI).changeCellValues(
-      col,
-      row,
-      processedValues ? processedValues : values,
-      true
-    );
-    this.firePastedDataEvent(col, row, processedValues ? processedValues : values, changedCellResults);
-    return true;
+    const valuesToPaste = processedValues ? processedValues : values;
+    const targetCells = this.getPasteTargetCells(pasteRange, valuesToPaste);
+    const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, valuesToPaste, true);
+    const changedCells = this.getChangedCells(targetCells, changedCellResults);
+    if (!changedCells.length) {
+      return this.getEmptyPasteResult(changedCellResults);
+    }
+    this.firePastedDataEvent(col, row, valuesToPaste, changedCellResults);
+    return { pasted: true, changedCellResults, changedCells };
   }
 
   // 处理粘贴的文本数据
-  private async processPastedText(pastedData: string, pasteRange: PasteRange): Promise<boolean> {
+  private async processPastedText(pastedData: string, pasteContext: PasteContext): Promise<PasteWriteResult> {
     const table = this.table;
+    const pasteRange = pasteContext.pasteRange;
     const { col, row } = pasteRange;
     const rows = pastedData.split('\n'); // 将数据拆分为行
     const values: (string | number)[][] = [];
@@ -1314,26 +1439,27 @@ export class EventManager {
     });
     let processedValues;
     // 检查是否支持公式处理（针对vtable-sheet）
-    if (table.options.keyboardOptions?.processFormulaBeforePaste && this.copySourceRange) {
+    if (table.options.keyboardOptions?.processFormulaBeforePaste && pasteContext.copySourceRange) {
       // 利用复制时记录的源位置，对粘贴的数据进行公式处理
       processedValues = table.options.keyboardOptions.processFormulaBeforePaste(
         values,
-        this.copySourceRange.startCol,
-        this.copySourceRange.startRow,
+        pasteContext.copySourceRange.startCol,
+        pasteContext.copySourceRange.startRow,
         col,
         row
       );
     }
 
+    const valuesToPaste = processedValues ? processedValues : values;
+    const targetCells = this.getPasteTargetCells(pasteRange, valuesToPaste);
     // 保持与 navigator.clipboard.read 中的操作一致
-    const changedCellResults = await (table as ListTableAPI).changeCellValues(
-      col,
-      row,
-      processedValues ? processedValues : values,
-      true
-    );
-    this.firePastedDataEvent(col, row, processedValues ? processedValues : values, changedCellResults);
-    return true;
+    const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, valuesToPaste, true);
+    const changedCells = this.getChangedCells(targetCells, changedCellResults);
+    if (!changedCells.length) {
+      return this.getEmptyPasteResult(changedCellResults);
+    }
+    this.firePastedDataEvent(col, row, valuesToPaste, changedCellResults);
+    return { pasted: true, changedCellResults, changedCells };
   }
 
   private firePastedDataEvent(
@@ -1357,118 +1483,109 @@ export class EventManager {
       console.warn('PASTED_DATA listener failed:', error);
     }
   }
-  // 清空选中区域的内容
-  private clearCutArea(table: ListTableAPI): void {
-    try {
-      const ranges = this.cutRanges;
-      if (!ranges || ranges.length === 0) {
-        return;
-      }
+  private getEmptyPasteResult(changedCellResults: boolean[][] = []): PasteWriteResult {
+    return {
+      pasted: false,
+      changedCellResults,
+      changedCells: []
+    };
+  }
 
-      table.changeCellValuesByRanges(ranges, '');
+  private getPasteTargetCells(pasteRange: PasteRange, values: (string | number)[][]): SourceCell[][] {
+    const targetCells: SourceCell[][] = [];
+    for (let rowIndex = 0; rowIndex < values.length; rowIndex++) {
+      targetCells[rowIndex] = [];
+      for (let colIndex = 0; colIndex < values[rowIndex].length; colIndex++) {
+        targetCells[rowIndex][colIndex] = this.getCellIdentity(pasteRange.col + colIndex, pasteRange.row + rowIndex);
+      }
+    }
+    return targetCells;
+  }
+
+  private getChangedCells(targetCells: SourceCell[][], changedCellResults: boolean[][]): SourceCell[] {
+    const changedCells: SourceCell[] = [];
+    for (let rowIndex = 0; rowIndex < changedCellResults.length; rowIndex++) {
+      for (let colIndex = 0; colIndex < (changedCellResults[rowIndex]?.length ?? 0); colIndex++) {
+        if (changedCellResults[rowIndex][colIndex] && targetCells[rowIndex]?.[colIndex]) {
+          changedCells.push(targetCells[rowIndex][colIndex]);
+        }
+      }
+    }
+    return changedCells;
+  }
+
+  private getCellIdentity(col: number, row: number): SourceCell {
+    const table = this.table as ListTableAPI;
+    const recordShowIndex = table.getRecordShowIndexByCell?.(col, row);
+    const recordIndex = recordShowIndex >= 0 ? (table as any).dataSource?.getIndexKey?.(recordShowIndex) : undefined;
+    const field = table.internalProps?.layoutMap?.getBody?.(col, row)?.field;
+    return { col, row, recordIndex, field };
+  }
+
+  // 清空选中区域的内容
+  private async clearCutArea(cutState: CutState, changedCells: SourceCell[]): Promise<void> {
+    try {
+      const table = this.table as ListTableAPI;
+      const changedKeys = new Set<string>();
+      changedCells.forEach(cell => {
+        changedKeys.add(this.getCellKey(cell));
+        changedKeys.add(this.getCoordKey(cell));
+      });
+      const ranges: CellRange[] = [];
+      for (let i = 0; i < cutState.sourceCells.length; i++) {
+        const sourceCell = cutState.sourceCells[i];
+        if (changedKeys.has(this.getCellKey(sourceCell)) || changedKeys.has(this.getCoordKey(sourceCell))) {
+          continue;
+        }
+        const currentAddress = this.getCurrentCellAddress(sourceCell);
+        if (!currentAddress) {
+          continue;
+        }
+        ranges.push({
+          start: { col: currentAddress.col, row: currentAddress.row },
+          end: { col: currentAddress.col, row: currentAddress.row }
+        });
+      }
+      if (ranges.length) {
+        await table.changeCellValuesByRanges(ranges, '');
+      }
     } catch (error) {
       console.error('清空单元格内容失败', error);
+      throw error;
     }
   }
 
-  // 检查剪贴板内容是否被其他应用更改
-  private async checkClipboardChanged(eventClipboardData: EventClipboardData | null): Promise<boolean> {
-    // 如果不支持读取剪贴板，则无法检测变化
-    if (!navigator.clipboard || !navigator.clipboard.readText) {
-      if (eventClipboardData?.text) {
-        return eventClipboardData.text !== this.lastClipboardContent;
+  private getCurrentCellAddress(sourceCell: SourceCell): { col: number; row: number } | null {
+    const table = this.table as ListTableAPI;
+    if (sourceCell.recordIndex !== undefined && sourceCell.field !== undefined && table.getCellAddrByFieldRecord) {
+      const address = table.getCellAddrByFieldRecord(sourceCell.field, sourceCell.recordIndex);
+      if (address) {
+        return address;
       }
-      throw new Error('Clipboard readText is unavailable');
     }
+    return { col: sourceCell.col, row: sourceCell.row };
+  }
 
-    try {
-      const currentContent = await navigator.clipboard.readText();
-      // console.log('当前剪贴板内容:', currentContent);
-      // console.log('上次保存的剪贴板内容:', this.lastClipboardContent);
-
-      // 比较当前剪贴板内容与剪切时保存的内容
-      return currentContent !== this.lastClipboardContent;
-    } catch (err) {
-      console.warn('检查剪贴板状态失败:', err);
-      throw err;
+  private getCellKey(cell: SourceCell): string {
+    if (cell.recordIndex !== undefined && cell.field !== undefined) {
+      return `record:${String(cell.recordIndex)}:${String(cell.field)}`;
     }
+    return this.getCoordKey(cell);
+  }
+
+  private getCoordKey(cell: SourceCell): string {
+    return `coord:${cell.col}:${cell.row}`;
   }
 
   private resetCutState(): void {
-    if (!this.cutWaitPaste) {
-      return;
-    }
     this.cutWaitPaste = false;
+    this.activeCutState = null;
     this.cutCellRange = null;
     this.cutRanges = null;
     if (this.clipboardCheckTimer) {
       clearTimeout(this.clipboardCheckTimer);
       this.clipboardCheckTimer = null;
     }
-  }
-
-  // 保存剪贴板内容
-  private saveClipboardContent(): void {
-    // 尝试获取剪贴板内容
-    if (navigator.clipboard && navigator.clipboard.readText) {
-      // 延迟一点以确保剪贴板内容已更新
-      setTimeout(() => {
-        navigator.clipboard
-          .readText()
-          .then(text => {
-            this.lastClipboardContent = text;
-            console.log('已保存剪贴板状态');
-          })
-          .catch(err => {
-            console.warn('无法读取剪贴板内容:', err);
-          });
-      }, 50);
-    }
-  }
-  private async pasteHtmlToTable(item: ClipboardItem, pasteRange: PasteRange): Promise<boolean> {
-    try {
-      const blob = await item.getType('text/html');
-      const pastedData = await blob.text();
-      const pasted = await this.processPastedHTML(pastedData, pasteRange);
-      if (pasted) {
-        return true;
-      }
-    } catch (error) {
-      console.warn('Paste html operation failed:', error);
-    }
-    return false;
-  }
-
-  private async pasteTextToTable(item: ClipboardItem, pasteRange: PasteRange): Promise<boolean> {
-    const table = this.table;
-    // 如果只有 'text/plain'
-    const { col, row, maxCol, maxRow } = pasteRange;
-
-    try {
-      const blob = await item.getType('text/plain');
-      const pastedData = await blob.text();
-      const values = this.parsePastedData(pastedData);
-
-      const pasteValuesRowCount = values.length;
-      const pasteValuesColCount = Math.max(...values.map(row => row.length), 0);
-
-      const processedValues = this.handlePasteValues(
-        values,
-        pasteValuesRowCount,
-        pasteValuesColCount,
-        maxRow - row + 1,
-        maxCol - col + 1
-      );
-
-      const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, processedValues, true);
-
-      this.firePastedDataEvent(col, row, processedValues, changedCellResults);
-      return true;
-    } catch (error) {
-      // 静默处理粘贴错误，保持原有行为
-      console.warn('Paste operation failed:', error);
-    }
-    return false;
   }
 
   private parsePastedData(pastedData: string): (string | number)[][] {
