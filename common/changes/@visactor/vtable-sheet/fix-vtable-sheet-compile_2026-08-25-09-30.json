@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable-sheet",
+      "comment": "fix: keep test-only plugin sources out of the vtable-sheet package compile",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable-sheet",
+  "email": "108231307+dajiaohuang@users.noreply.github.com"
+}
