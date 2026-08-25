@@ -795,8 +795,9 @@ export class EventManager {
       e.preventDefault();
 
       const canUseAsyncClipboard = window.isSecureContext && !!navigator.clipboard?.writeText;
-      if (!canUseAsyncClipboard && this.setCopyDataToEventClipboard(data, e)) {
-        this.afterCopyData(data, isCut);
+      const dataHTML = this.getCopyDataHTML(data);
+      if (!canUseAsyncClipboard && this.setCopyDataToEventClipboard(data, dataHTML, e)) {
+        this.afterCopyData(data, isCut, !isCut);
         return;
       }
 
@@ -832,19 +833,6 @@ export class EventManager {
             try {
               // 尝试使用 ClipboardItem（支持富文本）
               if (window.ClipboardItem) {
-                let htmlValues = data;
-                if (
-                  table.stateManager.select.ranges.length === 1 && //只有一个选区的时候采取解析公式（和excel一致）
-                  table.options.keyboardOptions?.getCopyCellValue?.html
-                ) {
-                  htmlValues = this.table.getCopyValue(
-                    table.options.keyboardOptions?.getCopyCellValue.html as (
-                      col: number,
-                      row: number
-                    ) => string | number
-                  );
-                }
-                const dataHTML = setDataToHTML(htmlValues);
                 await navigator.clipboard.write([
                   new ClipboardItem({
                     'text/html': new Blob([dataHTML], { type: 'text/html' }),
@@ -895,7 +883,21 @@ export class EventManager {
     }
   }
 
-  private setCopyDataToEventClipboard(data: string, e: KeyboardEvent): boolean {
+  private getCopyDataHTML(data: string): string {
+    const table = this.table;
+    let htmlValues = data;
+    if (
+      table.stateManager.select.ranges.length === 1 && //只有一个选区的时候采取解析公式（和excel一致）
+      table.options.keyboardOptions?.getCopyCellValue?.html
+    ) {
+      htmlValues = this.table.getCopyValue(
+        table.options.keyboardOptions?.getCopyCellValue.html as (col: number, row: number) => string | number
+      );
+    }
+    return setDataToHTML(htmlValues);
+  }
+
+  private setCopyDataToEventClipboard(data: string, dataHTML: string, e: KeyboardEvent): boolean {
     const clipboardData = (e as unknown as ClipboardEvent).clipboardData;
     if (!clipboardData) {
       return false;
@@ -903,6 +905,7 @@ export class EventManager {
 
     try {
       clipboardData.setData('text/plain', data);
+      clipboardData.setData('text/html', dataHTML);
       return true;
     } catch (error) {
       console.warn('事件剪贴板写入失败，使用降级方案:', error);
