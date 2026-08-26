@@ -209,7 +209,7 @@ isClickPopUp(target: HTMLElement) {
 }
 ```
 
-Different component libraries expose different props for popup class names. For example, React Arco Select can use `dropdownMenuClassName`, Vue Arco Select can use `triggerProps.class`, and Ant Design Select can use `classNames.popup.root` or `popupClassName` in older versions. See the React and Vue Arco Select custom editor demos for complete examples.
+Different component libraries expose different props for popup class names. For example, React Arco Select can use `dropdownMenuClassName`, Vue Arco Select can use `triggerProps.contentClass`, and Ant Design Select can use `classNames.popup.root` or `popupClassName` in older versions. See the React and Vue Arco Select custom editor demos for complete examples.
 
 If the third-party component has a close animation after selection, or if its internal implementation affects the order of `onChange` and blur events, update the editor's current value in the component change callback before calling `endEdit`. This prevents `getValue` from reading the old value.
 

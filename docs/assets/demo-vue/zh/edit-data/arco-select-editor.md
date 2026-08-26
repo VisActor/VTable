@@ -67,7 +67,7 @@ class ArcoListEditor {
               placeholder: 'Select city',
               modelValue: this.currentValue,
               triggerProps: {
-                class: selectEditorPopupClassName
+                contentClass: selectEditorPopupClassName
               },
               'onUpdate:modelValue': value => {
                 this.currentValue = value;
@@ -124,8 +124,7 @@ class ArcoListEditor {
       if (
         target.classList &&
         (target.classList.contains(selectEditorPopupClassName) ||
-          target.classList.contains('arco-select-vtable') ||
-          target.classList.contains('arco-select-popup'))
+          target.classList.contains('arco-select-vtable'))
       ) {
         return true;
       }

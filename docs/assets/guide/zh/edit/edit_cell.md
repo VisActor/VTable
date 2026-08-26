@@ -214,7 +214,7 @@ isClickPopUp(target: HTMLElement) {
 }
 ```
 
-不同组件库暴露的弹层 class 配置项不同，例如 React Arco Select 可以通过 `dropdownMenuClassName` 配置，Vue Arco Select 可以通过 `triggerProps.class` 配置，Ant Design Select 可以通过 `classNames.popup.root` 或旧版本的 `popupClassName` 配置。完整示例可参考 React 和 Vue 的 Arco Select 自定义编辑器 demo。
+不同组件库暴露的弹层 class 配置项不同，例如 React Arco Select 可以通过 `dropdownMenuClassName` 配置，Vue Arco Select 可以通过 `triggerProps.contentClass` 配置，Ant Design Select 可以通过 `classNames.popup.root` 或旧版本的 `popupClassName` 配置。完整示例可参考 React 和 Vue 的 Arco Select 自定义编辑器 demo。
 
 如果第三方组件在选中后存在关闭动画，或者 `onChange` 与失焦事件的触发顺序受组件内部实现影响，需要先在组件的变更回调中更新编辑器当前值，再按需调用 `endEdit` 结束编辑，避免 `getValue` 读取到旧值。
 
