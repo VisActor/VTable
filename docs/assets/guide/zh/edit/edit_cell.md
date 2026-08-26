@@ -189,6 +189,35 @@ VTable.register.editor('custom-date', custom_date_editor);
 
 在上面的示例中，我们创建了一个名为`DateEditor`的自定义编辑器，并实现了`IEditor`接口所要求的方法。然后，我们通过`VTable.register.editor`方法将自定义编辑器注册到 VTable 中，以便在表格中使用。
 
+### 处理第三方组件的弹层 DOM
+
+当自定义编辑器使用 Select、Cascader、DatePicker、Tooltip 等第三方组件时，弹层 DOM 可能不会挂载在编辑器容器内部，而是通过 portal/teleport 追加到 `body`。这种情况下，用户点击弹层选项时，VTable 看到的点击目标不在编辑器容器内，可能会触发编辑器提前结束。
+
+建议为第三方组件的弹层根节点配置一个稳定的 class，并在 `isEditorElement` 中同时判断编辑器容器和弹层 DOM：
+
+```ts
+const editorPopupClassName = 'vtable-editor-popup';
+
+isEditorElement(target: HTMLElement) {
+  return this.element.contains(target) || this.isClickPopUp(target);
+}
+
+isClickPopUp(target: HTMLElement) {
+  let current: HTMLElement | null = target;
+  while (current) {
+    if (current.classList?.contains(editorPopupClassName)) {
+      return true;
+    }
+    current = current.parentNode as HTMLElement | null;
+  }
+  return false;
+}
+```
+
+不同组件库暴露的弹层 class 配置项不同，例如 React Arco Select 可以通过 `dropdownMenuClassName` 配置，Vue Arco Select 可以通过 `triggerProps.class` 配置，Ant Design Select 可以通过 `classNames.popup.root` 或旧版本的 `popupClassName` 配置。完整示例可参考 React 和 Vue 的 Arco Select 自定义编辑器 demo。
+
+如果第三方组件在选中后存在关闭动画，或者 `onChange` 与失焦事件的触发顺序受组件内部实现影响，需要先在组件的变更回调中更新编辑器当前值，再按需调用 `endEdit` 结束编辑，避免 `getValue` 读取到旧值。
+
 `IEditor` 接口[定义](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
 
 ```ts

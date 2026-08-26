@@ -19,6 +19,8 @@ https://arco.design/vue/components/select
 ## 代码演示
 
 ```javascript livedemo template=vtable-vue
+const selectEditorPopupClassName = 'vtable-editor-select-popup';
+
 class ArcoListEditor {
   root = null;
   element = null;
@@ -64,6 +66,9 @@ class ArcoListEditor {
               style: { height: '32px' },
               placeholder: 'Select city',
               modelValue: this.currentValue,
+              triggerProps: {
+                class: selectEditorPopupClassName
+              },
               'onUpdate:modelValue': value => {
                 this.currentValue = value;
                 self.setValue(value);
@@ -110,12 +115,18 @@ class ArcoListEditor {
   }
 
   isEditorElement(target) {
+    // popup append 在 body 尾部，不在编辑器容器内；点击 popup 时也应该被认为仍在编辑器区域。
     return this.element?.contains(target) || this.isClickPopUp(target);
   }
 
   isClickPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select-vtable')) {
+      if (
+        target.classList &&
+        (target.classList.contains(selectEditorPopupClassName) ||
+          target.classList.contains('arco-select-vtable') ||
+          target.classList.contains('arco-select-popup'))
+      ) {
         return true;
       }
       target = target.parentNode;
