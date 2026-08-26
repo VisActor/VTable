@@ -2047,7 +2047,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false) {
+  changeCellValues(
+    startCol: number,
+    startRow: number,
+    values: (string | number)[][],
+    workOnEditableCell = false,
+    triggerEvent = true,
+    _noTriggerChangeCellValuesEvent?: boolean,
+    shouldCancel?: () => boolean
+  ): boolean[][] {
+    const changedCellResults: boolean[][] = [];
+    if (shouldCancel?.()) {
+      return changedCellResults;
+    }
     let pasteColEnd = startCol;
     let pasteRowEnd = startRow;
     // const rowCount = values.length;
@@ -2078,6 +2090,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (startRow + i > this.rowCount - 1) {
         break;
       }
+      changedCellResults[i] = [];
       pasteRowEnd = startRow + i;
       const rowValues = values[i];
       let thisRowPasteColEnd = startCol;
@@ -2095,12 +2108,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           let newValue: string | number = value;
           const oldValue = oldValues[i][j];
           const rawValue = beforeChangeValues[i][j];
-          if (typeof rawValue === 'number' && isAllDigits(value)) {
+          if (typeof rawValue === 'number' && typeof value === 'string' && isAllDigits(value)) {
             newValue = parseFloat(value);
           }
+          changedCellResults[i][j] = true;
           this._changeCellValueToDataSet(startCol + j, startRow + i, oldValue, newValue);
           const changedValue = this.getCellOriginValue(startCol + j, startRow + i);
-          if (changedValue !== oldValue) {
+          if (changedValue !== oldValue && triggerEvent) {
             this.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
               col: startCol + j,
               row: startRow + i,
@@ -2109,6 +2123,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               changedValue
             });
           }
+        } else {
+          changedCellResults[i][j] = false;
         }
       }
       pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
@@ -2167,6 +2183,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
 
     this.scenegraph.updateNextFrame();
+    return changedCellResults;
   }
 
   private _changeCellValueToDataSet(col: number, row: number, oldValue: string | number, newValue: string | number) {

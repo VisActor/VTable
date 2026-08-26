@@ -759,7 +759,7 @@ export interface PivotTableAPI extends BaseTableAPI {
     triggerEvent?: boolean,
     noTriggerChangeCellValuesEvent?: boolean,
     shouldCancel?: () => boolean
-  ) => void;
+  ) => boolean[][];
 
   /**
    * 获取行表头全路径

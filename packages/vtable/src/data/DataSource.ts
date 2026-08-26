@@ -732,7 +732,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     col?: number,
     row?: number,
     table?: BaseTableAPI
-  ): FieldData {
+  ): FieldData | Promise<FieldData> {
     if (field === null) {
       return undefined;
     }
@@ -752,20 +752,21 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           formatValue = parseFloat(value);
         }
         if (isPromise(record)) {
-          record
+          return record
             .then(record => {
               record[field as string | number] = formatValue;
+              return formatValue;
             })
             .catch((err: Error) => {
               console.error('VTable Error:', err);
+              return undefined;
             });
+        }
+        if (record) {
+          record[field] = formatValue;
         } else {
-          if (record) {
-            record[field] = formatValue;
-          } else {
-            this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
-            this.records[dataIndex as number][field] = formatValue;
-          }
+          this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
+          this.records[dataIndex as number][field] = formatValue;
         }
       }
     }

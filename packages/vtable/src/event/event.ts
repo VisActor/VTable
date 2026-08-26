@@ -69,6 +69,7 @@ type EventClipboardData = {
   hasText?: boolean;
   readFailed?: boolean;
   internalFormulaText?: string;
+  internalFormulaHtmlMarker?: string;
 };
 
 type SourceCell = {
@@ -155,8 +156,10 @@ export class EventManager {
   private clipboardOperationId: number = 0;
   private pasteOperationId: number = 0;
   private pasteWriteInProgress: boolean = false;
+  private pasteWritePromise: Promise<void> = Promise.resolve();
   private clipboardWritePromise: Promise<void> = Promise.resolve();
   private lastCopiedClipboardData: EventClipboardData | null = null;
+  private internalFormulaHtmlMarkerId: number = 0;
   private fieldKeyIds: WeakMap<object, number> = new WeakMap();
   private fieldKeyId: number = 0;
   private activeCutState: CutState | null = null;
@@ -855,10 +858,6 @@ export class EventManager {
     const table = this.table;
     const operationId = ++this.clipboardOperationId;
     this.pasteOperationId++;
-    if (this.pasteWriteInProgress) {
-      e.preventDefault();
-      return null;
-    }
     if (!isCut) {
       this.resetCutState();
     }
@@ -890,19 +889,22 @@ export class EventManager {
       }
       const plainClipboardData = data;
       const internalFormulaText = formulaClipboardData !== plainClipboardData ? formulaClipboardData : undefined;
+      const internalFormulaHtmlMarker = internalFormulaText ? this.createInternalFormulaHtmlMarker() : undefined;
+      const clipboardHTML =
+        dataHTML && internalFormulaHtmlMarker
+          ? this.attachInternalFormulaHtmlMarker(dataHTML, internalFormulaHtmlMarker)
+          : dataHTML;
       const eventClipboardWriteData = hasEventClipboard
-        ? this.setCopyDataToEventClipboard(plainClipboardData, dataHTML, e, internalFormulaText)
+        ? this.setCopyDataToEventClipboard(
+            plainClipboardData,
+            clipboardHTML,
+            e,
+            internalFormulaText,
+            internalFormulaHtmlMarker
+          )
         : null;
       if (eventClipboardWriteData) {
-        copiedClipboardData = await this.ensureQueuedClipboardWrite(
-          eventClipboardWriteData,
-          canUseAsyncClipboard,
-          canWriteRichClipboard,
-          operationId
-        );
-        if (!copiedClipboardData) {
-          return null;
-        }
+        copiedClipboardData = eventClipboardWriteData;
         this.lastCopiedClipboardData = copiedClipboardData;
         if (isCut) {
           this.lastClipboardContent = this.getClipboardSignature(copiedClipboardData);
@@ -967,19 +969,20 @@ export class EventManager {
                   return null;
                 }
                 // 尝试使用 ClipboardItem（支持富文本）
-                if (canWriteRichClipboard && dataHTML) {
+                if (canWriteRichClipboard && clipboardHTML) {
                   await navigator.clipboard.write([
                     new ClipboardItem({
-                      'text/html': new Blob([dataHTML], { type: 'text/html' }),
+                      'text/html': new Blob([clipboardHTML], { type: 'text/html' }),
                       'text/plain': new Blob([plainClipboardData], { type: 'text/plain' })
                     })
                   ]);
                   return {
-                    html: dataHTML,
+                    html: clipboardHTML,
                     text: plainClipboardData,
                     hasHtml: true,
                     hasText: true,
-                    internalFormulaText
+                    internalFormulaText,
+                    internalFormulaHtmlMarker
                   };
                 }
                 // 降级到纯文本
@@ -1275,37 +1278,6 @@ export class EventManager {
     }
   }
 
-  private async ensureQueuedClipboardWrite(
-    clipboardData: EventClipboardData,
-    canUseAsyncClipboard: boolean,
-    canWriteRichClipboard: boolean,
-    operationId: number
-  ): Promise<EventClipboardData | null> {
-    return this.queueClipboardWrite(async () => {
-      if (!this.isClipboardOperationCurrent(operationId)) {
-        return null;
-      }
-      try {
-        if (canWriteRichClipboard && clipboardData.hasHtml) {
-          await navigator.clipboard.write([
-            new ClipboardItem({
-              'text/html': new Blob([clipboardData.html], { type: 'text/html' }),
-              'text/plain': new Blob([clipboardData.text], { type: 'text/plain' })
-            })
-          ]);
-        } else if (canUseAsyncClipboard) {
-          await navigator.clipboard.writeText(clipboardData.text);
-        }
-      } catch (error) {
-        console.warn('异步同步事件剪贴板数据失败，保留事件剪贴板结果:', error);
-      }
-      if (!this.isClipboardOperationCurrent(operationId)) {
-        return null;
-      }
-      return clipboardData;
-    });
-  }
-
   private isClipboardDataChanged(clipboardData: EventClipboardData | null, cutState: CutState): boolean | null {
     if (!clipboardData || clipboardData.readFailed) {
       return null;
@@ -1344,30 +1316,16 @@ export class EventManager {
     if (!clipboardData || clipboardData.readFailed || !sourceData) {
       return false;
     }
-    return this.isClipboardDataSameByCommonTypes(clipboardData, sourceData);
+    return this.isClipboardDataSameBySignature(clipboardData, sourceData);
   }
 
-  private isClipboardDataSameByCommonTypes(clipboardData: EventClipboardData, sourceData: EventClipboardData): boolean {
-    if (sourceData.hasHtml && !clipboardData.hasHtml) {
-      return false;
-    }
-    if (sourceData.hasText && !clipboardData.hasText) {
-      return false;
-    }
-    let hasComparableType = false;
-    if (sourceData.hasHtml && clipboardData.hasHtml) {
-      hasComparableType = true;
-      if (sourceData.html !== clipboardData.html) {
-        return false;
-      }
-    }
-    if (sourceData.hasText && clipboardData.hasText) {
-      hasComparableType = true;
-      if (sourceData.text !== clipboardData.text) {
-        return false;
-      }
-    }
-    return hasComparableType;
+  private isClipboardDataSameBySignature(clipboardData: EventClipboardData, sourceData: EventClipboardData): boolean {
+    return (
+      sourceData.hasHtml === clipboardData.hasHtml &&
+      sourceData.hasText === clipboardData.hasText &&
+      (!sourceData.hasHtml || sourceData.html === clipboardData.html) &&
+      (!sourceData.hasText || sourceData.text === clipboardData.text)
+    );
   }
 
   private getCopyFormulaPlainData(data: string, isCut: boolean): string | null {
@@ -1409,11 +1367,20 @@ export class EventManager {
     }
   }
 
+  private createInternalFormulaHtmlMarker(): string {
+    return `vtable-formula-${Date.now()}-${++this.internalFormulaHtmlMarkerId}`;
+  }
+
+  private attachInternalFormulaHtmlMarker(html: string, marker: string): string {
+    return `${html}<!--${marker}-->`;
+  }
+
   private setCopyDataToEventClipboard(
     data: string,
     dataHTML: string | null,
     e: KeyboardEvent,
-    internalFormulaText?: string
+    internalFormulaText?: string,
+    internalFormulaHtmlMarker?: string
   ): EventClipboardData | null {
     const clipboardData = (e as unknown as ClipboardEvent).clipboardData;
     if (!clipboardData) {
@@ -1428,6 +1395,7 @@ export class EventManager {
           clipboardData.setData('text/html', dataHTML);
           copiedClipboardData.html = dataHTML;
           copiedClipboardData.hasHtml = true;
+          copiedClipboardData.internalFormulaHtmlMarker = internalFormulaHtmlMarker;
         } catch (error) {
           console.warn('事件剪贴板HTML写入失败，保留纯文本数据:', error);
         }
@@ -1521,10 +1489,6 @@ export class EventManager {
   // 执行实际的粘贴操作
   handlePaste(e: KeyboardEvent): void {
     const pasteOperationId = ++this.pasteOperationId;
-    if (this.pasteWriteInProgress) {
-      e.preventDefault();
-      return;
-    }
     const pasteRange = this.getPasteRange();
     if (!pasteRange) {
       return;
@@ -1621,13 +1585,29 @@ export class EventManager {
     const emptyResult = this.getEmptyPasteResult();
     const pasteClipboardData = this.getPasteClipboardData(clipboardData, pasteContext);
     if (
-      this.pasteWriteInProgress ||
       !this.isPasteOperationCurrent(pasteContext.pasteOperationId) ||
       (table as ListTableAPI).editorManager?.editingEditor
     ) {
       return emptyResult;
     }
+    if (this.pasteWriteInProgress) {
+      await this.pasteWritePromise.catch(() => {
+        // Previous paste failures are handled by their own task.
+      });
+      if (
+        !this.isPasteOperationCurrent(pasteContext.pasteOperationId) ||
+        (table as ListTableAPI).editorManager?.editingEditor
+      ) {
+        return emptyResult;
+      }
+    }
     let pasteResult = emptyResult;
+    let settlePasteWrite: () => void = () => {
+      return;
+    };
+    this.pasteWritePromise = new Promise<void>(resolve => {
+      settlePasteWrite = resolve;
+    });
     this.pasteWriteInProgress = true;
     try {
       if ((table as ListTableAPI).changeCellValues) {
@@ -1663,6 +1643,7 @@ export class EventManager {
       return pasteResult;
     } finally {
       this.pasteWriteInProgress = false;
+      settlePasteWrite();
       if (!pasteContext.cutState && table.keyboardOptions?.showCopyCellBorder) {
         clearActiveCellRangeState(table);
       }
@@ -1677,7 +1658,14 @@ export class EventManager {
       return clipboardData;
     }
     const sourceData = pasteContext.cutState?.clipboardData ?? this.lastCopiedClipboardData;
-    if (!sourceData?.internalFormulaText || !this.isClipboardDataSameByCommonTypes(clipboardData, sourceData)) {
+    if (
+      !sourceData?.internalFormulaText ||
+      !sourceData.internalFormulaHtmlMarker ||
+      !sourceData.hasHtml ||
+      !clipboardData.hasHtml ||
+      !this.isClipboardDataSameBySignature(clipboardData, sourceData) ||
+      !clipboardData.html.includes(sourceData.internalFormulaHtmlMarker)
+    ) {
       return clipboardData;
     }
     return {
