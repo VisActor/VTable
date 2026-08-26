@@ -164,7 +164,8 @@ export async function listTableChangeCellValues(
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
-  noTriggerChangeCellValuesEvent?: boolean
+  noTriggerChangeCellValuesEvent?: boolean,
+  shouldCancel?: () => boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -206,8 +207,45 @@ export async function listTableChangeCellValues(
     changedValue: string | number;
   }[] = [];
 
+  const preValidatedCellResults: boolean[][] | null = shouldCancel && workOnEditableCell ? [] : null;
+  if (preValidatedCellResults) {
+    for (let i = 0; i < values.length; i++) {
+      if (shouldCancel?.()) {
+        return changedCellResults;
+      }
+      if (startRow + i > table.rowCount - 1) {
+        break;
+      }
+      preValidatedCellResults[i] = [];
+      const rowValues = values[i];
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > table.colCount - 1) {
+          break;
+        }
+        let isCanChange = false;
+        if (table.isHasEditorDefine(startCol + j, startRow + i)) {
+          const editor = table.getEditor(startCol + j, startRow + i);
+          const oldValue = oldValues[i][j];
+          const value = rowValues[j];
+          const maybePromiseOrValue =
+            editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
+          const validateResult = isPromise(maybePromiseOrValue) ? await maybePromiseOrValue : maybePromiseOrValue;
+          if (shouldCancel?.()) {
+            return changedCellResults;
+          }
+          isCanChange =
+            validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
+        }
+        preValidatedCellResults[i][j] = isCanChange;
+      }
+    }
+  }
+
   //#endregion
   for (let i = 0; i < values.length; i++) {
+    if (shouldCancel?.()) {
+      return changedCellResults;
+    }
     if (startRow + i > table.rowCount - 1) {
       break;
     }
@@ -221,7 +259,9 @@ export async function listTableChangeCellValues(
       }
       thisRowPasteColEnd = startCol + j;
       let isCanChange = false;
-      if (workOnEditableCell === false) {
+      if (preValidatedCellResults) {
+        isCanChange = preValidatedCellResults[i]?.[j] === true;
+      } else if (workOnEditableCell === false) {
         isCanChange = true;
       } else {
         if (table.isHasEditorDefine(startCol + j, startRow + i)) {
@@ -232,6 +272,9 @@ export async function listTableChangeCellValues(
             editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
           if (isPromise(maybePromiseOrValue)) {
             const validateResult = await maybePromiseOrValue;
+            if (shouldCancel?.()) {
+              return changedCellResults;
+            }
             isCanChange =
               validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
           } else {
@@ -244,6 +287,9 @@ export async function listTableChangeCellValues(
       }
       // if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
       if (isCanChange) {
+        if (shouldCancel?.()) {
+          return changedCellResults;
+        }
         changedCellResults[i][j] = true;
         const value = rowValues[j];
         const recordShowIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);

@@ -68,6 +68,7 @@ type EventClipboardData = {
   hasHtml?: boolean;
   hasText?: boolean;
   readFailed?: boolean;
+  internalFormulaText?: string;
 };
 
 type SourceCell = {
@@ -852,12 +853,12 @@ export class EventManager {
 
   async handleCopy(e: KeyboardEvent, isCut: boolean = false): Promise<CopySnapshot | null> {
     const table = this.table;
+    const operationId = ++this.clipboardOperationId;
+    this.pasteOperationId++;
     if (this.pasteWriteInProgress) {
       e.preventDefault();
       return null;
     }
-    const operationId = ++this.clipboardOperationId;
-    this.pasteOperationId++;
     if (!isCut) {
       this.resetCutState();
     }
@@ -883,18 +884,25 @@ export class EventManager {
       const hasEventClipboard = !!(e as unknown as ClipboardEvent).clipboardData;
       const dataHTML =
         !canUseAsyncClipboard || canWriteRichClipboard || hasEventClipboard ? this.getCopyDataHTML(data) : null;
-      const plainClipboardData = this.getCopyFormulaPlainData(data, isCut);
-      if (plainClipboardData === null) {
+      const formulaClipboardData = this.getCopyFormulaPlainData(data, isCut);
+      if (formulaClipboardData === null) {
         return null;
       }
+      const plainClipboardData = data;
+      const internalFormulaText = formulaClipboardData !== plainClipboardData ? formulaClipboardData : undefined;
       const eventClipboardWriteData = hasEventClipboard
-        ? this.setCopyDataToEventClipboard(plainClipboardData, dataHTML, e)
+        ? this.setCopyDataToEventClipboard(plainClipboardData, dataHTML, e, internalFormulaText)
         : null;
       if (eventClipboardWriteData) {
-        if (!this.isClipboardOperationCurrent(operationId)) {
+        copiedClipboardData = await this.ensureQueuedClipboardWrite(
+          eventClipboardWriteData,
+          canUseAsyncClipboard,
+          canWriteRichClipboard,
+          operationId
+        );
+        if (!copiedClipboardData) {
           return null;
         }
-        copiedClipboardData = eventClipboardWriteData;
         this.lastCopiedClipboardData = copiedClipboardData;
         if (isCut) {
           this.lastClipboardContent = this.getClipboardSignature(copiedClipboardData);
@@ -966,11 +974,17 @@ export class EventManager {
                       'text/plain': new Blob([plainClipboardData], { type: 'text/plain' })
                     })
                   ]);
-                  return { html: dataHTML, text: plainClipboardData, hasHtml: true, hasText: true };
+                  return {
+                    html: dataHTML,
+                    text: plainClipboardData,
+                    hasHtml: true,
+                    hasText: true,
+                    internalFormulaText
+                  };
                 }
                 // 降级到纯文本
                 await navigator.clipboard.writeText(plainClipboardData);
-                return { html: '', text: plainClipboardData, hasText: true };
+                return { html: '', text: plainClipboardData, hasText: true, internalFormulaText };
               });
               if (copiedClipboardData) {
                 copySucceeded = true;
@@ -986,21 +1000,21 @@ export class EventManager {
                 return null;
               }
               if (copySucceeded) {
-                copiedClipboardData = { html: '', text: plainClipboardData, hasText: true };
+                copiedClipboardData = { html: '', text: plainClipboardData, hasText: true, internalFormulaText };
               }
             }
           } else {
             // 没有权限，使用降级方案
             copySucceeded = this.fallbackCopyToClipboard(plainClipboardData);
             if (copySucceeded) {
-              copiedClipboardData = { html: '', text: plainClipboardData, hasText: true };
+              copiedClipboardData = { html: '', text: plainClipboardData, hasText: true, internalFormulaText };
             }
           }
         } else {
           // 不支持现代剪贴板API，使用降级方案
           copySucceeded = this.fallbackCopyToClipboard(plainClipboardData);
           if (copySucceeded) {
-            copiedClipboardData = { html: '', text: plainClipboardData, hasText: true };
+            copiedClipboardData = { html: '', text: plainClipboardData, hasText: true, internalFormulaText };
           }
         }
 
@@ -1031,7 +1045,7 @@ export class EventManager {
         if (!this.isClipboardOperationCurrent(operationId)) {
           return null;
         }
-        this.lastCopiedClipboardData = { html: '', text: plainClipboardData, hasText: true };
+        this.lastCopiedClipboardData = { html: '', text: plainClipboardData, hasText: true, internalFormulaText };
         if (isCut) {
           this.lastClipboardContent = this.getClipboardSignature(this.lastCopiedClipboardData);
           copySnapshot.clipboardData = this.lastCopiedClipboardData;
@@ -1261,6 +1275,37 @@ export class EventManager {
     }
   }
 
+  private async ensureQueuedClipboardWrite(
+    clipboardData: EventClipboardData,
+    canUseAsyncClipboard: boolean,
+    canWriteRichClipboard: boolean,
+    operationId: number
+  ): Promise<EventClipboardData | null> {
+    return this.queueClipboardWrite(async () => {
+      if (!this.isClipboardOperationCurrent(operationId)) {
+        return null;
+      }
+      try {
+        if (canWriteRichClipboard && clipboardData.hasHtml) {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': new Blob([clipboardData.html], { type: 'text/html' }),
+              'text/plain': new Blob([clipboardData.text], { type: 'text/plain' })
+            })
+          ]);
+        } else if (canUseAsyncClipboard) {
+          await navigator.clipboard.writeText(clipboardData.text);
+        }
+      } catch (error) {
+        console.warn('异步同步事件剪贴板数据失败，保留事件剪贴板结果:', error);
+      }
+      if (!this.isClipboardOperationCurrent(operationId)) {
+        return null;
+      }
+      return clipboardData;
+    });
+  }
+
   private isClipboardDataChanged(clipboardData: EventClipboardData | null, cutState: CutState): boolean | null {
     if (!clipboardData || clipboardData.readFailed) {
       return null;
@@ -1272,14 +1317,8 @@ export class EventManager {
     if (sourceData.hasHtml && !clipboardData.hasHtml) {
       return null;
     }
-    if (!sourceData.hasHtml && clipboardData.hasHtml) {
-      return true;
-    }
     if (sourceData.hasText && !clipboardData.hasText) {
       return null;
-    }
-    if (!sourceData.hasText && clipboardData.hasText) {
-      return true;
     }
     let hasComparableType = false;
     if (clipboardData.hasHtml && sourceData.hasHtml) {
@@ -1294,7 +1333,10 @@ export class EventManager {
         return true;
       }
     }
-    return hasComparableType ? false : null;
+    if (hasComparableType) {
+      return false;
+    }
+    return null;
   }
 
   private isClipboardDataSameAsLastCopy(clipboardData: EventClipboardData | null): boolean {
@@ -1302,10 +1344,30 @@ export class EventManager {
     if (!clipboardData || clipboardData.readFailed || !sourceData) {
       return false;
     }
-    if (!!sourceData.hasHtml !== !!clipboardData.hasHtml || !!sourceData.hasText !== !!clipboardData.hasText) {
+    return this.isClipboardDataSameByCommonTypes(clipboardData, sourceData);
+  }
+
+  private isClipboardDataSameByCommonTypes(clipboardData: EventClipboardData, sourceData: EventClipboardData): boolean {
+    if (sourceData.hasHtml && !clipboardData.hasHtml) {
       return false;
     }
-    return this.getClipboardSignature(clipboardData) === this.getClipboardSignature(sourceData);
+    if (sourceData.hasText && !clipboardData.hasText) {
+      return false;
+    }
+    let hasComparableType = false;
+    if (sourceData.hasHtml && clipboardData.hasHtml) {
+      hasComparableType = true;
+      if (sourceData.html !== clipboardData.html) {
+        return false;
+      }
+    }
+    if (sourceData.hasText && clipboardData.hasText) {
+      hasComparableType = true;
+      if (sourceData.text !== clipboardData.text) {
+        return false;
+      }
+    }
+    return hasComparableType;
   }
 
   private getCopyFormulaPlainData(data: string, isCut: boolean): string | null {
@@ -1350,7 +1412,8 @@ export class EventManager {
   private setCopyDataToEventClipboard(
     data: string,
     dataHTML: string | null,
-    e: KeyboardEvent
+    e: KeyboardEvent,
+    internalFormulaText?: string
   ): EventClipboardData | null {
     const clipboardData = (e as unknown as ClipboardEvent).clipboardData;
     if (!clipboardData) {
@@ -1359,7 +1422,7 @@ export class EventManager {
 
     try {
       clipboardData.setData('text/plain', data);
-      const copiedClipboardData: EventClipboardData = { html: '', text: data, hasText: true };
+      const copiedClipboardData: EventClipboardData = { html: '', text: data, hasText: true, internalFormulaText };
       if (dataHTML) {
         try {
           clipboardData.setData('text/html', dataHTML);
@@ -1457,6 +1520,7 @@ export class EventManager {
 
   // 执行实际的粘贴操作
   handlePaste(e: KeyboardEvent): void {
+    const pasteOperationId = ++this.pasteOperationId;
     if (this.pasteWriteInProgress) {
       e.preventDefault();
       return;
@@ -1465,7 +1529,6 @@ export class EventManager {
     if (!pasteRange) {
       return;
     }
-    const pasteOperationId = ++this.pasteOperationId;
     const eventClipboardData = this.getEventClipboardData(e);
     const pasteCopySourceRange = this.copySourceRange;
     if (!this.cutWaitPaste) {
@@ -1556,6 +1619,7 @@ export class EventManager {
   ): Promise<PasteWriteResult> {
     const table = this.table;
     const emptyResult = this.getEmptyPasteResult();
+    const pasteClipboardData = this.getPasteClipboardData(clipboardData, pasteContext);
     if (
       this.pasteWriteInProgress ||
       !this.isPasteOperationCurrent(pasteContext.pasteOperationId) ||
@@ -1568,22 +1632,25 @@ export class EventManager {
     try {
       if ((table as ListTableAPI).changeCellValues) {
         try {
-          if (clipboardData?.html) {
+          if (pasteClipboardData?.html) {
             try {
-              const htmlResult = await this.processPastedHTML(clipboardData.html, pasteContext);
+              const htmlResult = await this.processPastedHTML(pasteClipboardData.html, pasteContext);
               if (htmlResult.pasted) {
                 pasteResult = htmlResult;
                 return pasteResult;
               }
             } catch (error) {
               console.warn('粘贴HTML数据失败:', error);
-              if (/<table\b/i.test(clipboardData.html)) {
+              if (/<table\b/i.test(pasteClipboardData.html)) {
                 return emptyResult;
               }
             }
           }
-          if (clipboardData?.hasText || clipboardData?.text) {
-            pasteResult = await this.processPastedText(clipboardData.text, pasteContext);
+          if (pasteClipboardData?.hasText || pasteClipboardData?.text) {
+            pasteResult = await this.processPastedText(
+              pasteClipboardData.internalFormulaText ?? pasteClipboardData.text,
+              pasteContext
+            );
             return pasteResult;
           }
         } catch (error) {
@@ -1600,6 +1667,23 @@ export class EventManager {
         clearActiveCellRangeState(table);
       }
     }
+  }
+
+  private getPasteClipboardData(
+    clipboardData: EventClipboardData | null,
+    pasteContext: PasteContext
+  ): EventClipboardData | null {
+    if (!clipboardData || !pasteContext.copySourceRange) {
+      return clipboardData;
+    }
+    const sourceData = pasteContext.cutState?.clipboardData ?? this.lastCopiedClipboardData;
+    if (!sourceData?.internalFormulaText || !this.isClipboardDataSameByCommonTypes(clipboardData, sourceData)) {
+      return clipboardData;
+    }
+    return {
+      ...clipboardData,
+      internalFormulaText: sourceData.internalFormulaText
+    };
   }
 
   private getPasteRange(): PasteRange | null {
@@ -1767,7 +1851,10 @@ export class EventManager {
       col,
       row,
       valuesToPaste,
-      !pasteContext.cutState
+      !pasteContext.cutState,
+      true,
+      undefined,
+      () => !this.isPasteOperationCurrent(pasteContext.pasteOperationId)
     );
     if (!this.isPasteOperationCurrent(pasteContext.pasteOperationId)) {
       return this.getEmptyPasteResult();
@@ -1832,7 +1919,10 @@ export class EventManager {
       col,
       row,
       valuesToPaste,
-      !pasteContext.cutState
+      !pasteContext.cutState,
+      true,
+      undefined,
+      () => !this.isPasteOperationCurrent(pasteContext.pasteOperationId)
     );
     if (!this.isPasteOperationCurrent(pasteContext.pasteOperationId)) {
       return this.getEmptyPasteResult();
