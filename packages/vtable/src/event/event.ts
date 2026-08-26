@@ -55,6 +55,7 @@ type CopySnapshot = {
   copySourceRange: { startCol: number; startRow: number } | null;
   cellInfos: CellInfo[][] | null;
   sourceCells: SourceCell[];
+  sourceCellMatrix: SourceCellMatrix;
   sourceColCount: number;
   sourceRowCount: number;
   clipboardData: EventClipboardData | null;
@@ -77,11 +78,14 @@ type SourceCell = {
   value?: any;
 };
 
+type SourceCellMatrix = (SourceCell | null)[][];
+
 type CutState = {
   id: number;
   ranges: ClipboardRange[];
   cellInfos: CellInfo[][] | null;
   sourceCells: SourceCell[];
+  sourceCellMatrix: SourceCellMatrix;
   sourceColCount: number;
   sourceRowCount: number;
   clipboardData: EventClipboardData | null;
@@ -150,6 +154,7 @@ export class EventManager {
   private clipboardOperationId: number = 0;
   private pasteOperationId: number = 0;
   private pasteWriteInProgress: boolean = false;
+  private clipboardWritePromise: Promise<void> = Promise.resolve();
   private lastCopiedClipboardData: EventClipboardData | null = null;
   private fieldKeyIds: WeakMap<object, number> = new WeakMap();
   private fieldKeyId: number = 0;
@@ -847,12 +852,12 @@ export class EventManager {
 
   async handleCopy(e: KeyboardEvent, isCut: boolean = false): Promise<CopySnapshot | null> {
     const table = this.table;
-    const operationId = ++this.clipboardOperationId;
-    this.pasteOperationId++;
     if (this.pasteWriteInProgress) {
       e.preventDefault();
       return null;
     }
+    const operationId = ++this.clipboardOperationId;
+    this.pasteOperationId++;
     if (!isCut) {
       this.resetCutState();
     }
@@ -949,27 +954,26 @@ export class EventManager {
               if (!this.isClipboardOperationCurrent(operationId)) {
                 return null;
               }
-              // 尝试使用 ClipboardItem（支持富文本）
-              if (canWriteRichClipboard && dataHTML) {
-                await navigator.clipboard.write([
-                  new ClipboardItem({
-                    'text/html': new Blob([dataHTML], { type: 'text/html' }),
-                    'text/plain': new Blob([plainClipboardData], { type: 'text/plain' })
-                  })
-                ]);
+              copiedClipboardData = await this.queueClipboardWrite(async () => {
                 if (!this.isClipboardOperationCurrent(operationId)) {
                   return null;
                 }
-                copySucceeded = true;
-                copiedClipboardData = { html: dataHTML, text: plainClipboardData, hasHtml: true, hasText: true };
-              } else {
+                // 尝试使用 ClipboardItem（支持富文本）
+                if (canWriteRichClipboard && dataHTML) {
+                  await navigator.clipboard.write([
+                    new ClipboardItem({
+                      'text/html': new Blob([dataHTML], { type: 'text/html' }),
+                      'text/plain': new Blob([plainClipboardData], { type: 'text/plain' })
+                    })
+                  ]);
+                  return { html: dataHTML, text: plainClipboardData, hasHtml: true, hasText: true };
+                }
                 // 降级到纯文本
                 await navigator.clipboard.writeText(plainClipboardData);
-                if (!this.isClipboardOperationCurrent(operationId)) {
-                  return null;
-                }
+                return { html: '', text: plainClipboardData, hasText: true };
+              });
+              if (copiedClipboardData) {
                 copySucceeded = true;
-                copiedClipboardData = { html: '', text: plainClipboardData, hasText: true };
               }
             } catch (clipboardError) {
               console.warn('剪贴板写入失败，使用降级方案:', clipboardError);
@@ -1079,8 +1083,9 @@ export class EventManager {
       end: { col: range.end.col, row: range.end.row }
     }));
     const sourceRange = ranges.length === 1 ? ranges[0] : null;
-    const sourceCells = this.getSourceCells(clonedRanges);
-    const sourceSize = this.getSourceSize(clonedRanges, sourceCells.length);
+    const sourceCellMatrix = this.getSourceCellMatrix(clonedRanges);
+    const sourceCells = this.getSourceCells(sourceCellMatrix);
+    const sourceSize = this.getSourceSize(clonedRanges, sourceCellMatrix);
 
     return {
       ranges: clonedRanges,
@@ -1092,6 +1097,7 @@ export class EventManager {
         : null,
       cellInfos: includeCellInfos ? this.table.getSelectedCellInfos() : null,
       sourceCells,
+      sourceCellMatrix,
       sourceColCount: sourceSize.colCount,
       sourceRowCount: sourceSize.rowCount,
       clipboardData: null,
@@ -1106,29 +1112,101 @@ export class EventManager {
     }));
   }
 
-  private getSourceCells(ranges: ClipboardRange[]): SourceCell[] {
+  private getSourceCellMatrix(ranges: ClipboardRange[]): SourceCellMatrix {
     const table = this.table as ListTableAPI;
-    const sourceCells: SourceCell[] = [];
-    for (let i = 0; i < ranges.length; i++) {
-      const range = ranges[i];
+    const createSourceCell = (col: number, row: number): SourceCell => {
+      const recordShowIndex = table.getRecordShowIndexByCell?.(col, row);
+      const recordIndex = recordShowIndex >= 0 ? (table as any).dataSource?.getIndexKey?.(recordShowIndex) : undefined;
+      const field = table.internalProps?.layoutMap?.getBody?.(col, row)?.field;
+      return { col, row, recordIndex, field, value: table.getCellOriginValue?.(col, row) };
+    };
+    if (ranges.length === 1) {
+      const range = ranges[0];
       const startCol = Math.min(range.start.col, range.end.col);
       const endCol = Math.max(range.start.col, range.end.col);
       const startRow = Math.min(range.start.row, range.end.row);
       const endRow = Math.max(range.start.row, range.end.row);
+      const sourceCellMatrix: SourceCellMatrix = [];
       for (let row = startRow; row <= endRow; row++) {
+        const rowCells: (SourceCell | null)[] = [];
         for (let col = startCol; col <= endCol; col++) {
-          const recordShowIndex = table.getRecordShowIndexByCell?.(col, row);
-          const recordIndex =
-            recordShowIndex >= 0 ? (table as any).dataSource?.getIndexKey?.(recordShowIndex) : undefined;
-          const field = table.internalProps?.layoutMap?.getBody?.(col, row)?.field;
-          sourceCells.push({ col, row, recordIndex, field, value: table.getCellOriginValue?.(col, row) });
+          rowCells.push(createSourceCell(col, row));
+        }
+        sourceCellMatrix.push(rowCells);
+      }
+      return sourceCellMatrix;
+    }
+
+    let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
+    let maxCol = Math.max(ranges[0].start.col, ranges[0].end.col);
+    let minRow = Math.min(ranges[0].start.row, ranges[0].end.row);
+    let maxRow = Math.max(ranges[0].start.row, ranges[0].end.row);
+    ranges.forEach(range => {
+      minCol = Math.min(minCol, range.start.col, range.end.col);
+      maxCol = Math.max(maxCol, range.start.col, range.end.col);
+      minRow = Math.min(minRow, range.start.row, range.end.row);
+      maxRow = Math.max(maxRow, range.start.row, range.end.row);
+    });
+    const isExistDataInRow = (row: number) =>
+      ranges.some(range => {
+        const startRow = Math.min(range.start.row, range.end.row);
+        const endRow = Math.max(range.start.row, range.end.row);
+        return startRow <= row && endRow >= row;
+      });
+    const isExistDataInCol = (col: number) =>
+      ranges.some(range => {
+        const startCol = Math.min(range.start.col, range.end.col);
+        const endCol = Math.max(range.start.col, range.end.col);
+        return startCol <= col && endCol >= col;
+      });
+    const getRangeExistDataInCell = (col: number, row: number) =>
+      ranges.some(range => {
+        const startRow = Math.min(range.start.row, range.end.row);
+        const endRow = Math.max(range.start.row, range.end.row);
+        const startCol = Math.min(range.start.col, range.end.col);
+        const endCol = Math.max(range.start.col, range.end.col);
+        return startCol <= col && endCol >= col && startRow <= row && endRow >= row;
+      });
+    const sourceCellMatrix: SourceCellMatrix = [];
+    for (let row = minRow; row <= maxRow; row++) {
+      if (!isExistDataInRow(row)) {
+        continue;
+      }
+      const rowCells: (SourceCell | null)[] = [];
+      for (let col = minCol; col <= maxCol; col++) {
+        if (!isExistDataInCol(col)) {
+          continue;
+        }
+        rowCells.push(getRangeExistDataInCell(col, row) ? createSourceCell(col, row) : null);
+      }
+      sourceCellMatrix.push(rowCells);
+    }
+    return sourceCellMatrix;
+  }
+
+  private getSourceCells(sourceCellMatrix: SourceCellMatrix): SourceCell[] {
+    const sourceCells: SourceCell[] = [];
+    for (let row = 0; row < sourceCellMatrix.length; row++) {
+      for (let col = 0; col < sourceCellMatrix[row].length; col++) {
+        const sourceCell = sourceCellMatrix[row][col];
+        if (sourceCell) {
+          sourceCells.push(sourceCell);
         }
       }
     }
     return sourceCells;
   }
 
-  private getSourceSize(ranges: ClipboardRange[], sourceCellCount: number): { colCount: number; rowCount: number } {
+  private getSourceSize(
+    ranges: ClipboardRange[],
+    sourceCellMatrix: SourceCellMatrix
+  ): { colCount: number; rowCount: number } {
+    if (sourceCellMatrix.length) {
+      return {
+        colCount: sourceCellMatrix[0]?.length ?? 0,
+        rowCount: sourceCellMatrix.length
+      };
+    }
     if (ranges.length === 1) {
       const range = ranges[0];
       return {
@@ -1136,10 +1214,7 @@ export class EventManager {
         rowCount: Math.abs(range.end.row - range.start.row) + 1
       };
     }
-    return {
-      colCount: sourceCellCount,
-      rowCount: 1
-    };
+    return { colCount: 0, rowCount: 0 };
   }
 
   private getClipboardSignature(data: EventClipboardData | null): string {
@@ -1159,6 +1234,33 @@ export class EventManager {
     return (operationId === undefined || operationId === this.pasteOperationId) && !this.table.isReleased;
   }
 
+  private async queueClipboardWrite(
+    write: () => Promise<EventClipboardData | null>
+  ): Promise<EventClipboardData | null> {
+    const previousWrite = this.clipboardWritePromise;
+    let settleCurrentWrite: () => void = () => {
+      return;
+    };
+    this.clipboardWritePromise = previousWrite
+      .catch(() => {
+        // Ignore stale write failures so the latest copy can still proceed.
+      })
+      .then(
+        () =>
+          new Promise<void>(resolve => {
+            settleCurrentWrite = resolve;
+          })
+      );
+    await previousWrite.catch(() => {
+      // Previous clipboard write failure should not block later copy attempts.
+    });
+    try {
+      return await write();
+    } finally {
+      settleCurrentWrite();
+    }
+  }
+
   private isClipboardDataChanged(clipboardData: EventClipboardData | null, cutState: CutState): boolean | null {
     if (!clipboardData || clipboardData.readFailed) {
       return null;
@@ -1169,6 +1271,15 @@ export class EventManager {
     }
     if (sourceData.hasHtml && !clipboardData.hasHtml) {
       return null;
+    }
+    if (!sourceData.hasHtml && clipboardData.hasHtml) {
+      return true;
+    }
+    if (sourceData.hasText && !clipboardData.hasText) {
+      return null;
+    }
+    if (!sourceData.hasText && clipboardData.hasText) {
+      return true;
     }
     let hasComparableType = false;
     if (clipboardData.hasHtml && sourceData.hasHtml) {
@@ -1191,7 +1302,7 @@ export class EventManager {
     if (!clipboardData || clipboardData.readFailed || !sourceData) {
       return false;
     }
-    if (sourceData.hasHtml && !clipboardData.hasHtml) {
+    if (!!sourceData.hasHtml !== !!clipboardData.hasHtml || !!sourceData.hasText !== !!clipboardData.hasText) {
       return false;
     }
     return this.getClipboardSignature(clipboardData) === this.getClipboardSignature(sourceData);
@@ -1316,6 +1427,7 @@ export class EventManager {
       ranges: this.cloneRanges(copySnapshot.ranges),
       cellInfos: copySnapshot.cellInfos,
       sourceCells: copySnapshot.sourceCells,
+      sourceCellMatrix: copySnapshot.sourceCellMatrix,
       sourceColCount: copySnapshot.sourceColCount,
       sourceRowCount: copySnapshot.sourceRowCount,
       clipboardData: copySnapshot.clipboardData,
@@ -1345,7 +1457,6 @@ export class EventManager {
 
   // 执行实际的粘贴操作
   handlePaste(e: KeyboardEvent): void {
-    const pasteOperationId = ++this.pasteOperationId;
     if (this.pasteWriteInProgress) {
       e.preventDefault();
       return;
@@ -1354,6 +1465,7 @@ export class EventManager {
     if (!pasteRange) {
       return;
     }
+    const pasteOperationId = ++this.pasteOperationId;
     const eventClipboardData = this.getEventClipboardData(e);
     const pasteCopySourceRange = this.copySourceRange;
     if (!this.cutWaitPaste) {
@@ -1393,6 +1505,11 @@ export class EventManager {
         }
         const changed = this.isClipboardDataChanged(clipboardData, cutState);
         if (changed === null) {
+          await this.executePaste(clipboardData, {
+            pasteRange,
+            copySourceRange: this.isClipboardDataSameAsLastCopy(clipboardData) ? pasteCopySourceRange : null,
+            pasteOperationId
+          });
           return;
         }
         const pasteResult = await this.executePaste(clipboardData, {
@@ -1852,15 +1969,16 @@ export class EventManager {
     const migratedSourceCells: SourceCell[] = [];
     const migratedKeys = new Set<string>();
     if (!cutState.isSingleRange) {
-      let sourceIndex = 0;
       for (let rowIndex = 0; rowIndex < changedCellResults.length; rowIndex++) {
         for (let colIndex = 0; colIndex < (changedCellResults[rowIndex]?.length ?? 0); colIndex++) {
-          const sourceCell = cutState.sourceCells[sourceIndex++];
           if (!changedCellResults[rowIndex][colIndex]) {
             continue;
           }
+          const sourceRow = rowIndex % cutState.sourceRowCount;
+          const sourceCol = colIndex % cutState.sourceColCount;
+          const sourceCell = cutState.sourceCellMatrix[sourceRow]?.[sourceCol];
           if (!sourceCell) {
-            return [];
+            continue;
           }
           const sourceKey = this.getCellKey(sourceCell);
           if (!migratedKeys.has(sourceKey)) {
