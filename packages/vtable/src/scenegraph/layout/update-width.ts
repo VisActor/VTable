@@ -446,7 +446,15 @@ function updateCellWidth(
           );
           const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
           customElementsGroup = shouldRenderContent
-            ? createCornerCustomMergeContainer(customResult.elementsGroup, width, height, mergeRange, scene.table)
+            ? createCornerCustomMergeContainer(
+                customResult.elementsGroup,
+                width,
+                height,
+                mergeRange,
+                scene.table,
+                col,
+                row
+              )
             : undefined;
           renderDefault = shouldRenderContent ? customResult.renderDefault : false;
           isHeightChange = true;

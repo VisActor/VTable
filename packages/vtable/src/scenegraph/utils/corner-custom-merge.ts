@@ -26,7 +26,9 @@ export function createCornerCustomMergeContainer(
   width: number,
   height: number,
   range: CellRange | undefined,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  col: number,
+  row: number
 ): VGroup | undefined {
   if (!customElementsGroup || !isCornerCustomMergeRange(range, table)) {
     return customElementsGroup;
@@ -43,6 +45,8 @@ export function createCornerCustomMergeContainer(
     clip: true
   });
   customContainer.name = CUSTOM_CONTAINER_NAME;
+  customContainer.col = col;
+  customContainer.row = row;
   customContainer.appendChild(customElementsGroup);
 
   return customContainer as unknown as VGroup;

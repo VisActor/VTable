@@ -599,7 +599,7 @@ function _generateCustomElementsGroup(
     // custom merge custom render
     const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, range, table);
     customElementsGroup = shouldRenderContent
-      ? createCornerCustomMergeContainer(customResult.elementsGroup, cellWidth, cellHeight, range, table)
+      ? createCornerCustomMergeContainer(customResult.elementsGroup, cellWidth, cellHeight, range, table, col, row)
       : undefined;
     renderDefault = shouldRenderContent ? customResult.renderDefault : false;
   } else if (range?.isCustom && !table.isCornerHeader(col, row)) {
@@ -633,7 +633,7 @@ function _generateCustomElementsGroup(
       );
       const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, range, table);
       customElementsGroup = shouldRenderContent
-        ? createCornerCustomMergeContainer(customResult.elementsGroup, cellWidth, cellHeight, range, table)
+        ? createCornerCustomMergeContainer(customResult.elementsGroup, cellWidth, cellHeight, range, table, col, row)
         : undefined;
       renderDefault = shouldRenderContent ? customResult.renderDefault : false;
     }
@@ -1412,7 +1412,9 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           contentWidth,
           contentHeight,
           customMergeRange,
-          table
+          table,
+          col,
+          row
         );
 
         if (cellGroup.childrenCount > 0 && customElementsGroup) {

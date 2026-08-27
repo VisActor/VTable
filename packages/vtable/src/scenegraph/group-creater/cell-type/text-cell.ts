@@ -43,14 +43,14 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  customElementsGroup: VGroup,
+  customElementsGroup: VGroup | undefined,
   renderDefault: boolean,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
   isAsync: boolean
 ): Group {
   const isCornerCustomMergeContentCell =
-    !!customElementsGroup && isCornerCustomMergeRange(range, table) && col === range.end.col && row === range.end.row;
+    isCornerCustomMergeRange(range, table) && col === range.end.col && row === range.end.row;
   // The carrier cell must allow the clipped merge container to span internal cell bounds.
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
@@ -124,8 +124,8 @@ export function createCellGroup(
   }
   if (isCornerCustomMergeContentCell) {
     cellGroup.setAttributes({
-      width: Math.max(cellGroup.attribute.width, customElementsGroup.attribute.width ?? 0),
-      height: Math.max(cellGroup.attribute.height, customElementsGroup.attribute.height ?? 0)
+      width: Math.max(cellGroup.attribute.width, customElementsGroup?.attribute.width ?? 0),
+      height: Math.max(cellGroup.attribute.height, customElementsGroup?.attribute.height ?? 0)
     });
   }
   if (renderDefault) {
