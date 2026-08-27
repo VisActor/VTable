@@ -16,10 +16,10 @@ export class ReactCustomLayout {
   removeAllContainer: () => void;
   table: BaseTableAPI;
   customLayoutFuncCache: Map<string, ICustomLayoutFuc>;
-  reactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
+  reactRemoveGraphicCache: Map<string, (col: number, row: number, afterRemove?: () => void) => boolean | void>;
   reactRemoveAllGraphicCache: Map<string, () => void>;
   headerCustomLayoutFuncCache: Map<string, ICustomLayoutFuc>;
-  headerReactRemoveGraphicCache: Map<string, (col: number, row: number) => void>;
+  headerReactRemoveGraphicCache: Map<string, (col: number, row: number, afterRemove?: () => void) => boolean | void>;
   headerReactRemoveAllGraphicCache: Map<string, () => void>;
   // reactContainerCache: Map<number, Map<string, any>>;
   constructor(table: BaseTableAPI) {
@@ -58,7 +58,7 @@ export class ReactCustomLayout {
 
   setReactRemoveGraphic(
     componentId: string,
-    removeGraphic: (col: number, row: number) => void,
+    removeGraphic: (col: number, row: number, afterRemove?: () => void) => boolean | void,
     isHeaderCustomLayout?: boolean
   ) {
     if (isHeaderCustomLayout) {
@@ -134,7 +134,7 @@ export class ReactCustomLayout {
     return this.customLayoutFuncCache.get(componentId) || emptyCustomLayout;
   }
 
-  removeCustomCell(col: number, row: number) {
+  removeCustomCell(col: number, row: number, afterRemove?: () => void): boolean {
     // const { startInTotal } = this.table.getBodyColumnDefine(col, row) as any;
     const isHeader = this.table.isHeader(col, row);
     let removeFun;
@@ -148,8 +148,9 @@ export class ReactCustomLayout {
       removeFun = this.reactRemoveGraphicCache.get(componentId);
     }
     if (removeFun) {
-      removeFun(col, row);
+      return removeFun(col, row, afterRemove) !== false;
     }
+    return true;
   }
 
   clearCache() {

@@ -21,7 +21,7 @@ import {
   createCornerCustomMergeContainer,
   isCornerCustomMergeRange,
   shouldRenderCornerCustomMergeContent,
-  updateCornerCustomMergeContent
+  updateCornerCustomMergeContentOnce
 } from '../utils/corner-custom-merge';
 import { computeRowHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
@@ -133,6 +133,7 @@ function updateColunmWidth(
   scene: Scenegraph
 ) {
   let needRerangeRow = false;
+  const refreshedCornerCustomMergeRanges = new Set<string>();
   // const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const oldColumnWidth = columnGroup?.attribute.width ?? 0;
   columnGroup?.setAttribute('width', oldColumnWidth + detaX);
@@ -147,7 +148,8 @@ function updateColunmWidth(
       oldColumnWidth + detaX,
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
-      scene.table.internalProps.autoWrapText
+      scene.table.internalProps.autoWrapText,
+      refreshedCornerCustomMergeRanges
     );
     if (isHeightChange) {
       const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
@@ -252,7 +254,8 @@ function updateCellWidth(
   detaX: number,
   isHeader: boolean,
   // autoColWidth: boolean,
-  autoWrapText: boolean
+  autoWrapText: boolean,
+  refreshedCornerCustomMergeRanges?: Set<string>
 ): boolean {
   if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
@@ -314,7 +317,16 @@ function updateCellWidth(
     oldBarCell.release();
 
     // deal width text
-    const cellChange = updateMergeCellContentWidth(cellGroup, distWidth, detaX, autoRowHeight, true, scene.table);
+    const cellChange = updateMergeCellContentWidth(
+      cellGroup,
+      distWidth,
+      detaX,
+      autoRowHeight,
+      true,
+      scene.table,
+      true,
+      refreshedCornerCustomMergeRanges
+    );
     isHeightChange = isHeightChange || cellChange;
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
@@ -485,7 +497,8 @@ function updateCellWidth(
       autoRowHeight,
       renderDefault,
       scene.table,
-      !customContainer
+      !customContainer,
+      refreshedCornerCustomMergeRanges
     );
     isHeightChange = isHeightChange || cellChange;
   }
@@ -503,7 +516,8 @@ function updateMergeCellContentWidth(
   autoRowHeight: boolean,
   renderDefault: boolean,
   table: BaseTableAPI,
-  refreshCornerCustomMergeContent = true
+  refreshCornerCustomMergeContent = true,
+  refreshedCornerCustomMergeRanges?: Set<string>
 ) {
   if (isMergeCellGroup(cellGroup)) {
     distWidth = 0;
@@ -598,7 +612,7 @@ function updateMergeCellContentWidth(
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
     if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
-      updateCornerCustomMergeContent(mergeRange, table);
+      updateCornerCustomMergeContentOnce(mergeRange, table, refreshedCornerCustomMergeRanges);
     }
     return isHeightChange;
   }

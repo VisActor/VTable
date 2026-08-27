@@ -52,12 +52,50 @@ export function createCornerCustomMergeContainer(
 }
 
 export function updateCornerCustomMergeContent(range: CellRange, table: BaseTableAPI): void {
+  updateCornerCustomMergeContentOnce(range, table);
+}
+
+export function updateCornerCustomMergeContentOnce(
+  range: CellRange,
+  table: BaseTableAPI,
+  refreshedRanges?: Set<string>
+): void {
+  if (refreshedRanges) {
+    const rangeKey = `${range.start.col}-${range.start.row}-${range.end.col}-${range.end.row}`;
+    if (refreshedRanges.has(rangeKey)) {
+      return;
+    }
+    refreshedRanges.add(rangeKey);
+  }
+
+  refreshCornerCustomMergeContent(range, table);
+}
+
+function refreshCornerCustomMergeContent(range: CellRange, table: BaseTableAPI): void {
   const cellGroup = table.scenegraph.getCell(range.end.col, range.end.row);
   const customContainer =
     cellGroup.getChildByName(CUSTOM_CONTAINER_NAME) || cellGroup.getChildByName(CUSTOM_MERGE_CONTAINER_NAME);
 
   if (customContainer) {
-    table.reactCustomLayout?.removeCustomCell(range.start.col, range.start.row);
+    const removed = table.reactCustomLayout?.removeCustomCell(range.start.col, range.start.row, () => {
+      removeCornerCustomContainerAndUpdate(range, table);
+    });
+    if (removed === false) {
+      return;
+    }
+    removeCornerCustomContainerAndUpdate(range, table);
+    return;
+  }
+
+  table.scenegraph.updateCellContent(range.end.col, range.end.row);
+}
+
+function removeCornerCustomContainerAndUpdate(range: CellRange, table: BaseTableAPI): void {
+  const cellGroup = table.scenegraph.getCell(range.end.col, range.end.row);
+  const customContainer =
+    cellGroup.getChildByName(CUSTOM_CONTAINER_NAME) || cellGroup.getChildByName(CUSTOM_MERGE_CONTAINER_NAME);
+
+  if (customContainer) {
     customContainer.removeAllChild();
     cellGroup.removeChild(customContainer);
   }
