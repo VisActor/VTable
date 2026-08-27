@@ -21,7 +21,8 @@ import { Factory } from '../../core/factory';
 import {
   createCornerCustomMergeContainer,
   isCornerCustomMergeRange,
-  shouldRenderCornerCustomMergeContent
+  shouldRenderCornerCustomMergeContent,
+  updateCornerCustomMergeContent
 } from '../utils/corner-custom-merge';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
@@ -412,7 +413,7 @@ function updateMergeCellContentHeight(
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
     if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
-      table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
+      updateCornerCustomMergeContent(mergeRange, table);
     }
   } else {
     const style = table._getCellStyle(cellGroup.col, cellGroup.row);

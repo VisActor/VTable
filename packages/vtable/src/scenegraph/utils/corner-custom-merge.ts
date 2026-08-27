@@ -1,7 +1,7 @@
 import type { Group as VGroup } from '@src/vrender';
 import type { CellRange } from '../../ts-types';
 import type { BaseTableAPI } from '../../ts-types/base-table';
-import { CUSTOM_CONTAINER_NAME } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME } from '../component/custom';
 import { Group } from '../graphic/group';
 
 export function isCornerCustomMergeRange(range: CellRange | undefined, table: BaseTableAPI): boolean {
@@ -49,4 +49,18 @@ export function createCornerCustomMergeContainer(
   customContainer.appendChild(customElementsGroup);
 
   return customContainer as unknown as VGroup;
+}
+
+export function updateCornerCustomMergeContent(range: CellRange, table: BaseTableAPI): void {
+  const cellGroup = table.scenegraph.getCell(range.end.col, range.end.row);
+  const customContainer =
+    cellGroup.getChildByName(CUSTOM_CONTAINER_NAME) || cellGroup.getChildByName(CUSTOM_MERGE_CONTAINER_NAME);
+
+  if (customContainer) {
+    table.reactCustomLayout?.removeCustomCell(range.start.col, range.start.row);
+    customContainer.removeAllChild();
+    cellGroup.removeChild(customContainer);
+  }
+
+  table.scenegraph.updateCellContent(range.end.col, range.end.row);
 }

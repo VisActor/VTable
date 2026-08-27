@@ -20,7 +20,8 @@ import { updateCellContentWidth } from '../utils/text-icon-layout';
 import {
   createCornerCustomMergeContainer,
   isCornerCustomMergeRange,
-  shouldRenderCornerCustomMergeContent
+  shouldRenderCornerCustomMergeContent,
+  updateCornerCustomMergeContent
 } from '../utils/corner-custom-merge';
 import { computeRowHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
@@ -597,7 +598,7 @@ function updateMergeCellContentWidth(
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
     if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
-      table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
+      updateCornerCustomMergeContent(mergeRange, table);
     }
     return isHeightChange;
   }
