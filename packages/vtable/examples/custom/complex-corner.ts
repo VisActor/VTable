@@ -103,6 +103,7 @@ export function createTable() {
         const linePoints = [
           { x: 0, y: 0 },
           { x: width - 40, y: height },
+          { x: 0, y: 0 },
           { x: provinceWidth + cityWidth + 3, y: height },
           { x: 0, y: 0 },
           { x: provinceWidth, y: height },
