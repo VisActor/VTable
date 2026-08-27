@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: prevent empty image, audio, and video cells from opening media previews (GitHub #5290)",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "108231307+dajiaohuang@users.noreply.github.com"
+}
