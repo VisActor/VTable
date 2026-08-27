@@ -106,7 +106,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     const key = `${col}-${row}`;
     if (container.current.has(key)) {
       const currentContainer = container.current.get(key);
-      module.reconcilor.updateContainer(null, currentContainer, null);
+      reconcilorUnmountContainer(module, currentContainer);
       // group = currentContainer.containerInfo;
       currentContainer.containerInfo.delete();
       container.current.delete(key);
@@ -121,7 +121,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     }
     container.current.forEach((value, key) => {
       const currentContainer = value;
-      module.reconcilor.updateContainer(null, currentContainer, null);
+      reconcilorUnmountContainer(module, currentContainer);
       currentContainer.containerInfo.delete();
     });
     container.current.clear();
@@ -235,6 +235,20 @@ function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElem
   //   // debugger;
   //   // group.html.dom = div;
   // }
+}
+
+function reconcilorUnmountContainer(module: ReconcilerModule, currentContainer: any) {
+  const { reconcilor } = module;
+  const updateContainerSync = (reconcilor as any).updateContainerSync;
+  if (typeof updateContainerSync === 'function') {
+    updateContainerSync(null, currentContainer, null);
+    const flushSyncWork = (reconcilor as any).flushSyncWork;
+    if (typeof flushSyncWork === 'function') {
+      flushSyncWork();
+    }
+    return;
+  }
+  reconcilor.updateContainer(null, currentContainer, null);
 }
 
 function getCellRect(col: number, row: number, table: any) {
