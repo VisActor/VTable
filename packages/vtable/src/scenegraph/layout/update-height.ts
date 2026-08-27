@@ -255,24 +255,33 @@ export function updateCellHeight(
           }
         }
 
-        if (customLayout || customRender) {
+        const mergeRange = isMergeCellGroup(cell)
+          ? scene.table.getCellRange(cell.mergeStartCol, cell.mergeStartRow)
+          : undefined;
+        const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
+        if (!shouldRenderContent) {
+          renderDefault = false;
+        } else if (customLayout || customRender) {
           // const { autoRowHeight } = table.internalProps;
           const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
           let width = cell.attribute.width;
           let height = cell.attribute.height;
-          const mergeRange = isMergeCellGroup(cell)
-            ? scene.table.getCellRange(cell.mergeStartCol, cell.mergeStartRow)
-            : undefined;
           if (isMergeCellGroup(cell)) {
             width = scene.table.getColsWidth(cell.mergeStartCol, cell.mergeEndCol);
             height = scene.table.getRowsHeight(cell.mergeStartRow, cell.mergeEndRow);
           }
+          let customCol = col;
+          let customRow = row;
+          if (mergeRange && isCornerCustomMergeRange(mergeRange, scene.table)) {
+            customCol = mergeRange.start.col;
+            customRow = mergeRange.start.row;
+          }
           const customResult = dealWithCustom(
             customLayout,
             customRender,
-            col,
-            row,
+            customCol,
+            customRow,
             width,
             height,
             false,
@@ -281,19 +290,14 @@ export function updateCellHeight(
             mergeRange,
             scene.table
           );
-          const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
-          customElementsGroup = shouldRenderContent
-            ? createCornerCustomMergeContainer(
-                customResult.elementsGroup,
-                width,
-                height,
-                mergeRange,
-                scene.table,
-                col,
-                row
-              )
-            : undefined;
-          renderDefault = shouldRenderContent ? customResult.renderDefault : false;
+          customElementsGroup = createCornerCustomMergeContainer(
+            customResult.elementsGroup,
+            width,
+            height,
+            mergeRange,
+            scene.table
+          );
+          renderDefault = customResult.renderDefault;
         }
 
         if (cell.childrenCount > 0 && customElementsGroup) {

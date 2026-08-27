@@ -7,6 +7,7 @@ import { Group } from '../graphic/group';
 export function isCornerCustomMergeRange(range: CellRange | undefined, table: BaseTableAPI): boolean {
   return (
     !!range?.isCustom &&
+    (range.start.col !== range.end.col || range.start.row !== range.end.row) &&
     table.isCornerHeader(range.start.col, range.start.row) &&
     table.isCornerHeader(range.end.col, range.end.row)
   );
@@ -26,9 +27,7 @@ export function createCornerCustomMergeContainer(
   width: number,
   height: number,
   range: CellRange | undefined,
-  table: BaseTableAPI,
-  col: number,
-  row: number
+  table: BaseTableAPI
 ): VGroup | undefined {
   if (!customElementsGroup || !isCornerCustomMergeRange(range, table)) {
     return customElementsGroup;
@@ -45,8 +44,8 @@ export function createCornerCustomMergeContainer(
     clip: true
   });
   customContainer.name = CUSTOM_CONTAINER_NAME;
-  customContainer.col = col;
-  customContainer.row = row;
+  customContainer.col = range.start.col;
+  customContainer.row = range.start.row;
   customContainer.appendChild(customElementsGroup);
 
   return customContainer as unknown as VGroup;

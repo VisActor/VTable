@@ -418,24 +418,33 @@ function updateCellWidth(
           }
         }
 
-        if (customLayout || customRender) {
+        const mergeRange = isMergeCellGroup(cellGroup)
+          ? scene.table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow)
+          : undefined;
+        const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
+        if (!shouldRenderContent) {
+          renderDefault = false;
+        } else if (customLayout || customRender) {
           // const { autoRowHeight } = table.internalProps;
           const style = scene.table._getCellStyle(col, row) as ProgressBarStyle;
           const padding = getQuadProps(getProp('padding', style, col, row, scene.table));
           let width = cellGroup.attribute.width;
           let height = cellGroup.attribute.height;
-          const mergeRange = isMergeCellGroup(cellGroup)
-            ? scene.table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow)
-            : undefined;
           if (isMergeCellGroup(cellGroup)) {
             width = scene.table.getColsWidth(cellGroup.mergeStartCol, cellGroup.mergeEndCol);
             height = scene.table.getRowsHeight(cellGroup.mergeStartRow, cellGroup.mergeEndRow);
           }
+          let customCol = col;
+          let customRow = row;
+          if (mergeRange && isCornerCustomMergeRange(mergeRange, scene.table)) {
+            customCol = mergeRange.start.col;
+            customRow = mergeRange.start.row;
+          }
           const customResult = dealWithCustom(
             customLayout,
             customRender,
-            col,
-            row,
+            customCol,
+            customRow,
             width,
             height,
             false,
@@ -444,19 +453,14 @@ function updateCellWidth(
             mergeRange,
             scene.table
           );
-          const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, mergeRange, scene.table);
-          customElementsGroup = shouldRenderContent
-            ? createCornerCustomMergeContainer(
-                customResult.elementsGroup,
-                width,
-                height,
-                mergeRange,
-                scene.table,
-                col,
-                row
-              )
-            : undefined;
-          renderDefault = shouldRenderContent ? customResult.renderDefault : false;
+          customElementsGroup = createCornerCustomMergeContainer(
+            customResult.elementsGroup,
+            width,
+            height,
+            mergeRange,
+            scene.table
+          );
+          renderDefault = customResult.renderDefault;
           isHeightChange = true;
         }
 
