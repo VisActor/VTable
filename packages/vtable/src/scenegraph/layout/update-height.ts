@@ -327,7 +327,15 @@ export function updateCellHeight(
     //     scene.table
     //   );
     // }
-    updateMergeCellContentHeight(cell, distHeight, detaY, scene.table.isAutoRowHeight(row), renderDefault, scene.table);
+    updateMergeCellContentHeight(
+      cell,
+      distHeight,
+      detaY,
+      scene.table.isAutoRowHeight(row),
+      renderDefault,
+      scene.table,
+      !customContainer
+    );
   }
 }
 
@@ -337,7 +345,8 @@ function updateMergeCellContentHeight(
   detaY: number,
   autoRowHeight: boolean,
   renderDefault: boolean,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  refreshCornerCustomMergeContent = true
 ) {
   if (isMergeCellGroup(cellGroup)) {
     distHeight = 0;
@@ -402,7 +411,7 @@ function updateMergeCellContentHeight(
       }
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
-    if (isCornerCustomMergeRange(mergeRange, table)) {
+    if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
       table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
     }
   } else {

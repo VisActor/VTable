@@ -483,7 +483,8 @@ function updateCellWidth(
       detaX,
       autoRowHeight,
       renderDefault,
-      scene.table
+      scene.table,
+      !customContainer
     );
     isHeightChange = isHeightChange || cellChange;
   }
@@ -500,7 +501,8 @@ function updateMergeCellContentWidth(
   detaX: number,
   autoRowHeight: boolean,
   renderDefault: boolean,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  refreshCornerCustomMergeContent = true
 ) {
   if (isMergeCellGroup(cellGroup)) {
     distWidth = 0;
@@ -594,7 +596,7 @@ function updateMergeCellContentWidth(
       }
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
-    if (isCornerCustomMergeRange(mergeRange, table)) {
+    if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
       table.scenegraph.updateCellContent(mergeRange.end.col, mergeRange.end.row);
     }
     return isHeightChange;
