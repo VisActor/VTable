@@ -75,7 +75,7 @@ export function flushCornerCustomMergeContentUpdates(
   table: BaseTableAPI
 ): void {
   pendingRanges.forEach(range => {
-    refreshCornerCustomMergeContent(range, table);
+    refreshCornerCustomMergeContentForResize(range, table);
   });
   pendingRanges.clear();
 }
@@ -92,6 +92,18 @@ function refreshCornerCustomMergeContent(range: CellRange, table: BaseTableAPI):
   if (customContainer) {
     table.reactCustomLayout?.removeCustomCell(range.start.col, range.start.row);
     customContainer.removeAllChild();
+    cellGroup.removeChild(customContainer);
+  }
+
+  table.scenegraph.updateCellContent(range.end.col, range.end.row);
+}
+
+function refreshCornerCustomMergeContentForResize(range: CellRange, table: BaseTableAPI): void {
+  const cellGroup = table.scenegraph.getCell(range.end.col, range.end.row);
+  const customContainer =
+    cellGroup.getChildByName(CUSTOM_CONTAINER_NAME) || cellGroup.getChildByName(CUSTOM_MERGE_CONTAINER_NAME);
+
+  if (customContainer) {
     cellGroup.removeChild(customContainer);
   }
 
