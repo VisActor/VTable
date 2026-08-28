@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: preserve pivot table column widths after updateOption (#5298)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "biukam.w@gmail.com"
+}
