@@ -4,6 +4,8 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME } from '../component/custom';
 import { Group } from '../graphic/group';
 
+export type CornerCustomMergeRangeUpdateMap = Map<string, CellRange>;
+
 export function isCornerCustomMergeRange(range: CellRange | undefined, table: BaseTableAPI): boolean {
   return (
     !!range?.isCustom &&
@@ -52,23 +54,34 @@ export function createCornerCustomMergeContainer(
 }
 
 export function updateCornerCustomMergeContent(range: CellRange, table: BaseTableAPI): void {
-  updateCornerCustomMergeContentOnce(range, table);
+  refreshCornerCustomMergeContent(range, table);
 }
 
-export function updateCornerCustomMergeContentOnce(
+export function queueCornerCustomMergeContentUpdate(
   range: CellRange,
   table: BaseTableAPI,
-  refreshedRanges?: Set<string>
+  pendingRanges?: CornerCustomMergeRangeUpdateMap
 ): void {
-  if (refreshedRanges) {
-    const rangeKey = `${range.start.col}-${range.start.row}-${range.end.col}-${range.end.row}`;
-    if (refreshedRanges.has(rangeKey)) {
-      return;
-    }
-    refreshedRanges.add(rangeKey);
+  if (!pendingRanges) {
+    refreshCornerCustomMergeContent(range, table);
+    return;
   }
 
-  refreshCornerCustomMergeContent(range, table);
+  pendingRanges.set(getCornerCustomMergeRangeKey(range), range);
+}
+
+export function flushCornerCustomMergeContentUpdates(
+  pendingRanges: CornerCustomMergeRangeUpdateMap,
+  table: BaseTableAPI
+): void {
+  pendingRanges.forEach(range => {
+    refreshCornerCustomMergeContent(range, table);
+  });
+  pendingRanges.clear();
+}
+
+function getCornerCustomMergeRangeKey(range: CellRange): string {
+  return `${range.start.col}-${range.start.row}-${range.end.col}-${range.end.row}`;
 }
 
 function refreshCornerCustomMergeContent(range: CellRange, table: BaseTableAPI): void {

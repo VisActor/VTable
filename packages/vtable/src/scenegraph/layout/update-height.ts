@@ -19,10 +19,12 @@ import { getCellMergeRange } from '../../tools/merge-range';
 import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
 import { Factory } from '../../core/factory';
 import {
+  type CornerCustomMergeRangeUpdateMap,
   createCornerCustomMergeContainer,
+  flushCornerCustomMergeContentUpdates,
   isCornerCustomMergeRange,
-  shouldRenderCornerCustomMergeContent,
-  updateCornerCustomMergeContentOnce
+  queueCornerCustomMergeContentUpdate,
+  shouldRenderCornerCustomMergeContent
 } from '../utils/corner-custom-merge';
 
 export function updateRowHeight(
@@ -30,8 +32,11 @@ export function updateRowHeight(
   row: number,
   detaY: number,
   skipTableHeightMap?: boolean,
-  refreshedCornerCustomMergeRanges = new Set<string>()
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ) {
+  const shouldFlushCornerCustomMergeRanges = !pendingCornerCustomMergeRanges;
+  pendingCornerCustomMergeRanges ??= new Map();
+
   // 更新table行高存储
   if (!skipTableHeightMap && detaY) {
     scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
@@ -57,7 +62,7 @@ export function updateRowHeight(
       height + detaY,
       detaY,
       scene.table.isHeader(col, row),
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
 
     scene.updateCellContentWhileResize(col, row);
@@ -91,6 +96,10 @@ export function updateRowHeight(
       }
     }
   }
+
+  if (shouldFlushCornerCustomMergeRanges) {
+    flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, scene.table);
+  }
 }
 
 /**
@@ -105,7 +114,7 @@ export function updateCellHeightForRow(
   height: number,
   detaY: number,
   isHeader: boolean,
-  refreshedCornerCustomMergeRanges?: Set<string>
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
   // autoRowHeight: boolean
 ) {
   // cell.setAttribute('height', height);
@@ -117,7 +126,7 @@ export function updateCellHeightForRow(
     return;
   }
 
-  updateCellHeight(scene, cellGroup, col, row, distHeight, detaY, isHeader, refreshedCornerCustomMergeRanges);
+  updateCellHeight(scene, cellGroup, col, row, distHeight, detaY, isHeader, pendingCornerCustomMergeRanges);
 }
 
 export function updateCellHeightForColumn(
@@ -142,7 +151,7 @@ export function updateCellHeight(
   distHeight: number,
   detaY: number,
   isHeader: boolean,
-  refreshedCornerCustomMergeRanges?: Set<string>
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ) {
   if (cell.attribute.height === distHeight && !cell.needUpdateHeight) {
     return;
@@ -199,7 +208,7 @@ export function updateCellHeight(
       true,
       scene.table,
       true,
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
   } else if (type === 'sparkline') {
     // 目前先采用重新生成节点的方案
@@ -368,7 +377,7 @@ export function updateCellHeight(
       renderDefault,
       scene.table,
       !customContainer,
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
   }
 }
@@ -381,7 +390,7 @@ function updateMergeCellContentHeight(
   renderDefault: boolean,
   table: BaseTableAPI,
   refreshCornerCustomMergeContent = true,
-  refreshedCornerCustomMergeRanges?: Set<string>
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ) {
   if (isMergeCellGroup(cellGroup)) {
     distHeight = 0;
@@ -447,7 +456,7 @@ function updateMergeCellContentHeight(
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
     if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
-      updateCornerCustomMergeContentOnce(mergeRange, table, refreshedCornerCustomMergeRanges);
+      queueCornerCustomMergeContentUpdate(mergeRange, table, pendingCornerCustomMergeRanges);
     }
   } else {
     const style = table._getCellStyle(cellGroup.col, cellGroup.row);

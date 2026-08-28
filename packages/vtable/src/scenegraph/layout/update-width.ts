@@ -18,10 +18,12 @@ import { isMergeCellGroup } from '../utils/is-merge-cell-group';
 import { getQuadProps } from '../utils/padding';
 import { updateCellContentWidth } from '../utils/text-icon-layout';
 import {
+  type CornerCustomMergeRangeUpdateMap,
   createCornerCustomMergeContainer,
+  flushCornerCustomMergeContentUpdates,
   isCornerCustomMergeRange,
-  shouldRenderCornerCustomMergeContent,
-  updateCornerCustomMergeContentOnce
+  queueCornerCustomMergeContentUpdate,
+  shouldRenderCornerCustomMergeContent
 } from '../utils/corner-custom-merge';
 import { computeRowHeight } from './compute-row-height';
 import { updateCellHeightForRow } from './update-height';
@@ -42,8 +44,11 @@ export function updateColWidth(
   col: number,
   detaX: number,
   skipTableWidthMap?: boolean,
-  refreshedCornerCustomMergeRanges = new Set<string>()
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ) {
+  const shouldFlushCornerCustomMergeRanges = !pendingCornerCustomMergeRanges;
+  pendingCornerCustomMergeRanges ??= new Map();
+
   if (!skipTableWidthMap) {
     scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
   }
@@ -52,33 +57,33 @@ export function updateColWidth(
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const rightTopColumn = scene.getColGroupInRightTopCorner(col);
   if (colOrCornerHeaderColumn && !rightTopColumn) {
-    updateColunmWidth(colOrCornerHeaderColumn, detaX, 'col-corner', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(colOrCornerHeaderColumn, detaX, 'col-corner', scene, pendingCornerCustomMergeRanges);
   }
   // deal with right bottom frozen cells
   if (rightTopColumn) {
-    updateColunmWidth(rightTopColumn, detaX, 'right-top', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(rightTopColumn, detaX, 'right-top', scene, pendingCornerCustomMergeRanges);
   }
 
   // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
-    updateColunmWidth(rowHeaderOrBodyColumn, detaX, 'row-body', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(rowHeaderOrBodyColumn, detaX, 'row-body', scene, pendingCornerCustomMergeRanges);
   }
 
   const leftBottomColumn = scene.getColGroupInLeftBottomCorner(col);
   // deal with left bottom frozen cells
   if (leftBottomColumn) {
-    updateColunmWidth(leftBottomColumn, detaX, 'left-bottom', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(leftBottomColumn, detaX, 'left-bottom', scene, pendingCornerCustomMergeRanges);
   }
   // deal with bottom frozen cells
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
-    updateColunmWidth(bottomColumn, detaX, 'bottom', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(bottomColumn, detaX, 'bottom', scene, pendingCornerCustomMergeRanges);
   }
   // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
   if (rightBottomColumn) {
-    updateColunmWidth(rightBottomColumn, detaX, 'right-bottom', scene, refreshedCornerCustomMergeRanges);
+    updateColunmWidth(rightBottomColumn, detaX, 'right-bottom', scene, pendingCornerCustomMergeRanges);
   }
 
   // 更新剩余列位置
@@ -128,6 +133,10 @@ export function updateColWidth(
     });
   }
 
+  if (shouldFlushCornerCustomMergeRanges) {
+    flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, scene.table);
+  }
+
   // scene.table.setColWidth(col, rowHeaderOrBodyColumn.attribute.width, true);
 }
 
@@ -137,7 +146,7 @@ function updateColunmWidth(
   // autoRowHeight: boolean,
   mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-top' | 'right-bottom',
   scene: Scenegraph,
-  refreshedCornerCustomMergeRanges: Set<string>
+  pendingCornerCustomMergeRanges: CornerCustomMergeRangeUpdateMap
 ) {
   let needRerangeRow = false;
   // const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
@@ -155,7 +164,7 @@ function updateColunmWidth(
       detaX,
       mode === 'row-body' ? cell.col < scene.table.rowHeaderLevelCount : true,
       scene.table.internalProps.autoWrapText,
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
     if (isHeightChange) {
       const mergeInfo = getCellMergeInfo(scene.table, cell.col, cell.row);
@@ -261,7 +270,7 @@ function updateCellWidth(
   isHeader: boolean,
   // autoColWidth: boolean,
   autoWrapText: boolean,
-  refreshedCornerCustomMergeRanges?: Set<string>
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ): boolean {
   if (cell.attribute.width === distWidth && !cell.needUpdateWidth) {
     return false;
@@ -331,7 +340,7 @@ function updateCellWidth(
       true,
       scene.table,
       true,
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
     isHeightChange = isHeightChange || cellChange;
   } else if (type === 'sparkline') {
@@ -510,7 +519,7 @@ function updateCellWidth(
       renderDefault,
       scene.table,
       !customContainer,
-      refreshedCornerCustomMergeRanges
+      pendingCornerCustomMergeRanges
     );
     isHeightChange = isHeightChange || cellChange;
   }
@@ -529,7 +538,7 @@ function updateMergeCellContentWidth(
   renderDefault: boolean,
   table: BaseTableAPI,
   refreshCornerCustomMergeContent = true,
-  refreshedCornerCustomMergeRanges?: Set<string>
+  pendingCornerCustomMergeRanges?: CornerCustomMergeRangeUpdateMap
 ) {
   if (isMergeCellGroup(cellGroup)) {
     distWidth = 0;
@@ -624,7 +633,7 @@ function updateMergeCellContentWidth(
     }
     const mergeRange = table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow);
     if (refreshCornerCustomMergeContent && isCornerCustomMergeRange(mergeRange, table)) {
-      updateCornerCustomMergeContentOnce(mergeRange, table, refreshedCornerCustomMergeRanges);
+      queueCornerCustomMergeContentUpdate(mergeRange, table, pendingCornerCustomMergeRanges);
     }
     return isHeightChange;
   }

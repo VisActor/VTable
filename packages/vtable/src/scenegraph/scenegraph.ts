@@ -1001,9 +1001,9 @@ export class Scenegraph {
     detaX: number,
     skipUpdateContainer?: boolean,
     skipTableWidthMap?: boolean,
-    refreshedCornerCustomMergeRanges?: Set<string>
+    pendingCornerCustomMergeRanges?: Map<string, CellRange>
   ) {
-    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap, refreshedCornerCustomMergeRanges);
+    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap, pendingCornerCustomMergeRanges);
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
@@ -1550,10 +1550,10 @@ export class Scenegraph {
     row: number,
     detaY: number,
     skipTableHeightMap?: boolean,
-    refreshedCornerCustomMergeRanges?: Set<string>
+    pendingCornerCustomMergeRanges?: Map<string, CellRange>
   ) {
     detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY, skipTableHeightMap, refreshedCornerCustomMergeRanges);
+    updateRowHeight(this, row, detaY, skipTableHeightMap, pendingCornerCustomMergeRanges);
     this.updateContainerHeight(row, detaY);
   }
   updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
