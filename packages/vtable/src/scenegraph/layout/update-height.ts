@@ -25,13 +25,18 @@ import {
   updateCornerCustomMergeContentOnce
 } from '../utils/corner-custom-merge';
 
-export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
+export function updateRowHeight(
+  scene: Scenegraph,
+  row: number,
+  detaY: number,
+  skipTableHeightMap?: boolean,
+  refreshedCornerCustomMergeRanges = new Set<string>()
+) {
   // 更新table行高存储
   if (!skipTableHeightMap && detaY) {
     scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
   }
 
-  const refreshedCornerCustomMergeRanges = new Set<string>();
   for (let col = 0; col < scene.table.colCount; col++) {
     const cell = scene.getCell(col, row);
     if (cell.role === 'empty') {
@@ -226,9 +231,15 @@ export function updateCellHeight(
       (cell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
-      // if (scene.table.reactCustomLayout) {
-      //   scene.table.reactCustomLayout.removeCustomCell(col, row);
-      // }
+      if (scene.table.reactCustomLayout) {
+        const mergeRange = isMergeCellGroup(cell)
+          ? scene.table.getCellRange(cell.mergeStartCol, cell.mergeStartRow)
+          : undefined;
+        const shouldUseMergeStart = mergeRange && isCornerCustomMergeRange(mergeRange, scene.table);
+        const removeCol = shouldUseMergeStart ? mergeRange.start.col : col;
+        const removeRow = shouldUseMergeStart ? mergeRange.start.row : row;
+        scene.table.reactCustomLayout.removeCustomCell(removeCol, removeRow);
+      }
       // customContainer.removeAllChild();
       let customElementsGroup;
       cell.removeChild(customContainer);

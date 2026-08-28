@@ -98,30 +98,20 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     [children, reportReconcilerError]
   );
 
-  const removeContainer = useCallback((col: number, row: number, afterRemove?: () => void) => {
+  const removeContainer = useCallback((col: number, row: number) => {
     const module = reconcilerModule.current;
     if (!module) {
-      return true;
+      return;
     }
     const key = `${col}-${row}`;
     if (container.current.has(key)) {
       const currentContainer = container.current.get(key);
-      const syncUnmounted = reconcilorUnmountContainer(module, currentContainer);
-      const finalizeRemove = () => {
+      reconcilorUnmountContainer(module, currentContainer);
+      if (container.current.get(key) === currentContainer) {
         currentContainer.containerInfo.delete();
         container.current.delete(key);
-      };
-      if (syncUnmounted) {
-        finalizeRemove();
-        return true;
       }
-      scheduleAfterReconcilerCommit(module, () => {
-        finalizeRemove();
-        afterRemove?.();
-      });
-      return false;
     }
-    return true;
   }, []);
 
   const removeAllContainer = useCallback(() => {
@@ -130,25 +120,20 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       container.current.clear();
       return;
     }
-    const pendingContainers: Array<{ key: string; currentContainer: FiberRoot }> = [];
-    let canFlushSync = true;
-    container.current.forEach((value, key) => {
-      const currentContainer = value;
-      canFlushSync = requestReconcilerUnmountContainer(module, currentContainer) && canFlushSync;
-      pendingContainers.push({ key, currentContainer });
+    const pendingContainers = Array.from(container.current.entries());
+    batchReconcilerUpdates(module, () => {
+      pendingContainers.forEach(([, currentContainer]) => {
+        requestReconcilerUnmountContainer(module, currentContainer);
+      });
     });
-    const finalizeRemove = () => {
-      pendingContainers.forEach(({ key, currentContainer }) => {
+    flushReconcilerWork(module);
+
+    pendingContainers.forEach(([key, currentContainer]) => {
+      if (container.current.get(key) === currentContainer) {
         currentContainer.containerInfo.delete();
         container.current.delete(key);
-      });
-    };
-
-    if (canFlushSync && flushReconcilerWork(module)) {
-      finalizeRemove();
-    } else {
-      scheduleAfterReconcilerCommit(module, finalizeRemove);
-    }
+      }
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -243,10 +228,7 @@ function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElem
   const updateContainerSync = (reconcilor as any).updateContainerSync;
   if (typeof updateContainerSync === 'function') {
     updateContainerSync(element, currentContainer, null);
-    const flushSyncWork = (reconcilor as any).flushSyncWork;
-    if (typeof flushSyncWork === 'function') {
-      flushSyncWork();
-    }
+    flushReconcilerWork(module);
     return;
   }
   reconcilor.updateContainer(element, currentContainer, null);
@@ -262,26 +244,23 @@ function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElem
 }
 
 function reconcilorUnmountContainer(module: ReconcilerModule, currentContainer: any): boolean {
-  if (!requestReconcilerUnmountContainer(module, currentContainer)) {
-    return false;
-  }
+  requestReconcilerUnmountContainer(module, currentContainer);
   return flushReconcilerWork(module);
 }
 
-function requestReconcilerUnmountContainer(module: ReconcilerModule, currentContainer: any): boolean {
+function requestReconcilerUnmountContainer(module: ReconcilerModule, currentContainer: any) {
   const { reconcilor } = module;
   const updateContainerSync = (reconcilor as any).updateContainerSync;
   if (typeof updateContainerSync === 'function') {
     try {
       updateContainerSync(null, currentContainer, null);
-      return true;
+      return;
     } catch {
       reconcilor.updateContainer(null, currentContainer, null);
-      return false;
+      return;
     }
   }
   reconcilor.updateContainer(null, currentContainer, null);
-  return false;
 }
 
 function flushReconcilerWork(module: ReconcilerModule): boolean {
@@ -290,7 +269,7 @@ function flushReconcilerWork(module: ReconcilerModule): boolean {
   if (typeof flushSyncWork === 'function') {
     try {
       const result = flushSyncWork();
-      if (result === false) {
+      if (result === true) {
         return false;
       }
     } catch {
@@ -309,12 +288,13 @@ function flushReconcilerWork(module: ReconcilerModule): boolean {
   return true;
 }
 
-function scheduleAfterReconcilerCommit(module: ReconcilerModule, callback: () => void) {
-  // eslint-disable-next-line no-undef
-  setTimeout(() => {
-    flushReconcilerWork(module);
+function batchReconcilerUpdates(module: ReconcilerModule, callback: () => void) {
+  const batchedUpdates = (module.reconcilor as any).batchedUpdates;
+  if (typeof batchedUpdates === 'function') {
+    batchedUpdates(callback);
+  } else {
     callback();
-  }, 0);
+  }
 }
 
 function getCellRect(col: number, row: number, table: any) {

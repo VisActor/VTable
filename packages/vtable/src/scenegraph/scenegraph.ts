@@ -512,6 +512,8 @@ export class Scenegraph {
   }
 
   releaseStage() {
+    this.clear = true;
+    this._needUpdateContainer = false;
     const releaseAppRef = this.releaseVRenderAppRef;
     this.releaseVRenderAppRef = undefined;
 
@@ -994,8 +996,14 @@ export class Scenegraph {
    * @param {number} detaX 改变的宽度值
    * @return {*}
    */
-  updateColWidth(col: number, detaX: number, skipUpdateContainer?: boolean, skipTableWidthMap?: boolean) {
-    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap);
+  updateColWidth(
+    col: number,
+    detaX: number,
+    skipUpdateContainer?: boolean,
+    skipTableWidthMap?: boolean,
+    refreshedCornerCustomMergeRanges?: Set<string>
+  ) {
+    updateColWidth(this, col, Math.round(detaX), skipTableWidthMap, refreshedCornerCustomMergeRanges);
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
@@ -1538,9 +1546,14 @@ export class Scenegraph {
     }
   }
 
-  updateRowHeight(row: number, detaY: number, skipTableHeightMap?: boolean) {
+  updateRowHeight(
+    row: number,
+    detaY: number,
+    skipTableHeightMap?: boolean,
+    refreshedCornerCustomMergeRanges?: Set<string>
+  ) {
     detaY = Math.round(detaY);
-    updateRowHeight(this, row, detaY, skipTableHeightMap);
+    updateRowHeight(this, row, detaY, skipTableHeightMap, refreshedCornerCustomMergeRanges);
     this.updateContainerHeight(row, detaY);
   }
   updateRowsHeight(rows: number[], detaYs: number[], skipTableHeightMap?: boolean) {
@@ -2223,6 +2236,10 @@ export class Scenegraph {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
+          if (!this._needUpdateContainer || this.clear) {
+            this._needUpdateContainer = false;
+            return;
+          }
           this.updateContainerSync(updateConfig.needUpdateCellY ?? false);
         }, 0);
       }

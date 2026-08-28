@@ -37,7 +37,13 @@ import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
  * @param {number} detaX
  * @return {*}
  */
-export function updateColWidth(scene: Scenegraph, col: number, detaX: number, skipTableWidthMap?: boolean) {
+export function updateColWidth(
+  scene: Scenegraph,
+  col: number,
+  detaX: number,
+  skipTableWidthMap?: boolean,
+  refreshedCornerCustomMergeRanges = new Set<string>()
+) {
   if (!skipTableWidthMap) {
     scene.table._setColWidth(col, scene.table.getColWidth(col) + detaX, true);
   }
@@ -46,33 +52,33 @@ export function updateColWidth(scene: Scenegraph, col: number, detaX: number, sk
   const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const rightTopColumn = scene.getColGroupInRightTopCorner(col);
   if (colOrCornerHeaderColumn && !rightTopColumn) {
-    updateColunmWidth(colOrCornerHeaderColumn, detaX, 'col-corner', scene);
+    updateColunmWidth(colOrCornerHeaderColumn, detaX, 'col-corner', scene, refreshedCornerCustomMergeRanges);
   }
   // deal with right bottom frozen cells
   if (rightTopColumn) {
-    updateColunmWidth(rightTopColumn, detaX, 'right-top', scene);
+    updateColunmWidth(rightTopColumn, detaX, 'right-top', scene, refreshedCornerCustomMergeRanges);
   }
 
   // deal with row header or body or right frozen cells
   const rowHeaderOrBodyColumn = scene.getColGroup(col) as Group;
   if (rowHeaderOrBodyColumn) {
-    updateColunmWidth(rowHeaderOrBodyColumn, detaX, 'row-body', scene);
+    updateColunmWidth(rowHeaderOrBodyColumn, detaX, 'row-body', scene, refreshedCornerCustomMergeRanges);
   }
 
   const leftBottomColumn = scene.getColGroupInLeftBottomCorner(col);
   // deal with left bottom frozen cells
   if (leftBottomColumn) {
-    updateColunmWidth(leftBottomColumn, detaX, 'left-bottom', scene);
+    updateColunmWidth(leftBottomColumn, detaX, 'left-bottom', scene, refreshedCornerCustomMergeRanges);
   }
   // deal with bottom frozen cells
   const bottomColumn = scene.getColGroupInBottom(col);
   if (bottomColumn) {
-    updateColunmWidth(bottomColumn, detaX, 'bottom', scene);
+    updateColunmWidth(bottomColumn, detaX, 'bottom', scene, refreshedCornerCustomMergeRanges);
   }
   // deal with right bottom frozen cells
   const rightBottomColumn = scene.getColGroupInRightBottomCorner(col);
   if (rightBottomColumn) {
-    updateColunmWidth(rightBottomColumn, detaX, 'right-bottom', scene);
+    updateColunmWidth(rightBottomColumn, detaX, 'right-bottom', scene, refreshedCornerCustomMergeRanges);
   }
 
   // 更新剩余列位置
@@ -130,10 +136,10 @@ function updateColunmWidth(
   detaX: number,
   // autoRowHeight: boolean,
   mode: 'col-corner' | 'row-body' | 'bottom' | 'left-bottom' | 'right-top' | 'right-bottom',
-  scene: Scenegraph
+  scene: Scenegraph,
+  refreshedCornerCustomMergeRanges: Set<string>
 ) {
   let needRerangeRow = false;
-  const refreshedCornerCustomMergeRanges = new Set<string>();
   // const colOrCornerHeaderColumn = scene.getColGroup(col, true) as Group;
   const oldColumnWidth = columnGroup?.attribute.width ?? 0;
   columnGroup?.setAttribute('width', oldColumnWidth + detaX);
@@ -380,9 +386,15 @@ function updateCellWidth(
       (cell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
     if (customContainer) {
       // fix for custom component flash
-      // if (scene.table.reactCustomLayout) {
-      //   scene.table.reactCustomLayout.removeCustomCell(col, row);
-      // }
+      if (scene.table.reactCustomLayout) {
+        const mergeRange = isMergeCellGroup(cellGroup)
+          ? scene.table.getCellRange(cellGroup.mergeStartCol, cellGroup.mergeStartRow)
+          : undefined;
+        const shouldUseMergeStart = mergeRange && isCornerCustomMergeRange(mergeRange, scene.table);
+        const removeCol = shouldUseMergeStart ? mergeRange.start.col : col;
+        const removeRow = shouldUseMergeStart ? mergeRange.start.row : row;
+        scene.table.reactCustomLayout.removeCustomCell(removeCol, removeRow);
+      }
       // customContainer.removeAllChild();
       let customElementsGroup;
       cell.removeChild(customContainer);
