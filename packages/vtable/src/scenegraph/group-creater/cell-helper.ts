@@ -43,6 +43,11 @@ import { onBeforeAttributeUpdateForInvertHighlight } from '../../plugins/invert-
 import { getCellBorderStrokeWidth } from '../utils/cell-border-stroke-width';
 import type { CreateSwitchCellGroup } from './cell-type/switch-cell';
 import type { CreateButtonCellGroup } from './cell-type/button-cell';
+import {
+  createCornerCustomMergeContainer,
+  isCornerCustomMergeRange,
+  shouldRenderCornerCustomMergeContent
+} from '../utils/corner-custom-merge';
 
 const PROMISE_CELL_UPDATE_TOKEN_KEY = '__vtable_promise_cell_update_token__';
 
@@ -590,9 +595,23 @@ function _generateCustomElementsGroup(
 ) {
   let customElementsGroup;
   let renderDefault = true;
+  const shouldRenderContent = shouldRenderCornerCustomMergeContent(col, row, range, table);
+  if (!shouldRenderContent) {
+    return {
+      customElementsGroup,
+      renderDefault: false
+    };
+  }
+
   if (customResult) {
     // custom merge custom render
-    customElementsGroup = customResult.elementsGroup;
+    customElementsGroup = createCornerCustomMergeContainer(
+      customResult.elementsGroup,
+      cellWidth,
+      cellHeight,
+      range,
+      table
+    );
     renderDefault = customResult.renderDefault;
   } else if (range?.isCustom && !table.isCornerHeader(col, row)) {
     // 判断不是角头单元格，来兼容corner中设置的customLayout
@@ -610,11 +629,13 @@ function _generateCustomElementsGroup(
       customLayout = define?.customLayout;
     }
     if (customLayout || customRender) {
+      const customCol = range && isCornerCustomMergeRange(range, table) ? range.start.col : col;
+      const customRow = range && isCornerCustomMergeRange(range, table) ? range.start.row : row;
       const customResult = dealWithCustom(
         customLayout,
         customRender,
-        col,
-        row,
+        customCol,
+        customRow,
         cellWidth,
         cellHeight,
         false,
@@ -623,7 +644,13 @@ function _generateCustomElementsGroup(
         range,
         table
       );
-      customElementsGroup = customResult.elementsGroup;
+      customElementsGroup = createCornerCustomMergeContainer(
+        customResult.elementsGroup,
+        cellWidth,
+        cellHeight,
+        range,
+        table
+      );
       renderDefault = customResult.renderDefault;
     }
   }
@@ -675,7 +702,7 @@ export function updateCell(
       //   cellTheme.group.cornerRadius = getCellCornerRadius(col, row, table);
       // }
 
-      if (customLayout || customRender) {
+      if ((customLayout || customRender) && shouldRenderCornerCustomMergeContent(col, row, customMergeRange, table)) {
         customResult = dealWithCustom(
           customLayout,
           customRender,
@@ -1364,6 +1391,24 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
       } = customMerge;
 
       if (customMergeLayout || customMergeRender) {
+        const rangeHeight = table.getRowHeight(row);
+        const rangeWidth = table.getColWidth(col);
+        const contentWidth = table.getColsWidth(customMergeRange.start.col, customMergeRange.end.col);
+        const contentHeight = table.getRowsHeight(customMergeRange.start.row, customMergeRange.end.row);
+
+        cellGroup.contentWidth = contentWidth;
+        cellGroup.contentHeight = contentHeight;
+
+        if (!shouldRenderCornerCustomMergeContent(col, row, customMergeRange, table)) {
+          const customContainer = cellGroup.getChildByName(CUSTOM_CONTAINER_NAME);
+          if (customContainer) {
+            cellGroup.removeChild(customContainer);
+          }
+          cellGroup.setAttribute('clip', true);
+          resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+          return customMergeRange;
+        }
+
         const customResult = dealWithCustom(
           customMergeLayout,
           customMergeRender,
@@ -1378,7 +1423,13 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           table
         );
 
-        const customElementsGroup = customResult.elementsGroup;
+        const customElementsGroup = createCornerCustomMergeContainer(
+          customResult.elementsGroup,
+          contentWidth,
+          contentHeight,
+          customMergeRange,
+          table
+        );
 
         if (cellGroup.childrenCount > 0 && customElementsGroup) {
           cellGroup.insertBefore(customElementsGroup, cellGroup.firstChild);
@@ -1386,15 +1437,10 @@ export function getCustomCellMergeCustom(col: number, row: number, cellGroup: Gr
           cellGroup.appendChild(customElementsGroup);
         }
 
-        const rangeHeight = table.getRowHeight(row);
-        const rangeWidth = table.getColWidth(col);
-
-        const { width: contentWidth } = cellGroup.attribute;
-        const { height: contentHeight } = cellGroup.attribute;
-        cellGroup.contentWidth = contentWidth;
-        cellGroup.contentHeight = contentHeight;
-
         resizeCellGroup(cellGroup, rangeWidth, rangeHeight, customMergeRange, table);
+        if (isCornerCustomMergeRange(customMergeRange, table)) {
+          cellGroup.setAttribute('clip', false);
+        }
 
         return customMergeRange;
       }

@@ -9,6 +9,7 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import type { CellRange } from '../../../ts-types';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { createMark } from '../../graphic/mark';
+import { isCornerCustomMergeRange } from '../../utils/corner-custom-merge';
 
 /**
  * @description: 创建单元格场景节点
@@ -42,12 +43,15 @@ export function createCellGroup(
   textAlign: CanvasTextAlign,
   textBaseline: CanvasTextBaseline,
   mayHaveIcon: boolean,
-  customElementsGroup: VGroup,
+  customElementsGroup: VGroup | undefined,
   renderDefault: boolean,
   cellTheme: IThemeSpec,
   range: CellRange | undefined,
   isAsync: boolean
 ): Group {
+  const isCornerCustomMergeContentCell =
+    isCornerCustomMergeRange(range, table) && col === range.end.col && row === range.end.row;
+  // The carrier cell must allow the clipped merge container to span internal cell bounds.
   const headerStyle = table._getCellStyle(col, row); // to be fixed
   const functionalPadding = getFunctionalProp('padding', headerStyle, col, row, table);
   if (isValid(functionalPadding)) {
@@ -84,7 +88,7 @@ export function createCellGroup(
         cursor: (cellTheme?.group as any)?.cursor ?? undefined,
         lineDash: cellTheme?.group?.lineDash ?? undefined,
         lineCap: 'butt',
-        clip: true,
+        clip: !isCornerCustomMergeContentCell,
         cornerRadius: cellTheme.group.cornerRadius
       } as any);
     }
@@ -106,7 +110,7 @@ export function createCellGroup(
 
       lineCap: 'butt',
 
-      clip: true,
+      clip: !isCornerCustomMergeContentCell,
 
       cornerRadius: cellTheme.group.cornerRadius
     } as any);
@@ -117,6 +121,12 @@ export function createCellGroup(
   }
   if (customElementsGroup) {
     cellGroup.appendChild(customElementsGroup);
+  }
+  if (isCornerCustomMergeContentCell) {
+    cellGroup.setAttributes({
+      width: Math.max(cellGroup.attribute.width, customElementsGroup?.attribute.width ?? 0),
+      height: Math.max(cellGroup.attribute.height, customElementsGroup?.attribute.height ?? 0)
+    });
   }
   if (renderDefault) {
     const textStr: string = value;

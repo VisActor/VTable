@@ -71,9 +71,18 @@ const option = {
   },
   corner: {
     titleOnDimension: 'row',
+    disableHeaderHover: true,
+    disableHeaderSelect: true,
     customLayout: args => {
       const { table, row, col, rect } = args;
       const { height, width } = rect ?? table.getCellRect(col, row);
+      const provinceWidth = table.getColWidth(0);
+      const cityWidth = table.getColWidth(1);
+      const categoryHeight = table.getRowHeight(0);
+      const provinceCenterX = provinceWidth / 2;
+      const cityCenterX = provinceWidth + cityWidth / 2;
+      const indicatorX = provinceWidth + cityWidth + 6;
+      const endCategoryX = width - 50;
       const container = createGroup({
         height,
         width
@@ -81,12 +90,12 @@ const option = {
 
       // 定义文本内容的数组
       const texts = [
-        { text: '省份', fontSize: 18, x: 30, y: rect.height - 25 },
-        { text: '城市', fontSize: 18, x: 105, y: rect.height - 25 },
-        { text: '数据', fontSize: 18, x: rect.width - 50, y: rect.height - 35 },
-        { text: '子类别', fontSize: 18, x: rect.width - 50, y: rect.height - 85 },
-        { text: '类别', fontSize: 18, x: rect.width - 50, y: 18 },
-        { text: '指标', fontSize: 16, x: 176, y: rect.height - 20 }
+        { text: '省份', fontSize: 18, x: provinceCenterX - 18, y: height - 25 },
+        { text: '城市', fontSize: 18, x: cityCenterX - 18, y: height - 25 },
+        { text: '数据', fontSize: 18, x: endCategoryX, y: height - 35 },
+        { text: '子类别', fontSize: 18, x: endCategoryX, y: height - 85 },
+        { text: '类别', fontSize: 18, x: endCategoryX, y: Math.max(18, categoryHeight / 2 - 9) },
+        { text: '指标', fontSize: 16, x: indicatorX, y: height - 20 }
       ];
 
       // 循环添加文本
@@ -105,17 +114,16 @@ const option = {
 
       // 定义线段的点
       const linePoints = [
-        { x: rect.left, y: rect.top },
         { x: 0, y: 0 },
-        { x: rect.width - 40, y: rect.height },
+        { x: width - 40, y: height },
         { x: 0, y: 0 },
-        { x: 173, y: rect.height },
+        { x: provinceWidth + cityWidth + 3, y: height },
         { x: 0, y: 0 },
-        { x: 84, y: rect.height },
+        { x: provinceWidth, y: height },
         { x: 0, y: 0 },
-        { x: rect.width, y: rect.height - 90 },
+        { x: width, y: categoryHeight },
         { x: 0, y: 0 },
-        { x: rect.width, y: rect.height - 38 },
+        { x: width, y: height - 38 },
         { x: 0, y: 0 }
       ];
 
@@ -398,6 +406,10 @@ const option = {
   rightFrozenColCount: 1,
   dragOrder: {
     dragHeaderMode: 'all'
+  },
+  resize: {
+    columnResizeMode: 'all',
+    rowResizeMode: 'all'
   }
 };
 

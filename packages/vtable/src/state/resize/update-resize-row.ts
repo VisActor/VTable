@@ -1,5 +1,6 @@
 import type { ListTable } from '../../ListTable';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
+import { flushCornerCustomMergeContentUpdates } from '../../scenegraph/utils/corner-custom-merge';
 import type { IndicatorData } from '../../ts-types/list-table/layout-map/api';
 import type { StateManager } from '../state';
 
@@ -69,21 +70,24 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
 }
 
 function updateResizeColForRow(detaY: number, state: StateManager) {
+  const pendingCornerCustomMergeRanges = new Map();
   if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
-    state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
-    state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
+    state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY, undefined, pendingCornerCustomMergeRanges);
+    state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY, undefined, pendingCornerCustomMergeRanges);
 
     state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
     state.table.internalProps._heightResizedRowMap.add(state.rowResize.row + 1);
   } else {
-    state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
+    state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY, undefined, pendingCornerCustomMergeRanges);
     state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
   }
+  flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, state.table);
 }
 
 function updateResizeColForAll(detaY: number, state: StateManager) {
   // 全列调整
   // const layout = state.table.internalProps.layoutMap as PivotHeaderLayoutMap;
+  const pendingCornerCustomMergeRanges = new Map();
   for (let row = state.table.frozenRowCount; row < state.table.rowCount - state.table.bottomFrozenRowCount; row++) {
     // // 是否禁止调整列宽disableRowResize 对应canResizeRow的逻辑判断
     // if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
@@ -92,9 +96,10 @@ function updateResizeColForAll(detaY: number, state: StateManager) {
     //     continue;
     //   }
     // }
-    state.table.scenegraph.updateRowHeight(row, detaY);
+    state.table.scenegraph.updateRowHeight(row, detaY, undefined, pendingCornerCustomMergeRanges);
     state.table.internalProps._heightResizedRowMap.add(row);
   }
+  flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, state.table);
 }
 
 function updateResizeColForIndicator(detaY: number, state: StateManager) {
@@ -110,6 +115,7 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
     resizeDimensionKey = headerPath?.dimensionKey;
     resizeDimensionValue = headerPath?.value;
   }
+  const pendingCornerCustomMergeRanges = new Map();
   for (
     let row = state.table.columnHeaderLevelCount;
     row < state.table.rowCount - state.table.bottomFrozenRowCount;
@@ -117,17 +123,18 @@ function updateResizeColForIndicator(detaY: number, state: StateManager) {
   ) {
     const indicatorKey = layout.getIndicatorKey(state.table.rowHeaderLevelCount, row);
     if (!layout.indicatorsAsCol && indicatorKey === resizeIndicatorKey) {
-      state.table.scenegraph.updateRowHeight(row, detaY);
+      state.table.scenegraph.updateRowHeight(row, detaY, undefined, pendingCornerCustomMergeRanges);
       state.table.internalProps._heightResizedRowMap.add(row);
     } else if (layout.indicatorsAsCol) {
       const headerPaths = layout.getCellHeaderPaths(state.table.rowHeaderLevelCount - 1, row);
       const headerPath = headerPaths?.rowHeaderPaths?.[headerPaths.rowHeaderPaths.length - 1];
       if (headerPath && resizeDimensionKey === headerPath.dimensionKey && resizeDimensionValue === headerPath.value) {
-        state.table.scenegraph.updateRowHeight(row, detaY);
+        state.table.scenegraph.updateRowHeight(row, detaY, undefined, pendingCornerCustomMergeRanges);
         state.table.internalProps._heightResizedRowMap.add(row);
       }
     }
   }
+  flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, state.table);
 }
 
 function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
@@ -144,6 +151,7 @@ function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
   // 计算当前受影响列的总宽度 后面会利用这个计算比例
   const totalRowHeight = state.table.getRowsHeight(startRow, endRow);
   const moveY = detaY; // 纠正moveX 用于指标列均分该值
+  const pendingCornerCustomMergeRanges = new Map();
   for (let row = startRow; row <= endRow; row++) {
     // 是否禁止调整列宽disableRowResize 对应canResizeRow的逻辑判断
     // if (!(state.table.internalProps.transpose || (state.table.isPivotTable() && !layout.indicatorsAsCol))) {
@@ -161,7 +169,8 @@ function updateResizeColForIndicatorGroup(detaY: number, state: StateManager) {
     } else if (deltaHeight < 0 && deltaHeight >= -0.5) {
       deltaHeight = -0.51;
     }
-    state.table.scenegraph.updateRowHeight(row, deltaHeight);
+    state.table.scenegraph.updateRowHeight(row, deltaHeight, undefined, pendingCornerCustomMergeRanges);
     state.table.internalProps._heightResizedRowMap.add(row);
   }
+  flushCornerCustomMergeContentUpdates(pendingCornerCustomMergeRanges, state.table);
 }

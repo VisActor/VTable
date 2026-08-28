@@ -106,10 +106,11 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
     const key = `${col}-${row}`;
     if (container.current.has(key)) {
       const currentContainer = container.current.get(key);
-      module.reconcilor.updateContainer(null, currentContainer, null);
-      // group = currentContainer.containerInfo;
-      currentContainer.containerInfo.delete();
-      container.current.delete(key);
+      reconcilorUnmountContainer(module, currentContainer);
+      if (container.current.get(key) === currentContainer) {
+        currentContainer.containerInfo.delete();
+        container.current.delete(key);
+      }
     }
   }, []);
 
@@ -119,12 +120,20 @@ export const CustomLayout: React.FC<CustomLayoutProps> = (props: PropsWithChildr
       container.current.clear();
       return;
     }
-    container.current.forEach((value, key) => {
-      const currentContainer = value;
-      module.reconcilor.updateContainer(null, currentContainer, null);
-      currentContainer.containerInfo.delete();
+    const pendingContainers = Array.from(container.current.entries());
+    batchReconcilerUpdates(module, () => {
+      pendingContainers.forEach(([, currentContainer]) => {
+        requestReconcilerUnmountContainer(module, currentContainer);
+      });
     });
-    container.current.clear();
+    flushReconcilerWork(module);
+
+    pendingContainers.forEach(([key, currentContainer]) => {
+      if (container.current.get(key) === currentContainer) {
+        currentContainer.containerInfo.delete();
+        container.current.delete(key);
+      }
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -219,10 +228,7 @@ function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElem
   const updateContainerSync = (reconcilor as any).updateContainerSync;
   if (typeof updateContainerSync === 'function') {
     updateContainerSync(element, currentContainer, null);
-    const flushSyncWork = (reconcilor as any).flushSyncWork;
-    if (typeof flushSyncWork === 'function') {
-      flushSyncWork();
-    }
+    flushReconcilerWork(module);
     return;
   }
   reconcilor.updateContainer(element, currentContainer, null);
@@ -235,6 +241,60 @@ function reconcilorUpdateContainer(module: ReconcilerModule, children: ReactElem
   //   // debugger;
   //   // group.html.dom = div;
   // }
+}
+
+function reconcilorUnmountContainer(module: ReconcilerModule, currentContainer: any): boolean {
+  requestReconcilerUnmountContainer(module, currentContainer);
+  return flushReconcilerWork(module);
+}
+
+function requestReconcilerUnmountContainer(module: ReconcilerModule, currentContainer: any) {
+  const { reconcilor } = module;
+  const updateContainerSync = (reconcilor as any).updateContainerSync;
+  if (typeof updateContainerSync === 'function') {
+    try {
+      updateContainerSync(null, currentContainer, null);
+      return;
+    } catch {
+      reconcilor.updateContainer(null, currentContainer, null);
+      return;
+    }
+  }
+  reconcilor.updateContainer(null, currentContainer, null);
+}
+
+function flushReconcilerWork(module: ReconcilerModule): boolean {
+  const { reconcilor } = module;
+  const flushSyncWork = (reconcilor as any).flushSyncWork;
+  if (typeof flushSyncWork === 'function') {
+    try {
+      const result = flushSyncWork();
+      if (result === true) {
+        return false;
+      }
+    } catch {
+      return false;
+    }
+  }
+
+  const flushPassiveEffects = (reconcilor as any).flushPassiveEffects;
+  if (typeof flushPassiveEffects === 'function') {
+    try {
+      flushPassiveEffects();
+    } catch {
+      return false;
+    }
+  }
+  return true;
+}
+
+function batchReconcilerUpdates(module: ReconcilerModule, callback: () => void) {
+  const batchedUpdates = (module.reconcilor as any).batchedUpdates;
+  if (typeof batchedUpdates === 'function') {
+    batchedUpdates(callback);
+  } else {
+    callback();
+  }
 }
 
 function getCellRect(col: number, row: number, table: any) {
