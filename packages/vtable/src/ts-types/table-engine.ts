@@ -399,7 +399,8 @@ export interface ListTableAPI extends BaseTableAPI {
     values: (string | number)[][],
     workOnEditableCell?: boolean,
     triggerEvent?: boolean,
-    noTriggerChangeCellValuesEvent?: boolean
+    noTriggerChangeCellValuesEvent?: boolean,
+    shouldCancel?: () => boolean
   ) => Promise<boolean[][]> | boolean[][];
   /**
    * 根据源数据 records 的 index + field 修改值。
@@ -750,7 +751,15 @@ export interface PivotTableAPI extends BaseTableAPI {
    * @param row 粘贴数据的起始行号
    * @param values 多个单元格的数据数组
    */
-  changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
+  changeCellValues: (
+    col: number,
+    row: number,
+    values: (string | number)[][],
+    workOnEditableCell: boolean,
+    triggerEvent?: boolean,
+    noTriggerChangeCellValuesEvent?: boolean,
+    shouldCancel?: () => boolean
+  ) => boolean[][];
 
   /**
    * 获取行表头全路径

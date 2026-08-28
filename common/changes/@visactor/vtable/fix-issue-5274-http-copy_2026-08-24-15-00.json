@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: prefer event clipboard data for copy and cut, fall back to it for paste when the async Clipboard API is unavailable, preserve cut source cells until paste succeeds, and normalize pasted HTML cell content (GitHub #5274)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

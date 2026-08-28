@@ -31,6 +31,53 @@ function refreshCustomMergeCellGroups(table: ListTable) {
   }
 }
 
+type ChangeCellTargetSnapshot = {
+  col: number;
+  row: number;
+  isHeader: boolean;
+  recordIndex?: number | number[];
+  field?: any;
+};
+
+function isSameRecordIndex(
+  sourceRecordIndex: number | number[] | undefined,
+  currentRecordIndex: number | number[] | undefined
+): boolean {
+  if (Array.isArray(sourceRecordIndex) || Array.isArray(currentRecordIndex)) {
+    return (
+      Array.isArray(sourceRecordIndex) &&
+      Array.isArray(currentRecordIndex) &&
+      sourceRecordIndex.length === currentRecordIndex.length &&
+      sourceRecordIndex.every((value, index) => value === currentRecordIndex[index])
+    );
+  }
+  return sourceRecordIndex === currentRecordIndex;
+}
+
+function isTargetCellSnapshotCurrent(table: ListTable, snapshot: ChangeCellTargetSnapshot): boolean {
+  if (table.isHeader(snapshot.col, snapshot.row) !== snapshot.isHeader) {
+    return false;
+  }
+  if (snapshot.isHeader) {
+    return true;
+  }
+  const recordShowIndex = table.getRecordShowIndexByCell(snapshot.col, snapshot.row);
+  const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+  const { field } = table.internalProps.layoutMap.getBody(snapshot.col, snapshot.row);
+  return isSameRecordIndex(snapshot.recordIndex, recordIndex) && snapshot.field === field;
+}
+
+function areTargetCellSnapshotsCurrent(table: ListTable, snapshots: ChangeCellTargetSnapshot[][]): boolean {
+  for (let i = 0; i < snapshots.length; i++) {
+    for (let j = 0; j < snapshots[i].length; j++) {
+      if (!isTargetCellSnapshotCurrent(table, snapshots[i][j])) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 /**
  * 更改单元格数据 会触发change_cell_value事件
  * @param col
@@ -164,7 +211,8 @@ export async function listTableChangeCellValues(
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable,
-  noTriggerChangeCellValuesEvent?: boolean
+  noTriggerChangeCellValuesEvent?: boolean,
+  shouldCancel?: () => boolean
 ): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
@@ -173,6 +221,7 @@ export async function listTableChangeCellValues(
   //#region 提前组织好未更改前的数据
   const beforeChangeValues: (string | number)[][] = [];
   const oldValues: (string | number)[][] = [];
+  const targetSnapshots: ChangeCellTargetSnapshot[][] = [];
   let cellUpdateType: 'normal' | 'sort' | 'group';
 
   for (let i = 0; i < values.length; i++) {
@@ -182,17 +231,26 @@ export async function listTableChangeCellValues(
     const rowValues = values[i];
     const rawRowValues: (string | number)[] = [];
     const oldRowValues: (string | number)[] = [];
+    const rowTargetSnapshots: ChangeCellTargetSnapshot[] = [];
     beforeChangeValues.push(rawRowValues);
     oldValues.push(oldRowValues);
+    targetSnapshots.push(rowTargetSnapshots);
     for (let j = 0; j < rowValues.length; j++) {
       if (startCol + j > table.colCount - 1) {
         break;
       }
+      const col = startCol + j;
+      const row = startRow + i;
       cellUpdateType = getCellUpdateType(startCol + j, startRow + i, table, cellUpdateType);
-      const beforeChangeValue = table.getCellRawValue(startCol + j, startRow + i);
+      const beforeChangeValue = table.getCellRawValue(col, row);
       rawRowValues.push(beforeChangeValue);
-      const oldValue = table.getCellOriginValue(startCol + j, startRow + i);
+      const oldValue = table.getCellOriginValue(col, row);
       oldRowValues.push(oldValue);
+      const isHeader = table.isHeader(col, row);
+      const recordShowIndex = table.getRecordShowIndexByCell(col, row);
+      const recordIndex = recordShowIndex >= 0 ? table.dataSource.getIndexKey(recordShowIndex) : undefined;
+      const { field } = table.internalProps.layoutMap.getBody(col, row);
+      rowTargetSnapshots.push({ col, row, isHeader, recordIndex, field });
     }
   }
 
@@ -205,6 +263,43 @@ export async function listTableChangeCellValues(
     currentValue: string | number;
     changedValue: string | number;
   }[] = [];
+
+  const preValidatedCellResults: boolean[][] | null = shouldCancel && workOnEditableCell ? [] : null;
+  if (preValidatedCellResults) {
+    for (let i = 0; i < values.length; i++) {
+      if (shouldCancel?.()) {
+        return changedCellResults;
+      }
+      if (startRow + i > table.rowCount - 1) {
+        break;
+      }
+      preValidatedCellResults[i] = [];
+      const rowValues = values[i];
+      for (let j = 0; j < rowValues.length; j++) {
+        if (startCol + j > table.colCount - 1) {
+          break;
+        }
+        let isCanChange = false;
+        if (table.isHasEditorDefine(startCol + j, startRow + i)) {
+          const editor = table.getEditor(startCol + j, startRow + i);
+          const oldValue = oldValues[i][j];
+          const value = rowValues[j];
+          const maybePromiseOrValue =
+            editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
+          const validateResult = isPromise(maybePromiseOrValue) ? await maybePromiseOrValue : maybePromiseOrValue;
+          if (shouldCancel?.()) {
+            return changedCellResults;
+          }
+          isCanChange =
+            validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
+        }
+        preValidatedCellResults[i][j] = isCanChange;
+      }
+    }
+  }
+  if (shouldCancel?.() || !areTargetCellSnapshotsCurrent(table, targetSnapshots)) {
+    return changedCellResults;
+  }
 
   //#endregion
   for (let i = 0; i < values.length; i++) {
@@ -221,7 +316,9 @@ export async function listTableChangeCellValues(
       }
       thisRowPasteColEnd = startCol + j;
       let isCanChange = false;
-      if (workOnEditableCell === false) {
+      if (preValidatedCellResults) {
+        isCanChange = preValidatedCellResults[i]?.[j] === true;
+      } else if (workOnEditableCell === false) {
         isCanChange = true;
       } else {
         if (table.isHasEditorDefine(startCol + j, startRow + i)) {
@@ -232,6 +329,9 @@ export async function listTableChangeCellValues(
             editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
           if (isPromise(maybePromiseOrValue)) {
             const validateResult = await maybePromiseOrValue;
+            if (shouldCancel?.()) {
+              return changedCellResults;
+            }
             isCanChange =
               validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
           } else {
@@ -256,7 +356,17 @@ export async function listTableChangeCellValues(
         if (table.isHeader(startCol + j, startRow + i)) {
           table.internalProps.layoutMap.updateColumnTitle(startCol + j, startRow + i, value as string);
         } else {
-          table.dataSource.changeFieldValue(value, recordShowIndex, field, startCol + j, startRow + i, table);
+          const changeResult = table.dataSource.changeFieldValue(
+            value,
+            recordShowIndex,
+            field,
+            startCol + j,
+            startRow + i,
+            table
+          );
+          if (isPromise(changeResult)) {
+            await changeResult;
+          }
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
         if (oldValue !== changedValue && triggerEvent) {
