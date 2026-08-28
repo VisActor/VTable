@@ -15,12 +15,12 @@ The configuration items of IMarkLine are as follows:
 ```javascript
 export interface IMarkLine {
   date: string;
-  style?: ILineStyle;
+  style?: IMarkLineStyle | ((args: IMarkLineStyleArgumentType) => IMarkLineStyle);
   /** The position of the mark line under the date column. The default is 'left'. */
   position?: 'left' | 'right' | 'middle' | 'date';
-    /** Automatically scroll the date range to include this mark line. */
+  /** Automatically scroll the date range to include this mark line. */
   scrollToMarkLine?: boolean;
-  content?: string; // markLine中内容
+  content?: string; // markLine content
   /** The style of the content in the markLine. */
   contentStyle?: {
     color?: string;
@@ -31,6 +31,20 @@ export interface IMarkLine {
     cornerRadius?: string;
   }
 }
+
+export type IMarkLineStyle = Omit<ILineStyle, 'lineWidth'> & {
+  lineWidth?: number | ((args: IMarkLineStyleArgumentType) => number);
+};
+
+export type IMarkLineStyleArgumentType = {
+  date: Date;
+  dateIndex: number;
+  dateX: number;
+  cellStartX: number;
+  cellWidth: number;
+  timelineColWidth: number;
+  millisecondsPerPixel: number;
+};
 ```
 
 ## Mark Line Style
@@ -43,17 +57,54 @@ const ganttOptions = {
     {
       date: '2024-01-01',
       style: {
-        color: 'red',
+        lineColor: 'red',
+        lineWidth: 1,
       },
     },
     {
       date: '2024-01-02',
       style: {
-        color: 'blue',
+        lineColor: 'blue',
+        lineWidth: 2,
       },
     },
   ],
 };
+```
+
+When the mark line width needs to change with timeline zooming, configure `style.lineWidth` as a function. The function is re-executed whenever the mark line refreshes, and its argument includes the current timeline column width, cell width, and milliseconds-per-pixel ratio:
+
+```javascript
+const ganttOptions = {
+  markLine: [
+    {
+      date: '2024-07-17',
+      content: 'Dynamic width',
+      style: {
+        lineWidth: ({ timelineColWidth }) => Math.max(1, Math.round(timelineColWidth / 20)),
+        lineColor: 'blue',
+        lineDash: [8, 4]
+      }
+    }
+  ]
+};
+```
+
+You can also configure the whole `style` as a function:
+
+```javascript
+const ganttOptions = {
+  markLine: [
+    {
+      date: '2024-07-17',
+      style: ({ millisecondsPerPixel }) => ({
+        lineWidth: millisecondsPerPixel > 86400000 ? 1 : 3,
+        lineColor: 'red'
+      })
+    }
+  ]
+};
+```
 
 ## Mark Line Position
 

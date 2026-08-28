@@ -134,7 +134,7 @@ export function setDataToHTML(data: string) {
     cells.forEach(function (cell: string, cellIndex: number) {
       // 单元格数据处理
       const parsedCellData = !cell
-        ? ' '
+        ? ''
         : cell
             .toString()
             .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks

@@ -19,6 +19,7 @@ The Gantt chart smart zoom feature provides multi-level timeline display schemes
 - API get current zoom state: Use methods provided by `getCurrentZoomState`
 - API set current zoom state: Use methods provided by `setZoomPosition`
 - API zooming: Use zoom methods provided by `zoomScaleManager`
+- `markLine.style.lineWidth`: Can be configured as a function to calculate the mark line width from the current zoomed timeline column width
 
 ## Demo
 
@@ -729,6 +730,27 @@ const option = {
       lineColor: '#f1f3f4'
     }
   },
+  markLine: [
+    {
+      date: '2024-07-17',
+      content: 'Dynamic width',
+      style: {
+        lineWidth: ({ timelineColWidth }) => Math.max(1, Math.round(timelineColWidth / 20)),
+        lineColor: 'blue',
+        lineDash: [8, 4]
+      }
+    },
+    {
+      date: '2024-08-17',
+      content: 'Fixed width',
+      position: 'middle',
+      style: {
+        lineWidth: 2,
+        lineColor: 'red',
+        lineDash: [8, 4]
+      }
+    }
+  ],
   headerRowHeight: 50,
   rowHeight: 40,
   overscrollBehavior: 'none'

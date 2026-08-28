@@ -1,7 +1,8 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
   "include": ["src"],
-  "compilerOptions": {    
+  "exclude": ["src/test-shims"],
+  "compilerOptions": {
     "types": ["jest", "offscreencanvas", "node"],
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",

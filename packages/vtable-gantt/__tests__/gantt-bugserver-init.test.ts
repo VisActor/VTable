@@ -7,6 +7,23 @@ import { Gantt } from '../src/index';
 import { defaultPixelRatio } from '../src/tools/pixel-ratio';
 
 describe('bugserver gantt initialization', () => {
+  function findFirstMarkLineShape(gantt) {
+    let result;
+    function walk(node) {
+      if (!node || result) {
+        return;
+      }
+      if (node.type === 'line') {
+        result = node;
+        return;
+      }
+      const children = node.children || node._children;
+      children?.forEach?.(child => walk(child));
+    }
+    walk(gantt.scenegraph.markLine.markLIneContainer);
+    return result;
+  }
+
   test('initializes gantt with mixed date formats and top-level columns', () => {
     const container = createDiv();
     container.style.width = '800px';
@@ -104,6 +121,58 @@ describe('bugserver gantt initialization', () => {
     });
 
     expect(gantt.scenegraph.stage).toBeDefined();
+
+    gantt.release?.();
+    container.remove();
+  });
+
+  test('recomputes markLine function style when refreshed after zoom scale changes', () => {
+    const container = createDiv();
+    container.style.width = '800px';
+    container.style.height = '400px';
+    const calls = [];
+
+    const gantt = new Gantt(container, {
+      records: [
+        { id: 1, title: 'Task 1', start: '2024-07-05', end: '2024-07-10' },
+        { id: 2, title: 'Task 2', start: '2024-07-11', end: '2024-07-15' }
+      ],
+      columns: [{ field: 'title', title: 'title', width: 200 }],
+      taskBar: {
+        startDateField: 'start',
+        endDateField: 'end'
+      },
+      timelineHeader: {
+        colWidth: 30,
+        scales: [
+          { unit: 'week', step: 1, startOfWeek: 'sunday' },
+          { unit: 'day', step: 1 }
+        ]
+      },
+      minDate: '2024-07-01',
+      maxDate: '2024-07-31',
+      markLine: [
+        {
+          date: '2024-07-17',
+          style: {
+            lineColor: 'blue',
+            lineWidth: ({ timelineColWidth }) => {
+              calls.push(timelineColWidth);
+              return timelineColWidth > 60 ? 6 : 2;
+            }
+          }
+        }
+      ]
+    });
+
+    expect(findFirstMarkLineShape(gantt).attribute.lineWidth).toBe(2);
+
+    gantt.parsedOptions.timelineColWidth = 80;
+    gantt.scenegraph.markLine.refresh();
+
+    expect(findFirstMarkLineShape(gantt).attribute.lineWidth).toBe(6);
+    expect(calls).toContain(30);
+    expect(calls).toContain(80);
 
     gantt.release?.();
     container.remove();

@@ -39,8 +39,8 @@ export function isZeroStyle(style: number | number[]) {
 }
 
 // 设置复制区域的状态 类似excel的虚线框
-export function setActiveCellRangeState(table: BaseTableAPI) {
-  const selectRanges = table.stateManager.select.ranges;
+export function setActiveCellRangeState(table: BaseTableAPI, ranges = table.stateManager.select.ranges) {
+  const selectRanges = ranges;
   const setRanges = [];
   for (let i = 0; i < selectRanges.length; i++) {
     const range = selectRanges[i];

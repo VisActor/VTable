@@ -1172,26 +1172,27 @@ export function createTable() {
     },
     // minDate: '2024-07-01',
     // maxDate: '2024-10-15',
-    // markLine: [
-    //   {
-    //     date: '2024-07-17',
-    //     style: {
-    //       lineWidth: 1,
-    //       lineColor: 'blue',
-    //       lineDash: [8, 4]
-    //     }
-    //   },
-    //   {
-    //     date: '2024-08-17',
-    //     position: 'middle',
-    //     // scrollToMarkLine: true,
-    //     style: {
-    //       lineWidth: 2,
-    //       lineColor: 'red',
-    //       lineDash: [8, 4]
-    //     }
-    //   }
-    // ],
+    markLine: [
+      {
+        date: '2024-07-17',
+        content: '动态宽度',
+        style: {
+          lineWidth: ({ timelineColWidth }) => Math.max(1, Math.round(timelineColWidth / 20)),
+          lineColor: 'blue',
+          lineDash: [8, 4]
+        }
+      },
+      {
+        date: '2024-08-17',
+        content: '固定宽度',
+        position: 'middle',
+        style: {
+          lineWidth: 2,
+          lineColor: 'red',
+          lineDash: [8, 4]
+        }
+      }
+    ],
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,

@@ -20,6 +20,8 @@ https://arco.design/react/components/select
 
 ```javascript livedemo template=vtable-react
 // import * as ReactVTable from '@visactor/react-vtable';
+const selectEditorPopupClassName = 'vtable-editor-select-popup';
+
 class ArcoListEditor {
   constructor() {
     this.root = null;
@@ -48,6 +50,7 @@ class ArcoListEditor {
       <div>
         <ArcoDesign.Select
           placeholder="Select city"
+          dropdownMenuClassName={selectEditorPopupClassName}
           defaultValue={defaultValue}
           onChange={value => {
             this.currentValue = value;
@@ -86,13 +89,16 @@ class ArcoListEditor {
   }
 
   isEditorElement(target) {
-    // cascader创建时时在cavas后追加一个dom，而popup append在body尾部。不论popup还是dom，都应该被认为是点击到了editor区域
+    // popup append 在 body 尾部，不在编辑器容器内；点击 popup 时也应该被认为仍在编辑器区域。
     return this.element.contains(target) || this.isClickPopUp(target);
   }
 
   isClickPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select-vtable')) {
+      if (
+        target.classList &&
+        (target.classList.contains(selectEditorPopupClassName) || target.classList.contains('arco-select-vtable'))
+      ) {
         return true;
       }
       // 如果到达了DOM树的顶部，则停止搜索

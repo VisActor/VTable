@@ -19,6 +19,8 @@ https://arco.design/vue/components/select
 ## Code Demonstration
 
 ```javascript livedemo template=vtable-vue
+const selectEditorPopupClassName = 'vtable-editor-select-popup';
+
 class ArcoListEditor {
   root = null;
   element = null;
@@ -64,6 +66,9 @@ class ArcoListEditor {
               style: { height: '32px' },
               placeholder: 'Select city',
               modelValue: this.currentValue,
+              triggerProps: {
+                contentClass: selectEditorPopupClassName
+              },
               'onUpdate:modelValue': value => {
                 this.currentValue = value;
                 self.setValue(value);
@@ -110,12 +115,18 @@ class ArcoListEditor {
   }
 
   isEditorElement(target) {
+    // The popup is appended to body and is outside the editor container.
+    // Clicking the popup should still be treated as clicking inside the editor.
     return this.element?.contains(target) || this.isClickPopUp(target);
   }
 
   isClickPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select-vtable')) {
+      if (
+        target.classList &&
+        (target.classList.contains(selectEditorPopupClassName) ||
+          target.classList.contains('arco-select-vtable'))
+      ) {
         return true;
       }
       target = target.parentNode;
