@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix(scrolling): ensure target row/col is reached after animation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
