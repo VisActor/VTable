@@ -212,6 +212,7 @@ export class NoneAggregator extends Aggregator {
 export class CustomAggregator extends Aggregator {
   type: string = AggregationType.CUSTOM;
   isRecord?: boolean = true;
+  recalculateFromChildren?: boolean;
   declare field?: string;
   aggregationFun?: Function;
   values: (string | number)[] = [];
@@ -222,6 +223,19 @@ export class CustomAggregator extends Aggregator {
   }
   push(record: any): void {
     if (record) {
+      if (this.recalculateFromChildren && record.isAggregator) {
+        if (this.isRecord && this.records) {
+          this.records.push(...record.records);
+        }
+        if (this.children) {
+          this.children.push(record);
+        }
+        if (this.field) {
+          this.values.push(...record.records.map((item: any) => item[this.field as string]));
+        }
+        this.clearCacheValue();
+        return;
+      }
       if (this.isRecord && this.records) {
         if (record.isAggregator) {
           this.records.push(...record.records);
@@ -290,6 +304,16 @@ export class CustomAggregator extends Aggregator {
     this.fieldValue = undefined;
   }
   recalculate() {
+    if (this.recalculateFromChildren && this.children?.length && this.field) {
+      this.values = [];
+      this.children.forEach(child => {
+        if (isValid(child.changedValue)) {
+          this.values.push(child.value());
+        } else {
+          this.values.push(...child.records.map(record => record[this.field as string]));
+        }
+      });
+    }
     this.fieldValue = undefined;
     this._formatedValue = undefined;
     // do nothing

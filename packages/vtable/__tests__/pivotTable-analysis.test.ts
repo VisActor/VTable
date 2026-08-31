@@ -410,13 +410,37 @@ describe('pivotTable grand total grouped by lower-level dimension', () => {
     }
   });
 
+  function findBodyCell(rowValues: string[], colValues: string[] = [], role?: 'normal' | 'grand-total') {
+    for (let col = 0; col < pivotTable.colCount; col++) {
+      for (let row = 0; row < pivotTable.rowCount; row++) {
+        if (pivotTable.isHeader(col, row)) {
+          continue;
+        }
+        const paths = pivotTable.getCellHeaderPaths(col, row);
+        const currentRowValues = paths.rowHeaderPaths
+          .filter(path => path.dimensionKey)
+          .map(path => path.value as string);
+        const currentColValues = paths.colHeaderPaths
+          .filter(path => path.dimensionKey)
+          .map(path => path.value as string);
+        const rowRole = pivotTable.getCellPivotRole(col, row).rowRole;
+        if (
+          currentRowValues.join('|') === rowValues.join('|') &&
+          currentColValues.join('|') === colValues.join('|') &&
+          (!role || rowRole === role)
+        ) {
+          return { col, row };
+        }
+      }
+    }
+    throw new Error(`Unable to find body cell for ${rowValues.join('/')}`);
+  }
+
   test('creates grouped grand total headers and values', () => {
     const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.value === '合计');
 
     expect(grandTotalNode.levelSpan).toBe(1);
-    expect(grandTotalNode.children.map(node => node.value)).toEqual(
-      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
-    );
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '商票', '信用证', '小计']);
     expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(400);
     expect(pivotTable.dataset.getAggregator(['合计', '商票'], [], 'balance').value()).toBe(200);
     expect(pivotTable.dataset.getAggregator(['合计', '信用证'], [], 'balance').value()).toBe(400);
@@ -432,18 +456,18 @@ describe('pivotTable grand total grouped by lower-level dimension', () => {
     ]);
 
     const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.value === '合计');
-    expect(grandTotalNode.children.map(node => node.value)).toEqual(
-      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
-    );
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '信用证', '商票', '小计']);
   });
 
   test('recalculates grouped and overall grand totals after editing', () => {
-    pivotTable.dataset.changeTreeNodeValue(['公司一', '银票'], [], 'balance', 150);
+    const detailCell = findBodyCell(['公司一', '银票'], [], 'normal');
+    pivotTable.changeCellValue(detailCell.col, detailCell.row, '150');
+    const groupedTotalCell = findBodyCell(['合计', '银票'], [], 'grand-total');
+    const overallTotalCell = findBodyCell(['合计', '小计'], [], 'grand-total');
 
-    const groupedGrandTotal = pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance');
-    expect(groupedGrandTotal.children.map(child => child.value())).toEqual([150, 300]);
-    expect(groupedGrandTotal.value()).toBe(450);
-    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(1050);
+    expect(pivotTable.getCellOriginValue(detailCell.col, detailCell.row)).toBe(150);
+    expect(pivotTable.getCellOriginValue(groupedTotalCell.col, groupedTotalCell.row)).toBe(450);
+    expect(pivotTable.getCellOriginValue(overallTotalCell.col, overallTotalCell.row)).toBe(1050);
     pivotTable.release();
   });
 });
@@ -482,15 +506,32 @@ describe('pivotTable column grand total grouped by lower-level dimension', () =>
 
     const grandTotalNode = pivotTable.dataset.colHeaderTree.find(node => node.value === '合计');
     expect(grandTotalNode.levelSpan).toBe(1);
-    expect(grandTotalNode.children.map(node => node.value)).toEqual(
-      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
-    );
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '商票', '信用证', '小计']);
     expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(400);
     expect(pivotTable.dataset.getAggregator([], ['合计', '小计'], 'balance').value()).toBe(1000);
 
-    pivotTable.dataset.changeTreeNodeValue([], ['公司一', '银票'], 'balance', 150);
-    expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(450);
-    expect(pivotTable.dataset.getAggregator([], ['合计', '小计'], 'balance').value()).toBe(1050);
+    const findBodyCell = (colValues: string[], role: 'normal' | 'grand-total') => {
+      for (let col = 0; col < pivotTable.colCount; col++) {
+        for (let row = 0; row < pivotTable.rowCount; row++) {
+          if (pivotTable.isHeader(col, row)) {
+            continue;
+          }
+          const paths = pivotTable.getCellHeaderPaths(col, row);
+          const values = paths.colHeaderPaths.filter(path => path.dimensionKey).map(path => path.value as string);
+          if (values.join('|') === colValues.join('|') && pivotTable.getCellPivotRole(col, row).colRole === role) {
+            return { col, row };
+          }
+        }
+      }
+      throw new Error(`Unable to find body cell for ${colValues.join('/')}`);
+    };
+    const detailCell = findBodyCell(['公司一', '银票'], 'normal');
+    pivotTable.changeCellValue(detailCell.col, detailCell.row, '150');
+    const groupedTotalCell = findBodyCell(['合计', '银票'], 'grand-total');
+    const overallTotalCell = findBodyCell(['合计', '小计'], 'grand-total');
+
+    expect(pivotTable.getCellOriginValue(groupedTotalCell.col, groupedTotalCell.row)).toBe(450);
+    expect(pivotTable.getCellOriginValue(overallTotalCell.col, overallTotalCell.row)).toBe(1050);
     pivotTable.release();
   });
 });
@@ -500,10 +541,12 @@ describe('pivotTable grouped grand total edge cases', () => {
     records: any[],
     options: {
       rows?: string[];
-      rowHierarchyType?: 'grid' | 'tree';
+      rowHierarchyType?: 'grid' | 'tree' | 'grid-tree';
       grandTotalDimensions?: string[];
       showSubTotalsOnTop?: boolean;
+      showSubTotalsOnTreeNode?: boolean;
       aggregationRules?: any[];
+      sortRules?: any[];
     } = {}
   ) {
     const containerDom: HTMLElement = createDiv();
@@ -516,9 +559,12 @@ describe('pivotTable grouped grand total edge cases', () => {
       indicators: ['balance'],
       indicatorsAsCol: true,
       rowHierarchyType: options.rowHierarchyType,
+      rowExpandLevel: 3,
       records,
       dataConfig: {
+        updateAggregationOnEditCell: true,
         aggregationRules: options.aggregationRules,
+        sortRules: options.sortRules,
         totals: {
           row: {
             showGrandTotals: true,
@@ -526,11 +572,40 @@ describe('pivotTable grouped grand total edge cases', () => {
             grandTotalDimensions: options.grandTotalDimensions ?? ['type'],
             grandTotalLabel: '合计',
             subTotalLabel: '小计',
-            showSubTotalsOnTop: options.showSubTotalsOnTop
+            showSubTotalsOnTop: options.showSubTotalsOnTop,
+            showSubTotalsOnTreeNode: options.showSubTotalsOnTreeNode
           }
         }
       }
     });
+  }
+
+  function findBodyCell(
+    pivotTable: PivotTable,
+    rowValues: string[],
+    role?: 'normal' | 'grand-total'
+  ): { col: number; row: number } {
+    const candidates: string[] = [];
+    for (let col = 0; col < pivotTable.colCount; col++) {
+      for (let row = 0; row < pivotTable.rowCount; row++) {
+        if (pivotTable.isHeader(col, row)) {
+          continue;
+        }
+        const values = pivotTable
+          .getCellHeaderPaths(col, row)
+          .rowHeaderPaths.filter(path => path.dimensionKey)
+          .map(path => path.value as string);
+        candidates.push(`${values.join('/')} (${pivotTable.getCellPivotRole(col, row).rowRole})`);
+        if (
+          values.join('|') === rowValues.join('|') &&
+          (!role || pivotTable.getCellPivotRole(col, row).rowRole === role)
+        ) {
+          return { col, row };
+        }
+      }
+    }
+    const availableCells = Array.from(new Set(candidates)).join(', ');
+    throw new Error(`Unable to find body cell for ${rowValues.join('/')}: ${availableCells}`);
   }
 
   test('keeps records whose dimension values match total labels separate from grouped totals', () => {
@@ -549,6 +624,8 @@ describe('pivotTable grouped grand total edge cases', () => {
     expect(
       pivotTable.dataset.getAggregator([grandTotalNode.dataValue, overallNode.dataValue], [], 'balance').value()
     ).toBe(400);
+    const groupedTotalCell = findBodyCell(pivotTable, ['合计', '小计'], 'grand-total');
+    expect(pivotTable.getCellOriginValue(groupedTotalCell.col, groupedTotalCell.row)).toBe(400);
     pivotTable.release();
   });
 
@@ -610,7 +687,9 @@ describe('pivotTable grouped grand total edge cases', () => {
     const pivotTable = createPivotTable(
       [
         { organization: '公司一', type: '银票', balance: 100 },
-        { organization: '公司二', type: '银票', balance: 300 }
+        { organization: '公司一', type: '银票', balance: 200 },
+        { organization: '公司二', type: '商票', balance: 300 },
+        { organization: '公司二', type: '商票', balance: 500 }
       ],
       {
         aggregationRules: [
@@ -624,8 +703,14 @@ describe('pivotTable grouped grand total edge cases', () => {
       }
     );
 
-    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(200);
-    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(200);
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(150);
+    expect(pivotTable.dataset.getAggregator(['合计', '商票'], [], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(275);
+
+    const detailCell = findBodyCell(pivotTable, ['公司一', '银票'], 'normal');
+    pivotTable.changeCellValue(detailCell.col, detailCell.row, '500');
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(500);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBeCloseTo(433.33, 2);
     pivotTable.release();
   });
 
@@ -638,6 +723,75 @@ describe('pivotTable grouped grand total edge cases', () => {
 
     expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(400);
     expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(999);
+    pivotTable.release();
+  });
+
+  test('uses custom grouped total records for retained dimensions', () => {
+    const pivotTable = createPivotTable([
+      { organization: '公司一', type: '银票', balance: 100 },
+      { organization: '公司二', type: '银票', balance: 300 },
+      { type: '银票', balance: 999 }
+    ]);
+
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(999);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(400);
+    pivotTable.release();
+  });
+
+  test('sorts grouped totals by indicator values', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司一', type: '商票', balance: 300 },
+        { organization: '公司二', type: '信用证', balance: 200 }
+      ],
+      {
+        sortRules: [
+          {
+            sortField: 'type',
+            sortByIndicator: 'balance',
+            sortType: VTable.TYPES.SortType.DESC,
+            query: []
+          }
+        ]
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['商票', '信用证', '银票', '小计']);
+    pivotTable.release();
+  });
+
+  test('supports multiple retained dimensions and grid-tree lookup', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', category: '票据', type: '银票', balance: 100 },
+        { organization: '公司二', category: '票据', type: '商票', balance: 300 },
+        { organization: '公司三', category: '贷款', type: '信用贷', balance: 200 }
+      ],
+      {
+        rows: ['organization', 'category', 'type'],
+        rowHierarchyType: 'grid-tree',
+        grandTotalDimensions: ['category', 'type'],
+        showSubTotalsOnTreeNode: true
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['票据', '贷款', '小计']);
+    expect(grandTotalNode.children[0].children.map(node => node.value)).toEqual(['银票', '商票']);
+    expect(grandTotalNode.children[0].levelSpan).toBe(1);
+    expect(pivotTable.dataset.getAggregator(['合计', '票据', '银票'], [], 'balance').value()).toBe(100);
+    const groupedCell = findBodyCell(pivotTable, ['合计', '票据', '银票'], 'grand-total');
+    expect(pivotTable.getCellOriginValue(groupedCell.col, groupedCell.row)).toBe(100);
+    const groupedPath = pivotTable
+      .getCellHeaderPaths(groupedCell.col, groupedCell.row)
+      .rowHeaderPaths.filter(path => path.dimensionKey)
+      .map(path => path.dataValue ?? path.value)
+      .join(pivotTable.dataset.stringJoinChar);
+    expect((pivotTable.internalProps.layoutMap as any).getRowKeysPath(groupedCell.col, groupedCell.row)).toBe(
+      groupedPath
+    );
     pivotTable.release();
   });
 

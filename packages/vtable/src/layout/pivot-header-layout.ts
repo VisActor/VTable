@@ -4362,7 +4362,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (path.colHeaderPaths.length) {
       path.colHeaderPaths.forEach(path => {
         if (path.dimensionKey) {
-          colKey.push(path.value);
+          colKey.push(path.dataValue ?? path.value);
         }
       });
     }
@@ -4378,7 +4378,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (path.rowHeaderPaths.length) {
       path.rowHeaderPaths.forEach(path => {
         if (path.dimensionKey) {
-          rowKey.push(path.value);
+          rowKey.push(path.dataValue ?? path.value);
         }
       });
     }
