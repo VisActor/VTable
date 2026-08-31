@@ -102,10 +102,10 @@ export function createGroupForFirstScreen(
   if (hasUnresizedRows) {
     // compute rows height in first screen
     computeRowsHeight(table, 0, rowEndForCompute); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
-    if (table.heightMode === 'autoHeight') {
-      bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
-      syncVisibleBodyRows(proxy, bodyDistRow);
-    }
+  }
+  if (table.heightMode === 'autoHeight') {
+    bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
+    syncVisibleBodyRows(proxy, bodyDistRow);
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
