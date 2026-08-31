@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createGroupForFirstScreen } from '../src/scenegraph/group-creater/progress/create-group-for-first-screen';
 import { computeColsWidth } from '../src/scenegraph/layout/compute-col-width';
+import { computeRowsHeight } from '../src/scenegraph/layout/compute-row-height';
 
 jest.mock('../src/scenegraph/layout/compute-col-width', () => ({
   computeColsWidth: jest.fn()
@@ -98,5 +99,54 @@ describe('createGroupForFirstScreen issue #5298', () => {
 
     expect(table.internalProps._widthResizedColMap.has).toHaveBeenCalledTimes(2);
     expect(computeColsWidth).toHaveBeenCalledWith(table, 0, 9999);
+  });
+
+  test('recalculates unresized rows when some rows keep manual heights', () => {
+    const table = createMockTable();
+    table.internalProps._heightResizedRowMap = new Set([0]);
+    const proxy = {
+      table,
+      firstScreenColLimit: 3,
+      firstScreenRowLimit: 3,
+      totalCol: 2,
+      totalRow: 2,
+      setParamsForRow: jest.fn(),
+      setParamsForColumn: jest.fn(),
+      progress: jest.fn(),
+      colStart: 0,
+      rowStart: 0
+    };
+    const groups = [makeGroup(), makeGroup(), makeGroup(), makeGroup(), makeGroup(), makeGroup()];
+
+    createGroupForFirstScreen(...groups, 0, 0, proxy);
+
+    expect(computeRowsHeight).toHaveBeenCalledWith(table, 0, 2);
+  });
+
+  test('stops scanning resized rows after finding an unresized row', () => {
+    const table = createMockTable();
+    table.rowCount = 10000;
+    table.heightMode = 'adaptive';
+    table.internalProps._heightResizedRowMap = {
+      has: jest.fn(row => row === 0)
+    };
+    const proxy = {
+      table,
+      firstScreenColLimit: 3,
+      firstScreenRowLimit: 3,
+      totalCol: 2,
+      totalRow: 2,
+      setParamsForRow: jest.fn(),
+      setParamsForColumn: jest.fn(),
+      progress: jest.fn(),
+      colStart: 0,
+      rowStart: 0
+    };
+    const groups = [makeGroup(), makeGroup(), makeGroup(), makeGroup(), makeGroup(), makeGroup()];
+
+    createGroupForFirstScreen(...groups, 0, 0, proxy);
+
+    expect(table.internalProps._heightResizedRowMap.has).toHaveBeenCalledTimes(2);
+    expect(computeRowsHeight).toHaveBeenCalledWith(table, 0, 9999);
   });
 });
