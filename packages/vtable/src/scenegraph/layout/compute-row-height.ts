@@ -139,14 +139,13 @@ export function computeRowsHeight(
       ) {
         // check fixed style and no wrap situation, fill all row width single compute
         // traspose table and row indicator pivot table cannot use single row height
-        const height = computeRowHeight(table.columnHeaderLevelCount, 0, table.colCount - 1, table);
-        fillRowsHeight(
-          height,
-          table.columnHeaderLevelCount,
-          table.rowCount - 1 - table.bottomFrozenRowCount,
-          table,
-          update ? newHeights : undefined
-        );
+        const fillStartRow = table.columnHeaderLevelCount;
+        const fillEndRow = table.rowCount - 1 - table.bottomFrozenRowCount;
+        const rowForCompute = getFirstUnresizedRow(table, fillStartRow, fillEndRow);
+        if (rowForCompute >= 0) {
+          const height = computeRowHeight(rowForCompute, 0, table.colCount - 1, table);
+          fillRowsHeight(height, fillStartRow, fillEndRow, table, update ? newHeights : undefined);
+        }
         //底部冻结的行行高需要单独计算
         for (let row = table.rowCount - table.bottomFrozenRowCount; row <= rowEnd; row++) {
           const height = computeRowHeight(row, 0, table.colCount - 1, table);
@@ -352,6 +351,10 @@ export function computeRowsHeight(
 }
 
 export function computeRowHeight(row: number, startCol: number, endCol: number, table: BaseTableAPI): number {
+  if (table.internalProps._heightResizedRowMap.has(row)) {
+    return table.getRowHeight(row);
+  }
+
   return computeRowHeightInternal(row, startCol, endCol, table, true);
 }
 
@@ -607,6 +610,9 @@ function fillRowsHeight(
     return;
   }
   for (let row = startRow; row <= endRow; row++) {
+    if (table.internalProps._heightResizedRowMap.has(row)) {
+      continue;
+    }
     if (newHeights) {
       newHeights[row] = height;
     } else {
@@ -614,6 +620,15 @@ function fillRowsHeight(
     }
   }
   table.internalProps.useOneRowHeightFillAll = true;
+}
+
+function getFirstUnresizedRow(table: BaseTableAPI, startRow: number, endRow: number): number {
+  for (let row = startRow; row <= endRow; row++) {
+    if (!table.internalProps._heightResizedRowMap.has(row)) {
+      return row;
+    }
+  }
+  return -1;
 }
 
 /**
