@@ -76,9 +76,13 @@ export function createGroupForFirstScreen(
   }
   let bodyDistRow = Math.min(proxy.bodyBottomRow, distRow - table.bottomFrozenRowCount);
   const colEndForCompute = distColForCompute ?? distCol;
-  const hasUnresizedColumns = Array.from({ length: colEndForCompute + 1 }, (_, col) =>
-    table.internalProps._widthResizedColMap.has(col)
-  ).some(resized => !resized);
+  let hasUnresizedColumns = false;
+  for (let col = 0; col <= colEndForCompute; col++) {
+    if (!table.internalProps._widthResizedColMap.has(col)) {
+      hasUnresizedColumns = true;
+      break;
+    }
+  }
   if (hasUnresizedColumns) {
     // Compute widths for new columns while preserving manually resized columns.
     computeColsWidth(table, 0, colEndForCompute);
