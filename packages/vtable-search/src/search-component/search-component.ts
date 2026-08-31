@@ -38,6 +38,11 @@ export type SearchComponentOption = {
 
 const HighlightStyleId = '__search_component_highlight';
 const FocusHighlightStyleId = '__search_component_focus';
+type SearchCellPosition =
+  | { col: number; row: number }
+  | {
+      range: VTable.TYPES.CellRange;
+    };
 
 const defaultHighlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 255, 0, 0.2)'
@@ -87,6 +92,7 @@ export class SearchComponent {
   treeIndex: number;
   scrollOption: ITableAnimationOption;
   private resultTableMap = new WeakMap<object, IVTable>();
+  private resultTreeMap = new WeakMap<object, boolean>();
 
   constructor(option: SearchComponentOption) {
     this.table = option.table;
@@ -110,11 +116,11 @@ export class SearchComponent {
   }
 
   private getSearchTables(): IVTable[] {
-    const tables: IVTable[] = [this.table];
+    const tables: IVTable[] = this.isTableAvailable(this.table) ? [this.table] : [];
     const subTableInstances = (this.table as any).internalProps?.subTableInstances;
     if (subTableInstances && typeof subTableInstances.forEach === 'function') {
       subTableInstances.forEach((subTable: IVTable) => {
-        if (subTable && subTable !== this.table && !(subTable as any).isReleased) {
+        if (subTable && subTable !== this.table && this.isTableAvailable(subTable)) {
           tables.push(subTable);
         }
       });
@@ -122,19 +128,223 @@ export class SearchComponent {
     return tables;
   }
 
-  private getResultTable(resultItem: typeof this.queryResult[number]): IVTable {
-    return this.resultTableMap.get(resultItem as object) || this.table;
+  private isTableAvailable(table: IVTable | undefined): table is IVTable {
+    return !!table && !(table as any).isReleased && !!(table as any).scenegraph;
+  }
+
+  private getResultTable(resultItem: typeof this.queryResult[number]): IVTable | undefined {
+    const table = this.resultTableMap.get(resultItem as object);
+    if (table) {
+      return this.isTableAvailable(table) ? table : undefined;
+    }
+    return this.isTableAvailable(this.table) ? this.table : undefined;
   }
 
   private getResultTables(): IVTable[] {
-    const tables = new Set<IVTable>(this.getSearchTables());
-    this.queryResult?.forEach(resultItem => tables.add(this.getResultTable(resultItem)));
+    const activeTables = new Set<IVTable>(this.getSearchTables());
+    activeTables.add(this.table);
+    const tables = new Set<IVTable>();
+    activeTables.forEach(table => {
+      if (this.isTableAvailable(table)) {
+        tables.add(table);
+      }
+    });
+    this.queryResult?.forEach(resultItem => {
+      const table = this.resultTableMap.get(resultItem as object);
+      if (table && activeTables.has(table) && this.isTableAvailable(table)) {
+        tables.add(table);
+      }
+    });
     return Array.from(tables);
   }
 
-  private addQueryResult(resultItem: typeof this.queryResult[number], table: IVTable): void {
+  private pruneUnavailableResults(): void {
+    if (!this.queryResult?.length) {
+      return;
+    }
+    const activeTables = new Set<IVTable>(this.getSearchTables());
+    activeTables.add(this.table);
+    const availableResults = this.queryResult.filter(resultItem => {
+      const table = this.resultTableMap.get(resultItem as object) || this.table;
+      return activeTables.has(table) && this.isTableAvailable(table);
+    });
+    if (availableResults.length === this.queryResult.length) {
+      return;
+    }
+    this.queryResult = availableResults;
+    if (!this.queryResult.length) {
+      this.currentIndex = -1;
+    } else if (this.currentIndex >= this.queryResult.length) {
+      this.currentIndex = this.queryResult.length - 1;
+    }
+  }
+
+  private isTreeResult(resultItem: typeof this.queryResult[number]): boolean {
+    return this.resultTreeMap.get(resultItem as object) ?? Array.isArray(resultItem.indexNumber);
+  }
+
+  private addQueryResult(resultItem: typeof this.queryResult[number], table: IVTable, isTree = false): void {
     this.queryResult.push(resultItem);
     this.resultTableMap.set(resultItem as object, table);
+    this.resultTreeMap.set(resultItem as object, isTree);
+  }
+
+  private getResultCellPosition(resultItem: typeof this.queryResult[number]): SearchCellPosition | undefined {
+    if (this.isTreeResult(resultItem)) {
+      return this.getVisibleTreeCell(resultItem);
+    }
+    if (resultItem.range) {
+      return {
+        range: resultItem.range
+      };
+    }
+    if (typeof resultItem.col === 'number' && typeof resultItem.row === 'number') {
+      return {
+        col: resultItem.col,
+        row: resultItem.row
+      };
+    }
+    return undefined;
+  }
+
+  private getResultCell(resultItem: typeof this.queryResult[number]): { col: number; row: number } | undefined {
+    const position = this.getResultCellPosition(resultItem);
+    if (!position) {
+      return undefined;
+    }
+    return 'range' in position ? position.range.start : position;
+  }
+
+  private getCellPositionRange(position: any): VTable.TYPES.CellRange | undefined {
+    if (position?.range) {
+      return position.range;
+    }
+    if (typeof position?.col === 'number' && typeof position?.row === 'number') {
+      return {
+        start: { col: position.col, row: position.row },
+        end: { col: position.col, row: position.row }
+      };
+    }
+    return undefined;
+  }
+
+  private getCellPositionKey(position: any): string | undefined {
+    const range = this.getCellPositionRange(position);
+    if (!range) {
+      return undefined;
+    }
+    return `${range.start.col}:${range.start.row}:${range.end.col}:${range.end.row}`;
+  }
+
+  private refreshCellStyle(table: IVTable, position: SearchCellPosition | any): void {
+    const range = this.getCellPositionRange(position);
+    if (!range) {
+      return;
+    }
+    for (let col = range.start.col; col <= range.end.col; col++) {
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        table.scenegraph.updateCellContent(col, row, true);
+      }
+    }
+  }
+
+  private rebuildCustomCellStyleArrangement(plugin: any, arrangements: any[]): void {
+    if (!plugin) {
+      return;
+    }
+    const currentArrangements = plugin.customCellStyleArrangement;
+    if (Array.isArray(currentArrangements)) {
+      currentArrangements.length = 0;
+      currentArrangements.push(...arrangements);
+    } else {
+      plugin.customCellStyleArrangement = arrangements;
+    }
+    const rebuildIndex = plugin._rebuildCustomCellStyleArrangementIndex;
+    if (typeof rebuildIndex === 'function') {
+      rebuildIndex.call(plugin);
+    }
+  }
+
+  private setSearchCellStyle(
+    resultItem: typeof this.queryResult[number],
+    customStyleId: string | undefined = HighlightStyleId
+  ): void {
+    const table = this.getResultTable(resultItem);
+    if (!this.isTableAvailable(table)) {
+      return;
+    }
+    const position = this.getResultCellPosition(resultItem);
+    if (!position) {
+      return;
+    }
+    const plugin = (table as any).customCellStylePlugin;
+    if (!plugin) {
+      return;
+    }
+    const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
+    const arrangements = Array.from(plugin.customCellStyleArrangement || []);
+    const positionKey = this.getCellPositionKey(position);
+    const retainedArrangements = arrangements.filter((item: any) => {
+      return !(searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item?.cellPosition) === positionKey);
+    });
+    if (customStyleId) {
+      retainedArrangements.push({
+        cellPosition: position,
+        customStyleId
+      });
+    }
+    this.rebuildCustomCellStyleArrangement(plugin, retainedArrangements);
+    this.refreshCellStyle(table, position);
+    table.scenegraph.updateNextFrame();
+  }
+
+  private searchTable(table: IVTable): void {
+    for (let row = 0; row < table.rowCount; row++) {
+      for (let col = 0; col < table.colCount; col++) {
+        if (this.skipHeader && table.isHeader(col, row)) {
+          continue;
+        }
+        const value = table.getCellValue(col, row);
+        if (this.queryMethod(this.queryStr, value, { col, row, table })) {
+          const mergeCell = table.getCellRange(col, row);
+          if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
+            let isIn = false;
+            for (let i = this.queryResult.length - 1; i >= 0; i--) {
+              const resultTable = this.getResultTable(this.queryResult[i]);
+              if (
+                resultTable === table &&
+                !this.isTreeResult(this.queryResult[i]) &&
+                this.queryResult[i].col === mergeCell.start.col &&
+                this.queryResult[i].row === mergeCell.start.row
+              ) {
+                isIn = true;
+                break;
+              }
+            }
+            if (!isIn) {
+              this.addQueryResult(
+                {
+                  col: mergeCell.start.col,
+                  row: mergeCell.start.row,
+                  range: mergeCell,
+                  value
+                },
+                table
+              );
+            }
+          } else {
+            this.addQueryResult(
+              {
+                col,
+                row,
+                value
+              },
+              table
+            );
+          }
+        }
+      }
+    }
   }
 
   private getHeaderOffset(): number {
@@ -180,26 +390,35 @@ export class SearchComponent {
 
   private clearRenderedCellStyles(targetTable: IVTable = this.table) {
     const plugin = (targetTable as any).customCellStylePlugin;
-    if (!plugin) {
+    if (!plugin || !this.isTableAvailable(targetTable)) {
       return;
     }
-    const cellsToRefresh: { col: number; row: number }[] = [];
+    const positionsToRefresh = new Map<string, SearchCellPosition>();
     const arrangements = Array.from((plugin as any)?.customCellStyleArrangement || []);
+    const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
+    const searchArrangements = arrangements.filter((item: any) => searchStyleIds.has(item?.customStyleId));
 
-    arrangements.forEach((item: any) => {
+    if (!searchArrangements.length) {
+      return;
+    }
+
+    searchArrangements.forEach((item: any) => {
       const cellPosition = item?.cellPosition;
-      if (typeof cellPosition?.col === 'number' && typeof cellPosition?.row === 'number') {
-        cellsToRefresh.push({
-          col: cellPosition.col,
-          row: cellPosition.row
-        });
+      const key = this.getCellPositionKey(cellPosition);
+      if (key) {
+        positionsToRefresh.set(key, cellPosition);
       }
     });
 
-    plugin.clearCustomCellStyleArrangement();
-    cellsToRefresh.forEach(({ col, row }) => {
-      targetTable.scenegraph.updateCellContent(col, row, true);
-    });
+    const retainedArrangements = arrangements.filter((item: any) => !searchStyleIds.has(item?.customStyleId));
+    if (retainedArrangements.length === 0) {
+      plugin.clearCustomCellStyleArrangement();
+      this.rebuildCustomCellStyleArrangement(plugin, []);
+    } else {
+      this.rebuildCustomCellStyleArrangement(plugin, retainedArrangements);
+    }
+
+    positionsToRefresh.forEach(position => this.refreshCellStyle(targetTable, position));
   }
 
   search(str: string) {
@@ -243,7 +462,8 @@ export class SearchComponent {
                   col,
                   value: value?.toString?.() ?? String(value)
                 },
-                this.table
+                this.table,
+                true
               );
             }
           });
@@ -259,7 +479,8 @@ export class SearchComponent {
                 indexNumber: currentPath,
                 col: treeCol
               },
-              this.table
+              this.table,
+              true
             );
           }
 
@@ -273,6 +494,9 @@ export class SearchComponent {
       // 同一节点同一列可能被多次命中（例如 fieldsToSearch 未限制且字段值重复），做一次简单去重
       const dedup = new Set<string>();
       this.queryResult = this.queryResult.filter(r => {
+        if (!this.isTreeResult(r)) {
+          return true;
+        }
         const key = `${(r.indexNumber || []).join('.')}:${r.col ?? ''}`;
         if (dedup.has(key)) {
           return false;
@@ -281,9 +505,13 @@ export class SearchComponent {
         return true;
       });
 
-      this.currentIndex = this.queryResult.length > 0 ? 0 : -1;
+      this.getSearchTables()
+        .filter(table => table !== this.table)
+        .forEach(table => this.searchTable(table));
 
-      if (this.queryResult.length > 0) {
+      this.currentIndex = this.queryResult.length > 0 && this.isTreeResult(this.queryResult[0]) ? 0 : -1;
+
+      if (this.currentIndex === 0) {
         this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber, col: this.queryResult[0].col ?? treeCol });
       }
 
@@ -298,60 +526,16 @@ export class SearchComponent {
       }
       this.updateCellStyle();
 
+      if (this.autoJump && this.currentIndex === -1 && this.queryResult.length > 0) {
+        return this.next();
+      }
+
       return {
         index: this.currentIndex >= 0 ? this.currentIndex : 0,
         results: this.queryResult
       };
     }
-    this.getSearchTables().forEach(table => {
-      for (let row = 0; row < table.rowCount; row++) {
-        for (let col = 0; col < table.colCount; col++) {
-          if (this.skipHeader && table.isHeader(col, row)) {
-            continue;
-          }
-          const value = table.getCellValue(col, row);
-          if (this.queryMethod(this.queryStr, value, { col, row, table })) {
-            // deal merge cell
-            const mergeCell = table.getCellRange(col, row);
-            if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
-              // find is cell already in queryResult
-              let isIn = false;
-              for (let i = this.queryResult.length - 1; i >= 0; i--) {
-                const resultTable = this.getResultTable(this.queryResult[i]);
-                if (
-                  resultTable === table &&
-                  this.queryResult[i].col === mergeCell.start.col &&
-                  this.queryResult[i].row === mergeCell.start.row
-                ) {
-                  isIn = true;
-                  break;
-                }
-              }
-              if (!isIn) {
-                this.addQueryResult(
-                  {
-                    col: mergeCell.start.col,
-                    row: mergeCell.start.row,
-                    range: mergeCell,
-                    value
-                  },
-                  table
-                );
-              }
-            } else {
-              this.addQueryResult(
-                {
-                  col,
-                  row,
-                  value
-                },
-                table
-              );
-            }
-          }
-        }
-      }
-    });
+    this.getSearchTables().forEach(table => this.searchTable(table));
     this.updateCellStyle();
 
     if (this.callback) {
@@ -384,19 +568,11 @@ export class SearchComponent {
     highlight: boolean = true,
     customStyleId: string = HighlightStyleId
   ) {
-    const { col, row, range } = resultItem;
-    this.getResultTable(resultItem).arrangeCustomCellStyle(
-      range
-        ? { range }
-        : {
-            row,
-            col
-          },
-      highlight ? customStyleId : null
-    );
+    this.setSearchCellStyle(resultItem, highlight ? customStyleId : undefined);
   }
 
   updateCellStyle(highlight: boolean = true) {
+    this.pruneUnavailableResults();
     if (!highlight) {
       this.getResultTables().forEach(table => {
         this.clearRenderedCellStyles(table);
@@ -419,89 +595,72 @@ export class SearchComponent {
       this.clearRenderedCellStyles(table);
     });
 
-    if (this.isTree) {
-      if (!this.queryResult.length) {
-        this.table.scenegraph.updateNextFrame();
-        return;
+    for (let i = 0; i < this.queryResult.length; i++) {
+      const resultItem = this.queryResult[i];
+      const table = this.getResultTable(resultItem);
+      const position = this.getResultCellPosition(resultItem);
+      if (!table || !position) {
+        continue;
       }
+      table.customCellStylePlugin.addCustomCellStyleArrangement(position as any, HighlightStyleId);
+      this.refreshCellStyle(table, position);
+    }
 
-      // 先为所有命中节点打普通高亮
-      for (let i = 0; i < this.queryResult.length; i++) {
-        const cell = this.getVisibleTreeCell(this.queryResult[i]);
-        if (!cell) {
-          continue;
-        }
-        this.table.customCellStylePlugin.addCustomCellStyleArrangement(
-          {
-            col: cell.col,
-            row: cell.row
-          },
-          HighlightStyleId
-        );
-        this.table.scenegraph.updateCellContent(cell.col, cell.row, true);
+    if (this.currentIndex >= 0 && this.currentIndex < this.queryResult.length) {
+      const resultItem = this.queryResult[this.currentIndex];
+      const table = this.getResultTable(resultItem);
+      const position = this.getResultCellPosition(resultItem);
+      if (table && position) {
+        table.customCellStylePlugin.addCustomCellStyleArrangement(position as any, FocusHighlightStyleId);
+        this.refreshCellStyle(table, position);
       }
+    }
+    resultTables.forEach(table => {
+      this.rebuildCustomCellStyleArrangement(
+        (table as any).customCellStylePlugin,
+        Array.from((table as any).customCellStylePlugin?.customCellStyleArrangement || [])
+      );
+      table.scenegraph.updateNextFrame();
+    });
+  }
 
-      // 再为当前索引打焦点高亮
-      if (this.currentIndex >= 0 && this.currentIndex < this.queryResult.length) {
-        const cell = this.getVisibleTreeCell(this.queryResult[this.currentIndex]);
-        if (cell) {
-          this.table.customCellStylePlugin.addCustomCellStyleArrangement(
-            {
-              col: cell.col,
-              row: cell.row
-            },
-            FocusHighlightStyleId
-          );
-          this.table.scenegraph.updateCellContent(cell.col, cell.row, true);
-        }
-      }
-
-      this.table.scenegraph.updateNextFrame();
+  private jumpToResult(resultItem: typeof this.queryResult[number]): void {
+    if (this.isTreeResult(resultItem)) {
+      this.jumpToCell({ IndexNumber: resultItem.indexNumber, col: resultItem.col });
     } else {
-      for (let i = 0; i < this.queryResult.length; i++) {
-        const table = this.getResultTable(this.queryResult[i]);
-        table.customCellStylePlugin.addCustomCellStyleArrangement(
-          {
-            col: this.queryResult[i].col,
-            row: this.queryResult[i].row
-          },
-          HighlightStyleId
-        );
-        table.scenegraph.updateCellContent(this.queryResult[i].col, this.queryResult[i].row, true);
+      const table = this.getResultTable(resultItem);
+      if (table) {
+        this.jumpToCell({ col: resultItem.col, row: resultItem.row }, table);
       }
-      resultTables.forEach(table => table.scenegraph.updateNextFrame());
     }
   }
 
   next() {
+    this.pruneUnavailableResults();
     if (!this.queryResult.length) {
       return {
         index: 0,
         results: this.queryResult
       };
     }
-    if (this.isTree) {
-      this.currentIndex++;
-      if (this.currentIndex >= this.queryResult.length) {
-        this.currentIndex = 0;
-      }
-      const { indexNumber, col } = this.queryResult[this.currentIndex];
-      this.jumpToCell({ IndexNumber: indexNumber, col });
+    const previousIndex = this.currentIndex;
+    this.currentIndex++;
+    if (this.currentIndex >= this.queryResult.length) {
+      this.currentIndex = 0;
+    }
+    const previousResult = previousIndex >= 0 ? this.queryResult[previousIndex] : undefined;
+    const currentResult = this.queryResult[this.currentIndex];
+
+    if (this.isTreeResult(currentResult) || (previousResult && this.isTreeResult(previousResult))) {
+      this.jumpToResult(currentResult);
       this.updateCellStyle();
     } else {
-      if (this.currentIndex !== -1) {
+      if (previousResult) {
         // reset last focus
-        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
+        this.arrangeCustomCellStyle(previousResult);
       }
-      this.currentIndex++;
-      if (this.currentIndex >= this.queryResult.length) {
-        this.currentIndex = 0;
-      }
-      const { col, row } = this.queryResult[this.currentIndex];
-
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocusHighlightStyleId);
-
-      this.jumpToCell({ col, row }, this.getResultTable(this.queryResult[this.currentIndex]));
+      this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
+      this.jumpToResult(currentResult);
     }
 
     return {
@@ -511,6 +670,7 @@ export class SearchComponent {
   }
 
   prev() {
+    this.pruneUnavailableResults();
     if (!this.queryResult.length) {
       return {
         index: 0,
@@ -518,29 +678,23 @@ export class SearchComponent {
       };
     }
 
-    if (this.isTree) {
-      this.currentIndex--;
-      if (this.currentIndex < 0) {
-        this.currentIndex = this.queryResult.length - 1;
-      }
+    const previousIndex = this.currentIndex;
+    this.currentIndex--;
+    if (this.currentIndex < 0) {
+      this.currentIndex = this.queryResult.length - 1;
+    }
+    const previousResult = previousIndex >= 0 ? this.queryResult[previousIndex] : undefined;
+    const currentResult = this.queryResult[this.currentIndex];
 
-      const { indexNumber, col } = this.queryResult[this.currentIndex];
-      this.jumpToCell({ IndexNumber: indexNumber, col });
+    if (this.isTreeResult(currentResult) || (previousResult && this.isTreeResult(previousResult))) {
+      this.jumpToResult(currentResult);
       this.updateCellStyle();
     } else {
-      // 普通表格处理
-      if (this.currentIndex !== -1) {
-        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
+      if (previousResult) {
+        this.arrangeCustomCellStyle(previousResult);
       }
-
-      this.currentIndex--;
-      if (this.currentIndex < 0) {
-        this.currentIndex = this.queryResult.length - 1;
-      }
-
-      const { col, row } = this.queryResult[this.currentIndex];
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocusHighlightStyleId);
-      this.jumpToCell({ col, row }, this.getResultTable(this.queryResult[this.currentIndex]));
+      this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
+      this.jumpToResult(currentResult);
     }
 
     return {
@@ -549,8 +703,22 @@ export class SearchComponent {
     };
   }
 
+  private getSubTableBodyRowIndex(targetTable: IVTable): number | undefined {
+    const subTableInstances = (this.table as any).internalProps?.subTableInstances;
+    if (!subTableInstances || typeof subTableInstances.forEach !== 'function') {
+      return undefined;
+    }
+    let bodyRowIndex: number | undefined;
+    subTableInstances.forEach((subTable: IVTable, rowIndex: number) => {
+      if (subTable === targetTable) {
+        bodyRowIndex = rowIndex;
+      }
+    });
+    return bodyRowIndex;
+  }
+
   jumpToCell(params: { col?: number; row?: number; IndexNumber?: number[] }, targetTable: IVTable = this.table) {
-    if (this.isTree) {
+    if (Array.isArray(params.IndexNumber)) {
       const { IndexNumber } = params;
       const indexNumbers = [...IndexNumber];
 
@@ -587,6 +755,17 @@ export class SearchComponent {
       }
     } else {
       const { col, row } = params;
+      if (targetTable !== this.table) {
+        const bodyRowIndex = this.getSubTableBodyRowIndex(targetTable);
+        if (bodyRowIndex !== undefined) {
+          const parentRow = bodyRowIndex + ((this.table as any).columnHeaderLevelCount || 0);
+          const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
+          const isParentRowVisible = parentRow >= rowStart && parentRow <= rowEnd;
+          if (!isParentRowVisible) {
+            this.table.scrollToCell({ col: 0, row: parentRow });
+          }
+        }
+      }
       const { rowStart, rowEnd } = targetTable.getBodyVisibleRowRange();
       const { colStart, colEnd } = targetTable.getBodyVisibleColRange();
 
@@ -616,6 +795,7 @@ export class SearchComponent {
     this.queryStr = '';
     this.queryResult = [];
     this.resultTableMap = new WeakMap<object, IVTable>();
+    this.resultTreeMap = new WeakMap<object, boolean>();
     this.currentIndex = -1;
   }
 }

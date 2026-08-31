@@ -6,6 +6,7 @@ import { SearchComponent } from '../src';
 
 function createTable(values: string[][]) {
   const arrangements: { col: number; row: number; style: string }[] = [];
+  const customCellStyleArrangement: { cellPosition: { col: number; row: number }; customStyleId: string }[] = [];
   const table = {
     options: {
       columns: [{ field: 'name' }]
@@ -24,15 +25,18 @@ function createTable(values: string[][]) {
     arrangeCustomCellStyle: jest.fn((position: { col: number; row: number }, style: string) => {
       if (style) {
         arrangements.push({ col: position.col, row: position.row, style });
+        customCellStyleArrangement.push({ cellPosition: position, customStyleId: style });
       }
     }),
     customCellStylePlugin: {
-      customCellStyleArrangement: arrangements,
+      customCellStyleArrangement,
       addCustomCellStyleArrangement: jest.fn((position: { col: number; row: number }, style: string) => {
         arrangements.push({ col: position.col, row: position.row, style });
+        customCellStyleArrangement.push({ cellPosition: position, customStyleId: style });
       }),
       clearCustomCellStyleArrangement: jest.fn(() => {
         arrangements.splice(0, arrangements.length);
+        customCellStyleArrangement.splice(0, customCellStyleArrangement.length);
       })
     },
     scenegraph: {
@@ -87,7 +91,12 @@ test('focus navigation and clear operate on the matching detail table', () => {
   search.next();
   search.next();
 
-  expect(detail.table.arrangeCustomCellStyle).toHaveBeenCalledWith({ col: 0, row: 1 }, '__search_component_focus');
+  expect(detail.table.customCellStylePlugin.customCellStyleArrangement).toEqual([
+    {
+      cellPosition: { col: 0, row: 1 },
+      customStyleId: '__search_component_focus'
+    }
+  ]);
 
   search.clear();
 
