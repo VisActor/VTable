@@ -378,3 +378,114 @@ describe('pivotTable-analysis init test', () => {
     pivotTable.release();
   });
 });
+
+describe('pivotTable grand total grouped by lower-level dimension', () => {
+  const containerDom: HTMLElement = createDiv();
+  containerDom.style.position = 'relative';
+  containerDom.style.width = '500px';
+  containerDom.style.height = '500px';
+
+  const pivotTable = new PivotTable(containerDom, {
+    rows: ['organization', 'type'],
+    columns: [],
+    indicators: ['balance'],
+    indicatorsAsCol: true,
+    records: [
+      { organization: '公司一', type: '银票', balance: 100 },
+      { organization: '公司一', type: '商票', balance: 200 },
+      { organization: '公司二', type: '银票', balance: 300 },
+      { organization: '公司二', type: '信用证', balance: 400 }
+    ],
+    dataConfig: {
+      updateAggregationOnEditCell: true,
+      totals: {
+        row: {
+          showGrandTotals: true,
+          showSubTotals: false,
+          grandTotalDimensions: ['type'],
+          grandTotalLabel: '合计',
+          subTotalLabel: '小计'
+        }
+      }
+    }
+  });
+
+  test('creates grouped grand total headers and values', () => {
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.value === '合计');
+
+    expect(grandTotalNode.levelSpan).toBe(1);
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(
+      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
+    );
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator(['合计', '商票'], [], 'balance').value()).toBe(200);
+    expect(pivotTable.dataset.getAggregator(['合计', '信用证'], [], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(1000);
+  });
+
+  test('keeps grouped grand total headers after sorting updates', () => {
+    pivotTable.updateSortRules([
+      {
+        sortField: 'type',
+        sortType: VTable.TYPES.SortType.DESC
+      }
+    ]);
+
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.value === '合计');
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(
+      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
+    );
+  });
+
+  test('recalculates grouped and overall grand totals after editing', () => {
+    pivotTable.dataset.changeTreeNodeValue(['公司一', '银票'], [], 'balance', 150);
+
+    const groupedGrandTotal = pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance');
+    expect(groupedGrandTotal.children.map(child => child.value())).toEqual([150, 300]);
+    expect(groupedGrandTotal.value()).toBe(450);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(1050);
+    pivotTable.release();
+  });
+});
+
+describe('pivotTable column grand total grouped by lower-level dimension', () => {
+  test('creates grouped column grand total headers and values', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+
+    const pivotTable = new PivotTable(containerDom, {
+      rows: [],
+      columns: ['organization', 'type'],
+      indicators: ['balance'],
+      indicatorsAsCol: true,
+      records: [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司一', type: '商票', balance: 200 },
+        { organization: '公司二', type: '银票', balance: 300 },
+        { organization: '公司二', type: '信用证', balance: 400 }
+      ],
+      dataConfig: {
+        totals: {
+          column: {
+            showGrandTotals: true,
+            showSubTotals: false,
+            grandTotalDimensions: ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          }
+        }
+      }
+    });
+
+    const grandTotalNode = pivotTable.dataset.colHeaderTree.find(node => node.value === '合计');
+    expect(grandTotalNode.levelSpan).toBe(1);
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(
+      expect.arrayContaining(['银票', '商票', '信用证', '小计'])
+    );
+    expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator([], ['合计', '小计'], 'balance').value()).toBe(1000);
+    pivotTable.release();
+  });
+});

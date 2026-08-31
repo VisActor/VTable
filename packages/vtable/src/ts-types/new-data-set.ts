@@ -48,6 +48,8 @@ export interface Total {
   // calcSubTotals?: CalcTotals;
   /** 小计汇总维度定义 */
   subTotalsDimensions?: string[];
+  /** 总计中保留的下级维度，用于按维度分组显示总计 */
+  grandTotalDimensions?: string[];
   /** 汇总节点显示名称  默认'总计' */
   grandTotalLabel?: string;
   /** 汇总节点显示名称  默认'小计' */

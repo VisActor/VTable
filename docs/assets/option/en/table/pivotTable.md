@@ -225,6 +225,8 @@ export interface Total {
   showSubTotals: boolean;
   // Subtotal summary dimension definition
   subTotalsDimensions?: string[];
+  // Lower-level dimensions retained in the grand total area for grouped totals. Only dimensions after the first dimension on the current axis are supported.
+  grandTotalDimensions?: string[];
   //Default 'total'
   grandTotalLabel?: string;
   //Default 'Subtotal'

@@ -82,6 +82,7 @@ dataConfig: {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['province'],
+          grandTotalDimensions: ['city'], // 总计区域继续按 city 分组，并追加整体小计
           grandTotalLabel: '行总计',
           subTotalLabel: '小计',
           showGrandTotalsOnTop: true, //汇总值显示在上
@@ -98,6 +99,8 @@ dataConfig: {
       }
     },
 ```
+
+`grandTotalDimensions` 用于在总计区域中保留下级维度。比如行维度为 `['province', 'city']` 时，将行总计配置为 `grandTotalDimensions: ['city']`，会在“行总计”下按城市分别显示汇总值，并追加一行整体“小计”。该配置也可用于列总计，只支持当前行或列方向首层之后的维度；不配置时仍显示原有的单一总计。
 
 具体示例：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
 
