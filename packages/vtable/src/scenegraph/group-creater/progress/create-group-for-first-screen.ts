@@ -88,15 +88,20 @@ export function createGroupForFirstScreen(
     computeColsWidth(table, 0, colEndForCompute);
   }
 
-  if (table.internalProps._heightResizedRowMap.size === 0) {
+  const rowEndForCompute =
+    table.options.canvasHeight === 'auto' || table.options.customConfig?.forceComputeAllRowHeight
+      ? table.rowCount - 1
+      : distRowForCompute ?? distRow;
+  let hasUnresizedRows = false;
+  for (let row = 0; row <= rowEndForCompute; row++) {
+    if (!table.internalProps._heightResizedRowMap.has(row)) {
+      hasUnresizedRows = true;
+      break;
+    }
+  }
+  if (hasUnresizedRows) {
     // compute rows height in first screen
-    computeRowsHeight(
-      table,
-      0,
-      table.options.canvasHeight === 'auto' || table.options.customConfig?.forceComputeAllRowHeight
-        ? table.rowCount - 1
-        : distRowForCompute ?? distRow
-    ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
+    computeRowsHeight(table, 0, rowEndForCompute); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
     if (table.heightMode === 'autoHeight') {
       bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
       syncVisibleBodyRows(proxy, bodyDistRow);
