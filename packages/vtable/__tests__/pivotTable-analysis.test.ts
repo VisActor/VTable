@@ -467,6 +467,7 @@ describe('pivotTable column grand total grouped by lower-level dimension', () =>
         { organization: '公司二', type: '信用证', balance: 400 }
       ],
       dataConfig: {
+        updateAggregationOnEditCell: true,
         totals: {
           column: {
             showGrandTotals: true,
@@ -486,6 +487,180 @@ describe('pivotTable column grand total grouped by lower-level dimension', () =>
     );
     expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(400);
     expect(pivotTable.dataset.getAggregator([], ['合计', '小计'], 'balance').value()).toBe(1000);
+
+    pivotTable.dataset.changeTreeNodeValue([], ['公司一', '银票'], 'balance', 150);
+    expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(450);
+    expect(pivotTable.dataset.getAggregator([], ['合计', '小计'], 'balance').value()).toBe(1050);
+    pivotTable.release();
+  });
+});
+
+describe('pivotTable grouped grand total edge cases', () => {
+  function createPivotTable(
+    records: any[],
+    options: {
+      rows?: string[];
+      rowHierarchyType?: 'grid' | 'tree';
+      grandTotalDimensions?: string[];
+      showSubTotalsOnTop?: boolean;
+      aggregationRules?: any[];
+    } = {}
+  ) {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    return new PivotTable(containerDom, {
+      rows: options.rows ?? ['organization', 'type'],
+      columns: [],
+      indicators: ['balance'],
+      indicatorsAsCol: true,
+      rowHierarchyType: options.rowHierarchyType,
+      records,
+      dataConfig: {
+        aggregationRules: options.aggregationRules,
+        totals: {
+          row: {
+            showGrandTotals: true,
+            showSubTotals: false,
+            grandTotalDimensions: options.grandTotalDimensions ?? ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计',
+            showSubTotalsOnTop: options.showSubTotalsOnTop
+          }
+        }
+      }
+    });
+  }
+
+  test('keeps records whose dimension values match total labels separate from grouped totals', () => {
+    const pivotTable = createPivotTable([
+      { organization: '合计', type: '小计', balance: 100 },
+      { organization: '公司二', type: '小计', balance: 300 }
+    ]);
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+    const groupedNode = grandTotalNode.children[0];
+    const overallNode = grandTotalNode.children[1];
+
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(100);
+    expect(
+      pivotTable.dataset.getAggregator([grandTotalNode.dataValue, groupedNode.dataValue], [], 'balance').value()
+    ).toBe(400);
+    expect(
+      pivotTable.dataset.getAggregator([grandTotalNode.dataValue, overallNode.dataValue], [], 'balance').value()
+    ).toBe(400);
+    pivotTable.release();
+  });
+
+  test('uses active dimension indexes when an intermediate dimension has no values', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司二', type: '银票', balance: 300 }
+      ],
+      {
+        rows: ['organization', 'unused', 'type']
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '小计']);
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(400);
+    pivotTable.release();
+  });
+
+  test('keeps column values matching the grand total label separate from grouped totals', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    const pivotTable = new PivotTable(containerDom, {
+      rows: [],
+      columns: ['organization', 'type'],
+      indicators: ['balance'],
+      indicatorsAsCol: true,
+      records: [
+        { organization: '合计', type: '银票', balance: 100 },
+        { organization: '公司二', type: '银票', balance: 300 }
+      ],
+      dataConfig: {
+        totals: {
+          column: {
+            showGrandTotals: true,
+            showSubTotals: false,
+            grandTotalDimensions: ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          }
+        }
+      }
+    });
+    const grandTotalNode = pivotTable.dataset.colHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(pivotTable.dataset.getAggregator([], ['合计', '银票'], 'balance').value()).toBe(100);
+    expect(
+      pivotTable.dataset
+        .getAggregator([], [grandTotalNode.dataValue, grandTotalNode.children[0].dataValue], 'balance')
+        .value()
+    ).toBe(400);
+    pivotTable.release();
+  });
+
+  test('passes the custom aggregation function to grouped and overall totals', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司二', type: '银票', balance: 300 }
+      ],
+      {
+        aggregationRules: [
+          {
+            indicatorKey: 'balance',
+            field: 'balance',
+            aggregationType: VTable.TYPES.AggregationType.CUSTOM,
+            aggregationFun: (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length
+          }
+        ]
+      }
+    );
+
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(200);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(200);
+    pivotTable.release();
+  });
+
+  test('keeps custom overall total records effective with grouped grand totals', () => {
+    const pivotTable = createPivotTable([
+      { organization: '公司一', type: '银票', balance: 100 },
+      { organization: '公司二', type: '银票', balance: 300 },
+      { balance: 999 }
+    ]);
+
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(999);
+    pivotTable.release();
+  });
+
+  test('orders tree grouped totals by retained dimensions and honors subtotal placement', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: 'A', type: 'A', balance: 100 },
+        { organization: 'A', type: 'B', balance: 200 },
+        { organization: 'B', type: 'A', balance: 300 }
+      ],
+      {
+        rowHierarchyType: 'tree',
+        showSubTotalsOnTop: true
+      }
+    );
+    pivotTable.updateSortRules([
+      { sortField: 'organization', sortType: VTable.TYPES.SortType.ASC },
+      { sortField: 'type', sortType: VTable.TYPES.SortType.DESC }
+    ]);
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['小计', 'B', 'A']);
+    expect(pivotTable.dataset.getAggregator(['合计', 'B'], [], 'balance').value()).toBe(200);
     pivotTable.release();
   });
 });

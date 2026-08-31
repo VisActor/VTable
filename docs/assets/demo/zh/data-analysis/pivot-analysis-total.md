@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.totals
 
 # 透视分析——小计总计
 
-透视分析表格通过 `dataConfig.totals` 配置行列维度的小计和总计。本示例中，行方向保持原有的小计和总计效果；列方向通过 `grandTotalDimensions: ['Segment']`，让列总计在 `Segment` 维度下分组展示，并追加一个包含全部分组的整体小计。汇总默认显示在底部或右侧，也可以通过 `showGrandTotalsOnTop` 调整到顶部或左侧。[配置参考](../../option/PivotTable#dataConfig.totals)
+透视分析表格通过 `dataConfig.totals` 配置行列维度的小计和总计。本示例中，行方向保持原有的小计和总计效果；列方向通过 `grandTotalDimensions: ['Segment']`，让列总计在 `Segment` 维度下分组展示，并追加一个包含全部分组的整体小计。行总计默认显示在底部，可通过 `showGrandTotalsOnTop` 调整到顶部；列总计默认显示在右侧，可通过 `showGrandTotalsOnLeft` 调整到左侧。[配置参考](../../option/PivotTable#dataConfig.totals)
 
 ## 关键配置
 

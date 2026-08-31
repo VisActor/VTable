@@ -687,7 +687,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 index
               };
             }
-            return colPath.indicatorKey ?? colPath.value;
+            return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
           });
         const rowKeys = cellDimensionPath.rowHeaderPaths
           ?.filter((path: any) => {
@@ -700,7 +700,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 index
               };
             }
-            return rowPath.indicatorKey ?? rowPath.value;
+            return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
           });
         const aggregator = this.dataset.getAggregator(
           // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -720,10 +720,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -779,7 +779,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
       const rowKeys = cellDimensionPath.rowHeaderPaths
         ?.filter((path: any) => {
@@ -792,7 +792,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -816,10 +816,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const valueNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -859,7 +859,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
       const rowKeys = cellDimensionPath.rowHeaderPaths
         ?.filter((path: any) => {
@@ -872,7 +872,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -889,10 +889,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -932,7 +932,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
       const rowKeys = cellDimensionPath.rowHeaderPaths
         ?.filter((path: any) => {
@@ -945,7 +945,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -961,10 +961,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -1001,7 +1001,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
       const rowKeys = cellDimensionPath.rowHeaderPaths
         ?.filter((path: any) => {
@@ -1014,7 +1014,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -1031,10 +1031,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -1069,7 +1069,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
       const rowKeys = cellDimensionPath.rowHeaderPaths
         ?.filter((path: any) => {
@@ -1082,7 +1082,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
               index
             };
           }
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -1099,10 +1099,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       //数据为行列树结构 根据row col获取对应的维度名称 查找到对应值
       const cellDimensionPath = this.internalProps.layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const treeNode = this.flatDataToObjects.getTreeNode(
         rowKeys,
@@ -2221,7 +2221,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 index
               };
             }
-            return colPath.indicatorKey ?? colPath.value;
+            return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
           });
         const rowKeys = cellDimensionPath.rowHeaderPaths
           ?.filter((path: any) => {
@@ -2234,7 +2234,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
                 index
               };
             }
-            return rowPath.indicatorKey ?? rowPath.value;
+            return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
           });
         this.dataset.changeTreeNodeValue(
           rowKeys,
@@ -2262,10 +2262,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           );
       } else {
         const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-          return colPath.indicatorKey ?? colPath.value;
+          return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
         });
         const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-          return rowPath.indicatorKey ?? rowPath.value;
+          return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
         });
         this.flatDataToObjects.changeTreeNodeValue(
           rowKeys,

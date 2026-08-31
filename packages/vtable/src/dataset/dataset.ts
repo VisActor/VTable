@@ -107,6 +107,8 @@ export class Dataset {
   indicatorStatistics: { max: Aggregator; min: Aggregator; total: Aggregator }[] = [];
 
   stringJoinChar = String.fromCharCode(0);
+  private readonly groupedGrandTotalKey = String.fromCharCode(1) + 'vtable_grouped_grand_total';
+  private readonly groupedGrandTotalSubtotalKey = String.fromCharCode(1) + 'vtable_grouped_grand_total_subtotal';
   //缓存rows对应每个值是否为汇总字段
   private rowsIsTotal: boolean[] = [];
   private colsIsTotal: boolean[] = [];
@@ -330,7 +332,8 @@ export class Dataset {
             this.rowGrandTotalLabel,
             this.totals?.row?.showGrandTotalsOnTop ?? false,
             this.totals?.row?.grandTotalDimensions,
-            this.rowSubTotalLabel
+            this.rowSubTotalLabel,
+            this.totals?.row?.showSubTotalsOnTop ?? false
           );
         } else {
           this.rowHeaderTree = this.ArrToTree(
@@ -345,7 +348,8 @@ export class Dataset {
             this.rowSubTotalLabel,
             this.totals?.row?.showGrandTotalsOnTop ?? false,
             this.totals?.row?.showSubTotalsOnTop ?? false,
-            this.totals?.row?.grandTotalDimensions
+            this.totals?.row?.grandTotalDimensions,
+            true
           );
         }
       }
@@ -380,7 +384,8 @@ export class Dataset {
           this.colSubTotalLabel,
           this.totals?.column?.showGrandTotalsOnLeft ?? false,
           this.totals?.column?.showSubTotalsOnLeft ?? false,
-          this.totals?.column?.grandTotalDimensions
+          this.totals?.column?.grandTotalDimensions,
+          false
         );
         // }
       }
@@ -738,7 +743,11 @@ export class Dataset {
               return rk in record;
             })
           ) {
-            rowKey.push(this.rowGrandTotalLabel);
+            if (this.getGrandTotalDimensionIndexes(this.rows, this.dataConfig.totals.row.grandTotalDimensions).length) {
+              rowKey.push(this.groupedGrandTotalKey, this.groupedGrandTotalSubtotalKey);
+            } else {
+              rowKey.push(this.rowGrandTotalLabel);
+            }
             isToTalRecord = true;
             break;
           } else if (
@@ -798,7 +807,14 @@ export class Dataset {
               return ck in record;
             })
           ) {
-            colKey.push(this.colGrandTotalLabel);
+            if (
+              this.getGrandTotalDimensionIndexes(this.columns, this.dataConfig.totals.column.grandTotalDimensions)
+                .length
+            ) {
+              colKey.push(this.groupedGrandTotalKey, this.groupedGrandTotalSubtotalKey);
+            } else {
+              colKey.push(this.colGrandTotalLabel);
+            }
             isToTalRecord = true;
             break;
           } else if (
@@ -1068,7 +1084,8 @@ export class Dataset {
           this.rowGrandTotalLabel,
           this.totals?.row?.showGrandTotalsOnTop ?? false,
           this.totals?.row?.grandTotalDimensions,
-          this.rowSubTotalLabel
+          this.rowSubTotalLabel,
+          this.totals?.row?.showSubTotalsOnTop ?? false
         );
       } else {
         this.rowHeaderTree = this.ArrToTree(
@@ -1083,7 +1100,8 @@ export class Dataset {
           this.rowSubTotalLabel,
           this.totals?.row?.showGrandTotalsOnTop ?? false,
           this.totals?.row?.showSubTotalsOnTop ?? false,
-          this.totals?.row?.grandTotalDimensions
+          this.totals?.row?.grandTotalDimensions,
+          true
         );
       }
     }
@@ -1101,7 +1119,8 @@ export class Dataset {
         this.colSubTotalLabel,
         this.totals?.column?.showGrandTotalsOnLeft ?? false,
         this.totals?.column?.showSubTotalsOnLeft ?? false,
-        this.totals?.column?.grandTotalDimensions
+        this.totals?.column?.grandTotalDimensions,
+        false
       );
     }
     // this.rowKeysPath_FULL = this.TreeToArr(
@@ -1193,8 +1212,8 @@ export class Dataset {
     }
     //#endregion
     // let agg;
-    let flatRowKey;
-    let flatColKey;
+    let flatRowKey: string;
+    let flatColKey: string;
     if (typeof rowKey === 'string') {
       flatRowKey = rowKey;
     } else {
@@ -1248,6 +1267,39 @@ export class Dataset {
       }
       // flatColKey = colKey.join(this.stringJoinChar);
       flatColKey = join(colKey, this.stringJoinChar);
+    }
+
+    if (
+      Array.isArray(rowKey) &&
+      rowKey[0] === this.rowGrandTotalLabel &&
+      !this.tree[flatRowKey] &&
+      this.getGrandTotalDimensionIndexes(
+        this.rows.filter((_, index) => this.rowsHasValue[index]),
+        this.totals?.row?.grandTotalDimensions
+      ).length
+    ) {
+      const internalRowKey = rowKey.slice();
+      internalRowKey[0] = this.groupedGrandTotalKey;
+      if (internalRowKey.length === 2 && internalRowKey[1] === this.rowSubTotalLabel) {
+        internalRowKey[1] = this.groupedGrandTotalSubtotalKey;
+      }
+      flatRowKey = join(internalRowKey, this.stringJoinChar);
+    }
+    if (
+      Array.isArray(colKey) &&
+      colKey[0] === this.colGrandTotalLabel &&
+      !Object.keys(this.tree).some(rowTreeKey => this.tree[rowTreeKey]?.[flatColKey]) &&
+      this.getGrandTotalDimensionIndexes(
+        this.columns.filter((_, index) => this.columnsHasValue[index]),
+        this.totals?.column?.grandTotalDimensions
+      ).length
+    ) {
+      const internalColKey = colKey.slice();
+      internalColKey[0] = this.groupedGrandTotalKey;
+      if (internalColKey.length === 2 && internalColKey[1] === this.colSubTotalLabel) {
+        internalColKey[1] = this.groupedGrandTotalSubtotalKey;
+      }
+      flatColKey = join(internalColKey, this.stringJoinChar);
     }
     //TODO 原有逻辑 但这里先强制跳过
     // if ( rowKey.length === 0 && colKey.length === 0) {
@@ -1661,13 +1713,12 @@ export class Dataset {
           }
         }
       }
-      if ((that.totals?.column?.showGrandTotals || this.rows.length === 0) && colKey[0] !== that.colGrandTotalLabel) {
+      if ((that.totals?.column?.showGrandTotals || this.rows.length === 0) && colKey[0] !== this.groupedGrandTotalKey) {
         const flatColTotalKeys = this.getGrandTotalKeys(
           colKey,
-          that.columns,
+          that.columns.filter((_, index) => that.columnsHasValue[index]),
           that.totals?.column?.grandTotalDimensions,
-          that.colGrandTotalLabel,
-          that.colSubTotalLabel
+          that.colGrandTotalLabel
         );
         for (const flatColTotalKey of flatColTotalKeys) {
           if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
@@ -1713,6 +1764,7 @@ export class Dataset {
                 ]({
                   key: toComputeIndicatorKeys[i],
                   field: aggRule?.field ?? toComputeIndicatorKeys[i],
+                  aggregationFun: aggRule?.aggregationFun,
                   formatFun:
                     aggRule?.formatFun ??
                     (
@@ -1726,7 +1778,14 @@ export class Dataset {
                 });
               }
               if (flatColTotalKey !== flatColKey) {
-                this.tree[flatRowKey][flatColTotalKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                const sourceAggregator = that.tree[flatRowKey]?.[flatColKey]?.[i];
+                if (this.tree[flatRowKey][flatColTotalKey][i].type === AggregationType.CUSTOM) {
+                  sourceAggregator?.records.forEach(record => {
+                    this.tree[flatRowKey][flatColTotalKey][i].push(record);
+                  });
+                } else {
+                  this.tree[flatRowKey][flatColTotalKey][i].push(sourceAggregator);
+                }
               }
             }
           }
@@ -1835,14 +1894,13 @@ export class Dataset {
 
           if (
             (that.totals?.row?.showGrandTotals || this.columns.length === 0) &&
-            rowKey[0] !== that.rowGrandTotalLabel
+            rowKey[0] !== this.groupedGrandTotalKey
           ) {
             const flatRowTotalKeys = this.getGrandTotalKeys(
               rowKey,
-              that.rows,
+              that.rows.filter((_, index) => that.rowsHasValue[index]),
               that.totals?.row?.grandTotalDimensions,
-              that.rowGrandTotalLabel,
-              that.rowSubTotalLabel
+              that.rowGrandTotalLabel
             );
             for (const flatRowTotalKey of flatRowTotalKeys) {
               if (!this.tree[flatRowTotalKey]) {
@@ -1882,6 +1940,7 @@ export class Dataset {
                     ]({
                       key: toComputeIndicatorKeys[i],
                       field: aggRule?.field ?? toComputeIndicatorKeys[i],
+                      aggregationFun: aggRule?.aggregationFun,
                       formatFun:
                         aggRule?.formatFun ??
                         (
@@ -1896,7 +1955,14 @@ export class Dataset {
                   }
                 }
                 if (flatRowTotalKey !== flatRowKey) {
-                  this.tree[flatRowTotalKey][flatColKey][i].push(that.tree[flatRowKey]?.[flatColKey]?.[i]);
+                  const sourceAggregator = that.tree[flatRowKey]?.[flatColKey]?.[i];
+                  if (this.tree[flatRowTotalKey][flatColKey][i].type === AggregationType.CUSTOM) {
+                    sourceAggregator?.records.forEach(record => {
+                      this.tree[flatRowTotalKey][flatColKey][i].push(record);
+                    });
+                  } else {
+                    this.tree[flatRowTotalKey][flatColKey][i].push(sourceAggregator);
+                  }
                 }
               }
             }
@@ -1967,19 +2033,44 @@ export class Dataset {
       .sort((a, b) => a - b);
   }
 
+  private getGroupedGrandTotalPaths(
+    keys: string[][],
+    dimensions: string[],
+    grandTotalDimensions: string[] | undefined,
+    isRow: boolean = true
+  ) {
+    const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions);
+    const groupedPaths = new Map<string, string[]>();
+    keys.forEach(key => {
+      const path = dimensionIndexes.map(index => key[index]);
+      groupedPaths.set(join(path, this.stringJoinChar), path);
+    });
+    return Array.from(groupedPaths.values()).sort(
+      this.arrSort(
+        dimensionIndexes.map(index => dimensions[index]),
+        isRow
+      )
+    );
+  }
+
   private getGrandTotalKeys(
     dimensionKey: string[],
     dimensions: string[],
     grandTotalDimensions: string[] | undefined,
-    grandTotalLabel: string,
-    subTotalLabel: string
+    grandTotalLabel: string
   ) {
     const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions);
     if (!dimensionIndexes.length) {
       return [grandTotalLabel];
     }
-    const groupedKey = [grandTotalLabel, ...dimensionIndexes.map(dimensionIndex => dimensionKey[dimensionIndex])];
-    return [join(groupedKey, this.stringJoinChar), join([grandTotalLabel, subTotalLabel], this.stringJoinChar)];
+    const groupedKey = [
+      this.groupedGrandTotalKey,
+      ...dimensionIndexes.map(dimensionIndex => dimensionKey[dimensionIndex])
+    ];
+    return [
+      join(groupedKey, this.stringJoinChar),
+      join([this.groupedGrandTotalKey, this.groupedGrandTotalSubtotalKey], this.stringJoinChar)
+    ];
   }
 
   private ArrToTree1(
@@ -1990,7 +2081,8 @@ export class Dataset {
     grandTotalLabel: string,
     showGrandTotalsOnTop: boolean,
     grandTotalDimensions?: string[],
-    subTotalLabel?: string
+    subTotalLabel?: string,
+    showSubTotalsOnTop?: boolean
   ) {
     /**
      *
@@ -2069,22 +2161,24 @@ export class Dataset {
       } else {
         const grandTotalNode: any = {
           value: grandTotalLabel,
+          dataValue: this.groupedGrandTotalKey,
           dimensionKey: rows[0],
           children: [],
           role: 'grand-total'
         };
         const grandTotalMap = new Map<string, any>();
-        arr.forEach(list => {
+        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, true).forEach(list => {
           let parent = grandTotalNode;
-          const path = [grandTotalLabel];
+          const path = [this.groupedGrandTotalKey];
           grandTotalDimensionIndexes.forEach((dimensionIndex, index) => {
-            const value = list[dimensionIndex];
+            const value = list[index];
             path.push(value);
             const flatKey = join(path, concatStr);
             let item = grandTotalMap.get(flatKey);
             if (!item) {
               item = {
                 value,
+                dataValue: value,
                 dimensionKey: rows[dimensionIndex],
                 children: index === grandTotalDimensionIndexes.length - 1 ? createIndicatorChildren() : []
               };
@@ -2094,11 +2188,17 @@ export class Dataset {
             parent = item;
           });
         });
-        grandTotalNode.children.push({
+        const totalChild = {
           value: subTotalLabel,
+          dataValue: this.groupedGrandTotalSubtotalKey,
           dimensionKey: rows[grandTotalDimensionIndexes[0]],
           children: createIndicatorChildren()
-        });
+        };
+        if (showSubTotalsOnTop) {
+          grandTotalNode.children.unshift(totalChild);
+        } else {
+          grandTotalNode.children.push(totalChild);
+        }
         if (showGrandTotalsOnTop) {
           result.unshift(grandTotalNode);
         } else {
@@ -2124,7 +2224,8 @@ export class Dataset {
     subTotalLabel: string,
     showGrandTotalsOnTop: boolean,
     showSubTotalsOnTop: boolean,
-    grandTotalDimensions?: string[]
+    grandTotalDimensions?: string[],
+    isRow?: boolean
   ) {
     /**
      *
@@ -2246,8 +2347,16 @@ export class Dataset {
             value: indicator.title
           };
         }) ?? [];
-      const node: { value: string; dimensionKey: string; children: any[]; levelSpan: number; role: string } = {
+      const node: {
+        value: string;
+        dataValue?: string;
+        dimensionKey: string;
+        children: any[];
+        levelSpan: number;
+        role: string;
+      } = {
         value: grandTotalLabel, // getId(item?.id, 1),
+        dataValue: grandTotalDimensionIndexes.length ? this.groupedGrandTotalKey : undefined,
         dimensionKey: rows[0],
         levelSpan: grandTotalDimensionIndexes[0] ?? subTotalFlags.length,
         children: [],
@@ -2255,11 +2364,11 @@ export class Dataset {
       };
       if (grandTotalDimensionIndexes.length) {
         const grandTotalMap = new Map<string, any>();
-        arr.forEach(list => {
+        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, isRow).forEach(list => {
           let parent = node;
-          const path = [grandTotalLabel];
+          const path = [this.groupedGrandTotalKey];
           grandTotalDimensionIndexes.forEach((dimensionIndex, index) => {
-            const value = list[dimensionIndex];
+            const value = list[index];
             path.push(value);
             const flatKey = join(path, concatStr);
             let item = grandTotalMap.get(flatKey);
@@ -2267,6 +2376,7 @@ export class Dataset {
               const nextDimensionIndex = grandTotalDimensionIndexes[index + 1] ?? rows.length;
               item = {
                 value,
+                dataValue: value,
                 dimensionKey: rows[dimensionIndex],
                 levelSpan: nextDimensionIndex - dimensionIndex,
                 children: index === grandTotalDimensionIndexes.length - 1 ? createIndicatorChildren() : []
@@ -2279,6 +2389,7 @@ export class Dataset {
         });
         const totalChild = {
           value: subTotalLabel,
+          dataValue: this.groupedGrandTotalSubtotalKey,
           dimensionKey: rows[grandTotalDimensionIndexes[0]],
           levelSpan: rows.length - grandTotalDimensionIndexes[0],
           children: createIndicatorChildren()
@@ -2538,10 +2649,9 @@ export class Dataset {
     if (this.totals?.row?.showGrandTotals) {
       const rowGrandTotalKeys = this.getGrandTotalKeys(
         rowKeyParts,
-        this.rows,
+        this.rows.filter((_, index) => this.rowsHasValue[index]),
         this.totals.row.grandTotalDimensions,
-        this.rowGrandTotalLabel,
-        this.rowSubTotalLabel
+        this.rowGrandTotalLabel
       );
       for (const rowGrandTotalKey of rowGrandTotalKeys) {
         if (rowAggregateKeys.indexOf(rowGrandTotalKey) === -1) {
@@ -2569,10 +2679,9 @@ export class Dataset {
     if (this.totals?.column?.showGrandTotals) {
       const colGrandTotalKeys = this.getGrandTotalKeys(
         colKeyParts,
-        this.columns,
+        this.columns.filter((_, index) => this.columnsHasValue[index]),
         this.totals.column.grandTotalDimensions,
-        this.colGrandTotalLabel,
-        this.colSubTotalLabel
+        this.colGrandTotalLabel
       );
       for (const colGrandTotalKey of colGrandTotalKeys) {
         if (colAggregateKeys.indexOf(colGrandTotalKey) === -1) {

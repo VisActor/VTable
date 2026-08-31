@@ -104,6 +104,8 @@ export type IPivotTableCellHeaderPaths = {
 export interface IDimensionInfo {
   dimensionKey?: string;
   value?: string;
+  /** Internal value used to locate aggregated data when it differs from the displayed value. */
+  dataValue?: string;
   indicatorKey?: string;
   isPivotCorner?: boolean;
   virtual?: boolean;

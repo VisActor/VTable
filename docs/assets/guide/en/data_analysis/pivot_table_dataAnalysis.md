@@ -82,7 +82,7 @@ dataConfig: {
           showGrandTotals: true,
           showSubTotals: true,
           subTotalsDimensions: ['province'],
-          grandTotalDimensions: ['city'], // Group the grand total by city and append an overall subtotal
+          grandTotalDimensions: ['province'], // Group the grand total by province and append an overall subtotal
           grandTotalLabel: 'row total',
           subTotalLabel: 'Subtotal',
           showGrandTotalsOnTop: true, //totals show on top
@@ -100,7 +100,7 @@ dataConfig: {
     },
 ```
 
-`grandTotalDimensions` retains lower-level dimensions in the grand total area. For example, when the row dimensions are `['province', 'city']`, setting `grandTotalDimensions: ['city']` on the row total displays a total for each city under "row total" and appends an overall "Subtotal" row. The same option is available for column totals. Only dimensions after the first dimension on the current axis are supported. When omitted, VTable keeps the original single grand total.
+`grandTotalDimensions` retains lower-level dimensions in the grand total area. For example, with the row dimensions `['region', 'province']` shown above, setting `grandTotalDimensions: ['province']` displays a total for each province under "row total" and appends an overall "Subtotal" row. The same option is available for column totals. Only dimensions after the first dimension on the current axis are supported. When omitted, VTable keeps the original single grand total.
 
 Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
 

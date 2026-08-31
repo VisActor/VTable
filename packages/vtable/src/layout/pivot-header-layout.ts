@@ -2348,6 +2348,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         dimensionKey?: string;
         indicatorKey?: string;
         value?: string;
+        dataValue?: string;
         virtual?: boolean;
         role?: CellPivotRole;
       } = {};
@@ -2359,6 +2360,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         (colHeader.indicatorKey
           ? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? ''
           : colHeader.value);
+      colHeaderPath.dataValue = colHeader.dataValue;
       colHeaderPath.virtual = colHeader.virtual;
       colHeaderPath.role = colHeader.role;
       headerPaths.colHeaderPaths!.push(colHeaderPath);
@@ -2370,6 +2372,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           dimensionKey?: string;
           indicatorKey?: string;
           value?: string;
+          dataValue?: string;
           virtual?: boolean;
           role?: CellPivotRole;
         } = {};
@@ -2381,6 +2384,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (rowHeader.indicatorKey
             ? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? ''
             : rowHeader.value);
+        rowHeaderPath.dataValue = rowHeader.dataValue;
         rowHeaderPath.virtual = rowHeader.virtual;
         rowHeaderPath.role = rowHeader.role;
         headerPaths.rowHeaderPaths!.push(rowHeaderPath);

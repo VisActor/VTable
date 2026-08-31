@@ -9,7 +9,7 @@ option: PivotTable#dataConfig.totals
 
 # Pivot Analysis - Subtotal Total
 
-Configure `dataConfig.totals` to display subtotals and grand totals for row and column dimensions. In this example, row totals retain the original behavior, while `grandTotalDimensions: ['Segment']` groups the column grand total by `Segment` and appends an overall subtotal containing all groups. Totals appear at the bottom or on the right by default; use `showGrandTotalsOnTop` to move them to the top or left. [Configuration reference](../../option/PivotTable#dataConfig.totals)
+Configure `dataConfig.totals` to display subtotals and grand totals for row and column dimensions. In this example, row totals retain the original behavior, while `grandTotalDimensions: ['Segment']` groups the column grand total by `Segment` and appends an overall subtotal containing all groups. Row grand totals appear at the bottom by default and can be moved to the top with `showGrandTotalsOnTop`; column grand totals appear on the right and can be moved to the left with `showGrandTotalsOnLeft`. [Configuration reference](../../option/PivotTable#dataConfig.totals)
 
 ## Key Configurations
 
