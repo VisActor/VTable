@@ -631,6 +631,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
    * 数据集合, 平坦数据集合。另外一种特殊方式是传入分组后的数据，分组依据为指标
    */
   records?: any[] | Record<string, any[]>;
+  /** 数据分析相关配置 */
+  dataConfig?: IPivotTableDataConfig;
   /**
    * @deprecated 请使用resize.columnResizeType
    */

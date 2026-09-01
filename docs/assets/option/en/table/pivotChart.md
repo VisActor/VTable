@@ -49,6 +49,10 @@ The currently supported data formats are, taking the sales of large supermarkets
 ]
 ```
 
+## dataConfig(IPivotTableDataConfig)
+
+PivotChart supports the PivotTable data analysis configuration. When totals are configured, use `totals.row.grandTotalDimensions` or `totals.column.grandTotalDimensions` to create grouped grand totals by retained lower-level dimensions.
+
 ## columnTree(Array)
 
 List header tree, type:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.

@@ -646,6 +646,23 @@ describe('pivotTable grouped grand total edge cases', () => {
     pivotTable.release();
   });
 
+  test('keeps a configured lower-level total when the first dimension has no values', () => {
+    const pivotTable = createPivotTable(
+      [
+        { type: '银票', balance: 100 },
+        { type: '商票', balance: 300 }
+      ],
+      {
+        rows: ['unused', 'type']
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '商票', '小计']);
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(100);
+    pivotTable.release();
+  });
+
   test('keeps column values matching the grand total label separate from grouped totals', () => {
     const containerDom: HTMLElement = createDiv();
     containerDom.style.position = 'relative';
@@ -683,6 +700,62 @@ describe('pivotTable grouped grand total edge cases', () => {
     pivotTable.release();
   });
 
+  test('does not classify retained-dimension records as totals when totals are hidden', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    const pivotTable = new PivotTable(containerDom, {
+      rows: ['organization', 'type'],
+      columns: [],
+      indicators: ['balance'],
+      records: [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { type: '银票', balance: 300 }
+      ],
+      dataConfig: {
+        totals: {
+          row: {
+            showGrandTotals: false,
+            grandTotalDimensions: ['type']
+          }
+        }
+      }
+    });
+
+    expect(pivotTable.dataset.getAggregator(['银票'], [], 'balance').value()).toBe(300);
+    pivotTable.release();
+  });
+
+  test('resolves column grouped totals independently for each row', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    const pivotTable = new PivotTable(containerDom, {
+      rows: ['region'],
+      columns: ['organization', 'type'],
+      indicators: ['balance'],
+      records: [
+        { region: '华北', organization: '合计', type: '银票', balance: 100 },
+        { region: '华东', organization: '公司一', type: '银票', balance: 300 }
+      ],
+      dataConfig: {
+        totals: {
+          column: {
+            showGrandTotals: true,
+            grandTotalDimensions: ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          }
+        }
+      }
+    });
+
+    expect(pivotTable.dataset.getAggregator(['华东'], ['合计', '银票'], 'balance').value()).toBe(300);
+    pivotTable.release();
+  });
+
   test('passes the custom aggregation function to grouped and overall totals', () => {
     const pivotTable = createPivotTable(
       [
@@ -711,6 +784,109 @@ describe('pivotTable grouped grand total edge cases', () => {
     pivotTable.changeCellValue(detailCell.col, detailCell.row, '500');
     expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(500);
     expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBeCloseTo(433.33, 2);
+    pivotTable.release();
+  });
+
+  test('recalculates custom aggregation records after editing a multi-record cell', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司一', type: '银票', balance: 200 },
+        { organization: '公司二', type: '商票', balance: 300 }
+      ],
+      {
+        aggregationRules: [
+          {
+            indicatorKey: 'balance',
+            field: 'balance',
+            aggregationType: VTable.TYPES.AggregationType.CUSTOM,
+            aggregationFun: (_values: number[], records: { balance: number }[]) =>
+              records.reduce((sum, record) => sum + record.balance, 0)
+          }
+        ]
+      }
+    );
+    const detailCell = findBodyCell(pivotTable, ['公司一', '银票'], 'normal');
+
+    pivotTable.changeCellValue(detailCell.col, detailCell.row, '500');
+
+    expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(500);
+    expect(pivotTable.dataset.getAggregator(['合计', '小计'], [], 'balance').value()).toBe(800);
+    pivotTable.release();
+  });
+
+  test('recalculates custom grouped total intersections after editing', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    const pivotTable = new PivotTable(containerDom, {
+      rows: ['organization', 'type'],
+      columns: ['category', 'channel'],
+      indicators: ['balance'],
+      records: [
+        { organization: '公司一', type: '银票', category: '票据', channel: '线上', balance: 100 },
+        { organization: '公司一', type: '银票', category: '票据', channel: '线上', balance: 200 }
+      ],
+      dataConfig: {
+        updateAggregationOnEditCell: true,
+        aggregationRules: [
+          {
+            indicatorKey: 'balance',
+            field: 'balance',
+            aggregationType: VTable.TYPES.AggregationType.CUSTOM,
+            aggregationFun: (_values: number[], records: { balance: number }[]) =>
+              records.reduce((sum, record) => sum + record.balance, 0)
+          }
+        ],
+        totals: {
+          row: {
+            showGrandTotals: true,
+            grandTotalDimensions: ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          },
+          column: {
+            showGrandTotals: true,
+            grandTotalDimensions: ['channel'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          }
+        }
+      }
+    });
+    const findCell = (rowValues: string[], colValues: string[], role: 'normal' | 'grand-total') => {
+      for (let col = 0; col < pivotTable.colCount; col++) {
+        for (let row = 0; row < pivotTable.rowCount; row++) {
+          if (pivotTable.isHeader(col, row)) {
+            continue;
+          }
+          const paths = pivotTable.getCellHeaderPaths(col, row);
+          const currentRowValues = paths.rowHeaderPaths
+            .filter(path => path.dimensionKey)
+            .map(path => path.value as string);
+          const currentColValues = paths.colHeaderPaths
+            .filter(path => path.dimensionKey)
+            .map(path => path.value as string);
+          const roles = pivotTable.getCellPivotRole(col, row);
+          if (
+            currentRowValues.join('|') === rowValues.join('|') &&
+            currentColValues.join('|') === colValues.join('|') &&
+            roles.rowRole === role &&
+            roles.colRole === role
+          ) {
+            return { col, row };
+          }
+        }
+      }
+      throw new Error(`Unable to find ${rowValues.join('/')} and ${colValues.join('/')}`);
+    };
+    const detailCell = findCell(['公司一', '银票'], ['票据', '线上'], 'normal');
+
+    pivotTable.changeCellValue(detailCell.col, detailCell.row, '500');
+
+    const intersection = findCell(['合计', '银票'], ['合计', '线上'], 'grand-total');
+    expect(pivotTable.getCellOriginValue(intersection.col, intersection.row)).toBe(500);
     pivotTable.release();
   });
 
@@ -781,6 +957,7 @@ describe('pivotTable grouped grand total edge cases', () => {
     expect(grandTotalNode.children.map(node => node.value)).toEqual(['票据', '贷款', '小计']);
     expect(grandTotalNode.children[0].children.map(node => node.value)).toEqual(['银票', '商票']);
     expect(grandTotalNode.children[0].levelSpan).toBe(1);
+    expect(pivotTable.dataset.getAggregator(['合计', '票据'], [], 'balance').value()).toBe(400);
     expect(pivotTable.dataset.getAggregator(['合计', '票据', '银票'], [], 'balance').value()).toBe(100);
     const groupedCell = findBodyCell(pivotTable, ['合计', '票据', '银票'], 'grand-total');
     expect(pivotTable.getCellOriginValue(groupedCell.col, groupedCell.row)).toBe(100);
@@ -792,6 +969,44 @@ describe('pivotTable grouped grand total edge cases', () => {
     expect((pivotTable.internalProps.layoutMap as any).getRowKeysPath(groupedCell.col, groupedCell.row)).toBe(
       groupedPath
     );
+    pivotTable.release();
+  });
+
+  test('sorts non-leaf grouped totals by their own aggregated values', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', category: '票据', type: '银票', balance: 100 },
+        { organization: '公司二', category: '票据', type: '商票', balance: 600 },
+        { organization: '公司三', category: '贷款', type: '信用贷', balance: 500 }
+      ],
+      {
+        rows: ['organization', 'category', 'type'],
+        grandTotalDimensions: ['category', 'type'],
+        sortRules: [
+          {
+            sortField: 'category',
+            sortByIndicator: 'balance',
+            sortType: VTable.TYPES.SortType.DESC,
+            query: []
+          }
+        ]
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['票据', '贷款', '小计']);
+    pivotTable.release();
+  });
+
+  test('round-trips grouped total header paths when labels collide with data', () => {
+    const pivotTable = createPivotTable([
+      { organization: '合计', type: '银票', balance: 100 },
+      { organization: '公司二', type: '银票', balance: 300 }
+    ]);
+    const groupedTotalCell = findBodyCell(pivotTable, ['合计', '银票'], 'grand-total');
+    const paths = pivotTable.getCellHeaderPaths(groupedTotalCell.col, groupedTotalCell.row);
+
+    expect(pivotTable.getCellAddressByHeaderPaths(paths)).toEqual(groupedTotalCell);
     pivotTable.release();
   });
 

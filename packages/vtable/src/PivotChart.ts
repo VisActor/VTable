@@ -134,7 +134,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     this.internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
-    this.internalProps.dataConfig = { isPivotChart: true };
+    this.internalProps.dataConfig = { ...cloneDeep(options.dataConfig), isPivotChart: true };
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
     this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -356,7 +356,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 更新protectedSpace
     internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
-    internalProps.dataConfig = { isPivotChart: true };
+    internalProps.dataConfig = { ...cloneDeep(options.dataConfig), isPivotChart: true };
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
     this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];

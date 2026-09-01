@@ -3423,10 +3423,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const isMatch =
         (!isValid(currentPath.indicatorKey) &&
           dimension.dimensionKey === currentPath.dimensionKey &&
-          dimension.value === currentPath.value) ||
+          (isValid(currentPath.dataValue)
+            ? ((dimension as any).dataValue ?? dimension.value) === currentPath.dataValue
+            : dimension.value === currentPath.value)) ||
         (isValid(currentPath.indicatorKey) &&
           dimension.indicatorKey === currentPath.indicatorKey &&
-          ((isValid(dimension.value) && isValid(currentPath.value) && currentPath.value === dimension.value) ||
+          ((isValid(currentPath.dataValue) &&
+            ((dimension as any).dataValue ?? dimension.value) === currentPath.dataValue) ||
+            (isValid(dimension.value) && isValid(currentPath.value) && currentPath.value === dimension.value) ||
             !isValid(dimension.value) ||
             !isValid(currentPath.value)));
 
@@ -3625,7 +3629,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           .filter((hd: HeaderData) => {
             return (
               (hd?.field === rowDimension.dimensionKey || hd?.field === rowDimension.indicatorKey) &&
-              hd?.title === rowDimension.value
+              (isValid(rowDimension.dataValue)
+                ? ((hd as any).dataValue ?? hd.title) === rowDimension.dataValue
+                : hd?.title === rowDimension.value)
             );
           })
           .map((hd: HeaderData) => {
@@ -3643,7 +3649,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             fullCellIds.every(id => {
               const curHd = this._headerObjectMap[id];
               return rowHeaderPaths.find(rowDimensionPath => {
-                return rowDimensionPath.dimensionKey === curHd.field && rowDimensionPath.value === curHd.title;
+                return (
+                  rowDimensionPath.dimensionKey === curHd.field &&
+                  (isValid(rowDimensionPath.dataValue)
+                    ? ((curHd as any).dataValue ?? curHd.title) === rowDimensionPath.dataValue
+                    : rowDimensionPath.value === curHd.title)
+                );
               });
             })
           );
@@ -4258,7 +4269,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
-                return pathObj.value;
+                return pathObj.dataValue ?? pathObj.value;
               })
               .join(this.dataset.stringJoinChar)
           ];
@@ -4291,7 +4302,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
-                return pathObj.value;
+                return pathObj.dataValue ?? pathObj.value;
               })
               .join(this.dataset.stringJoinChar)
           ];

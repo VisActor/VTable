@@ -333,7 +333,8 @@ export class Dataset {
             this.totals?.row?.showGrandTotalsOnTop ?? false,
             this.totals?.row?.grandTotalDimensions,
             this.rowSubTotalLabel,
-            this.totals?.row?.showSubTotalsOnTop ?? false
+            this.totals?.row?.showSubTotalsOnTop ?? false,
+            this.rows
           );
         } else {
           this.rowHeaderTree = this.ArrToTree(
@@ -349,7 +350,8 @@ export class Dataset {
             this.totals?.row?.showGrandTotalsOnTop ?? false,
             this.totals?.row?.showSubTotalsOnTop ?? false,
             this.totals?.row?.grandTotalDimensions,
-            true
+            true,
+            this.rows
           );
         }
       }
@@ -385,7 +387,8 @@ export class Dataset {
           this.totals?.column?.showGrandTotalsOnLeft ?? false,
           this.totals?.column?.showSubTotalsOnLeft ?? false,
           this.totals?.column?.grandTotalDimensions,
-          false
+          false,
+          this.columns
         );
         // }
       }
@@ -560,6 +563,9 @@ export class Dataset {
     if ((this.filterRules?.length ?? 0) >= 1) {
       isNeedFilter = true;
     }
+    const records = Array.isArray(this.records) ? this.records : Object.values(this.records).flat();
+    this.rowsHasValue = this.rows.map(row => records.some(record => record && row in record));
+    this.columnsHasValue = this.columns.map(column => records.some(record => record && column in record));
     //常规records是数组的情况
     if (Array.isArray(this.records)) {
       if (!this.filteredRecords) {
@@ -618,6 +624,93 @@ export class Dataset {
    * @param assignedIndicatorKey 指定要计算的指标key  外部用户 用指标做records的key 分别存储不同指标对应的数据时 会传入这个参数
    * @returns
    */
+  private collectValue(field: string, collectKeys: string, record: any) {
+    if (!this.collectedValues[field]) {
+      this.collectedValues[field] = {};
+    }
+    if (!this.collectedValues[field][collectKeys]) {
+      if (this.collectValuesBy[field].sumBy) {
+        this.collectedValues[field][collectKeys] = {};
+      } else if (this.collectValuesBy[field].range) {
+        this.collectedValues[field][collectKeys] = {
+          min: Number.MAX_SAFE_INTEGER,
+          max: Number.MIN_SAFE_INTEGER
+        };
+      } else {
+        this.collectedValues[field][collectKeys] = [];
+      }
+    }
+
+    if (this.collectValuesBy[field].sumBy) {
+      const sumByKeys: string = this.collectValuesBy[field].sumBy
+        ?.map(byField => record[byField])
+        .join(this.stringJoinChar);
+      if (!(this.collectedValues[field][collectKeys] as any)[sumByKeys]) {
+        (this.collectedValues[field][collectKeys] as any)[sumByKeys] = new registeredAggregators[AggregationType.SUM]({
+          key: field,
+          field,
+          isRecord: undefined,
+          needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
+        });
+      }
+      (this.collectedValues[field][collectKeys] as any)[sumByKeys].push(record);
+    } else if (this.collectValuesBy[field].range) {
+      const fieldRange = this.collectedValues[field][collectKeys] as {
+        max: number;
+        min: number;
+      };
+      let max = Math.max(record[field], fieldRange.max);
+      let min = Math.min(record[field], fieldRange.min);
+      if (this.collectValuesBy[field].considerFields) {
+        for (const considerField of this.collectValuesBy[field].considerFields) {
+          if (record[considerField]) {
+            if (typeof record[considerField] === 'number') {
+              max = Math.max(record[considerField], max);
+              min = Math.min(record[considerField], min);
+            } else if (Array.isArray(record[considerField])) {
+              max = Math.max(...record[considerField], max);
+              min = Math.min(...record[considerField], min);
+            }
+          }
+        }
+      }
+      if (!isNaN(max)) {
+        fieldRange.max = max;
+        fieldRange.min = min;
+      }
+    } else {
+      const fieldValues = this.collectedValues[field][collectKeys] as Array<string>;
+      if (fieldValues.indexOf(record[field]) === -1) {
+        fieldValues.push(record[field]);
+      }
+    }
+  }
+
+  private getGroupedCollectedValueKeys(by: string[], record: any): string[] {
+    if (!(this.dataConfig as IPivotChartDataConfig)?.isPivotChart) {
+      return [];
+    }
+    const keys = new Set<string>();
+    [
+      { dimensions: this.rows, totals: this.totals?.row },
+      { dimensions: this.columns, totals: this.totals?.column }
+    ].forEach(({ dimensions, totals }) => {
+      if (!totals?.showGrandTotals) {
+        return;
+      }
+      const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, totals.grandTotalDimensions);
+      if (dimensionIndexes.length && dimensionIndexes.every(index => by.indexOf(dimensions[index]) !== -1)) {
+        keys.add(
+          join(
+            [this.groupedGrandTotalKey, ...dimensionIndexes.map(index => record[dimensions[index]])],
+            this.stringJoinChar
+          )
+        );
+      }
+    });
+    return Array.from(keys);
+  }
+
   private processRecord(record: any, assignedIndicatorKey?: string) {
     //这个派生字段的计算位置有待确定，是否应该放到filter之前
     this.derivedFieldRules?.forEach((derivedFieldRule: DerivedFieldRule, i: number) => {
@@ -628,69 +721,11 @@ export class Dataset {
     //#region 按照collectValuesBy 收集维度值
     for (const field in this.collectValuesBy) {
       if (isValid(record[field])) {
-        if (!this.collectedValues[field]) {
-          this.collectedValues[field] = {};
-        }
         const collectKeys = this.collectValuesBy[field].by.map(byField => record[byField]).join(this.stringJoinChar);
-        if (!this.collectedValues[field][collectKeys]) {
-          if (this.collectValuesBy[field].sumBy) {
-            this.collectedValues[field][collectKeys] = {};
-          } else if (this.collectValuesBy[field].range) {
-            this.collectedValues[field][collectKeys] = {
-              min: Number.MAX_SAFE_INTEGER,
-              max: Number.MIN_SAFE_INTEGER
-            };
-          } else {
-            this.collectedValues[field][collectKeys] = [];
-          }
-        }
-
-        if (this.collectValuesBy[field].sumBy) {
-          const sumByKeys: string = this.collectValuesBy[field].sumBy
-            ?.map(byField => record[byField])
-            .join(this.stringJoinChar);
-          if (!(this.collectedValues[field][collectKeys] as any)[sumByKeys]) {
-            (this.collectedValues[field][collectKeys] as any)[sumByKeys] = new registeredAggregators[
-              AggregationType.SUM
-            ]({
-              key: field,
-              field: field,
-              isRecord: undefined,
-              needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
-            });
-          }
-          (this.collectedValues[field][collectKeys] as any)[sumByKeys].push(record);
-        } else if (this.collectValuesBy[field].range) {
-          const fieldRange = this.collectedValues[field][collectKeys] as {
-            max: number;
-            min: number;
-          };
-          let max = Math.max(record[field], fieldRange.max);
-          let min = Math.min(record[field], fieldRange.min);
-          // 处理considerFields
-          if (this.collectValuesBy[field].considerFields) {
-            for (const considerField of this.collectValuesBy[field].considerFields) {
-              if (record[considerField]) {
-                if (typeof record[considerField] === 'number') {
-                  max = Math.max(record[considerField], max);
-                  min = Math.min(record[considerField], min);
-                } else if (Array.isArray(record[considerField])) {
-                  max = Math.max(...record[considerField], max);
-                  min = Math.min(...record[considerField], min);
-                }
-              }
-            }
-          }
-          if (!isNaN(max)) {
-            fieldRange.max = max;
-            fieldRange.min = min;
-          }
-        } else {
-          const fieldRange = this.collectedValues[field][collectKeys] as Array<string>;
-          if (fieldRange.indexOf(record[field]) === -1) {
-            fieldRange.push(record[field]);
-          }
-        }
+        this.collectValue(field, collectKeys, record);
+        this.getGroupedCollectedValueKeys(this.collectValuesBy[field].by, record).forEach(groupedCollectKeys => {
+          this.collectValue(field, groupedCollectKeys, record);
+        });
       }
     }
     //#endregion
@@ -728,11 +763,10 @@ export class Dataset {
     } else {
       const rowKey: string[] = [];
       rowKeys.push({ rowKey, indicatorKey: assignedIndicatorKey });
-      const customGroupedGrandTotalKey = this.getCustomGroupedGrandTotalKey(
-        record,
-        this.rows,
-        this.dataConfig?.totals?.row?.grandTotalDimensions
-      );
+      const customGroupedGrandTotalKey =
+        this.dataConfig?.totals?.row?.showGrandTotals && this.rowsHasValue[0]
+          ? this.getCustomGroupedGrandTotalKey(record, this.rows, this.dataConfig?.totals?.row?.grandTotalDimensions)
+          : undefined;
       if (customGroupedGrandTotalKey) {
         rowKey.push(...customGroupedGrandTotalKey);
         isToTalRecord = true;
@@ -804,11 +838,14 @@ export class Dataset {
     } else {
       const colKey: string[] = [];
       colKeys.push({ colKey, indicatorKey: assignedIndicatorKey });
-      const customGroupedGrandTotalKey = this.getCustomGroupedGrandTotalKey(
-        record,
-        this.columns,
-        this.dataConfig?.totals?.column?.grandTotalDimensions
-      );
+      const customGroupedGrandTotalKey =
+        this.dataConfig?.totals?.column?.showGrandTotals && this.columnsHasValue[0]
+          ? this.getCustomGroupedGrandTotalKey(
+              record,
+              this.columns,
+              this.dataConfig?.totals?.column?.grandTotalDimensions
+            )
+          : undefined;
       if (customGroupedGrandTotalKey) {
         colKey.push(...customGroupedGrandTotalKey);
         isToTalRecord = true;
@@ -1107,7 +1144,8 @@ export class Dataset {
           this.totals?.row?.showGrandTotalsOnTop ?? false,
           this.totals?.row?.grandTotalDimensions,
           this.rowSubTotalLabel,
-          this.totals?.row?.showSubTotalsOnTop ?? false
+          this.totals?.row?.showSubTotalsOnTop ?? false,
+          this.rows
         );
       } else {
         this.rowHeaderTree = this.ArrToTree(
@@ -1123,7 +1161,8 @@ export class Dataset {
           this.totals?.row?.showGrandTotalsOnTop ?? false,
           this.totals?.row?.showSubTotalsOnTop ?? false,
           this.totals?.row?.grandTotalDimensions,
-          true
+          true,
+          this.rows
         );
       }
     }
@@ -1142,7 +1181,8 @@ export class Dataset {
         this.totals?.column?.showGrandTotalsOnLeft ?? false,
         this.totals?.column?.showSubTotalsOnLeft ?? false,
         this.totals?.column?.grandTotalDimensions,
-        false
+        false,
+        this.columns
       );
     }
     // this.rowKeysPath_FULL = this.TreeToArr(
@@ -1297,7 +1337,8 @@ export class Dataset {
       !this.tree[flatRowKey] &&
       this.getGrandTotalDimensionIndexes(
         this.rows.filter((_, index) => this.rowsHasValue[index]),
-        this.totals?.row?.grandTotalDimensions
+        this.totals?.row?.grandTotalDimensions,
+        this.rows
       ).length
     ) {
       const internalRowKey = rowKey.slice();
@@ -1310,10 +1351,11 @@ export class Dataset {
     if (
       Array.isArray(colKey) &&
       colKey[0] === this.colGrandTotalLabel &&
-      !Object.keys(this.tree).some(rowTreeKey => this.tree[rowTreeKey]?.[flatColKey]) &&
+      !this.tree[flatRowKey]?.[flatColKey] &&
       this.getGrandTotalDimensionIndexes(
         this.columns.filter((_, index) => this.columnsHasValue[index]),
-        this.totals?.column?.grandTotalDimensions
+        this.totals?.column?.grandTotalDimensions,
+        this.columns
       ).length
     ) {
       const internalColKey = colKey.slice();
@@ -1521,17 +1563,17 @@ export class Dataset {
         if (sorter.sortRule?.sortByIndicator) {
           let aChanged = a;
           let bChanged = b;
-          if (!pathPrefix?.length && sorter.fieldIndex < fieldArr.length - 1) {
+          if (sorter.fieldIndex < fieldArr.length - 1) {
             aChanged = a.slice(0, sorter.fieldIndex + 1);
-            if (that.rowHierarchyType === 'grid' && isRow) {
+            if (!pathPrefix?.length && that.rowHierarchyType === 'grid' && isRow) {
               aChanged.push(that.rowSubTotalLabel);
-            } else if (!isRow) {
+            } else if (!pathPrefix?.length && !isRow) {
               aChanged.push(that.colSubTotalLabel);
             }
             bChanged = b.slice(0, sorter.fieldIndex + 1);
-            if (that.rowHierarchyType === 'grid' && isRow) {
+            if (!pathPrefix?.length && that.rowHierarchyType === 'grid' && isRow) {
               bChanged.push(that.rowSubTotalLabel);
-            } else if (!isRow) {
+            } else if (!pathPrefix?.length && !isRow) {
               bChanged.push(that.colSubTotalLabel);
             }
           }
@@ -1746,7 +1788,8 @@ export class Dataset {
           colKey,
           that.columns.filter((_, index) => that.columnsHasValue[index]),
           that.totals?.column?.grandTotalDimensions,
-          that.colGrandTotalLabel
+          that.colGrandTotalLabel,
+          that.columns
         );
         for (const flatColTotalKey of flatColTotalKeys) {
           if (this.totalRecordsTree?.[flatRowKey]?.[flatColTotalKey]) {
@@ -1927,7 +1970,8 @@ export class Dataset {
               rowKey,
               that.rows.filter((_, index) => that.rowsHasValue[index]),
               that.totals?.row?.grandTotalDimensions,
-              that.rowGrandTotalLabel
+              that.rowGrandTotalLabel,
+              that.rows
             );
             for (const flatRowTotalKey of flatRowTotalKeys) {
               if (!this.tree[flatRowTotalKey]) {
@@ -2049,13 +2093,26 @@ export class Dataset {
    * @param arr
    * @returns
    */
-  private getGrandTotalDimensionIndexes(dimensions: string[], grandTotalDimensions?: string[]) {
+  private getGrandTotalDimensionIndexes(
+    dimensions: string[],
+    grandTotalDimensions?: string[],
+    configuredDimensions: string[] = dimensions
+  ) {
     if (!grandTotalDimensions?.length) {
       return [];
     }
     return grandTotalDimensions
-      .map(dimension => dimensions.indexOf(dimension))
-      .filter((index, position, indexes) => index > 0 && indexes.indexOf(index) === position)
+      .map(dimension => ({
+        configuredIndex: configuredDimensions.indexOf(dimension),
+        activeIndex: dimensions.indexOf(dimension)
+      }))
+      .filter(
+        ({ configuredIndex, activeIndex }, position, indexes) =>
+          configuredIndex > 0 &&
+          activeIndex >= 0 &&
+          indexes.findIndex(item => item.activeIndex === activeIndex) === position
+      )
+      .map(({ activeIndex }) => activeIndex)
       .sort((a, b) => a - b);
   }
 
@@ -2079,9 +2136,10 @@ export class Dataset {
     keys: string[][],
     dimensions: string[],
     grandTotalDimensions: string[] | undefined,
-    isRow: boolean = true
+    isRow: boolean = true,
+    configuredDimensions: string[] = dimensions
   ) {
-    const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions);
+    const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions, configuredDimensions);
     const groupedPaths = new Map<string, string[]>();
     keys.forEach(key => {
       const path = dimensionIndexes.map(index => key[index]);
@@ -2100,9 +2158,10 @@ export class Dataset {
     dimensionKey: string[],
     dimensions: string[],
     grandTotalDimensions: string[] | undefined,
-    grandTotalLabel: string
+    grandTotalLabel: string,
+    configuredDimensions: string[] = dimensions
   ) {
-    const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions);
+    const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions, configuredDimensions);
     if (!dimensionIndexes.length) {
       return [grandTotalLabel];
     }
@@ -2111,7 +2170,7 @@ export class Dataset {
       ...dimensionIndexes.map(dimensionIndex => dimensionKey[dimensionIndex])
     ];
     return [
-      join(groupedKey, this.stringJoinChar),
+      ...groupedKey.slice(1).map((_, index) => join(groupedKey.slice(0, index + 2), this.stringJoinChar)),
       join([this.groupedGrandTotalKey, this.groupedGrandTotalSubtotalKey], this.stringJoinChar)
     ];
   }
@@ -2125,7 +2184,8 @@ export class Dataset {
     showGrandTotalsOnTop: boolean,
     grandTotalDimensions?: string[],
     subTotalLabel?: string,
-    showSubTotalsOnTop?: boolean
+    showSubTotalsOnTop?: boolean,
+    configuredRows: string[] = rows
   ) {
     /**
      *
@@ -2198,7 +2258,7 @@ export class Dataset {
 
     arr.forEach(item => addList(item, false));
     if (isGrandTotal) {
-      const grandTotalDimensionIndexes = this.getGrandTotalDimensionIndexes(rows, grandTotalDimensions);
+      const grandTotalDimensionIndexes = this.getGrandTotalDimensionIndexes(rows, grandTotalDimensions, configuredRows);
       if (!grandTotalDimensionIndexes.length) {
         addList([grandTotalLabel], isGrandTotal);
       } else {
@@ -2210,7 +2270,7 @@ export class Dataset {
           role: 'grand-total'
         };
         const grandTotalMap = new Map<string, any>();
-        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, true).forEach(list => {
+        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, true, configuredRows).forEach(list => {
           let parent = grandTotalNode;
           const path = [this.groupedGrandTotalKey];
           grandTotalDimensionIndexes.forEach((dimensionIndex, index) => {
@@ -2268,7 +2328,8 @@ export class Dataset {
     showGrandTotalsOnTop: boolean,
     showSubTotalsOnTop: boolean,
     grandTotalDimensions?: string[],
-    isRow?: boolean
+    isRow?: boolean,
+    configuredRows: string[] = rows
   ) {
     /**
      *
@@ -2376,7 +2437,7 @@ export class Dataset {
     }
     //最后将总计的节点加上
     if (isGrandTotal && arr?.length) {
-      const grandTotalDimensionIndexes = this.getGrandTotalDimensionIndexes(rows, grandTotalDimensions);
+      const grandTotalDimensionIndexes = this.getGrandTotalDimensionIndexes(rows, grandTotalDimensions, configuredRows);
       const createIndicatorChildren = () =>
         indicators?.map(indicator => {
           if (typeof indicator === 'string') {
@@ -2407,7 +2468,7 @@ export class Dataset {
       };
       if (grandTotalDimensionIndexes.length) {
         const grandTotalMap = new Map<string, any>();
-        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, isRow).forEach(list => {
+        this.getGroupedGrandTotalPaths(arr, rows, grandTotalDimensions, isRow, configuredRows).forEach(list => {
           let parent = node;
           const path = [this.groupedGrandTotalKey];
           grandTotalDimensionIndexes.forEach((dimensionIndex, index) => {
@@ -2694,7 +2755,8 @@ export class Dataset {
         rowKeyParts,
         this.rows.filter((_, index) => this.rowsHasValue[index]),
         this.totals.row.grandTotalDimensions,
-        this.rowGrandTotalLabel
+        this.rowGrandTotalLabel,
+        this.rows
       );
       for (const rowGrandTotalKey of rowGrandTotalKeys) {
         if (rowAggregateKeys.indexOf(rowGrandTotalKey) === -1) {
@@ -2724,7 +2786,8 @@ export class Dataset {
         colKeyParts,
         this.columns.filter((_, index) => this.columnsHasValue[index]),
         this.totals.column.grandTotalDimensions,
-        this.colGrandTotalLabel
+        this.colGrandTotalLabel,
+        this.columns
       );
       for (const colGrandTotalKey of colGrandTotalKeys) {
         if (colAggregateKeys.indexOf(colGrandTotalKey) === -1) {

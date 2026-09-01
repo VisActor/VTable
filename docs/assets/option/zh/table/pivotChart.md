@@ -49,6 +49,10 @@
 ]
 ```
 
+## dataConfig(IPivotTableDataConfig)
+
+透视图支持复用透视表的数据分析配置。配置总计时可使用 `totals.row.grandTotalDimensions` 或 `totals.column.grandTotalDimensions`，按保留的下级维度生成分组总计。
+
 ## columnTree(Array)
 
 列表头树，类型为:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`。其中 IDimensionHeaderNode 指的是维度非指标的维度值节点，IIndicatorHeaderNode 指的是指标名称节点。

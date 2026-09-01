@@ -306,11 +306,19 @@ export class CustomAggregator extends Aggregator {
   recalculate() {
     if (this.recalculateFromChildren && this.children?.length && this.field) {
       this.values = [];
+      this.records = [];
       this.children.forEach(child => {
         if (isValid(child.changedValue)) {
-          this.values.push(child.value());
+          const value = child.value();
+          this.values.push(value);
+          this.records.push({ [this.field as string]: value });
+        } else if (child instanceof CustomAggregator && child.recalculateFromChildren) {
+          this.values.push(...child.values);
+          this.records.push(...child.records);
         } else {
-          this.values.push(...child.records.map(record => record[this.field as string]));
+          const records = child.records;
+          this.values.push(...records.map(record => record[this.field as string]));
+          this.records.push(...records);
         }
       });
     }
