@@ -15,7 +15,7 @@ import type { IChartColumnIndicator } from '../../ts-types/pivot-table/indicator
 
 export function createDataset(options: PivotChartConstructorOptions) {
   const layoutNodeId = { seqId: 0 };
-  const dataConfig: IPivotChartDataConfig = { isPivotChart: true };
+  const dataConfig: IPivotChartDataConfig = { ...options.dataConfig, isPivotChart: true };
   let columnDimensionTree;
   let rowDimensionTree;
   let columnTree;
@@ -32,7 +32,7 @@ export function createDataset(options: PivotChartConstructorOptions) {
     }
     rowDimensionTree = new DimensionTree((options.rowTree as ITreeLayoutHeadNode[]) ?? [], layoutNodeId);
   }
-  const rowKeys = rowDimensionTree.dimensionKeys?.count
+  const rowKeys = rowDimensionTree?.dimensionKeys?.count
     ? rowDimensionTree.dimensionKeys.valueArr()
     : options.rows?.reduce((keys, rowObj) => {
         if (typeof rowObj === 'string') {
@@ -42,7 +42,7 @@ export function createDataset(options: PivotChartConstructorOptions) {
         }
         return keys;
       }, []) ?? [];
-  const columnKeys = columnDimensionTree.dimensionKeys?.count
+  const columnKeys = columnDimensionTree?.dimensionKeys?.count
     ? columnDimensionTree.dimensionKeys.valueArr()
     : options.columns?.reduce((keys, columnObj) => {
         if (typeof columnObj === 'string') {
