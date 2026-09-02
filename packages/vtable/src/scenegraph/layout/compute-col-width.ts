@@ -717,7 +717,7 @@ export function getAdaptiveWidth(
   const minWidthColumnMap = new Map<number, number>();
   for (let col = startCol; col < endColPlus1; col++) {
     const width = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
-    if (table.internalProps._widthResizedColMap.has(col)) {
+    if (table.widthMode === 'adaptive' && table.internalProps._widthResizedColMap.has(col)) {
       totalDrawWidth -= width;
       continue;
     }
