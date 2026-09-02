@@ -675,6 +675,17 @@ describe('pivotTable init test', () => {
     pivotTable.stateManager.endMoveCol();
     expect(pivotTable.getCellValue(3, 1)).toEqual('利润');
   });
+  test('pivotTable updateOption keeps default header col width aligned with default col width', () => {
+    pivotTable.updateOption(
+      {
+        ...option,
+        defaultColWidth: 120
+      },
+      { clearColWidthCache: false }
+    );
+
+    expect(pivotTable.internalProps.defaultHeaderColWidth).toBe(120);
+  });
   test('pivotTable updateOption hideIndicatorName&format', () => {
     indicators[0].format = rec => {
       return rec?.['利润'] ?? '0' + '元';

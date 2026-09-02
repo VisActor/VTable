@@ -14,7 +14,9 @@ function fillVisibleBodyRows(proxy: SceneProxy, distRow: number): number {
 
   while (targetRow < bodyBottomRow && table.getRowsHeight(table.frozenRowCount, targetRow) < visibleBodyHeight) {
     const nextRow = targetRow + 1;
-    computeRowsHeight(table, nextRow, nextRow, false);
+    if (!table.internalProps._heightResizedRowMap.has(nextRow)) {
+      computeRowsHeight(table, nextRow, nextRow, false);
+    }
     targetRow = nextRow;
   }
 
@@ -75,24 +77,37 @@ export function createGroupForFirstScreen(
     distRow = Math.min(proxy.firstScreenRowLimit - 1, table.rowCount - 1);
   }
   let bodyDistRow = Math.min(proxy.bodyBottomRow, distRow - table.bottomFrozenRowCount);
-  if (table.internalProps._widthResizedColMap.size === 0) {
-    // compute colums width in first screen
-    computeColsWidth(table, 0, distColForCompute ?? distCol);
+  const colEndForCompute = distColForCompute ?? distCol;
+  let hasUnresizedColumns = false;
+  for (let col = 0; col <= colEndForCompute; col++) {
+    if (!table.internalProps._widthResizedColMap.has(col)) {
+      hasUnresizedColumns = true;
+      break;
+    }
+  }
+  if (hasUnresizedColumns) {
+    // Compute widths for new columns while preserving manually resized columns.
+    computeColsWidth(table, 0, colEndForCompute);
   }
 
-  if (table.internalProps._heightResizedRowMap.size === 0) {
-    // compute rows height in first screen
-    computeRowsHeight(
-      table,
-      0,
-      table.options.canvasHeight === 'auto' || table.options.customConfig?.forceComputeAllRowHeight
-        ? table.rowCount - 1
-        : distRowForCompute ?? distRow
-    ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
-    if (table.heightMode === 'autoHeight') {
-      bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
-      syncVisibleBodyRows(proxy, bodyDistRow);
+  const rowEndForCompute =
+    table.options.canvasHeight === 'auto' || table.options.customConfig?.forceComputeAllRowHeight
+      ? table.rowCount - 1
+      : distRowForCompute ?? distRow;
+  let hasUnresizedRows = false;
+  for (let row = 0; row <= rowEndForCompute; row++) {
+    if (!table.internalProps._heightResizedRowMap.has(row)) {
+      hasUnresizedRows = true;
+      break;
     }
+  }
+  if (hasUnresizedRows) {
+    // compute rows height in first screen
+    computeRowsHeight(table, 0, rowEndForCompute); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
+  }
+  if (table.heightMode === 'autoHeight') {
+    bodyDistRow = fillVisibleBodyRows(proxy, bodyDistRow);
+    syncVisibleBodyRows(proxy, bodyDistRow);
   }
 
   if (distCol < table.colCount - table.rightFrozenColCount) {
