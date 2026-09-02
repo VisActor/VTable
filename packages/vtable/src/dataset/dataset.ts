@@ -706,6 +706,7 @@ export class Dataset {
             this.stringJoinChar
           )
         );
+        keys.add(join([this.groupedGrandTotalKey, this.groupedGrandTotalSubtotalKey], this.stringJoinChar));
       }
     });
     return Array.from(keys);
@@ -2462,7 +2463,7 @@ export class Dataset {
         value: grandTotalLabel, // getId(item?.id, 1),
         dataValue: grandTotalDimensionIndexes.length ? this.groupedGrandTotalKey : undefined,
         dimensionKey: rows[0],
-        levelSpan: grandTotalDimensionIndexes[0] ?? subTotalFlags.length,
+        levelSpan: Math.max(1, grandTotalDimensionIndexes[0] ?? subTotalFlags.length),
         children: [],
         role: 'grand-total'
       };

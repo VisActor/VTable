@@ -658,6 +658,7 @@ describe('pivotTable grouped grand total edge cases', () => {
     );
     const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
 
+    expect(grandTotalNode.levelSpan).toBe(1);
     expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '商票', '小计']);
     expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(100);
     pivotTable.release();

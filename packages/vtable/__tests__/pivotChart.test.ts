@@ -9292,10 +9292,17 @@ describe('pivotChart grouped grand total collected values', () => {
       }
     });
     const groupedKey = Object.keys(pivotChart.dataset.collectedValues.balance).find(key =>
-      key.startsWith(String.fromCharCode(1))
+      key.startsWith(`${String.fromCharCode(1)}vtable_grouped_grand_total${pivotChart.dataset.stringJoinChar}`)
     );
+    const groupedSubtotalKey = `${String.fromCharCode(1)}vtable_grouped_grand_total${
+      pivotChart.dataset.stringJoinChar
+    }${String.fromCharCode(1)}vtable_grouped_grand_total_subtotal`;
 
     expect(pivotChart.dataset.collectedValues.balance[groupedKey]).toMatchObject({
+      min: 400,
+      max: 400
+    });
+    expect(pivotChart.dataset.collectedValues.balance[groupedSubtotalKey]).toMatchObject({
       min: 400,
       max: 400
     });
