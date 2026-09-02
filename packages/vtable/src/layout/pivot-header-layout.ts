@@ -3644,19 +3644,19 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // 从上述过程中找到的pathCellIds中找到正确匹配完整路径rowHeaderPaths的一个  然后计算row行号
         const findedCellIdPath = findedCellIdPaths.find(pathIds => {
           const fullCellIds = this.findFullCellIds(pathIds);
+          const matchHeaderPath = (curHd: HeaderData, rowDimensionPath: IDimensionInfo) =>
+            rowDimensionPath.dimensionKey === curHd.field &&
+            (isValid(rowDimensionPath.dataValue)
+              ? ((curHd as any).dataValue ?? (curHd as any).define?.dataValue ?? curHd.title) ===
+                rowDimensionPath.dataValue
+              : rowDimensionPath.value === curHd.title);
           return (
             fullCellIds.length === rowHeaderPaths.length &&
-            fullCellIds.every((id, index) => {
-              const curHd = this._headerObjectMap[id];
-              const rowDimensionPath = rowHeaderPaths[index];
-              return (
-                rowDimensionPath.dimensionKey === curHd.field &&
-                (isValid(rowDimensionPath.dataValue)
-                  ? ((curHd as any).dataValue ?? (curHd as any).define?.dataValue ?? curHd.title) ===
-                    rowDimensionPath.dataValue
-                  : rowDimensionPath.value === curHd.title)
-              );
-            })
+            (rowHeaderPaths.some(rowDimensionPath => isValid(rowDimensionPath.dataValue))
+              ? fullCellIds.every((id, index) => matchHeaderPath(this._headerObjectMap[id], rowHeaderPaths[index]))
+              : fullCellIds.every(id =>
+                  rowHeaderPaths.some(rowDimensionPath => matchHeaderPath(this._headerObjectMap[id], rowDimensionPath))
+                ))
           );
         });
         if (findedCellIdPath) {
