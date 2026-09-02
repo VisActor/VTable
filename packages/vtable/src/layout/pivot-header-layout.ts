@@ -3630,7 +3630,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             return (
               (hd?.field === rowDimension.dimensionKey || hd?.field === rowDimension.indicatorKey) &&
               (isValid(rowDimension.dataValue)
-                ? ((hd as any).dataValue ?? hd.title) === rowDimension.dataValue
+                ? ((hd as any).dataValue ?? (hd as any).define?.dataValue ?? hd.title) === rowDimension.dataValue
                 : hd?.title === rowDimension.value)
             );
           })
@@ -3646,20 +3646,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           const fullCellIds = this.findFullCellIds(pathIds);
           return (
             fullCellIds.length === rowHeaderPaths.length &&
-            fullCellIds.every(id => {
+            fullCellIds.every((id, index) => {
               const curHd = this._headerObjectMap[id];
-              return rowHeaderPaths.find(rowDimensionPath => {
-                return (
-                  rowDimensionPath.dimensionKey === curHd.field &&
-                  (isValid(rowDimensionPath.dataValue)
-                    ? ((curHd as any).dataValue ?? curHd.title) === rowDimensionPath.dataValue
-                    : rowDimensionPath.value === curHd.title)
-                );
-              });
+              const rowDimensionPath = rowHeaderPaths[index];
+              return (
+                rowDimensionPath.dimensionKey === curHd.field &&
+                (isValid(rowDimensionPath.dataValue)
+                  ? ((curHd as any).dataValue ?? (curHd as any).define?.dataValue ?? curHd.title) ===
+                    rowDimensionPath.dataValue
+                  : rowDimensionPath.value === curHd.title)
+              );
             })
           );
         });
-        row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+        if (findedCellIdPath) {
+          row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+        }
       } else {
         rowDimensionFinded = this.matchDimensionPath(rowHeaderPaths, this.rowTree, needLowestLevel_rowPaths, true) as
           | ITreeLayoutHeadNode
@@ -3674,7 +3676,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // 通过dimension获取col和row
-    if (rowDimensionFinded || forceBody) {
+    if (rowDimensionFinded || (forceBody && !isValid(row))) {
       row = this.columnHeaderLevelCount;
       const { startInTotal, afterSpanLevel } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       row += startInTotal ?? 0;

@@ -547,6 +547,7 @@ describe('pivotTable grouped grand total edge cases', () => {
       showSubTotalsOnTreeNode?: boolean;
       aggregationRules?: any[];
       sortRules?: any[];
+      filterRules?: any[];
     } = {}
   ) {
     const containerDom: HTMLElement = createDiv();
@@ -565,6 +566,7 @@ describe('pivotTable grouped grand total edge cases', () => {
         updateAggregationOnEditCell: true,
         aggregationRules: options.aggregationRules,
         sortRules: options.sortRules,
+        filterRules: options.filterRules,
         totals: {
           row: {
             showGrandTotals: true,
@@ -661,6 +663,24 @@ describe('pivotTable grouped grand total edge cases', () => {
     expect(grandTotalNode.levelSpan).toBe(1);
     expect(grandTotalNode.children.map(node => node.value)).toEqual(['银票', '商票', '小计']);
     expect(pivotTable.dataset.getAggregator(['合计', '银票'], [], 'balance').value()).toBe(100);
+    pivotTable.release();
+  });
+
+  test('only uses filtered records to determine active grouped total dimensions', () => {
+    const pivotTable = createPivotTable(
+      [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { type: '商票', balance: 300 }
+      ],
+      {
+        filterRules: [{ filterFunc: record => record.organization !== '公司一' }]
+      }
+    );
+    const grandTotalNode = pivotTable.dataset.rowHeaderTree.find(node => node.role === 'grand-total');
+
+    expect(grandTotalNode.levelSpan).toBe(1);
+    expect(grandTotalNode.children.map(node => node.value)).toEqual(['商票', '小计']);
+    expect(pivotTable.dataset.getAggregator(['合计', '商票'], [], 'balance').value()).toBe(300);
     pivotTable.release();
   });
 
@@ -944,7 +964,8 @@ describe('pivotTable grouped grand total edge cases', () => {
       [
         { organization: '公司一', category: '票据', type: '银票', balance: 100 },
         { organization: '公司二', category: '票据', type: '商票', balance: 300 },
-        { organization: '公司三', category: '贷款', type: '信用贷', balance: 200 }
+        { organization: '公司三', category: '贷款', type: '信用贷', balance: 200 },
+        { category: '票据', balance: 999 }
       ],
       {
         rows: ['organization', 'category', 'type'],
@@ -958,7 +979,7 @@ describe('pivotTable grouped grand total edge cases', () => {
     expect(grandTotalNode.children.map(node => node.value)).toEqual(['票据', '贷款', '小计']);
     expect(grandTotalNode.children[0].children.map(node => node.value)).toEqual(['银票', '商票']);
     expect(grandTotalNode.children[0].levelSpan).toBe(1);
-    expect(pivotTable.dataset.getAggregator(['合计', '票据'], [], 'balance').value()).toBe(400);
+    expect(pivotTable.dataset.getAggregator(['合计', '票据'], [], 'balance').value()).toBe(999);
     expect(pivotTable.dataset.getAggregator(['合计', '票据', '银票'], [], 'balance').value()).toBe(100);
     const groupedCell = findBodyCell(pivotTable, ['合计', '票据', '银票'], 'grand-total');
     expect(pivotTable.getCellOriginValue(groupedCell.col, groupedCell.row)).toBe(100);
@@ -1031,6 +1052,9 @@ describe('pivotTable grouped grand total edge cases', () => {
 
     expect(grandTotalNode.children.map(node => node.value)).toEqual(['小计', 'B', 'A']);
     expect(pivotTable.dataset.getAggregator(['合计', 'B'], [], 'balance').value()).toBe(200);
+    const groupedTotalCell = findBodyCell(pivotTable, ['合计', 'B'], 'grand-total');
+    const paths = pivotTable.getCellHeaderPaths(groupedTotalCell.col, groupedTotalCell.row);
+    expect(pivotTable.getCellAddressByHeaderPaths(paths)).toEqual(groupedTotalCell);
     pivotTable.release();
   });
 });

@@ -563,7 +563,9 @@ export class Dataset {
     if ((this.filterRules?.length ?? 0) >= 1) {
       isNeedFilter = true;
     }
-    const records = Array.isArray(this.records) ? this.records : Object.values(this.records).flat();
+    const records = (Array.isArray(this.records) ? this.records : Object.values(this.records).flat()).filter(
+      record => !isNeedFilter || this.filterRecord(record)
+    );
     this.rowsHasValue = this.rows.map(row => records.some(record => record && row in record));
     this.columnsHasValue = this.columns.map(column => records.some(record => record && column in record));
     //常规records是数组的情况
@@ -719,18 +721,6 @@ export class Dataset {
         record[derivedFieldRule.fieldName] = derivedFieldRule.derivedFunc(record);
       }
     });
-    //#region 按照collectValuesBy 收集维度值
-    for (const field in this.collectValuesBy) {
-      if (isValid(record[field])) {
-        const collectKeys = this.collectValuesBy[field].by.map(byField => record[byField]).join(this.stringJoinChar);
-        this.collectValue(field, collectKeys, record);
-        this.getGroupedCollectedValueKeys(this.collectValuesBy[field].by, record).forEach(groupedCollectKeys => {
-          this.collectValue(field, groupedCollectKeys, record);
-        });
-      }
-    }
-    //#endregion
-
     let isToTalRecord = false;
     //#region 收集rowKey colKey
     // 原先的逻辑不关心customRowTree 只是根据rows 从record上收集维度path。现在考虑了rowTree和colTree的传入，需要依据colTree的真实定义的path来给数据做对应关系。
@@ -888,6 +878,19 @@ export class Dataset {
               break;
             }
           }
+        }
+      }
+    }
+    //#endregion
+    //#region 按照collectValuesBy 收集维度值
+    if (!isToTalRecord) {
+      for (const field in this.collectValuesBy) {
+        if (isValid(record[field])) {
+          const collectKeys = this.collectValuesBy[field].by.map(byField => record[byField]).join(this.stringJoinChar);
+          this.collectValue(field, collectKeys, record);
+          this.getGroupedCollectedValueKeys(this.collectValuesBy[field].by, record).forEach(groupedCollectKeys => {
+            this.collectValue(field, groupedCollectKeys, record);
+          });
         }
       }
     }
@@ -2125,12 +2128,24 @@ export class Dataset {
     const dimensionIndexes = this.getGrandTotalDimensionIndexes(dimensions, grandTotalDimensions);
     if (
       !dimensionIndexes.length ||
-      !dimensionIndexes.every(index => dimensions[index] in record) ||
       dimensions.some((dimension, index) => dimensionIndexes.indexOf(index) === -1 && dimension in record)
     ) {
       return undefined;
     }
-    return [this.groupedGrandTotalKey, ...dimensionIndexes.map(index => record[dimensions[index]])];
+    const prefixIndexes: number[] = [];
+    for (const index of dimensionIndexes) {
+      if (!(dimensions[index] in record)) {
+        break;
+      }
+      prefixIndexes.push(index);
+    }
+    if (
+      !prefixIndexes.length ||
+      dimensionIndexes.slice(prefixIndexes.length).some(index => dimensions[index] in record)
+    ) {
+      return undefined;
+    }
+    return [this.groupedGrandTotalKey, ...prefixIndexes.map(index => record[dimensions[index]])];
   }
 
   private getGroupedGrandTotalPaths(

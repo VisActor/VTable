@@ -9251,7 +9251,7 @@ function createTable(containerDom) {
 }
 
 describe('pivotChart grouped grand total collected values', () => {
-  test('collects chart ranges under grouped grand total paths', () => {
+  test('collects chart ranges under grouped grand total paths while ignoring external total records', () => {
     const containerDom: HTMLElement = createDiv();
     containerDom.style.position = 'relative';
     containerDom.style.width = '500px';
@@ -9278,7 +9278,8 @@ describe('pivotChart grouped grand total collected values', () => {
       indicatorsAsCol: false,
       records: [
         { organization: '公司一', type: '银票', balance: 100 },
-        { organization: '公司二', type: '银票', balance: 300 }
+        { organization: '公司二', type: '银票', balance: 300 },
+        { type: '银票', balance: 999 }
       ],
       dataConfig: {
         totals: {
@@ -9291,9 +9292,7 @@ describe('pivotChart grouped grand total collected values', () => {
         }
       }
     });
-    const groupedKey = Object.keys(pivotChart.dataset.collectedValues.balance).find(key =>
-      key.startsWith(`${String.fromCharCode(1)}vtable_grouped_grand_total${pivotChart.dataset.stringJoinChar}`)
-    );
+    const groupedKey = `${String.fromCharCode(1)}vtable_grouped_grand_total${pivotChart.dataset.stringJoinChar}银票`;
     const groupedSubtotalKey = `${String.fromCharCode(1)}vtable_grouped_grand_total${
       pivotChart.dataset.stringJoinChar
     }${String.fromCharCode(1)}vtable_grouped_grand_total_subtotal`;
