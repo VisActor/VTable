@@ -2796,7 +2796,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       defaultRowHeight = 40,
       defaultHeaderRowHeight,
       defaultColWidth = 80,
-      defaultHeaderColWidth = 80,
+      defaultHeaderColWidth,
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
