@@ -7184,4 +7184,49 @@ describe('get-data-cell-path test', () => {
       cellLocation: 'body'
     });
   });
+
+  test('get-data-cell-path returns the grouped grand total path', () => {
+    const data = { organization: '公司一', type: '银票', balance: 100 };
+    const path = getDataCellPath(
+      {
+        rows: ['organization', 'type'],
+        columns: [],
+        indicators: [
+          {
+            indicatorKey: 'balance',
+            cellType: 'chart',
+            chartModule: 'vchart',
+            chartSpec: {
+              type: 'bar',
+              data: {
+                id: 'data'
+              },
+              xField: 'type',
+              yField: 'balance'
+            }
+          }
+        ],
+        indicatorsAsCol: false,
+        records: [data],
+        dataConfig: {
+          totals: {
+            row: {
+              showGrandTotals: true,
+              showGrandTotalsOnTop: true,
+              grandTotalDimensions: ['type'],
+              grandTotalLabel: '合计',
+              subTotalLabel: '小计'
+            }
+          }
+        }
+      },
+      data
+    );
+
+    expect(path?.rowHeaderPaths[0]).toMatchObject({
+      dimensionKey: 'organization',
+      value: '合计'
+    });
+    expect(path?.rowHeaderPaths[0].dataValue).toContain('grouped_grand_total');
+  });
 });

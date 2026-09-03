@@ -69,10 +69,10 @@ export function getDataCellPath(
 
       const cellDimensionPath = layoutMap.getCellHeaderPaths(col, row);
       const colKeys = cellDimensionPath.colHeaderPaths.map((colPath: any) => {
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any) => {
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       // const aggregator = dataset.getAggregator(
       //   rowKey[rowKey.length - 1],

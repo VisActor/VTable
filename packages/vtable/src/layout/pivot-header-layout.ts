@@ -2348,6 +2348,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         dimensionKey?: string;
         indicatorKey?: string;
         value?: string;
+        dataValue?: string;
         virtual?: boolean;
         role?: CellPivotRole;
       } = {};
@@ -2359,6 +2360,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         (colHeader.indicatorKey
           ? this.getIndicatorInfoByIndicatorKey(colHeader.indicatorKey)?.title ?? ''
           : colHeader.value);
+      colHeaderPath.dataValue = colHeader.dataValue;
       colHeaderPath.virtual = colHeader.virtual;
       colHeaderPath.role = colHeader.role;
       headerPaths.colHeaderPaths!.push(colHeaderPath);
@@ -2370,6 +2372,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           dimensionKey?: string;
           indicatorKey?: string;
           value?: string;
+          dataValue?: string;
           virtual?: boolean;
           role?: CellPivotRole;
         } = {};
@@ -2381,6 +2384,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           (rowHeader.indicatorKey
             ? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? ''
             : rowHeader.value);
+        rowHeaderPath.dataValue = rowHeader.dataValue;
         rowHeaderPath.virtual = rowHeader.virtual;
         rowHeaderPath.role = rowHeader.role;
         headerPaths.rowHeaderPaths!.push(rowHeaderPath);
@@ -3419,10 +3423,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const isMatch =
         (!isValid(currentPath.indicatorKey) &&
           dimension.dimensionKey === currentPath.dimensionKey &&
-          dimension.value === currentPath.value) ||
+          (isValid(currentPath.dataValue)
+            ? ((dimension as any).dataValue ?? dimension.value) === currentPath.dataValue
+            : dimension.value === currentPath.value)) ||
         (isValid(currentPath.indicatorKey) &&
           dimension.indicatorKey === currentPath.indicatorKey &&
-          ((isValid(dimension.value) && isValid(currentPath.value) && currentPath.value === dimension.value) ||
+          ((isValid(currentPath.dataValue) &&
+            ((dimension as any).dataValue ?? dimension.value) === currentPath.dataValue) ||
+            (isValid(dimension.value) && isValid(currentPath.value) && currentPath.value === dimension.value) ||
             !isValid(dimension.value) ||
             !isValid(currentPath.value)));
 
@@ -3621,7 +3629,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           .filter((hd: HeaderData) => {
             return (
               (hd?.field === rowDimension.dimensionKey || hd?.field === rowDimension.indicatorKey) &&
-              hd?.title === rowDimension.value
+              (isValid(rowDimension.dataValue)
+                ? ((hd as any).dataValue ?? (hd as any).define?.dataValue ?? hd.title) === rowDimension.dataValue
+                : hd?.title === rowDimension.value)
             );
           })
           .map((hd: HeaderData) => {
@@ -3634,17 +3644,24 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // 从上述过程中找到的pathCellIds中找到正确匹配完整路径rowHeaderPaths的一个  然后计算row行号
         const findedCellIdPath = findedCellIdPaths.find(pathIds => {
           const fullCellIds = this.findFullCellIds(pathIds);
+          const matchHeaderPath = (curHd: HeaderData, rowDimensionPath: IDimensionInfo) =>
+            rowDimensionPath.dimensionKey === curHd.field &&
+            (isValid(rowDimensionPath.dataValue)
+              ? ((curHd as any).dataValue ?? (curHd as any).define?.dataValue ?? curHd.title) ===
+                rowDimensionPath.dataValue
+              : rowDimensionPath.value === curHd.title);
           return (
             fullCellIds.length === rowHeaderPaths.length &&
-            fullCellIds.every(id => {
-              const curHd = this._headerObjectMap[id];
-              return rowHeaderPaths.find(rowDimensionPath => {
-                return rowDimensionPath.dimensionKey === curHd.field && rowDimensionPath.value === curHd.title;
-              });
-            })
+            (rowHeaderPaths.some(rowDimensionPath => isValid(rowDimensionPath.dataValue))
+              ? fullCellIds.every((id, index) => matchHeaderPath(this._headerObjectMap[id], rowHeaderPaths[index]))
+              : fullCellIds.every(id =>
+                  rowHeaderPaths.some(rowDimensionPath => matchHeaderPath(this._headerObjectMap[id], rowDimensionPath))
+                ))
           );
         });
-        row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+        if (findedCellIdPath) {
+          row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+        }
       } else {
         rowDimensionFinded = this.matchDimensionPath(rowHeaderPaths, this.rowTree, needLowestLevel_rowPaths, true) as
           | ITreeLayoutHeadNode
@@ -3659,7 +3676,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       }
     }
     // 通过dimension获取col和row
-    if (rowDimensionFinded || forceBody) {
+    if (rowDimensionFinded || (forceBody && !isValid(row))) {
       row = this.columnHeaderLevelCount;
       const { startInTotal, afterSpanLevel } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       row += startInTotal ?? 0;
@@ -4254,7 +4271,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
-                return pathObj.value;
+                return pathObj.dataValue ?? pathObj.value;
               })
               .join(this.dataset.stringJoinChar)
           ];
@@ -4287,7 +4304,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           this.dataset.collectedValues[key]?.[
             path
               .map(pathObj => {
-                return pathObj.value;
+                return pathObj.dataValue ?? pathObj.value;
               })
               .join(this.dataset.stringJoinChar)
           ];
@@ -4358,7 +4375,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (path.colHeaderPaths.length) {
       path.colHeaderPaths.forEach(path => {
         if (path.dimensionKey) {
-          colKey.push(path.value);
+          colKey.push(path.dataValue ?? path.value);
         }
       });
     }
@@ -4374,7 +4391,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (path.rowHeaderPaths.length) {
       path.rowHeaderPaths.forEach(path => {
         if (path.dimensionKey) {
-          rowKey.push(path.value);
+          rowKey.push(path.dataValue ?? path.value);
         }
       });
     }

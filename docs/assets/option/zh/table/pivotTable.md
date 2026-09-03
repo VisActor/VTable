@@ -229,6 +229,8 @@ export interface Total {
   showSubTotals: boolean;
   // 小计汇总维度定义
   subTotalsDimensions?: string[];
+  // 总计中保留的下级维度，用于在总计区域内继续按维度分组；仅支持当前行/列方向首层之后的维度
+  grandTotalDimensions?: string[];
   // 默认'总计'
   grandTotalLabel?: string;
   // 默认'小计'

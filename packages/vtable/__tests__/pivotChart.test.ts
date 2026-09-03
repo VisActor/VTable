@@ -9249,6 +9249,66 @@ function createTable(containerDom) {
   const tableInstance = new VTable.PivotChart(option);
   return tableInstance;
 }
+
+describe('pivotChart grouped grand total collected values', () => {
+  test('collects chart ranges under grouped grand total paths while ignoring external total records', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '500px';
+    containerDom.style.height = '500px';
+    const pivotChart = new VTable.PivotChart({
+      container: containerDom,
+      rows: ['organization', 'type'],
+      columns: [],
+      indicators: [
+        {
+          indicatorKey: 'balance',
+          cellType: 'chart',
+          chartModule: 'vchart',
+          chartSpec: {
+            type: 'bar',
+            data: {
+              id: 'data'
+            },
+            xField: 'type',
+            yField: 'balance'
+          }
+        }
+      ],
+      indicatorsAsCol: false,
+      records: [
+        { organization: '公司一', type: '银票', balance: 100 },
+        { organization: '公司二', type: '银票', balance: 300 },
+        { type: '银票', balance: 999 }
+      ],
+      dataConfig: {
+        totals: {
+          row: {
+            showGrandTotals: true,
+            grandTotalDimensions: ['type'],
+            grandTotalLabel: '合计',
+            subTotalLabel: '小计'
+          }
+        }
+      }
+    });
+    const groupedKey = `${String.fromCharCode(1)}vtable_grouped_grand_total${pivotChart.dataset.stringJoinChar}银票`;
+    const groupedSubtotalKey = `${String.fromCharCode(1)}vtable_grouped_grand_total${
+      pivotChart.dataset.stringJoinChar
+    }${String.fromCharCode(1)}vtable_grouped_grand_total_subtotal`;
+
+    expect(pivotChart.dataset.collectedValues.balance[groupedKey]).toMatchObject({
+      min: 400,
+      max: 400
+    });
+    expect(pivotChart.dataset.collectedValues.balance[groupedSubtotalKey]).toMatchObject({
+      min: 400,
+      max: 400
+    });
+    pivotChart.release();
+  });
+});
+
 describe('pivotChart init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';

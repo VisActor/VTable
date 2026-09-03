@@ -134,7 +134,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.setCustomStateNameToSpec();
     this.internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     this.internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
-    this.internalProps.dataConfig = { isPivotChart: true };
+    this.internalProps.dataConfig = { ...cloneDeep(options.dataConfig), isPivotChart: true };
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
     this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -356,7 +356,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // 更新protectedSpace
     internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
-    internalProps.dataConfig = { isPivotChart: true };
+    internalProps.dataConfig = { ...cloneDeep(options.dataConfig), isPivotChart: true };
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
     this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];
@@ -674,7 +674,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
         if (rowPath.indicatorKey) {
@@ -683,7 +683,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -740,7 +740,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
         if (rowPath.indicatorKey) {
@@ -749,7 +749,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
@@ -791,7 +791,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return colPath.indicatorKey ?? colPath.value;
+        return colPath.indicatorKey ?? colPath.dataValue ?? colPath.value;
       });
       const rowKeys = cellDimensionPath.rowHeaderPaths.map((rowPath: any, index: number) => {
         if (rowPath.indicatorKey) {
@@ -800,7 +800,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             index
           };
         }
-        return rowPath.indicatorKey ?? rowPath.value;
+        return rowPath.indicatorKey ?? rowPath.dataValue ?? rowPath.value;
       });
       const aggregator = this.dataset.getAggregator(
         // !this.internalProps.layoutMap.indicatorsAsCol ? rowKeys.slice(0, -1) : rowKeys,
