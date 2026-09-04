@@ -18,7 +18,7 @@ import type {
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
-import { isArray, isValid } from '@visactor/vutils';
+import { arrayEqual, isArray, isValid } from '@visactor/vutils';
 import {
   _setDataSource,
   _setRecords,
@@ -49,7 +49,7 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { getGroupByDataConfig } from './core/group-helper';
 import { DataSource, type CachedDataSource } from './data';
-import { getValueFromDeepArray } from './data/DataSource';
+import { getRecordFieldValue, getValueFromDeepArray } from './data/DataSource';
 import {
   listTableAddRecord,
   listTableAddRecords,
@@ -98,6 +98,10 @@ function clearLayoutColumnState(columns: ColumnsDefine | undefined) {
     });
     clearLayoutColumnState((column as any).children ?? (column as any).columns);
   });
+}
+
+function isSameField(left: FieldDef, right: FieldDef): boolean {
+  return left === right || (Array.isArray(left) && Array.isArray(right) && arrayEqual(left, right));
 }
 
 // registerAxis();
@@ -703,7 +707,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return this.dataSource.getTableIndex(recordIndex) + this.columnHeaderLevelCount;
   }
   getTableIndexByField(field: FieldDef) {
-    const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => col.field === field);
+    const colObj = this.internalProps.layoutMap.columnObjects.find((col: any) => isSameField(col.field, field));
     if (!colObj) {
       return -1;
     }
@@ -1163,7 +1167,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   getCellRangeByField(field: FieldDef, index: number): CellRange | null {
     const { layoutMap } = this.internalProps;
-    const colObj = layoutMap.columnObjects.find((col: any) => col.field === field);
+    const colObj = layoutMap.columnObjects.find((col: any) => isSameField(col.field, field));
     if (colObj) {
       const layoutRange = layoutMap.getBodyLayoutRangeById(colObj.id);
       let startRow;
@@ -1938,9 +1942,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
     let record: any;
     let oldValue: any;
-    if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+    if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number' || Array.isArray(field))) {
       record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
-      oldValue = record?.[field as any];
+      oldValue = getRecordFieldValue(record, field);
     }
 
     this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
@@ -1950,7 +1954,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
 
     const changedValue =
-      record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+      record && (typeof field === 'string' || typeof field === 'number' || Array.isArray(field))
+        ? getRecordFieldValue(record, field)
+        : (value as any);
 
     if (oldValue !== changedValue) {
       const cellAddr = this.getCellAddrByFieldRecord(field, recordIndex);
@@ -2028,16 +2034,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const records = (this.dataSource as DataSource).dataSourceObj?.records as any[] | undefined;
       let record: any;
       let oldValue: any;
-      if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number')) {
+      if (Array.isArray(records) && (typeof field === 'string' || typeof field === 'number' || Array.isArray(field))) {
         record = Array.isArray(recordIndex) ? getValueFromDeepArray(records, recordIndex) : records[recordIndex];
-        oldValue = record?.[field as any];
+        oldValue = getRecordFieldValue(record, field);
       }
 
       this.dataSource.changeFieldValueByRecordIndex(value, recordIndex, field, this);
 
       if (triggerEvent) {
         const changedValue =
-          record && (typeof field === 'string' || typeof field === 'number') ? record?.[field as any] : (value as any);
+          record && (typeof field === 'string' || typeof field === 'number' || Array.isArray(field))
+            ? getRecordFieldValue(record, field)
+            : (value as any);
         if (oldValue !== changedValue) {
           const changeValue = {
             col: (this.getCellAddrByFieldRecord(field, recordIndex)?.col ?? -1) as number,

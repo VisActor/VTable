@@ -100,6 +100,10 @@ export function getField(
     const colIndex = col - table.leftRowSeriesNumberCount;
     return record[colIndex];
   }
+  if (Array.isArray(fieldGet)) {
+    const fieldResult = getValueByPath(record, [...fieldGet]);
+    return getValue(fieldResult, promiseCallBack);
+  }
   if (isObject(record) && fieldGet in (record as any)) {
     const fieldResult = (record as any)[fieldGet];
 
@@ -107,10 +111,6 @@ export function getField(
   }
   if (typeof fieldGet === 'function') {
     const fieldResult = fieldGet(record, col, row, table);
-    return getValue(fieldResult, promiseCallBack);
-  }
-  if (Array.isArray(fieldGet)) {
-    const fieldResult = getValueByPath(record, [...fieldGet]);
     return getValue(fieldResult, promiseCallBack);
   }
   const fieldArray = `${fieldGet}`.split('.');
@@ -124,6 +124,90 @@ export function getField(
     ...fieldArray
   );
   return getValue(fieldResult, promiseCallBack);
+}
+
+function getRecordFieldPath(field: FieldDef | number): string[] | undefined {
+  if (Array.isArray(field)) {
+    return field;
+  }
+  if (typeof field === 'string' && field.includes('.')) {
+    return field.split('.');
+  }
+  return undefined;
+}
+
+function hasRecordField(record: any, field: FieldDef | number): boolean {
+  if (!isObject(record)) {
+    return false;
+  }
+  const path = getRecordFieldPath(field);
+  if (!Array.isArray(field) && (field as any) in record) {
+    return true;
+  }
+  if (!path) {
+    return false;
+  }
+  let target = record;
+  for (const key of path) {
+    if (!isObject(target) || !(key in target)) {
+      return false;
+    }
+    target = target[key];
+  }
+  return true;
+}
+
+export function getRecordFieldValue(record: any, field: FieldDef | number): any {
+  if (record === null || record === undefined) {
+    return undefined;
+  }
+  const path = getRecordFieldPath(field);
+  if (!Array.isArray(field) && isObject(record) && (field as any) in record) {
+    return record[field as any];
+  }
+  if (!path) {
+    return record[field as any];
+  }
+  return path.reduce((current, key) => {
+    return current === null || current === undefined ? undefined : current[key];
+  }, record);
+}
+
+function setRecordProperty(record: any, key: string, value: any): void {
+  if (key === '__proto__') {
+    Object.defineProperty(record, key, {
+      configurable: true,
+      enumerable: true,
+      value,
+      writable: true
+    });
+    return;
+  }
+  record[key] = value;
+}
+
+export function setRecordFieldValue(record: any, field: FieldDef | number, value: FieldData): void {
+  if (record === null || record === undefined) {
+    return;
+  }
+  const path = getRecordFieldPath(field);
+  if (!path || (!Array.isArray(field) && isObject(record) && (field as any) in record)) {
+    record[field as any] = value;
+    return;
+  }
+
+  if (path.length === 0) {
+    return;
+  }
+  let target = record;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    if (!Object.prototype.hasOwnProperty.call(target, key) || target[key] === null || typeof target[key] !== 'object') {
+      setRecordProperty(target, key, {});
+    }
+    target = target[key];
+  }
+  setRecordProperty(target, path[path.length - 1], value);
 }
 
 function _getIndex(sortedIndexMap: null | (number | number[])[], index: number): number | number[] {
@@ -744,8 +828,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (field === undefined || field === '') {
         field = col - table.leftRowSeriesNumberCount;
       }
-      if (typeof field === 'string' || typeof field === 'number') {
-        const beforeChangedValue = this.beforeChangedRecordsMap.get(dataIndex.toString())?.[field as any]; // this.getOriginalField(index, field, col, row, table);
+      if (typeof field === 'string' || typeof field === 'number' || Array.isArray(field)) {
+        const beforeChangedValue = getRecordFieldValue(this.beforeChangedRecordsMap.get(dataIndex.toString()), field);
         const record = this.getOriginalRecord(dataIndex);
         let formatValue = value;
         if (typeof beforeChangedValue === 'number' && isAllDigits(value)) {
@@ -754,7 +838,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (isPromise(record)) {
           return record
             .then(record => {
-              record[field as string | number] = formatValue;
+              setRecordFieldValue(record, field, formatValue);
               return formatValue;
             })
             .catch((err: Error) => {
@@ -763,10 +847,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             });
         }
         if (record) {
-          record[field] = formatValue;
+          setRecordFieldValue(record, field, formatValue);
         } else {
           this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
-          this.records[dataIndex as number][field] = formatValue;
+          setRecordFieldValue(this.records[dataIndex as number], field, formatValue);
         }
       }
     }
@@ -802,8 +886,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       );
     }
 
-    if (typeof field === 'string' || typeof field === 'number') {
-      const beforeChangedValue = this.beforeChangedRecordsMap.get(rawKey)?.[field as any];
+    if (typeof field === 'string' || typeof field === 'number' || Array.isArray(field)) {
+      const beforeChangedValue = getRecordFieldValue(this.beforeChangedRecordsMap.get(rawKey), field);
       const rawRecords = Array.isArray((this.dataSourceObj as any)?.records)
         ? (this.dataSourceObj as any).records
         : null;
@@ -817,10 +901,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         formatValue = parseFloat(value);
       }
       if (record) {
-        record[field] = formatValue;
+        setRecordFieldValue(record, field, formatValue);
       } else if (rawRecords && typeof recordIndex === 'number') {
         rawRecords[recordIndex] = this.addRecordRule === 'Array' ? [] : {};
-        rawRecords[recordIndex][field] = formatValue;
+        setRecordFieldValue(rawRecords[recordIndex], field, formatValue);
       }
     }
   }
@@ -1651,7 +1735,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       return true;
     }
     const record = this.getOriginalRecord(index);
-    return Boolean(record && (field as any) in (record as any));
+    return hasRecordField(record, field);
   }
 
   protected fieldPromiseCallBack(
