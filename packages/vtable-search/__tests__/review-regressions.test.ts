@@ -265,6 +265,60 @@ test('released detail tables are removed from search state safely', () => {
   expect(search.queryResult).toHaveLength(0);
 });
 
+test('search skips all tables while the master table is entering release', () => {
+  const main = createCellTable([['Alice']], { isMasterDetail: true });
+  const detail = createCellTable([['Widget']]);
+  main.table.internalProps = { subTableInstances: new Map([[0, detail.table]]) };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+  main.table.internalProps._isReleasing = true;
+
+  const result = search.search('i');
+
+  expect(result.results).toHaveLength(0);
+  expect(main.table.getCellValue).not.toHaveBeenCalled();
+  expect(detail.table.getCellValue).not.toHaveBeenCalled();
+
+  main.table.internalProps.subTableInstances.clear();
+  main.table.pluginManager.getPluginByName.mockReturnValue(undefined);
+
+  const resumedResult = search.search('i');
+
+  expect(resumedResult.results).toHaveLength(1);
+  expect(resumedResult.results[0]).toMatchObject({ table: main.table, value: 'Alice' });
+});
+
+test('search excludes a detail table while it is entering release', () => {
+  const main = createCellTable([['Alice']], { isMasterDetail: true });
+  const detail = createCellTable([['Widget']]);
+  main.table.internalProps = { subTableInstances: new Map([[0, detail.table]]) };
+  detail.table.internalProps = { _isReleasing: true };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
+  const result = search.search('i');
+
+  expect(result.results).toHaveLength(1);
+  expect(result.results[0]).toMatchObject({ table: main.table, value: 'Alice' });
+  expect(detail.table.getCellValue).not.toHaveBeenCalled();
+});
+
+test('clearing stale results during master release does not touch table scenegraphs', () => {
+  const main = createCellTable([['Alice']], { isMasterDetail: true });
+  const detail = createCellTable([['Widget']]);
+  main.table.internalProps = { subTableInstances: new Map([[0, detail.table]]) };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
+  search.search('i');
+  main.table.scenegraph.updateCellContent.mockClear();
+  detail.table.scenegraph.updateCellContent.mockClear();
+  main.table.internalProps._isReleasing = true;
+
+  search.clear();
+
+  expect(main.table.scenegraph.updateCellContent).not.toHaveBeenCalled();
+  expect(detail.table.scenegraph.updateCellContent).not.toHaveBeenCalled();
+  expect(search.queryResult).toHaveLength(0);
+});
+
 test('tree master tables still search expanded detail tables', () => {
   const main = createTreeTable();
   const detail = createCellTable([['Widget']]);

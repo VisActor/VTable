@@ -131,7 +131,10 @@ export class SearchComponent {
   }
 
   private getSearchTableEntries(): SearchTableEntry[] {
-    const entries: SearchTableEntry[] = this.isTableAvailable(this.table) ? [{ table: this.table }] : [];
+    if (!this.isTableAvailable(this.table) || this.isMasterTableReleasing()) {
+      return [];
+    }
+    const entries: SearchTableEntry[] = [{ table: this.table }];
     const seenTables = new Set<IVTable>(entries.map(entry => entry.table));
     const subTableInstances = (this.table as any).internalProps?.subTableInstances;
     if (subTableInstances && typeof subTableInstances.forEach === 'function') {
@@ -150,7 +153,24 @@ export class SearchComponent {
   }
 
   private isTableAvailable(table: IVTable | undefined): table is IVTable {
-    return !!table && !(table as any).isReleased && !!(table as any).scenegraph;
+    return !!table && !(table as any).isReleased && !this.isMasterTableReleasing(table) && !!(table as any).scenegraph;
+  }
+
+  private isMasterTableReleasing(table: IVTable = this.table): boolean {
+    const internalProps = (table as any).internalProps;
+    if (internalProps?._isReleasing !== true) {
+      return false;
+    }
+
+    if (table !== this.table) {
+      return true;
+    }
+
+    const pluginManager = (table as any).pluginManager;
+    // The root table can retain this flag after its plugin is removed, so only honor it while the plugin is registered.
+    return (
+      typeof pluginManager?.getPluginByName === 'function' && !!pluginManager.getPluginByName('Master Detail Plugin')
+    );
   }
 
   private getTableHierarchyType(table: IVTable): string | undefined {
