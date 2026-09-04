@@ -4,14 +4,23 @@ import type { EasingType } from '@visactor/vtable/src/vrender';
 import { isValid } from '@visactor/vutils';
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 
+export type QueryResultItem = {
+  col?: number;
+  row?: number;
+  range?: VTable.TYPES.CellRange;
+  value?: string;
+  indexNumber?: number[];
+  /** The table that owns this match. */
+  table?: IVTable;
+  /** A stable table instance identifier when the table exposes one. */
+  tableId?: string;
+  /** The owning master body row for a master-detail result. */
+  parentRow?: number;
+};
+
 export type QueryResult = {
   queryStr: string;
-  results: {
-    col?: number;
-    row?: number;
-    value?: string;
-    indexNumber?: number[];
-  }[];
+  results: QueryResultItem[];
 };
 
 export type SearchComponentOption = {
@@ -38,11 +47,17 @@ export type SearchComponentOption = {
 
 const HighlightStyleId = '__search_component_highlight';
 const FocusHighlightStyleId = '__search_component_focus';
+const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
 type SearchCellPosition =
   | { col: number; row: number }
   | {
       range: VTable.TYPES.CellRange;
     };
+
+type SearchTableEntry = {
+  table: IVTable;
+  parentRow?: number;
+};
 
 const defaultHighlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 255, 0, 0.2)'
@@ -79,13 +94,7 @@ export class SearchComponent {
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 
   queryStr: string;
-  queryResult: {
-    col?: number;
-    row?: number;
-    range?: VTable.TYPES.CellRange;
-    value?: string;
-    indexNumber?: number[];
-  }[];
+  queryResult: QueryResultItem[];
 
   currentIndex: number;
   isTree: boolean;
@@ -93,6 +102,11 @@ export class SearchComponent {
   scrollOption: ITableAnimationOption;
   private resultTableMap = new WeakMap<object, IVTable>();
   private resultTreeMap = new WeakMap<object, boolean>();
+  private resultParentRowMap = new WeakMap<object, number>();
+  private resultTables = new Set<IVTable>();
+  private tableIdMap = new WeakMap<object, string>();
+  private searchStyleArrangementMap = new WeakMap<object, Map<string, any>>();
+  private nextTableId = 1;
 
   constructor(option: SearchComponentOption) {
     this.table = option.table;
@@ -115,29 +129,90 @@ export class SearchComponent {
     this.table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
   }
 
-  private getSearchTables(): IVTable[] {
-    const tables: IVTable[] = this.isTableAvailable(this.table) ? [this.table] : [];
+  private getSearchTableEntries(): SearchTableEntry[] {
+    const entries: SearchTableEntry[] = this.isTableAvailable(this.table) ? [{ table: this.table }] : [];
+    const seenTables = new Set<IVTable>(entries.map(entry => entry.table));
     const subTableInstances = (this.table as any).internalProps?.subTableInstances;
     if (subTableInstances && typeof subTableInstances.forEach === 'function') {
-      subTableInstances.forEach((subTable: IVTable) => {
-        if (subTable && subTable !== this.table && this.isTableAvailable(subTable)) {
-          tables.push(subTable);
+      subTableInstances.forEach((subTable: IVTable, parentRow: number) => {
+        if (subTable && !seenTables.has(subTable) && this.isTableAvailable(subTable)) {
+          entries.push({ table: subTable, parentRow });
+          seenTables.add(subTable);
         }
       });
     }
-    return tables;
+    return entries;
+  }
+
+  private getSearchTables(): IVTable[] {
+    return this.getSearchTableEntries().map(entry => entry.table);
   }
 
   private isTableAvailable(table: IVTable | undefined): table is IVTable {
     return !!table && !(table as any).isReleased && !!(table as any).scenegraph;
   }
 
-  private getResultTable(resultItem: typeof this.queryResult[number]): IVTable | undefined {
-    const table = this.resultTableMap.get(resultItem as object);
+  private getTableHierarchyType(table: IVTable): string | undefined {
+    return (
+      (table as any).rowHierarchyType ??
+      (table as any).dataSource?.rowHierarchyType ??
+      (table as any).options?.rowHierarchyType ??
+      (table as any).internalProps?.layoutMap?.rowHierarchyType
+    );
+  }
+
+  private isMasterDetailTable(table: IVTable = this.table): boolean {
+    if ((table as any).options?.masterDetail === true || (table as any).internalProps?.masterDetail === true) {
+      return true;
+    }
+    const pluginManager = (table as any).pluginManager;
+    if (pluginManager?.getPluginByName?.('Master Detail Plugin')) {
+      return true;
+    }
+    const subTableInstances = (table as any).internalProps?.subTableInstances;
+    if (!subTableInstances || typeof subTableInstances.forEach !== 'function') {
+      return false;
+    }
+    if (typeof subTableInstances.size === 'number' && subTableInstances.size > 0) {
+      return true;
+    }
+    if (
+      this.getTableHierarchyType(table) === 'grid' &&
+      (typeof (table as any).getSubTableByRowIndex === 'function' ||
+        typeof (table as any).getAllSubTableInstances === 'function')
+    ) {
+      return true;
+    }
+    return (
+      typeof (table as any).getSubTableByRowIndex === 'function' ||
+      typeof (table as any).getAllSubTableInstances === 'function'
+    );
+  }
+
+  private isTreeTable(table: IVTable): boolean {
+    if (this.isMasterDetailTable(table)) {
+      return false;
+    }
+    const hierarchyType = this.getTableHierarchyType(table);
+    if (hierarchyType) {
+      return hierarchyType === 'tree' || hierarchyType === 'grid-tree';
+    }
+    return !!(table as any).options?.columns?.some((item: any) => item?.tree);
+  }
+
+  private getResultTable(resultItem: (typeof this.queryResult)[number]): IVTable | undefined {
+    const table = resultItem.table ?? this.resultTableMap.get(resultItem as object);
     if (table) {
       return this.isTableAvailable(table) ? table : undefined;
     }
     return this.isTableAvailable(this.table) ? this.table : undefined;
+  }
+
+  private getResultParentRow(resultItem: (typeof this.queryResult)[number]): number | undefined {
+    if (typeof resultItem.parentRow === 'number') {
+      return resultItem.parentRow;
+    }
+    return this.resultParentRowMap.get(resultItem as object);
   }
 
   private getResultTables(): IVTable[] {
@@ -149,47 +224,110 @@ export class SearchComponent {
         tables.add(table);
       }
     });
-    this.queryResult?.forEach(resultItem => {
-      const table = this.resultTableMap.get(resultItem as object);
-      if (table && activeTables.has(table) && this.isTableAvailable(table)) {
+    this.resultTables.forEach(table => {
+      if (this.isTableAvailable(table)) {
         tables.add(table);
       }
     });
     return Array.from(tables);
   }
 
+  private getActiveSearchTableSet(): Set<IVTable> {
+    const activeTables = new Set<IVTable>(this.getSearchTables());
+    activeTables.add(this.table);
+    return activeTables;
+  }
+
+  private isResultAvailable(resultItem: (typeof this.queryResult)[number], activeTables?: Set<IVTable>): boolean {
+    const table = this.getResultTable(resultItem);
+    const tables = activeTables || this.getActiveSearchTableSet();
+    return !!table && tables.has(table) && this.isTableAvailable(table);
+  }
+
   private pruneUnavailableResults(): void {
     if (!this.queryResult?.length) {
       return;
     }
-    const activeTables = new Set<IVTable>(this.getSearchTables());
-    activeTables.add(this.table);
-    const availableResults = this.queryResult.filter(resultItem => {
-      const table = this.resultTableMap.get(resultItem as object) || this.table;
-      return activeTables.has(table) && this.isTableAvailable(table);
-    });
+    const activeTables = this.getActiveSearchTableSet();
+    let hasUnavailableTable = false;
+    for (const table of this.resultTables) {
+      if (!activeTables.has(table) || !this.isTableAvailable(table)) {
+        hasUnavailableTable = true;
+        break;
+      }
+    }
+    if (!hasUnavailableTable) {
+      return;
+    }
+
+    const currentResult = this.currentIndex >= 0 ? this.queryResult[this.currentIndex] : undefined;
+    const availableResults: QueryResultItem[] = [];
+    for (const resultItem of this.queryResult) {
+      if (this.isResultAvailable(resultItem, activeTables)) {
+        availableResults.push(resultItem);
+      }
+    }
     if (availableResults.length === this.queryResult.length) {
       return;
     }
     this.queryResult = availableResults;
     if (!this.queryResult.length) {
       this.currentIndex = -1;
+    } else if (currentResult) {
+      const currentResultIndex = this.queryResult.indexOf(currentResult);
+      this.currentIndex =
+        currentResultIndex >= 0
+          ? currentResultIndex
+          : Math.min(Math.max(this.currentIndex, -1), this.queryResult.length - 1);
     } else if (this.currentIndex >= this.queryResult.length) {
       this.currentIndex = this.queryResult.length - 1;
     }
+    this.resultTables = new Set<IVTable>();
+    for (const resultItem of this.queryResult) {
+      const table = this.getResultTable(resultItem);
+      if (table) {
+        this.resultTables.add(table);
+      }
+    }
   }
 
-  private isTreeResult(resultItem: typeof this.queryResult[number]): boolean {
+  private isTreeResult(resultItem: (typeof this.queryResult)[number]): boolean {
     return this.resultTreeMap.get(resultItem as object) ?? Array.isArray(resultItem.indexNumber);
   }
 
-  private addQueryResult(resultItem: typeof this.queryResult[number], table: IVTable, isTree = false): void {
+  private getTableId(table: IVTable): string {
+    const explicitId = (table as any).id;
+    if (typeof explicitId === 'string' && explicitId) {
+      return explicitId;
+    }
+    const existingId = this.tableIdMap.get(table as object);
+    if (existingId) {
+      return existingId;
+    }
+    const generatedId = `search-table-${this.nextTableId++}`;
+    this.tableIdMap.set(table as object, generatedId);
+    return generatedId;
+  }
+
+  private addQueryResult(
+    resultItem: (typeof this.queryResult)[number],
+    table: IVTable,
+    isTree = false,
+    parentRow?: number
+  ): void {
+    resultItem.table = table;
+    resultItem.tableId = this.getTableId(table);
+    if (typeof parentRow === 'number') {
+      resultItem.parentRow = parentRow;
+      this.resultParentRowMap.set(resultItem as object, parentRow);
+    }
     this.queryResult.push(resultItem);
     this.resultTableMap.set(resultItem as object, table);
     this.resultTreeMap.set(resultItem as object, isTree);
+    this.resultTables.add(table);
   }
 
-  private getResultCellPosition(resultItem: typeof this.queryResult[number]): SearchCellPosition | undefined {
+  private getResultCellPosition(resultItem: (typeof this.queryResult)[number]): SearchCellPosition | undefined {
     if (this.isTreeResult(resultItem)) {
       return this.getVisibleTreeCell(resultItem);
     }
@@ -207,7 +345,7 @@ export class SearchComponent {
     return undefined;
   }
 
-  private getResultCell(resultItem: typeof this.queryResult[number]): { col: number; row: number } | undefined {
+  private getResultCell(resultItem: (typeof this.queryResult)[number]): { col: number; row: number } | undefined {
     const position = this.getResultCellPosition(resultItem);
     if (!position) {
       return undefined;
@@ -248,25 +386,111 @@ export class SearchComponent {
     }
   }
 
-  private rebuildCustomCellStyleArrangement(plugin: any, arrangements: any[]): void {
-    if (!plugin) {
+  private arrangeSearchCellStyle(table: IVTable, position: SearchCellPosition, customStyleId: string): void {
+    const plugin = (table as any).customCellStylePlugin;
+    const arrangements = plugin?.customCellStyleArrangement;
+    const positionKey = this.getCellPositionKey(position);
+    if (plugin && Array.isArray(arrangements) && positionKey) {
+      let tableStyles = this.searchStyleArrangementMap.get(table as object);
+      if (!tableStyles) {
+        tableStyles = new Map<string, any>();
+        this.searchStyleArrangementMap.set(table as object, tableStyles);
+      }
+      const existing = tableStyles.get(positionKey);
+      if (existing && arrangements.includes(existing)) {
+        existing.customStyleId = customStyleId;
+        return;
+      }
+      const existingSearchArrangement = arrangements.find(
+        (item: any) =>
+          searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item.cellPosition) === positionKey
+      );
+      if (existingSearchArrangement) {
+        existingSearchArrangement.customStyleId = customStyleId;
+        tableStyles.set(positionKey, existingSearchArrangement);
+        return;
+      }
+      if (typeof plugin.addCustomCellStyleArrangement === 'function') {
+        plugin.addCustomCellStyleArrangement(position as any, customStyleId);
+        const currentArrangements = plugin.customCellStyleArrangement;
+        const addedArrangement = Array.isArray(currentArrangements)
+          ? [...currentArrangements]
+              .reverse()
+              .find(
+                (item: any) =>
+                  searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item.cellPosition) === positionKey
+              )
+          : undefined;
+        if (addedArrangement) {
+          tableStyles.set(positionKey, addedArrangement);
+        }
+        return;
+      }
+      const addedArrangement = { cellPosition: position, customStyleId };
+      arrangements.push(addedArrangement);
+      tableStyles.set(positionKey, addedArrangement);
       return;
     }
-    const currentArrangements = plugin.customCellStyleArrangement;
-    if (Array.isArray(currentArrangements)) {
-      currentArrangements.length = 0;
-      currentArrangements.push(...arrangements);
-    } else {
-      plugin.customCellStyleArrangement = arrangements;
-    }
-    const rebuildIndex = plugin._rebuildCustomCellStyleArrangementIndex;
-    if (typeof rebuildIndex === 'function') {
-      rebuildIndex.call(plugin);
+    const arrange = (table as any).arrangeCustomCellStyle;
+    if (typeof arrange === 'function') {
+      arrange.call(table, position as any, customStyleId as any, true);
+    } else if (typeof plugin?.arrangeCustomCellStyle === 'function') {
+      plugin.arrangeCustomCellStyle(position as any, customStyleId as any, true);
     }
   }
 
+  private clearSearchCellStyleAtPosition(table: IVTable, position: SearchCellPosition): void {
+    const plugin = (table as any).customCellStylePlugin;
+    const arrangements = plugin?.customCellStyleArrangement;
+    const positionKey = this.getCellPositionKey(position);
+    if (!Array.isArray(arrangements) || !positionKey) {
+      return;
+    }
+    for (const item of arrangements) {
+      if (searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item.cellPosition) === positionKey) {
+        item.customStyleId = null;
+      }
+    }
+  }
+
+  private clearSearchCellStyles(table: IVTable): Map<string, SearchCellPosition> {
+    const plugin = (table as any).customCellStylePlugin;
+    const positionsToRefresh = new Map<string, SearchCellPosition>();
+    const arrangements = plugin?.customCellStyleArrangement;
+    if (!Array.isArray(arrangements)) {
+      return positionsToRefresh;
+    }
+    const retainedArrangements: any[] = [];
+    let hasSearchArrangement = false;
+    for (const item of arrangements) {
+      if (!searchStyleIds.has(item?.customStyleId)) {
+        retainedArrangements.push(item);
+        continue;
+      }
+      hasSearchArrangement = true;
+      const position = item.cellPosition as SearchCellPosition;
+      const key = this.getCellPositionKey(position);
+      if (key) {
+        positionsToRefresh.set(key, position);
+      }
+    }
+    if (!hasSearchArrangement) {
+      return positionsToRefresh;
+    }
+
+    if (retainedArrangements.length === 0 && typeof plugin.clearCustomCellStyleArrangement === 'function') {
+      plugin.clearCustomCellStyleArrangement();
+    } else if (typeof plugin.updateCustomCell === 'function' && Array.isArray(plugin.customCellStyle)) {
+      plugin.updateCustomCell([...plugin.customCellStyle], retainedArrangements);
+    } else {
+      arrangements.splice(0, arrangements.length, ...retainedArrangements);
+      plugin?._rebuildCustomCellStyleArrangementIndex?.call(plugin);
+    }
+    return positionsToRefresh;
+  }
+
   private setSearchCellStyle(
-    resultItem: typeof this.queryResult[number],
+    resultItem: (typeof this.queryResult)[number],
     customStyleId: string | undefined = HighlightStyleId
   ): void {
     const table = this.getResultTable(resultItem);
@@ -281,143 +505,229 @@ export class SearchComponent {
     if (!plugin) {
       return;
     }
-    const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
-    const arrangements = Array.from(plugin.customCellStyleArrangement || []);
-    const positionKey = this.getCellPositionKey(position);
-    const retainedArrangements = arrangements.filter((item: any) => {
-      return !(searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item?.cellPosition) === positionKey);
-    });
     if (customStyleId) {
-      retainedArrangements.push({
-        cellPosition: position,
-        customStyleId
-      });
+      this.arrangeSearchCellStyle(table, position, customStyleId);
+    } else {
+      this.clearSearchCellStyleAtPosition(table, position);
     }
-    this.rebuildCustomCellStyleArrangement(plugin, retainedArrangements);
     this.refreshCellStyle(table, position);
     table.scenegraph.updateNextFrame();
   }
 
-  private searchTable(table: IVTable): void {
-    for (let row = 0; row < table.rowCount; row++) {
-      for (let col = 0; col < table.colCount; col++) {
+  private searchTable(table: IVTable, parentRow?: number): void {
+    if (this.isTreeTable(table)) {
+      this.searchTreeTable(table, parentRow);
+      return;
+    }
+
+    const seenPositions = new Set<string>();
+    const rowCount = typeof (table as any).rowCount === 'number' ? (table as any).rowCount : 0;
+    const colCount = typeof (table as any).colCount === 'number' ? (table as any).colCount : 0;
+    for (let row = 0; row < rowCount; row++) {
+      for (let col = 0; col < colCount; col++) {
         if (this.skipHeader && table.isHeader(col, row)) {
           continue;
         }
         const value = table.getCellValue(col, row);
-        if (this.queryMethod(this.queryStr, value, { col, row, table })) {
-          const mergeCell = table.getCellRange(col, row);
-          if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
-            let isIn = false;
-            for (let i = this.queryResult.length - 1; i >= 0; i--) {
-              const resultTable = this.getResultTable(this.queryResult[i]);
-              if (
-                resultTable === table &&
-                !this.isTreeResult(this.queryResult[i]) &&
-                this.queryResult[i].col === mergeCell.start.col &&
-                this.queryResult[i].row === mergeCell.start.row
-              ) {
-                isIn = true;
-                break;
-              }
-            }
-            if (!isIn) {
-              this.addQueryResult(
-                {
-                  col: mergeCell.start.col,
-                  row: mergeCell.start.row,
-                  range: mergeCell,
-                  value
-                },
-                table
-              );
-            }
-          } else {
-            this.addQueryResult(
-              {
-                col,
-                row,
-                value
-              },
-              table
-            );
-          }
+        if (!this.queryMethod(this.queryStr, value, { col, row, table })) {
+          continue;
         }
+        const mergeCell = table.getCellRange(col, row);
+        const isMerged = mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row;
+        const position = isMerged ? { range: mergeCell } : { col, row };
+        const positionKey = this.getCellPositionKey(position);
+        if (positionKey && seenPositions.has(positionKey)) {
+          continue;
+        }
+        if (positionKey) {
+          seenPositions.add(positionKey);
+        }
+        this.addQueryResult(
+          isMerged
+            ? {
+                col: mergeCell.start.col,
+                row: mergeCell.start.row,
+                range: mergeCell,
+                value
+              }
+            : { col, row, value },
+          table,
+          false,
+          parentRow
+        );
       }
     }
   }
 
-  private getHeaderOffset(): number {
+  private getTableRecords(table: IVTable): any[] {
+    const records =
+      (table as any).records ?? (table as any).dataSource?.records ?? (table as any).internalProps?.records;
+    return Array.isArray(records) ? records : [];
+  }
+
+  private searchTreeTable(table: IVTable, parentRow?: number): void {
+    const records = this.getTableRecords(table);
+    const treeCol = this.getTreeCol(table);
+    const childrenKey = (table as any).options?.childrenKey || 'children';
+    const seenResults = new Set<string>();
+
+    const addTreeResult = (path: number[], col: number, value?: unknown) => {
+      const key = `${path.join('.')}:${col}`;
+      if (seenResults.has(key)) {
+        return;
+      }
+      seenResults.add(key);
+      this.addQueryResult(
+        {
+          indexNumber: path,
+          col,
+          value: isValid(value) ? value?.toString?.() ?? String(value) : undefined
+        },
+        table,
+        true,
+        parentRow
+      );
+    };
+
+    const walk = (nodes: any[], path: number[]) => {
+      nodes.forEach((item: any, idx: number) => {
+        if (!item || typeof item !== 'object') {
+          return;
+        }
+        const currentPath = [...path, idx];
+        const searchFields =
+          Array.isArray(this.fieldsToSearch) && this.fieldsToSearch.length > 0
+            ? this.fieldsToSearch
+            : Object.keys(item);
+        let hitAnyField = false;
+        searchFields.forEach(field => {
+          const value = item[field];
+          if (!isValid(value)) {
+            return;
+          }
+          const col = this.getHeaderCellAddressByField(table, field)?.col ?? treeCol;
+          if (this.queryMethod(this.queryStr, value, { col, row: 0, table })) {
+            hitAnyField = true;
+            addTreeResult(currentPath, col, value);
+          }
+        });
+
+        if (
+          !hitAnyField &&
+          this.treeQueryMethod &&
+          this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table })
+        ) {
+          addTreeResult(currentPath, treeCol);
+        }
+
+        const children = item[childrenKey];
+        if (Array.isArray(children) && children.length > 0) {
+          walk(children, currentPath);
+        }
+      });
+    };
+
+    walk(records, []);
+  }
+
+  private getHeaderOffset(table: IVTable): number {
+    const configuredOffset = (table as any).columnHeaderLevelCount;
+    if (typeof configuredOffset === 'number' && configuredOffset >= 0) {
+      return configuredOffset;
+    }
     let offset = 0;
-    while (this.table.isHeader(0, offset)) {
+    const rowCount = typeof (table as any).rowCount === 'number' ? (table as any).rowCount : Number.MAX_SAFE_INTEGER;
+    while (offset < rowCount && table.isHeader(0, offset)) {
       offset++;
     }
     return offset;
   }
 
-  private getHeaderCellAddressByField(field: string): { col: number; row: number } | undefined {
-    // PivotTable/ListTable share internal layoutMap API but it's not exposed on the public type.
-    const layoutMap = (this.table as any).internalProps?.layoutMap;
-    return layoutMap?.getHeaderCellAddressByField?.(field);
+  private getHeaderCellAddressByField(table: IVTable, field: string): { col: number; row: number } | undefined {
+    const layoutMap = (table as any).internalProps?.layoutMap;
+    const address = layoutMap?.getHeaderCellAddressByField?.(field);
+    if (address && typeof address.col === 'number') {
+      return address;
+    }
+
+    let leafCol = 0;
+    let found: { col: number; row: number } | undefined;
+    const visitColumns = (columns: any[], depth: number) => {
+      columns.forEach(column => {
+        if (found) {
+          return;
+        }
+        if (Array.isArray(column?.columns) && column.columns.length > 0) {
+          visitColumns(column.columns, depth + 1);
+        } else {
+          if (column?.field === field) {
+            found = { col: leafCol, row: depth };
+          }
+          leafCol++;
+        }
+      });
+    };
+    const columns = (table as any).options?.columns;
+    if (Array.isArray(columns)) {
+      visitColumns(columns, 0);
+    }
+    return found;
   }
 
-  private getTreeCol(): number {
-    const treeColumn = (this.table as any)?.options?.columns?.find((c: any) => c?.tree);
+  private getTreeCol(table: IVTable): number {
+    const columns = (table as any)?.options?.columns;
+    let treeColumn: any;
+    let leafCol = 0;
+    let treeLeafCol = 0;
+    const visitColumns = (items: any[]) => {
+      items.forEach(item => {
+        if (Array.isArray(item?.columns) && item.columns.length > 0) {
+          visitColumns(item.columns);
+        } else {
+          if (!treeColumn && item?.tree) {
+            treeColumn = item;
+            treeLeafCol = leafCol;
+          }
+          leafCol++;
+        }
+      });
+    };
+    if (Array.isArray(columns)) {
+      visitColumns(columns);
+    }
     const field = treeColumn?.field;
     if (typeof field === 'string' && field) {
-      const addr = this.getHeaderCellAddressByField(field);
-      if (addr && typeof addr.col === 'number') {
-        return addr.col;
+      const address = this.getHeaderCellAddressByField(table, field);
+      if (address && typeof address.col === 'number') {
+        return address.col;
       }
     }
-    // Fallback to previous behavior.
-    return this.treeIndex;
+    return treeColumn ? treeLeafCol : 0;
   }
 
-  private getVisibleTreeCell(resultItem: typeof this.queryResult[number]): { col: number; row: number } | undefined {
+  private getVisibleTreeCell(resultItem: (typeof this.queryResult)[number]): { col: number; row: number } | undefined {
     if (!resultItem.indexNumber) {
       return undefined;
     }
-    const rawIndex = this.getBodyRowIndexByRecordIndex(resultItem.indexNumber);
+    const table = this.getResultTable(resultItem);
+    if (!table) {
+      return undefined;
+    }
+    const rawIndex = this.getBodyRowIndexByRecordIndex(resultItem.indexNumber, table);
     if (rawIndex < 0) {
       return undefined;
     }
     return {
-      col: typeof resultItem.col === 'number' ? resultItem.col : this.getTreeCol(),
-      row: rawIndex + this.getHeaderOffset()
+      col: typeof resultItem.col === 'number' ? resultItem.col : this.getTreeCol(table),
+      row: rawIndex + this.getHeaderOffset(table)
     };
   }
 
   private clearRenderedCellStyles(targetTable: IVTable = this.table) {
-    const plugin = (targetTable as any).customCellStylePlugin;
-    if (!plugin || !this.isTableAvailable(targetTable)) {
+    if (!this.isTableAvailable(targetTable)) {
       return;
     }
-    const positionsToRefresh = new Map<string, SearchCellPosition>();
-    const arrangements = Array.from((plugin as any)?.customCellStyleArrangement || []);
-    const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
-    const searchArrangements = arrangements.filter((item: any) => searchStyleIds.has(item?.customStyleId));
-
-    if (!searchArrangements.length) {
-      return;
-    }
-
-    searchArrangements.forEach((item: any) => {
-      const cellPosition = item?.cellPosition;
-      const key = this.getCellPositionKey(cellPosition);
-      if (key) {
-        positionsToRefresh.set(key, cellPosition);
-      }
-    });
-
-    const retainedArrangements = arrangements.filter((item: any) => !searchStyleIds.has(item?.customStyleId));
-    if (retainedArrangements.length === 0) {
-      plugin.clearCustomCellStyleArrangement();
-      this.rebuildCustomCellStyleArrangement(plugin, []);
-    } else {
-      this.rebuildCustomCellStyleArrangement(plugin, retainedArrangements);
-    }
-
+    const positionsToRefresh = this.clearSearchCellStyles(targetTable);
     positionsToRefresh.forEach(position => this.refreshCellStyle(targetTable, position));
   }
 
@@ -431,88 +741,20 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
-    this.isTree = this.table.options.columns.some((item: any) => item.tree);
-    this.treeIndex = this.isTree ? this.table.options.columns.findIndex((item: any) => item.tree) : 0;
+    this.isTree = this.isTreeTable(this.table);
+    this.treeIndex = this.isTree ? this.getTreeCol(this.table) : 0;
     if (this.isTree) {
-      // 如果传入单一节点也能处理
-      const treeCol = this.getTreeCol();
-      const walk = (nodes: any[], path: number[]) => {
-        nodes.forEach((item: any, idx: number) => {
-          const currentPath = [...path, idx]; // 当前节点的完整路径
-
-          // 为了做到“单元格级别高亮”，优先按字段匹配并映射到具体列。
-          const searchFields =
-            Array.isArray(this.fieldsToSearch) && this.fieldsToSearch.length > 0
-              ? this.fieldsToSearch
-              : Object.keys(item);
-
-          let hitAnyField = false;
-          searchFields.forEach(field => {
-            const value = item?.[field];
-            if (!isValid(value)) {
-              return;
-            }
-            const col = this.getHeaderCellAddressByField(field)?.col ?? treeCol;
-            // row 在树形场景下要在展开后才能准确计算，这里传 0 仅用于自定义 queryMethod 的兼容参数。
-            if (this.queryMethod(this.queryStr, value, { col, row: 0, table: this.table })) {
-              hitAnyField = true;
-              this.addQueryResult(
-                {
-                  indexNumber: currentPath,
-                  col,
-                  value: value?.toString?.() ?? String(value)
-                },
-                this.table,
-                true
-              );
-            }
-          });
-
-          // 兼容旧用法：如果用户自定义 treeQueryMethod 命中但字段级别未命中，则至少高亮树列。
-          if (
-            !hitAnyField &&
-            this.treeQueryMethod &&
-            this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table: this.table })
-          ) {
-            this.addQueryResult(
-              {
-                indexNumber: currentPath,
-                col: treeCol
-              },
-              this.table,
-              true
-            );
-          }
-
-          if (item.children && Array.isArray(item.children) && item.children.length > 0) {
-            walk(item.children, currentPath);
-          }
-        });
-      };
-
-      walk(this.table.records, []);
-      // 同一节点同一列可能被多次命中（例如 fieldsToSearch 未限制且字段值重复），做一次简单去重
-      const dedup = new Set<string>();
-      this.queryResult = this.queryResult.filter(r => {
-        if (!this.isTreeResult(r)) {
-          return true;
+      this.searchTreeTable(this.table);
+      for (const entry of this.getSearchTableEntries()) {
+        if (entry.table !== this.table) {
+          this.searchTable(entry.table, entry.parentRow);
         }
-        const key = `${(r.indexNumber || []).join('.')}:${r.col ?? ''}`;
-        if (dedup.has(key)) {
-          return false;
-        }
-        dedup.add(key);
-        return true;
-      });
-
-      this.getSearchTables()
-        .filter(table => table !== this.table)
-        .forEach(table => this.searchTable(table));
+      }
 
       this.currentIndex = this.queryResult.length > 0 && this.isTreeResult(this.queryResult[0]) ? 0 : -1;
 
       if (this.currentIndex === 0) {
-        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber, col: this.queryResult[0].col ?? treeCol });
+        this.jumpToResult(this.queryResult[0]);
       }
 
       if (this.callback) {
@@ -535,7 +777,9 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
-    this.getSearchTables().forEach(table => this.searchTable(table));
+    for (const entry of this.getSearchTableEntries()) {
+      this.searchTable(entry.table, entry.parentRow);
+    }
     this.updateCellStyle();
 
     if (this.callback) {
@@ -564,7 +808,7 @@ export class SearchComponent {
    * @param {string} customStyleId 自定义样式ID
    */
   arrangeCustomCellStyle(
-    resultItem: typeof this.queryResult[number],
+    resultItem: (typeof this.queryResult)[number],
     highlight: boolean = true,
     customStyleId: string = HighlightStyleId
   ) {
@@ -575,7 +819,8 @@ export class SearchComponent {
     this.pruneUnavailableResults();
     if (!highlight) {
       this.getResultTables().forEach(table => {
-        this.clearRenderedCellStyles(table);
+        const positionsToRefresh = this.clearSearchCellStyles(table);
+        positionsToRefresh.forEach(position => this.refreshCellStyle(table, position));
         table.scenegraph.updateNextFrame();
       });
       return;
@@ -592,17 +837,18 @@ export class SearchComponent {
       if (!table.hasCustomCellStyle(FocusHighlightStyleId)) {
         table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
       }
-      this.clearRenderedCellStyles(table);
+      const positionsToRefresh = this.clearSearchCellStyles(table);
+      positionsToRefresh.forEach(position => this.refreshCellStyle(table, position));
     });
 
     for (let i = 0; i < this.queryResult.length; i++) {
       const resultItem = this.queryResult[i];
       const table = this.getResultTable(resultItem);
       const position = this.getResultCellPosition(resultItem);
-      if (!table || !position) {
+      if (!table || !position || !(table as any).customCellStylePlugin) {
         continue;
       }
-      table.customCellStylePlugin.addCustomCellStyleArrangement(position as any, HighlightStyleId);
+      this.arrangeSearchCellStyle(table, position, HighlightStyleId);
       this.refreshCellStyle(table, position);
     }
 
@@ -610,28 +856,25 @@ export class SearchComponent {
       const resultItem = this.queryResult[this.currentIndex];
       const table = this.getResultTable(resultItem);
       const position = this.getResultCellPosition(resultItem);
-      if (table && position) {
-        table.customCellStylePlugin.addCustomCellStyleArrangement(position as any, FocusHighlightStyleId);
+      if (table && position && (table as any).customCellStylePlugin) {
+        this.arrangeSearchCellStyle(table, position, FocusHighlightStyleId);
         this.refreshCellStyle(table, position);
       }
     }
     resultTables.forEach(table => {
-      this.rebuildCustomCellStyleArrangement(
-        (table as any).customCellStylePlugin,
-        Array.from((table as any).customCellStylePlugin?.customCellStyleArrangement || [])
-      );
       table.scenegraph.updateNextFrame();
     });
   }
 
-  private jumpToResult(resultItem: typeof this.queryResult[number]): void {
+  private jumpToResult(resultItem: (typeof this.queryResult)[number]): void {
+    const table = this.getResultTable(resultItem);
+    if (!table) {
+      return;
+    }
     if (this.isTreeResult(resultItem)) {
-      this.jumpToCell({ IndexNumber: resultItem.indexNumber, col: resultItem.col });
+      this.jumpToCell({ IndexNumber: resultItem.indexNumber, col: resultItem.col }, table);
     } else {
-      const table = this.getResultTable(resultItem);
-      if (table) {
-        this.jumpToCell({ col: resultItem.col, row: resultItem.row }, table);
-      }
+      this.jumpToCell({ col: resultItem.col, row: resultItem.row }, table);
     }
   }
 
@@ -651,17 +894,11 @@ export class SearchComponent {
     const previousResult = previousIndex >= 0 ? this.queryResult[previousIndex] : undefined;
     const currentResult = this.queryResult[this.currentIndex];
 
-    if (this.isTreeResult(currentResult) || (previousResult && this.isTreeResult(previousResult))) {
-      this.jumpToResult(currentResult);
-      this.updateCellStyle();
-    } else {
-      if (previousResult) {
-        // reset last focus
-        this.arrangeCustomCellStyle(previousResult);
-      }
-      this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
-      this.jumpToResult(currentResult);
+    this.jumpToResult(currentResult);
+    if (previousResult) {
+      this.arrangeCustomCellStyle(previousResult, true, HighlightStyleId);
     }
+    this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
 
     return {
       index: this.currentIndex,
@@ -686,16 +923,11 @@ export class SearchComponent {
     const previousResult = previousIndex >= 0 ? this.queryResult[previousIndex] : undefined;
     const currentResult = this.queryResult[this.currentIndex];
 
-    if (this.isTreeResult(currentResult) || (previousResult && this.isTreeResult(previousResult))) {
-      this.jumpToResult(currentResult);
-      this.updateCellStyle();
-    } else {
-      if (previousResult) {
-        this.arrangeCustomCellStyle(previousResult);
-      }
-      this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
-      this.jumpToResult(currentResult);
+    this.jumpToResult(currentResult);
+    if (previousResult) {
+      this.arrangeCustomCellStyle(previousResult, true, HighlightStyleId);
     }
+    this.arrangeCustomCellStyle(currentResult, true, FocusHighlightStyleId);
 
     return {
       index: this.currentIndex,
@@ -717,65 +949,192 @@ export class SearchComponent {
     return bodyRowIndex;
   }
 
-  jumpToCell(params: { col?: number; row?: number; IndexNumber?: number[] }, targetTable: IVTable = this.table) {
-    if (Array.isArray(params.IndexNumber)) {
-      const { IndexNumber } = params;
-      const indexNumbers = [...IndexNumber];
+  private getMasterViewport(): { top: number; bottom: number } | undefined {
+    const masterTable = this.table as any;
+    const tableY = typeof masterTable.tableY === 'number' ? masterTable.tableY : 0;
+    const viewBoxY =
+      typeof masterTable.options?.viewBox?.y1 === 'number' ? masterTable.options.viewBox.y1 : 0;
+    const top = tableY + viewBoxY;
+    const height =
+      typeof masterTable.tableNoFrameHeight === 'number'
+        ? masterTable.tableNoFrameHeight
+        : typeof masterTable.getVisibleRect === 'function'
+        ? masterTable.getVisibleRect()?.height
+        : undefined;
+    return typeof height === 'number' ? { top, bottom: top + height } : undefined;
+  }
 
-      const tmp = [...indexNumbers];
-      let tmpNumber = 0;
-      let i = 0;
-
-      // 展开树形结构的父节点
-      while (tmpNumber < tmp.length - 1) {
-        tmpNumber++;
-        const indexNumber = indexNumbers.slice(0, tmpNumber);
-
-        // 跳过表头行
-        while (this.table.isHeader(0, i)) {
-          i++;
-        }
-        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-
-        const hierarchyState = this.table.getHierarchyState(this.treeIndex, row);
-        if (hierarchyState !== 'expand') {
-          this.table.toggleHierarchyState(this.treeIndex, row);
+  private getSubTableTargetRect(
+    targetTable: IVTable,
+    position?: SearchCellPosition
+  ): { top: number; bottom: number } | undefined {
+    if (position && typeof (targetTable as any).getCellRangeRelativeRect === 'function') {
+      const range = this.getCellPositionRange(position);
+      if (range) {
+        const rect = (targetTable as any).getCellRangeRelativeRect(range);
+        if (rect && typeof rect.top === 'number') {
+          const bottom =
+            typeof rect.bottom === 'number'
+              ? rect.bottom
+              : typeof rect.height === 'number'
+              ? rect.top + rect.height
+              : undefined;
+          if (typeof bottom === 'number') {
+            return { top: rect.top, bottom };
+          }
         }
       }
+    }
+    const viewBox = (targetTable as any).options?.viewBox;
+    if (viewBox && typeof viewBox.y1 === 'number' && typeof viewBox.y2 === 'number') {
+      return { top: viewBox.y1, bottom: viewBox.y2 };
+    }
+    return undefined;
+  }
 
-      const finalRow = this.getBodyRowIndexByRecordIndex(indexNumbers) + i;
+  private isSubTableTargetVisible(targetTable: IVTable, position?: SearchCellPosition): boolean {
+    const viewport = this.getMasterViewport();
+    const targetRect = this.getSubTableTargetRect(targetTable, position);
+    if (!viewport || !targetRect) {
+      return true;
+    }
+    const targetHeight = targetRect.bottom - targetRect.top;
+    if (targetHeight >= viewport.bottom - viewport.top) {
+      return targetRect.bottom > viewport.top && targetRect.top < viewport.bottom;
+    }
+    return targetRect.top >= viewport.top && targetRect.bottom <= viewport.bottom;
+  }
+
+  private ensureSubTableParentVisible(targetTable: IVTable, position?: SearchCellPosition): void {
+    if (targetTable === this.table) {
+      return;
+    }
+    const bodyRowIndex = this.getSubTableBodyRowIndex(targetTable);
+    if (bodyRowIndex === undefined) {
+      return;
+    }
+    const parentRow = bodyRowIndex + this.getHeaderOffset(this.table);
+    const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
+    const isParentRowVisible = parentRow >= rowStart && parentRow <= rowEnd;
+    if (!isParentRowVisible || !this.isSubTableTargetVisible(targetTable, position)) {
+      this.table.scrollToCell({ row: parentRow });
+      this.scrollSubTableTargetIntoMasterViewport(targetTable, position);
+    }
+  }
+
+  private scrollSubTableTargetIntoMasterViewport(targetTable: IVTable, position?: SearchCellPosition): void {
+    const viewport = this.getMasterViewport();
+    const targetRect = this.getSubTableTargetRect(targetTable, position);
+    const masterTable = this.table as any;
+    if (!viewport || !targetRect || typeof masterTable.scrollTop !== 'number') {
+      return;
+    }
+
+    let scrollOffset = 0;
+    if (targetRect.top < viewport.top) {
+      scrollOffset = targetRect.top - viewport.top;
+    } else if (targetRect.bottom > viewport.bottom) {
+      scrollOffset = targetRect.bottom - viewport.bottom;
+    }
+    if (scrollOffset === 0) {
+      return;
+    }
+
+    masterTable.scrollTop = Math.max(0, masterTable.scrollTop + scrollOffset);
+    masterTable.render?.();
+  }
+
+  private findVisibleTreeBodyIndex(table: IVTable, targetPath: number[]): number {
+    const records = this.getTableRecords(table);
+    const treeCol = this.getTreeCol(table);
+    const headerOffset = this.getHeaderOffset(table);
+    let bodyIndex = 0;
+    let foundIndex = -1;
+    const walk = (nodes: any[], parentPath: number[]) => {
+      nodes.forEach((node: any, index: number) => {
+        if (foundIndex !== -1) {
+          return;
+        }
+        const path = [...parentPath, index];
+        if (path.length === targetPath.length && path.every((value, pathIndex) => value === targetPath[pathIndex])) {
+          foundIndex = bodyIndex;
+          return;
+        }
+        const row = bodyIndex + headerOffset;
+        bodyIndex++;
+        const children = node?.[(table as any).options?.childrenKey || 'children'];
+        const hierarchyState = table.getHierarchyState?.(treeCol, row);
+        if (Array.isArray(children) && (hierarchyState === 'expand' || hierarchyState === undefined)) {
+          walk(children, path);
+        }
+      });
+    };
+    walk(records, []);
+    return foundIndex;
+  }
+
+  private getTreeBodyIndex(table: IVTable, indexNumbers: number[]): number {
+    let bodyIndex = this.getBodyRowIndexByRecordIndex(indexNumbers, table);
+    const headerOffset = this.getHeaderOffset(table);
+    const treeCol = this.getTreeCol(table);
+
+    for (let depth = 1; depth < indexNumbers.length; depth++) {
+      const parentPath = indexNumbers.slice(0, depth);
+      bodyIndex = this.getBodyRowIndexByRecordIndex(parentPath, table);
+      if (bodyIndex < 0) {
+        bodyIndex = this.findVisibleTreeBodyIndex(table, parentPath);
+      }
+      if (bodyIndex < 0) {
+        continue;
+      }
+      const row = bodyIndex + headerOffset;
+      const hierarchyState = table.getHierarchyState?.(treeCol, row);
+      if (hierarchyState !== 'expand') {
+        table.toggleHierarchyState?.(treeCol, row);
+      }
+    }
+
+    bodyIndex = this.getBodyRowIndexByRecordIndex(indexNumbers, table);
+    if (bodyIndex < 0) {
+      bodyIndex = this.findVisibleTreeBodyIndex(table, indexNumbers);
+    }
+    return bodyIndex;
+  }
+
+  jumpToCell(params: { col?: number; row?: number; IndexNumber?: number[] }, targetTable: IVTable = this.table) {
+    if (Array.isArray(params.IndexNumber)) {
+      const indexNumbers = [...params.IndexNumber];
+      const finalBodyIndex = this.getTreeBodyIndex(targetTable, indexNumbers);
+      if (finalBodyIndex < 0) {
+        return;
+      }
+      const finalRow = finalBodyIndex + this.getHeaderOffset(targetTable);
 
       // 根据配置决定是否滚动表格
-      const targetCol = typeof params.col === 'number' ? params.col : this.getTreeCol();
-      this.table.scrollToCell({ row: finalRow, col: targetCol }, this.scrollOption);
+      const targetCol = typeof params.col === 'number' ? params.col : this.getTreeCol(targetTable);
+      targetTable.scrollToCell({ row: finalRow, col: targetCol }, this.scrollOption);
+      this.ensureSubTableParentVisible(targetTable, { col: targetCol, row: finalRow });
 
       // 根据配置决定是否滚动页面
       if (this.enableViewportScroll) {
-        scrollVTableCellIntoView(this.table, { row: finalRow, col: targetCol });
+        scrollVTableCellIntoView(targetTable, { row: finalRow, col: targetCol });
       }
     } else {
       const { col, row } = params;
-      if (targetTable !== this.table) {
-        const bodyRowIndex = this.getSubTableBodyRowIndex(targetTable);
-        if (bodyRowIndex !== undefined) {
-          const parentRow = bodyRowIndex + ((this.table as any).columnHeaderLevelCount || 0);
-          const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
-          const isParentRowVisible = parentRow >= rowStart && parentRow <= rowEnd;
-          if (!isParentRowVisible) {
-            this.table.scrollToCell({ col: 0, row: parentRow });
-          }
-        }
+      if (typeof col !== 'number' || typeof row !== 'number') {
+        return;
       }
       const { rowStart, rowEnd } = targetTable.getBodyVisibleRowRange();
       const { colStart, colEnd } = targetTable.getBodyVisibleColRange();
 
       // 检查单元格是否在表格可视范围内
-      const isInTableView = !(row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd);
+      const isInTableView = row >= rowStart && row <= rowEnd && col >= colStart && col <= colEnd;
 
       // 根据配置决定是否滚动表格
       if (!isInTableView) {
         targetTable.scrollToCell({ col, row });
       }
+      this.ensureSubTableParentVisible(targetTable, { col, row });
 
       // 根据配置决定是否滚动页面
       if (this.enableViewportScroll) {
@@ -783,11 +1142,20 @@ export class SearchComponent {
       }
     }
   }
-  getBodyRowIndexByRecordIndex(index: number | number[]): number {
+  getBodyRowIndexByRecordIndex(index: number | number[], targetTable: IVTable = this.table): number {
     if (Array.isArray(index) && index.length === 1) {
       index = index[0];
     }
-    return this.table.dataSource.getTableIndex(index);
+    const dataSource = (targetTable as any).dataSource;
+    if (typeof dataSource?.getTableIndex === 'function') {
+      const tableIndex = dataSource.getTableIndex(index);
+      return typeof tableIndex === 'number' ? tableIndex : -1;
+    }
+    const tableIndex = (targetTable as any).getTableIndexByRecordIndex?.(index as number);
+    if (typeof tableIndex === 'number') {
+      return tableIndex - this.getHeaderOffset(targetTable);
+    }
+    return -1;
   }
   clear() {
     // reset highlight cell style
@@ -796,6 +1164,8 @@ export class SearchComponent {
     this.queryResult = [];
     this.resultTableMap = new WeakMap<object, IVTable>();
     this.resultTreeMap = new WeakMap<object, boolean>();
+    this.resultParentRowMap = new WeakMap<object, number>();
+    this.resultTables.clear();
     this.currentIndex = -1;
   }
 }
@@ -810,8 +1180,15 @@ function scrollVTableCellIntoView(table: IVTable, cellInfo: { row: number; col: 
     return;
   }
 
-  // 获取单元格在表格中的位置信息
-  const cellRect = table.getCellRect(cellInfo.col, cellInfo.row);
+  // 获取单元格相对于表格可视区域的位置信息。该 API 同时包含 viewBox 偏移。
+  const cellRange = table.getCellRange?.(cellInfo.col, cellInfo.row) || {
+    start: cellInfo,
+    end: cellInfo
+  };
+  const cellRect =
+    typeof table.getCellRangeRelativeRect === 'function'
+      ? table.getCellRangeRelativeRect(cellRange)
+      : table.getCellRect(cellInfo.col, cellInfo.row);
   if (!cellRect) {
     return;
   }
@@ -819,8 +1196,8 @@ function scrollVTableCellIntoView(table: IVTable, cellInfo: { row: number; col: 
   // 查找最近的可滚动父容器
   let scrollContainer: Element | null = tableEl.parentElement;
   while (scrollContainer) {
-    const computedStyle = getComputedStyle(scrollContainer);
-    const hasScroll = /(auto|scroll|overlay)/.test(computedStyle.overflowY);
+    const computedStyle = typeof getComputedStyle === 'function' ? getComputedStyle(scrollContainer) : undefined;
+    const hasScroll = !!computedStyle && /(auto|scroll|overlay)/.test(computedStyle.overflowY);
     const canScroll = scrollContainer.scrollHeight > scrollContainer.clientHeight;
 
     if (hasScroll && canScroll) {
