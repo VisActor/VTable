@@ -16,6 +16,10 @@ function createCellTable(
     rowHierarchyType?: 'grid' | 'tree';
     viewBox?: { x1: number; y1: number; x2: number; y2: number };
     tableNoFrameHeight?: number;
+    frozenRowsHeight?: number;
+    bottomFrozenRowsHeight?: number;
+    frozenRowCount?: number;
+    bottomFrozenRowCount?: number;
     cellRect?: (col: number, row: number) => { left: number; top: number; width: number; height: number };
     cellRangeRelativeRect?: (position: any) => {
       left: number;
@@ -126,12 +130,16 @@ function createCellTable(
       width: 800
     })),
     tableNoFrameHeight: options.tableNoFrameHeight ?? 200,
+    frozenRowCount: options.frozenRowCount ?? 0,
+    bottomFrozenRowCount: options.bottomFrozenRowCount ?? 0,
     scrollTop: 0,
     tableY: 0,
     options: {
       columns: options.columns || [{ field: 'name' }],
       viewBox: options.viewBox
     },
+    getFrozenRowsHeight: jest.fn(() => options.frozenRowsHeight ?? 0),
+    getBottomFrozenRowsHeight: jest.fn(() => options.bottomFrozenRowsHeight ?? 0),
     scrollToCell: jest.fn()
   };
 
@@ -386,6 +394,32 @@ test('detail navigation accounts for the master viewBox offset', () => {
   expect(main.table.scrollTop).toBe(10);
 });
 
+test('detail navigation respects the master clipping area for frozen rows', () => {
+  const main = createCellTable([['Parent']], {
+    visibleRows: { rowStart: 1, rowEnd: 1 },
+    tableNoFrameHeight: 200,
+    frozenRowsHeight: 40,
+    bottomFrozenRowsHeight: 30,
+    frozenRowCount: 2,
+    rowHierarchyType: 'grid',
+    isMasterDetail: true
+  });
+  main.table.rowCount = 10;
+  const detail = createCellTable([['Widget']], {
+    cellRangeRelativeRect: () => ({ left: 0, top: 160, width: 100, height: 20 }),
+    visibleRows: { rowStart: 2, rowEnd: 2 }
+  });
+  main.table.internalProps = {
+    subTableInstances: new Map([[0, detail.table]])
+  };
+
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+  search.search('i');
+  search.next();
+
+  expect(main.table.scrollTop).toBe(10);
+});
+
 test('detail navigation does not scroll the master for a visible viewBox after master scrolling', () => {
   const main = createCellTable([['Parent']], {
     visibleRows: { rowStart: 1, rowEnd: 1 },
@@ -542,6 +576,20 @@ test('navigation does not rebuild the custom style index for search entries', ()
   search.next();
 
   expect(rebuildIndex).not.toHaveBeenCalled();
+});
+
+test('navigation does not scan the arrangement list for cached search styles', () => {
+  const main = createCellTable([['Alice', 'Alina']]);
+  main.table.colCount = 2;
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+  search.search('Ali');
+  const includesSpy = jest.spyOn(Array.prototype, 'includes');
+
+  search.next();
+  search.next();
+
+  expect(includesSpy).not.toHaveBeenCalled();
+  includesSpy.mockRestore();
 });
 
 test('visible range boundaries are treated as inclusive', () => {

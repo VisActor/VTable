@@ -106,6 +106,7 @@ export class SearchComponent {
   private resultTables = new Set<IVTable>();
   private tableIdMap = new WeakMap<object, string>();
   private searchStyleArrangementMap = new WeakMap<object, Map<string, any>>();
+  private searchStyleArrangementArrays = new WeakMap<object, any[]>();
   private nextTableId = 1;
 
   constructor(option: SearchComponentOption) {
@@ -374,6 +375,11 @@ export class SearchComponent {
     return `${range.start.col}:${range.start.row}:${range.end.col}:${range.end.row}`;
   }
 
+  private resetSearchStyleArrangementCache(table: IVTable): void {
+    this.searchStyleArrangementMap.delete(table as object);
+    this.searchStyleArrangementArrays.delete(table as object);
+  }
+
   private refreshCellStyle(table: IVTable, position: SearchCellPosition | any): void {
     const range = this.getCellPositionRange(position);
     if (!range) {
@@ -392,12 +398,17 @@ export class SearchComponent {
     const positionKey = this.getCellPositionKey(position);
     if (plugin && Array.isArray(arrangements) && positionKey) {
       let tableStyles = this.searchStyleArrangementMap.get(table as object);
+      const cachedArrangements = this.searchStyleArrangementArrays.get(table as object);
+      if (cachedArrangements !== arrangements) {
+        tableStyles?.clear();
+        this.searchStyleArrangementArrays.set(table as object, arrangements);
+      }
       if (!tableStyles) {
         tableStyles = new Map<string, any>();
         this.searchStyleArrangementMap.set(table as object, tableStyles);
       }
       const existing = tableStyles.get(positionKey);
-      if (existing && arrangements.includes(existing)) {
+      if (existing && (existing.customStyleId == null || searchStyleIds.has(existing.customStyleId))) {
         existing.customStyleId = customStyleId;
         return;
       }
@@ -413,14 +424,15 @@ export class SearchComponent {
       if (typeof plugin.addCustomCellStyleArrangement === 'function') {
         plugin.addCustomCellStyleArrangement(position as any, customStyleId);
         const currentArrangements = plugin.customCellStyleArrangement;
-        const addedArrangement = Array.isArray(currentArrangements)
-          ? [...currentArrangements]
-              .reverse()
-              .find(
-                (item: any) =>
-                  searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item.cellPosition) === positionKey
-              )
+        const lastArrangement = Array.isArray(currentArrangements)
+          ? currentArrangements[currentArrangements.length - 1]
           : undefined;
+        const addedArrangement =
+          lastArrangement &&
+          searchStyleIds.has(lastArrangement.customStyleId) &&
+          this.getCellPositionKey(lastArrangement.cellPosition) === positionKey
+            ? lastArrangement
+            : undefined;
         if (addedArrangement) {
           tableStyles.set(positionKey, addedArrangement);
         }
@@ -456,6 +468,7 @@ export class SearchComponent {
   private clearSearchCellStyles(table: IVTable): Map<string, SearchCellPosition> {
     const plugin = (table as any).customCellStylePlugin;
     const positionsToRefresh = new Map<string, SearchCellPosition>();
+    this.resetSearchStyleArrangementCache(table);
     const arrangements = plugin?.customCellStyleArrangement;
     if (!Array.isArray(arrangements)) {
       return positionsToRefresh;
@@ -949,19 +962,48 @@ export class SearchComponent {
     return bodyRowIndex;
   }
 
-  private getMasterViewport(): { top: number; bottom: number } | undefined {
+  private getMasterViewport(targetTable?: IVTable): { top: number; bottom: number } | undefined {
     const masterTable = this.table as any;
     const tableY = typeof masterTable.tableY === 'number' ? masterTable.tableY : 0;
-    const viewBoxY =
-      typeof masterTable.options?.viewBox?.y1 === 'number' ? masterTable.options.viewBox.y1 : 0;
-    const top = tableY + viewBoxY;
+    const viewBoxY = typeof masterTable.options?.viewBox?.y1 === 'number' ? masterTable.options.viewBox.y1 : 0;
+    let top = tableY + viewBoxY;
     const height =
       typeof masterTable.tableNoFrameHeight === 'number'
         ? masterTable.tableNoFrameHeight
         : typeof masterTable.getVisibleRect === 'function'
         ? masterTable.getVisibleRect()?.height
         : undefined;
-    return typeof height === 'number' ? { top, bottom: top + height } : undefined;
+    if (typeof height !== 'number') {
+      return undefined;
+    }
+
+    let bottom = top + height;
+    if (targetTable && targetTable !== this.table) {
+      const bodyRowIndex = this.getSubTableBodyRowIndex(targetTable);
+      if (bodyRowIndex !== undefined) {
+        const headerOffset = this.getHeaderOffset(this.table);
+        const rowIndex = bodyRowIndex + headerOffset;
+        const frozenRowCount =
+          typeof masterTable.frozenRowCount === 'number' ? masterTable.frozenRowCount : headerOffset;
+        const bottomFrozenRowCount =
+          typeof masterTable.bottomFrozenRowCount === 'number' ? masterTable.bottomFrozenRowCount : 0;
+        const rowCount = typeof masterTable.rowCount === 'number' ? masterTable.rowCount : 0;
+        const frozenRowsHeight =
+          typeof masterTable.getFrozenRowsHeight === 'function' ? masterTable.getFrozenRowsHeight() : 0;
+        const bottomFrozenRowsHeight =
+          typeof masterTable.getBottomFrozenRowsHeight === 'function' ? masterTable.getBottomFrozenRowsHeight() : 0;
+        const isFrozenDataRow = rowIndex >= headerOffset && rowIndex < frozenRowCount;
+        const isBottomFrozenDataRow = bottomFrozenRowCount > 0 && rowIndex >= rowCount - bottomFrozenRowCount;
+
+        if (isFrozenDataRow) {
+          bottom -= bottomFrozenRowsHeight;
+        } else if (!isBottomFrozenDataRow) {
+          top += frozenRowsHeight;
+          bottom -= bottomFrozenRowsHeight;
+        }
+      }
+    }
+    return { top, bottom };
   }
 
   private getSubTableTargetRect(
@@ -993,7 +1035,7 @@ export class SearchComponent {
   }
 
   private isSubTableTargetVisible(targetTable: IVTable, position?: SearchCellPosition): boolean {
-    const viewport = this.getMasterViewport();
+    const viewport = this.getMasterViewport(targetTable);
     const targetRect = this.getSubTableTargetRect(targetTable, position);
     if (!viewport || !targetRect) {
       return true;
@@ -1023,7 +1065,7 @@ export class SearchComponent {
   }
 
   private scrollSubTableTargetIntoMasterViewport(targetTable: IVTable, position?: SearchCellPosition): void {
-    const viewport = this.getMasterViewport();
+    const viewport = this.getMasterViewport(targetTable);
     const targetRect = this.getSubTableTargetRect(targetTable, position);
     const masterTable = this.table as any;
     if (!viewport || !targetRect || typeof masterTable.scrollTop !== 'number') {
