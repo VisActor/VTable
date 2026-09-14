@@ -125,27 +125,24 @@ describe('CustomCellStylePlugin', () => {
     expect(lastCall[2]).toBe(true);
   });
 
-  test('uses the exact-cell index instead of scanning unrelated arrangements', () => {
+  test('uses indexed overlays without scanning unrelated search positions', () => {
     let numericReads = 0;
-    const arrangements = new Proxy(
-      Array.from({ length: 1000 }, (_, col) => ({
-        cellPosition: { col, row: 0 },
-        customStyleId: 's'
-      })),
-      {
-        get(target, property, receiver) {
-          if (typeof property === 'string' && /^\d+$/.test(property)) {
-            numericReads++;
-          }
-          return Reflect.get(target, property, receiver);
+    const arrangements = new Proxy([], {
+      get(target, property, receiver) {
+        if (typeof property === 'string' && /^\d+$/.test(property)) {
+          numericReads++;
         }
+        return Reflect.get(target, property, receiver);
       }
-    );
+    });
     const plugin = new CustomCellStylePlugin(
       createMockTable(1000, 1) as any,
       [{ id: 's', style: { bgColor: 'yellow' } }] as any,
       arrangements as any
     );
+    for (let col = 0; col < 1000; col++) {
+      plugin.setCustomCellStyleOverlay('search', { range: { start: { col, row: 0 }, end: { col, row: 0 } } }, 's');
+    }
     numericReads = 0;
 
     expect(plugin.getCustomCellStyleIds(500, 0)).toEqual(['s']);
@@ -186,7 +183,54 @@ describe('CustomCellStylePlugin', () => {
     plugin.clearCustomCellStyleArrangement();
 
     expect((plugin as any)._customCellStyleArrangementIndex.size).toBe(0);
-    expect((plugin as any)._customCellStyleArrangementIndexes.size).toBe(0);
     expect(plugin.getCustomCellStyleIds(1, 2)).toEqual([]);
+  });
+
+  test('keeps search overlays separate from user arrangement updates', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'user-a', style: { color: 'red' } },
+        { id: 'user-b', style: { fontWeight: 'bold' } },
+        { id: 'user-updated', style: { color: 'blue' } },
+        { id: 'search', style: { bgColor: 'yellow' } }
+      ] as any,
+      [
+        { cellPosition: { col: 1, row: 2 }, customStyleId: 'user-a' },
+        { cellPosition: { col: 1, row: 2 }, customStyleId: 'user-b' }
+      ] as any
+    );
+    plugin.setCustomCellStyleOverlay('search-component', { col: 1, row: 2 }, 'search');
+
+    plugin.arrangeCustomCellStyle({ col: 1, row: 2 }, 'user-updated');
+
+    expect(plugin.customCellStyleArrangement).toEqual([
+      { cellPosition: { col: 1, row: 2 }, customStyleId: 'user-a' },
+      { cellPosition: { col: 1, row: 2 }, customStyleId: 'user-updated' }
+    ]);
+    expect(plugin.getCustomCellStyleIds(1, 2)).toEqual(['user-a', 'user-updated', 'search']);
+
+    plugin.clearCustomCellStyleOverlay('search-component');
+
+    expect(plugin.getCustomCellStyleIds(1, 2)).toEqual(['user-a', 'user-updated']);
+  });
+
+  test('reads direct public arrangement mutations without a lookup cache', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'first', style: { color: 'red' } },
+        { id: 'second', style: { color: 'blue' } }
+      ] as any,
+      [{ cellPosition: { col: 1, row: 1 }, customStyleId: 'first' }] as any
+    );
+
+    plugin.customCellStyleArrangement.splice(0, 1, {
+      cellPosition: { col: 2, row: 2 },
+      customStyleId: 'second'
+    } as any);
+
+    expect(plugin.getCustomCellStyleIds(1, 1)).toEqual([]);
+    expect(plugin.getCustomCellStyleIds(2, 2)).toEqual(['second']);
   });
 });

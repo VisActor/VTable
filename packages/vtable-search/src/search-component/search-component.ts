@@ -47,6 +47,7 @@ export type SearchComponentOption = {
 
 const HighlightStyleId = '__search_component_highlight';
 const FocusHighlightStyleId = '__search_component_focus';
+const SearchStyleOverlayId = '__search_component_overlay';
 const searchStyleIds = new Set([HighlightStyleId, FocusHighlightStyleId]);
 type SearchCellPosition =
   | { col: number; row: number }
@@ -105,17 +106,8 @@ export class SearchComponent {
   private resultParentRowMap = new WeakMap<object, number>();
   private resultTables = new Set<IVTable>();
   private tableIdMap = new WeakMap<object, string>();
-  private tableIdOwners = new Map<string, object>();
-  private searchStyleArrangementMap = new WeakMap<object, Map<string, { arrangement: any; index: number }>>();
-  private searchStyleArrangementStates = new WeakMap<
-    object,
-    {
-      arrangements: any[];
-      length: number;
-      first: any;
-      last: any;
-    }
-  >();
+  private usedTableIds = new Set<string>();
+  private searchStylePositions = new WeakMap<object, Map<string, SearchCellPosition>>();
   private nextTableId = 1;
 
   constructor(option: SearchComponentOption) {
@@ -347,11 +339,11 @@ export class SearchComponent {
     const explicitId = (table as any).id;
     const baseId = typeof explicitId === 'string' && explicitId ? explicitId : 'search-table';
     let tableId = baseId;
-    while (this.tableIdOwners.has(tableId)) {
+    while (this.usedTableIds.has(tableId)) {
       tableId = `${baseId}-${this.nextTableId++}`;
     }
     this.tableIdMap.set(table as object, tableId);
-    this.tableIdOwners.set(tableId, table as object);
+    this.usedTableIds.add(tableId);
     return tableId;
   }
 
@@ -420,53 +412,6 @@ export class SearchComponent {
     return `${range.start.col}:${range.start.row}:${range.end.col}:${range.end.row}`;
   }
 
-  private resetSearchStyleArrangementCache(table: IVTable): void {
-    this.searchStyleArrangementMap.delete(table as object);
-    this.searchStyleArrangementStates.delete(table as object);
-  }
-
-  private rebuildSearchStyleArrangementCache(
-    table: IVTable,
-    arrangements: any[]
-  ): Map<string, { arrangement: any; index: number }> {
-    const tableStyles = new Map<string, { arrangement: any; index: number }>();
-    arrangements.forEach((arrangement, index) => {
-      if (!searchStyleIds.has(arrangement?.customStyleId)) {
-        return;
-      }
-      const key = this.getCellPositionKey(arrangement.cellPosition);
-      if (key) {
-        tableStyles.set(key, { arrangement, index });
-      }
-    });
-    this.searchStyleArrangementMap.set(table as object, tableStyles);
-    this.updateSearchStyleArrangementState(table, arrangements);
-    return tableStyles;
-  }
-
-  private getSearchStyleArrangementCache(
-    table: IVTable,
-    arrangements: any[]
-  ): Map<string, { arrangement: any; index: number }> {
-    const state = this.searchStyleArrangementStates.get(table as object);
-    const tableStyles = this.searchStyleArrangementMap.get(table as object);
-    const isFresh =
-      state?.arrangements === arrangements &&
-      state.length === arrangements.length &&
-      state.first === arrangements[0] &&
-      state.last === arrangements[arrangements.length - 1];
-    return tableStyles && isFresh ? tableStyles : this.rebuildSearchStyleArrangementCache(table, arrangements);
-  }
-
-  private updateSearchStyleArrangementState(table: IVTable, arrangements: any[]): void {
-    this.searchStyleArrangementStates.set(table as object, {
-      arrangements,
-      length: arrangements.length,
-      first: arrangements[0],
-      last: arrangements[arrangements.length - 1]
-    });
-  }
-
   private refreshCellStyle(table: IVTable, position: SearchCellPosition | any): void {
     const range = this.getCellPositionRange(position);
     if (!range) {
@@ -481,46 +426,32 @@ export class SearchComponent {
 
   private arrangeSearchCellStyle(table: IVTable, position: SearchCellPosition, customStyleId: string): void {
     const plugin = (table as any).customCellStylePlugin;
-    const arrangements = plugin?.customCellStyleArrangement;
     const positionKey = this.getCellPositionKey(position);
-    if (plugin && Array.isArray(arrangements) && positionKey) {
-      let tableStyles = this.getSearchStyleArrangementCache(table, arrangements);
-      let existing = tableStyles.get(positionKey);
-      if (existing && arrangements[existing.index] !== existing.arrangement) {
-        tableStyles = this.rebuildSearchStyleArrangementCache(table, arrangements);
-        existing = tableStyles.get(positionKey);
+    if (plugin && positionKey && typeof plugin.setCustomCellStyleOverlay === 'function') {
+      plugin.setCustomCellStyleOverlay(SearchStyleOverlayId, position, customStyleId);
+      let positions = this.searchStylePositions.get(table as object);
+      if (!positions) {
+        positions = new Map();
+        this.searchStylePositions.set(table as object, positions);
       }
-      if (
-        existing &&
-        (existing.arrangement.customStyleId == null || searchStyleIds.has(existing.arrangement.customStyleId))
-      ) {
-        existing.arrangement.customStyleId = customStyleId;
+      positions.set(positionKey, position);
+      return;
+    }
+
+    const arrangements = plugin?.customCellStyleArrangement;
+    if (plugin && Array.isArray(arrangements) && positionKey) {
+      const existing = arrangements.find(
+        item => searchStyleIds.has(item?.customStyleId) && this.getCellPositionKey(item.cellPosition) === positionKey
+      );
+      if (existing && (existing.customStyleId == null || searchStyleIds.has(existing.customStyleId))) {
+        existing.customStyleId = customStyleId;
         return;
       }
       if (typeof plugin.addCustomCellStyleArrangement === 'function') {
         plugin.addCustomCellStyleArrangement(position as any, customStyleId);
-        const currentArrangements = plugin.customCellStyleArrangement;
-        if (Array.isArray(currentArrangements)) {
-          if (currentArrangements !== arrangements) {
-            tableStyles = this.getSearchStyleArrangementCache(table, currentArrangements);
-          }
-          const index = currentArrangements.length - 1;
-          const addedArrangement = currentArrangements[index];
-          if (
-            addedArrangement &&
-            searchStyleIds.has(addedArrangement.customStyleId) &&
-            this.getCellPositionKey(addedArrangement.cellPosition) === positionKey
-          ) {
-            tableStyles.set(positionKey, { arrangement: addedArrangement, index });
-          }
-          this.updateSearchStyleArrangementState(table, currentArrangements);
-        }
         return;
       }
-      const addedArrangement = { cellPosition: position, customStyleId };
-      arrangements.push(addedArrangement);
-      tableStyles.set(positionKey, { arrangement: addedArrangement, index: arrangements.length - 1 });
-      this.updateSearchStyleArrangementState(table, arrangements);
+      arrangements.push({ cellPosition: position, customStyleId });
       return;
     }
     const arrange = (table as any).arrangeCustomCellStyle;
@@ -533,8 +464,14 @@ export class SearchComponent {
 
   private clearSearchCellStyleAtPosition(table: IVTable, position: SearchCellPosition): void {
     const plugin = (table as any).customCellStylePlugin;
-    const arrangements = plugin?.customCellStyleArrangement;
     const positionKey = this.getCellPositionKey(position);
+    if (plugin && positionKey && typeof plugin.setCustomCellStyleOverlay === 'function') {
+      plugin.setCustomCellStyleOverlay(SearchStyleOverlayId, position, undefined);
+      this.searchStylePositions.get(table as object)?.delete(positionKey);
+      return;
+    }
+
+    const arrangements = plugin?.customCellStyleArrangement;
     if (!Array.isArray(arrangements) || !positionKey) {
       return;
     }
@@ -548,7 +485,14 @@ export class SearchComponent {
   private clearSearchCellStyles(table: IVTable): Map<string, SearchCellPosition> {
     const plugin = (table as any).customCellStylePlugin;
     const positionsToRefresh = new Map<string, SearchCellPosition>();
-    this.resetSearchStyleArrangementCache(table);
+    const overlayPositions = this.searchStylePositions.get(table as object);
+    if (plugin && overlayPositions && typeof plugin.clearCustomCellStyleOverlay === 'function') {
+      overlayPositions.forEach((position, key) => positionsToRefresh.set(key, position));
+      plugin.clearCustomCellStyleOverlay(SearchStyleOverlayId);
+      this.searchStylePositions.delete(table as object);
+      return positionsToRefresh;
+    }
+
     const arrangements = plugin?.customCellStyleArrangement;
     if (!Array.isArray(arrangements)) {
       return positionsToRefresh;
@@ -571,14 +515,8 @@ export class SearchComponent {
       return positionsToRefresh;
     }
 
-    if (retainedArrangements.length === 0 && typeof plugin.clearCustomCellStyleArrangement === 'function') {
-      plugin.clearCustomCellStyleArrangement();
-    } else if (typeof plugin.updateCustomCell === 'function' && Array.isArray(plugin.customCellStyle)) {
-      plugin.updateCustomCell([...plugin.customCellStyle], retainedArrangements);
-    } else {
-      arrangements.splice(0, arrangements.length, ...retainedArrangements);
-      plugin?._rebuildCustomCellStyleArrangementIndex?.call(plugin);
-    }
+    arrangements.splice(0, arrangements.length, ...retainedArrangements);
+    plugin?._rebuildCustomCellStyleArrangementIndex?.call(plugin);
     return positionsToRefresh;
   }
 

@@ -100,6 +100,5 @@ test('focus navigation and clear operate on the matching detail table', () => {
 
   search.clear();
 
-  expect(detail.table.customCellStylePlugin.clearCustomCellStyleArrangement).toHaveBeenCalled();
-  expect(detail.arrangements).toHaveLength(0);
+  expect(detail.table.customCellStylePlugin.customCellStyleArrangement).toHaveLength(0);
 });

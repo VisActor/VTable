@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix(vtable): use indexed exact-cell custom style lookups",
+      "comment": "fix(vtable): support indexed custom style overlays",
       "type": "patch",
       "packageName": "@visactor/vtable"
     }

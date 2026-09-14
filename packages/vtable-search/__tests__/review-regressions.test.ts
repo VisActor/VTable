@@ -3,6 +3,7 @@
 // @ts-nocheck
 
 import { SearchComponent } from '../src';
+import { CustomCellStylePlugin } from '../../vtable/src/plugins/custom-cell-style';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -87,6 +88,8 @@ function createCellTable(
     isReleased: false,
     isHeader: jest.fn((_col, row) => row === 0),
     getCellValue: jest.fn((col, row) => (row === 0 ? 'Name' : values[row - 1]?.[col])),
+    getCellOriginValue: jest.fn((col, row) => (row === 0 ? 'Name' : values[row - 1]?.[col])),
+    getCellHeaderPaths: jest.fn(() => undefined),
     getCellRange: jest.fn((col, row) => ({
       start: { col, row },
       end: { col, row }
@@ -166,6 +169,23 @@ function createCellTable(
   }
 
   return { table, customCellStylePlugin, registeredStyles };
+}
+
+function attachRealCustomStylePlugin(
+  target: ReturnType<typeof createCellTable>,
+  customCellStyle: any[] = [],
+  customCellStyleArrangement: any[] = []
+) {
+  const plugin = new CustomCellStylePlugin(
+    target.table as any,
+    customCellStyle as any,
+    customCellStyleArrangement as any
+  );
+  target.table.customCellStylePlugin = plugin;
+  target.table.registerCustomCellStyle = jest.fn(plugin.registerCustomCellStyle.bind(plugin));
+  target.table.hasCustomCellStyle = jest.fn(plugin.hasCustomCellStyle.bind(plugin));
+  target.table.arrangeCustomCellStyle = jest.fn(plugin.arrangeCustomCellStyle.bind(plugin));
+  return plugin;
 }
 
 function createTreeTable() {
@@ -266,6 +286,9 @@ test('released detail tables are removed from search state safely', () => {
   const search = new SearchComponent({ table: main.table as any, autoJump: false });
 
   search.search('i');
+  expect(search.queryResult).toEqual(
+    expect.arrayContaining([expect.objectContaining({ table: detail.table, value: 'Widget' })])
+  );
   detail.table.isReleased = true;
   detail.table.scenegraph = null;
   main.table.internalProps.subTableInstances.clear();
@@ -635,32 +658,85 @@ test('search styles do not replace a user range arrangement at the same cell', (
   ]);
 });
 
-test('navigation does not rebuild the custom style index for search entries', () => {
-  const main = createCellTable([['Alice', 'Alina']]);
-  main.table.colCount = 2;
+test('real style plugin keeps multiple user styles separate from search overlays', () => {
+  const main = createCellTable([['Alice']]);
+  const plugin = attachRealCustomStylePlugin(
+    main,
+    [
+      { id: 'user-a', style: { color: 'red' } },
+      { id: 'user-b', style: { fontWeight: 'bold' } },
+      { id: 'user-updated', style: { color: 'blue' } }
+    ],
+    [
+      { cellPosition: { col: 0, row: 1 }, customStyleId: 'user-a' },
+      { cellPosition: { col: 0, row: 1 }, customStyleId: 'user-b' }
+    ]
+  );
   const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
   search.search('Ali');
-  const rebuildIndex = main.customCellStylePlugin._rebuildCustomCellStyleArrangementIndex;
-  rebuildIndex.mockClear();
+  main.table.arrangeCustomCellStyle({ col: 0, row: 1 }, 'user-updated');
 
-  search.next();
-  search.next();
+  expect(plugin.customCellStyleArrangement).toEqual([
+    { cellPosition: { col: 0, row: 1 }, customStyleId: 'user-a' },
+    { cellPosition: { col: 0, row: 1 }, customStyleId: 'user-updated' }
+  ]);
+  expect(plugin.getCustomCellStyleIds(0, 1)).toEqual(['user-a', 'user-updated', '__search_component_highlight']);
 
-  expect(rebuildIndex).not.toHaveBeenCalled();
+  search.clear();
+
+  expect(plugin.customCellStyleArrangement).toHaveLength(2);
+  expect(plugin.getCustomCellStyleIds(0, 1)).toEqual(['user-a', 'user-updated']);
 });
 
-test('navigation does not scan the arrangement list for cached search styles', () => {
+test('real style plugin indexes merged search overlays without growing the public arrangement list', () => {
+  const values = Array.from({ length: 80 }, (_, index) => `Hit ${Math.floor(index / 2)}`);
+  const main = createCellTable([values]);
+  main.table.colCount = values.length;
+  main.table.getCellRange = jest.fn((col, row) => {
+    if (row !== 1) {
+      return { start: { col, row }, end: { col, row } };
+    }
+    const startCol = col - (col % 2);
+    return { start: { col: startCol, row }, end: { col: startCol + 1, row } };
+  });
+  let arrangementReads = 0;
+  const publicArrangements = new Proxy([], {
+    get(target, property, receiver) {
+      if (typeof property === 'string' && /^\d+$/.test(property)) {
+        arrangementReads++;
+      }
+      return Reflect.get(target, property, receiver);
+    }
+  });
+  const plugin = attachRealCustomStylePlugin(main, [], publicArrangements);
+  main.table.scenegraph.updateCellContent.mockImplementation((col, row) => {
+    plugin.getCustomCellStyleIds(col, row);
+  });
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  arrangementReads = 0;
+
+  const result = search.search('Hit');
+
+  expect(result.results).toHaveLength(40);
+  expect(plugin.customCellStyleArrangement).toHaveLength(0);
+  expect((plugin as any)._customCellStyleOverlays.get('__search_component_overlay').positions.size).toBe(40);
+  expect(arrangementReads).toBe(0);
+});
+
+test('real plugin navigation updates only the previous and current overlays', () => {
   const main = createCellTable([['Alice', 'Alina']]);
   main.table.colCount = 2;
+  const plugin = attachRealCustomStylePlugin(main);
   const search = new SearchComponent({ table: main.table as any, autoJump: false });
   search.search('Ali');
-  const includesSpy = jest.spyOn(Array.prototype, 'includes');
+  const setOverlaySpy = jest.spyOn(plugin, 'setCustomCellStyleOverlay');
 
   search.next();
   search.next();
 
-  expect(includesSpy).not.toHaveBeenCalled();
-  includesSpy.mockRestore();
+  expect(setOverlaySpy).toHaveBeenCalledTimes(3);
+  expect(plugin.customCellStyleArrangement).toHaveLength(0);
 });
 
 test('visible range boundaries are treated as inclusive', () => {
@@ -1032,7 +1108,8 @@ test('tree detail navigation uses synchronous local scrolling before reading its
   search.jumpToCell({ IndexNumber: [0], col: 0 }, detail.table as any, 0);
 
   expect(detail.table.scrollToCell).toHaveBeenCalledWith({ row: 1, col: 0 }, false);
-  expect(geometryReads[geometryReads.length - 1]).toBe(true);
+  expect(geometryReads.length).toBeGreaterThan(0);
+  expect(geometryReads.every(Boolean)).toBe(true);
   expect(main.table.scrollTop).toBe(0);
 });
 
