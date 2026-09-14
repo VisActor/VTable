@@ -124,4 +124,69 @@ describe('CustomCellStylePlugin', () => {
     expect(lastCall[1]).toBe(4);
     expect(lastCall[2]).toBe(true);
   });
+
+  test('uses the exact-cell index instead of scanning unrelated arrangements', () => {
+    let numericReads = 0;
+    const arrangements = new Proxy(
+      Array.from({ length: 1000 }, (_, col) => ({
+        cellPosition: { col, row: 0 },
+        customStyleId: 's'
+      })),
+      {
+        get(target, property, receiver) {
+          if (typeof property === 'string' && /^\d+$/.test(property)) {
+            numericReads++;
+          }
+          return Reflect.get(target, property, receiver);
+        }
+      }
+    );
+    const plugin = new CustomCellStylePlugin(
+      createMockTable(1000, 1) as any,
+      [{ id: 's', style: { bgColor: 'yellow' } }] as any,
+      arrangements as any
+    );
+    numericReads = 0;
+
+    expect(plugin.getCustomCellStyleIds(500, 0)).toEqual(['s']);
+    expect(numericReads).toBeLessThan(10);
+  });
+
+  test('keeps exact and range styles in arrangement order', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'range-first', style: { bgColor: 'red' } },
+        { id: 'exact', style: { color: 'white' } },
+        { id: 'range-last', style: { fontWeight: 'bold' } }
+      ] as any,
+      [
+        {
+          cellPosition: { range: { start: { col: 0, row: 0 }, end: { col: 5, row: 5 } } },
+          customStyleId: 'range-first'
+        },
+        { cellPosition: { col: 2, row: 2 }, customStyleId: 'exact' },
+        {
+          cellPosition: { range: { start: { col: 1, row: 1 }, end: { col: 3, row: 3 } } },
+          customStyleId: 'range-last'
+        }
+      ] as any
+    );
+
+    expect(plugin.getCustomCellStyleIds(2, 2)).toEqual(['range-first', 'exact', 'range-last']);
+  });
+
+  test('clearing arrangements also clears lookup indexes', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [{ id: 's', style: { bgColor: 'red' } }] as any,
+      [{ cellPosition: { col: 1, row: 2 }, customStyleId: 's' }] as any
+    );
+
+    plugin.clearCustomCellStyleArrangement();
+
+    expect((plugin as any)._customCellStyleArrangementIndex.size).toBe(0);
+    expect((plugin as any)._customCellStyleArrangementIndexes.size).toBe(0);
+    expect(plugin.getCustomCellStyleIds(1, 2)).toEqual([]);
+  });
 });

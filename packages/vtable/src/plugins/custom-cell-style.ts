@@ -23,6 +23,8 @@ export class CustomCellStylePlugin {
   customCellStyle: CustomCellStyle[];
   customCellStyleArrangement: CustomCellStyleArrangement[];
   private _customCellStyleArrangementIndex: Map<string, number>;
+  private _customCellStyleArrangementIndexes: Map<string, number[]>;
+  private _customCellStyleRangeArrangementIndexes: number[];
   private _customCellStyleArrangementTombstoneCount: number;
 
   constructor(
@@ -34,6 +36,8 @@ export class CustomCellStylePlugin {
     this.customCellStyle = customCellStyle;
     this.customCellStyleArrangement = customCellStyleArrangement;
     this._customCellStyleArrangementIndex = new Map();
+    this._customCellStyleArrangementIndexes = new Map();
+    this._customCellStyleRangeArrangementIndexes = [];
     this._customCellStyleArrangementTombstoneCount = 0;
     this._rebuildCustomCellStyleArrangementIndex();
   }
@@ -51,15 +55,27 @@ export class CustomCellStylePlugin {
 
   private _rebuildCustomCellStyleArrangementIndex() {
     this._customCellStyleArrangementIndex.clear();
+    this._customCellStyleArrangementIndexes.clear();
+    this._customCellStyleRangeArrangementIndexes.length = 0;
     this._customCellStyleArrangementTombstoneCount = 0;
     for (let i = 0; i < this.customCellStyleArrangement.length; i++) {
-      if (!isValid((this.customCellStyleArrangement[i] as any).customStyleId)) {
+      const arrangement = this.customCellStyleArrangement[i];
+      if (!isValid((arrangement as any).customStyleId)) {
         this._customCellStyleArrangementTombstoneCount++;
         continue;
       }
-      const key = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[i].cellPosition);
+      const key = this._getCustomCellStyleArrangementKey(arrangement.cellPosition);
       if (key) {
         this._customCellStyleArrangementIndex.set(key, i);
+        const indexes = this._customCellStyleArrangementIndexes.get(key);
+        if (indexes) {
+          indexes.push(i);
+        } else {
+          this._customCellStyleArrangementIndexes.set(key, [i]);
+        }
+      }
+      if (arrangement.cellPosition.range) {
+        this._customCellStyleRangeArrangementIndexes.push(i);
       }
     }
   }
@@ -84,19 +100,36 @@ export class CustomCellStylePlugin {
 
   clearCustomCellStyleArrangement() {
     this.customCellStyleArrangement = [];
+    this._rebuildCustomCellStyleArrangementIndex();
   }
 
   addCustomCellStyleArrangement(
     cellPosition: {
-      col: number;
-      row: number;
+      col?: number;
+      row?: number;
+      range?: CellRange;
     },
     customStyleId: string | undefined | null
   ) {
-    this.customCellStyleArrangement.push({
+    const arrangement = {
       cellPosition,
       customStyleId
-    });
+    };
+    this.customCellStyleArrangement.push(arrangement);
+    const index = this.customCellStyleArrangement.length - 1;
+    const key = this._getCustomCellStyleArrangementKey(cellPosition);
+    if (key) {
+      this._customCellStyleArrangementIndex.set(key, index);
+      const indexes = this._customCellStyleArrangementIndexes.get(key);
+      if (indexes) {
+        indexes.push(index);
+      } else {
+        this._customCellStyleArrangementIndexes.set(key, [index]);
+      }
+    }
+    if (cellPosition.range) {
+      this._customCellStyleRangeArrangementIndexes.push(index);
+    }
   }
 
   getCustomCellStyle(col: number, row: number) {
@@ -138,12 +171,24 @@ export class CustomCellStylePlugin {
     const range = this.table.getCellRange(col, row);
     for (let c = range.start.col; c <= range.end.col; c++) {
       for (let r = range.start.row; r <= range.end.row; r++) {
-        // eslint-disable-next-line no-loop-func
-        this.customCellStyleArrangement.forEach(style => {
-          if (!isValid(style.customStyleId)) {
-            return;
+        const exactIndexes = this._customCellStyleArrangementIndexes.get(`cell:${c},${r}`) ?? [];
+        let exactIndex = 0;
+        let rangeIndex = 0;
+        while (exactIndex < exactIndexes.length || rangeIndex < this._customCellStyleRangeArrangementIndexes.length) {
+          const nextExactIndex = exactIndexes[exactIndex] ?? Number.POSITIVE_INFINITY;
+          const nextRangeIndex = this._customCellStyleRangeArrangementIndexes[rangeIndex] ?? Number.POSITIVE_INFINITY;
+          const arrangementIndex = Math.min(nextExactIndex, nextRangeIndex);
+          const isRangeArrangement = nextRangeIndex <= nextExactIndex;
+          if (isRangeArrangement) {
+            rangeIndex++;
+          } else {
+            exactIndex++;
           }
-          if (style.cellPosition.range) {
+          const style = this.customCellStyleArrangement[arrangementIndex];
+          if (!style || !isValid(style.customStyleId)) {
+            continue;
+          }
+          if (isRangeArrangement && style.cellPosition.range) {
             if (
               style.cellPosition.range.start.col <= c &&
               style.cellPosition.range.end.col >= c &&
@@ -153,11 +198,11 @@ export class CustomCellStylePlugin {
               // customStyleId = style.customStyleId;
               customStyleIds.push(style.customStyleId as string);
             }
-          } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
+          } else if (!isRangeArrangement && style.cellPosition.col === c && style.cellPosition.row === r) {
             // customStyleId = style.customStyleId;
             customStyleIds.push(style.customStyleId as string);
           }
-        });
+        }
       }
     }
 
@@ -225,17 +270,8 @@ export class CustomCellStylePlugin {
       const item = this.customCellStyleArrangement[index];
       const itemKey = item ? this._getCustomCellStyleArrangementKey(item.cellPosition) : undefined;
       if (!item || !isValid((item as any).customStyleId) || itemKey !== inputKey) {
-        index = this.customCellStyleArrangement.findIndex(style => {
-          if (!isValid((style as any).customStyleId)) {
-            return false;
-          }
-          return this._getCustomCellStyleArrangementKey(style.cellPosition) === inputKey;
-        });
-        if (index !== -1) {
-          this._customCellStyleArrangementIndex.set(inputKey, index);
-        } else {
-          this._customCellStyleArrangementIndex.delete(inputKey);
-        }
+        this._rebuildCustomCellStyleArrangementIndex();
+        index = this._customCellStyleArrangementIndex.get(inputKey) ?? -1;
       }
     }
     if (index === -1 && !inputKey) {
@@ -274,6 +310,15 @@ export class CustomCellStylePlugin {
       );
       if (pushedKey) {
         this._customCellStyleArrangementIndex.set(pushedKey, pushedIndex);
+        const indexes = this._customCellStyleArrangementIndexes.get(pushedKey);
+        if (indexes) {
+          indexes.push(pushedIndex);
+        } else {
+          this._customCellStyleArrangementIndexes.set(pushedKey, [pushedIndex]);
+        }
+      }
+      if (this.customCellStyleArrangement[pushedIndex].cellPosition.range) {
+        this._customCellStyleRangeArrangementIndexes.push(pushedIndex);
       }
     } else if (this.customCellStyleArrangement[index].customStyleId === customStyleId) {
       // same style
@@ -338,6 +383,8 @@ export class CustomCellStylePlugin {
     this.customCellStyle.length = 0;
     this.customCellStyleArrangement.length = 0;
     this._customCellStyleArrangementIndex.clear();
+    this._customCellStyleArrangementIndexes.clear();
+    this._customCellStyleRangeArrangementIndexes.length = 0;
     this._customCellStyleArrangementTombstoneCount = 0;
     customCellStyle.forEach((cellStyle: CustomCellStyle) => {
       this.registerCustomCellStyle(cellStyle.id, cellStyle.style);

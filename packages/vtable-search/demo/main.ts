@@ -109,7 +109,8 @@ const createSidebar = (node: HTMLDivElement) => {
 
 const run = () => {
   const sidebarNode = document.querySelector<HTMLDivElement>('#sidebar')!;
-  const prevActivePath = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const prevActivePath =
+    new URLSearchParams(window.location.search).get('demo') || localStorage.getItem(LOCAL_STORAGE_KEY);
 
   createSidebar(sidebarNode);
   initSidebarEvent(sidebarNode);

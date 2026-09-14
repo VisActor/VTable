@@ -6,6 +6,7 @@ import { SearchComponent } from '../src';
 
 afterEach(() => {
   jest.restoreAllMocks();
+  document.body.innerHTML = '';
 });
 
 function createCellTable(
@@ -53,6 +54,7 @@ function createCellTable(
       .map((item, index) => [getArrangementKey(item.cellPosition), index])
       .filter(([key]) => key !== undefined)
   );
+  const registeredStyles = new Set<string>();
   const customCellStylePlugin = {
     customCellStyleArrangement: arrangements,
     addCustomCellStyleArrangement: jest.fn((cellPosition, customStyleId) => {
@@ -89,8 +91,10 @@ function createCellTable(
       start: { col, row },
       end: { col, row }
     })),
-    registerCustomCellStyle: jest.fn(),
-    hasCustomCellStyle: jest.fn(() => true),
+    registerCustomCellStyle: jest.fn(styleId => {
+      registeredStyles.add(styleId);
+    }),
+    hasCustomCellStyle: jest.fn(styleId => registeredStyles.has(styleId)),
     arrangeCustomCellStyle: jest.fn((position, style) => {
       if (style) {
         const key = getArrangementKey(position);
@@ -161,7 +165,7 @@ function createCellTable(
     };
   }
 
-  return { table, customCellStylePlugin };
+  return { table, customCellStylePlugin, registeredStyles };
 }
 
 function createTreeTable() {
@@ -314,13 +318,17 @@ test('clearing stale results during master release does not touch table scenegra
 
   search.search('i');
   main.table.scenegraph.updateCellContent.mockClear();
+  main.table.scenegraph.updateNextFrame.mockClear();
   detail.table.scenegraph.updateCellContent.mockClear();
+  detail.table.scenegraph.updateNextFrame.mockClear();
   main.table.internalProps._isReleasing = true;
 
   search.clear();
 
   expect(main.table.scenegraph.updateCellContent).not.toHaveBeenCalled();
+  expect(main.table.scenegraph.updateNextFrame).not.toHaveBeenCalled();
   expect(detail.table.scenegraph.updateCellContent).not.toHaveBeenCalled();
+  expect(detail.table.scenegraph.updateNextFrame).not.toHaveBeenCalled();
   expect(search.queryResult).toHaveLength(0);
 });
 
@@ -339,6 +347,7 @@ test('tree master tables still search expanded detail tables', () => {
       customStyleId: '__search_component_highlight'
     }
   ]);
+  expect(detail.registeredStyles).toEqual(new Set(['__search_component_highlight', '__search_component_focus']));
 });
 
 test('detail result navigation scrolls the master row into view first', () => {
@@ -354,6 +363,9 @@ test('detail result navigation scrolls the master row into view first', () => {
 
   expect(main.table.scrollToCell).toHaveBeenCalledWith({ row: 6 });
   expect(detail.table.scrollToCell).toHaveBeenCalled();
+  expect(main.table.scrollToCell.mock.invocationCallOrder[0]).toBeLessThan(
+    detail.table.scrollToCell.mock.invocationCallOrder[0]
+  );
 });
 
 test('master-detail search does not recurse child records as tree results', () => {
@@ -778,19 +790,18 @@ test('scrolling a detail result keeps the master horizontal position', () => {
   expect(main.table.scrollToCell).toHaveBeenCalledWith({ row: 1 });
 });
 
-test('normal navigation does not filter the entire result list', () => {
+test('normal navigation does not check every result for availability', () => {
   const main = createCellTable([['Alice', 'Alina', 'Alicia']], { rowHierarchyType: 'grid' });
   main.table.colCount = 3;
   const search = new SearchComponent({ table: main.table as any, autoJump: false });
   search.search('Ali');
 
-  const filterSpy = jest.spyOn(Array.prototype, 'filter');
+  const availabilitySpy = jest.spyOn(search as any, 'isResultAvailable');
   search.next();
   search.next();
   search.prev();
 
-  expect(filterSpy).not.toHaveBeenCalled();
-  filterSpy.mockRestore();
+  expect(availabilitySpy).not.toHaveBeenCalled();
 });
 
 test('tree-configured pivot tables search rendered cells instead of raw records', () => {
@@ -804,32 +815,37 @@ test('tree-configured pivot tables search rendered cells instead of raw records'
   expect(result.results[0].indexNumber).toBeUndefined();
 });
 
-test('bulk highlighting does not scan the growing arrangement list for every result', () => {
+test('bulk highlighting creates every result and arrangement', () => {
   const main = createCellTable([Array.from({ length: 100 }, (_, index) => `Hit ${index}`)]);
   main.table.colCount = 100;
-  const findSpy = jest.fn(() => undefined);
-  main.customCellStylePlugin.customCellStyleArrangement.find = findSpy;
   const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
 
-  search.search('Hit');
+  const result = search.search('Hit');
 
-  expect(findSpy).not.toHaveBeenCalled();
+  expect(result.results).toHaveLength(100);
+  expect(main.customCellStylePlugin.customCellStyleArrangement).toHaveLength(100);
 });
 
-test('navigation rebuilds a style cache mutated in place', () => {
-  const main = createCellTable([['Alice']]);
+test('navigation rebuilds a middle style cache entry mutated in place', () => {
+  const main = createCellTable([['Alice', 'Alina', 'Alicia']]);
+  main.table.colCount = 3;
   const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
   search.search('Ali');
   const arrangements = main.customCellStylePlugin.customCellStyleArrangement;
-  const detachedSearchStyle = arrangements[0];
-  arrangements.splice(0, arrangements.length, {
-    cellPosition: { col: 0, row: 1 },
+  const firstArrangement = arrangements[0];
+  const detachedSearchStyle = arrangements[1];
+  const lastArrangement = arrangements[2];
+  arrangements.splice(1, 1, {
+    cellPosition: { col: 1, row: 1 },
     customStyleId: 'user-style'
   });
 
   search.next();
+  search.next();
 
   expect(detachedSearchStyle.customStyleId).toBe('__search_component_highlight');
+  expect(arrangements[0]).toBe(firstArrangement);
+  expect(arrangements[2]).toBe(lastArrangement);
   expect(arrangements).toEqual(
     expect.arrayContaining([
       expect.objectContaining({ customStyleId: 'user-style' }),
@@ -917,32 +933,96 @@ test('next keeps its direction when the current detail result is released', () =
   expect(result.results[1].table).toBe(secondDetail.table);
 });
 
+test('next keeps its direction when multiple results before and at the current index are released', () => {
+  const main = createCellTable([['Match']], { isMasterDetail: true });
+  const firstDetail = createCellTable([['Match first']]);
+  const secondDetail = createCellTable([['Match second']]);
+  const thirdDetail = createCellTable([['Match third']]);
+  main.table.internalProps = {
+    subTableInstances: new Map([
+      [0, firstDetail.table],
+      [1, secondDetail.table],
+      [2, thirdDetail.table]
+    ])
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  search.search('Match');
+  search.next();
+  search.next();
+  search.next();
+  firstDetail.table.isReleased = true;
+  firstDetail.table.scenegraph = null;
+  secondDetail.table.isReleased = true;
+  secondDetail.table.scenegraph = null;
+
+  const result = search.next();
+
+  expect(result.index).toBe(1);
+  expect(result.results[1].table).toBe(thirdDetail.table);
+});
+
+test('prev keeps its direction when multiple results including the current detail are released', () => {
+  const main = createCellTable([['Match']], { isMasterDetail: true });
+  const firstDetail = createCellTable([['Match first']]);
+  const secondDetail = createCellTable([['Match second']]);
+  const thirdDetail = createCellTable([['Match third']]);
+  const fourthDetail = createCellTable([['Match fourth']]);
+  main.table.internalProps = {
+    subTableInstances: new Map([
+      [0, firstDetail.table],
+      [1, secondDetail.table],
+      [2, thirdDetail.table],
+      [3, fourthDetail.table]
+    ])
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  search.search('Match');
+  search.next();
+  search.next();
+  search.next();
+  search.next();
+  firstDetail.table.isReleased = true;
+  firstDetail.table.scenegraph = null;
+  thirdDetail.table.isReleased = true;
+  thirdDetail.table.scenegraph = null;
+
+  const result = search.prev();
+
+  expect(result.index).toBe(1);
+  expect(result.results[1].table).toBe(secondDetail.table);
+});
+
 test('result navigation uses the recorded detail parent row without a reverse scan', () => {
   const main = createCellTable([['Parent']], { isMasterDetail: true });
   const detail = createCellTable([['Widget']]);
   const subTableInstances = new Map([[7, detail.table]]);
-  const forEachSpy = jest.spyOn(subTableInstances, 'forEach');
   main.table.internalProps = { subTableInstances };
   const search = new SearchComponent({ table: main.table as any, autoJump: false });
-  forEachSpy.mockClear();
+  const result = search.search('Widget');
+  const reverseLookupSpy = jest.spyOn(search as any, 'getSubTableBodyRowIndex');
 
-  search.jumpToCell({ col: 0, row: 1 }, detail.table as any, 7);
+  search.next();
 
-  expect(forEachSpy).not.toHaveBeenCalled();
+  expect(result.results[0].parentRow).toBe(7);
+  expect(reverseLookupSpy).not.toHaveBeenCalled();
   expect(main.table.scrollToCell).toHaveBeenCalledWith({ row: 8 });
 });
 
-test('tree detail navigation completes its local scroll before adjusting the master viewport', () => {
+test('tree detail navigation uses synchronous local scrolling before reading its target geometry', () => {
   const main = createCellTable([['Parent']], { isMasterDetail: true });
   let detailScrolled = false;
+  const geometryReads: boolean[] = [];
   const detail = createCellTable([['Widget']], {
     columns: [{ field: 'name', tree: true }],
     records: [{ name: 'Widget' }],
     rowHierarchyType: 'tree',
-    cellRangeRelativeRect: () => ({ left: 0, top: detailScrolled ? 50 : 500, width: 100, height: 20 })
+    cellRangeRelativeRect: () => {
+      geometryReads.push(detailScrolled);
+      return { left: 0, top: detailScrolled ? 50 : 500, width: 100, height: 20 };
+    }
   });
   detail.table.scrollToCell.mockImplementation((_cell, option) => {
-    if (option?.duration === 0) {
+    if (option === false) {
       detailScrolled = true;
     }
   });
@@ -951,6 +1031,26 @@ test('tree detail navigation completes its local scroll before adjusting the mas
 
   search.jumpToCell({ IndexNumber: [0], col: 0 }, detail.table as any, 0);
 
-  expect(detail.table.scrollToCell).toHaveBeenCalledWith({ row: 1, col: 0 }, expect.objectContaining({ duration: 0 }));
+  expect(detail.table.scrollToCell).toHaveBeenCalledWith({ row: 1, col: 0 }, false);
+  expect(geometryReads[geometryReads.length - 1]).toBe(true);
   expect(main.table.scrollTop).toBe(0);
+});
+
+test('search result table IDs remain unique when VTable timestamp IDs collide', () => {
+  const main = createCellTable([['Parent']], { isMasterDetail: true });
+  const firstDetail = createCellTable([['Widget one']]);
+  const secondDetail = createCellTable([['Widget two']]);
+  firstDetail.table.id = 'VTable123';
+  secondDetail.table.id = 'VTable123';
+  main.table.internalProps = {
+    subTableInstances: new Map([
+      [0, firstDetail.table],
+      [1, secondDetail.table]
+    ])
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
+  const result = search.search('Widget');
+
+  expect(result.results.map(item => item.tableId)).toEqual(['VTable123', 'VTable123-1']);
 });

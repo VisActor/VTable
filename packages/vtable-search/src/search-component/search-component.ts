@@ -105,6 +105,7 @@ export class SearchComponent {
   private resultParentRowMap = new WeakMap<object, number>();
   private resultTables = new Set<IVTable>();
   private tableIdMap = new WeakMap<object, string>();
+  private tableIdOwners = new Map<string, object>();
   private searchStyleArrangementMap = new WeakMap<object, Map<string, { arrangement: any; index: number }>>();
   private searchStyleArrangementStates = new WeakMap<
     object,
@@ -292,11 +293,17 @@ export class SearchComponent {
       return;
     }
 
-    const currentResult = this.currentIndex >= 0 ? this.queryResult[this.currentIndex] : undefined;
+    const previousIndex = this.currentIndex;
+    const currentResult = previousIndex >= 0 ? this.queryResult[previousIndex] : undefined;
     const availableResults: QueryResultItem[] = [];
-    for (const resultItem of this.queryResult) {
+    let availableBeforeCurrent = 0;
+    for (let index = 0; index < this.queryResult.length; index++) {
+      const resultItem = this.queryResult[index];
       if (this.isResultAvailable(resultItem, activeTables)) {
         availableResults.push(resultItem);
+        if (index < previousIndex) {
+          availableBeforeCurrent++;
+        }
       }
     }
     if (availableResults.length === this.queryResult.length) {
@@ -310,11 +317,11 @@ export class SearchComponent {
       if (currentResultIndex >= 0) {
         this.currentIndex = currentResultIndex;
       } else if (direction > 0) {
-        this.currentIndex = Math.min(this.currentIndex - 1, this.queryResult.length - 1);
+        this.currentIndex = availableBeforeCurrent - 1;
       } else if (direction < 0) {
-        this.currentIndex = Math.min(this.currentIndex, this.queryResult.length);
+        this.currentIndex = availableBeforeCurrent;
       } else {
-        this.currentIndex = Math.min(Math.max(this.currentIndex, -1), this.queryResult.length - 1);
+        this.currentIndex = Math.min(availableBeforeCurrent, this.queryResult.length - 1);
       }
     } else if (this.currentIndex >= this.queryResult.length) {
       this.currentIndex = this.queryResult.length - 1;
@@ -333,17 +340,19 @@ export class SearchComponent {
   }
 
   private getTableId(table: IVTable): string {
-    const explicitId = (table as any).id;
-    if (typeof explicitId === 'string' && explicitId) {
-      return explicitId;
-    }
     const existingId = this.tableIdMap.get(table as object);
     if (existingId) {
       return existingId;
     }
-    const generatedId = `search-table-${this.nextTableId++}`;
-    this.tableIdMap.set(table as object, generatedId);
-    return generatedId;
+    const explicitId = (table as any).id;
+    const baseId = typeof explicitId === 'string' && explicitId ? explicitId : 'search-table';
+    let tableId = baseId;
+    while (this.tableIdOwners.has(tableId)) {
+      tableId = `${baseId}-${this.nextTableId++}`;
+    }
+    this.tableIdMap.set(table as object, tableId);
+    this.tableIdOwners.set(tableId, table as object);
+    return tableId;
   }
 
   private addQueryResult(
@@ -1257,7 +1266,7 @@ export class SearchComponent {
       if (isDetailTable) {
         this.ensureSubTableParentVisible(targetTable, undefined, parentBodyRowIndex);
       }
-      const scrollOption = isDetailTable ? { ...this.scrollOption, duration: 0 } : this.scrollOption;
+      const scrollOption = isDetailTable ? false : this.scrollOption;
       targetTable.scrollToCell({ row: finalRow, col: targetCol }, scrollOption);
       this.ensureSubTableParentVisible(targetTable, { col: targetCol, row: finalRow }, parentBodyRowIndex);
 
@@ -1272,6 +1281,10 @@ export class SearchComponent {
       }
       const { rowStart, rowEnd } = targetTable.getBodyVisibleRowRange();
       const { colStart, colEnd } = targetTable.getBodyVisibleColRange();
+      const isDetailTable = targetTable !== this.table;
+      if (isDetailTable) {
+        this.ensureSubTableParentVisible(targetTable, undefined, parentBodyRowIndex);
+      }
 
       // 检查单元格是否在表格可视范围内
       const isInTableView = row >= rowStart && row <= rowEnd && col >= colStart && col <= colEnd;
