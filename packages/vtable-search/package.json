@@ -24,6 +24,7 @@
   },
   "scripts": {
     "start": "vite ./demo",
+    "test": "jest --runInBand",
     "build": "npm run fix-memory-limit && bundle --clean",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },

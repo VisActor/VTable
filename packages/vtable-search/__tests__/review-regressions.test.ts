@@ -4,6 +4,10 @@
 
 import { SearchComponent } from '../src';
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 function createCellTable(
   values: string[][],
   options: {
@@ -13,7 +17,7 @@ function createCellTable(
     visibleCols?: { colStart: number; colEnd: number };
     initialArrangements?: { col: number; row: number; style: string }[];
     columnHeaderLevelCount?: number;
-    rowHierarchyType?: 'grid' | 'tree';
+    rowHierarchyType?: 'grid' | 'tree' | 'grid-tree';
     viewBox?: { x1: number; y1: number; x2: number; y2: number };
     tableNoFrameHeight?: number;
     frozenRowsHeight?: number;
@@ -71,6 +75,7 @@ function createCellTable(
     })
   };
   const table = {
+    isPivotTable: jest.fn(() => false),
     id: `table-${Math.random()}`,
     rowHierarchyType: options.rowHierarchyType,
     records: options.records,
@@ -786,4 +791,166 @@ test('normal navigation does not filter the entire result list', () => {
 
   expect(filterSpy).not.toHaveBeenCalled();
   filterSpy.mockRestore();
+});
+
+test('tree-configured pivot tables search rendered cells instead of raw records', () => {
+  const pivot = createCellTable([['North', 'Hit total']], { rowHierarchyType: 'tree' });
+  pivot.table.isPivotTable.mockReturnValue(true);
+  const search = new SearchComponent({ table: pivot.table as any, autoJump: false, skipHeader: true });
+
+  const result = search.search('Hit');
+
+  expect(result.results).toEqual([expect.objectContaining({ table: pivot.table, col: 1, row: 1, value: 'Hit total' })]);
+  expect(result.results[0].indexNumber).toBeUndefined();
+});
+
+test('bulk highlighting does not scan the growing arrangement list for every result', () => {
+  const main = createCellTable([Array.from({ length: 100 }, (_, index) => `Hit ${index}`)]);
+  main.table.colCount = 100;
+  const findSpy = jest.fn(() => undefined);
+  main.customCellStylePlugin.customCellStyleArrangement.find = findSpy;
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+
+  search.search('Hit');
+
+  expect(findSpy).not.toHaveBeenCalled();
+});
+
+test('navigation rebuilds a style cache mutated in place', () => {
+  const main = createCellTable([['Alice']]);
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  search.search('Ali');
+  const arrangements = main.customCellStylePlugin.customCellStyleArrangement;
+  const detachedSearchStyle = arrangements[0];
+  arrangements.splice(0, arrangements.length, {
+    cellPosition: { col: 0, row: 1 },
+    customStyleId: 'user-style'
+  });
+
+  search.next();
+
+  expect(detachedSearchStyle.customStyleId).toBe('__search_component_highlight');
+  expect(arrangements).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ customStyleId: 'user-style' }),
+      expect.objectContaining({ customStyleId: '__search_component_focus' })
+    ])
+  );
+});
+
+test('expanding a tree result rebuilds highlights with current row coordinates', () => {
+  const records = [
+    { name: 'Hit before' },
+    { name: 'Parent', children: [{ name: 'Hit child' }] },
+    { name: 'Hit after' }
+  ];
+  const main = createCellTable([], {
+    columns: [{ field: 'name', tree: true }],
+    records,
+    rowHierarchyType: 'tree'
+  });
+  let expanded = false;
+  main.table.rowCount = 4;
+  main.table.dataSource.getTableIndex = jest.fn(index => {
+    const path = Array.isArray(index) ? index : [index];
+    if (path[0] === 0) {
+      return 0;
+    }
+    if (path[0] === 1 && path.length === 1) {
+      return 1;
+    }
+    if (path[0] === 1 && path[1] === 0) {
+      return expanded ? 2 : -1;
+    }
+    if (path[0] === 2) {
+      return expanded ? 3 : 2;
+    }
+    return -1;
+  });
+  main.table.getHierarchyState = jest.fn(() => (expanded ? 'expand' : 'collapse'));
+  main.table.toggleHierarchyState = jest.fn(() => {
+    expanded = true;
+    main.table.rowCount = 5;
+  });
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
+  search.search('Hit');
+  search.next();
+
+  const searchArrangements = main.customCellStylePlugin.customCellStyleArrangement.filter(item =>
+    item.customStyleId?.startsWith('__search_component_')
+  );
+  expect(searchArrangements).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        cellPosition: { col: 0, row: 3 },
+        customStyleId: '__search_component_focus'
+      }),
+      expect.objectContaining({ cellPosition: { col: 0, row: 4 }, customStyleId: '__search_component_highlight' })
+    ])
+  );
+  expect(searchArrangements).not.toEqual(
+    expect.arrayContaining([expect.objectContaining({ cellPosition: { col: 0, row: 2 } })])
+  );
+});
+
+test('next keeps its direction when the current detail result is released', () => {
+  const main = createCellTable([['Match']], { isMasterDetail: true });
+  const firstDetail = createCellTable([['Match first']]);
+  const secondDetail = createCellTable([['Match second']]);
+  main.table.internalProps = {
+    subTableInstances: new Map([
+      [0, firstDetail.table],
+      [1, secondDetail.table]
+    ])
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  search.search('Match');
+  search.next();
+  search.next();
+  firstDetail.table.isReleased = true;
+  firstDetail.table.scenegraph = null;
+
+  const result = search.next();
+
+  expect(result.index).toBe(1);
+  expect(result.results[1].table).toBe(secondDetail.table);
+});
+
+test('result navigation uses the recorded detail parent row without a reverse scan', () => {
+  const main = createCellTable([['Parent']], { isMasterDetail: true });
+  const detail = createCellTable([['Widget']]);
+  const subTableInstances = new Map([[7, detail.table]]);
+  const forEachSpy = jest.spyOn(subTableInstances, 'forEach');
+  main.table.internalProps = { subTableInstances };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+  forEachSpy.mockClear();
+
+  search.jumpToCell({ col: 0, row: 1 }, detail.table as any, 7);
+
+  expect(forEachSpy).not.toHaveBeenCalled();
+  expect(main.table.scrollToCell).toHaveBeenCalledWith({ row: 8 });
+});
+
+test('tree detail navigation completes its local scroll before adjusting the master viewport', () => {
+  const main = createCellTable([['Parent']], { isMasterDetail: true });
+  let detailScrolled = false;
+  const detail = createCellTable([['Widget']], {
+    columns: [{ field: 'name', tree: true }],
+    records: [{ name: 'Widget' }],
+    rowHierarchyType: 'tree',
+    cellRangeRelativeRect: () => ({ left: 0, top: detailScrolled ? 50 : 500, width: 100, height: 20 })
+  });
+  detail.table.scrollToCell.mockImplementation((_cell, option) => {
+    if (option?.duration === 0) {
+      detailScrolled = true;
+    }
+  });
+  main.table.internalProps = { subTableInstances: new Map([[0, detail.table]]) };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false });
+
+  search.jumpToCell({ IndexNumber: [0], col: 0 }, detail.table as any, 0);
+
+  expect(detail.table.scrollToCell).toHaveBeenCalledWith({ row: 1, col: 0 }, expect.objectContaining({ duration: 0 }));
+  expect(main.table.scrollTop).toBe(0);
 });
