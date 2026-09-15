@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(vtable-search): search expanded master-detail tables (#5036)",
+      "type": "patch",
+      "packageName": "@visactor/vtable-search"
+    }
+  ],
+  "packageName": "@visactor/vtable-search",
+  "email": "biukam.w@gmail.com"
+}

@@ -18,12 +18,19 @@ export interface ICustomCellStylePlugin {
   ): CustomCellStylePlugin;
 }
 
+type CustomCellStyleOverlay = {
+  positions: Map<string, string[]>;
+  cells: Map<string, Map<string, string>>;
+};
+
 export class CustomCellStylePlugin {
   table: BaseTableAPI;
   customCellStyle: CustomCellStyle[];
   customCellStyleArrangement: CustomCellStyleArrangement[];
   private _customCellStyleArrangementIndex: Map<string, number>;
   private _customCellStyleArrangementTombstoneCount: number;
+  private _customCellStyleOverlays: Map<string, CustomCellStyleOverlay>;
+  private _customCellStyleIdsCache?: Map<string, string[]>;
 
   constructor(
     table: BaseTableAPI,
@@ -35,6 +42,7 @@ export class CustomCellStylePlugin {
     this.customCellStyleArrangement = customCellStyleArrangement;
     this._customCellStyleArrangementIndex = new Map();
     this._customCellStyleArrangementTombstoneCount = 0;
+    this._customCellStyleOverlays = new Map();
     this._rebuildCustomCellStyleArrangementIndex();
   }
 
@@ -53,11 +61,12 @@ export class CustomCellStylePlugin {
     this._customCellStyleArrangementIndex.clear();
     this._customCellStyleArrangementTombstoneCount = 0;
     for (let i = 0; i < this.customCellStyleArrangement.length; i++) {
-      if (!isValid((this.customCellStyleArrangement[i] as any).customStyleId)) {
+      const arrangement = this.customCellStyleArrangement[i];
+      if (!isValid((arrangement as any).customStyleId)) {
         this._customCellStyleArrangementTombstoneCount++;
         continue;
       }
-      const key = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[i].cellPosition);
+      const key = this._getCustomCellStyleArrangementKey(arrangement.cellPosition);
       if (key) {
         this._customCellStyleArrangementIndex.set(key, i);
       }
@@ -84,12 +93,14 @@ export class CustomCellStylePlugin {
 
   clearCustomCellStyleArrangement() {
     this.customCellStyleArrangement = [];
+    this._rebuildCustomCellStyleArrangementIndex();
   }
 
   addCustomCellStyleArrangement(
     cellPosition: {
-      col: number;
-      row: number;
+      col?: number;
+      row?: number;
+      range?: CellRange;
     },
     customStyleId: string | undefined | null
   ) {
@@ -97,6 +108,63 @@ export class CustomCellStylePlugin {
       cellPosition,
       customStyleId
     });
+  }
+
+  setCustomCellStyleOverlay(
+    sourceId: string,
+    cellPosition: { col?: number; row?: number; range?: CellRange },
+    customStyleId: string | undefined | null
+  ) {
+    const positionKey = this._getCustomCellStyleArrangementKey(cellPosition);
+    if (!positionKey) {
+      return;
+    }
+    let overlay = this._customCellStyleOverlays.get(sourceId);
+    if (!overlay) {
+      overlay = {
+        positions: new Map(),
+        cells: new Map()
+      };
+      this._customCellStyleOverlays.set(sourceId, overlay);
+    }
+    const previousCellKeys = overlay.positions.get(positionKey) ?? [];
+    if (!customStyleId) {
+      previousCellKeys.forEach(cellKey => {
+        const cellStyles = overlay?.cells.get(cellKey);
+        cellStyles?.delete(positionKey);
+        if (cellStyles?.size === 0) {
+          overlay?.cells.delete(cellKey);
+        }
+      });
+      overlay.positions.delete(positionKey);
+      if (overlay.positions.size === 0) {
+        this._customCellStyleOverlays.delete(sourceId);
+      }
+      return;
+    }
+
+    const range = cellPosition.range ?? {
+      start: { col: cellPosition.col as number, row: cellPosition.row as number },
+      end: { col: cellPosition.col as number, row: cellPosition.row as number }
+    };
+    const cellKeys: string[] = [];
+    for (let col = range.start.col; col <= range.end.col; col++) {
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        const cellKey = `${col}:${row}`;
+        cellKeys.push(cellKey);
+        let cellStyles = overlay.cells.get(cellKey);
+        if (!cellStyles) {
+          cellStyles = new Map();
+          overlay.cells.set(cellKey, cellStyles);
+        }
+        cellStyles.set(positionKey, customStyleId);
+      }
+    }
+    overlay.positions.set(positionKey, cellKeys);
+  }
+
+  clearCustomCellStyleOverlay(sourceId: string) {
+    this._customCellStyleOverlays.delete(sourceId);
   }
 
   getCustomCellStyle(col: number, row: number) {
@@ -132,15 +200,28 @@ export class CustomCellStylePlugin {
   }
 
   getCustomCellStyleIds(col: number, row: number) {
-    // let customStyleId;
-    const customStyleIds: string[] = [];
-
     const range = this.table.getCellRange(col, row);
+    const rangeKey = `${range.start.col}:${range.start.row}:${range.end.col}:${range.end.row}`;
+    const cachedStyleIds = this._customCellStyleIdsCache?.get(rangeKey);
+    if (cachedStyleIds) {
+      return cachedStyleIds;
+    }
+
+    const customStyleIds = this._collectCustomCellStyleIds(range);
+    this._customCellStyleIdsCache?.set(rangeKey, customStyleIds);
+    return customStyleIds;
+  }
+
+  private _collectCustomCellStyleIds(range: CellRange) {
+    const customStyleIds: string[] = [];
+    const seenArrangements = new Set<number>();
+    const seenOverlayPositions = new Set<string>();
+
     for (let c = range.start.col; c <= range.end.col; c++) {
       for (let r = range.start.row; r <= range.end.row; r++) {
         // eslint-disable-next-line no-loop-func
-        this.customCellStyleArrangement.forEach(style => {
-          if (!isValid(style.customStyleId)) {
+        this.customCellStyleArrangement.forEach((style, index) => {
+          if (seenArrangements.has(index) || !isValid(style.customStyleId)) {
             return;
           }
           if (style.cellPosition.range) {
@@ -150,18 +231,51 @@ export class CustomCellStylePlugin {
               style.cellPosition.range.start.row <= r &&
               style.cellPosition.range.end.row >= r
             ) {
-              // customStyleId = style.customStyleId;
+              seenArrangements.add(index);
               customStyleIds.push(style.customStyleId as string);
             }
           } else if (style.cellPosition.col === c && style.cellPosition.row === r) {
-            // customStyleId = style.customStyleId;
+            seenArrangements.add(index);
             customStyleIds.push(style.customStyleId as string);
           }
         });
+        for (const [sourceId, overlay] of this._customCellStyleOverlays) {
+          const overlayStyles = overlay.cells.get(`${c}:${r}`);
+          if (overlayStyles) {
+            for (const [positionKey, customStyleId] of overlayStyles) {
+              const overlayPositionKey = `${sourceId}:${positionKey}`;
+              if (!seenOverlayPositions.has(overlayPositionKey)) {
+                seenOverlayPositions.add(overlayPositionKey);
+                customStyleIds.push(customStyleId);
+              }
+            }
+          }
+        }
       }
     }
 
     return customStyleIds;
+  }
+
+  refreshCustomCellStyleRange(
+    cellPosition: { col?: number; row?: number; range?: CellRange },
+    forceFastUpdate: boolean = false
+  ) {
+    const range = cellPosition.range ?? {
+      start: { col: cellPosition.col as number, row: cellPosition.row as number },
+      end: { col: cellPosition.col as number, row: cellPosition.row as number }
+    };
+    const previousCache = this._customCellStyleIdsCache;
+    this._customCellStyleIdsCache = new Map();
+    try {
+      for (let col = Math.max(0, range.start.col); col <= Math.min(this.table.colCount - 1, range.end.col); col++) {
+        for (let row = Math.max(0, range.start.row); row <= Math.min(this.table.rowCount - 1, range.end.row); row++) {
+          this.table.scenegraph.updateCellContent(col, row, forceFastUpdate);
+        }
+      }
+    } finally {
+      this._customCellStyleIdsCache = previousCache;
+    }
   }
 
   getCustomCellStyleOption(customStyleId: string) {
@@ -220,40 +334,8 @@ export class CustomCellStylePlugin {
     forceFastUpdate?: boolean
   ) {
     const inputKey = this._getCustomCellStyleArrangementKey(cellPos);
-    let index = inputKey ? this._customCellStyleArrangementIndex.get(inputKey) ?? -1 : -1;
-    if (inputKey && index !== -1) {
-      const item = this.customCellStyleArrangement[index];
-      const itemKey = item ? this._getCustomCellStyleArrangementKey(item.cellPosition) : undefined;
-      if (!item || !isValid((item as any).customStyleId) || itemKey !== inputKey) {
-        index = this.customCellStyleArrangement.findIndex(style => {
-          if (!isValid((style as any).customStyleId)) {
-            return false;
-          }
-          return this._getCustomCellStyleArrangementKey(style.cellPosition) === inputKey;
-        });
-        if (index !== -1) {
-          this._customCellStyleArrangementIndex.set(inputKey, index);
-        } else {
-          this._customCellStyleArrangementIndex.delete(inputKey);
-        }
-      }
-    }
-    if (index === -1 && !inputKey) {
-      index = this.customCellStyleArrangement.findIndex(style => {
-        if (!isValid((style as any).customStyleId)) {
-          return false;
-        }
-        if (style.cellPosition.range && cellPos.range) {
-          return (
-            style.cellPosition.range.start.col === cellPos.range.start.col &&
-            style.cellPosition.range.start.row === cellPos.range.start.row &&
-            style.cellPosition.range.end.col === cellPos.range.end.col &&
-            style.cellPosition.range.end.row === cellPos.range.end.row
-          );
-        }
-        return style.cellPosition.col === cellPos.col && style.cellPosition.row === cellPos.row;
-      });
-    }
+    this._rebuildCustomCellStyleArrangementIndex();
+    const index = inputKey ? this._customCellStyleArrangementIndex.get(inputKey) ?? -1 : -1;
 
     if (index === -1 && !customStyleId) {
       // do nothing
@@ -283,14 +365,8 @@ export class CustomCellStylePlugin {
       this.customCellStyleArrangement[index].customStyleId = customStyleId;
     } else {
       // delete useless style
-      const existedKey = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[index].cellPosition);
-      if (isValid((this.customCellStyleArrangement[index] as any).customStyleId)) {
-        this._customCellStyleArrangementTombstoneCount++;
-      }
       (this.customCellStyleArrangement[index] as any).customStyleId = null;
-      if (existedKey) {
-        this._customCellStyleArrangementIndex.delete(existedKey);
-      }
+      this._rebuildCustomCellStyleArrangementIndex();
       this._compactCustomCellStyleArrangementIfNeeded();
     }
 
@@ -335,16 +411,59 @@ export class CustomCellStylePlugin {
   }
 
   updateCustomCell(customCellStyle: CustomCellStyle[], customCellStyleArrangement: CustomCellStyleArrangement[]) {
+    const positionsToRefresh = new Map<string, CustomCellStyleArrangement['cellPosition']>();
+    this.customCellStyleArrangement.forEach(arrangement => {
+      const key = this._getCustomCellStyleArrangementKey(arrangement.cellPosition);
+      if (key) {
+        positionsToRefresh.set(key, arrangement.cellPosition);
+      }
+    });
+
     this.customCellStyle.length = 0;
+    const styleIndexes = new Map<string, number>();
+    customCellStyle.forEach(cellStyle => {
+      const index = styleIndexes.get(cellStyle.id);
+      const nextCellStyle = {
+        id: cellStyle.id,
+        style: cellStyle.style
+      };
+      if (index === undefined) {
+        styleIndexes.set(cellStyle.id, this.customCellStyle.length);
+        this.customCellStyle.push(nextCellStyle);
+      } else {
+        this.customCellStyle[index] = nextCellStyle;
+      }
+    });
+
     this.customCellStyleArrangement.length = 0;
-    this._customCellStyleArrangementIndex.clear();
-    this._customCellStyleArrangementTombstoneCount = 0;
-    customCellStyle.forEach((cellStyle: CustomCellStyle) => {
-      this.registerCustomCellStyle(cellStyle.id, cellStyle.style);
+    const arrangementIndexes = new Map<string, number>();
+    customCellStyleArrangement.forEach(arrangement => {
+      const nextArrangement = {
+        cellPosition: {
+          col: arrangement.cellPosition.col,
+          row: arrangement.cellPosition.row,
+          range: arrangement.cellPosition.range
+        },
+        customStyleId: arrangement.customStyleId
+      };
+      const key = this._getCustomCellStyleArrangementKey(arrangement.cellPosition);
+      if (key) {
+        const index = arrangementIndexes.get(key);
+        if (index === undefined) {
+          arrangementIndexes.set(key, this.customCellStyleArrangement.length);
+          this.customCellStyleArrangement.push(nextArrangement);
+        } else {
+          this.customCellStyleArrangement[index] = nextArrangement;
+        }
+        positionsToRefresh.set(key, arrangement.cellPosition);
+      } else {
+        this.customCellStyleArrangement.push(nextArrangement);
+      }
     });
-    customCellStyleArrangement.forEach((cellStyle: CustomCellStyleArrangement) => {
-      this.arrangeCustomCellStyle(cellStyle.cellPosition, cellStyle.customStyleId);
-    });
+    this._rebuildCustomCellStyleArrangementIndex();
+
+    positionsToRefresh.forEach(position => this.refreshCustomCellStyleRange(position));
+    this.table.scenegraph.updateNextFrame();
   }
 
   hasCustomCellStyle(customStyleId: string) {
