@@ -417,11 +417,7 @@ export class SearchComponent {
     if (!range) {
       return;
     }
-    for (let col = range.start.col; col <= range.end.col; col++) {
-      for (let row = range.start.row; row <= range.end.row; row++) {
-        table.scenegraph.updateCellContent(col, row, true);
-      }
-    }
+    table.scenegraph.updateCellContent(range.start.col, range.start.row, true);
   }
 
   private arrangeSearchCellStyle(table: IVTable, position: SearchCellPosition, customStyleId: string): void {

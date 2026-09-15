@@ -83,6 +83,9 @@ export function createTable() {
   }
 
   requestAnimationFrame(() => {
+    if (tableInstance.isReleased) {
+      return;
+    }
     records.forEach((_record, recordIndex) => {
       const row = tableInstance.getTableIndexByRecordIndex(recordIndex);
       if (typeof row === 'number' && tableInstance.getHierarchyState(0, row) !== 'expand') {

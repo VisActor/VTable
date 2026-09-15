@@ -721,6 +721,8 @@ test('real style plugin indexes merged search overlays without growing the publi
   expect(result.results).toHaveLength(40);
   expect(plugin.customCellStyleArrangement).toHaveLength(0);
   expect((plugin as any)._customCellStyleOverlays.get('__search_component_overlay').positions.size).toBe(40);
+  expect(main.table.scenegraph.updateCellContent).toHaveBeenCalledTimes(40);
+  expect(main.table.scenegraph.updateCellContent.mock.calls.every(([col]) => col % 2 === 0)).toBe(true);
   expect(arrangementReads).toBe(0);
 });
 

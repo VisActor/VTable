@@ -293,31 +293,8 @@ export class CustomCellStylePlugin {
     forceFastUpdate?: boolean
   ) {
     const inputKey = this._getCustomCellStyleArrangementKey(cellPos);
-    let index = inputKey ? this._customCellStyleArrangementIndex.get(inputKey) ?? -1 : -1;
-    if (inputKey && index !== -1) {
-      const item = this.customCellStyleArrangement[index];
-      const itemKey = item ? this._getCustomCellStyleArrangementKey(item.cellPosition) : undefined;
-      if (!item || !isValid((item as any).customStyleId) || itemKey !== inputKey) {
-        this._rebuildCustomCellStyleArrangementIndex();
-        index = this._customCellStyleArrangementIndex.get(inputKey) ?? -1;
-      }
-    }
-    if (index === -1 && !inputKey) {
-      index = this.customCellStyleArrangement.findIndex(style => {
-        if (!isValid((style as any).customStyleId)) {
-          return false;
-        }
-        if (style.cellPosition.range && cellPos.range) {
-          return (
-            style.cellPosition.range.start.col === cellPos.range.start.col &&
-            style.cellPosition.range.start.row === cellPos.range.start.row &&
-            style.cellPosition.range.end.col === cellPos.range.end.col &&
-            style.cellPosition.range.end.row === cellPos.range.end.row
-          );
-        }
-        return style.cellPosition.col === cellPos.col && style.cellPosition.row === cellPos.row;
-      });
-    }
+    this._rebuildCustomCellStyleArrangementIndex();
+    const index = inputKey ? this._customCellStyleArrangementIndex.get(inputKey) ?? -1 : -1;
 
     if (index === -1 && !customStyleId) {
       // do nothing
@@ -347,14 +324,8 @@ export class CustomCellStylePlugin {
       this.customCellStyleArrangement[index].customStyleId = customStyleId;
     } else {
       // delete useless style
-      const existedKey = this._getCustomCellStyleArrangementKey(this.customCellStyleArrangement[index].cellPosition);
-      if (isValid((this.customCellStyleArrangement[index] as any).customStyleId)) {
-        this._customCellStyleArrangementTombstoneCount++;
-      }
       (this.customCellStyleArrangement[index] as any).customStyleId = null;
-      if (existedKey) {
-        this._customCellStyleArrangementIndex.delete(existedKey);
-      }
+      this._rebuildCustomCellStyleArrangementIndex();
       this._compactCustomCellStyleArrangementIfNeeded();
     }
 

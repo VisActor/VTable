@@ -233,4 +233,77 @@ describe('CustomCellStylePlugin', () => {
     expect(plugin.getCustomCellStyleIds(1, 1)).toEqual([]);
     expect(plugin.getCustomCellStyleIds(2, 2)).toEqual(['second']);
   });
+
+  test('updates and clears positions inserted directly into the public arrangement array', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'first', style: { color: 'red' } },
+        { id: 'second', style: { color: 'blue' } }
+      ] as any,
+      [] as any
+    );
+    plugin.customCellStyleArrangement.push({
+      cellPosition: { col: 3, row: 4 },
+      customStyleId: 'first'
+    } as any);
+
+    plugin.arrangeCustomCellStyle({ col: 3, row: 4 }, 'second');
+
+    expect(plugin.customCellStyleArrangement).toHaveLength(1);
+    expect(plugin.getCustomCellStyleIds(3, 4)).toEqual(['second']);
+
+    plugin.arrangeCustomCellStyle({ col: 3, row: 4 }, null);
+
+    expect(plugin.getCustomCellStyleIds(3, 4)).toEqual([]);
+  });
+
+  test('updates the latest style after a same-position public append', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'first', style: { color: 'red' } },
+        { id: 'second', style: { color: 'blue' } },
+        { id: 'updated', style: { color: 'green' } }
+      ] as any,
+      [{ cellPosition: { col: 2, row: 2 }, customStyleId: 'first' }] as any
+    );
+    plugin.customCellStyleArrangement.push({
+      cellPosition: { col: 2, row: 2 },
+      customStyleId: 'second'
+    } as any);
+
+    plugin.arrangeCustomCellStyle({ col: 2, row: 2 }, 'updated');
+
+    expect(plugin.customCellStyleArrangement).toEqual([
+      { cellPosition: { col: 2, row: 2 }, customStyleId: 'first' },
+      { cellPosition: { col: 2, row: 2 }, customStyleId: 'updated' }
+    ]);
+
+    plugin.arrangeCustomCellStyle({ col: 2, row: 2 }, null);
+
+    expect(plugin.getCustomCellStyleIds(2, 2)).toEqual(['first']);
+    expect((plugin as any)._customCellStyleArrangementIndex.get('cell:2,2')).toBe(0);
+  });
+
+  test('updates the correct style after a direct public deletion shifts indexes', () => {
+    const plugin = new CustomCellStylePlugin(
+      createMockTable() as any,
+      [
+        { id: 'first', style: { color: 'red' } },
+        { id: 'second', style: { color: 'blue' } },
+        { id: 'updated', style: { color: 'green' } }
+      ] as any,
+      [
+        { cellPosition: { col: 1, row: 1 }, customStyleId: 'first' },
+        { cellPosition: { col: 2, row: 2 }, customStyleId: 'second' }
+      ] as any
+    );
+    plugin.customCellStyleArrangement.splice(0, 1);
+
+    plugin.arrangeCustomCellStyle({ col: 2, row: 2 }, 'updated');
+
+    expect(plugin.customCellStyleArrangement).toEqual([{ cellPosition: { col: 2, row: 2 }, customStyleId: 'updated' }]);
+    expect((plugin as any)._customCellStyleArrangementIndex.get('cell:2,2')).toBe(0);
+  });
 });
