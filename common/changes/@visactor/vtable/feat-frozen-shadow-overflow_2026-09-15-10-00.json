@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: support overflow-based frozen column shadow visibility",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

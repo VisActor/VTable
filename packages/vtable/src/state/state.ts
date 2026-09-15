@@ -1258,6 +1258,7 @@ export class StateManager {
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
+    this.table.scenegraph.component.updateFrozenColumnShadowVisibility();
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
     // this.table.scenegraph.bodyGroup.lastChild.onBeforeAttributeUpdate = attr => {
     //   if (attr.x) {
@@ -1429,6 +1430,7 @@ export class StateManager {
 
     // 更新scrollbar位置
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
+    this.table.scenegraph.component.updateFrozenColumnShadowVisibility();
 
     const dx = this.scroll.horizontalBarPos - oldHorizontalBarPos;
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {
