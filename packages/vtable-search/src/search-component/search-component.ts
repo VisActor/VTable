@@ -417,7 +417,16 @@ export class SearchComponent {
     if (!range) {
       return;
     }
-    table.scenegraph.updateCellContent(range.start.col, range.start.row, true);
+    const plugin = (table as any).customCellStylePlugin;
+    if (typeof plugin?.refreshCustomCellStyleRange === 'function') {
+      plugin.refreshCustomCellStyleRange(position, true);
+      return;
+    }
+    for (let col = range.start.col; col <= range.end.col; col++) {
+      for (let row = range.start.row; row <= range.end.row; row++) {
+        table.scenegraph.updateCellContent(col, row, true);
+      }
+    }
   }
 
   private arrangeSearchCellStyle(table: IVTable, position: SearchCellPosition, customStyleId: string): void {

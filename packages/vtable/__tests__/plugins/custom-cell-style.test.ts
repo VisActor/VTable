@@ -306,4 +306,33 @@ describe('CustomCellStylePlugin', () => {
     expect(plugin.customCellStyleArrangement).toEqual([{ cellPosition: { col: 2, row: 2 }, customStyleId: 'updated' }]);
     expect((plugin as any)._customCellStyleArrangementIndex.get('cell:2,2')).toBe(0);
   });
+
+  test('bulk updates arrangements with a single index rebuild', () => {
+    const table = createMockTable(1000, 2);
+    const plugin = new CustomCellStylePlugin(table as any, [] as any, [] as any);
+    const rebuildSpy = jest.spyOn(plugin as any, '_rebuildCustomCellStyleArrangementIndex');
+    const arrangements = Array.from({ length: 1000 }, (_, col) => ({
+      cellPosition: { col, row: 0 },
+      customStyleId: 'bulk'
+    }));
+    arrangements.push({
+      cellPosition: { col: 500, row: 0 },
+      customStyleId: 'updated'
+    });
+
+    plugin.updateCustomCell(
+      [
+        { id: 'bulk', style: { bgColor: 'yellow' } },
+        { id: 'updated', style: { bgColor: 'green' } }
+      ] as any,
+      arrangements as any
+    );
+
+    expect(rebuildSpy).toHaveBeenCalledTimes(1);
+    expect(plugin.customCellStyleArrangement).toHaveLength(1000);
+    expect((plugin as any)._customCellStyleArrangementIndex.size).toBe(1000);
+    expect(plugin.getCustomCellStyleIds(500, 0)).toEqual(['updated']);
+    expect(table.scenegraph.updateCellContent).toHaveBeenCalledTimes(1000);
+    expect(table.scenegraph.updateNextFrame).toHaveBeenCalledTimes(1);
+  });
 });

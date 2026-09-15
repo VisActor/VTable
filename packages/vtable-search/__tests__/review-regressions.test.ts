@@ -713,6 +713,7 @@ test('real style plugin indexes merged search overlays without growing the publi
   main.table.scenegraph.updateCellContent.mockImplementation((col, row) => {
     plugin.getCustomCellStyleIds(col, row);
   });
+  const collectStyleIdsSpy = jest.spyOn(plugin as any, '_collectCustomCellStyleIds');
   const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
   arrangementReads = 0;
 
@@ -721,8 +722,11 @@ test('real style plugin indexes merged search overlays without growing the publi
   expect(result.results).toHaveLength(40);
   expect(plugin.customCellStyleArrangement).toHaveLength(0);
   expect((plugin as any)._customCellStyleOverlays.get('__search_component_overlay').positions.size).toBe(40);
-  expect(main.table.scenegraph.updateCellContent).toHaveBeenCalledTimes(40);
-  expect(main.table.scenegraph.updateCellContent.mock.calls.every(([col]) => col % 2 === 0)).toBe(true);
+  expect(main.table.scenegraph.updateCellContent).toHaveBeenCalledTimes(80);
+  expect(main.table.scenegraph.updateCellContent.mock.calls.map(([col]) => col)).toEqual(
+    Array.from({ length: 80 }, (_, col) => col)
+  );
+  expect(collectStyleIdsSpy).toHaveBeenCalledTimes(40);
   expect(arrangementReads).toBe(0);
 });
 
