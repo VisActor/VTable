@@ -88,7 +88,17 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       widthMode: 'standard',
       allowFrozenColCount: 3,
       frozenColCount: 1,
-      showFrozenIcon: true
+      showFrozenIcon: true,
+      theme: VTable.themes.DEFAULT.extends({
+        frozenColumnLine: {
+          shadow: {
+            width: 8,
+            startColor: 'rgba(0, 0, 0, 0.12)',
+            endColor: 'rgba(0, 0, 0, 0)',
+            visible: 'overflow'
+          }
+        }
+      })
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;
