@@ -1249,6 +1249,7 @@ function canUseComplexCellFastUpdate(
   addNew: boolean
 ) {
   if (
+    !define ||
     addNew ||
     oldCellGroup.role !== 'cell' ||
     range ||
