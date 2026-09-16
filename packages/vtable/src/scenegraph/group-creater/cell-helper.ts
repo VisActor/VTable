@@ -1215,7 +1215,7 @@ function updateCellContent(
     ? oldCellGroup
     : undefined;
   if (reusableCellGroup) {
-    createCellArgs.push(value, reusableCellGroup);
+    createCellArgs.push(hasCellValue ? cellValue : value, reusableCellGroup);
   } else if (hasCellValue) {
     createCellArgs.push(cellValue);
   }
