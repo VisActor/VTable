@@ -105,6 +105,7 @@ export class SearchComponent {
   private resultTreeMap = new WeakMap<object, boolean>();
   private resultParentRowMap = new WeakMap<object, number>();
   private resultTables = new Set<IVTable>();
+  private searchedTables = new Set<IVTable>();
   private tableIdMap = new WeakMap<object, string>();
   private usedTableIds = new Set<string>();
   private searchStylePositions = new WeakMap<object, Map<string, SearchCellPosition>>();
@@ -767,6 +768,62 @@ export class SearchComponent {
     positionsToRefresh.forEach(position => this.refreshCellStyle(targetTable, position));
   }
 
+  private sortMasterDetailResultsByVisualOrder(): void {
+    if (!this.isMasterDetailTable() || this.queryResult.length < 2) {
+      return;
+    }
+    const headerOffset = this.getHeaderOffset(this.table);
+    this.queryResult = this.queryResult
+      .map((result, index) => {
+        const table = this.getResultTable(result);
+        const isMasterResult = table === this.table;
+        const cell = isMasterResult ? this.getResultCell(result) : undefined;
+        const parentRow = isMasterResult ? (cell?.row ?? headerOffset) - headerOffset : this.getResultParentRow(result);
+        return {
+          result,
+          index,
+          parentRow: typeof parentRow === 'number' ? parentRow : Number.MAX_SAFE_INTEGER,
+          tableOrder: isMasterResult ? 0 : 1
+        };
+      })
+      .sort((a, b) => a.parentRow - b.parentRow || a.tableOrder - b.tableOrder || a.index - b.index)
+      .map(item => item.result);
+  }
+
+  private syncNewSearchTables(): void {
+    if (!this.queryStr || !this.isMasterDetailTable()) {
+      return;
+    }
+    const newEntries = this.getSearchTableEntries().filter(entry => !this.searchedTables.has(entry.table));
+    if (!newEntries.length) {
+      return;
+    }
+
+    const currentResult =
+      this.currentIndex >= 0 && this.currentIndex < this.queryResult.length
+        ? this.queryResult[this.currentIndex]
+        : undefined;
+    const previousResultCount = this.queryResult.length;
+    for (const entry of newEntries) {
+      this.searchedTables.add(entry.table);
+      this.searchTable(entry.table, entry.parentRow);
+    }
+    if (this.queryResult.length === previousResultCount) {
+      return;
+    }
+
+    this.sortMasterDetailResultsByVisualOrder();
+    this.currentIndex = currentResult ? this.queryResult.indexOf(currentResult) : -1;
+    this.updateCellStyle();
+    this.callback?.(
+      {
+        queryStr: this.queryStr,
+        results: this.queryResult
+      },
+      this.table
+    );
+  }
+
   search(str: string) {
     this.clear();
     this.queryStr = str;
@@ -781,11 +838,14 @@ export class SearchComponent {
     this.treeIndex = this.isTree ? this.getTreeCol(this.table) : 0;
     if (this.isTree) {
       this.searchTreeTable(this.table);
-      for (const entry of this.getSearchTableEntries()) {
+      const entries = this.getSearchTableEntries();
+      entries.forEach(entry => this.searchedTables.add(entry.table));
+      for (const entry of entries) {
         if (entry.table !== this.table) {
           this.searchTable(entry.table, entry.parentRow);
         }
       }
+      this.sortMasterDetailResultsByVisualOrder();
 
       this.currentIndex = this.queryResult.length > 0 && this.isTreeResult(this.queryResult[0]) ? 0 : -1;
 
@@ -813,9 +873,12 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
-    for (const entry of this.getSearchTableEntries()) {
+    const entries = this.getSearchTableEntries();
+    entries.forEach(entry => this.searchedTables.add(entry.table));
+    for (const entry of entries) {
       this.searchTable(entry.table, entry.parentRow);
     }
+    this.sortMasterDetailResultsByVisualOrder();
     this.updateCellStyle();
 
     if (this.callback) {
@@ -919,6 +982,7 @@ export class SearchComponent {
   }
 
   next() {
+    this.syncNewSearchTables();
     this.pruneUnavailableResults(1);
     if (!this.queryResult.length) {
       return {
@@ -947,6 +1011,7 @@ export class SearchComponent {
   }
 
   prev() {
+    this.syncNewSearchTables();
     this.pruneUnavailableResults(-1);
     if (!this.queryResult.length) {
       return {
@@ -1268,6 +1333,7 @@ export class SearchComponent {
     this.resultTreeMap = new WeakMap<object, boolean>();
     this.resultParentRowMap = new WeakMap<object, number>();
     this.resultTables.clear();
+    this.searchedTables.clear();
     this.currentIndex = -1;
   }
 }

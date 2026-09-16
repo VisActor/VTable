@@ -419,6 +419,56 @@ test('master-detail search does not recurse child records as tree results', () =
   expect(result.results[0].indexNumber).toBeUndefined();
 });
 
+test('master-detail results follow their visual parent-row order', () => {
+  const main = createCellTable([['Target main 1'], ['Other'], ['Target main 3']], {
+    isMasterDetail: true
+  });
+  const firstDetail = createCellTable([['Target detail 1'], ['Target nested 1']]);
+  const thirdDetail = createCellTable([['Target detail 3']]);
+  main.table.internalProps = {
+    subTableInstances: new Map([
+      [2, thirdDetail.table],
+      [0, firstDetail.table]
+    ])
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+
+  const result = search.search('Target');
+
+  expect(result.results.map(item => item.value)).toEqual([
+    'Target main 1',
+    'Target detail 1',
+    'Target nested 1',
+    'Target main 3',
+    'Target detail 3'
+  ]);
+});
+
+test('next includes a detail table expanded after the initial search', () => {
+  const main = createCellTable([['Target main 1'], ['Target main 2']], {
+    isMasterDetail: true
+  });
+  main.table.internalProps = {
+    subTableInstances: new Map()
+  };
+  const search = new SearchComponent({ table: main.table as any, autoJump: false, skipHeader: true });
+  search.search('Target');
+  search.next();
+
+  const detail = createCellTable([['Target detail 1']]);
+  main.table.internalProps.subTableInstances.set(0, detail.table);
+
+  const result = search.next();
+
+  expect(result.index).toBe(1);
+  expect(result.results.map(item => item.value)).toEqual(['Target main 1', 'Target detail 1', 'Target main 2']);
+  expect(result.results[result.index]).toMatchObject({
+    table: detail.table,
+    parentRow: 0,
+    value: 'Target detail 1'
+  });
+});
+
 test('detail navigation scrolls the master when its expanded viewBox is clipped', () => {
   const main = createCellTable([['Parent']], {
     visibleRows: { rowStart: 1, rowEnd: 1 },
