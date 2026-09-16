@@ -22,7 +22,7 @@ describe('complex cell fast update', () => {
       columns: [
         { field: 'checkbox', cellType: 'checkbox', width: 160 },
         { field: 'switch', cellType: 'switch', width: 160 },
-        { field: 'button', cellType: 'button', width: 160 },
+        { field: 'button', cellType: 'button', width: 160, disable: args => args.value === 'Close' },
         { field: 'progress', cellType: 'progressbar', width: 160, min: 0, max: 100 }
       ],
       defaultRowHeight: 40
@@ -54,6 +54,7 @@ describe('complex cell fast update', () => {
     expect(components[3].getChildByName('progress-bar-main')).toBe(progressMain);
     expect(cellGroups[3].getChildByName('text')).toBe(progressText);
     expect(components[2].attribute.text).toBe('Close');
+    expect(components[2].attribute.disable).toBe(true);
     expect(progressText.attribute.text).toBe('75');
     expect(progressMain.attribute.width).toBeGreaterThan(initialProgressWidth);
 
@@ -73,6 +74,7 @@ describe('complex cell fast update', () => {
       expect(cellGroup.getChildByName(componentNames[col])).toBe(components[col]);
     });
     expect(components[2].attribute.text).toBe('Open');
+    expect(components[2].attribute.disable).toBe(false);
     expect(progressText.attribute.text).toBe('25');
 
     table.release();
@@ -235,6 +237,36 @@ describe('complex cell fast update', () => {
     expect(unmarkedCellGroup).not.toBe(updatedCellGroup);
     expect(unmarkedCellGroup.getChildByName('mark')).toBeNull();
 
+    table.release();
+  });
+
+  test('renders resolved progress values instead of Promise objects', async () => {
+    const container = createDiv();
+    container.style.width = '400px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [{ progress: 25 }],
+      columns: [{ field: 'progress', cellType: 'progressbar', width: 160, min: 0, max: 100 }],
+      defaultRowHeight: 40
+    });
+
+    const cellGroup = table.scenegraph.getCell(0, 1);
+    const removeAllChild = jest.spyOn(cellGroup, 'removeAllChild').mockImplementation(() => cellGroup);
+    let resolveProgress: (value: number) => void;
+    const progress = new Promise<number>(resolve => {
+      resolveProgress = resolve;
+    });
+
+    table.updateRecords([{ progress }], [0]);
+    resolveProgress(75);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(table.scenegraph.getCell(0, 1)).toBe(cellGroup);
+    expect(cellGroup.getChildByName('text').attribute.text).toBe('75');
+    expect(cellGroup.getChildByName('progress-bar')).not.toBeNull();
+
+    removeAllChild.mockRestore();
     table.release();
   });
 });
