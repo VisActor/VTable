@@ -33,6 +33,7 @@ describe('complex cell fast update', () => {
     const components = cellGroups.map((cellGroup, col) => cellGroup.getChildByName(componentNames[col]));
     const progressText = cellGroups[3].getChildByName('text');
     const progressMain = components[3].getChildByName('progress-bar-main');
+    const initialProgressWidth = progressMain.attribute.width;
 
     table.updateRecords(
       [
@@ -52,6 +53,9 @@ describe('complex cell fast update', () => {
     });
     expect(components[3].getChildByName('progress-bar-main')).toBe(progressMain);
     expect(cellGroups[3].getChildByName('text')).toBe(progressText);
+    expect(components[2].attribute.text).toBe('Close');
+    expect(progressText.attribute.text).toBe('75');
+    expect(progressMain.attribute.width).toBeGreaterThan(initialProgressWidth);
 
     table.updateRecords(
       [
@@ -68,6 +72,8 @@ describe('complex cell fast update', () => {
       expect(table.scenegraph.getCell(col, 1)).toBe(cellGroup);
       expect(cellGroup.getChildByName(componentNames[col])).toBe(components[col]);
     });
+    expect(components[2].attribute.text).toBe('Open');
+    expect(progressText.attribute.text).toBe('25');
 
     table.release();
   });
@@ -121,6 +127,113 @@ describe('complex cell fast update', () => {
 
     table.updateRecords([{ progress: 'invalid', mode: 'default', show: true, background: true }], [0]);
     expect(progressGroup.childrenCount).toBe(0);
+
+    table.release();
+  });
+
+  test('preserves progress text layout attributes during reuse', () => {
+    const container = createDiv();
+    container.style.width = '400px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [{ progress: 25 }],
+      columns: [
+        {
+          field: 'progress',
+          cellType: 'progressbar',
+          width: 160,
+          min: 0,
+          max: 100,
+          style: { textAlign: 'right' }
+        }
+      ],
+      customConfig: { limitContentHeight: false },
+      theme: { _contentOffset: 3 },
+      defaultRowHeight: 40
+    });
+
+    const cellGroup = table.scenegraph.getCell(0, 1);
+    const text = cellGroup.getChildByName('text');
+
+    table.updateRecords([{ progress: 75 }], [0]);
+
+    expect(table.scenegraph.getCell(0, 1)).toBe(cellGroup);
+    expect(cellGroup.getChildByName('text')).toBe(text);
+    expect(text.attribute).toMatchObject({
+      text: '75',
+      heightLimit: -1,
+      whiteSpace: 'normal',
+      dx: -3,
+      keepCenterInLine: true
+    });
+
+    table.release();
+  });
+
+  test('falls back when table customRender is configured', () => {
+    const container = createDiv();
+    container.style.width = '400px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [{ progress: 25 }],
+      columns: [{ field: 'progress', cellType: 'progressbar', width: 160, min: 0, max: 100 }],
+      customRender: () => ({
+        elements: [{ type: 'rect', x: 0, y: 0, width: 4, height: 4, fill: '#f00' }],
+        renderDefault: true
+      }),
+      defaultRowHeight: 40
+    });
+
+    const cellGroup = table.scenegraph.getCell(0, 1);
+    expect(cellGroup.getChildByName('custom-container')).not.toBeNull();
+
+    table.updateRecords([{ progress: 75 }], [0]);
+
+    const updatedCellGroup = table.scenegraph.getCell(0, 1);
+    expect(updatedCellGroup).not.toBe(cellGroup);
+    expect(updatedCellGroup.getChildByName('custom-container')).not.toBeNull();
+
+    table.release();
+  });
+
+  test('falls back when a progress cell gains a mark', () => {
+    const container = createDiv();
+    container.style.width = '400px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [{ progress: 25 }],
+      columns: [
+        {
+          field: 'progress',
+          cellType: 'progressbar',
+          width: 160,
+          min: 0,
+          max: 100,
+          style: {
+            marked: args => args.value >= 50
+          }
+        }
+      ],
+      defaultRowHeight: 40
+    });
+
+    const cellGroup = table.scenegraph.getCell(0, 1);
+    expect(cellGroup.getChildByName('mark')).toBeNull();
+
+    table.updateRecords([{ progress: 75 }], [0]);
+
+    const updatedCellGroup = table.scenegraph.getCell(0, 1);
+    expect(updatedCellGroup).not.toBe(cellGroup);
+    expect(updatedCellGroup.getChildByName('mark')).not.toBeNull();
+
+    table.updateRecords([{ progress: 25 }], [0]);
+
+    const unmarkedCellGroup = table.scenegraph.getCell(0, 1);
+    expect(unmarkedCellGroup).not.toBe(updatedCellGroup);
+    expect(unmarkedCellGroup.getChildByName('mark')).toBeNull();
 
     table.release();
   });
