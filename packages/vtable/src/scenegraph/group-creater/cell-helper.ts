@@ -1084,6 +1084,14 @@ function updateProgressBarTextCellGroup(
   const { text: textArr, moreThanMaxCharacters } = breakString(value, table);
   const hierarchyOffset = getHierarchyOffset(col, row, table);
   const lineClamp = cellStyle.lineClamp;
+  let contentOffset = 0;
+  if (isNumber(table.theme._contentOffset)) {
+    if (textAlign === 'left') {
+      contentOffset = table.theme._contentOffset;
+    } else if (textAlign === 'right') {
+      contentOffset = -table.theme._contentOffset;
+    }
+  }
   let x = padding[3];
   if (textAlign === 'center') {
     x += (cellWidth - padding[1] - padding[3]) / 2;
@@ -1099,9 +1107,19 @@ function updateProgressBarTextCellGroup(
       autoWrapText,
       lineClamp,
       wordBreak: 'break-word',
-      heightLimit: cellHeight - Math.floor(padding[0] + padding[2]),
+      heightLimit:
+        table.options.customConfig?.limitContentHeight === false
+          ? -1
+          : cellHeight - Math.floor(padding[0] + padding[2]),
       pickable: false,
-      dx: textAlign === 'left' ? hierarchyOffset : 0,
+      dx: (textAlign === 'left' ? hierarchyOffset : 0) + contentOffset,
+      whiteSpace:
+        table.options.customConfig?.limitContentHeight === false
+          ? 'normal'
+          : textArr.length === 1 && !autoWrapText
+          ? 'no-wrap'
+          : 'normal',
+      keepCenterInLine: true,
       x
     }) as any
   );
@@ -1189,6 +1207,7 @@ function updateCellContent(
     customResult,
     mayHaveIcon,
     table._getCellStyle(col, row).autoWrapText ?? table.internalProps.autoWrapText,
+    cellTheme,
     table,
     row,
     addNew
@@ -1224,6 +1243,7 @@ function canUseComplexCellFastUpdate(
   customResult: { elementsGroup?: VGroup; renderDefault: boolean } | undefined,
   mayHaveIcon: boolean,
   autoWrapText: boolean,
+  cellTheme: IThemeSpec,
   table: BaseTableAPI,
   row: number,
   addNew: boolean
@@ -1237,7 +1257,8 @@ function canUseComplexCellFastUpdate(
     autoWrapText ||
     table.isAutoRowHeight(row) ||
     define.customLayout ||
-    define.customRender
+    define.customRender ||
+    table.customRender
   ) {
     return false;
   }
@@ -1252,7 +1273,12 @@ function canUseComplexCellFastUpdate(
     return !!oldCellGroup.getChildByName('button');
   }
   if (type === 'progressbar') {
-    return !!oldCellGroup.getChildByName('text') && !!oldCellGroup.getChildByName('progress-bar');
+    return (
+      !(cellTheme as any)?._vtable?.marked &&
+      !oldCellGroup.getChildByName('mark') &&
+      !!oldCellGroup.getChildByName('text') &&
+      !!oldCellGroup.getChildByName('progress-bar')
+    );
   }
   return false;
 }

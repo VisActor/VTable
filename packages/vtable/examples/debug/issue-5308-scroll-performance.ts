@@ -169,24 +169,36 @@ export function createTable() {
     cellUpdatesByType: {}
   };
   let lastFrame = performance.now();
+  let measurementStart = Infinity;
+  let frameRequestId = 0;
+  let automationRequestId = 0;
+  let released = false;
+  let longTaskObserver: PerformanceObserver | undefined;
 
   const recordFrame = (time: number) => {
+    if (released) {
+      return;
+    }
     const gap = time - lastFrame;
     lastFrame = time;
-    if (gap > 20) {
+    if (time >= measurementStart && gap > 20) {
       samples.frameGaps.push(gap);
       if (samples.frameGaps.length > 500) {
         samples.frameGaps.shift();
       }
     }
-    requestAnimationFrame(recordFrame);
+    frameRequestId = requestAnimationFrame(recordFrame);
   };
-  requestAnimationFrame(recordFrame);
+  frameRequestId = requestAnimationFrame(recordFrame);
 
   if ('PerformanceObserver' in window) {
-    new PerformanceObserver(list => {
-      list.getEntries().forEach(entry => samples.longTasks.push(entry.duration));
-    }).observe({ entryTypes: ['longtask'] });
+    longTaskObserver = new PerformanceObserver(list => {
+      list
+        .getEntries()
+        .filter(entry => entry.startTime >= measurementStart)
+        .forEach(entry => samples.longTasks.push(entry.duration));
+    });
+    longTaskObserver.observe({ entryTypes: ['longtask'] });
   }
 
   const recordsStart = performance.now();
@@ -253,56 +265,41 @@ export function createTable() {
     samples.scrollEvents++;
   });
 
-  window.issue5308Perf = Object.assign(samples, {
-    table,
-    reset: () => {
-      samples.frameGaps.length = 0;
-      samples.longTasks.length = 0;
-      samples.scrollEvents = 0;
-      samples.cellUpdates = 0;
-      samples.cellUpdatesByType = {};
-    }
-  });
-  window.tableInstance = table;
-
-  if (params.get('jump') === '1') {
-    requestAnimationFrame(() => {
-      window.issue5308Perf.reset();
-      const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
-      const start = performance.now();
-      table.setScrollTop(maxScrollTop / 2);
-      const jumpDuration = performance.now() - start;
-      window.issue5308Result = {
-        elapsed: jumpDuration,
-        jumpDuration,
-        frameGaps: [...samples.frameGaps],
-        longTasks: [...samples.longTasks],
-        scrollEvents: samples.scrollEvents,
-        cellUpdates: samples.cellUpdates,
-        cellUpdatesByType: { ...samples.cellUpdatesByType }
-      };
-    });
-  }
-
-  if (params.get('auto') === '1') {
+  const reset = () => {
+    window.issue5308Result = undefined;
     samples.frameGaps.length = 0;
     samples.longTasks.length = 0;
     samples.scrollEvents = 0;
     samples.cellUpdates = 0;
     samples.cellUpdatesByType = {};
-    const start = performance.now();
-    const duration = 2000;
-    const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
-    const scroll = (time: number) => {
-      const progress = Math.min(1, (time - start) / duration);
-      table.setScrollTop(maxScrollTop * progress);
-      if (progress < 1) {
-        requestAnimationFrame(scroll);
-        return;
-      }
-      requestAnimationFrame(() => {
+    measurementStart = performance.now();
+    lastFrame = measurementStart;
+  };
+
+  window.issue5308Perf = Object.assign(samples, {
+    table,
+    reset
+  });
+  window.tableInstance = table;
+
+  const originalRelease = table.release.bind(table);
+  table.release = ((...args: Parameters<typeof table.release>) => {
+    released = true;
+    cancelAnimationFrame(frameRequestId);
+    cancelAnimationFrame(automationRequestId);
+    longTaskObserver?.disconnect();
+    return originalRelease(...args);
+  }) as typeof table.release;
+
+  const reportResult = (start: number, jumpDuration?: number) => {
+    automationRequestId = requestAnimationFrame(() => {
+      automationRequestId = requestAnimationFrame(() => {
+        if (released) {
+          return;
+        }
         window.issue5308Result = {
           elapsed: performance.now() - start,
+          jumpDuration,
           frameGaps: [...samples.frameGaps],
           longTasks: [...samples.longTasks],
           scrollEvents: samples.scrollEvents,
@@ -310,7 +307,37 @@ export function createTable() {
           cellUpdatesByType: { ...samples.cellUpdatesByType }
         };
       });
+    });
+  };
+
+  if (params.get('jump') === '1') {
+    automationRequestId = requestAnimationFrame(() => {
+      reset();
+      const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+      const start = performance.now();
+      table.setScrollTop(maxScrollTop / 2);
+      const jumpDuration = performance.now() - start;
+      reportResult(start, jumpDuration);
+    });
+  }
+
+  if (params.get('auto') === '1') {
+    reset();
+    const start = performance.now();
+    const duration = 2000;
+    const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+    const scroll = (time: number) => {
+      if (released) {
+        return;
+      }
+      const progress = Math.min(1, (time - start) / duration);
+      table.setScrollTop(maxScrollTop * progress);
+      if (progress < 1) {
+        automationRequestId = requestAnimationFrame(scroll);
+        return;
+      }
+      reportResult(start);
     };
-    requestAnimationFrame(scroll);
+    automationRequestId = requestAnimationFrame(scroll);
   }
 }
