@@ -24,7 +24,8 @@ export function createProgressBarCell(
   row: number,
   padding: [number, number, number, number],
   table: BaseTableAPI,
-  range?: CellRange
+  range?: CellRange,
+  progressBarGroup?: Group
 ) {
   if (progressBarDefine.dependField) {
     const dependField = getOrApply(progressBarDefine.dependField, {
@@ -93,13 +94,24 @@ export function createProgressBarCell(
   if (isNumber(table.theme._contentOffset)) {
     _contentOffset = table.theme._contentOffset;
   }
-  const percentCompleteBarGroup = new Group({
-    x: -_contentOffset,
-    y: -_contentOffset,
-    width: contentWidth,
-    height: contentHeight
-  });
+  const percentCompleteBarGroup =
+    progressBarGroup ??
+    new Group({
+      x: -_contentOffset,
+      y: -_contentOffset,
+      width: contentWidth,
+      height: contentHeight
+    });
+  if (progressBarGroup) {
+    progressBarGroup.setAttributes({
+      x: -_contentOffset,
+      y: -_contentOffset,
+      width: contentWidth,
+      height: contentHeight
+    });
+  }
   percentCompleteBarGroup.name = 'progress-bar';
+  const usedGraphicNames = new Set<string>();
 
   const {
     showBar,
@@ -203,6 +215,7 @@ export function createProgressBarCell(
     }
     const num = Number(svalue);
     if (isNaN(num)) {
+      removeUnusedProgressBarGraphics(percentCompleteBarGroup, usedGraphicNames);
       return percentCompleteBarGroup;
     }
 
@@ -230,14 +243,13 @@ export function createProgressBarCell(
       });
 
       if (bgFillColor) {
-        const barBack = createRect({
+        updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-background', usedGraphicNames, {
           x: barLeft,
           y: barTop,
           width: barMaxWidth,
           height: barHeight,
           fill: bgFillColor
         });
-        percentCompleteBarGroup.addChild(barBack);
       }
 
       const fillColor =
@@ -250,14 +262,13 @@ export function createProgressBarCell(
           dataValue,
           percentile
         }) || '#20a8d8';
-      const barMain = createRect({
+      updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-main', usedGraphicNames, {
         x: barLeft,
         y: barTop,
         width: barSize,
         height: barHeight,
         fill: fillColor
       });
-      percentCompleteBarGroup.addChild(barMain);
     } else if (barType === 'negative') {
       // negative模式参考风神现有数据条样式，显示坐标轴和正负数据条
       // 计算坐标轴位置
@@ -286,14 +297,13 @@ export function createProgressBarCell(
         percentile: positiveRate
       });
       if (bgFillColor) {
-        const barBack = createRect({
+        updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-background', usedGraphicNames, {
           x: barLeft,
           y: barTop,
           width: barMaxWidth,
           height: barHeight,
           fill: bgFillColor
         });
-        percentCompleteBarGroup.addChild(barBack);
       }
 
       // 坐标轴距离左侧边界距离
@@ -324,14 +334,13 @@ export function createProgressBarCell(
           dataValue,
           percentile: negativeRate
         }) || '#20a8d8';
-      const barNega = createRect({
+      updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-negative', usedGraphicNames, {
         x: barRectNega.left,
         y: barRectNega.top,
         width: barRectNega.width,
         height: barRectNega.height,
         fill: barNagiFillColor
       });
-      percentCompleteBarGroup.addChild(barNega);
 
       // 绘制正值区域
       let barSizePosi = Math.min(barMaxWidth * positiveFactor * positiveRate, barMaxWidth);
@@ -363,14 +372,13 @@ export function createProgressBarCell(
           dataValue,
           percentile: positiveRate
         }) || '#20a8d8';
-      const barPosi = createRect({
+      updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-positive', usedGraphicNames, {
         x: barRectPosi.left,
         y: barRectPosi.top,
         width: barRectPosi.width,
         height: barRectPosi.height,
         fill: barPosiFillColor
       });
-      percentCompleteBarGroup.addChild(barPosi);
 
       // 绘制坐标轴
       const lineLeft = barRightToLeft ? barRectNega.left : barRectPosi.left;
@@ -383,7 +391,7 @@ export function createProgressBarCell(
         dataValue,
         percentile: positiveRate
       });
-      const line = createLine({
+      updateProgressBarLine(percentCompleteBarGroup, 'progress-bar-axis', usedGraphicNames, {
         x: 0,
         y: 0,
         stroke: lineStrokeColor,
@@ -394,7 +402,6 @@ export function createProgressBarCell(
           { x: lineLeft, y: height }
         ]
       });
-      percentCompleteBarGroup.addChild(line);
 
       // 绘制mark
       if (showBarMark && (positiveRate || negativeRate)) {
@@ -456,14 +463,13 @@ export function createProgressBarCell(
             });
           }
         }
-        const barMark = createLine({
+        updateProgressBarLine(percentCompleteBarGroup, 'progress-bar-mark', usedGraphicNames, {
           x: 0,
           y: 0,
           stroke: barMarkStrokeColor,
           lineWidth,
           points
         });
-        percentCompleteBarGroup.addChild(barMark);
       }
     } else if (barType === 'negative_no_axis') {
       // negative_no_axis模式不显示坐标轴，正负数据条同向，区分颜色
@@ -500,14 +506,13 @@ export function createProgressBarCell(
         percentile
       });
       if (bgFillColor) {
-        const barBack = createRect({
+        updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-background', usedGraphicNames, {
           x: barLeft,
           y: barTop,
           width: barMaxWidth,
           height: barHeight,
           fill: bgFillColor
         });
-        percentCompleteBarGroup.addChild(barBack);
       }
 
       // 绘制bar
@@ -541,14 +546,13 @@ export function createProgressBarCell(
             percentile
           }) || '#20a8d8';
       }
-      const bar = createRect({
+      updateProgressBarRect(percentCompleteBarGroup, 'progress-bar-main', usedGraphicNames, {
         x: barRect.left,
         y: barRect.top,
         width: barRect.width,
         height: barRect.height,
         fill: barRectFillColor
       });
-      percentCompleteBarGroup.addChild(bar);
 
       // 绘制mark
       if (showBarMark && num) {
@@ -594,18 +598,70 @@ export function createProgressBarCell(
             y: barRect.top + barRect.height - barMarkWidth / 2
           });
         }
-        const barMark = createLine({
+        updateProgressBarLine(percentCompleteBarGroup, 'progress-bar-mark', usedGraphicNames, {
           x: 0,
           y: 0,
           stroke: barMarkStrokeColor,
           lineWidth,
           points
         });
-        percentCompleteBarGroup.addChild(barMark);
       }
     }
   }
+  removeUnusedProgressBarGraphics(percentCompleteBarGroup, usedGraphicNames);
   return percentCompleteBarGroup;
+}
+
+function updateProgressBarRect(group: Group, name: string, usedGraphicNames: Set<string>, attributes: any) {
+  usedGraphicNames.add(name);
+  let graphic = group.getChildByName(name);
+  if (graphic?.type !== 'rect') {
+    if (graphic) {
+      group.removeChild(graphic);
+      graphic.release?.();
+    }
+    graphic = createRect(attributes);
+    graphic.name = name;
+    if (name === 'progress-bar-background' && group.firstChild) {
+      group.insertBefore(graphic, group.firstChild);
+    } else {
+      group.addChild(graphic);
+    }
+  } else {
+    graphic.setAttributes(attributes);
+  }
+  return graphic;
+}
+
+function updateProgressBarLine(group: Group, name: string, usedGraphicNames: Set<string>, attributes: any) {
+  usedGraphicNames.add(name);
+  let graphic = group.getChildByName(name);
+  if (graphic?.type !== 'line') {
+    if (graphic) {
+      group.removeChild(graphic);
+      graphic.release?.();
+    }
+    graphic = createLine(attributes);
+    graphic.name = name;
+    group.addChild(graphic);
+  } else {
+    graphic.setAttributes(attributes);
+  }
+  return graphic;
+}
+
+function removeUnusedProgressBarGraphics(group: Group, usedGraphicNames: Set<string>) {
+  const unusedGraphics: any[] = [];
+  group.forEachChildren((graphic: any) => {
+    if (!usedGraphicNames.has(graphic.name)) {
+      unusedGraphics.push(graphic);
+    }
+    return false;
+  });
+  unusedGraphics.forEach(graphic => {
+    group.removeChild(graphic);
+    graphic.release?.();
+  });
 }
 
 export type CreateProgressBarCell = typeof createProgressBarCell;
