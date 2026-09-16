@@ -1,0 +1,17 @@
+<div id="vTable"></div>
+
+<style>
+  html,
+  body,
+  #vTable {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+</style>
+
+<script type="module">
+  import { createTable } from './debug/issue-5308-scroll-performance';
+
+  createTable();
+</script>
