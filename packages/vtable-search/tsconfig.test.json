@@ -6,7 +6,9 @@
     "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": ".",
-    "paths": {}
+    "paths": {
+      "@src/*": ["../vtable/src/*"]
+    }
   },
   "include": ["src", "__tests__"]
 }

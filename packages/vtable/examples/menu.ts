@@ -80,6 +80,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5036-master-detail-search'
+      },
+      {
+        path: 'debug',
         name: 'issue-4761-update-records-edit-render'
       },
       {

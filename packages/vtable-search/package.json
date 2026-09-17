@@ -24,6 +24,7 @@
   },
   "scripts": {
     "start": "vite ./demo",
+    "test": "jest --runInBand",
     "build": "npm run fix-memory-limit && bundle --clean",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
@@ -43,6 +44,7 @@
     "cross-env": "^7.0.3",
     "increase-memory-limit": "^1.0.7",
     "@visactor/vchart": "2.1.3",
+    "@visactor/vtable-plugins": "workspace:1.26.8",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
