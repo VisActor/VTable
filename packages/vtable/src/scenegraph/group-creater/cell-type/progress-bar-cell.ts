@@ -8,6 +8,15 @@ import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isNumber } from '@visactor/vutils';
 import type { CellRange, StylePropertyFunctionArg } from '../../../ts-types';
 
+const PROGRESS_BAR_GRAPHIC_ORDER = [
+  'progress-bar-background',
+  'progress-bar-main',
+  'progress-bar-negative',
+  'progress-bar-positive',
+  'progress-bar-axis',
+  'progress-bar-mark'
+];
+
 export function createProgressBarCell(
   progressBarDefine: {
     min?: number | ((args: StylePropertyFunctionArg) => number);
@@ -609,6 +618,7 @@ export function createProgressBarCell(
     }
   }
   removeUnusedProgressBarGraphics(percentCompleteBarGroup, usedGraphicNames);
+  reorderProgressBarGraphics(percentCompleteBarGroup);
   return percentCompleteBarGroup;
 }
 
@@ -661,6 +671,16 @@ function removeUnusedProgressBarGraphics(group: Group, usedGraphicNames: Set<str
   unusedGraphics.forEach(graphic => {
     group.removeChild(graphic);
     graphic.release?.();
+  });
+}
+
+function reorderProgressBarGraphics(group: Group) {
+  PROGRESS_BAR_GRAPHIC_ORDER.forEach(name => {
+    const graphic = group.getChildByName(name);
+    if (graphic) {
+      group.removeChild(graphic);
+      group.addChild(graphic);
+    }
   });
 }
 

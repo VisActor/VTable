@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { ListTable } from '../../src';
 import { createDiv } from '../dom';
+import { Group } from '../../src/scenegraph/graphic/group';
 
 global.__VERSION__ = 'none';
 
@@ -97,7 +98,8 @@ describe('complex cell fast update', () => {
           barType: args => args.table.getCellOriginRecord(args.col, args.row).mode,
           style: {
             barBgColor: args => (args.table.getCellOriginRecord(args.col, args.row).background ? '#eee' : undefined),
-            showBar: args => args.table.getCellOriginRecord(args.col, args.row).show
+            showBar: args => args.table.getCellOriginRecord(args.col, args.row).show,
+            showBarMark: true
           }
         }
       ],
@@ -124,6 +126,22 @@ describe('complex cell fast update', () => {
     expect(progressGroup.getChildByName('progress-bar-positive')).toBe(positive);
     expect(progressGroup.getChildByName('progress-bar-axis')).toBe(axis);
 
+    table.updateRecords([{ progress: 50, mode: 'negative_no_axis', show: true, background: true }], [0]);
+    let graphicNames = [];
+    progressGroup.forEachChildren(graphic => {
+      graphicNames.push(graphic.name);
+      return false;
+    });
+    expect(graphicNames.indexOf('progress-bar-main')).toBeLessThan(graphicNames.indexOf('progress-bar-mark'));
+
+    table.updateRecords([{ progress: 50, mode: 'negative', show: true, background: true }], [0]);
+    graphicNames = [];
+    progressGroup.forEachChildren(graphic => {
+      graphicNames.push(graphic.name);
+      return false;
+    });
+    expect(graphicNames.indexOf('progress-bar-axis')).toBeLessThan(graphicNames.indexOf('progress-bar-mark'));
+
     table.updateRecords([{ progress: 50, mode: 'negative', show: false, background: true }], [0]);
     expect(progressGroup.childrenCount).toBe(0);
 
@@ -147,7 +165,10 @@ describe('complex cell fast update', () => {
           width: 160,
           min: 0,
           max: 100,
-          style: { textAlign: 'right' }
+          style: {
+            textAlign: 'right',
+            textBaseline: args => (args.value === 75 ? 'bottom' : 'top')
+          }
         }
       ],
       customConfig: { limitContentHeight: false },
@@ -157,6 +178,7 @@ describe('complex cell fast update', () => {
 
     const cellGroup = table.scenegraph.getCell(0, 1);
     const text = cellGroup.getChildByName('text');
+    expect(text.textBaseline).toBe('top');
 
     table.updateRecords([{ progress: 75 }], [0]);
 
@@ -169,6 +191,39 @@ describe('complex cell fast update', () => {
       dx: -3,
       keepCenterInLine: true
     });
+    expect(text.textBaseline).toBe('bottom');
+
+    table.release();
+  });
+
+  test('falls back when a reusable cell contains stale icons or custom content', () => {
+    const container = createDiv();
+    container.style.width = '400px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [{ progress: 25 }],
+      columns: [{ field: 'progress', cellType: 'progressbar', width: 160, min: 0, max: 100 }],
+      defaultRowHeight: 40
+    });
+
+    const cellGroup = table.scenegraph.getCell(0, 1);
+    const staleIcon = new Group({});
+    staleIcon.role = 'icon-left';
+    cellGroup.addChild(staleIcon);
+
+    table.updateRecords([{ progress: 50 }], [0]);
+
+    const withoutIcon = table.scenegraph.getCell(0, 1);
+    expect(withoutIcon).not.toBe(cellGroup);
+
+    const staleCustomContainer = new Group({});
+    staleCustomContainer.name = 'custom-container';
+    withoutIcon.addChild(staleCustomContainer);
+
+    table.updateRecords([{ progress: 75 }], [0]);
+
+    expect(table.scenegraph.getCell(0, 1)).not.toBe(withoutIcon);
 
     table.release();
   });
@@ -264,7 +319,9 @@ describe('complex cell fast update', () => {
 
     expect(table.scenegraph.getCell(0, 1)).toBe(cellGroup);
     expect(cellGroup.getChildByName('text').attribute.text).toBe('75');
-    expect(cellGroup.getChildByName('progress-bar')).not.toBeNull();
+    const progressBar = cellGroup.getChildByName('progress-bar');
+    expect(progressBar).not.toBeNull();
+    expect(progressBar.getChildByName('progress-bar-main').attribute.width).toBeGreaterThan(0);
 
     removeAllChild.mockRestore();
     table.release();
