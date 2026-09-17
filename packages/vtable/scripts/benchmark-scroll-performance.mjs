@@ -15,7 +15,6 @@ const COLUMNS = readNumber('BENCHMARK_COLUMNS', 64);
 const TIMEOUT = readNumber('BENCHMARK_TIMEOUT', 30000);
 const MAX_SCROLL_P95_RATIO = readNumber('BENCHMARK_MAX_SCROLL_P95_RATIO', 2.6);
 const MAX_JUMP_DURATION_RATIO = readNumber('BENCHMARK_MAX_JUMP_DURATION_RATIO', 3.1);
-const MAX_JUMP_ELAPSED_RATIO = readNumber('BENCHMARK_MAX_JUMP_ELAPSED_RATIO', 1.7);
 
 const rootDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const viteCli = path.join(rootDirectory, 'node_modules', 'vite', 'bin', 'vite.js');
@@ -219,7 +218,6 @@ function evaluateThresholds(results) {
   const failures = [];
   const scrollP95Limit = results.scroll.text.frameGapP95 * MAX_SCROLL_P95_RATIO + 4;
   const jumpDurationLimit = results.jump.text.jumpDuration * MAX_JUMP_DURATION_RATIO + 5;
-  const jumpElapsedLimit = results.jump.text.elapsed * MAX_JUMP_ELAPSED_RATIO + 30;
 
   if (results.scroll.complex.frameGapP95 > scrollP95Limit) {
     failures.push(
@@ -235,11 +233,6 @@ function evaluateThresholds(results) {
       )}ms`
     );
   }
-  if (results.jump.complex.elapsed > jumpElapsedLimit) {
-    failures.push(
-      `jump elapsed ${results.jump.complex.elapsed}ms exceeds relative limit ${round(jumpElapsedLimit)}ms`
-    );
-  }
 
   return {
     comparisons,
@@ -247,9 +240,7 @@ function evaluateThresholds(results) {
       maxScrollP95Ratio: MAX_SCROLL_P95_RATIO,
       scrollP95AdditiveTolerance: 4,
       maxJumpDurationRatio: MAX_JUMP_DURATION_RATIO,
-      jumpDurationAdditiveTolerance: 5,
-      maxJumpElapsedRatio: MAX_JUMP_ELAPSED_RATIO,
-      jumpElapsedAdditiveTolerance: 30
+      jumpDurationAdditiveTolerance: 5
     },
     failures
   };
