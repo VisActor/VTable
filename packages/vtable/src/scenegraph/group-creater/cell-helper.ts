@@ -366,7 +366,7 @@ export function createCell(
       customResult
     );
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
-    const dataValue = table.getCellOriginValue(col, row);
+    const dataValue = isAsync ? value : table.getCellOriginValue(col, row);
     if (cellGroup) {
       updateProgressBarTextCellGroup(
         cellGroup,
@@ -1078,6 +1078,7 @@ function updateProgressBarTextCellGroup(
   if (!textMark) {
     return;
   }
+  (textMark as any).textBaseline = textBaseline;
 
   const cellStyle = table._getCellStyle(col, row);
   const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
@@ -1248,10 +1249,19 @@ function canUseComplexCellFastUpdate(
   row: number,
   addNew: boolean
 ) {
+  let oldCellHasIcon = false;
+  oldCellGroup.forEachChildren((child: IGraphic) => {
+    if (typeof child.role === 'string' && child.role.startsWith('icon-')) {
+      oldCellHasIcon = true;
+    }
+    return false;
+  });
   if (
     !define ||
     addNew ||
     oldCellGroup.role !== 'cell' ||
+    oldCellHasIcon ||
+    !!oldCellGroup.getChildByName(CUSTOM_CONTAINER_NAME) ||
     range ||
     customResult ||
     mayHaveIcon ||

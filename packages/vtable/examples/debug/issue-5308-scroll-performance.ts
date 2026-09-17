@@ -172,6 +172,7 @@ export function createTable() {
   let measurementStart = Infinity;
   let frameRequestId = 0;
   let automationRequestId = 0;
+  let automationTimerId = 0;
   let released = false;
   let longTaskObserver: PerformanceObserver | undefined;
 
@@ -195,7 +196,7 @@ export function createTable() {
     longTaskObserver = new PerformanceObserver(list => {
       list
         .getEntries()
-        .filter(entry => entry.startTime >= measurementStart)
+        .filter(entry => entry.startTime + entry.duration >= measurementStart)
         .forEach(entry => samples.longTasks.push(entry.duration));
     });
     longTaskObserver.observe({ entryTypes: ['longtask'] });
@@ -236,7 +237,6 @@ export function createTable() {
     })
   });
   window.issue5308Init.tableDuration = performance.now() - tableStart;
-  window.issue5308Init.ready = true;
 
   const scenegraph = table.scenegraph as typeof table.scenegraph & {
     updateCellContent: (col: number, row: number, forceFastUpdate?: boolean) => unknown;
@@ -276,6 +276,40 @@ export function createTable() {
     lastFrame = measurementStart;
   };
 
+  const isScenegraphIdle = () => {
+    const proxy = table.scenegraph.proxy;
+    return (
+      !proxy.isProgressing &&
+      proxy.colUpdatePos > proxy.colEnd &&
+      proxy.rowUpdatePos > proxy.rowEnd &&
+      proxy.currentCol >= proxy.totalCol &&
+      proxy.currentRow >= proxy.totalRow
+    );
+  };
+
+  const waitForScenegraphIdle = (callback: () => void) => {
+    const check = () => {
+      if (released) {
+        return;
+      }
+      if (!isScenegraphIdle()) {
+        automationTimerId = window.setTimeout(check, 16);
+        return;
+      }
+      automationTimerId = window.setTimeout(() => {
+        if (released) {
+          return;
+        }
+        if (isScenegraphIdle()) {
+          callback();
+        } else {
+          check();
+        }
+      });
+    };
+    check();
+  };
+
   window.issue5308Perf = Object.assign(samples, {
     table,
     reset
@@ -287,57 +321,65 @@ export function createTable() {
     released = true;
     cancelAnimationFrame(frameRequestId);
     cancelAnimationFrame(automationRequestId);
+    clearTimeout(automationTimerId);
     longTaskObserver?.disconnect();
     return originalRelease(...args);
   }) as typeof table.release;
 
   const reportResult = (start: number, jumpDuration?: number) => {
-    automationRequestId = requestAnimationFrame(() => {
-      automationRequestId = requestAnimationFrame(() => {
-        if (released) {
-          return;
-        }
-        window.issue5308Result = {
-          elapsed: performance.now() - start,
-          jumpDuration,
-          frameGaps: [...samples.frameGaps],
-          longTasks: [...samples.longTasks],
-          scrollEvents: samples.scrollEvents,
-          cellUpdates: samples.cellUpdates,
-          cellUpdatesByType: { ...samples.cellUpdatesByType }
-        };
+    waitForScenegraphIdle(() => {
+      automationTimerId = window.setTimeout(() => {
+        automationTimerId = window.setTimeout(() => {
+          if (released) {
+            return;
+          }
+          window.issue5308Result = {
+            elapsed: performance.now() - start,
+            jumpDuration,
+            frameGaps: [...samples.frameGaps],
+            longTasks: [...samples.longTasks],
+            scrollEvents: samples.scrollEvents,
+            cellUpdates: samples.cellUpdates,
+            cellUpdatesByType: { ...samples.cellUpdatesByType }
+          };
+        });
       });
     });
   };
 
-  if (params.get('jump') === '1') {
-    automationRequestId = requestAnimationFrame(() => {
-      reset();
-      const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
-      const start = performance.now();
-      table.setScrollTop(maxScrollTop / 2);
-      const jumpDuration = performance.now() - start;
-      reportResult(start, jumpDuration);
-    });
-  }
-
-  if (params.get('auto') === '1') {
+  waitForScenegraphIdle(() => {
     reset();
-    const start = performance.now();
-    const duration = 2000;
-    const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
-    const scroll = (time: number) => {
-      if (released) {
-        return;
-      }
-      const progress = Math.min(1, (time - start) / duration);
-      table.setScrollTop(maxScrollTop * progress);
-      if (progress < 1) {
-        automationRequestId = requestAnimationFrame(scroll);
-        return;
-      }
-      reportResult(start);
-    };
-    automationRequestId = requestAnimationFrame(scroll);
-  }
+    window.issue5308Init.ready = true;
+
+    if (params.get('jump') === '1') {
+      automationTimerId = window.setTimeout(() => {
+        reset();
+        const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+        const start = performance.now();
+        table.setScrollTop(maxScrollTop / 2);
+        const jumpDuration = performance.now() - start;
+        reportResult(start, jumpDuration);
+      });
+    }
+
+    if (params.get('auto') === '1') {
+      reset();
+      const start = performance.now();
+      const duration = 2000;
+      const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+      const scroll = (time: number) => {
+        if (released) {
+          return;
+        }
+        const progress = Math.min(1, (time - start) / duration);
+        table.setScrollTop(maxScrollTop * progress);
+        if (progress < 1) {
+          automationRequestId = requestAnimationFrame(scroll);
+          return;
+        }
+        reportResult(start);
+      };
+      automationRequestId = requestAnimationFrame(scroll);
+    }
+  });
 }
