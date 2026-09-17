@@ -182,9 +182,9 @@ export function createTable() {
     }
     const gap = time - lastFrame;
     lastFrame = time;
-    if (time >= measurementStart && gap > 20) {
+    if (time >= measurementStart) {
       samples.frameGaps.push(gap);
-      if (samples.frameGaps.length > 500) {
+      if (samples.frameGaps.length > 1000) {
         samples.frameGaps.shift();
       }
     }
@@ -355,8 +355,10 @@ export function createTable() {
       automationTimerId = window.setTimeout(() => {
         reset();
         const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+        const maxScrollLeft = Math.max(0, table.getAllColsWidth() - table.tableNoFrameWidth);
         const start = performance.now();
         table.setScrollTop(maxScrollTop / 2);
+        table.setScrollLeft(maxScrollLeft / 2);
         const jumpDuration = performance.now() - start;
         reportResult(start, jumpDuration);
       });
@@ -365,14 +367,16 @@ export function createTable() {
     if (params.get('auto') === '1') {
       reset();
       const start = performance.now();
-      const duration = 2000;
+      const duration = Number(params.get('duration')) || 2000;
       const maxScrollTop = Math.max(0, table.getAllRowsHeight() - table.tableNoFrameHeight);
+      const maxScrollLeft = Math.max(0, table.getAllColsWidth() - table.tableNoFrameWidth);
       const scroll = (time: number) => {
         if (released) {
           return;
         }
         const progress = Math.min(1, (time - start) / duration);
         table.setScrollTop(maxScrollTop * progress);
+        table.setScrollLeft(maxScrollLeft * progress);
         if (progress < 1) {
           automationRequestId = requestAnimationFrame(scroll);
           return;
