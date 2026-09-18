@@ -1,0 +1,59 @@
+name: Performance benchmark
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main', 'develop']
+    paths:
+      - 'packages/vtable/src/**'
+      - 'packages/vtable/examples/debug/issue-5308-scroll-performance.ts'
+      - 'packages/vtable/examples/issue-5308-scroll-performance.html'
+      - 'packages/vtable/scripts/benchmark-scroll-performance.mjs'
+      - 'packages/vtable/package.json'
+      - 'common/config/rush/pnpm-lock.yaml'
+      - '.github/workflows/performance-benchmark.yml'
+  pull_request:
+    branches: ['main', 'develop']
+    paths:
+      - 'packages/vtable/src/**'
+      - 'packages/vtable/examples/debug/issue-5308-scroll-performance.ts'
+      - 'packages/vtable/examples/issue-5308-scroll-performance.html'
+      - 'packages/vtable/scripts/benchmark-scroll-performance.mjs'
+      - 'packages/vtable/package.json'
+      - 'common/config/rush/pnpm-lock.yaml'
+      - '.github/workflows/performance-benchmark.yml'
+
+jobs:
+  scroll-performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+          cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+
+      - name: Install dependencies
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+
+      - name: Install Chromium
+        working-directory: packages/vtable
+        run: node node_modules/playwright/cli.js install --with-deps chromium
+
+      - name: Run scroll performance benchmark
+        working-directory: packages/vtable
+        env:
+          BENCHMARK_OUTPUT: benchmark-result.json
+        run: node ../../common/scripts/install-run-rushx.js benchmark:scroll
+
+      - name: Upload benchmark result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scroll-performance-result
+          path: packages/vtable/benchmark-result.json
+          if-no-files-found: ignore

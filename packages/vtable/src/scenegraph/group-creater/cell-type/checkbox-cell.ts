@@ -46,10 +46,9 @@ export function createCheckboxCellGroup(
   cellValue?: any
 ) {
   const value = arguments.length >= 20 ? cellValue : table.getCellValue(col, row);
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   // cell
   if (!cellGroup) {
-    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-
     if (isAsync) {
       cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
       if (cellGroup && cellGroup.role === 'cell') {
@@ -95,6 +94,23 @@ export function createCheckboxCellGroup(
       cellGroup.row = row;
       cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
+  } else {
+    cellGroup.setAttributes({
+      x: xOrigin,
+      y: yOrigin,
+      width,
+      height,
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
+      lineCap: 'butt',
+      clip: true,
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
   }
 
   let icons;
@@ -155,6 +171,7 @@ export function createCheckboxCellGroup(
   }
 
   // checkbox
+  const oldCheckboxComponent = cellGroup.getChildByName('checkbox') as CheckBox;
   const checkboxComponent = createCheckbox(
     col,
     row,
@@ -166,7 +183,8 @@ export function createCheckboxCellGroup(
     define,
     table,
     isCheckboxTree,
-    value
+    value,
+    oldCheckboxComponent
   );
 
   // 目前只支持展示折叠或者展开icons
@@ -266,11 +284,13 @@ export function createCheckboxCellGroup(
       }
     });
   } else {
-    if (checkboxComponent) {
+    if (checkboxComponent && checkboxComponent !== oldCheckboxComponent) {
       cellGroup.appendChild(checkboxComponent);
     }
 
-    checkboxComponent.render();
+    if (!oldCheckboxComponent) {
+      checkboxComponent.render();
+    }
   }
 
   width -= padding[1] + padding[3] + iconWidth;
@@ -308,7 +328,8 @@ function createCheckbox(
   define: CheckboxColumnDefine,
   table: BaseTableAPI,
   isCheckboxTree: boolean,
-  cellValue: any
+  cellValue: any,
+  checkbox?: CheckBox
 ) {
   const style = table._getCellStyle(col, row) as CheckboxStyle;
   const size = getProp('size', style, col, row, table);
@@ -431,7 +452,11 @@ function createCheckbox(
   checkIconImage && (checkboxAttributes.icon.checkIconImage = checkIconImage);
   indeterminateIconImage && (checkboxAttributes.icon.indeterminateIconImage = indeterminateIconImage);
 
-  const checkbox = new CheckBox(checkboxAttributes);
+  if (checkbox) {
+    checkbox.initAttributes(checkboxAttributes);
+  } else {
+    checkbox = new CheckBox(checkboxAttributes);
+  }
   checkbox.name = 'checkbox';
 
   return checkbox;

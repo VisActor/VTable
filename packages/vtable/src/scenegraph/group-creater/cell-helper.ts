@@ -90,10 +90,11 @@ export function createCell(
     elementsGroup?: VGroup;
     renderDefault: boolean;
   },
-  cellValue?: any
+  cellValue?: any,
+  reusableCellGroup?: Group
 ): Group {
   let isAsync = false;
-  let cellGroup: Group;
+  let cellGroup = reusableCellGroup;
   const hasCellValue = arguments.length >= 19;
   let renderValue = hasCellValue ? cellValue : value;
   if (isPromise(value)) {
@@ -365,32 +366,49 @@ export function createCell(
       customResult
     );
     const style = table._getCellStyle(col, row) as ProgressBarStyle;
-    const dataValue = table.getCellOriginValue(col, row);
-    // 创建基础文字单元格
-    const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
-    cellGroup = createTextCellGroup(
-      table,
-      value,
-      columnGroup,
-      0,
-      y,
-      col,
-      row,
-      colWidth,
-      cellWidth,
-      cellHeight,
-      padding,
-      textAlign,
-      textBaseline,
-      mayHaveIcon,
-      customElementsGroup,
-      renderDefault,
-      cellTheme,
-      range,
-      isAsync
-    );
+    const dataValue = isAsync ? value : table.getCellOriginValue(col, row);
+    if (cellGroup) {
+      updateProgressBarTextCellGroup(
+        cellGroup,
+        value,
+        col,
+        row,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        cellTheme,
+        table
+      );
+    } else {
+      // 创建基础文字单元格
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      cellGroup = createTextCellGroup(
+        table,
+        value,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        customElementsGroup,
+        renderDefault,
+        cellTheme,
+        range,
+        isAsync
+      );
+    }
 
     // 创建bar group
+    const oldProgressBarGroup = cellGroup.getChildByName('progress-bar') as Group;
     const createProgressBarCell = Factory.getFunction('createProgressBarCell') as CreateProgressBarCell;
     const progressBarGroup = createProgressBarCell(
       define as ProgressbarColumnDefine,
@@ -402,13 +420,16 @@ export function createCell(
       row,
       padding,
       table,
-      range
+      range,
+      oldProgressBarGroup
     );
     // 进度图插入到文字前，绘制在文字下
-    if (cellGroup.firstChild) {
-      cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
-    } else {
-      cellGroup.appendChild(progressBarGroup);
+    if (progressBarGroup !== oldProgressBarGroup) {
+      if (cellGroup.firstChild) {
+        cellGroup.insertBefore(progressBarGroup, cellGroup.firstChild);
+      } else {
+        cellGroup.appendChild(progressBarGroup);
+      }
     }
   } else if (type === 'sparkline') {
     const createSparkLineCellGroup = Factory.getFunction('createSparkLineCellGroup') as CreateSparkLineCellGroup;
@@ -456,7 +477,7 @@ export function createCell(
     } else {
       const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
       cellGroup = createCheckboxCellGroup(
-        null,
+        cellGroup ?? null,
         columnGroup,
         0,
         y,
@@ -530,7 +551,7 @@ export function createCell(
   } else if (type === 'switch') {
     const createSwitchCellGroup = Factory.getFunction('createSwitchCellGroup') as CreateSwitchCellGroup;
     cellGroup = createSwitchCellGroup(
-      null,
+      cellGroup ?? null,
       columnGroup,
       0,
       y,
@@ -553,7 +574,7 @@ export function createCell(
   } else if (type === 'button') {
     const createButtonCellGroup = Factory.getFunction('createButtonCellGroup') as CreateButtonCellGroup;
     cellGroup = createButtonCellGroup(
-      null,
+      cellGroup ?? null,
       columnGroup,
       0,
       y,
@@ -1017,6 +1038,105 @@ export function updateCell(
   return newCellGroup;
 }
 
+function updateProgressBarTextCellGroup(
+  cellGroup: Group,
+  value: any,
+  col: number,
+  row: number,
+  cellWidth: number,
+  cellHeight: number,
+  padding: [number, number, number, number],
+  textAlign: CanvasTextAlign,
+  textBaseline: CanvasTextBaseline,
+  cellTheme: IThemeSpec,
+  table: BaseTableAPI
+) {
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
+  cellGroup.setAttributes({
+    width: cellWidth,
+    height: cellHeight,
+    lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+    fill: cellTheme?.group?.fill ?? undefined,
+    stroke: cellTheme?.group?.stroke ?? undefined,
+    strokeArrayWidth: strokeArrayWidth ?? undefined,
+    strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+    cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+    cornerRadius: cellTheme?.group?.cornerRadius ?? 0,
+    lineDash: cellTheme?.group?.lineDash ?? undefined,
+    lineCap: 'butt',
+    clip: true,
+    y: table.scenegraph.getCellGroupY(row)
+  } as any);
+  cellGroup.col = col;
+  cellGroup.row = row;
+  cellGroup.mergeStartCol = undefined;
+  cellGroup.mergeStartRow = undefined;
+  cellGroup.mergeEndCol = undefined;
+  cellGroup.mergeEndRow = undefined;
+
+  const textMark = cellGroup.getChildByName('text');
+  if (!textMark) {
+    return;
+  }
+  (textMark as any).textBaseline = textBaseline;
+
+  const cellStyle = table._getCellStyle(col, row);
+  const autoWrapText = cellStyle.autoWrapText ?? table.internalProps.autoWrapText;
+  const { text: textArr, moreThanMaxCharacters } = breakString(value, table);
+  const hierarchyOffset = getHierarchyOffset(col, row, table);
+  const lineClamp = cellStyle.lineClamp;
+  let contentOffset = 0;
+  if (isNumber(table.theme._contentOffset)) {
+    if (textAlign === 'left') {
+      contentOffset = table.theme._contentOffset;
+    } else if (textAlign === 'right') {
+      contentOffset = -table.theme._contentOffset;
+    }
+  }
+  let x = padding[3];
+  if (textAlign === 'center') {
+    x += (cellWidth - padding[1] - padding[3]) / 2;
+  } else if (textAlign === 'right') {
+    x += cellWidth - padding[1] - padding[3];
+  }
+  textMark.setAttributes(
+    Object.assign({}, cellTheme.text, {
+      text: textArr.length === 1 && !autoWrapText ? textArr[0] : textArr,
+      moreThanMaxCharacters,
+      maxLineWidth: cellWidth - padding[1] - padding[3] - hierarchyOffset,
+      textBaseline: 'top',
+      autoWrapText,
+      lineClamp,
+      wordBreak: 'break-word',
+      heightLimit:
+        table.options.customConfig?.limitContentHeight === false
+          ? -1
+          : cellHeight - Math.floor(padding[0] + padding[2]),
+      pickable: false,
+      dx: (textAlign === 'left' ? hierarchyOffset : 0) + contentOffset,
+      whiteSpace:
+        table.options.customConfig?.limitContentHeight === false
+          ? 'normal'
+          : textArr.length === 1 && !autoWrapText
+          ? 'no-wrap'
+          : 'normal',
+      keepCenterInLine: true,
+      x
+    }) as any
+  );
+
+  if (textMark.attribute.text) {
+    const contentHeight = cellHeight - padding[0] - padding[2];
+    const y =
+      textBaseline === 'middle'
+        ? padding[0] + (contentHeight - textMark.AABBBounds.height()) / 2
+        : textBaseline === 'bottom'
+        ? padding[0] + contentHeight - textMark.AABBBounds.height()
+        : padding[0];
+    textMark.setAttribute('y', y);
+  }
+}
+
 function updateCellContent(
   type: ColumnTypeOption,
   value: any,
@@ -1080,7 +1200,24 @@ function updateCellContent(
     range,
     customResult
   ];
-  if (hasCellValue) {
+  const reusableCellGroup = canUseComplexCellFastUpdate(
+    type,
+    oldCellGroup,
+    define,
+    range,
+    customResult,
+    mayHaveIcon,
+    table._getCellStyle(col, row).autoWrapText ?? table.internalProps.autoWrapText,
+    cellTheme,
+    table,
+    row,
+    addNew
+  )
+    ? oldCellGroup
+    : undefined;
+  if (reusableCellGroup) {
+    createCellArgs.push(hasCellValue ? cellValue : value, reusableCellGroup);
+  } else if (hasCellValue) {
     createCellArgs.push(cellValue);
   }
   const newCellGroup = createCell(...createCellArgs);
@@ -1097,6 +1234,64 @@ function updateCellContent(
     }
   }
   return newCellGroup;
+}
+
+function canUseComplexCellFastUpdate(
+  type: ColumnTypeOption,
+  oldCellGroup: Group,
+  define: ColumnDefine,
+  range: CellRange | undefined,
+  customResult: { elementsGroup?: VGroup; renderDefault: boolean } | undefined,
+  mayHaveIcon: boolean,
+  autoWrapText: boolean,
+  cellTheme: IThemeSpec,
+  table: BaseTableAPI,
+  row: number,
+  addNew: boolean
+) {
+  let oldCellHasIcon = false;
+  oldCellGroup.forEachChildren((child: IGraphic) => {
+    if (typeof child.role === 'string' && child.role.startsWith('icon-')) {
+      oldCellHasIcon = true;
+    }
+    return false;
+  });
+  if (
+    !define ||
+    addNew ||
+    oldCellGroup.role !== 'cell' ||
+    oldCellHasIcon ||
+    !!oldCellGroup.getChildByName(CUSTOM_CONTAINER_NAME) ||
+    range ||
+    customResult ||
+    mayHaveIcon ||
+    autoWrapText ||
+    table.isAutoRowHeight(row) ||
+    define.customLayout ||
+    define.customRender ||
+    table.customRender
+  ) {
+    return false;
+  }
+
+  if (type === 'checkbox') {
+    return !define.tree && !!oldCellGroup.getChildByName('checkbox');
+  }
+  if (type === 'switch') {
+    return !!oldCellGroup.getChildByName('switch');
+  }
+  if (type === 'button') {
+    return !!oldCellGroup.getChildByName('button');
+  }
+  if (type === 'progressbar') {
+    return (
+      !(cellTheme as any)?._vtable?.marked &&
+      !oldCellGroup.getChildByName('mark') &&
+      !!oldCellGroup.getChildByName('text') &&
+      !!oldCellGroup.getChildByName('progress-bar')
+    );
+  }
+  return false;
 }
 
 function canUseFastUpdate(

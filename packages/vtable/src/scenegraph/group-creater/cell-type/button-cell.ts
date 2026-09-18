@@ -10,6 +10,8 @@ import { getOrApply } from '../../../tools/helper';
 import { getHierarchyOffset } from '../../utils/get-hierarchy-offset';
 import { dealWithIconLayout } from '../../utils/text-icon-layout';
 
+const hoverListenerBoundComponents = new WeakSet<Tag>();
+
 export function createButtonCellGroup(
   cellGroup: Group | null,
   columnGroup: Group,
@@ -32,10 +34,9 @@ export function createButtonCellGroup(
   cellValue?: any
 ) {
   const value = arguments.length >= 19 ? cellValue : table.getCellValue(col, row);
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   // cell
   if (!cellGroup) {
-    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-
     if (isAsync) {
       cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
       if (cellGroup && cellGroup.role === 'cell') {
@@ -81,6 +82,23 @@ export function createButtonCellGroup(
       cellGroup.row = row;
       cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
+  } else {
+    cellGroup.setAttributes({
+      x: xOrigin,
+      y: yOrigin,
+      width,
+      height,
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
+      lineCap: 'butt',
+      clip: true,
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
   }
 
   let icons;
@@ -132,6 +150,7 @@ export function createButtonCellGroup(
     });
   }
 
+  const oldButtonComponent = cellGroup.getChildByName('button') as Tag;
   const buttonComponent = createButton(
     col,
     row,
@@ -142,9 +161,10 @@ export function createButtonCellGroup(
     cellTheme,
     define,
     table,
-    value
+    value,
+    oldButtonComponent
   );
-  if (buttonComponent) {
+  if (buttonComponent && buttonComponent !== oldButtonComponent) {
     cellGroup.appendChild(buttonComponent);
   }
 
@@ -184,7 +204,8 @@ function createButton(
   cellTheme: IThemeSpec,
   define: ButtonColumnDefine,
   table: BaseTableAPI,
-  cellValue: any
+  cellValue: any,
+  buttonComponent?: Tag
 ) {
   const style = table._getCellStyle(col, row) as ButtonStyle;
   const buttonColor = getProp('buttonColor', style, col, row, table);
@@ -275,15 +296,27 @@ function createButton(
   buttonTextDisableColor && (buttonAttributes.state.text.fill = buttonTextDisableColor);
   buttonTextHoverColor && (buttonAttributes.state.text.hover.fill = buttonTextHoverColor);
 
-  const buttonComponent = new Tag(buttonAttributes);
+  if (buttonComponent) {
+    buttonComponent.removeState('hover', false);
+    buttonComponent.initAttributes(buttonAttributes);
+  } else {
+    buttonComponent = new Tag(buttonAttributes);
+  }
   buttonComponent.name = 'button';
 
-  if (!isDisable) {
+  if (!hoverListenerBoundComponents.has(buttonComponent)) {
+    hoverListenerBoundComponents.add(buttonComponent);
     buttonComponent.addEventListener('mouseenter', () => {
+      if ((buttonComponent.attribute as any).disable) {
+        return;
+      }
       buttonComponent.addState('hover', true, false);
       buttonComponent.stage.renderNextFrame();
     });
     buttonComponent.addEventListener('mouseleave', () => {
+      if ((buttonComponent.attribute as any).disable) {
+        return;
+      }
       buttonComponent.removeState('hover', false);
       buttonComponent.stage.renderNextFrame();
     });
