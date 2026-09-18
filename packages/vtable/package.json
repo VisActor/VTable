@@ -40,11 +40,13 @@
     "demo": "vite serve examples",
     "site-demo": "vite serve site-demo",
     "compile": "tsc --noEmit",
+    "e2e:serve": "vite serve e2e/fixtures --config e2e/vite.config.ts --host 127.0.0.1 --port 3010",
     "eslint": "eslint --debug --fix src/",
     "build": "npm run fix-memory-limit && bundle --clean",
     "dev": "bundle --clean -f es -w",
     "start": "vite serve examples",
     "test": "jest --silent",
+    "test:firefox": "playwright test --config playwright.config.ts",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
     "build:es": "bundle --clean -f es --ignorePostTasks",
@@ -120,7 +122,8 @@
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
     "@resvg/resvg-js": "^2.5.0",
-    "pikaday": "1.8.2"
+    "pikaday": "1.8.2",
+    "@playwright/test": "1.55.1"
   },
   "unpkg": "latest",
   "unpkgFiles": [

@@ -43,6 +43,8 @@ stats.html
 report.html
 
 coverage/
+playwright-report/
+test-results/
 
 *.local.ts
 

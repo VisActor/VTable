@@ -36,3 +36,9 @@ jobs:
         run: node common/scripts/install-run-rush.js build -t @visactor/vtable-search
       - name: Test
         run: node common/scripts/install-run-rush.js test -t @visactor/vtable-search
+      - name: Install Playwright Firefox
+        working-directory: ./packages/vtable
+        run: npx playwright install firefox
+      - name: Test Firefox paste
+        working-directory: ./packages/vtable
+        run: node ../../common/scripts/install-run-rushx.js test:firefox
