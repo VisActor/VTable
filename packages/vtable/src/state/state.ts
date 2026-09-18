@@ -54,6 +54,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { autoMergeCellRanges } from './select/auto-merge-ranges';
 import { expendCellRange } from '../tools/merge-range';
 
 export class StateManager {
@@ -787,7 +788,8 @@ export class StateManager {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
+  /** 结束当前选区；批量设置时可延迟到最后一个区域再执行多选区合并。 */
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true, mergeRanges: boolean = true) {
     if (this.select.selecting) {
       this.select.selecting = false;
       if (this.select.ranges.length === 0) {
@@ -827,6 +829,14 @@ export class StateManager {
         this.table.scenegraph.selectingRangeComponents.clear();
       } else {
         selectEnd(this.table.scenegraph);
+      }
+      // 即使最后一项是重复区域，也要在去重后完成整批选区的合并。
+      if (mergeRanges) {
+        const mergedRanges = autoMergeCellRanges(this.select.ranges, this.table);
+        if (mergedRanges !== this.select.ranges) {
+          this.select.ranges = mergedRanges;
+          this.table.scenegraph.recreateAllSelectRangeComponents();
+        }
       }
 
       // 触发SELECTED_CELL

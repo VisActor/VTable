@@ -462,6 +462,8 @@ export interface BaseTableConstructorOptions {
     highlightInRange?: boolean;
     /** 是否将选中的单元格自动滚动到视口内 默认为true */
     makeSelectCellVisible?: boolean;
+    /** 是否自动归并普通 body 主区域内可拼成完整矩形的多选范围 */
+    autoMergeRanges?: boolean;
     /** 右键点击单元格是否禁用选择单元格 */
     disableSelectOnContextMenu?: boolean;
   };
