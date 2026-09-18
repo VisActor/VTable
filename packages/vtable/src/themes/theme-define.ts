@@ -660,7 +660,7 @@ export class TableTheme implements ITableThemeDefine {
       );
       this._frozenColumnLine = {
         get shadow():
-          | { width: number; startColor: string; endColor: string; visible: 'always' | 'scrolling' }
+          | { width: number; startColor: string; endColor: string; visible: 'always' | 'scrolling' | 'overflow' }
           | undefined {
           if (frozenColumnLine.shadow) {
             return {
@@ -673,7 +673,7 @@ export class TableTheme implements ITableThemeDefine {
               get endColor(): string {
                 return frozenColumnLine.shadow?.endColor ?? 'rgba(00, 24, 47, 0)';
               },
-              get visible(): 'always' | 'scrolling' {
+              get visible(): 'always' | 'scrolling' | 'overflow' {
                 return frozenColumnLine.shadow?.visible ?? 'always';
               }
             };
