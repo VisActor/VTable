@@ -76,6 +76,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4699-firefox-paste'
+      },
+      {
+        path: 'debug',
         name: 'issue-3752-large-merge-auto-height'
       },
       {
