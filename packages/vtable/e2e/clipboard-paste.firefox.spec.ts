@@ -15,7 +15,7 @@ interface Issue4699Window extends Window {
 }
 
 test('pastes event clipboard data into a selected cell without an editor caret', async ({ page, browserName }) => {
-  expect(browserName).toBe('firefox');
+  test.skip(browserName !== 'firefox', 'Firefox-only clipboard regression');
 
   await page.addInitScript(() => {
     const state = { readCalls: 0 };
