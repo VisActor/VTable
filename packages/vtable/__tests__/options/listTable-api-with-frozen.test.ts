@@ -280,6 +280,29 @@ describe('listTable init test', () => {
     frozenTable.release();
   });
 
+  test('listTable should remove all records with a bottom frozen row', () => {
+    const optionWithBottomFrozenRow = {
+      ...option,
+      bottomFrozenRowCount: 1,
+      container: createDiv(),
+      records: records.slice(0, 2)
+    };
+    optionWithBottomFrozenRow.container.style.position = 'relative';
+    optionWithBottomFrozenRow.container.style.width = '1000px';
+    optionWithBottomFrozenRow.container.style.height = '800px';
+
+    const frozenTable = new ListTable(optionWithBottomFrozenRow);
+
+    expect(() => frozenTable.deleteRecords([0, 1])).not.toThrow();
+    expect(frozenTable.records).toHaveLength(0);
+    expect(frozenTable.bottomFrozenRowCount).toBe(0);
+    expect(frozenTable.scenegraph.bottomFrozenGroup.attribute.height).toBe(0);
+    expect(frozenTable.scenegraph.leftBottomCornerGroup.attribute.height).toBe(0);
+    expect(frozenTable.scenegraph.rightBottomCornerGroup.attribute.height).toBe(0);
+
+    frozenTable.release();
+  });
+
   test('listTable bottom corner rows should stay below right frozen body when only right frozen column exists', () => {
     const optionWithOnlyRightFrozenColumn = {
       ...option,
