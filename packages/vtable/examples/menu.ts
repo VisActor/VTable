@@ -72,6 +72,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-3903-delete-all-bottom-frozen'
+      },
+      {
+        path: 'debug',
         name: 'issue-3752-large-merge-auto-height'
       },
       {
