@@ -196,6 +196,11 @@ function ratio(complexValue, textValue) {
   return textValue > 0 ? round(complexValue / textValue) : null;
 }
 
+function formatRatio(complexValue, textValue) {
+  const value = ratio(complexValue, textValue);
+  return value === null ? 'n/a' : `${value}x`;
+}
+
 function verifyCoverage(results) {
   const expectedTypes = ['checkbox', 'switch', 'button', 'progressbar'];
   for (const mode of ['scroll', 'jump']) {
@@ -247,16 +252,70 @@ function evaluateThresholds(results) {
 }
 
 function formatSummary(result) {
-  return [
+  const scrollP95Limit = round(
+    result.scroll.text.frameGapP95 * result.evaluation.thresholds.maxScrollP95Ratio +
+      result.evaluation.thresholds.scrollP95AdditiveTolerance
+  );
+  const jumpDurationLimit = round(
+    result.jump.text.jumpDuration * result.evaluation.thresholds.maxJumpDurationRatio +
+      result.evaluation.thresholds.jumpDurationAdditiveTolerance
+  );
+  const scrollP95Passed = result.scroll.complex.frameGapP95 <= scrollP95Limit;
+  const jumpDurationPassed = result.jump.complex.jumpDuration <= jumpDurationLimit;
+  const passed = result.evaluation.failures.length === 0;
+  const lines = [
     '## VTable scroll performance benchmark',
     '',
-    `- Rounds: ${ROUNDS} (+ ${WARMUP_ROUNDS} warmup)`,
-    `- Scroll p95: text ${result.scroll.text.frameGapP95}ms, complex ${result.scroll.complex.frameGapP95}ms`,
-    `- Jump elapsed: text ${result.jump.text.elapsed}ms, complex ${result.jump.complex.elapsed}ms`,
-    `- Ratios: scroll p95 ${result.evaluation.comparisons.scrollP95Ratio}x, jump duration ${result.evaluation.comparisons.jumpDurationRatio}x, jump elapsed ${result.evaluation.comparisons.jumpElapsedRatio}x`,
-    `- Status: ${result.evaluation.failures.length === 0 ? 'PASS' : 'FAIL'}`,
+    `### Result: **${passed ? 'PASS' : 'FAIL'}**`,
+    '',
+    'Lower values are better. Limits are calculated from the text-cell control in the same run.',
+    '',
+    '| Gated metric | Text control | Complex cells | Relative | Allowed maximum | Result |',
+    '| --- | ---: | ---: | ---: | ---: | :---: |',
+    `| Scroll frame-gap p95 | ${result.scroll.text.frameGapP95} ms | ${
+      result.scroll.complex.frameGapP95
+    } ms | ${result.evaluation.comparisons.scrollP95Ratio}x | ${scrollP95Limit} ms | ${
+      scrollP95Passed ? 'PASS' : 'FAIL'
+    } |`,
+    `| Jump synchronous duration | ${result.jump.text.jumpDuration} ms | ${
+      result.jump.complex.jumpDuration
+    } ms | ${result.evaluation.comparisons.jumpDurationRatio}x | ${jumpDurationLimit} ms | ${
+      jumpDurationPassed ? 'PASS' : 'FAIL'
+    } |`,
+    '',
+    '### Diagnostics',
+    '',
+    'These values are reported for investigation but do not fail the build.',
+    '',
+    '| Metric | Text control | Complex cells | Relative |',
+    '| --- | ---: | ---: | ---: |',
+    `| Scroll missed-frame time | ${result.scroll.text.missedFrameTime} ms | ${
+      result.scroll.complex.missedFrameTime
+    } ms | ${formatRatio(result.scroll.complex.missedFrameTime, result.scroll.text.missedFrameTime)} |`,
+    `| Scroll long-task time | ${result.scroll.text.longTaskTime} ms | ${
+      result.scroll.complex.longTaskTime
+    } ms | ${formatRatio(result.scroll.complex.longTaskTime, result.scroll.text.longTaskTime)} |`,
+    `| Jump completion time | ${result.jump.text.elapsed} ms | ${result.jump.complex.elapsed} ms | ${
+      result.evaluation.comparisons.jumpElapsedRatio
+    }x |`,
+    '',
+    '<details>',
+    '<summary>Run configuration</summary>',
+    '',
+    `- Rows: ${result.configuration.rows}`,
+    `- Columns: ${result.configuration.columns}`,
+    `- Scroll duration: ${result.configuration.duration} ms`,
+    `- Samples: ${result.configuration.rounds} measured + ${result.configuration.warmupRounds} warmup per case`,
+    '',
+    '</details>',
     ''
-  ].join('\n');
+  ];
+
+  if (!passed) {
+    lines.push('### Failed checks', '', ...result.evaluation.failures.map(failure => `- ${failure}`), '');
+  }
+
+  return lines.join('\n');
 }
 
 async function main() {
