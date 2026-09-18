@@ -163,6 +163,20 @@ describe('listTable select auto merge ranges', () => {
     expect(table.getSelectedCellRanges()).toEqual(selectedRanges.map(addSkipBodyMerge));
   });
 
+  test('merges a complete batch even when its last range is a duplicate', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const start = getMainBodyCell(table, 1, 1);
+    const next = { col: start.col + 1, row: start.row };
+
+    table.selectCells([
+      { start, end: start },
+      { start: next, end: next },
+      { start: next, end: next }
+    ]);
+
+    expect(table.getSelectedCellRanges()).toEqual([addSkipBodyMerge({ start, end: next })]);
+  });
+
   test('uses the merged ranges for ctrl multi-select and selected_cell events', () => {
     const table = createTable({ autoMergeRanges: true });
     const start = getMainBodyCell(table, 1, 1);
