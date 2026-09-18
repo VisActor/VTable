@@ -54,6 +54,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { autoMergeCellRanges } from './select/auto-merge-ranges';
 import { expendCellRange } from '../tools/merge-range';
 
 export class StateManager {
@@ -827,6 +828,11 @@ export class StateManager {
         this.table.scenegraph.selectingRangeComponents.clear();
       } else {
         selectEnd(this.table.scenegraph);
+        const mergedRanges = autoMergeCellRanges(this.select.ranges, this.table);
+        if (mergedRanges !== this.select.ranges) {
+          this.select.ranges = mergedRanges;
+          this.table.scenegraph.recreateAllSelectRangeComponents();
+        }
       }
 
       // 触发SELECTED_CELL
