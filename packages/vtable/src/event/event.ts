@@ -50,6 +50,7 @@ type ClipboardRange = {
   end: { col: number; row: number };
 };
 
+// Keep the pointer target larger than the 6px visual handle without changing its appearance.
 const FILL_HANDLE_HIT_TARGET_SIZE = 24;
 
 type CopySnapshot = {
