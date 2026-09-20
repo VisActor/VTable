@@ -181,6 +181,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-issue-4534-update-task-record'
+  },
+  {
+    path: 'gantt',
     name: 'issue-4778-taskbar-relative-rect'
   }
   //   ]
