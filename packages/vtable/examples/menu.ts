@@ -84,6 +84,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4794-filter-update-records'
+      },
+      {
+        path: 'debug',
         name: 'issue-3752-large-merge-auto-height'
       },
       {

@@ -246,6 +246,49 @@ describe('listTable data events test', () => {
     expect(records).toEqual(table.records);
   });
 
+  test('updateRecords under filter should persist extra fields to source records', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    table.updateFilterRules([
+      {
+        filterKey: 'id',
+        filteredValues: [2, 3, 4]
+      }
+    ]);
+
+    const updatedRecord = {
+      ...table.records[0],
+      name: 'Employee 2 updated',
+      modifiedCells: { name: true }
+    };
+    table.updateRecords([updatedRecord], [0]);
+
+    expect(records[1]).toBe(updatedRecord);
+    expect(records[1].modifiedCells).toEqual({ name: true });
+
+    table.updateFilterRules([]);
+
+    expect(table.records[1]).toBe(updatedRecord);
+    expect(table.records[1].name).toBe('Employee 2 updated');
+  });
+
   test('addRecord under filter should keep relative position after clearing filter', () => {
     table.release();
     const records = [
