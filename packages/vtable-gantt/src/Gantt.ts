@@ -1510,6 +1510,7 @@ export class Gantt extends EventTarget {
   }
   setRecords(records: any[]) {
     this.records = records;
+    initProjectTaskTimes(this);
     this.data.setRecords(records);
     updateOptionsWhenRecordChanged(this);
     this.taskListTableInstance.setRecords(records);
