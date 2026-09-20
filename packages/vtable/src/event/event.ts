@@ -50,6 +50,8 @@ type ClipboardRange = {
   end: { col: number; row: number };
 };
 
+const FILL_HANDLE_HIT_TARGET_SIZE = 24;
+
 type CopySnapshot = {
   ranges: ClipboardRange[];
   copySourceRange: { startCol: number; startRow: number } | null;
@@ -706,11 +708,10 @@ export class EventManager {
           }
           const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBoundTargetY);
 
-          const squareSize = 6 * 3;
           // 判断鼠标是否落在fillhandle矩形内
           if (
             this.table.stateManager.fillHandle?.isFilling ||
-            (distanceX <= squareSize / 2 && distanceY <= squareSize / 2)
+            (distanceX <= FILL_HANDLE_HIT_TARGET_SIZE / 2 && distanceY <= FILL_HANDLE_HIT_TARGET_SIZE / 2)
           ) {
             if (update) {
               this.table.stateManager.startFillSelect(eventArgsSet.abstractPos.x, eventArgsSet.abstractPos.y);

@@ -76,6 +76,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4656-fill-handle-hit-area'
+      },
+      {
+        path: 'debug',
         name: 'issue-3752-large-merge-auto-height'
       },
       {
