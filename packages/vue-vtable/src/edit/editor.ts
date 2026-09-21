@@ -4,6 +4,10 @@ import { h, isVNode, customRef, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 import type { RectProps } from '@visactor/vtable/es/ts-types/common';
 
+function isPromiseLike<T>(value: T | Promise<T>): value is Promise<T> {
+  return Boolean(value && typeof (value as Promise<T>).then === 'function');
+}
+
 /** 渲染式编辑器参数 */
 export interface DynamicRenderEditorParams {
   /** 行索引 */
@@ -266,8 +270,13 @@ export class DynamicRenderEditor {
         }
         return validate;
       };
-      const validate = editConfig.validateValue({ col, row, value, oldValue, table });
-      return validate instanceof Promise ? validate.then(handleValidationResult) : handleValidationResult(validate);
+      let validate: boolean | Promise<boolean>;
+      try {
+        validate = editConfig.validateValue({ col, row, value, oldValue, table });
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      return isPromiseLike(validate) ? validate.then(handleValidationResult) : handleValidationResult(validate);
     }
     return true;
   }

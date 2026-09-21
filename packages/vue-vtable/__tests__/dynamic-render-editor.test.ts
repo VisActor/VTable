@@ -83,4 +83,52 @@ describe('DynamicRenderEditor', () => {
     expect(validation).toBeInstanceOf(Promise);
     await expect(validation).resolves.toBe(true);
   });
+
+  test('converts synchronous validation errors to rejected promises', async () => {
+    const editor = new DynamicRenderEditor();
+    const error = new Error('validation failed');
+    const table = {
+      getBodyColumnDefine: jest.fn().mockReturnValue({
+        editConfig: {
+          validateValue: () => {
+            throw error;
+          }
+        }
+      })
+    } as any;
+
+    const validation = editor.validateValue('next', 'previous', { col: 0, row: 1 }, table);
+
+    expect(validation).toBeInstanceOf(Promise);
+    await expect(validation).rejects.toBe(error);
+  });
+
+  test('handles promise-like validation results from another realm', async () => {
+    const editor = new DynamicRenderEditor();
+    const promiseLike = {
+      then(resolve: (value: boolean) => boolean) {
+        return Promise.resolve(resolve(false));
+      }
+    };
+    const table = {
+      getBodyColumnDefine: jest.fn().mockReturnValue({
+        editConfig: {
+          validateValue: () => promiseLike
+        }
+      }),
+      getVisibleCellRangeRelativeRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 100, height: 40 }),
+      showTooltip: jest.fn()
+    } as any;
+
+    const validation = editor.validateValue('next', 'previous', { col: 0, row: 1 }, table);
+
+    await expect(validation).resolves.toBe(false);
+    expect(table.showTooltip).toHaveBeenCalledWith(
+      0,
+      1,
+      expect.objectContaining({
+        content: 'invalid'
+      })
+    );
+  });
 });
