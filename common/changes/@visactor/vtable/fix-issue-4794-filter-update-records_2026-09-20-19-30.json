@@ -2,7 +2,7 @@
   "changes": [
     {
       "comment": "test(vtable): cover preserving updateRecords results after clearing filters",
-      "type": "patch",
+      "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
