@@ -236,12 +236,12 @@ export class DynamicRenderEditor {
     }
   }
 
-  async validateValue(
+  validateValue(
     value?: any,
     oldValue?: any,
     editCell?: { col: number; row: number },
     table?: any
-  ): Promise<boolean> {
+  ): boolean | Promise<boolean> {
     const { col, row } = editCell || {};
     if (!isValid(col) || !isValid(row)) {
       return true;
@@ -249,22 +249,25 @@ export class DynamicRenderEditor {
     const define = table.getBodyColumnDefine(col, row) as ColumnDefine;
     const { editConfig } = define || {};
     if (typeof editConfig?.validateValue === 'function') {
-      const validate = await editConfig.validateValue({ col, row, value, oldValue, table });
-      if (validate === false) {
-        const rect = table.getVisibleCellRangeRelativeRect({ col, row });
-        table.showTooltip(col, row, {
-          content: editConfig.invalidPrompt || 'invalid',
-          referencePosition: { rect, placement: TYPES.Placement.top },
-          style: {
-            bgColor: 'red',
-            color: 'white',
-            arrowMark: true
-          },
-          disappearDelay: 1000
-        });
-        return false;
-      }
-      return validate;
+      const handleValidationResult = (validate: boolean) => {
+        if (validate === false) {
+          const rect = table.getVisibleCellRangeRelativeRect({ col, row });
+          table.showTooltip(col, row, {
+            content: editConfig.invalidPrompt || 'invalid',
+            referencePosition: { rect, placement: TYPES.Placement.top },
+            style: {
+              bgColor: 'red',
+              color: 'white',
+              arrowMark: true
+            },
+            disappearDelay: 1000
+          });
+          return false;
+        }
+        return validate;
+      };
+      const validate = editConfig.validateValue({ col, row, value, oldValue, table });
+      return validate instanceof Promise ? validate.then(handleValidationResult) : handleValidationResult(validate);
     }
     return true;
   }
