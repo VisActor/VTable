@@ -270,13 +270,14 @@ export class DynamicRenderEditor {
         }
         return validate;
       };
-      let validate: boolean | Promise<boolean>;
       try {
-        validate = editConfig.validateValue({ col, row, value, oldValue, table });
+        const validate = editConfig.validateValue({ col, row, value, oldValue, table });
+        return isPromiseLike(validate)
+          ? Promise.resolve(validate).then(handleValidationResult)
+          : handleValidationResult(validate);
       } catch (error) {
         return Promise.reject(error);
       }
-      return isPromiseLike(validate) ? validate.then(handleValidationResult) : handleValidationResult(validate);
     }
     return true;
   }

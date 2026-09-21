@@ -131,4 +131,48 @@ describe('DynamicRenderEditor', () => {
       })
     );
   });
+
+  test('converts errors from a promise-like then getter to rejected promises', async () => {
+    const editor = new DynamicRenderEditor();
+    const error = new Error('then getter failed');
+    const promiseLike = Object.defineProperty({}, 'then', {
+      get() {
+        throw error;
+      }
+    });
+    const table = {
+      getBodyColumnDefine: jest.fn().mockReturnValue({
+        editConfig: {
+          validateValue: () => promiseLike
+        }
+      })
+    } as any;
+
+    const validation = editor.validateValue('next', 'previous', { col: 0, row: 1 }, table);
+
+    expect(validation).toBeInstanceOf(Promise);
+    await expect(validation).rejects.toBe(error);
+  });
+
+  test('converts errors from invoking a promise-like then to rejected promises', async () => {
+    const editor = new DynamicRenderEditor();
+    const error = new Error('then invocation failed');
+    const promiseLike = {
+      then() {
+        throw error;
+      }
+    };
+    const table = {
+      getBodyColumnDefine: jest.fn().mockReturnValue({
+        editConfig: {
+          validateValue: () => promiseLike
+        }
+      })
+    } as any;
+
+    const validation = editor.validateValue('next', 'previous', { col: 0, row: 1 }, table);
+
+    expect(validation).toBeInstanceOf(Promise);
+    await expect(validation).rejects.toBe(error);
+  });
 });
