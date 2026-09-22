@@ -12,10 +12,6 @@ module.exports = {
 
   umdOutputFilename: 'index',
   minify: false,
-  envs: {
-    __DEV__: JSON.stringify(false),
-    'process.env.NODE_ENV': JSON.stringify('production')
-  },
   output: {
     footer: '/* follow me on Twitter! @rich_harris */'
   }
