@@ -1,6 +1,6 @@
 /* global window */
 import type { Tag } from '@visactor/vtable/es/vrender';
-import { useCallback, useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import { Button, Group, Link, ListColumn, ListTable } from '../../../src';
 
@@ -44,18 +44,12 @@ function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
   }
   observedKinds.add(kind);
   const run = readinessRun;
-  let remainingFrames = 120;
 
   const checkStage = () => {
     if (run !== readinessRun || window.__issue_4836_error__) {
       return;
     }
     if (!control.stage) {
-      remainingFrames -= 1;
-      if (remainingFrames === 0) {
-        window.__issue_4836_error__ = `${kind} control was not attached to a stage`;
-        return;
-      }
       scheduleAnimationFrame(checkStage);
       return;
     }
@@ -82,14 +76,13 @@ function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
 
 function ActionCell(props: ActionCellProps) {
   const { table, row, col, rect, kind } = props;
-  const handleControlRef = useCallback(
-    (control: Tag | null) => {
-      if (control) {
-        observeStageAttachment(kind, control);
-      }
-    },
-    [kind]
-  );
+  const controlRef = useRef<Tag>(null);
+
+  useEffect(() => {
+    if (controlRef.current) {
+      observeStageAttachment(kind, controlRef.current);
+    }
+  }, [kind]);
 
   if (!table || row === undefined || col === undefined) {
     return null;
@@ -98,11 +91,11 @@ function ActionCell(props: ActionCellProps) {
   const { width, height } = rect || table.getCellRect(col, row);
   const content =
     kind === 'link' ? (
-      <Link ref={handleControlRef} maxWidth={width - 30} panelStyle={{ visible: true, boundsPadding: [6, 12] }}>
+      <Link ref={controlRef} maxWidth={width - 30} panelStyle={{ visible: true, boundsPadding: [6, 12] }}>
         View
       </Link>
     ) : (
-      <Button ref={handleControlRef} maxWidth={width - 30}>
+      <Button ref={controlRef} maxWidth={width - 30}>
         Open
       </Button>
     );
@@ -156,6 +149,27 @@ function App() {
     observedKinds.clear();
     window.__issue_4836_ready__ = false;
     delete window.__issue_4836_error__;
+    const run = readinessRun;
+    let remainingFrames = 120;
+
+    const checkReadyDeadline = () => {
+      if (run !== readinessRun || window.__issue_4836_ready__ || window.__issue_4836_error__) {
+        return;
+      }
+      remainingFrames -= 1;
+      if (remainingFrames === 0) {
+        const missingKinds = (['link', 'button'] as const).filter(kind => !stagedControls.has(kind));
+        window.__issue_4836_error__ = missingKinds.length
+          ? `${missingKinds.join(' and ')} control${
+              missingKinds.length > 1 ? 's were' : ' was'
+            } not attached to a stage`
+          : 'Link and Button controls did not reach the ready state';
+        return;
+      }
+      scheduleAnimationFrame(checkReadyDeadline);
+    };
+
+    scheduleAnimationFrame(checkReadyDeadline);
 
     return () => {
       readinessRun += 1;
