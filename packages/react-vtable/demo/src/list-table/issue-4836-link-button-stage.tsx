@@ -1,6 +1,6 @@
 /* global window */
 import type { Tag } from '@visactor/vtable/es/vrender';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CustomLayoutFunctionArg } from '../../../src';
 import { Button, Group, Link, ListColumn, ListTable } from '../../../src';
 
@@ -143,18 +143,16 @@ function ActionCell(props: ActionCellProps) {
 }
 
 function App() {
-  const readinessToken = useRef({ active: false, run: 0 });
+  const [activeRun, setActiveRun] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     readinessRun += 1;
-    const token = readinessToken.current;
-    token.active = true;
-    token.run = readinessRun;
+    const run = readinessRun;
+    setActiveRun(run);
     stagedControls.clear();
     observedKinds.clear();
     window.__issue_4836_ready__ = false;
     delete window.__issue_4836_error__;
-    const run = token.run;
     let remainingFrames = 120;
 
     const checkReadyDeadline = () => {
@@ -177,8 +175,7 @@ function App() {
     scheduleAnimationFrame(checkReadyDeadline);
 
     return () => {
-      token.active = false;
-      if (readinessRun !== token.run) {
+      if (readinessRun !== run) {
         return;
       }
       readinessRun += 1;
@@ -190,14 +187,17 @@ function App() {
     };
   }, []);
 
+  if (activeRun === null) {
+    return null;
+  }
+
   return (
     <ListTable
       records={records}
       height="100%"
       defaultRowHeight={44}
       onError={error => {
-        const token = readinessToken.current;
-        if (!token.active || token.run !== readinessRun) {
+        if (activeRun !== readinessRun) {
           return;
         }
         window.__issue_4836_ready__ = false;
