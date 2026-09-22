@@ -1,5 +1,12 @@
 import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
+import * as React from 'react';
+import { Button } from '../../../packages/react-vtable/es/components/button/button';
+import { Link } from '../../../packages/react-vtable/es/components/link/link';
+import {
+  createReconcilerContainer,
+  reconcilor
+} from '../../../packages/react-vtable/es/table-components/custom/reconciler';
 import * as VTableEditors from '@visactor/vtable-editors';
 import * as VTableGantt from '@visactor/vtable-gantt';
 import {
@@ -61,8 +68,29 @@ const VTablePlugins = {
 window.VTablePlugins = VTablePlugins;
 // @ts-ignore
 window.VRender = VRender;
+// @ts-ignore
+window.ReactVTableTest = {
+  runDetachedCustomLayoutComponents() {
+    const testReconciler = reconcilor as typeof reconcilor & {
+      flushSyncWork?: () => unknown;
+      flushPassiveEffects?: () => unknown;
+    };
+
+    [React.createElement(Link, null, 'View'), React.createElement(Button, null, 'Open')].forEach(component => {
+      const detachedGroup = new VRender.Group({});
+      const container = createReconcilerContainer(detachedGroup);
+      testReconciler.updateContainer(component, container, null);
+      testReconciler.flushSyncWork?.();
+      testReconciler.flushPassiveEffects?.();
+      testReconciler.updateContainer(null, container, null);
+      testReconciler.flushSyncWork?.();
+      testReconciler.flushPassiveEffects?.();
+    });
+  }
+};
 
 export default {
+  React,
   VTable,
   VTableEditors,
   VTableGantt,

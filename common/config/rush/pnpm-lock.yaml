@@ -1849,6 +1849,9 @@ importers:
 
   ../../tools/bugserver-trigger:
     dependencies:
+      '@visactor/react-vtable':
+        specifier: workspace:1.26.8
+        version: link:../../packages/react-vtable
       '@visactor/vtable':
         specifier: workspace:1.26.8
         version: link:../../packages/vtable
@@ -1864,6 +1867,12 @@ importers:
       '@visactor/vtable-sheet':
         specifier: workspace:1.26.8
         version: link:../../packages/vtable-sheet
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      tslib:
+        specifier: 2.3.1
+        version: 2.3.1
     devDependencies:
       '@internal/bundler':
         specifier: workspace:*
@@ -1883,6 +1892,9 @@ importers:
       '@types/node-fetch':
         specifier: 2.6.4
         version: 2.6.4
+      '@types/react':
+        specifier: 18.2.79
+        version: 18.2.79
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
