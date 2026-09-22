@@ -68,9 +68,11 @@ const VTablePlugins = {
 window.VTablePlugins = VTablePlugins;
 // @ts-ignore
 window.VRender = VRender;
+const currentBundleUrl = (window.document.currentScript as HTMLScriptElement | null)?.src;
 // Invoked by Bugserver photo case 6ab1ded722ae4f0047df39bd before its required screenshot.
 // @ts-ignore
 window.ReactVTableTest = {
+  bundleUrl: currentBundleUrl,
   runDetachedCustomLayoutComponents() {
     const testReconciler = reconcilor as typeof reconcilor & {
       flushSyncWork?: () => unknown;
