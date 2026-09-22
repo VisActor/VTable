@@ -17,12 +17,26 @@ type ActionCellProps = CustomLayoutFunctionArg & {
 
 const stagedControls = new Map<ActionCellProps['kind'], Tag>();
 const observedKinds = new Set<ActionCellProps['kind']>();
+const scheduledAnimationFrames = new Set<number>();
 let readinessRun = 0;
 
 const records = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
   name: `Record ${index + 1}`
 }));
+
+function scheduleAnimationFrame(callback: () => void) {
+  const frameId = window.requestAnimationFrame(() => {
+    scheduledAnimationFrames.delete(frameId);
+    callback();
+  });
+  scheduledAnimationFrames.add(frameId);
+}
+
+function cancelScheduledAnimationFrames() {
+  scheduledAnimationFrames.forEach(frameId => window.cancelAnimationFrame(frameId));
+  scheduledAnimationFrames.clear();
+}
 
 function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
   if (observedKinds.has(kind)) {
@@ -42,7 +56,7 @@ function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
         window.__issue_4836_error__ = `${kind} control was not attached to a stage`;
         return;
       }
-      window.requestAnimationFrame(checkStage);
+      scheduleAnimationFrame(checkStage);
       return;
     }
 
@@ -52,7 +66,7 @@ function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
     }
 
     stagedControls.forEach(item => item.stage?.renderNextFrame?.());
-    window.requestAnimationFrame(() => {
+    scheduleAnimationFrame(() => {
       if (
         run === readinessRun &&
         !window.__issue_4836_error__ &&
@@ -63,7 +77,7 @@ function observeStageAttachment(kind: ActionCellProps['kind'], control: Tag) {
     });
   };
 
-  window.requestAnimationFrame(checkStage);
+  scheduleAnimationFrame(checkStage);
 }
 
 function ActionCell(props: ActionCellProps) {
@@ -142,6 +156,14 @@ function App() {
     observedKinds.clear();
     window.__issue_4836_ready__ = false;
     delete window.__issue_4836_error__;
+
+    return () => {
+      readinessRun += 1;
+      cancelScheduledAnimationFrames();
+      stagedControls.clear();
+      observedKinds.clear();
+      window.__issue_4836_ready__ = false;
+    };
   }, []);
 
   return (

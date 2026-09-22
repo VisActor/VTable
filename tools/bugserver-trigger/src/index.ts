@@ -1,5 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
+import { createStageFromVRenderApp } from '@visactor/vtable/es/vrender-app';
 import * as React from 'react';
 import { Button } from '../../../packages/react-vtable/es/components/button/button';
 import { Link } from '../../../packages/react-vtable/es/components/link/link';
@@ -82,12 +83,42 @@ window.ReactVTableTest = {
     [React.createElement(Link, null, 'View'), React.createElement(Button, null, 'Open')].forEach(component => {
       const detachedGroup = new VRender.Group({});
       const container = createReconcilerContainer(detachedGroup);
-      testReconciler.updateContainer(component, container, null);
-      testReconciler.flushSyncWork?.();
-      testReconciler.flushPassiveEffects?.();
-      testReconciler.updateContainer(null, container, null);
-      testReconciler.flushSyncWork?.();
-      testReconciler.flushPassiveEffects?.();
+      const canvas = window.document.createElement('canvas');
+      const { stage, releaseAppRef } = createStageFromVRenderApp(
+        {
+          canvas,
+          width: 200,
+          height: 80
+        },
+        { mode: 'browser', scope: 'react-custom-layout-components' }
+      );
+
+      try {
+        testReconciler.updateContainer(component, container, null);
+        testReconciler.flushSyncWork?.();
+        testReconciler.flushPassiveEffects?.();
+
+        const graphic = detachedGroup.firstChild;
+        if (!graphic) {
+          throw new Error('Custom layout component did not create a graphic');
+        }
+        if (graphic.stage) {
+          throw new Error('Custom layout component was attached to a stage before its group was mounted');
+        }
+
+        stage.defaultLayer.add(detachedGroup as unknown as Parameters<typeof stage.defaultLayer.add>[0]);
+        stage.render();
+
+        if (graphic.stage !== stage) {
+          throw new Error('Custom layout component was not attached to the rendered stage');
+        }
+      } finally {
+        testReconciler.updateContainer(null, container, null);
+        testReconciler.flushSyncWork?.();
+        testReconciler.flushPassiveEffects?.();
+        stage.release();
+        releaseAppRef();
+      }
     });
   }
 };
