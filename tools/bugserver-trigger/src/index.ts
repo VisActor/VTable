@@ -68,6 +68,7 @@ const VTablePlugins = {
 window.VTablePlugins = VTablePlugins;
 // @ts-ignore
 window.VRender = VRender;
+// Invoked by Bugserver photo case 6ab1ded722ae4f0047df39bd before its required screenshot.
 // @ts-ignore
 window.ReactVTableTest = {
   runDetachedCustomLayoutComponents() {
