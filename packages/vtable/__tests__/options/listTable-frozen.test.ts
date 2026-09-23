@@ -92,3 +92,43 @@ describe('listTable-frozen init test', () => {
     listTable.release();
   });
 });
+
+describe('listTable frozen columns in transpose mode', () => {
+  test('keeps configured columns frozen after a zero-width mount and scrolling', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '0px';
+    containerDom.style.height = '300px';
+
+    const transposeTable = new ListTable(containerDom, {
+      columns: [
+        { field: 'name', title: 'Name', width: 120 },
+        { field: 'value', title: 'Value', width: 120 }
+      ],
+      records: Array.from({ length: 10 }, (_, index) => ({
+        name: `name-${index}`,
+        value: `value-${index}`
+      })),
+      defaultColWidth: 120,
+      frozenColCount: 2,
+      transpose: true
+    });
+
+    expect(transposeTable.frozenColCount).toBe(2);
+    expect(transposeTable.scenegraph.getColGroup(0).parent).toBe(transposeTable.scenegraph.rowHeaderGroup);
+    expect(transposeTable.scenegraph.getColGroup(1).parent).toBe(transposeTable.scenegraph.rowHeaderGroup);
+    expect(transposeTable.scenegraph.getColGroup(2).parent).toBe(transposeTable.scenegraph.bodyGroup);
+
+    containerDom.style.width = '400px';
+    transposeTable.resize();
+    transposeTable.setScrollLeft(240);
+
+    expect(transposeTable.scrollLeft).toBeGreaterThan(0);
+    expect(transposeTable.scenegraph.getColGroup(0).parent).toBe(transposeTable.scenegraph.rowHeaderGroup);
+    expect(transposeTable.scenegraph.getColGroup(1).parent).toBe(transposeTable.scenegraph.rowHeaderGroup);
+    expect(transposeTable.scenegraph.getColGroup(2).parent).toBe(transposeTable.scenegraph.bodyGroup);
+
+    transposeTable.stateManager.clearFrozenObserver();
+    transposeTable.release();
+  });
+});

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "test: cover zero-width mounting and add a demo for frozen columns in transpose mode (GitHub #4111)",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

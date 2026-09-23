@@ -1229,6 +1229,10 @@ export const menus = [
     children: [
       {
         path: 'frozen',
+        name: 'issue-4111-transpose-frozen-columns'
+      },
+      {
+        path: 'frozen',
         name: 'list-table-bottom-frozen'
       },
       {
