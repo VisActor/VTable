@@ -17,6 +17,7 @@ export function createTable() {
     return;
   }
 
+  container.style.width = '0px';
   const tableInstance = new VTable.ListTable(container, {
     columns: [
       { field: 'name', title: 'Name', width: 120 },
@@ -31,4 +32,8 @@ export function createTable() {
   });
 
   window.tableInstance = tableInstance;
+
+  requestAnimationFrame(() => {
+    container.style.width = '';
+  });
 }
