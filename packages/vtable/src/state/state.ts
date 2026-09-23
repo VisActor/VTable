@@ -1105,6 +1105,10 @@ export class StateManager {
     }
   }
 
+  release() {
+    this.clearFrozenObserver();
+  }
+
   setFrozenCol(col: number) {
     if (col !== this.frozen.col) {
       // const oldFrozenCol = this.frozen.col;

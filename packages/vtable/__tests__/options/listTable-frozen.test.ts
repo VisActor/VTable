@@ -128,7 +128,11 @@ describe('listTable frozen columns in transpose mode', () => {
     expect(transposeTable.scenegraph.getColGroup(1).parent).toBe(transposeTable.scenegraph.rowHeaderGroup);
     expect(transposeTable.scenegraph.getColGroup(2).parent).toBe(transposeTable.scenegraph.bodyGroup);
 
-    transposeTable.stateManager.clearFrozenObserver();
+    const observer = transposeTable.stateManager._frozenObserver;
+    const disconnect = jest.spyOn(observer, 'disconnect');
     transposeTable.release();
+
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(transposeTable.stateManager._frozenObserver).toBeNull();
   });
 });
