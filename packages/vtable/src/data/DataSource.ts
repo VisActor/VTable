@@ -962,6 +962,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private _hasFilterInEffect(): boolean {
     return (this.dataConfig?.filterRules?.length ?? 0) >= 1 || (this.lastFilterRules?.length ?? 0) >= 1;
   }
+  /**
+   * body 中的显示索引 → this.records（数据源数组）索引。
+   * 排序或筛选后 currentIndexedData 保存的是「视图顺序 → 数据源顺序」的映射，
+   * 未排序/未筛选时它是恒等映射，此时直接返回 viewIndex。
+   */
+  private _getRecordIndexFromViewIndex(viewIndex: number): number {
+    const indexedData = this.currentIndexedData;
+    const mappedIndex = Array.isArray(indexedData) ? indexedData[viewIndex] : undefined;
+    return typeof mappedIndex === 'number' ? mappedIndex : viewIndex;
+  }
   private _normalizeInsertIndex(index: number, length: number): number {
     if (index === undefined || index === null) {
       return length;
@@ -1251,7 +1261,8 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       if (viewIndex >= this.records.length || viewIndex < 0) {
         continue;
       }
-      const deletedRecord = this.records[viewIndex];
+      // viewIndex 是 body 中的显示索引：排序后需先映射回数据源索引，否则会删到别的记录
+      const deletedRecord = this.records[this._getRecordIndexFromViewIndex(viewIndex)];
       const rawIndex = rawRecords.indexOf(deletedRecord);
       if (rawIndex >= 0) {
         rawRecords.splice(rawIndex, 1);
@@ -1349,7 +1360,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (recordIndex >= this.records.length || recordIndex < 0) {
           continue;
         }
-        const oldRecord = this.records[recordIndex];
+        const oldRecord = this.records[this._getRecordIndexFromViewIndex(recordIndex)];
         const rawIndex = rawRecords.indexOf(oldRecord);
         if (rawIndex >= 0) {
           rawRecords[rawIndex] = records[index];

@@ -427,4 +427,64 @@ describe('listTable data events test', () => {
     table.updateFilterRules(table.dataSource.dataConfig.filterRules as any);
     expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3']);
   });
+
+  test('deleteRecords on a sorted table should remove the source record shown in that row', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 降序排列后 body 第一行是 id 为 5 的记录
+    expect(table.getCellValue(0, table.columnHeaderLevelCount)).toBe(5);
+
+    table.deleteRecords([0]);
+
+    // 删除的是显示在第一行的记录（id 5），而不是数据源数组的第 0 条
+    expect(records.map(record => record.id)).toEqual([1, 2, 3, 4]);
+    expect(table.getCellValue(0, table.columnHeaderLevelCount)).toBe(4);
+  });
+
+  test('updateRecords on a sorted table should update the source record shown in that row', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    table.updateRecords([{ id: 5, name: 'Employee 5 updated' }], [0]);
+
+    // 更新的同样是显示在第一行的记录（id 5，数据源下标 4）
+    expect(records.map(record => record.id)).toEqual([1, 2, 3, 4, 5]);
+    expect(records[4].name).toBe('Employee 5 updated');
+    expect(table.getCellValue(1, table.columnHeaderLevelCount)).toBe('Employee 5 updated');
+  });
 });
