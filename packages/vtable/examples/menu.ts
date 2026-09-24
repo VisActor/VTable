@@ -96,6 +96,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-4111-transpose-frozen-observer'
+      },
+      {
+        path: 'debug',
         name: 'issue-5036-master-detail-search'
       },
       {
@@ -1227,6 +1231,10 @@ export const menus = [
   {
     menu: 'frozen',
     children: [
+      {
+        path: 'frozen',
+        name: 'issue-4111-transpose-frozen-columns'
+      },
       {
         path: 'frozen',
         name: 'list-table-bottom-frozen'

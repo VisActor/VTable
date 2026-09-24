@@ -2734,6 +2734,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     this.eventManager.release();
+    this.stateManager.release();
     internalProps.focusControl?.release?.();
     internalProps.legends?.forEach(legend => {
       legend?.release();
