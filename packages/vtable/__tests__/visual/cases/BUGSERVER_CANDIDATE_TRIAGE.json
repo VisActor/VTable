@@ -5,12 +5,12 @@
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
-    "deferred_interaction": 160,
+    "deferred_interaction": 157,
     "deferred_large_source": 70,
     "deferred_resource": 31,
     "deferred_static": 216,
-    "migrated": 40,
-    "privacy_excluded": 10
+    "migrated": 42,
+    "privacy_excluded": 11
   },
   "entries": [
     {
@@ -3251,9 +3251,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-custom-sort-click-colors",
+      "verification": "real sort-icon click + changed city order + two metric color mappings"
     },
     {
       "id": "65817239eab07e0091708bb8",
@@ -8029,9 +8030,10 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "drag-row-series-order",
+      "verification": "two row-series drags + record order + displayed order"
     },
     {
       "id": "673c5c17013a5500b2fe99e0",
@@ -9733,9 +9735,9 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains customer/order identifiers and product-level business records; source is excluded; no source-ID linkage to local cases"
     },
     {
       "id": "68ff1d7f07d0a000a8414c50",
