@@ -197,6 +197,13 @@ export const cases = [
   { id: 'scrollbar-ignore-frozen', purpose: '主横向滚动条跨越冻结列宽度', file: './frozen/scrollbar-ignore-frozen.mjs', bundles: ['vtable'] },
   { id: 'frozen-empty-records-header', purpose: '大量列滚动后清空记录保留冻结表头', file: './frozen/empty-records-header.mjs', bundles: ['vtable'] },
   { id: 'checkbox-header-options', purpose: '复选框表头回调固定选中与禁用配置', file: './cells/checkbox-header-options.mjs', bundles: ['vtable'] },
+  { id: 'link-merged-auto-height', purpose: '合并链接单元格在自动行高下禁用点击跳转', file: './cells/link-merged-auto-height.mjs', bundles: ['vtable'] },
+  { id: 'pivot-indicator-hide-frozen', purpose: '按列隐藏透视指标并冻结右列与底行', file: './pivot/indicator-hide-frozen.mjs', bundles: ['vtable'] },
+  { id: 'pivot-color-legend-order', purpose: '透视表标题先于顶部连续色彩图例布局', file: './pivot/color-legend-order.mjs', bundles: ['vtable'] },
+  { id: 'pivot-chart-spec-mark-line', purpose: '透视表回调图表配置及面积图阈值标记线', file: './pivot/chart-spec-mark-line.mjs', bundles: ['vchart'] },
+  { id: 'pivot-chart-area-axis-sort', purpose: '启用坐标轴排序配置的双系列透视面积图', file: './pivot-chart/area-axis-sort.mjs', bundles: ['vchart'] },
+  { id: 'pivot-chart-rose-indicator-title', purpose: '透视玫瑰图与可见指标标题', file: './pivot-chart/rose-indicator-title.mjs', bundles: ['vchart'] },
+  { id: 'plugin-excel-delete-range', purpose: 'Excel 键盘插件通过 Delete 清空可编辑选区', file: './plugins/excel-delete-range.mjs', bundles: ['plugins', 'editors'] },
 ];
 
 /** 从当前清单目录加载用例，冻结副本不会回到工作区取代码。 */
