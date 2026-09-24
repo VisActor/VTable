@@ -5,12 +5,12 @@
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
-    "deferred_interaction": 156,
+    "deferred_interaction": 136,
     "deferred_large_source": 70,
     "deferred_resource": 31,
     "deferred_static": 212,
-    "migrated": 46,
-    "privacy_excluded": 12
+    "migrated": 59,
+    "privacy_excluded": 19
   },
   "entries": [
     {
@@ -1769,9 +1769,10 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "layout-auto-fill-width-resize-container",
+      "verification": "dragged first-column width and remaining column after host resize"
     },
     {
       "id": "653249d776bd2d82b5ce5e67",
@@ -1899,9 +1900,10 @@
         "click",
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "checkbox-over-thousand-rows",
+      "verification": "scroll beyond 1000 rows and checkbox state changes"
     },
     {
       "id": "6540b514f95bdcf7c340d701",
@@ -1924,9 +1926,10 @@
         "drag",
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "layout-auto-fill-width-resize-container",
+      "verification": "stateManager resize, mouse drag and host width"
     },
     {
       "id": "6540b960f95bdcf7c340d702",
@@ -2224,9 +2227,10 @@
         "click",
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "double-click-auto-column-width",
+      "verification": "mouse drag then double-click changes measured width"
     },
     {
       "id": "6555f4339dabd71aa3845bb9",
@@ -2245,9 +2249,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "double-click-auto-width-height",
+      "verification": "double-click changes width with auto row height"
     },
     {
       "id": "6556050183c71200999f1f0c",
@@ -2287,9 +2292,9 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "6559c76e38a83fc5d23015a1",
@@ -2308,9 +2313,9 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "6559c7c838a83fc5d23015a4",
@@ -3365,9 +3370,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "disable-hover-columns",
+      "verification": "hover.cellPos, disableHover and disableHeaderHover"
     },
     {
       "id": "658c0a1b9f48b900833db069",
@@ -4181,9 +4187,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "api-update-columns-after-selection",
+      "verification": "click callback, updated header and selected range"
     },
     {
       "id": "65b2059f06085f008cf8f8f9",
@@ -4359,9 +4366,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-update-sort-rules-after-click",
+      "verification": "pivot sort click and updated region order"
     },
     {
       "id": "65c088a197cc3d008de5b484",
@@ -4403,9 +4411,9 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "65c0983d97cc3d008de5b495",
@@ -4426,9 +4434,9 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "65c09b2d97cc3d008de5b499",
@@ -4506,9 +4514,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "api-update-columns-on-mouseleave",
+      "verification": "mouseleave callback, colCount and cell value"
     },
     {
       "id": "65d4948797cc3d008de5b593",
@@ -5384,9 +5393,9 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "662e20c6d4511700f6885626",
@@ -7848,9 +7857,10 @@
         "click",
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-in-range",
+      "verification": "selected range spans header and body with highlightInRange"
     },
     {
       "id": "672c9d90e4bb4400b299cbd2",
@@ -8207,9 +8217,9 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "675f9c36bb067d00b20cdcc1",
@@ -9330,9 +9340,9 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business-like fields or values; source is not copied into the repository"
     },
     {
       "id": "683ea8ae83f5b200a644bb88",
@@ -10328,9 +10338,10 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-chart-brush-multiple-selection",
+      "verification": "chart brush drag triggers brushEnd"
     },
     {
       "id": "696739d9b71f44005d359b67",
@@ -10597,9 +10608,10 @@
         "click",
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "plugin-auto-fill-grid-tree-origin-value",
+      "verification": "fill-handle drag and copy-fill changes target cell value"
     },
     {
       "id": "6a1416f2709fdc006857f1dc",
@@ -10622,9 +10634,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-header-scroll-top",
+      "verification": "header selection and scrollTop after click"
     },
     {
       "id": "6a68957b3dd664005e729649",
