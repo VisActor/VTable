@@ -117,3 +117,6 @@ tsconfig.tsbuildinfo
 
 # codex
 .omx/
+
+# Local visual regression runs
+.vtable-visual/
