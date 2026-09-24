@@ -47,6 +47,7 @@
     "start": "vite serve examples",
     "test": "jest --silent",
     "test:firefox": "playwright test --config playwright.config.ts",
+    "test:visual": "node scripts/visual-test.mjs",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
     "build:es": "bundle --clean -f es --ignorePostTasks",
