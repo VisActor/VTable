@@ -34,19 +34,21 @@ export default {
     return table;
   },
   async exercise(page) {
-    // 三次点击分别落在圆周不同象限，保留来源的连续选择动作。
+    // 用图元数据求真实扇区坐标，避免图表在不同平台的单元格内偏移影响命中。
     const points = await page.evaluate(() => {
       const table = window.__visualTable;
       const cell = Array.from({ length: table.rowCount }, (_, row) =>
         Array.from({ length: table.colCount }, (_, col) => ({ col, row })))
         .flat().find(({ col, row }) => table.getCellType(col, row) === 'chart');
       if (!cell) throw new Error('饼图单元格未渲染');
-      const b = table.getCellRect(cell.col, cell.row).bounds;
+      const paths = table.getCellHeaderPaths(cell.col, cell.row);
       const host = document.getElementById('table').getBoundingClientRect();
-      const cx = host.x + (b.x1 + b.x2) / 2;
-      const cy = host.y + (b.y1 + b.y2) / 2;
-      return [{ x: cx + 70, y: cy }, { x: cx - 35, y: cy + 55 },
-        { x: cx - 20, y: cy - 60 }];
+      return [{ category: 'A', value: 6 }, { category: 'B', value: 9 }, { category: 'C', value: 12 }]
+        .map(datum => {
+          const position = table.getChartDatumPosition({ group: 'All', bucket: 'One', ...datum }, paths);
+          if (!position) throw new Error(`无法定位扇区 ${datum.category}`);
+          return { x: host.x + position.x, y: host.y + position.y };
+        });
     });
     for (const point of points) await page.mouse.click(point.x, point.y);
     await page.mouse.move(650, 350);
