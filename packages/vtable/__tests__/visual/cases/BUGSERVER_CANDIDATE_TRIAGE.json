@@ -6,10 +6,10 @@
   "counts": {
     "baseline_failure": 1,
     "deferred_interaction": 136,
-    "deferred_large_source": 70,
+    "deferred_large_source": 68,
     "deferred_resource": 31,
-    "deferred_static": 212,
-    "migrated": 59,
+    "deferred_static": 206,
+    "migrated": 67,
     "privacy_excluded": 19
   },
   "entries": [
@@ -1972,9 +1972,10 @@
         "click",
         "move"
       ],
-      "status": "deferred_large_source",
-      "priority": "P2",
-      "reason": "reduce the large source to a sanitized minimal fixture and verify its unique behavior"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-chart-area-axis-sort",
+      "verification": "area chart cell and rendered screenshot"
     },
     {
       "id": "6541ecf501e33ad70dc01e38",
@@ -2014,9 +2015,10 @@
       "methodSignals": [],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-indicator-hide-frozen",
+      "verification": "right and bottom frozen counts"
     },
     {
       "id": "654348a6b3dae69746d08701",
@@ -4565,9 +4567,10 @@
         "line"
       ],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-chart-spec-mark-line",
+      "verification": "chartSpec callback and two chart cells"
     },
     {
       "id": "65d59c5d97cc3d008de5b5a7",
@@ -8278,9 +8281,10 @@
       "methodSignals": [],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-indicator-hide-frozen",
+      "verification": "hidden indicator values and callback paths"
     },
     {
       "id": "676bb773df600200b24f54db",
@@ -10093,9 +10097,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "plugin-excel-delete-range",
+      "verification": "Delete clears selected editable range only"
     },
     {
       "id": "692d599f94f4f800664fe7a5",
@@ -10317,9 +10322,10 @@
         "rose"
       ],
       "actionKinds": [],
-      "status": "deferred_large_source",
-      "priority": "P2",
-      "reason": "reduce the large source to a sanitized minimal fixture and verify its unique behavior"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-chart-rose-indicator-title",
+      "verification": "rose chart cell and rendered screenshot"
     },
     {
       "id": "6954de338ff7e3005dfc6526",
@@ -10466,9 +10472,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "pivot-color-legend-order",
+      "verification": "visible legend bounds and top layout"
     },
     {
       "id": "697f0e81cfeff4005eb02fa4",
@@ -10764,9 +10771,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "link-merged-auto-height",
+      "verification": "link type, merged range, no navigation"
     },
     {
       "id": "6a8c044f1d0efd005e397e9f",
