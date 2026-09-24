@@ -5,11 +5,11 @@
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
-    "deferred_interaction": 176,
+    "deferred_interaction": 165,
     "deferred_large_source": 70,
     "deferred_resource": 31,
-    "deferred_static": 223,
-    "migrated": 20,
+    "deferred_static": 219,
+    "migrated": 35,
     "privacy_excluded": 7
   },
   "entries": [
@@ -169,9 +169,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "hover-cross",
+      "verification": "表头与表体真实悬停、cross 高亮状态及截图"
     },
     {
       "id": "647456e55d221c008666ee1d",
@@ -238,9 +239,10 @@
         "click",
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-drag-outside",
+      "verification": "单选、拖选、表头选择、表外点击后的范围及截图"
     },
     {
       "id": "64745a8d5d221c008666ee20",
@@ -515,9 +517,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "hover-row",
+      "verification": "表头与表体真实悬停、row 高亮状态及截图"
     },
     {
       "id": "647ddbcfeafb6dd17a28869b",
@@ -537,9 +540,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "hover-column",
+      "verification": "表头与表体真实悬停、column 高亮状态及截图"
     },
     {
       "id": "647ddbf6eafb6dd17a28869c",
@@ -559,9 +563,10 @@
       "actionKinds": [
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "hover-single",
+      "verification": "表头与表体真实悬停、single 高亮状态及截图"
     },
     {
       "id": "64b780578973e285ed4e5e0c",
@@ -1718,9 +1723,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-header-cell",
+      "verification": "表头点击后单格选择范围及截图"
     },
     {
       "id": "65322e87159a621b655d9eb9",
@@ -2066,9 +2072,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-column-disabled",
+      "verification": "列级禁选点击后无选择范围及截图"
     },
     {
       "id": "6544b3b14280163c75d7fa9b",
@@ -3438,9 +3445,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-global-disabled",
+      "verification": "全局禁选点击后无选择范围及截图"
     },
     {
       "id": "658d56ae20ffa2008c33ebf4",
@@ -3463,9 +3471,10 @@
         "click",
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-header-disabled-drag",
+      "verification": "表头禁选点击与真实列拖动后的字段顺序及截图"
     },
     {
       "id": "658e984a20ffa2008c33ec28",
@@ -7466,9 +7475,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "checkbox-header-options",
+      "verification": "四种复选框列配置、七条状态数据与截图"
     },
     {
       "id": "6704cd0d22f17300a767a2be",
@@ -9557,9 +9567,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "scrollbar-ignore-frozen",
+      "verification": "动态冻结、setScrollLeft 后主滚动条宽度与截图"
     },
     {
       "id": "68b012cb8af47900b375bce6",
@@ -10707,9 +10718,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "frozen-empty-records-header",
+      "verification": "311 列末端点击清空记录后左右冻结表头与截图"
     },
     {
       "id": "6a8597d0a44900005e2b8e47",
@@ -10840,9 +10852,10 @@
         "click",
         "move"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "frozen-shadow-start",
+      "verification": "横向滚动动作后回到起点；左右阴影可见性与截图"
     },
     {
       "id": "6aaba81349fc4f005c341b4d",
@@ -10861,9 +10874,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "frozen-shadow-end",
+      "verification": "setScrollLeft 到终点；左右阴影可见性与截图"
     },
     {
       "id": "6aaba8136d3a95005dc7fa6e",
@@ -10882,9 +10896,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "frozen-shadow-middle",
+      "verification": "setScrollLeft 到中间；左右阴影可见性与截图"
     }
   ]
 }
