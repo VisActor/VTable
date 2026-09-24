@@ -62,10 +62,40 @@ export function createTable() {
   const raceTable = createTable(raceContainer);
   issueWindow.__issue_4111_race_table__ = raceTable;
 
+  const originalSetTimeout = window.setTimeout;
+  const originalClearTimeout = window.clearTimeout;
+  const frozenCheckTimers = new Map<ReturnType<typeof setTimeout>, () => void>();
+  let captureFrozenCheck = false;
+  let timerId = 0;
+  let checkFrozenRanAfterRelease = false;
+  const restoreTimers = () => {
+    window.setTimeout = originalSetTimeout;
+    window.clearTimeout = originalClearTimeout;
+  };
+  window.setTimeout = ((callback: TimerHandler, timeout?: number) => {
+    if (captureFrozenCheck && timeout === 0) {
+      const id = (timerId += 1) as unknown as ReturnType<typeof setTimeout>;
+      frozenCheckTimers.set(id, () => {
+        if (typeof callback === 'function') {
+          callback();
+        }
+      });
+      return id;
+    }
+    return originalSetTimeout(callback, timeout);
+  }) as typeof window.setTimeout;
+  window.clearTimeout = ((id?: ReturnType<typeof setTimeout>) => {
+    if (id && frozenCheckTimers.delete(id)) {
+      return;
+    }
+    originalClearTimeout(id);
+  }) as typeof window.clearTimeout;
+
   const release = tableInstance.release.bind(tableInstance);
   tableInstance.release = () => {
     window.removeEventListener('error', onError);
     window.removeEventListener('unhandledrejection', onError);
+    restoreTimers();
     if (!raceTable.isReleased) {
       raceTable.release();
     }
@@ -79,11 +109,19 @@ export function createTable() {
 
   requestAnimationFrame(() => {
     container.style.width = '640px';
+    captureFrozenCheck = true;
     raceContainer.style.width = '640px';
 
     requestAnimationFrame(() => {
       const raceObserverRecovered = !raceTable.stateManager._frozenObserver;
+      raceTable.stateManager.checkFrozen = () => {
+        checkFrozenRanAfterRelease = true;
+      };
+      const queuedFrozenCheckBeforeRelease = frozenCheckTimers.size;
       raceTable.release();
+      const remainingTimerCallbacks = Array.from(frozenCheckTimers.values());
+      restoreTimers();
+      remainingTimerCallbacks.forEach(callback => callback());
 
       requestAnimationFrame(() => {
         tableInstance.setScrollLeft(240);
@@ -96,6 +134,8 @@ export function createTable() {
         const pass =
           visibleObserverRecovered &&
           raceObserverRecovered &&
+          queuedFrozenCheckBeforeRelease > 0 &&
+          !checkFrozenRanAfterRelease &&
           frozenColumnsRemainFixed &&
           !issueWindow.__issue_4111_error__;
 
@@ -103,7 +143,7 @@ export function createTable() {
         status.textContent =
           `${pass ? 'PASS' : 'FAIL'} | frozen=${tableInstance.frozenColCount} | ` +
           `scrollLeft=${tableInstance.scrollLeft} | observer recovery=${observerRecovery} | ` +
-          'released observer has no async error';
+          `queued check cancelled=${queuedFrozenCheckBeforeRelease > 0 && !checkFrozenRanAfterRelease ? 'yes' : 'no'}`;
         status.style.color = pass ? '#237804' : '#a8071a';
         status.style.borderLeft = `4px solid ${pass ? '#52c41a' : '#ff4d4f'}`;
         status.style.paddingLeft = '8px';
