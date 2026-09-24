@@ -5,12 +5,12 @@
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
-    "deferred_interaction": 165,
+    "deferred_interaction": 160,
     "deferred_large_source": 70,
     "deferred_resource": 31,
-    "deferred_static": 219,
-    "migrated": 35,
-    "privacy_excluded": 7
+    "deferred_static": 216,
+    "migrated": 40,
+    "privacy_excluded": 10
   },
   "entries": [
     {
@@ -3691,9 +3691,9 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains person names and identifier-like values; excluded after user review; separate anonymous API case has no source-ID linkage"
     },
     {
       "id": "659e667c6040570085cd3eea",
@@ -4738,9 +4738,9 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains person names and identifier-like values; excluded after user review; separate anonymous API case has no source-ID linkage"
     },
     {
       "id": "65e69335603de700d1d8b9e6",
@@ -4836,9 +4836,9 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains person names and identifier-like values; excluded after user review; separate anonymous API case has no source-ID linkage"
     },
     {
       "id": "65e7d4da603de700d1d8ba3d",
@@ -5759,9 +5759,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-row",
+      "verification": "body/header click order + selected range + highlightScope + visual theme"
     },
     {
       "id": "665eb726faec2700ad74954d",
@@ -5782,9 +5783,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-column",
+      "verification": "body/header click order + selected range + highlightScope + visual theme"
     },
     {
       "id": "665eb7fafaec2700ad749551",
@@ -5805,9 +5807,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-cross-theme",
+      "verification": "body/header click order + selected range + highlightScope + visual theme"
     },
     {
       "id": "665eba0ca4737f00b6623d44",
@@ -5829,9 +5832,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-cross-header-cell",
+      "verification": "body/header click order + selected range + highlightScope + visual theme"
     },
     {
       "id": "665ecceafaec2700ad749556",
@@ -5854,9 +5858,10 @@
       "actionKinds": [
         "click"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "select-highlight-cross-transpose",
+      "verification": "body/header click order + selected range + highlightScope + visual theme"
     },
     {
       "id": "665ecf14faec2700ad749559",
