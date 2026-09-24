@@ -3362,7 +3362,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           true
         );
       }
-      this.stateManager.endSelectCells(false, false);
+      // 批量设置选区时，收集完所有区域后再判断整个连通分量是否为矩形。
+      this.stateManager.endSelectCells(false, false, index === cellRanges.length - 1);
       this.stateManager.updateInteractionState(InteractionState.default);
     });
     // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
