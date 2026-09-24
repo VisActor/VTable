@@ -5,12 +5,12 @@
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
-    "deferred_interaction": 157,
+    "deferred_interaction": 156,
     "deferred_large_source": 70,
     "deferred_resource": 31,
     "deferred_static": 212,
     "migrated": 46,
-    "privacy_excluded": 11
+    "privacy_excluded": 12
   },
   "entries": [
     {
@@ -9206,9 +9206,9 @@
       "actionKinds": [
         "drag"
       ],
-      "status": "deferred_interaction",
-      "priority": "P1",
-      "reason": "recorded actions have no proven matching local action and assertion"
+      "status": "privacy_excluded",
+      "priority": null,
+      "reason": "source contains business process information; source is not copied into the repository"
     },
     {
       "id": "681c859484849700a73864dc",
