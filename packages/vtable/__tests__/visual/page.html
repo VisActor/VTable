@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>VTable visual regression</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: white; font-family: Arial, sans-serif; }
+      #table { position: relative; width: 800px; height: 600px; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    </style>
+  </head>
+  <body>
+    <div id="table"></div>
+    <script type="module">
+      import { cases, loadCase } from './cases/index.mjs';
+      import { settings } from './settings.mjs';
+      window.__visualErrors = [];
+      window.addEventListener('unhandledrejection', event => window.__visualErrors.push(String(event.reason)));
+      const params = new URLSearchParams(location.search);
+      const phase = params.get('phase');
+      const selected = cases.find(item => item.id === params.get('case'));
+      try {
+        if (!selected || !['baseline', 'current'].includes(phase)) throw new Error('Invalid visual test input');
+        const names = ['vtable', 'editors', 'gantt', 'plugins', 'sheet', 'vchart'].filter(name => name === 'vtable' || selected.bundles.includes(name));
+        for (const name of names) {
+          // 只加载本轮构建副本；用例不得退回源码或外网版本。
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = `/${phase}-${name}.js`;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error(`${name} bundle load failed`));
+            document.head.append(script);
+          });
+        }
+        const container = document.getElementById('table');
+        container.style.width = `${settings.table.width}px`;
+        container.style.height = `${settings.table.height}px`;
+        document.body.style.fontFamily = settings.fontFamily;
+        const item = await loadCase(selected);
+        window.__visualTable = await item.mount(container);
+        if (!window.__visualTable) throw new Error('用例未返回表格实例');
+        await window.__visualTable.renderAsync?.();
+        await document.fonts.ready;
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        window.__visualReady = true;
+      } catch (error) {
+        window.__visualErrors.push(String(error?.stack || error));
+      }
+    </script>
+  </body>
+</html>
