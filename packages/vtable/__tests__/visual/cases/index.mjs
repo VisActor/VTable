@@ -83,6 +83,7 @@ export const cases = [
   { id: 'pivot-calculated-field-hidden-dependencies', purpose: '未显示依赖指标的计算字段', file: './pivot/calculated-field-hidden-dependencies.mjs', bundles: ['vtable'] },
   { id: 'gantt-project-range-set-records', purpose: 'setRecords 项目时间边界重算', file: './gantt/project-range-set-records.mjs', bundles: ['gantt'] },
   { id: 'gantt-empty-mark-line', purpose: '无任务的固定日期标记线', file: './gantt/empty-mark-line.mjs', bundles: ['gantt'] },
+  { id: 'gantt-resize-task-list-header', purpose: 'Gantt 缩窄任务列表列头后双层时间轴保持布局', file: './gantt/resize-task-list-header.mjs', bundles: ['gantt'] },
   { id: 'gantt-baseline-overlap', purpose: '基线与任务条重叠布局', file: './gantt/baseline-overlap.mjs', bundles: ['gantt'] },
   { id: 'pivot-chart-heatmap-two-indicators', purpose: '双热力图数据流和颜色图例', file: './pivot-chart/heatmap-two-indicators.mjs', bundles: ['vchart'] },
   { id: 'sheet-update-option', purpose: 'Sheet 全量配置更新', file: './sheet/update-option.mjs', bundles: ['sheet'] },
