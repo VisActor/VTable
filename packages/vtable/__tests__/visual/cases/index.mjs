@@ -157,6 +157,21 @@ export const cases = [
   { id: 'pivot-corner-remaining-variants', purpose: '角头其余三种行列指标排列', file: './pivot/corner-remaining-variants.mjs', bundles: ['vtable'] },
   { id: 'pivot-resize-indicator-group', purpose: '指标组行高按比例一起拖动', file: './pivot/resize-indicator-group.mjs', bundles: ['vtable'] },
   { id: 'transpose-only-body-auto-width', purpose: '转置表仅按表体计算自动列宽', file: './transpose/only-body-auto-width.mjs', bundles: ['vtable'] },
+  { id: 'hover-cross', purpose: '表头与表体悬停的 cross 高亮模式', file: './interaction/hover-cross.mjs', bundles: ['vtable'] },
+  { id: 'hover-row', purpose: '表头与表体悬停的 row 高亮模式', file: './interaction/hover-row.mjs', bundles: ['vtable'] },
+  { id: 'hover-column', purpose: '表头与表体悬停的 column 高亮模式', file: './interaction/hover-column.mjs', bundles: ['vtable'] },
+  { id: 'hover-single', purpose: '表头与表体悬停的 single 高亮模式', file: './interaction/hover-single.mjs', bundles: ['vtable'] },
+  { id: 'select-drag-outside', purpose: '连续单选拖选表头选择与表外清选', file: './interaction/select-drag-outside.mjs', bundles: ['vtable'] },
+  { id: 'select-header-cell', purpose: '表头 cell 模式单格选择', file: './interaction/select-header-cell.mjs', bundles: ['vtable'] },
+  { id: 'select-column-disabled', purpose: '列级表体与表头禁选', file: './interaction/select-column-disabled.mjs', bundles: ['vtable'] },
+  { id: 'select-global-disabled', purpose: '全局禁选表体与表头', file: './interaction/select-global-disabled.mjs', bundles: ['vtable'] },
+  { id: 'select-header-disabled-drag', purpose: '表头禁选下的表体选择与列拖动', file: './interaction/select-header-disabled-drag.mjs', bundles: ['vtable'] },
+  { id: 'frozen-shadow-start', purpose: '冻结列 overflow 阴影在 start 位置的可见性', file: './frozen/frozen-shadow-start.mjs', bundles: ['vtable'] },
+  { id: 'frozen-shadow-end', purpose: '冻结列 overflow 阴影在 end 位置的可见性', file: './frozen/frozen-shadow-end.mjs', bundles: ['vtable'] },
+  { id: 'frozen-shadow-middle', purpose: '冻结列 overflow 阴影在 middle 位置的可见性', file: './frozen/frozen-shadow-middle.mjs', bundles: ['vtable'] },
+  { id: 'scrollbar-ignore-frozen', purpose: '主横向滚动条跨越冻结列宽度', file: './frozen/scrollbar-ignore-frozen.mjs', bundles: ['vtable'] },
+  { id: 'frozen-empty-records-header', purpose: '大量列滚动后清空记录保留冻结表头', file: './frozen/empty-records-header.mjs', bundles: ['vtable'] },
+  { id: 'checkbox-header-options', purpose: '复选框表头回调固定选中与禁用配置', file: './cells/checkbox-header-options.mjs', bundles: ['vtable'] },
 ];
 
 /** 从当前清单目录加载用例，冻结副本不会回到工作区取代码。 */
