@@ -1,15 +1,15 @@
 {
   "product": "VTable",
   "sourceSnapshotDigest": "de03690e63b7859f62ae14d4efc521951a1ce71d9d5db33881bcf98c37b54d1c",
-  "officialBaselineSha": "464c0630f7123fff5b398229fa81680a75a96430",
+  "officialBaselineSha": "4e5ce4540dc5fb223360d5d7c08efdcfd56b3d78",
   "method": "A migrated entry names an executed local case and its assertion. Deferred entries are explicitly unproven; shared option names or AST shapes do not establish equivalence.",
   "counts": {
     "baseline_failure": 1,
     "deferred_interaction": 157,
     "deferred_large_source": 70,
     "deferred_resource": 31,
-    "deferred_static": 216,
-    "migrated": 42,
+    "deferred_static": 212,
+    "migrated": 46,
     "privacy_excluded": 11
   },
   "entries": [
@@ -9755,9 +9755,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "sheet-insert-columns-before-second",
+      "verification": "公式结果、列数和第二列前插入后的数值位置"
     },
     {
       "id": "68ff1e7c479d9000abdefaf9",
@@ -9775,9 +9776,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "sheet-insert-columns-before-third",
+      "verification": "公式结果、列数和第三列前插入后的数值位置"
     },
     {
       "id": "68ff243743ec0700a96ec5b8",
@@ -9795,9 +9797,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "sheet-insert-rows-at-start",
+      "verification": "公式结果、行数和首条记录前插入后的数值位置"
     },
     {
       "id": "6915877abea5bb00a82e33e3",
@@ -10518,9 +10521,10 @@
       ],
       "chartTypes": [],
       "actionKinds": [],
-      "status": "deferred_static",
-      "priority": "P2",
-      "reason": "configuration or data variant has no proven matching local assertion"
+      "status": "migrated",
+      "priority": null,
+      "localCase": "sheet-insert-rows-after-first",
+      "verification": "公式结果、行数和第二条记录前插入后的数值位置"
     },
     {
       "id": "69899af7657c7a005c098ad8",
