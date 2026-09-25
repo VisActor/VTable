@@ -101,6 +101,9 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
     if (customRow) {
       this.row = customRow.distRow;
       animation = customRow.animation ?? true;
+    } else if (this.row >= this.table.rowCount - 1) {
+      this.row = this.table.frozenRowCount;
+      animation = false;
     } else if (isInteger(this.row) && screenTopRow !== this.row) {
       this.row = this.table.frozenRowCount;
       animation = false;
@@ -120,7 +123,6 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
         this.willUpdateRow = false;
         this.updateRow();
       },
-      // animation ? this.animationDuration + this.animationDelay : 0
       this.animationDuration + this.animationDelay
     );
   }
@@ -135,6 +137,9 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
     if (customCol) {
       this.col = customCol.distCol;
       animation = customCol.animation ?? true;
+    } else if (this.col >= this.table.colCount - 1) {
+      this.col = this.table.frozenColCount;
+      animation = false;
     } else if (isInteger(this.col) && this.table.scenegraph.proxy.screenLeftCol !== this.col) {
       this.col = this.table.frozenColCount;
       animation = false;
@@ -156,7 +161,6 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
         this.willUpdateCol = false;
         this.updateCol();
       },
-      // animation ? this.animationDuration + this.animationDelay : 0
       this.animationDuration + this.animationDelay
     );
   }
