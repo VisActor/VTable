@@ -5309,18 +5309,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : 3000;
     this.animationManager.scrollTo({ row: targetRow }, animationOption);
-    if (targetRowInt === targetRow) {
-      this._scrollToRowCorrectTimer = setTimeout(() => {
-        this.scrollToRow(targetRowInt, false);
-      }, duration);
-    }
+    this._scrollToRowCorrectTimer = setTimeout(() => {
+      this.scrollToRow(targetRowInt, false);
+    }, duration);
   }
   scrollToCol(col: number, animationOption?: ITableAnimationOption | boolean) {
     if (!animationOption) {
       this.scrollToCell({ col });
       return;
     }
+    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : 3000;
     this.animationManager.scrollTo({ col }, animationOption);
+    setTimeout(() => {
+      this.scrollToCell({ col: Math.floor(col) });
+      this.render();
+    }, duration);
   }
   /**
    * 滚动到具体某个单元格位置
