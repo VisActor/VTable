@@ -14,6 +14,37 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
     return;
   }
 
+  // 非实时响应模式：仅累积偏移量并移动指示线，实际行高在拖拽结束时统一应用
+  if (state.table.internalProps.resizeRealtime === false) {
+    state.rowResize.pendingDeltaY = (state.rowResize.pendingDeltaY ?? 0) + detaY;
+    state.rowResize.y = yInTable;
+    state.table.scenegraph.component.updateResizeRow(
+      state.rowResize.row,
+      xInTable,
+      state.rowResize.isBottomFrozen,
+      state.rowResize.pendingDeltaY
+    );
+    state.table.scenegraph.updateNextFrame();
+    return;
+  }
+
+  applyRowResizeDelta(detaY, xInTable, yInTable, state);
+}
+
+/** 非实时响应模式下，在拖拽结束时提交累计的高度变化 */
+export function commitPendingRowResize(state: StateManager) {
+  const pending = state.rowResize.pendingDeltaY ?? 0;
+  state.rowResize.pendingDeltaY = 0;
+  if (Math.abs(pending) < 1) {
+    return;
+  }
+  const isBottomFrozen = state.rowResize.isBottomFrozen;
+  const currentY = state.rowResize.y;
+  const targetY = isBottomFrozen ? currentY - pending : currentY + pending;
+  applyRowResizeDelta(pending, currentY, targetY, state);
+}
+
+function applyRowResizeDelta(detaY: number, xInTable: number, yInTable: number, state: StateManager) {
   const heightCache = state.table.getRowHeight(state.rowResize.row);
   let height = heightCache;
   height += detaY;
