@@ -162,6 +162,8 @@ export const cases = [
   { id: 'pivot-empty-string-dimension', purpose: '透视空字符串列维度与普通列并存', file: './pivot/empty-string-dimension.mjs', bundles: ['vtable'] },
   { id: 'pivot-chart-pie-multi-select', purpose: '透视饼图连续扇区多选', file: './pivot-chart/pie-multi-select.mjs', bundles: ['vchart'] },
   { id: 'resize-row-height', purpose: '列表选择后拖动行边界调整行高', file: './interaction/resize-row-height.mjs', bundles: ['vtable'] },
+  { id: 'resize-column-non-realtime', purpose: 'resize.realtime=false 时列宽仅在鼠标松开后应用', file: './interaction/resize-column-non-realtime.mjs', bundles: ['vtable'] },
+  { id: 'resize-column-realtime-default', purpose: 'resize.realtime 默认 true 时列宽实时随拖拽变化', file: './interaction/resize-column-realtime-default.mjs', bundles: ['vtable'] },
   { id: 'pivot-resize-indicator-row', purpose: '指标行上的透视表拖动行高', file: './pivot/resize-indicator-row.mjs', bundles: ['vtable'] },
   { id: 'pivot-corner-sort-one-dimension', purpose: '单级角头维度初始降序状态与排序图标', file: './pivot/corner-sort-one-dimension.mjs', bundles: ['vtable'] },
   { id: 'pivot-corner-sort-two-dimensions', purpose: '两级角头维度初始降序状态与排序图标', file: './pivot/corner-sort-two-dimensions.mjs', bundles: ['vtable'] },

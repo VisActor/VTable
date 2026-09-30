@@ -14,15 +14,40 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     return;
   }
 
+  // 非实时响应模式：仅累积偏移量并移动指示线，实际列宽在拖拽结束时统一应用
+  if (state.table.internalProps.resizeRealtime === false) {
+    state.columnResize.pendingDeltaX = (state.columnResize.pendingDeltaX ?? 0) + detaX;
+    state.columnResize.x = xInTable;
+    state.table.scenegraph.component.updateResizeCol(
+      state.columnResize.col,
+      yInTable,
+      state.columnResize.isRightFrozen,
+      state.columnResize.pendingDeltaX
+    );
+    state.table.scenegraph.updateNextFrame();
+    return;
+  }
+
+  applyColumnResizeDelta(detaX, xInTable, yInTable, state);
+}
+
+/** 非实时响应模式下，在拖拽结束时提交累计的宽度变化 */
+export function commitPendingColumnResize(state: StateManager) {
+  const pending = state.columnResize.pendingDeltaX ?? 0;
+  state.columnResize.pendingDeltaX = 0;
+  if (Math.abs(pending) < 1) {
+    return;
+  }
+  // 用当前列坐标+累计偏移量作为最终位置，复用实时模式的处理逻辑
+  const isRightFrozen = state.columnResize.isRightFrozen;
+  const currentX = state.columnResize.x;
+  const targetX = isRightFrozen ? currentX - pending : currentX + pending;
+  applyColumnResizeDelta(pending, targetX, currentX, state);
+}
+
+function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: number, state: StateManager) {
   // 检查minWidth/maxWidth
-  // getColWidth会进行Math.round，所以先从colWidthsMap获取：
-  // 如果是数值，直接使用；如果不是，则通过getColWidth获取像素值
-  // let widthCache = (state.table as any).colWidthsMap.get(state.columnResize.col);
-  // if (typeof widthCache === 'number') {
-  //   widthCache = widthCache;
-  // } else {
   const widthCache = state.table.getColWidth(state.columnResize.col);
-  // }
   let width = widthCache;
   width += detaX;
   const minWidth = state.table.getMinColWidth(state.columnResize.col);
@@ -80,17 +105,6 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     updateResizeColForColumn(detaX, state);
   }
 
-  // if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
-  //   // in adaptive mode, the right column width can not be negative
-  //   const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
-  //   if (rightColWidth - detaX < 0) {
-  //     detaX = rightColWidth;
-  //   }
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
-  // } else {
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-  // }
   state.columnResize.x = xInTable;
 
   // update resize column component
