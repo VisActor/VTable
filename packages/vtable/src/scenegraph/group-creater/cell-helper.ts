@@ -1260,6 +1260,10 @@ function canUseComplexCellFastUpdate(
     !define ||
     addNew ||
     oldCellGroup.role !== 'cell' ||
+    isValid(oldCellGroup.mergeStartCol) ||
+    isValid(oldCellGroup.mergeStartRow) ||
+    isValid(oldCellGroup.mergeEndCol) ||
+    isValid(oldCellGroup.mergeEndRow) ||
     oldCellHasIcon ||
     !!oldCellGroup.getChildByName(CUSTOM_CONTAINER_NAME) ||
     range ||

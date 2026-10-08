@@ -15,6 +15,7 @@ const COLUMNS = readNumber('BENCHMARK_COLUMNS', 64);
 const TIMEOUT = readNumber('BENCHMARK_TIMEOUT', 30000);
 const MAX_SCROLL_P95_RATIO = readNumber('BENCHMARK_MAX_SCROLL_P95_RATIO', 2.6);
 const MAX_JUMP_DURATION_RATIO = readNumber('BENCHMARK_MAX_JUMP_DURATION_RATIO', 3.1);
+const MAX_JUMP_ELAPSED_RATIO = readNumber('BENCHMARK_MAX_JUMP_ELAPSED_RATIO', 2.5);
 
 const rootDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const viteCli = path.join(rootDirectory, 'node_modules', 'vite', 'bin', 'vite.js');
@@ -223,6 +224,7 @@ function evaluateThresholds(results) {
   const failures = [];
   const scrollP95Limit = results.scroll.text.frameGapP95 * MAX_SCROLL_P95_RATIO + 4;
   const jumpDurationLimit = results.jump.text.jumpDuration * MAX_JUMP_DURATION_RATIO + 5;
+  const jumpElapsedLimit = results.jump.text.elapsed * MAX_JUMP_ELAPSED_RATIO + 100;
 
   if (results.scroll.complex.frameGapP95 > scrollP95Limit) {
     failures.push(
@@ -238,6 +240,11 @@ function evaluateThresholds(results) {
       )}ms`
     );
   }
+  if (results.jump.complex.elapsed > jumpElapsedLimit) {
+    failures.push(
+      `jump completion time ${results.jump.complex.elapsed}ms exceeds relative limit ${round(jumpElapsedLimit)}ms`
+    );
+  }
 
   return {
     comparisons,
@@ -245,7 +252,9 @@ function evaluateThresholds(results) {
       maxScrollP95Ratio: MAX_SCROLL_P95_RATIO,
       scrollP95AdditiveTolerance: 4,
       maxJumpDurationRatio: MAX_JUMP_DURATION_RATIO,
-      jumpDurationAdditiveTolerance: 5
+      jumpDurationAdditiveTolerance: 5,
+      maxJumpElapsedRatio: MAX_JUMP_ELAPSED_RATIO,
+      jumpElapsedAdditiveTolerance: 100
     },
     failures
   };
@@ -260,8 +269,13 @@ function formatSummary(result) {
     result.jump.text.jumpDuration * result.evaluation.thresholds.maxJumpDurationRatio +
       result.evaluation.thresholds.jumpDurationAdditiveTolerance
   );
+  const jumpElapsedLimit = round(
+    result.jump.text.elapsed * result.evaluation.thresholds.maxJumpElapsedRatio +
+      result.evaluation.thresholds.jumpElapsedAdditiveTolerance
+  );
   const scrollP95Passed = result.scroll.complex.frameGapP95 <= scrollP95Limit;
   const jumpDurationPassed = result.jump.complex.jumpDuration <= jumpDurationLimit;
+  const jumpElapsedPassed = result.jump.complex.elapsed <= jumpElapsedLimit;
   const passed = result.evaluation.failures.length === 0;
   const lines = [
     '## VTable scroll performance benchmark',
@@ -282,6 +296,11 @@ function formatSummary(result) {
     } ms | ${result.evaluation.comparisons.jumpDurationRatio}x | ${jumpDurationLimit} ms | ${
       jumpDurationPassed ? 'PASS' : 'FAIL'
     } |`,
+    `| Jump completion time | ${result.jump.text.elapsed} ms | ${
+      result.jump.complex.elapsed
+    } ms | ${result.evaluation.comparisons.jumpElapsedRatio}x | ${jumpElapsedLimit} ms | ${
+      jumpElapsedPassed ? 'PASS' : 'FAIL'
+    } |`,
     '',
     '### Diagnostics',
     '',
@@ -295,9 +314,6 @@ function formatSummary(result) {
     `| Scroll long-task time | ${result.scroll.text.longTaskTime} ms | ${
       result.scroll.complex.longTaskTime
     } ms | ${formatRatio(result.scroll.complex.longTaskTime, result.scroll.text.longTaskTime)} |`,
-    `| Jump completion time | ${result.jump.text.elapsed} ms | ${result.jump.complex.elapsed} ms | ${
-      result.evaluation.comparisons.jumpElapsedRatio
-    }x |`,
     '',
     '<details>',
     '<summary>Run configuration</summary>',

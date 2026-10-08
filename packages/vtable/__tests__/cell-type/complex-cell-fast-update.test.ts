@@ -228,6 +228,53 @@ describe('complex cell fast update', () => {
     table.release();
   });
 
+  test('falls back when reusable complex cells retain stale merge metadata', () => {
+    const container = createDiv();
+    container.style.width = '1000px';
+    container.style.height = '300px';
+
+    const table = new ListTable(container, {
+      records: [
+        {
+          checkbox: { text: 'Ready', checked: true },
+          switch: { text: '', checked: false },
+          button: 'Open',
+          progress: 25
+        }
+      ],
+      columns: [
+        { field: 'checkbox', cellType: 'checkbox', width: 160 },
+        { field: 'switch', cellType: 'switch', width: 160 },
+        { field: 'button', cellType: 'button', width: 160 },
+        { field: 'progress', cellType: 'progressbar', width: 160, min: 0, max: 100 }
+      ],
+      defaultRowHeight: 40
+    });
+
+    const cellGroups = [0, 1, 2, 3].map(col => table.scenegraph.getCell(col, 1));
+    cellGroups.forEach(cellGroup => {
+      cellGroup.mergeStartCol = 0;
+      cellGroup.mergeStartRow = 1;
+      cellGroup.mergeEndCol = 1;
+      cellGroup.mergeEndRow = 1;
+    });
+
+    cellGroups.forEach((_, col) => {
+      table.scenegraph.updateCellContent(col, 1);
+    });
+
+    cellGroups.forEach((cellGroup, col) => {
+      const updatedCellGroup = table.scenegraph.getCell(col, 1);
+      expect(updatedCellGroup).not.toBe(cellGroup);
+      expect(updatedCellGroup.mergeStartCol).toBeUndefined();
+      expect(updatedCellGroup.mergeStartRow).toBeUndefined();
+      expect(updatedCellGroup.mergeEndCol).toBeUndefined();
+      expect(updatedCellGroup.mergeEndRow).toBeUndefined();
+    });
+
+    table.release();
+  });
+
   test('falls back when table customRender is configured', () => {
     const container = createDiv();
     container.style.width = '400px';
