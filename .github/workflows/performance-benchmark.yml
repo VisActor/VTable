@@ -23,6 +23,9 @@ on:
       - 'common/config/rush/pnpm-lock.yaml'
       - '.github/workflows/performance-benchmark.yml'
 
+permissions:
+  contents: read
+
 jobs:
   scroll-performance:
     runs-on: ubuntu-latest
