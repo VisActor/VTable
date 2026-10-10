@@ -962,6 +962,29 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   private _hasFilterInEffect(): boolean {
     return (this.dataConfig?.filterRules?.length ?? 0) >= 1 || (this.lastFilterRules?.length ?? 0) >= 1;
   }
+  /**
+   * body 中的显示索引 → this.records（数据源数组）索引。
+   * body 显示索引是「当前页」内的索引：分页时当前页的映射保存在 _currentPagerIndexedData 中
+   * （等价于 getRecordIndexPaths(viewIndex)），未分页时它与 currentIndexedData 一致。
+   * 排序/筛选后它们保存的是「视图顺序 → 数据源顺序」的映射，未排序/未筛选时是恒等映射。
+   */
+  private _getRecordIndexFromViewIndex(viewIndex: number): number {
+    const pagerIndexedData = this._currentPagerIndexedData;
+    let mappedIndex: number | number[] | undefined;
+    if (Array.isArray(pagerIndexedData) && viewIndex >= 0 && viewIndex < pagerIndexedData.length) {
+      mappedIndex = pagerIndexedData[viewIndex];
+    }
+    if (mappedIndex === undefined) {
+      const indexedData = this.currentIndexedData;
+      mappedIndex = Array.isArray(indexedData) && viewIndex >= 0 ? indexedData[viewIndex] : undefined;
+    }
+    return typeof mappedIndex === 'number' ? mappedIndex : viewIndex;
+  }
+  /** body 显示索引的有效范围：分页时为当前页行数，否则为数据源长度 */
+  private _getViewRecordCount(): number {
+    const pagerIndexedData = this._currentPagerIndexedData;
+    return Array.isArray(pagerIndexedData) && pagerIndexedData.length > 0 ? pagerIndexedData.length : this.records.length;
+  }
   private _normalizeInsertIndex(index: number, length: number): number {
     if (index === undefined || index === null) {
       return length;
@@ -1244,20 +1267,36 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
 
     const realDeletedRecordIndexs: number[] = [];
-    const recordIndexsMaxToMin = recordIndexs.slice().sort((a, b) => b - a);
     const rawDeletedIndexs: number[] = [];
+    // 先一次性把 body 显示索引解析为「待删记录 + 原始下标」，再按原始下标降序删除：
+    // rawRecords 与 this.records 是同一数组（无筛选）时，边解析边 splice 会使后续映射失效、漏删记录
+    // （如降序表批量删除视图行 [0,1] 时只删掉一条）。
+    const pendingDeletes: number[] = [];
+    const handledViewIndexs = new Set<number>();
+    const recordIndexsMaxToMin = recordIndexs.slice().sort((a, b) => b - a);
+    const viewRecordCount = this._getViewRecordCount();
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const viewIndex = recordIndexsMaxToMin[index];
-      if (viewIndex >= this.records.length || viewIndex < 0) {
+      if (viewIndex < 0 || viewIndex >= viewRecordCount || handledViewIndexs.has(viewIndex)) {
         continue;
       }
-      const deletedRecord = this.records[viewIndex];
-      const rawIndex = rawRecords.indexOf(deletedRecord);
-      if (rawIndex >= 0) {
-        rawRecords.splice(rawIndex, 1);
-        rawDeletedIndexs.push(rawIndex);
+      handledViewIndexs.add(viewIndex);
+      // viewIndex 是 body 中的显示索引：分页/排序后需先映射回数据源索引，否则会删到别的记录
+      const deletedRecord = this.records[this._getRecordIndexFromViewIndex(viewIndex)];
+      if (deletedRecord === undefined) {
+        continue;
       }
       realDeletedRecordIndexs.push(viewIndex);
+      const rawIndex = rawRecords.indexOf(deletedRecord);
+      if (rawIndex >= 0) {
+        pendingDeletes.push(rawIndex);
+      }
+    }
+    // 按原始下标从大到小删除，保证前面的删除不影响后面的下标
+    pendingDeletes.sort((a, b) => b - a);
+    for (let index = 0; index < pendingDeletes.length; index++) {
+      rawRecords.splice(pendingDeletes[index], 1);
+      rawDeletedIndexs.push(pendingDeletes[index]);
     }
 
     this.beforeChangedRecordsMap.clear();
@@ -1346,10 +1385,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           return acc[key].children;
         }, rawRecords)[recordIndex[recordIndex.length - 1]] = records[index];
       } else {
-        if (recordIndex >= this.records.length || recordIndex < 0) {
+        if (recordIndex >= this._getViewRecordCount() || recordIndex < 0) {
           continue;
         }
-        const oldRecord = this.records[recordIndex];
+        const oldRecord = this.records[this._getRecordIndexFromViewIndex(recordIndex)];
         const rawIndex = rawRecords.indexOf(oldRecord);
         if (rawIndex >= 0) {
           rawRecords[rawIndex] = records[index];
