@@ -8,7 +8,7 @@ import type { StateManager } from '../state';
 export function updateResizeRow(xInTable: number, yInTable: number, state: StateManager) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
-  let detaY = state.rowResize.isBottomFrozen ? state.rowResize.y - yInTable : yInTable - state.rowResize.y;
+  const detaY = state.rowResize.isBottomFrozen ? state.rowResize.y - yInTable : yInTable - state.rowResize.y;
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaY) < 1) {
     return;
@@ -57,10 +57,11 @@ function applyRowResizeDelta(detaY: number, xInTable: number, yInTable: number, 
   }
   if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
     const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
-    let bottomRowHeight = bottomRowHeightCache;
-    bottomRowHeight -= detaY;
-    if (bottomRowHeight - detaY < state.table.internalProps.limitMinHeight) {
-      detaY = bottomRowHeight - state.table.internalProps.limitMinHeight;
+    // 下方相邻行承接相反方向的位移，目标高度为 bottomRowHeightCache - detaY。
+    const bottomRowHeight = bottomRowHeightCache - detaY;
+    // limitMinHeight 用目标高度判断，不再二次扣减 detaY，避免与指示线终点、实时模式不一致。
+    if (bottomRowHeight < state.table.internalProps.limitMinHeight) {
+      detaY = bottomRowHeightCache - state.table.internalProps.limitMinHeight;
     }
   }
   detaY = Math.ceil(detaY);

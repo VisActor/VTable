@@ -40,7 +40,7 @@ export function createTable() {
   // 提供简单的运行时切换按钮，便于对比两种模式的手感
   const bar = document.createElement('div');
   bar.style.cssText = [
-    'position:fixed',
+    'position:absolute',
     'top:10px',
     'right:10px',
     'z-index:9999',
@@ -56,7 +56,9 @@ export function createTable() {
     <div style="margin-bottom:6px;">当前 resize.realtime = <b id="__realtime_state">false</b></div>
     <button id="__toggle_realtime">切换为 实时响应(true)</button>
   `;
-  document.body.appendChild(bar);
+  // 挂进表格根元素内部（position:relative）而非 document.body，
+  // 这样切换到其他 demo、容器被清空时按钮会随之移除，不会残留在页面右上角
+  instance.getElement().appendChild(bar);
   let current = false;
   bar.querySelector('#__toggle_realtime')!.addEventListener('click', () => {
     current = !current;

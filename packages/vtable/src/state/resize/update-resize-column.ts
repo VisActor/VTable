@@ -8,7 +8,7 @@ import type { StateManager } from '../state';
 export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManager) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
-  let detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
+  const detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaX) < 1) {
     return;
@@ -52,14 +52,18 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
   width += detaX;
   const minWidth = state.table.getMinColWidth(state.columnResize.col);
   const maxWidth = state.table.getMaxColWidth(state.columnResize.col);
-  if (width < minWidth || width > maxWidth) {
-    if (widthCache === minWidth || widthCache === maxWidth) {
+  // 按目标宽度的越界方向 clamp：目标值过小时贴 minWidth，过大时贴 maxWidth。
+  // 非实时模式会把整段 pendingDeltaX 一次传入，若按“当前宽度离哪个边界更近”选择边界会产生反向 resize。
+  if (width < minWidth) {
+    if (widthCache === minWidth) {
       return;
-    } else if (widthCache - minWidth > maxWidth - widthCache) {
-      detaX = maxWidth - widthCache;
-    } else {
-      detaX = minWidth - widthCache;
     }
+    detaX = minWidth - widthCache;
+  } else if (width > maxWidth) {
+    if (widthCache === maxWidth) {
+      return;
+    }
+    detaX = maxWidth - widthCache;
   }
 
   // limitMinWidth限制
@@ -72,19 +76,23 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
     const rightColWidthCache = state.table.getColWidth(state.columnResize.col + 1);
     const rightColMinWidth = state.table.getMinColWidth(state.columnResize.col + 1);
     const rightColMaxWidth = state.table.getMaxColWidth(state.columnResize.col + 1);
-    let rightColWidth = rightColWidthCache;
-    rightColWidth -= detaX;
-    if (rightColWidth < rightColMinWidth || rightColWidth > rightColMaxWidth) {
-      if (rightColWidthCache === rightColMinWidth || rightColWidthCache === rightColMaxWidth) {
+    // 右侧相邻列承接相反方向的位移，目标宽度为 rightColWidthCache - detaX。
+    const rightColWidth = rightColWidthCache - detaX;
+    // 按目标宽度的越界方向 clamp：右列过窄时贴 min，过宽时贴 max。
+    if (rightColWidth < rightColMinWidth) {
+      if (rightColWidthCache === rightColMinWidth) {
         return;
-      } else if (rightColWidthCache - rightColMinWidth > rightColMaxWidth - rightColWidthCache) {
-        detaX = rightColMaxWidth - rightColWidthCache;
-      } else {
-        detaX = rightColMinWidth - rightColWidthCache;
       }
+      detaX = rightColWidthCache - rightColMinWidth;
+    } else if (rightColWidth > rightColMaxWidth) {
+      if (rightColWidthCache === rightColMaxWidth) {
+        return;
+      }
+      detaX = rightColWidthCache - rightColMaxWidth;
     }
-    if (rightColWidth - detaX < state.table.internalProps.limitMinWidth) {
-      detaX = rightColWidth - state.table.internalProps.limitMinWidth;
+    // limitMinWidth 用目标宽度判断，不再二次扣减 detaX，避免与指示线终点、实时模式不一致。
+    if (rightColWidthCache - detaX < state.table.internalProps.limitMinWidth) {
+      detaX = rightColWidthCache - state.table.internalProps.limitMinWidth;
     }
   }
   detaX = Math.ceil(detaX);
