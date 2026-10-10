@@ -1,0 +1,31 @@
+name: Bug Server Manual PR Report
+
+on:
+  workflow_run:
+    workflows: ['Bug Server Manual PR']
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # 取消或强制超时也会触发回报，服务端根据源 run 校验任务和真实结论。
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Report source run completion
+        env:
+          # 只从源 run 的固定环境后缀选择回报地址，不接受任意 URL。
+          BUG_SERVER_HOST: ${{ endsWith(github.event.workflow_run.display_title, ':boe') && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          REPORTED_RUN_ID: ${{ github.event.workflow_run.id }}
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node .github/scripts/bug-server-manual.cjs complete
