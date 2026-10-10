@@ -21,6 +21,8 @@ permissions:
 jobs:
   prepare:
     name: prepare
+    # GitHub 页面直接 dispatch 非默认分支时，不运行带凭据的控制步骤。
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -63,31 +65,42 @@ jobs:
     if: needs.prepare.outputs.reused != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions: {}
     steps:
       # 先用可信 Dockerfile 准备镜像，不将 PR 目录作为 Docker 构建上下文。
       - name: Prepare isolated build image
         run: |
           docker build --tag bugserver-pr-build - <<'DOCKERFILE'
           FROM node:22-bookworm
-          RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-setuptools pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev && rm -rf /var/lib/apt/lists/*
+          RUN apt-get update && apt-get install -y --no-install-recommends git python3 python3-setuptools pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev && rm -rf /var/lib/apt/lists/*
           DOCKERFILE
-      # PR 代码只在容器内执行；只挂载源码，不传 runner/cache token 或 Docker socket。
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ needs.prepare.outputs.head_repository }}
-          ref: ${{ needs.prepare.outputs.head_sha }}
-          persist-credentials: false
-      - name: Verify frozen checkout
-        env:
-          EXPECTED_SHA: ${{ needs.prepare.outputs.head_sha }}
-        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      # PR 源码仅在容器内拉取；宿主工作区只接收产物，不传 token 或 Docker socket。
       - name: Build frozen head in isolated container
+        env:
+          HEAD_REPOSITORY: ${{ needs.prepare.outputs.head_repository }}
+          EXPECTED_SHA: ${{ needs.prepare.outputs.head_sha }}
         run: |
+          mkdir -p "$GITHUB_WORKSPACE/tools/bugserver-trigger/dist"
           docker run --rm --init --cap-drop=ALL --security-opt=no-new-privileges \
             --user "$(id -u):$(id -g)" \
-            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace" \
-            --workdir /workspace --env HOME=/tmp --env NODE_OPTIONS=--max_old_space_size=4096 \
-            bugserver-pr-build sh -ec 'node common/scripts/install-run-rush.js install --bypass-policy && node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger'
+            --mount "type=bind,source=$GITHUB_WORKSPACE/tools/bugserver-trigger/dist,target=/bundle" \
+            --env HEAD_REPOSITORY --env EXPECTED_SHA --env HOME=/tmp --env NODE_OPTIONS=--max_old_space_size=4096 \
+            bugserver-pr-build sh -ec '
+              git init /tmp/source
+              cd /tmp/source
+              git remote add origin "https://github.com/$HEAD_REPOSITORY.git"
+              git fetch --depth=1 origin "$EXPECTED_SHA"
+              git checkout --detach FETCH_HEAD
+              test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+              node common/scripts/install-run-rush.js install --bypass-policy
+              node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+              bundle_file=/tmp/source/tools/bugserver-trigger/dist/index.js
+              test "$(realpath "$bundle_file")" = "$bundle_file"
+              test -f "$bundle_file" && test ! -L "$bundle_file"
+              test "$(wc -c < "$bundle_file")" -gt 0
+              test "$(wc -c < "$bundle_file")" -le 67108864
+              cp "$bundle_file" /bundle/index.js
+            '
       # 容器退出后，拒绝 symlink/目录及超限产物，避免上传动作读取 runner 文件。
       - name: Verify bundle before upload
         run: |
@@ -105,7 +118,7 @@ jobs:
 
   submit:
     needs: [prepare, build-bundle]
-    if: always() && needs.prepare.result == 'success' && (needs.prepare.outputs.reused == 'true' || needs.build-bundle.result == 'success')
+    if: always() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && needs.prepare.result == 'success' && (needs.prepare.outputs.reused == 'true' || needs.build-bundle.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 180
     permissions:
