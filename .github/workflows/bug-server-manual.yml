@@ -1,0 +1,116 @@
+name: Bug Server Manual PR
+run-name: bugserver-manual:${{ inputs.task_id }}${{ inputs.environment == 'boe' && ':boe' || '' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: 'Bug Server 创建的冻结任务 UUID（仅传任务编号）'
+        required: true
+        type: string
+      environment:
+        description: 'Bug Server 任务所属环境'
+        required: false
+        default: cn
+        type: choice
+        options: [cn, boe]
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      head_sha: ${{ steps.target.outputs.head_sha }}
+      head_repository: ${{ steps.target.outputs.head_repository }}
+      reused: ${{ steps.target.outputs.reused }}
+    steps:
+      # 控制脚本固定在启动 workflow 时的默认分支提交，只把 PR 产物作为数据读取。
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Resolve frozen task and try artifact reuse
+        id: target
+        env:
+          TASK_ID: ${{ inputs.task_id }}
+          BUG_SERVER_HOST: ${{ inputs.environment == 'boe' && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          GH_TOKEN: ${{ github.token }}
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node .github/scripts/bug-server-manual.cjs prepare
+      - uses: actions/upload-artifact@v4
+        if: steps.target.outputs.reused == 'true'
+        with:
+          name: bug-server-manual-${{ inputs.task_id }}
+          path: ${{ runner.temp }}/manual-bundle/index.js
+          if-no-files-found: error
+          retention-days: 7
+
+  build-bundle:
+    name: build-bundle
+    needs: prepare
+    if: needs.prepare.outputs.reused != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # 不注入 Bug Server token、App 私钥，不恢复或写入共享依赖缓存。
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.prepare.outputs.head_repository }}
+          ref: ${{ needs.prepare.outputs.head_sha }}
+          persist-credentials: false
+      - name: Verify frozen checkout
+        env:
+          EXPECTED_SHA: ${{ needs.prepare.outputs.head_sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Install Rush dependencies
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+      - name: Build bugserver-trigger and dependencies
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bug-server-manual-${{ inputs.task_id }}
+          path: tools/bugserver-trigger/dist/index.js
+          if-no-files-found: error
+          retention-days: 7
+
+  submit:
+    needs: [prepare, build-bundle]
+    if: always() && needs.prepare.result == 'success' && (needs.prepare.outputs.reused == 'true' || needs.build-bundle.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      # 不 checkout 或执行 PR 脚本；上传、SCM 和截图控制只使用可信提交。
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Submit bundle and wait for screenshot results
+        env:
+          TASK_ID: ${{ inputs.task_id }}
+          BUG_SERVER_HOST: ${{ inputs.environment == 'boe' && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          GH_TOKEN: ${{ github.token }}
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node .github/scripts/bug-server-manual.cjs submit
