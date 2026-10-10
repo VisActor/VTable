@@ -1,5 +1,5 @@
 name: Bug Server Manual PR
-run-name: bugserver-manual:${{ inputs.task_id }}${{ inputs.environment == 'boe' && ':boe' || '' }}
+run-name: bugserver-manual:${{ inputs.task_id }}${{ inputs.environment == 'boe' && ':boe' || inputs.environment == 'ppe' && ':ppe' || '' }}
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
         required: false
         default: cn
         type: choice
-        options: [cn, boe]
+        options: [cn, boe, ppe]
 
 permissions:
   contents: read
@@ -45,6 +45,7 @@ jobs:
         env:
           TASK_ID: ${{ inputs.task_id }}
           BUG_SERVER_HOST: ${{ inputs.environment == 'boe' && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          BUG_SERVER_ENVIRONMENT: ${{ inputs.environment }}
           GH_TOKEN: ${{ github.token }}
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node .github/scripts/bug-server-manual.cjs prepare
@@ -124,6 +125,7 @@ jobs:
         env:
           TASK_ID: ${{ inputs.task_id }}
           BUG_SERVER_HOST: ${{ inputs.environment == 'boe' && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          BUG_SERVER_ENVIRONMENT: ${{ inputs.environment }}
           GH_TOKEN: ${{ github.token }}
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node .github/scripts/bug-server-manual.cjs submit

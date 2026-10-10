@@ -16,7 +16,12 @@ function context(env) {
   // 复用既有 GitHub CI 公网入口；内网页面入口另由 bugserver 的 Host 白名单控制。
   const host = env.BUG_SERVER_HOST || 'https://bug-server.zijieapi.com';
   if (!new Set(['https://bug-server.zijieapi.com', 'https://bugserver.cn.goofy.app', 'https://g20b7465b2.gf-boe.bytedance.net']).has(host)) throw new Error('Unsupported Bug Server host');
-  return { env, host, runId };
+  const environment = env.BUG_SERVER_ENVIRONMENT || (host === 'https://g20b7465b2.gf-boe.bytedance.net' ? 'boe' : 'cn');
+  if (!['cn', 'boe', 'ppe'].includes(environment) || (environment === 'boe') !== (host === 'https://g20b7465b2.gf-boe.bytedance.net') ||
+      (environment === 'ppe' && host !== 'https://bug-server.zijieapi.com')) throw new Error('Unsupported Bug Server environment');
+  // PPE 固定复用 CN 公网入口，分流头仅发给 CI，不传给 GitHub 或产物地址。
+  const headers = environment === 'ppe' ? { 'x-use-ppe': '1', 'x-tt-env': 'ppe_bugserver_titan_auth' } : {};
+  return { env, host, runId, headers };
 }
 
 /** 每次重新构造 multipart；服务端 checkpoint 保证重试不重复创建 SCM/截图批次。 */
@@ -30,7 +35,7 @@ async function call(ctx, triggerType, fields = {}, filePath) {
         form.append(key, String(value));
       }
       if (filePath) form.append('bundleFile', new Blob([await readFile(filePath)], { type: 'text/javascript' }), 'index.js');
-      const response = await fetch(`${ctx.host}/api/ci/trigger`, { method: 'POST', body: form,
+      const response = await fetch(`${ctx.host}/api/ci/trigger`, { method: 'POST', body: form, headers: ctx.headers,
         signal: AbortSignal.timeout(75000), redirect: 'error' });
       const result = await response.json();
       if (!response.ok || result.code !== 0) {

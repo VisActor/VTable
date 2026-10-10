@@ -11,7 +11,9 @@ const env = { GITHUB_REPOSITORY: 'VisActor/VChart', GITHUB_RUN_ID: '99', TASK_ID
 
 test('控制脚本拒绝任意仓库、入口、任务编号和 run ID', () => {
   for (const patch of [{ GITHUB_REPOSITORY: 'evil/VChart' }, { TASK_ID: `${taskId}\nreused=true` },
-    { GITHUB_RUN_ID: '0' }, { BUG_SERVER_TOKEN: '' }, { BUG_SERVER_HOST: 'https://evil.example' }]) assert.throws(() => context({ ...env, ...patch }));
+    { GITHUB_RUN_ID: '0' }, { BUG_SERVER_TOKEN: '' }, { BUG_SERVER_HOST: 'https://evil.example' },
+    { BUG_SERVER_ENVIRONMENT: 'ppe_other' }, { BUG_SERVER_ENVIRONMENT: 'boe' },
+    { BUG_SERVER_ENVIRONMENT: 'ppe', BUG_SERVER_HOST: 'https://g20b7465b2.gf-boe.bytedance.net' }]) assert.throws(() => context({ ...env, ...patch }));
 });
 
 test('BOE 控制请求只发送到固定 BOE 地址，保留任务与服务 token 校验', async t => {
@@ -22,6 +24,7 @@ test('BOE 控制请求只发送到固定 BOE 地址，保留任务与服务 toke
     assert.equal(options.redirect, 'error');
     assert.equal(options.body.get('token'), 'test-project-token');
     assert.equal(options.body.get('workflowRunId'), '123');
+    assert.deepEqual(options.headers, {});
     return new Response(JSON.stringify({ code: 0, data: {} }));
   };
   await run('complete', { ...env, TASK_ID: undefined, REPORTED_RUN_ID: '123', BUG_SERVER_HOST: 'https://g20b7465b2.gf-boe.bytedance.net' });
@@ -35,8 +38,10 @@ test('prepare 使用服务端冻结 SHA，下载复用失败会退回构建', as
   t.after(() => rm(directory, { recursive: true, force: true }));
   const previousFetch = global.fetch;
   t.after(() => { global.fetch = previousFetch; });
+  let ppe = false;
   global.fetch = async (url, options) => {
     if (new URL(url).origin === 'https://api.github.com') return new Response('{}', { status: 404 });
+    assert.deepEqual(options.headers, ppe ? { 'x-use-ppe': '1', 'x-tt-env': 'ppe_bugserver_titan_auth' } : {});
     assert.equal(options.body.get('triggerType'), 'manual-info');
     assert.equal(options.body.get('manualTaskId'), taskId);
     assert.equal(options.body.get('workflowRunId'), '99');
@@ -45,6 +50,8 @@ test('prepare 使用服务端冻结 SHA，下载复用失败会退回构建', as
   };
   await run('prepare', { ...env, RUNNER_TEMP: directory, GITHUB_OUTPUT: join(directory, 'outputs') });
   assert.equal(await readFile(join(directory, 'outputs'), 'utf8'), `head_sha=${'a'.repeat(40)}\nhead_repository=contributor/VChart\nreused=false\n`);
+  ppe = true;
+  await run('prepare', { ...env, BUG_SERVER_ENVIRONMENT: 'ppe', RUNNER_TEMP: directory, GITHUB_OUTPUT: join(directory, 'ppe-outputs') });
 });
 
 test('submit 把可执行 JS 只当作上传数据，沿用 SCM/截图链路并保留差异结论', async t => {
@@ -62,6 +69,7 @@ test('submit 把可执行 JS 只当作上传数据，沿用 SCM/截图链路并�
     if (new URL(address).origin === 'https://api.github.com') {
       assert.equal(options.headers.Authorization, 'Bearer test-github-token');
       assert.equal(options.redirect, 'manual');
+      assert.equal(options.headers['x-tt-env'], undefined);
       return new Response(null, { status: 302, headers: { location: 'https://artifact.example/signed.zip' } });
     }
     if (new URL(address).origin === 'https://artifact.example') {
@@ -69,6 +77,8 @@ test('submit 把可执行 JS 只当作上传数据，沿用 SCM/截图链路并�
       return new Response(bytes);
     }
     assert.equal(options.redirect, 'error');
+    assert.equal(address, 'https://bug-server.zijieapi.com/api/ci/trigger');
+    assert.deepEqual(options.headers, { 'x-use-ppe': '1', 'x-tt-env': 'ppe_bugserver_titan_auth' });
     const form = options.body, type = form.get('triggerType');
     operations.push(type);
     assert.equal(form.get('token'), 'test-project-token');
@@ -83,7 +93,7 @@ test('submit 把可执行 JS 只当作上传数据，沿用 SCM/截图链路并�
     assert.ok(data, `Unexpected operation ${type}`);
     return new Response(JSON.stringify({ code: 0, data }));
   };
-  assert.equal(await run('submit', env), 1);
+  assert.equal(await run('submit', { ...env, BUG_SERVER_ENVIRONMENT: 'ppe' }), 1);
   assert.deepEqual(operations, ['manual-artifact', 'upload-file', 'scm-build', 'scm-version-info', 'photo-test', 'photo-result', 'manual-finish']);
   assert.ok(!operations.includes('performance-test'));
 });
@@ -95,9 +105,10 @@ test('独立完成回报只提供源 run ID，不从事件 payload 猜测被测 
     assert.equal(options.body.get('workflowRunId'), '123');
     assert.equal(options.body.get('manualTaskId'), null);
     assert.equal(options.body.get('outcome'), null);
+    assert.deepEqual(options.headers, { 'x-use-ppe': '1', 'x-tt-env': 'ppe_bugserver_titan_auth' });
     return new Response(JSON.stringify({ code: 0, data: { outcome: 'cancelled' } }));
   };
-  assert.equal(await run('complete', { ...env, TASK_ID: undefined, REPORTED_RUN_ID: '123' }), 0);
+  assert.equal(await run('complete', { ...env, TASK_ID: undefined, REPORTED_RUN_ID: '123', BUG_SERVER_ENVIRONMENT: 'ppe' }), 0);
 });
 
 test('可信上传前检查拒绝文件及父目录符号链接、空文件和超限文件', async t => {

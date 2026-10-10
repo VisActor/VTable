@@ -26,6 +26,7 @@ jobs:
         env:
           # 只从源 run 的固定环境后缀选择回报地址，不接受任意 URL。
           BUG_SERVER_HOST: ${{ endsWith(github.event.workflow_run.display_title, ':boe') && 'https://g20b7465b2.gf-boe.bytedance.net' || 'https://bug-server.zijieapi.com' }}
+          BUG_SERVER_ENVIRONMENT: ${{ endsWith(github.event.workflow_run.display_title, ':boe') && 'boe' || endsWith(github.event.workflow_run.display_title, ':ppe') && 'ppe' || 'cn' }}
           REPORTED_RUN_ID: ${{ github.event.workflow_run.id }}
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node .github/scripts/bug-server-manual.cjs complete
