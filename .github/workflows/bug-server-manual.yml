@@ -63,7 +63,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      # 不注入 Bug Server token、App 私钥，不恢复或写入共享依赖缓存。
+      # 先用可信 Dockerfile 准备镜像，不将 PR 目录作为 Docker 构建上下文。
+      - name: Prepare isolated build image
+        run: |
+          docker build --tag bugserver-pr-build - <<'DOCKERFILE'
+          FROM node:22-bookworm
+          RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-setuptools pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev && rm -rf /var/lib/apt/lists/*
+          DOCKERFILE
+      # PR 代码只在容器内执行；只挂载源码，不传 runner/cache token 或 Docker socket。
       - uses: actions/checkout@v4
         with:
           repository: ${{ needs.prepare.outputs.head_repository }}
@@ -73,15 +80,21 @@ jobs:
         env:
           EXPECTED_SHA: ${{ needs.prepare.outputs.head_sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-      - name: Install Rush dependencies
-        run: node common/scripts/install-run-rush.js install --bypass-policy
-      - name: Build bugserver-trigger and dependencies
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+      - name: Build frozen head in isolated container
+        run: |
+          docker run --rm --init --cap-drop=ALL --security-opt=no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace" \
+            --workdir /workspace --env HOME=/tmp --env NODE_OPTIONS=--max_old_space_size=4096 \
+            bugserver-pr-build sh -ec 'node common/scripts/install-run-rush.js install --bypass-policy && node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger'
+      # 容器退出后，拒绝 symlink/目录及超限产物，避免上传动作读取 runner 文件。
+      - name: Verify bundle before upload
+        run: |
+          bundle="$GITHUB_WORKSPACE/tools/bugserver-trigger/dist/index.js"
+          test "$(realpath "$bundle")" = "$bundle"
+          test -f "$bundle" && test ! -L "$bundle"
+          test "$(wc -c < "$bundle")" -gt 0
+          test "$(wc -c < "$bundle")" -le 67108864
       - uses: actions/upload-artifact@v4
         with:
           name: bug-server-manual-${{ inputs.task_id }}

@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { mkdtemp, readFile, rm } = require('node:fs/promises');
+const { mkdtemp, readFile, rm, mkdir, writeFile, symlink, realpath } = require('node:fs/promises');
 const { join } = require('node:path');
 const { tmpdir } = require('node:os');
 const { execFileSync } = require('node:child_process');
@@ -36,7 +36,7 @@ test('prepare 使用服务端冻结 SHA，下载复用失败会退回构建', as
   const previousFetch = global.fetch;
   t.after(() => { global.fetch = previousFetch; });
   global.fetch = async (url, options) => {
-    if (url.startsWith('https://api.github.com')) return new Response('{}', { status: 404 });
+    if (new URL(url).origin === 'https://api.github.com') return new Response('{}', { status: 404 });
     assert.equal(options.body.get('triggerType'), 'manual-info');
     assert.equal(options.body.get('manualTaskId'), taskId);
     assert.equal(options.body.get('workflowRunId'), '99');
@@ -59,12 +59,12 @@ test('submit 把可执行 JS 只当作上传数据，沿用 SCM/截图链路并�
   const operations = [];
   global.fetch = async (url, options) => {
     const address = String(url);
-    if (address.startsWith('https://api.github.com')) {
+    if (new URL(address).origin === 'https://api.github.com') {
       assert.equal(options.headers.Authorization, 'Bearer test-github-token');
       assert.equal(options.redirect, 'manual');
       return new Response(null, { status: 302, headers: { location: 'https://artifact.example/signed.zip' } });
     }
-    if (address.startsWith('https://artifact.example')) {
+    if (new URL(address).origin === 'https://artifact.example') {
       assert.equal(options.headers, undefined); // 签名 URL 请求不能携带 GitHub token。
       return new Response(bytes);
     }
@@ -98,4 +98,25 @@ test('独立完成回报只提供源 run ID，不从事件 payload 猜测被测 
     return new Response(JSON.stringify({ code: 0, data: { outcome: 'cancelled' } }));
   };
   assert.equal(await run('complete', { ...env, TASK_ID: undefined, REPORTED_RUN_ID: '123' }), 0);
+});
+
+test('可信上传前检查拒绝文件及父目录符号链接、空文件和超限文件', async t => {
+  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bugserver-upload-test-')));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const workflow = await readFile(join(__dirname, __dirname.endsWith('github-manual-pr') ? 'VTable-bug-server-manual.yml' : '../workflows/bug-server-manual.yml'), 'utf8');
+  const match = workflow.match(/- name: Verify bundle before upload\n\s+run: \|\n([\s\S]*?)\n\s+- uses:/);
+  assert.ok(match, 'Trusted bundle verifier is required');
+  const script = match[1].replace(/^ {10}/gm, '');
+  const folder = join(directory, 'tools/bugserver-trigger/dist'), bundle = join(folder, 'index.js');
+  await mkdir(folder, { recursive: true });
+  const verify = () => execFileSync('bash', ['-e', '-c', script], { env: { ...process.env, GITHUB_WORKSPACE: directory }, stdio: 'pipe' });
+  await writeFile(bundle, 'valid bundle'); verify();
+  await writeFile(bundle, ''); assert.throws(verify);
+  execFileSync('python3', ['-c', 'import sys\nwith open(sys.argv[1], "wb") as f: f.truncate(64 * 1024 * 1024 + 1)', bundle]);
+  assert.throws(verify);
+  await rm(bundle); await writeFile(join(directory, 'private.txt'), 'must not upload');
+  await symlink(join(directory, 'private.txt'), bundle); assert.throws(verify);
+  await rm(folder, { recursive: true }); await mkdir(join(directory, 'outside'));
+  await writeFile(join(directory, 'outside/index.js'), 'must not upload');
+  await symlink(join(directory, 'outside'), folder); assert.throws(verify);
 });
