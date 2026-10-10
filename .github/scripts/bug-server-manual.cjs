@@ -15,7 +15,7 @@ function context(env) {
   if (env.TASK_ID && !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(env.TASK_ID)) throw new Error('Invalid task ID');
   // 复用既有 GitHub CI 公网入口；内网页面入口另由 bugserver 的 Host 白名单控制。
   const host = env.BUG_SERVER_HOST || 'https://bug-server.zijieapi.com';
-  if (!['https://bug-server.zijieapi.com', 'https://bugserver.cn.goofy.app', 'https://g20b7465b2.gf-boe.bytedance.net'].includes(host)) throw new Error('Unsupported Bug Server host');
+  if (!new Set(['https://bug-server.zijieapi.com', 'https://bugserver.cn.goofy.app', 'https://g20b7465b2.gf-boe.bytedance.net']).has(host)) throw new Error('Unsupported Bug Server host');
   return { env, host, runId };
 }
 
