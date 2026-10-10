@@ -90,11 +90,11 @@ jobs:
       # 容器退出后，拒绝 symlink/目录及超限产物，避免上传动作读取 runner 文件。
       - name: Verify bundle before upload
         run: |
-          bundle_file="$GITHUB_WORKSPACE/tools/bugserver-trigger/dist/index.js"
-          test "$(realpath "$bundle_file")" = "$bundle_file"
-          test -f "$bundle_file" && test ! -L "$bundle_file"
-          test "$(wc -c < "$bundle_file")" -gt 0
-          test "$(wc -c < "$bundle_file")" -le 67108864
+          artifact_file="$GITHUB_WORKSPACE/tools/bugserver-trigger/dist/index.js"
+          test "$(realpath "$artifact_file")" = "$artifact_file"
+          test -f "$artifact_file" && test ! -L "$artifact_file"
+          test "$(wc -c < "$artifact_file")" -gt 0
+          test "$(wc -c < "$artifact_file")" -le 67108864
       - uses: actions/upload-artifact@v4
         with:
           name: bug-server-manual-${{ inputs.task_id }}
