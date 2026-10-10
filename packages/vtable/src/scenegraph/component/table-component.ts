@@ -640,9 +640,12 @@ export class TableComponent {
    * @param {number} y 标签显示的y坐标
    * @return {*}
    */
-  updateResizeCol(col: number, y: number, isRightFrozen?: boolean) {
+  updateResizeCol(col: number, y: number, isRightFrozen?: boolean, previewDeltaX?: number) {
     // 基准线
-    const colX = getColX(col, this.table, isRightFrozen);
+    const colBaseX = getColX(col, this.table, isRightFrozen);
+    const delta = previewDeltaX ?? 0;
+    // 非实时响应模式下指示线基于当前列右边界+累计偏移量渲染
+    const colX = isRightFrozen ? colBaseX - delta : colBaseX + delta;
     // this.columnResizeLine.setAttribute('x', x);
     this.columnResizeLine.setAttributes({
       x: colX,
@@ -665,7 +668,8 @@ export class TableComponent {
         x: colX,
         y
       });
-      (this.columnResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getColWidth(col))}px`);
+      const previewWidth = Math.max(0, this.table.getColWidth(col) + delta);
+      (this.columnResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(previewWidth)}px`);
     }
   }
 
@@ -725,9 +729,11 @@ export class TableComponent {
    * @param {number} y 标签显示的y坐标
    * @return {*}
    */
-  updateResizeRow(row: number, x: number, isBottomFrozen?: boolean) {
+  updateResizeRow(row: number, x: number, isBottomFrozen?: boolean, previewDeltaY?: number) {
     // 基准线
-    const rowY = getRowY(row, this.table, isBottomFrozen);
+    const rowBaseY = getRowY(row, this.table, isBottomFrozen);
+    const delta = previewDeltaY ?? 0;
+    const rowY = isBottomFrozen ? rowBaseY - delta : rowBaseY + delta;
     // this.columnResizeLine.setAttribute('x', x);
     this.rowResizeLine.setAttributes({
       y: rowY,
@@ -750,7 +756,8 @@ export class TableComponent {
         y: rowY,
         x
       });
-      (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
+      const previewHeight = Math.max(0, this.table.getRowHeight(row) + delta);
+      (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(previewHeight)}px`);
     }
   }
 

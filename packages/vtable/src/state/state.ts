@@ -37,7 +37,7 @@ import { getIconAndPositionFromTarget } from '../scenegraph/utils/icon';
 import type { BaseTableAPI, HeaderData } from '../ts-types/base-table';
 import { getBodyHorizontalScrollRange } from '../scenegraph/component/util';
 import { debounce } from '../tools/debounce';
-import { updateResizeColumn } from './resize/update-resize-column';
+import { updateResizeColumn, commitPendingColumnResize } from './resize/update-resize-column';
 import { changeRadioOrder, setRadioState, syncRadioState } from './radio/radio';
 import {
   changeCheckboxOrder,
@@ -48,7 +48,7 @@ import {
   syncCheckedState,
   updateHeaderCheckedState
 } from './checkbox/checkbox';
-import { updateResizeRow } from './resize/update-resize-row';
+import { updateResizeRow, commitPendingRowResize } from './resize/update-resize-row';
 import { deleteAllSelectingBorder } from '../scenegraph/select/delete-select-border';
 import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
@@ -135,6 +135,8 @@ export class StateManager {
     x: number;
     resizing: boolean;
     isRightFrozen?: boolean;
+    /** 非实时响应模式下，指示线相对原始列右边界的累计偏移量 */
+    pendingDeltaX?: number;
   };
   rowResize: {
     row: number;
@@ -142,6 +144,8 @@ export class StateManager {
     y: number;
     resizing: boolean;
     isBottomFrozen?: boolean;
+    /** 非实时响应模式下，指示线相对原始行下边界的累计偏移量 */
+    pendingDeltaY?: number;
   };
   columnMove: {
     colSource: number;
@@ -295,12 +299,14 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
-      resizing: false
+      resizing: false,
+      pendingDeltaX: 0
     };
     this.rowResize = {
       row: -1,
       y: 0,
-      resizing: false
+      resizing: false,
+      pendingDeltaY: 0
     };
     this.columnMove = {
       colSource: -1,
@@ -382,12 +388,14 @@ export class StateManager {
     this.columnResize = {
       col: -1,
       x: 0,
-      resizing: false
+      resizing: false,
+      pendingDeltaX: 0
     };
     this.rowResize = {
       row: -1,
       y: 0,
-      resizing: false
+      resizing: false,
+      pendingDeltaY: 0
     };
     this.columnMove = {
       colSource: -1,
@@ -847,6 +855,9 @@ export class StateManager {
   }
 
   endResizeCol() {
+    if (this.columnResize.resizing && this.table.internalProps.resizeRealtime === false) {
+      commitPendingColumnResize(this);
+    }
     setTimeout(() => {
       this.columnResize.resizing = false;
     }, 0);
@@ -860,6 +871,7 @@ export class StateManager {
     this.columnResize.col = col;
     this.columnResize.x = x;
     this.columnResize.isRightFrozen = isRightFrozen;
+    this.columnResize.pendingDeltaX = 0;
 
     this.table.scenegraph.component.showResizeCol(col, y, isRightFrozen);
 
@@ -874,6 +886,9 @@ export class StateManager {
   }
 
   endResizeRow() {
+    if (this.rowResize.resizing && this.table.internalProps.resizeRealtime === false) {
+      commitPendingRowResize(this);
+    }
     setTimeout(() => {
       this.rowResize.resizing = false;
     }, 0);
@@ -887,6 +902,7 @@ export class StateManager {
     this.rowResize.row = row;
     this.rowResize.y = y;
     this.rowResize.isBottomFrozen = isBottomFrozen;
+    this.rowResize.pendingDeltaY = 0;
 
     this.table.scenegraph.component.showResizeRow(row, x, isBottomFrozen);
 
