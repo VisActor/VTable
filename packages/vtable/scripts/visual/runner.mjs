@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
-import { createRuntime, serve, fault, digest, atomicJson, fileManifest } from './runtime.mjs';
+import { createRuntime, serve, fault, digest, atomicJson, fileManifest, freezeSuite } from './runtime.mjs';
 import { git, workingTree, resolveBaseline, build, baselineBuild, official } from './build.mjs';
 import { saveReport } from '../../__tests__/visual/report.mjs';
 
@@ -17,10 +17,10 @@ export async function loadCases(suite, caseId) {
     if (!Array.isArray(cases) || !cases.length) throw new Error('用例清单为空');
     const ids = new Set();
     for (const item of cases) {
-      if (!/^[a-z][a-z0-9-]*$/.test(item.id) || ids.has(item.id)) throw new Error(`非法或重复 ID：${item.id}`);
+      if (typeof item.id !== 'string' || !/^[a-z][a-z0-9-]*$/.test(item.id) || ids.has(item.id)) throw new Error(`非法或重复 ID：${item.id}`);
       ids.add(item.id);
       if (
-        !item.purpose ||
+        typeof item.purpose !== 'string' || !item.purpose.trim() ||
         (item.sourceExample !== undefined && (typeof item.sourceExample !== 'string' || !item.sourceExample.trim())) ||
         !Array.isArray(item.bundles) || !item.bundles.length || item.bundles.some(name => !['vtable', 'editors', 'gantt', 'plugins', 'sheet', 'vchart'].includes(name)) || new Set(item.bundles).size !== item.bundles.length ||
         typeof item.file !== 'string' ||
@@ -198,9 +198,7 @@ export async function runVisual(root, options) {
     releaseLock = await acquireLock(output, { runId, pid: process.pid, startedAt: report.startedAt, runDir });
     const suite = path.join(runDir, 'suite');
     const source = path.join(root, 'packages/vtable/__tests__/visual');
-    await fileManifest(source);
-    await fs.cp(source, suite, { recursive: true });
-    report.frozenFiles = await fileManifest(suite);
+    report.frozenFiles = await freezeSuite(source, suite);
     report.suiteDigest = digest(JSON.stringify(report.frozenFiles));
     const { settings } = await import(pathToFileURL(path.join(suite, 'settings.mjs')));
     report.comparison = settings.comparison;
