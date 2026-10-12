@@ -117,6 +117,19 @@ test('stable IDs distinguish additions and archives, while corrupted snapshots f
   assert.throws(() => compareSuiteCases(corrupt, second), { code: 'CASE_MANIFEST_INVALID' });
 });
 
+test('JavaScript helpers include their transitive imports in case identities', async t => {
+  // 浏览器辅助文件可用 .js，嵌套依赖变化必须使受影响用例失效。
+  const directory = await fixture(t);
+  await fs.appendFile(path.join(directory, 'suite/helpers.mjs'), "import './transitive.js';\n");
+  await fs.writeFile(path.join(directory, 'suite/transitive.js'), "export { marker } from './nested.mjs';\n");
+  await fs.writeFile(path.join(directory, 'suite/nested.mjs'), 'export const marker = 1;\n');
+  const first = await createSuiteManifest(root, directory, source);
+  await fs.writeFile(path.join(directory, 'suite/nested.mjs'), 'export const marker = 2;\n');
+  const second = await createSuiteManifest(root, directory, source);
+  assert.deepEqual(compareSuiteCases(first, second).update, ['example', 'neighbor']);
+});
+
+
 test('missing resources, imports, duplicate IDs, ambiguous modules and path escapes fail', async t => {
   const missing = await fixture(t);
   await fs.rm(path.join(missing, 'current-vtable.js'));

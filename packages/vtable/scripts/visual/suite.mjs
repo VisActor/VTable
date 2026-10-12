@@ -39,7 +39,7 @@ async function importGraph(root, directory, files) {
   const ts = createRequire(path.join(root, 'tools/bundler/package.json'))('typescript');
   const known = new Set(files.map(file => file.path)),
     graph = new Map();
-  for (const file of files.filter(file => /\.(mjs|html)$/.test(file.path) && file.path.startsWith('suite/'))) {
+  for (const file of files.filter(file => /\.(m?js|html)$/.test(file.path) && file.path.startsWith('suite/'))) {
     const content = await fs.readFile(path.join(directory, file.path), 'utf8');
     const scripts = file.path.endsWith('.html')
       ? [...content.matchAll(/<script\b[^>]*type=["']module["'][^>]*>([\s\S]*?)<\/script>/gi)].map(match => match[1])
