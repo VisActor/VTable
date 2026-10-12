@@ -18,11 +18,14 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
   if (state.table.internalProps.resizeRealtime === false) {
     state.rowResize.pendingDeltaY = (state.rowResize.pendingDeltaY ?? 0) + detaY;
     state.rowResize.y = yInTable;
+    // 预览指示线/标签复用提交时相同的有效位移计算（dry run），
+    // 避免越过 limitMinHeight 或 adaptive 相邻行约束时预览显示未约束的尺寸、与最终行高不一致。
+    const previewDeltaY = applyRowResizeDelta(state.rowResize.pendingDeltaY, xInTable, yInTable, state, true);
     state.table.scenegraph.component.updateResizeRow(
       state.rowResize.row,
       xInTable,
       state.rowResize.isBottomFrozen,
-      state.rowResize.pendingDeltaY
+      previewDeltaY
     );
     state.table.scenegraph.updateNextFrame();
     return;
@@ -44,7 +47,13 @@ export function commitPendingRowResize(state: StateManager) {
   applyRowResizeDelta(pending, currentY, targetY, state);
 }
 
-function applyRowResizeDelta(detaY: number, xInTable: number, yInTable: number, state: StateManager) {
+function applyRowResizeDelta(
+  detaY: number,
+  xInTable: number,
+  yInTable: number,
+  state: StateManager,
+  dryRun = false
+): number {
   const heightCache = state.table.getRowHeight(state.rowResize.row);
   let height = heightCache;
   height += detaY;
@@ -65,6 +74,11 @@ function applyRowResizeDelta(detaY: number, xInTable: number, yInTable: number, 
     }
   }
   detaY = Math.ceil(detaY);
+
+  // dry run：仅返回约束后的有效位移，供非实时模式预览指示线/标签使用，不产生任何副作用。
+  if (dryRun) {
+    return detaY;
+  }
 
   if (
     state.rowResize.row < state.table.columnHeaderLevelCount ||
@@ -99,6 +113,7 @@ function applyRowResizeDelta(detaY: number, xInTable: number, yInTable: number, 
   //#endregion
   // stage rerender
   state.table.scenegraph.updateNextFrame();
+  return detaY;
 }
 
 function updateResizeColForRow(detaY: number, state: StateManager) {

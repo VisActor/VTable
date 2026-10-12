@@ -18,11 +18,14 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   if (state.table.internalProps.resizeRealtime === false) {
     state.columnResize.pendingDeltaX = (state.columnResize.pendingDeltaX ?? 0) + detaX;
     state.columnResize.x = xInTable;
+    // 预览指示线/标签复用提交时相同的有效位移计算（dry run），
+    // 避免越过 min/max 或 adaptive 相邻列约束时预览显示未约束的尺寸、与最终列宽不一致。
+    const previewDeltaX = applyColumnResizeDelta(state.columnResize.pendingDeltaX, xInTable, yInTable, state, true);
     state.table.scenegraph.component.updateResizeCol(
       state.columnResize.col,
       yInTable,
       state.columnResize.isRightFrozen,
-      state.columnResize.pendingDeltaX
+      previewDeltaX
     );
     state.table.scenegraph.updateNextFrame();
     return;
@@ -45,7 +48,13 @@ export function commitPendingColumnResize(state: StateManager) {
   applyColumnResizeDelta(pending, targetX, currentX, state);
 }
 
-function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: number, state: StateManager) {
+function applyColumnResizeDelta(
+  detaX: number,
+  xInTable: number,
+  yInTable: number,
+  state: StateManager,
+  dryRun = false
+): number {
   // 检查minWidth/maxWidth
   const widthCache = state.table.getColWidth(state.columnResize.col);
   let width = widthCache;
@@ -56,12 +65,12 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
   // 非实时模式会把整段 pendingDeltaX 一次传入，若按“当前宽度离哪个边界更近”选择边界会产生反向 resize。
   if (width < minWidth) {
     if (widthCache === minWidth) {
-      return;
+      return 0;
     }
     detaX = minWidth - widthCache;
   } else if (width > maxWidth) {
     if (widthCache === maxWidth) {
-      return;
+      return 0;
     }
     detaX = maxWidth - widthCache;
   }
@@ -81,12 +90,12 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
     // 按目标宽度的越界方向 clamp：右列过窄时贴 min，过宽时贴 max。
     if (rightColWidth < rightColMinWidth) {
       if (rightColWidthCache === rightColMinWidth) {
-        return;
+        return 0;
       }
       detaX = rightColWidthCache - rightColMinWidth;
     } else if (rightColWidth > rightColMaxWidth) {
       if (rightColWidthCache === rightColMaxWidth) {
-        return;
+        return 0;
       }
       detaX = rightColWidthCache - rightColMaxWidth;
     }
@@ -96,6 +105,11 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
     }
   }
   detaX = Math.ceil(detaX);
+
+  // dry run：仅返回约束后的有效位移，供非实时模式预览指示线/标签使用，不产生任何副作用。
+  if (dryRun) {
+    return detaX;
+  }
 
   if (
     state.columnResize.col < state.table.rowHeaderLevelCount ||
@@ -153,6 +167,7 @@ function applyColumnResizeDelta(detaX: number, xInTable: number, yInTable: numbe
 
   // stage rerender
   state.table.scenegraph.updateNextFrame();
+  return detaX;
 }
 
 function updateResizeColForColumn(detaX: number, state: StateManager) {

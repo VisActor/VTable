@@ -165,6 +165,7 @@ export const cases = [
   { id: 'resize-column-non-realtime', purpose: 'resize.realtime=false 时列宽仅在鼠标松开后应用', file: './interaction/resize-column-non-realtime.mjs', bundles: ['vtable'] },
   { id: 'resize-column-realtime-default', purpose: 'resize.realtime 默认 true 时列宽实时随拖拽变化', file: './interaction/resize-column-realtime-default.mjs', bundles: ['vtable'] },
   { id: 'resize-column-non-realtime-min-clamp', purpose: '非实时模式越过 minWidth 时按目标方向 clamp 而非反向 resize', file: './interaction/resize-column-non-realtime-min-clamp.mjs', bundles: ['vtable'] },
+  { id: 'resize-column-non-realtime-preview-clamp', purpose: '非实时拖拽预览指示线/标签按最终可应用尺寸约束', file: './interaction/resize-column-non-realtime-preview-clamp.mjs', bundles: ['vtable'] },
   { id: 'resize-column-adaptive-neighbor', purpose: 'adaptive 列宽相邻列位移不被重复扣减', file: './interaction/resize-column-adaptive-neighbor.mjs', bundles: ['vtable'] },
   { id: 'resize-row-adaptive-neighbor', purpose: 'adaptive 行高相邻行位移不被重复扣减', file: './interaction/resize-row-adaptive-neighbor.mjs', bundles: ['vtable'] },
   { id: 'pivot-resize-indicator-row', purpose: '指标行上的透视表拖动行高', file: './pivot/resize-indicator-row.mjs', bundles: ['vtable'] },
