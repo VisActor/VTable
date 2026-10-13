@@ -90,6 +90,7 @@ export function validateRunRequest(request) {
     request.generation < 1 ||
     identity?.repository !== repository ||
     identity.productKey !== productKey ||
+    identity.baseRef !== 'develop' ||
     !(identity.pullRequest === null || (Number.isSafeInteger(identity.pullRequest) && identity.pullRequest > 0)) ||
     ![identity.headSha, identity.baseSha, identity.controlCommit, subject?.testedCommit].every(commit) ||
     ![subject?.sourceDigest, identity.bundleDigest, identity.suiteDigests?.playwright, identity.policyDigest].every(
@@ -109,7 +110,13 @@ export function validateRunRequest(request) {
     !Array.isArray(request.engines) ||
     canonicalJson(request.engines) !== '["playwright"]' ||
     !Array.isArray(request.inputArtifacts) ||
-    request.inputArtifacts.some(item => !text(item.artifactId) || !sha(item.digest))
+    request.inputArtifacts.some(
+      item =>
+        !text(item?.artifactId) ||
+        !sha(item?.digest) ||
+        !text(item?.mediaType) ||
+        !['public', 'restricted'].includes(item?.visibility)
+    )
   )
     throw fault('RUN_REQUEST_INVALID', '运行请求身份、类型或选择集不符');
   const keys = items.map(item => {
@@ -235,6 +242,7 @@ async function prepareBaselines(directory, request, runDir, png) {
     manifest.repository !== repository ||
     manifest.productKey !== productKey ||
     !reference ||
+    reference.mediaType !== 'application/json' ||
     reference.digest !== digest(bytes) ||
     manifest.environmentId !== request.identity.environmentIds.playwright ||
     manifest.assetRevision !== request.identity.assetRevision ||

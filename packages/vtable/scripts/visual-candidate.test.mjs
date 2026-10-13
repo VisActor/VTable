@@ -161,7 +161,14 @@ async function fixture(t) {
     await fs.writeFile(path.join(baselines, 'baseline-manifest.json'), bytes);
     const value = structuredClone(requestValue);
     value.selection.items = ids.map(caseId => ({ engine: 'playwright', caseId, screenshotId: 'final' }));
-    value.inputArtifacts = [{ artifactId: baselineValue.artifactId, digest: digest(bytes) }];
+    value.inputArtifacts = [
+      {
+        artifactId: baselineValue.artifactId,
+        digest: digest(bytes),
+        mediaType: 'application/json',
+        visibility: 'restricted'
+      }
+    ];
     bind(value);
     const requestFile = path.join(directory, 'request.json');
     await fs.writeFile(requestFile, JSON.stringify(value));
@@ -202,6 +209,52 @@ test('candidate CLI requires an exact mode and leaves existing local modes avail
     assert.throws(() => parseOptions(bad), { code: 'INVALID_ARGUMENT' });
   assert.equal(Object.keys(parseOptions([])).length, 0);
   assert.equal(parseOptions(['--self-compare'])['self-compare'], true);
+});
+
+test('request branch and artifact metadata remain required even with a fresh execution key', () => {
+  // 独立检查必需字段，避免所有非法输入仅因陈旧执行键而被拒绝。
+  const request = bind({
+    schemaVersion: 1,
+    contractVersion: '1.0',
+    kind: 'run_request',
+    requestId: 'contract-example',
+    generation: 1,
+    identity: {
+      repository: product === 'vchart' ? 'VisActor/VChart' : 'VisActor/VTable',
+      productKey: product === 'vchart' ? 'chartspace4' : 'VTable',
+      pullRequest: null,
+      headSha: 'a'.repeat(40),
+      baseRef: 'develop',
+      baseSha: 'b'.repeat(40),
+      controlCommit: 'c'.repeat(40),
+      subject: { kind: 'pr_head', testedCommit: 'a'.repeat(40), mergeParents: [], sourceDigest: 'd'.repeat(64) },
+      bundleDigest: 'e'.repeat(64),
+      suiteDigests: { photo: null, playwright: 'f'.repeat(64) },
+      environmentIds: { photo: null, playwright: 'fixture-only' },
+      assetRevision: null,
+      policyDigest: 'a'.repeat(64)
+    },
+    engines: ['playwright'],
+    selection: { mode: 'full', items: [{ engine: 'playwright', caseId: 'example', screenshotId: 'final' }] },
+    inputArtifacts: [
+      { artifactId: 'fixture', digest: 'b'.repeat(64), mediaType: 'application/json', visibility: 'restricted' }
+    ],
+    rerunSequence: 0
+  });
+  assert.equal(validateRunRequest(request), request);
+  for (const alter of [
+    value => delete value.identity.baseRef,
+    value => (value.identity.baseRef = 'main'),
+    value => delete value.inputArtifacts[0].mediaType,
+    value => delete value.inputArtifacts[0].visibility,
+    value => (value.inputArtifacts[0].visibility = 'unknown'),
+    value => (value.identity.subject.testedCommit = 'b'.repeat(40))
+  ]) {
+    const bad = structuredClone(request);
+    alter(bad);
+    bind(bad);
+    assert.throws(() => validateRunRequest(bad), { code: 'RUN_REQUEST_INVALID' });
+  }
 });
 
 test(

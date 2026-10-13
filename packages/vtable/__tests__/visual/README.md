@@ -85,7 +85,7 @@ node packages/vtable/scripts/visual-test.mjs --run-suite .vtable-visual/suites/c
 }
 ```
 
-此示例只声明一个首次基准项。请求 `inputArtifacts` 必须引用该 artifactId 和清单**原始文件字节**的 SHA-256。环境 ID 和 assetRevision 必须与请求一致，所有选中截图均须有唯一条目；路径使用普通相对 POSIX 文件路径，禁止符号链接、越界和内容摘要不符。既有 PNG 填写 `baselineExpected=true`、相对 `path` 与 PNG 的 SHA-256；既有基准意外丢失仍声明 `true`，不得改成首次基准。只要使用既有 PNG，`renderer` 必须精确记录其实际 `{node, platform, arch, playwright, browser, settings}`，并与运行时实测一致。平台环境 ID 的完整镜像、字体、权限、内核和网络约束仍由可信控制器验收，本入口不建立操作系统隔离。
+此示例只声明一个首次基准项。请求目标 `identity.baseRef` 必须为 `develop`；`inputArtifacts` 必须包含该 artifactId、清单**原始文件字节**的 SHA-256、`mediaType=application/json` 和 `visibility=public|restricted`。可见性元信息不赋予执行器服务权限。环境 ID 和 assetRevision 必须与请求一致，所有选中截图均须有唯一条目；路径使用普通相对 POSIX 文件路径，禁止符号链接、越界和内容摘要不符。既有 PNG 填写 `baselineExpected=true`、相对 `path` 与 PNG 的 SHA-256；既有基准意外丢失仍声明 `true`，不得改成首次基准。只要使用既有 PNG，`renderer` 必须精确记录其实际 `{node, platform, arch, playwright, browser, settings}`，并与运行时实测一致。平台环境 ID 的完整镜像、字体、权限、内核和网络约束仍由可信控制器验收，本入口不建立操作系统隔离。
 
 基准只复制到结果目录后用于原生 `toMatchSnapshot`，不开启基准更新；运行前后校验输入和副本不变。用例继续执行原有 mount、exercise/verify、有效绘制、连续稳定截图和 release。交互后再次检查绘制，空白、资源错误或语义断言失败不能发布候选图。
 
