@@ -23,6 +23,8 @@ function selectionDescription(report) {
   const label =
     selection.mode === 'all'
       ? '全部本地用例'
+      : selection.mode === 'selection'
+      ? '指定集合 ' + selection.value
       : `${selection.mode === 'directory' ? '目录' : '单用例'} ${selection.value}`;
   return `${label}；选中 ${selection.selectedCount} / ${selection.totalCount}；其余 ${
     selection.totalCount - selection.selectedCount
@@ -297,9 +299,14 @@ function agentSummary(report) {
 
 /** 生成无需服务和网络的三图报告；原图链接保留完整分辨率。 */
 function renderHtml(report) {
-  const labels = { passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成' };
+  const labels = { passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成', no_baseline: '无指定基准' };
   const link = (file, label) => `<a href="${escape(file)}">${escape(label)}</a>`;
-  const baseline = report.baseline?.repository === 'working-tree' ? '工作区自比较' : '官方基线';
+  const baseline =
+    report.baseline?.repository === 'frozen-images'
+      ? '指定冻结基准'
+      : report.baseline?.repository === 'working-tree'
+      ? '工作区自比较'
+      : '官方基线';
   const cards = report.cases
     .map(
       item => `<article data-status="${item.status}" data-id="${escape(item.id)}">
@@ -390,9 +397,9 @@ function renderHtml(report) {
     )
     .join('')}
   <div class="filters"><label>状态 <select id="status"><option value="issues" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? 'selected' : ''
+    report.cases.some(item => item.status !== 'passed') ? 'selected' : ''
   }>问题用例</option><option value="all" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? '' : 'selected'
+    report.cases.some(item => item.status !== 'passed') ? '' : 'selected'
   }>全部</option>${Object.entries(labels)
     .map(([value, label]) => `<option value="${value}">${label}</option>`)
     .join('')}</select></label><label>用例 <select id="case"><option value="all">全部用例</option>${report.cases
@@ -439,4 +446,103 @@ async function writeJson(file, value) {
   const temporary = `${file}.tmp`;
   await fs.writeFile(temporary, JSON.stringify(value, null, 2));
   await fs.rename(temporary, file);
+}
+
+/** 复用现有三图视图展示冻结运行；协议结果与完成比较的状态分开。 */
+export async function saveRunReport(runDir, result, { manifest, request, renderer, options }) {
+  const rerun =
+    'node packages/' +
+    (request.identity.productKey === 'VTable' ? 'vtable' : 'vchart') +
+    '/scripts/visual-test.mjs --run-suite ' +
+    quote(options['run-suite']) +
+    ' --run-request ' +
+    quote(options['run-request']) +
+    ' --baseline-set ' +
+    quote(options['baseline-set']);
+  const ids = request.selection.items.map(item => item.caseId);
+  const mapping = {
+    matched: 'passed',
+    different: 'diff',
+    no_baseline: 'no_baseline',
+    assertion_failed: 'error',
+    execution_error: 'error',
+    skipped: 'not_run',
+    cancelled: 'not_run'
+  };
+  const cases = result.cases.map(row => {
+    const definition = manifest?.cases.find(item => item.caseId === row.caseId);
+    return {
+      id: row.caseId,
+      purpose:
+        (definition?.purpose ?? '') +
+        (row.status === 'no_baseline'
+          ? row.baselineExpected
+            ? '（既有基准意外缺失）'
+            : '（首次候选已验证，未建立基准）'
+          : ''),
+      status: mapping[row.status],
+      workflowStatus: row.status,
+      checks: { assertions: row.assertions, drawing: row.drawing, stability: row.stability },
+      durationMs: row.durationMs,
+      images: row.images,
+      source: { path: definition?.modulePath, frozenPath: definition?.modulePath, line: 1 },
+      phases: { baseline: row.baselineDigest ? '指定图片' : '无基准', current: row.status },
+      errors: row.error
+        ? [{ phase: 'current', stage: row.status, code: row.error.code, message: row.error.message }]
+        : [],
+      attachments: result.artifacts
+        .filter(item => item.caseId === row.caseId)
+        .map(item => ({ ...item, name: item.role, phase: item.role })),
+      rerun
+    };
+  });
+  const report = {
+    schemaVersion: 1,
+    startedAt: result.startedAt,
+    finalized: true,
+    workflow: {
+      resultPath: 'run-result.json',
+      rawOutcome: result.rawOutcome,
+      complete: result.complete,
+      identity: result.identity
+    },
+    status: result.rawOutcome === 'passed' ? 'passed' : result.rawOutcome === 'differences' ? 'diff' : 'error',
+    complete: result.complete && cases.every(item => ['passed', 'diff'].includes(item.status)),
+    counts: Object.fromEntries(
+      ['passed', 'diff', 'error', 'not_run', 'no_baseline'].map(status => [
+        status,
+        cases.filter(item => item.status === status).length
+      ])
+    ),
+    cases,
+    issues: result.error ? [{ phase: 'run', code: result.error.code, message: result.error.message }] : [],
+    local: {
+      head: request.identity.subject.testedCommit,
+      dirty: request.identity.subject.dirty ?? false,
+      digest: request.identity.subject.sourceDigest
+    },
+    baseline: { repository: 'frozen-images', sha: request.identity.assetRevision },
+    environment: renderer ?? {},
+    suiteDigest: manifest?.suiteDigest,
+    selection: {
+      mode: request.selection.mode === 'full' ? 'all' : 'selection',
+      value: request.selection.mode === 'full' ? null : request.requestId,
+      selectedIds: ids,
+      selectedCount: ids.length,
+      totalCount: manifest?.cases.length ?? ids.length
+    },
+    logs: { 'run-result.json': 'run-result.json', 'current.log': 'current.log' },
+    rerun
+  };
+  await writeJson(path.join(runDir, 'summary.json'), report);
+  await fs.writeFile(
+    path.join(runDir, 'agent-summary.md'),
+    '协议结果：' +
+      result.rawOutcome +
+      '；完整报告：' +
+      result.complete +
+      '\n机器消费 run-result.json；下面的完整比较不等于首次候选验证。\n\n' +
+      agentSummary(report)
+  );
+  await fs.writeFile(path.join(runDir, 'index.html'), renderHtml(report));
 }

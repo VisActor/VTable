@@ -37,6 +37,8 @@ async function checkDrawing(page, errors) {
 }
 
 const selectedIds = JSON.parse(process.env.VISUAL_CASE_IDS);
+const externalBaseline = process.env.VISUAL_EXTERNAL_BASELINE === '1';
+const baselineExpectations = externalBaseline ? JSON.parse(process.env.VISUAL_BASELINE_EXPECTATIONS) : null;
 for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
   const item = { ...metadata, ...(await loadCase(metadata)) };
   test(item.id, async ({ page, browser }, info) => {
@@ -49,6 +51,14 @@ for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
     info.annotations.push(stage);
     const failure = { type: 'failure-category', description: '' };
     info.annotations.push(failure);
+    const checks = { assertions: 'not_run', drawing: 'not_run', stability: 'not_run' };
+    const evidence = { type: 'checks', description: JSON.stringify(checks) };
+    info.annotations.push(evidence);
+    function recordCheck(name, status) {
+      // 只在真实检查执行前后记录状态，失败或未运行不会被补成通过。
+      checks[name] = status;
+      evidence.description = JSON.stringify(checks);
+    }
     const errors = [];
     const base = process.env.VISUAL_BASE_URL;
     page.on('pageerror', error => {
@@ -76,15 +86,23 @@ for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
       await page.goto(`${base}/suite/page.html?phase=${process.env.VISUAL_PHASE}&case=${item.id}`);
       stage.description = 'render';
       await page.waitForFunction(() => window.__visualReady || window.__visualErrors?.length);
+      recordCheck('drawing', 'failed');
       await checkDrawing(page, errors);
+      recordCheck('drawing', 'passed');
       stage.description = 'interaction';
+      recordCheck('assertions', 'failed');
       await item.exercise?.(page);
       stage.description = item.exercise ? 'interaction' : 'verify';
       await item.verify(page);
+      recordCheck('assertions', 'passed');
       stage.description = 'screenshot';
       await page.evaluate(() => document.fonts.ready);
+      recordCheck('stability', 'failed');
       const screenshot = await stableScreenshot(page);
+      recordCheck('stability', 'passed');
+      recordCheck('drawing', 'failed');
       await checkDrawing(page, errors);
+      recordCheck('drawing', 'passed');
       const renderedPath = info.outputPath('rendered.png');
       await fs.writeFile(renderedPath, screenshot);
       await info.attach('rendered', { path: renderedPath, contentType: 'image/png' });
@@ -95,6 +113,10 @@ for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
         try {
           await fs.access(info.snapshotPath(name));
         } catch (error) {
+          if (externalBaseline) {
+            await info.attach('missing-baseline', { body: Buffer.from('指定基准不存在'), contentType: 'text/plain' });
+            if (baselineExpectations[item.id] === false) return;
+          }
           failure.description = 'missing_artifact';
           throw error;
         }
@@ -126,10 +148,17 @@ async function hasComparisonEvidence(info, name) {
     try {
       const bytes = await fs.readFile(file);
       if (bytes.length < 24 || bytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') return false;
-      dimensions.push(`${bytes.readUInt32BE(16)}x${bytes.readUInt32BE(20)}`);
+      const width = bytes.readUInt32BE(16),
+        height = bytes.readUInt32BE(20);
+      if (!width || !height) return false;
+      dimensions.push({ width, height });
     } catch {
       return false;
     }
   }
-  return new Set(dimensions).size === 1;
+  // 原生尺寸差异的 diff 画布覆盖两侧最大范围，两张输入图无需同尺寸。
+  return (
+    dimensions[2].width === Math.max(dimensions[0].width, dimensions[1].width) &&
+    dimensions[2].height === Math.max(dimensions[0].height, dimensions[1].height)
+  );
 }

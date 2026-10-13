@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { createRuntime, digest, fault, atomicJson, fileManifest, freezeSuite } from './runtime.mjs';
-import { git, workingTree, build, bundleFiles } from './build.mjs';
+import { git, workingTree, build, bundleFiles, outputDirectory } from './build.mjs';
 import { loadCases, acquireLock } from './runner.mjs';
 
 const product = 'vtable';
@@ -207,9 +207,11 @@ export async function createSuiteManifest(root, directory, source) {
     repository,
     productKey,
     sourceCommit: source.head,
+    sourceParents: source.parents,
     sourceDigest: digest(canonicalJson({ head: source.head, worktreeDigest: source.digest })),
     engine: 'playwright',
-    adapterVersion: '1.0.0',
+    adapterVersion: '1.1.0',
+    sourceDirty: source.dirty,
     files,
     cases: [],
     resources,
@@ -300,14 +302,7 @@ export function compareSuiteCases(previous, current) {
 export async function exportSuite(root, destination, previous = null) {
   if (Number(process.versions.node.split('.')[0]) !== 22 || !['darwin', 'linux'].includes(process.platform))
     throw fault('PREFLIGHT_FAILED', '需要 Node.js 22 和 macOS/Linux');
-  destination = path.resolve(root, destination);
-  if (destination === root || destination.startsWith(`${root}${path.sep}`)) {
-    try {
-      git(root, ['check-ignore', '--no-index', destination]);
-    } catch {
-      throw fault('INVALID_ARGUMENT', '导出目录须位于工作区外或 Git 忽略目录');
-    }
-  }
+  destination = await outputDirectory(root, destination);
   const runtime = createRuntime(),
     detach = runtime.listenSignals();
   let owned = false,

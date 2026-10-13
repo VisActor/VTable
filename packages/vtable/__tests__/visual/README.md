@@ -53,6 +53,51 @@ node packages/vtable/scripts/visual-test.mjs --export-suite .vtable-visual/suite
 node --test packages/vtable/scripts/visual-suite.test.mjs
 ```
 
+## 冻结候选与指定只读基准
+
+同一用例还可以验证冻结构建并与平台提供的 PNG 集合比较，不重新构建或采集基准：
+
+```sh
+node packages/vtable/scripts/visual-test.mjs --run-suite .vtable-visual/suites/current --run-request /path/to/run-request.json --baseline-set /path/to/baselines
+# 可选 --output <新目录>；默认输出到 .vtable-visual/runs/<run-id>
+```
+
+三个输入必须配套，不能混用 `--case`、`--dir`、`--baseline`、`--self-compare` 或导出选项。输出须是新目录，位于工作区外或 Git 忽略目录，不能包含或覆盖输入；已有目录不会被覆盖。`suite-manifest.json` 需要 `adapterVersion=1.1.0`，增加实际提交的 `sourceParents` 与 `sourceDirty`；旧导出须重新生成。
+
+`run-request.json` 使用公共接口契约 v1 的 `run_request`：固定仓库、产品、被测提交与源摘要、suite/bundle/policy 摘要、环境 ID、assetRevision、selection 和 executionKey。仅支持 `engines=["playwright"]`，Photo 的 suite/environment 为 `null`，截图键为 `final`。`full` 必须包含冻结清单全部用例；`targeted` 必须逐项列出 ID，不扩展为全量。选择摘要为规范化 items 的 SHA-256，执行键为规范化 `{identity, engines, selectionDigest, rerunSequence}` 的 SHA-256。`pr_head` 必须测试 head；`pr_merge` 必须绑定实际父提交 `[baseSha, headSha]`。本机 `local_workspace` 可包含 dirty 修改，但属于辅助证据，不能替代可信 CI 结果。
+
+基准目录提供 `baseline-manifest.json`：
+
+```json
+{
+  "schemaVersion": 1,
+  "contractVersion": "1.0",
+  "kind": "baseline_manifest",
+  "artifactId": "selected-baselines",
+  "repository": "VisActor/VTable",
+  "productKey": "VTable",
+  "environmentId": "trusted-worker-environment-id",
+  "assetRevision": null,
+  "renderer": null,
+  "entries": [
+    {"caseId": "list-basic", "screenshotId": "final", "baselineExpected": false, "path": null, "digest": null}
+  ]
+}
+```
+
+此示例只声明一个首次基准项。请求 `inputArtifacts` 必须引用该 artifactId 和清单**原始文件字节**的 SHA-256。环境 ID 和 assetRevision 必须与请求一致，所有选中截图均须有唯一条目；路径使用普通相对 POSIX 文件路径，禁止符号链接、越界和内容摘要不符。既有 PNG 填写 `baselineExpected=true`、相对 `path` 与 PNG 的 SHA-256；既有基准意外丢失仍声明 `true`，不得改成首次基准。只要使用既有 PNG，`renderer` 必须精确记录其实际 `{node, platform, arch, playwright, browser, settings}`，并与运行时实测一致。平台环境 ID 的完整镜像、字体、权限、内核和网络约束仍由可信控制器验收，本入口不建立操作系统隔离。
+
+基准只复制到结果目录后用于原生 `toMatchSnapshot`，不开启基准更新；运行前后校验输入和副本不变。用例继续执行原有 mount、exercise/verify、有效绘制、连续稳定截图和 release。交互后再次检查绘制，空白、资源错误或语义断言失败不能发布候选图。
+
+机器结果读取 `run-result.json`（`kind=run_result`、contractVersion=1.0）。逐截图保留三项检查、七类状态 `matched` / `different` / `no_baseline` / `assertion_failed` / `execution_error` / `skipped` / `cancelled`、图像摘要与证据路径；`complete` 仅表示全部选中截图具有终态报告，不表示比较通过。首次基准项经断言和稳定性验证可输出 `role=candidate` 的 PNG，但状态仍为 `no_baseline`、rawOutcome=failed、退出 `2`；意外缺基准另带 `MISSING_BASELINE`。只有完整的原生比较证据可返回 `different` 和退出 `1`；全部匹配返回 `0`；缺图、不完整、执行或清理错误返回 `2`。标准基准的接受、写回与服务接入另由协调流程负责，本入口没有同步或接受命令。
+
+`summary.json`、`agent-summary.md` 和三图 HTML 是同次结果的查看入口；其中“完整比较”仍仅表示所选截图均完成有基准的比较。不要用首次候选已验证推断比较通过，也不要把指定基准或自比较称为官方 develop 通过。
+
+```sh
+# 先完成构建或套件导出，随后运行真实浏览器及失败路径专项
+node --test packages/vtable/scripts/visual-candidate.test.mjs
+```
+
 ## 用例维护
 
 目录说明及来源 ID 规则见 [用例指南](./cases/README.md)。开发完成后运行相关目录；提交 PR 前运行默认全量比较并检查差异。新功能或缺陷修复可以加独立用例。不得用放宽截图阈值、跳过语义断言或接受差异代替修复不稳定用例。工具自检：

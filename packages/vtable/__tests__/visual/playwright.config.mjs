@@ -5,6 +5,8 @@ import { settings } from './settings.mjs';
 const runDir = process.env.VISUAL_RUN_DIR;
 const phase = process.env.VISUAL_PHASE;
 if (!runDir || !['baseline', 'current'].includes(phase)) throw new Error('请通过 visual-test.mjs 运行');
+if (process.env.VISUAL_EXTERNAL_BASELINE === '1' && phase !== 'current')
+  throw new Error('指定基准模式只运行候选侧，不允许更新基准');
 
 export default defineConfig({
   testDir: '.',

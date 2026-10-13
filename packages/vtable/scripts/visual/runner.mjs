@@ -66,12 +66,12 @@ export function playwright(root) {
   }
 }
 /** 检查本机依赖及浏览器实际启动能力，不下载、不修改依赖。 */
-export async function preflight(root, runtime) {
+export async function preflight(root, runtime, { buildDependencies = true } = {}) {
   if (Number(process.versions.node.split('.')[0]) !== 22 || !['darwin', 'linux'].includes(process.platform))
     throw fault('PREFLIGHT_FAILED', '需要 Node.js 22 和 macOS/Linux');
   try {
-    git(root, ['--version']);
-    for (const folder of ['tools/bundler', 'packages/vtable']) {
+    if (buildDependencies) git(root, ['--version']);
+    for (const folder of buildDependencies ? ['tools/bundler', 'packages/vtable'] : []) {
       const require = createRequire(path.join(root, folder, 'package.json'));
       for (const dependency of folder === 'tools/bundler'
         ? ['typescript']
@@ -83,7 +83,7 @@ export async function preflight(root, runtime) {
       process.execPath,
       [
         '-e',
-        'const {chromium}=require(process.argv[1]);(async()=>{const browser=await chromium.launch();await browser.close();})().catch(e=>{console.error(e);process.exitCode=2;});',
+        'const {chromium}=require(process.argv[1]);(async()=>{const browser=await chromium.launch();const version=browser.version();await browser.close();console.log("VISUAL_BROWSER="+version);})().catch(e=>{console.error(e);process.exitCode=2;});',
         createRequire(path.join(root, 'packages/vtable/package.json')).resolve('@playwright/test')
       ],
       root,
@@ -91,6 +91,11 @@ export async function preflight(root, runtime) {
       { code: 'PREFLIGHT_FAILED', timeoutMs: 30000 }
     );
     return {
+      browser: (await fs.readFile(path.join(root, '.vtable-visual/preflight.log'), 'utf8'))
+        .split('\n')
+        .filter(line => line.startsWith('VISUAL_BROWSER='))
+        .at(-1)
+        .slice('VISUAL_BROWSER='.length),
       playwright: createRequire(path.join(root, 'packages/vtable/package.json'))('@playwright/test/package.json')
         .version
     };
@@ -109,7 +114,7 @@ export function validateResults(result, ids) {
     throw fault('RESULT_SET_MISMATCH', '阶段结果与选中用例集合不一致');
 }
 /** 运行冻结套件的一个阶段，保留已落盘的原始结果供失败汇总。 */
-export async function executePhase(root, runDir, phase, url, ids, runtime) {
+export async function executePhase(root, runDir, phase, url, ids, runtime, { collectFailures = false, env = {} } = {}) {
   const require = createRequire(path.join(root, 'packages/vtable/package.json'));
   await fs.rm(path.join(runDir, `${phase}-result.json`), { force: true });
   const code = await runtime.run(
@@ -120,7 +125,13 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
     {
       allowFailure: true,
       code: 'EXECUTION_FAILED',
-      env: { VISUAL_RUN_DIR: runDir, VISUAL_BASE_URL: url, VISUAL_PHASE: phase, VISUAL_CASE_IDS: JSON.stringify(ids) }
+      env: {
+        ...env,
+        VISUAL_RUN_DIR: runDir,
+        VISUAL_BASE_URL: url,
+        VISUAL_PHASE: phase,
+        VISUAL_CASE_IDS: JSON.stringify(ids)
+      }
     }
   );
   let result;
@@ -129,10 +140,13 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
   } catch (error) {
     throw fault('RESULT_SET_MISMATCH', `${phase} 缺少有效阶段结果`, error);
   }
-  validateResults(result, ids);
-  if (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
+  if (!collectFailures) validateResults(result, ids);
+  if (
+    !collectFailures &&
+    (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
+  )
     throw fault('EXECUTION_FAILED', `${phase} 阶段执行失败，请查看 ${phase}-result.json 和 ${phase}.log`);
-  return result;
+  return { ...result, exitCode: code };
 }
 /** 持有锁的运行才能释放锁，避免误删另一次运行。 */
 export async function acquireLock(output, owner) {

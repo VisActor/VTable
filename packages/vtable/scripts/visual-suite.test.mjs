@@ -9,7 +9,7 @@ import { parseOptions } from './visual-test.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const product = 'vtable';
-const source = { head: 'a'.repeat(40), digest: 'b'.repeat(64), dirty: true };
+const source = { head: 'a'.repeat(40), parents: [], digest: 'b'.repeat(64), dirty: true };
 
 /** 只在独立忽略目录构造输入，不修改真实用例或正式基准。 */
 async function fixture(
