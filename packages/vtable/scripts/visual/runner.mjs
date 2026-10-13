@@ -172,6 +172,7 @@ export async function acquireLock(output, owner) {
 }
 /** 编排一次完整对比；所有准备失败和清理失败尽可能进入统一报告。 */
 export async function runVisual(root, options) {
+  const progress = message => (options.json ? console.error : console.log)(message);
   const runtime = createRuntime();
   const detach = runtime.listenSignals();
   const output = path.join(root, '.vtable-visual');
@@ -202,7 +203,7 @@ export async function runVisual(root, options) {
   }
   try {
     await fs.mkdir(runDir, { recursive: true });
-    console.log(`运行目录：${runDir}`);
+    progress(`运行目录：${runDir}`);
     await atomicJson(path.join(runDir, 'summary.json'), {
       ...report,
       schemaVersion: 1,
@@ -210,6 +211,7 @@ export async function runVisual(root, options) {
       issues: [{ code: 'RUN_INCOMPLETE', message: '运行尚未完成' }]
     });
     releaseLock = await acquireLock(output, { runId, pid: process.pid, startedAt: report.startedAt, runDir });
+    report.local = await workingTree(root);
     const suite = path.join(runDir, 'suite');
     const source = path.join(root, 'packages/vtable/__tests__/visual');
     report.frozenFiles = await freezeSuite(source, suite);
@@ -233,7 +235,7 @@ export async function runVisual(root, options) {
       selectedCount: selected.length,
       totalCount: allCases.length
     };
-    console.log(`测试范围：${report.selection.value ?? '全部本地用例'}；选中 ${selected.length} / ${allCases.length}`);
+    progress(`测试范围：${report.selection.value ?? '全部本地用例'}；选中 ${selected.length} / ${allCases.length}`);
     const names = ['vtable', 'editors', 'gantt', 'plugins', 'sheet', 'vchart'].filter(name => name === 'vtable' || selected.some(item => item.bundles.includes(name)));
     if (!names.includes('vtable')) names.unshift('vtable');
     report.cases = selected.map(({ id, purpose, file, sourceExample, bundles }) => ({
@@ -250,7 +252,6 @@ export async function runVisual(root, options) {
     report.environment = { ...report.environment, ...(await timed('preflightMs', () => preflight(root, runtime))) };
     await fs.symlink(path.join(root, 'packages/vtable/node_modules'), path.join(runDir, 'node_modules'), 'dir');
     runtime.defer(() => fs.rm(path.join(runDir, 'node_modules'), { force: true }));
-    report.local = await workingTree(root);
     report.stage = 'fetch';
     const log = path.join(runDir, 'build.log');
     const sha = options['self-compare']
@@ -263,7 +264,7 @@ export async function runVisual(root, options) {
       cacheHit: false
     };
     report.stage = 'localBuild';
-    console.log('构建当前工作区…');
+    progress('构建当前工作区…');
     await timed('localBuildMs', () => build(root, runDir, 'current', names, runtime, log));
     const after = await workingTree(root);
     if (after.head !== report.local.head || after.digest !== report.local.digest)
@@ -284,7 +285,7 @@ export async function runVisual(root, options) {
     const ids = selected.map(item => item.id);
     for (const phase of ['baseline', 'current']) {
       report.stage = phase;
-      console.log(`${phase} 截图…`);
+      progress(`${phase} 截图…`);
       report[`${phase}Result`] = await timed(`${phase}ScreenshotsMs`, () =>
         executePhase(root, runDir, phase, url, ids, runtime)
       );
@@ -322,14 +323,35 @@ export async function runVisual(root, options) {
         report.issues.push({ phase: 'cleanup', category: 'execution', code: 'CLEANUP_FAILED', message: String(error) });
       }
     }
+    if (report.local) {
+      try {
+        report.localAfter = await workingTree(root);
+        if (report.local.head !== report.localAfter.head || report.local.digest !== report.localAfter.digest)
+          report.issues.push({ phase: 'source', category: 'execution', code: 'WORKSPACE_CHANGED', message: '检查前后源码或 HEAD 发生变化，请重跑' });
+      } catch (error) {
+        report.issues.push({ phase: 'source', category: 'execution', code: 'SOURCE_SNAPSHOT_FAILED', message: error.message });
+      }
+    }
     detach();
     report.finalized = true;
     report.timings.totalMs = Math.round(performance.now() - started);
   }
+  function finishResult(final, exitCode) {
+    // 标准机器入口只给本地事实；初次准备失败也不猜测范围或源码状态。
+    if (options.json) console.log(JSON.stringify({
+      schemaVersion: 1, kind: 'local_visual_result', runId, runDir, exitCode,
+      status: final.status, complete: final.complete === true,
+      selection: final.selection ?? report.selection ?? null, counts: final.counts ?? null,
+      source: { before: report.local ?? null, after: report.localAfter ?? null },
+      baseline: report.baseline ?? null, environment: report.environment,
+      report: { summary: path.join(runDir, 'summary.json'), html: path.join(runDir, 'index.html'), agentSummary: path.join(runDir, 'agent-summary.md') }
+    }));
+    return exitCode;
+  }
   try {
     const final = await saveReport(runDir, report);
-    console.log(`结果：${final.status}\n报告：${path.join(runDir, 'index.html')}`);
-    return final.status === 'passed' ? 0 : final.status === 'diff' ? 1 : 2;
+    progress(`结果：${final.status}\n报告：${path.join(runDir, 'index.html')}`);
+    return finishResult(final, final.status === 'passed' ? 0 : final.status === 'diff' ? 1 : 2);
   } catch (error) {
     console.error(`REPORT_FAILED: ${error.message}；原始证据：${runDir}`);
     try {
@@ -357,6 +379,6 @@ export async function runVisual(root, options) {
         '# 报告生成失败\n\n状态：error；code：REPORT_FAILED。请读取 summary.json 和阶段日志。\n'
       );
     } catch {}
-    return 2;
+    return finishResult({ status: 'error', complete: false }, 2);
   }
 }

@@ -105,3 +105,12 @@ node --test packages/vtable/scripts/visual-candidate.test.mjs
 ```sh
 node --test packages/vtable/scripts/visual-test.test.mjs
 ```
+
+
+## 本地比较的机器输出
+
+`node packages/vtable/scripts/visual-test.mjs --json` 保留默认全量和官方 develop 比较；也可附带现有 `--case`、`--dir`、`--baseline` 或 `--self-compare`。此选项仅用于本地比较，不与列举、单独预检、套件导出或冻结候选模式混用。
+
+stdout 只有一个 `schemaVersion=1`、`kind=local_visual_result` 对象，进度写入 stderr。对象保留真实 `exitCode`、`status`、`complete`、精确 `selection`、结果 `counts`、源码 `source.before/after`、实际 `baseline`、环境和三份报告绝对路径。退出码仍为通过 `0`、差异 `1`、错误 `2`；准备失败时未取得的范围、源码或基线为 null，不推断成功。源码摘要覆盖 HEAD、未提交和未跟踪源码，检查完成并清理后再次核对；发生变化记为 `WORKSPACE_CHANGED`、退出 `2`。目录或单例完成仅表示所选用例完成，`--self-compare` 只表示本地稳定性，均不代表官方全量、CI 或合入资格。
+
+依赖及浏览器继续由原生预检负责，不自动安装或修复。报告只位于本次返回的运行目录；取消或清理失败保留错误证据。机器契约专项：`node --test packages/vtable/scripts/visual-json.test.mjs`。可安装的公共 `visactor-flow check` 复用此入口，不另行实现截图比较。

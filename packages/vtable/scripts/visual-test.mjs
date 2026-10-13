@@ -27,6 +27,7 @@ export function parseOptions(args) {
         'run-request': { type: 'string' },
         'baseline-set': { type: 'string' },
         output: { type: 'string' },
+        json: { type: 'boolean' },
         help: { type: 'boolean' }
       }
     }));
@@ -60,6 +61,7 @@ export function parseOptions(args) {
       throw fault('INVALID_ARGUMENT', '--export-suite 必须独立使用，仅可附带 --previous-suite');
     return values;
   }
+  if (values.json && (values.list || values.check)) throw fault('INVALID_ARGUMENT', '--json 仅用于本地视觉比较');
   if (values['previous-suite'] !== undefined) throw fault('INVALID_ARGUMENT', '--previous-suite 需要 --export-suite');
   if (tokens.filter(token => token.kind === 'option' && token.name === 'dir').length > 1)
     throw fault('INVALID_ARGUMENT', '--dir 只能指定一次');
@@ -88,7 +90,7 @@ async function main() {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
   if (options.help) {
     console.log(
-      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> | --self-compare] [--dir <目录> | --case <id>]\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--list 列举用例；--check 本机环境检查；--help 帮助\n--export-suite <新目录> [--previous-suite <清单JSON>] 导出冻结套件和当前构建，不截图或更新基准。\n--run-suite <套件目录> --run-request <JSON> --baseline-set <目录> [--output <新目录>] 执行指定基准与候选验证，不构建或写标准图。\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
+      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> | --self-compare] [--dir <目录> | --case <id>] [--json]\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--list 列举用例；--check 本机环境检查；--help 帮助\n--export-suite <新目录> [--previous-suite <清单JSON>] 导出冻结套件和当前构建，不截图或更新基准。\n--run-suite <套件目录> --run-request <JSON> --baseline-set <目录> [--output <新目录>] 执行指定基准与候选验证，不构建或写标准图。\n--json：stdout 输出版本化结果和报告位置，进度写入 stderr。\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
     );
     return;
   }
