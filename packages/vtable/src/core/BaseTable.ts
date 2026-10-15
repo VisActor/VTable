@@ -5343,7 +5343,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         this._scrollToColCorrectTimer = null;
         if (!this.isReleased) {
           this.scrollToCell({ col });
-          this.render();
         }
       }, duration);
     }

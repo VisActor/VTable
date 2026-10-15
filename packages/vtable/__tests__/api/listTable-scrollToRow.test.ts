@@ -38,6 +38,29 @@ describe('listTable scrollToRow api', () => {
     table.release();
   });
 
+  test('renders once after animated column correction', () => {
+    const table = Object.create(Object.getPrototypeOf(ListTable.prototype));
+    table._scrollToColCorrectTimer = null;
+    table.isReleased = false;
+    table.clearColCorrectTimer = jest.fn();
+    table.animationManager = { scrollTo: jest.fn() };
+    const callbacks = [];
+    jest.spyOn(globalThis, 'setTimeout').mockImplementation(callback => {
+      callbacks.push(callback);
+      return callbacks.length as any;
+    });
+    const render = jest.fn();
+    const scrollToCell = jest.fn(() => render());
+    table.render = render;
+    table.scrollToCell = scrollToCell;
+
+    table.scrollToCol(2, { duration: 100 });
+    callbacks[0]();
+
+    expect(scrollToCell).toHaveBeenCalledWith({ col: 2 });
+    expect(render).toHaveBeenCalledTimes(1);
+  });
+
   test('cancels column correction on replacement and release, and ignores a late callback', () => {
     const container = createDiv();
     container.style.width = '400px';
