@@ -35,5 +35,8 @@
     "VisActor Flow / Unit",
     "VisActor Flow / Repository visual"
   ],
-  "firefoxPaste": true
+  "firefoxPaste": true,
+  "visualSuites": [
+    "core"
+  ]
 }

@@ -32,3 +32,15 @@ test('摘要变化和超限输入不能复用受理记录', () => {
   assert.throws(() => dispatchReceipt(JSON.stringify({ ...request, headSha: '0'.repeat(40) }), hash(request), policy, env));
   assert.throws(() => dispatchReceipt(' '.repeat(4097), hash(request), policy, env));
 });
+
+
+test('固定单测清单覆盖当前所有产品包，不因默认分支新增包而漏测', async () => {
+  const root = new URL('../../packages/', import.meta.url); const expected = [];
+  for (const entry of await fs.readdir(root, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const name = entry.name;
+    try { const pkg = JSON.parse(await fs.readFile(new URL(name + '/package.json', root), 'utf8')); if (pkg.scripts?.test) expected.push(name); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+  assert.deepEqual([...policy.unitPackages].sort(), expected.sort());
+});
