@@ -38,5 +38,9 @@
   "firefoxPaste": true,
   "visualSuites": [
     "core"
+  ],
+  "buildFormats": [
+    "es",
+    "cjs"
   ]
 }
