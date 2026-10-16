@@ -194,6 +194,7 @@ export const cases = [
   { id: 'frozen-shadow-start', purpose: '冻结列 overflow 阴影在 start 位置的可见性', file: './frozen/frozen-shadow-start.mjs', bundles: ['vtable'] },
   { id: 'frozen-shadow-end', purpose: '冻结列 overflow 阴影在 end 位置的可见性', file: './frozen/frozen-shadow-end.mjs', bundles: ['vtable'] },
   { id: 'frozen-shadow-middle', purpose: '冻结列 overflow 阴影在 middle 位置的可见性', file: './frozen/frozen-shadow-middle.mjs', bundles: ['vtable'] },
+  { id: 'frozen-shadow-merged-cells', purpose: '左右冻结阴影多段截断、真实滚动和主题切换', file: './frozen/merged-shadow.mjs', bundles: ['vtable'] },
   { id: 'scrollbar-ignore-frozen', purpose: '主横向滚动条跨越冻结列宽度', file: './frozen/scrollbar-ignore-frozen.mjs', bundles: ['vtable'] },
   { id: 'frozen-empty-records-header', purpose: '大量列滚动后清空记录保留冻结表头', file: './frozen/empty-records-header.mjs', bundles: ['vtable'] },
   { id: 'checkbox-header-options', purpose: '复选框表头回调固定选中与禁用配置', file: './cells/checkbox-header-options.mjs', bundles: ['vtable'] },
