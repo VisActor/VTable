@@ -4,7 +4,7 @@
 
 ## 准备
 
-在仓库根目录使用 Node.js 22，安装 Rush 依赖和锁文件对应的 Chromium：
+在仓库根目录使用 Node.js 22。VTable 与 VChart 统一固定 Playwright 1.63.0，安装 Rush 依赖和锁文件对应的 Chromium；两仓继续使用各自的执行配置与基线：
 
 ```sh
 node common/scripts/install-run-rush.js install --ignore-hooks
