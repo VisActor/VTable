@@ -1273,6 +1273,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // （如降序表批量删除视图行 [0,1] 时只删掉一条）。
     const pendingDeletes: number[] = [];
     const handledViewIndexs = new Set<number>();
+    const reservedRawIndexs = new Set<number>();
     const recordIndexsMaxToMin = recordIndexs.slice().sort((a, b) => b - a);
     const viewRecordCount = this._getViewRecordCount();
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
@@ -1287,8 +1288,14 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         continue;
       }
       realDeletedRecordIndexs.push(viewIndex);
-      const rawIndex = rawRecords.indexOf(deletedRecord);
+      // 同一个对象可能被源数组多次引用：此时每个显示行应各占一个原始槽位，
+      // 否则 indexOf 对多行返回同一原始下标，连续 splice 会误删其它行
+      let rawIndex = rawRecords.indexOf(deletedRecord);
+      while (rawIndex >= 0 && reservedRawIndexs.has(rawIndex)) {
+        rawIndex = rawRecords.indexOf(deletedRecord, rawIndex + 1);
+      }
       if (rawIndex >= 0) {
+        reservedRawIndexs.add(rawIndex);
         pendingDeletes.push(rawIndex);
       }
     }

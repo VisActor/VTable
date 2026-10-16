@@ -543,4 +543,28 @@ describe('listTable data events test', () => {
     expect(records.map(record => record.id)).toEqual([1, 2, 4, 5]);
     expect(records[1].name).toBe('Employee 2 updated');
   });
+
+  test('deleteRecords should use one source slot per deleted view row when a record object is reused', () => {
+    table.release();
+    const reused = { id: 1, name: 'Employee 1' };
+    const other = { id: 2, name: 'Employee 2' };
+    // 同一个对象被源数组引用多次（例如多张表共用同一条记录）
+    const records = [reused, other, reused, other];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 删除显示行 [1,2,3]：每一行各占一个原始槽位，保留的是第 0 行引用的那条记录
+    table.deleteRecords([1, 2, 3]);
+
+    expect(records.length).toBe(1);
+    expect(records[0]).toBe(reused);
+  });
 });
