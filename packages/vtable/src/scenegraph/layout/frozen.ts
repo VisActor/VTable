@@ -361,6 +361,9 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
     // row header -> left bottom
     for (let col = 0; col < table.frozenColCount; col++) {
       const bottomFrozenColumnGroup = scene.getColGroupInLeftBottomCorner(col);
+      if (!bottomFrozenColumnGroup) {
+        continue;
+      }
       // move cell
       for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {
         const cellGroup = scene.getCell(col, row, true);
@@ -377,6 +380,9 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
     // body -> bottom
     for (let col = proxy.colStart; col <= proxy.colEnd; col++) {
       const bottomFrozenColumnGroup = scene.getColGroupInBottom(col);
+      if (!bottomFrozenColumnGroup) {
+        continue;
+      }
       // move cell
       for (let row = table.rowCount - currentBottomFrozenRow - 1; row >= table.rowCount - distBottomFrozenRow; row--) {
         const cellGroup = scene.getCell(col, row, true);
@@ -394,6 +400,9 @@ export function dealBottomFrozen(distBottomFrozenRow: number, scene: Scenegraph)
       // right -> right bottom
       for (let col = table.colCount - table.rightFrozenColCount; col < table.colCount; col++) {
         const bottomFrozenColumnGroup = scene.getColGroupInRightBottomCorner(col);
+        if (!bottomFrozenColumnGroup) {
+          continue;
+        }
         // move cell
         for (
           let row = table.rowCount - currentBottomFrozenRow - 1;

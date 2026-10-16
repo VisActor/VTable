@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vue-vtable",
+      "comment": "fix: prevent dynamic editor completion from overwriting immediate cell updates",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vue-vtable",
+  "email": "github@visactor.io"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "test(vtable): cover preserving addRecords results after clearing filters",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

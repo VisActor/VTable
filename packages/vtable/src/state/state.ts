@@ -206,6 +206,7 @@ export class StateManager {
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
   _frozenObserver?: ResizeObserver;
+  _frozenObserverCheckTimer?: ReturnType<typeof setTimeout>;
 
   fastScrolling: boolean = false;
 
@@ -993,6 +994,9 @@ export class StateManager {
 
         // 使用 ResizeObserver 监听容器尺寸变化
         this._frozenObserver = new ResizeObserver(entries => {
+          if (this.table.isReleased) {
+            return;
+          }
           for (const entry of entries) {
             // 检查容器宽度是否变为可见
             if (entry.contentRect.width > 0) {
@@ -1001,8 +1005,11 @@ export class StateManager {
 
               this.table.resize();
 
-              setTimeout(() => {
-                this.checkFrozen();
+              this._frozenObserverCheckTimer = setTimeout(() => {
+                this._frozenObserverCheckTimer = undefined;
+                if (!this.table.isReleased) {
+                  this.checkFrozen();
+                }
               }, 0);
               return;
             }
@@ -1113,6 +1120,12 @@ export class StateManager {
       this._frozenObserver.disconnect();
       this._frozenObserver = null;
     }
+  }
+
+  release() {
+    this.clearFrozenObserver();
+    clearTimeout(this._frozenObserverCheckTimer);
+    this._frozenObserverCheckTimer = undefined;
   }
 
   setFrozenCol(col: number) {

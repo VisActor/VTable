@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vtable",
+      "comment": "test: add regression coverage and a reproduction demo for custom-layout Link and Button mounting before stage attachment (GitHub #4836)",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/react-vtable",
+  "email": "892739385@qq.com"
+}

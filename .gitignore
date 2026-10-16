@@ -43,6 +43,8 @@ stats.html
 report.html
 
 coverage/
+playwright-report/
+test-results/
 
 *.local.ts
 
@@ -115,3 +117,6 @@ tsconfig.tsbuildinfo
 
 # codex
 .omx/
+
+# Local visual regression runs
+.vtable-visual/

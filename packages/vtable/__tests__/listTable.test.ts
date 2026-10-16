@@ -1,7 +1,7 @@
 // @ts-nocheck
 // 有问题可对照demo unitTestListTable
 import records from './data/marketsales.json';
-import { ListTable } from '../src';
+import { ListTable, setCustomAlphabetCharSet } from '../src';
 import { createDiv } from './dom';
 global.__VERSION__ = 'none';
 describe('listTable init test', () => {
@@ -249,17 +249,33 @@ describe('listTable init test', () => {
     dragTable.release();
   });
   test('listTable measureTextWidth', () => {
-    const measureTextWdith = listTable.measureText("家里方大化工撒个福建师大看哈 fdsfgj! *-+&5%#.,'.，。、", {
-      fontFamily: 'Arial',
-      fontSize: 15,
-      fontWeight: 'bold'
+    // 固定原生字形度量，精确验证快速测量；不把操作系统字体的小数误差作为 API 契约。
+    setCustomAlphabetCharSet('');
+    const measure = jest.spyOn(CanvasRenderingContext2D.prototype, 'measureText').mockImplementation(function (text) {
+      expect(this.font).toBe('bold 15px Arial');
+      return {
+        width: Array.from(text).reduce((width, char) => width + (char.charCodeAt(0) > 127 ? 16 : 8), 0),
+        fontBoundingBoxAscent: 14,
+        fontBoundingBoxDescent: 3
+      };
     });
-    expect(measureTextWdith).toEqual({
-      fontBoundingBoxAscent: 14,
-      fontBoundingBoxDescent: 3,
-      width: 390.0501427283655,
-      height: 15
-    });
+    try {
+      const measureTextWidth = listTable.measureText("家里方大化工撒个福建师大看哈 fdsfgj! *-+&5%#.,'.，。、", {
+        fontFamily: 'Arial',
+        fontSize: 15,
+        fontWeight: 'bold'
+      });
+      expect(measure).toHaveBeenCalled();
+      expect(measureTextWidth).toEqual({
+        fontBoundingBoxAscent: 14,
+        fontBoundingBoxDescent: 3,
+        width: 432,
+        height: 15
+      });
+    } finally {
+      measure.mockRestore();
+      setCustomAlphabetCharSet('');
+    }
   });
   // test('listTable API getAllCells', () => {
   //   expect(JSON.parse(JSON.stringify(listTable.getCellInfo(5, 5)))).toEqual({

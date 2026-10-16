@@ -182,6 +182,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'issue-4778-taskbar-relative-rect'
+  },
+  {
+    path: 'gantt',
+    name: 'issue-4631-set-records-project'
   }
   //   ]
   // }

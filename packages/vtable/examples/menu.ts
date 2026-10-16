@@ -72,11 +72,31 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-3903-delete-all-bottom-frozen'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4656-fill-handle-hit-area'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4607-filter-add-records'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4794-filter-update-records'
+      },
+      {
+        path: 'debug',
         name: 'issue-3752-large-merge-auto-height'
       },
       {
         path: 'debug',
         name: 'issue-4186-nested-field-edit'
+      },
+      {
+        path: 'debug',
+        name: 'issue-4111-transpose-frozen-observer'
       },
       {
         path: 'debug',
@@ -1211,6 +1231,10 @@ export const menus = [
   {
     menu: 'frozen',
     children: [
+      {
+        path: 'frozen',
+        name: 'issue-4111-transpose-frozen-columns'
+      },
       {
         path: 'frozen',
         name: 'list-table-bottom-frozen'
