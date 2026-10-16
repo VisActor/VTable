@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "修复重复提交同一选区时新选框被误删、旧选框与填充柄残留的问题。",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "sunrui1992@foxmail.com"
+}

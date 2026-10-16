@@ -44,12 +44,35 @@ export default {
     await page.mouse.move(points.end.x, points.end.y, { steps: 10 });
     await page.mouse.up();
     await page.locator('.vtable__menu-element__item').filter({ hasText: '复制填充' }).click();
+    await page.waitForFunction(() => window.__visualTable.getActiveSheet().tableInstance.getCellValue(4, 4) === 11);
+    // 填充结束后点击目标格，截图固定为用户可达的单格选中态，排除拖动选择柄的瞬态。
+    const target = await page.evaluate(() => {
+      const table = window.__visualTable.getActiveSheet().tableInstance;
+      const bounds = table.scenegraph.getCell(4, 4).globalAABBBounds;
+      const canvas = table.canvas.getBoundingClientRect();
+      return { x: canvas.x + (bounds.x1 + bounds.x2) / 2,
+        y: canvas.y + (bounds.y1 + bounds.y2) / 2 };
+    });
+    await page.mouse.click(target.x, target.y);
+    // 等待表格实际绘制完成；renderAsync 的零延迟 Promise 不代表渲染已结束。
+    await page.evaluate(() => new Promise(resolve => {
+      const table = window.__visualTable.getActiveSheet().tableInstance;
+      const listener = table.on('after_render', () => {
+        table.off(listener);
+        resolve();
+      });
+      table.renderAsync();
+    }));
   },
   async verify(page) {
     // 当前复制填充行为将源格显示值 11 写到相邻单元格，源格仍为 11。
     await page.evaluate(() => {
       const sheet = window.__visualTable;
       const table = sheet.getActiveSheet().tableInstance;
+      const ranges = table.getSelectedCellRanges();
+      if (ranges.length !== 1 || ranges[0].start.col !== 4 || ranges[0].start.row !== 4 ||
+        ranges[0].end.col !== 4 || ranges[0].end.row !== 4)
+        throw new Error(`填充后的目标格未选中：${JSON.stringify(ranges)}`);
       if (window.__fillSourceValue !== 11 || table.getCellValue(3, 4) !== 11 ||
         table.getCellValue(4, 4) !== 11)
         throw new Error(`公式自动填充结果错误：${table.getCellValue(3, 4)}, ${table.getCellValue(4, 4)}`);

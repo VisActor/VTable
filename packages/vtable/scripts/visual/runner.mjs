@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
-import { createRuntime, serve, fault, digest, atomicJson, fileManifest } from './runtime.mjs';
+import { createRuntime, serve, fault, digest, atomicJson, fileManifest, freezeSuite } from './runtime.mjs';
 import { git, workingTree, resolveBaseline, build, baselineBuild, official } from './build.mjs';
 import { saveReport } from '../../__tests__/visual/report.mjs';
 
@@ -17,10 +17,10 @@ export async function loadCases(suite, caseId) {
     if (!Array.isArray(cases) || !cases.length) throw new Error('用例清单为空');
     const ids = new Set();
     for (const item of cases) {
-      if (!/^[a-z][a-z0-9-]*$/.test(item.id) || ids.has(item.id)) throw new Error(`非法或重复 ID：${item.id}`);
+      if (typeof item.id !== 'string' || !/^[a-z][a-z0-9-]*$/.test(item.id) || ids.has(item.id)) throw new Error(`非法或重复 ID：${item.id}`);
       ids.add(item.id);
       if (
-        !item.purpose ||
+        typeof item.purpose !== 'string' || !item.purpose.trim() ||
         (item.sourceExample !== undefined && (typeof item.sourceExample !== 'string' || !item.sourceExample.trim())) ||
         !Array.isArray(item.bundles) || !item.bundles.length || item.bundles.some(name => !['vtable', 'editors', 'gantt', 'plugins', 'sheet', 'vchart'].includes(name)) || new Set(item.bundles).size !== item.bundles.length ||
         typeof item.file !== 'string' ||
@@ -66,12 +66,12 @@ export function playwright(root) {
   }
 }
 /** 检查本机依赖及浏览器实际启动能力，不下载、不修改依赖。 */
-export async function preflight(root, runtime) {
+export async function preflight(root, runtime, { buildDependencies = true } = {}) {
   if (Number(process.versions.node.split('.')[0]) !== 22 || !['darwin', 'linux'].includes(process.platform))
     throw fault('PREFLIGHT_FAILED', '需要 Node.js 22 和 macOS/Linux');
   try {
-    git(root, ['--version']);
-    for (const folder of ['tools/bundler', 'packages/vtable']) {
+    if (buildDependencies) git(root, ['--version']);
+    for (const folder of buildDependencies ? ['tools/bundler', 'packages/vtable'] : []) {
       const require = createRequire(path.join(root, folder, 'package.json'));
       for (const dependency of folder === 'tools/bundler'
         ? ['typescript']
@@ -83,7 +83,7 @@ export async function preflight(root, runtime) {
       process.execPath,
       [
         '-e',
-        'const {chromium}=require(process.argv[1]);(async()=>{const browser=await chromium.launch();await browser.close();})().catch(e=>{console.error(e);process.exitCode=2;});',
+        'const {chromium}=require(process.argv[1]);(async()=>{const browser=await chromium.launch();const version=browser.version();await browser.close();console.log("VISUAL_BROWSER="+version);})().catch(e=>{console.error(e);process.exitCode=2;});',
         createRequire(path.join(root, 'packages/vtable/package.json')).resolve('@playwright/test')
       ],
       root,
@@ -91,6 +91,11 @@ export async function preflight(root, runtime) {
       { code: 'PREFLIGHT_FAILED', timeoutMs: 30000 }
     );
     return {
+      browser: (await fs.readFile(path.join(root, '.vtable-visual/preflight.log'), 'utf8'))
+        .split('\n')
+        .filter(line => line.startsWith('VISUAL_BROWSER='))
+        .at(-1)
+        .slice('VISUAL_BROWSER='.length),
       playwright: createRequire(path.join(root, 'packages/vtable/package.json'))('@playwright/test/package.json')
         .version
     };
@@ -109,7 +114,7 @@ export function validateResults(result, ids) {
     throw fault('RESULT_SET_MISMATCH', '阶段结果与选中用例集合不一致');
 }
 /** 运行冻结套件的一个阶段，保留已落盘的原始结果供失败汇总。 */
-export async function executePhase(root, runDir, phase, url, ids, runtime) {
+export async function executePhase(root, runDir, phase, url, ids, runtime, { collectFailures = false, env = {} } = {}) {
   const require = createRequire(path.join(root, 'packages/vtable/package.json'));
   await fs.rm(path.join(runDir, `${phase}-result.json`), { force: true });
   const code = await runtime.run(
@@ -120,7 +125,13 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
     {
       allowFailure: true,
       code: 'EXECUTION_FAILED',
-      env: { VISUAL_RUN_DIR: runDir, VISUAL_BASE_URL: url, VISUAL_PHASE: phase, VISUAL_CASE_IDS: JSON.stringify(ids) }
+      env: {
+        ...env,
+        VISUAL_RUN_DIR: runDir,
+        VISUAL_BASE_URL: url,
+        VISUAL_PHASE: phase,
+        VISUAL_CASE_IDS: JSON.stringify(ids)
+      }
     }
   );
   let result;
@@ -129,10 +140,13 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
   } catch (error) {
     throw fault('RESULT_SET_MISMATCH', `${phase} 缺少有效阶段结果`, error);
   }
-  validateResults(result, ids);
-  if (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
+  if (!collectFailures) validateResults(result, ids);
+  if (
+    !collectFailures &&
+    (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
+  )
     throw fault('EXECUTION_FAILED', `${phase} 阶段执行失败，请查看 ${phase}-result.json 和 ${phase}.log`);
-  return result;
+  return { ...result, exitCode: code };
 }
 /** 持有锁的运行才能释放锁，避免误删另一次运行。 */
 export async function acquireLock(output, owner) {
@@ -158,6 +172,7 @@ export async function acquireLock(output, owner) {
 }
 /** 编排一次完整对比；所有准备失败和清理失败尽可能进入统一报告。 */
 export async function runVisual(root, options) {
+  const progress = message => (options.json ? console.error : console.log)(message);
   const runtime = createRuntime();
   const detach = runtime.listenSignals();
   const output = path.join(root, '.vtable-visual');
@@ -188,7 +203,7 @@ export async function runVisual(root, options) {
   }
   try {
     await fs.mkdir(runDir, { recursive: true });
-    console.log(`运行目录：${runDir}`);
+    progress(`运行目录：${runDir}`);
     await atomicJson(path.join(runDir, 'summary.json'), {
       ...report,
       schemaVersion: 1,
@@ -196,11 +211,10 @@ export async function runVisual(root, options) {
       issues: [{ code: 'RUN_INCOMPLETE', message: '运行尚未完成' }]
     });
     releaseLock = await acquireLock(output, { runId, pid: process.pid, startedAt: report.startedAt, runDir });
+    report.local = await workingTree(root);
     const suite = path.join(runDir, 'suite');
     const source = path.join(root, 'packages/vtable/__tests__/visual');
-    await fileManifest(source);
-    await fs.cp(source, suite, { recursive: true });
-    report.frozenFiles = await fileManifest(suite);
+    report.frozenFiles = await freezeSuite(source, suite);
     report.suiteDigest = digest(JSON.stringify(report.frozenFiles));
     const { settings } = await import(pathToFileURL(path.join(suite, 'settings.mjs')));
     report.comparison = settings.comparison;
@@ -221,7 +235,7 @@ export async function runVisual(root, options) {
       selectedCount: selected.length,
       totalCount: allCases.length
     };
-    console.log(`测试范围：${report.selection.value ?? '全部本地用例'}；选中 ${selected.length} / ${allCases.length}`);
+    progress(`测试范围：${report.selection.value ?? '全部本地用例'}；选中 ${selected.length} / ${allCases.length}`);
     const names = ['vtable', 'editors', 'gantt', 'plugins', 'sheet', 'vchart'].filter(name => name === 'vtable' || selected.some(item => item.bundles.includes(name)));
     if (!names.includes('vtable')) names.unshift('vtable');
     report.cases = selected.map(({ id, purpose, file, sourceExample, bundles }) => ({
@@ -238,7 +252,6 @@ export async function runVisual(root, options) {
     report.environment = { ...report.environment, ...(await timed('preflightMs', () => preflight(root, runtime))) };
     await fs.symlink(path.join(root, 'packages/vtable/node_modules'), path.join(runDir, 'node_modules'), 'dir');
     runtime.defer(() => fs.rm(path.join(runDir, 'node_modules'), { force: true }));
-    report.local = await workingTree(root);
     report.stage = 'fetch';
     const log = path.join(runDir, 'build.log');
     const sha = options['self-compare']
@@ -251,7 +264,7 @@ export async function runVisual(root, options) {
       cacheHit: false
     };
     report.stage = 'localBuild';
-    console.log('构建当前工作区…');
+    progress('构建当前工作区…');
     await timed('localBuildMs', () => build(root, runDir, 'current', names, runtime, log));
     const after = await workingTree(root);
     if (after.head !== report.local.head || after.digest !== report.local.digest)
@@ -272,7 +285,7 @@ export async function runVisual(root, options) {
     const ids = selected.map(item => item.id);
     for (const phase of ['baseline', 'current']) {
       report.stage = phase;
-      console.log(`${phase} 截图…`);
+      progress(`${phase} 截图…`);
       report[`${phase}Result`] = await timed(`${phase}ScreenshotsMs`, () =>
         executePhase(root, runDir, phase, url, ids, runtime)
       );
@@ -310,14 +323,35 @@ export async function runVisual(root, options) {
         report.issues.push({ phase: 'cleanup', category: 'execution', code: 'CLEANUP_FAILED', message: String(error) });
       }
     }
+    if (report.local) {
+      try {
+        report.localAfter = await workingTree(root);
+        if (report.local.head !== report.localAfter.head || report.local.digest !== report.localAfter.digest)
+          report.issues.push({ phase: 'source', category: 'execution', code: 'WORKSPACE_CHANGED', message: '检查前后源码或 HEAD 发生变化，请重跑' });
+      } catch (error) {
+        report.issues.push({ phase: 'source', category: 'execution', code: 'SOURCE_SNAPSHOT_FAILED', message: error.message });
+      }
+    }
     detach();
     report.finalized = true;
     report.timings.totalMs = Math.round(performance.now() - started);
   }
+  function finishResult(final, exitCode) {
+    // 标准机器入口只给本地事实；初次准备失败也不猜测范围或源码状态。
+    if (options.json) console.log(JSON.stringify({
+      schemaVersion: 1, kind: 'local_visual_result', runId, runDir, exitCode,
+      status: final.status, complete: final.complete === true,
+      selection: final.selection ?? report.selection ?? null, counts: final.counts ?? null,
+      source: { before: report.local ?? null, after: report.localAfter ?? null },
+      baseline: report.baseline ?? null, environment: report.environment,
+      report: { summary: path.join(runDir, 'summary.json'), html: path.join(runDir, 'index.html'), agentSummary: path.join(runDir, 'agent-summary.md') }
+    }));
+    return exitCode;
+  }
   try {
     const final = await saveReport(runDir, report);
-    console.log(`结果：${final.status}\n报告：${path.join(runDir, 'index.html')}`);
-    return final.status === 'passed' ? 0 : final.status === 'diff' ? 1 : 2;
+    progress(`结果：${final.status}\n报告：${path.join(runDir, 'index.html')}`);
+    return finishResult(final, final.status === 'passed' ? 0 : final.status === 'diff' ? 1 : 2);
   } catch (error) {
     console.error(`REPORT_FAILED: ${error.message}；原始证据：${runDir}`);
     try {
@@ -345,6 +379,6 @@ export async function runVisual(root, options) {
         '# 报告生成失败\n\n状态：error；code：REPORT_FAILED。请读取 summary.json 和阶段日志。\n'
       );
     } catch {}
-    return 2;
+    return finishResult({ status: 'error', complete: false }, 2);
   }
 }

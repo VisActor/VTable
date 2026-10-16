@@ -6,9 +6,10 @@ export function moveSelectingRangeComponentsToSelectedRangeComponents(scene: Sce
   //
   // 若 selectedRangeComponents 已存在同 key 的段落（例如重复选择同一区域），先删除旧图元避免泄漏与重复绘制。
   scene.selectingRangeComponents.forEach((rangeComponent, key) => {
-    if (scene.selectedRangeComponents.get(key)) {
-      scene.selectingRangeComponents.get(key).rect.delete();
-      scene.selectingRangeComponents.get(key).fillhandle?.delete();
+    const previous = scene.selectedRangeComponents.get(key);
+    if (previous) {
+      previous.rect.delete();
+      previous.fillhandle?.delete();
     }
     scene.selectedRangeComponents.set(key, rangeComponent);
   });
