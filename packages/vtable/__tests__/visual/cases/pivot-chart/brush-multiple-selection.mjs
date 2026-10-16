@@ -14,7 +14,7 @@ export default {
     const chartSpec = (id, field) => ({
       type: 'bar', direction: 'vertical', data: { id },
       xField: 'category', yField: field,
-      brush: { visible: true, brushType: 'x', brushMode: 'multiple',
+      brush: { visible: true, brushType: 'x', brushMode: 'multiple', delayTime: 0,
         inBrush: { colorAlpha: 1 }, outOfBrush: { colorAlpha: 0.2 } },
       animation: false
     });
@@ -35,11 +35,17 @@ export default {
       defaultHeaderRowHeight: 30, defaultHeaderColWidth: 80,
       chartDimensionLinkage: {}
     });
-    table.onVChartEvent('brushEnd', () => { window.__brushEndCount++; });
+    table.onVChartEvent('brushEnd', event => {
+      window.__brushEndCount++;
+      window.__brushSelection = {
+        inside: event.value.inBrushData.map(row => row.category),
+        outside: event.value.outOfBrushData.map(row => row.category)
+      };
+    });
     return table;
   },
   async exercise(page) {
-    // 在首个可见图表单元格的绘图区水平拖动创建框选。
+    // 根据 B 柱的实际位置框选，避免固定坐标把所有类别一起选中。
     const segment = await page.evaluate(() => {
       const table = window.__visualTable;
       for (let row = 0; row < table.rowCount; row++)
@@ -47,25 +53,50 @@ export default {
           if (table.getCellType(col, row) === 'chart') {
             const b = table.getCellRect(col, row).bounds;
             const host = document.getElementById('table').getBoundingClientRect();
-            return { start: { x: host.x + b.x1 + 100,
-              y: host.y + (b.y1 + b.y2) / 2 },
-            end: { x: host.x + b.x1 + 360,
-              y: host.y + (b.y1 + b.y2) / 2 } };
+            const position = table.getChartDatumPosition(
+              { group: 'All', bucket: 'One', category: 'B', amount: 16 },
+              table.getCellHeaderPaths(col, row));
+            if (!position) throw new Error('无法定位 B 柱');
+            const y = host.y + (b.y1 + b.y2) / 2;
+            return { start: { x: host.x + position.x - 20, y },
+              end: { x: host.x + position.x + 20, y } };
           }
       throw new Error('框选图表单元格缺失');
     });
     await page.mouse.move(segment.start.x - 15, segment.start.y);
     await page.mouse.move(segment.start.x, segment.start.y, { steps: 5 });
-    await page.waitForTimeout(150);
+    // 激活图表后先完成一次表格绘制，避免首次 viewBox 同步在框选后清掉选框。
+    await page.evaluate(() => new Promise(resolve => {
+      const table = window.__visualTable;
+      const listener = table.on('after_render', () => {
+        table.off(listener);
+        resolve();
+      });
+      table.renderAsync();
+    }));
     await page.mouse.down();
     await page.mouse.move(segment.end.x, segment.end.y, { steps: 12 });
     await page.mouse.up();
-    await page.waitForTimeout(150);
+    await page.waitForFunction(() => window.__brushEndCount > 0);
+    // 框选状态会刷新图表缓存；等待表格实际绘制，截图不依赖异步帧的先后顺序。
+    await page.evaluate(() => new Promise(resolve => {
+      const table = window.__visualTable;
+      const listener = table.on('after_render', () => {
+        table.off(listener);
+        resolve();
+      });
+      table.renderAsync();
+    }));
+    // 活动图表和表格共用画布；表格完成后绘制已存在的选框，不修改选中状态。
+    await page.evaluate(() => window.__visualTable.scenegraph.brushingChartInstance.getStage().render());
   },
   async verify(page) {
-    // 至少一个图表收到 brushEnd，证明录制的拖动进入了 VChart 框选路径。
+    // 结束事件与真实选中/未选中数据同时成立，跳过拖动不能通过。
     await page.evaluate(() => {
       if (window.__brushEndCount < 1) throw new Error('透视图未触发框选结束事件');
+      const selected = window.__brushSelection;
+      if (!selected.inside.includes('B') || !selected.outside.includes('C'))
+        throw new Error(`透视图框选数据状态错误：${JSON.stringify(selected)}`);
     });
   }
 };
