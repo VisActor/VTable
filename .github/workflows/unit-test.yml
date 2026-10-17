@@ -15,8 +15,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # 与受控 CI 统一 Node 22，满足 Playwright 1.63 的运行要求。
+        node-version: ['22.22.2']
 
     steps:
       - uses: actions/checkout@v3
