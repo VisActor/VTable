@@ -2,10 +2,11 @@ import { isValid } from '@visactor/vutils';
 import type { ListTable } from '../..';
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
-import type { SelectAllOnCtrlAOption } from '../../ts-types';
+import type { CellRange, SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 import { isCellDisableSelect } from './is-cell-select-highlight';
+import { markHeaderSelectRange } from './auto-merge-ranges';
 /**
  * @description: 更新select位置
  * @param {StateManager} state
@@ -27,6 +28,7 @@ export function updateSelectPosition(
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { cellPos } = state.select;
+  let selectedRange: CellRange | undefined;
   state.select.isSelectAll = isSelectAll;
 
   if (col !== -1 && row !== -1 && makeSelectCellVisible) {
@@ -350,6 +352,7 @@ export function updateSelectPosition(
         scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
       }
     }
+    selectedRange = state.select.ranges[state.select.ranges.length - 1];
   } else if (
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&
     !table.stateManager.isResizeCol()
@@ -493,6 +496,11 @@ export function updateSelectPosition(
         scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
       }
     }
+    selectedRange = currentRange;
+  }
+  // 点击、Shift 和拖动均可投影到 body，在共同出口保留本次选择来源。
+  if (selectedRange && (table.isHeader(col, row) || table.isSeriesNumber(col, row))) {
+    markHeaderSelectRange(selectedRange);
   }
   scenegraph.updateNextFrame();
 }
