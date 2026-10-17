@@ -246,6 +246,26 @@ describe('listTable select auto merge ranges', () => {
     ]);
   });
 
+  test.each(['column', 'series', 'corner'])('keeps Ctrl-drag %s projections separate', target => {
+    const table = createTable(
+      { autoMergeRanges: true, headerSelectMode: 'body' },
+      target === 'column' ? {} : { rowSeriesNumber: {} }
+    );
+    const first = target === 'column'
+      ? { start: { col: 2, row: table.columnHeaderLevelCount }, end: { col: 2, row: table.rowCount - 1 } }
+      : target === 'series'
+        ? { start: { col: table.leftRowSeriesNumberCount, row: 2 }, end: { col: table.colCount - 1, row: 2 } }
+        : { start: { col: 2, row: 2 }, end: { col: 2, row: 2 } };
+    const start = target === 'series' ? { col: 2, row: 3 } : { col: 3, row: 2 };
+    const end = target === 'column' ? { col: 3, row: 0 } : { col: 0, row: target === 'series' ? 3 : 0 };
+    const projection = target === 'column'
+      ? { start: { col: 3, row: table.columnHeaderLevelCount }, end: { col: 3, row: table.rowCount - 1 } }
+      : { start: { col: table.leftRowSeriesNumberCount, row: target === 'series' ? 3 : table.columnHeaderLevelCount }, end: { col: table.colCount - 1, row: target === 'series' ? 3 : table.rowCount - 1 } };
+    table.selectCells([first]);
+    dragSelect(table, start, end, true);
+    expect(table.getSelectedCellRanges()).toEqual([addSkipBodyMerge(first), addSkipBodyMerge(projection)]);
+  });
+
   test('still merges explicit body API ranges with headerSelectMode body', () => {
     const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
     table.selectCells([
