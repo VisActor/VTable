@@ -341,7 +341,7 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
-      if (currentRange && state.select.headerSelectMode !== 'cell' && table.isHeader(col, row)) {
+      if (currentRange && (table.isHeader(col, row) || table.isSeriesNumber(col, row))) {
         markHeaderSelectRange(currentRange);
       }
       if (

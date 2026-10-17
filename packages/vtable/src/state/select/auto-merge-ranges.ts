@@ -5,7 +5,7 @@ type SelectRange = CellRange & { skipBodyMerge?: boolean };
 
 const headerSelectRanges = new WeakSet<CellRange>();
 
-/** 保留表头投影选区的来源，不向公开选区对象增加字段。 */
+/** 保留表头和序号投影选区的来源，不向公开选区对象增加字段。 */
 export function markHeaderSelectRange(range: CellRange): void {
   headerSelectRanges.add(range);
 }

@@ -215,6 +215,25 @@ describe('listTable select auto merge ranges', () => {
     ]);
   });
 
+  test('keeps series number body projections separate', () => {
+    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' }, { rowSeriesNumber: {} });
+    table.selectCell(0, 2, false, false, false);
+    table.selectCell(0, 3, false, true, false);
+    expect(table.getSelectedCellRanges()).toEqual([2, 3].map(row =>
+      addSkipBodyMerge({ start: { col: table.leftRowSeriesNumberCount, row }, end: { col: table.colCount - 1, row } })
+    ));
+  });
+
+  test('keeps corner body projections separate when ordinary headers use cell mode', () => {
+    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'cell', cornerHeaderSelectMode: 'body' }, { rowSeriesNumber: {} });
+    table.selectCell(0, 0, false, false, false);
+    table.selectCell(2, 2, false, true, false, true);
+    expect(table.getSelectedCellRanges()).toEqual([
+      addSkipBodyMerge({ start: { col: table.leftRowSeriesNumberCount, row: table.columnHeaderLevelCount }, end: { col: table.colCount - 1, row: table.rowCount - 1 } }),
+      addSkipBodyMerge({ start: { col: 2, row: 2 }, end: { col: 2, row: 2 } })
+    ]);
+  });
+
   test('still merges explicit body API ranges with headerSelectMode body', () => {
     const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
     table.selectCells([
