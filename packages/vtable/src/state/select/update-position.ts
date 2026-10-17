@@ -341,9 +341,6 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
-      if (currentRange && (table.isHeader(col, row) || table.isSeriesNumber(col, row))) {
-        markHeaderSelectRange(currentRange);
-      }
       if (
         currentRange &&
         currentRange.start.row <= table.rowCount - 1 &&
@@ -353,6 +350,11 @@ export function updateSelectPosition(
       ) {
         scenegraph.updateCellSelectBorder(currentRange, extendSelectRange);
       }
+    }
+    // Shift 扩展到表头也会产生 body 投影，统一保留本次选择交互的来源。
+    const selectedRange = state.select.ranges[state.select.ranges.length - 1];
+    if (selectedRange && (table.isHeader(col, row) || table.isSeriesNumber(col, row))) {
+      markHeaderSelectRange(selectedRange);
     }
   } else if (
     (interactionState === InteractionState.grabing || table.eventManager.isDraging) &&

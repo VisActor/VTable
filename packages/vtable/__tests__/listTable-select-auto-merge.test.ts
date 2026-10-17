@@ -234,6 +234,18 @@ describe('listTable select auto merge ranges', () => {
     ]);
   });
 
+  test('keeps Shift header projections separate from existing ordinary body ranges', () => {
+    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
+    const first = { start: { col: 2, row: table.columnHeaderLevelCount }, end: { col: 2, row: table.rowCount - 1 } };
+    table.selectCells([first]);
+    table.selectCell(4, 2, false, true, false, true);
+    table.selectCell(3, 0, true, false, false);
+    expect(table.getSelectedCellRanges()).toEqual([
+      addSkipBodyMerge(first),
+      { start: { col: 3, row: table.columnHeaderLevelCount }, end: { col: 4, row: table.rowCount - 1 }, skipBodyMerge: true }
+    ]);
+  });
+
   test('still merges explicit body API ranges with headerSelectMode body', () => {
     const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
     table.selectCells([
