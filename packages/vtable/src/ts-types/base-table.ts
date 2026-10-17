@@ -145,6 +145,9 @@ export interface IBaseTableProtected {
 
   rowResizeMode?: 'all' | 'none' | 'header' | 'body';
 
+  /** 拖拽调整行列尺寸时是否实时响应，为 false 时仅拖拽结束后应用尺寸变化 */
+  resizeRealtime?: boolean;
+
   columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
 
   rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
@@ -720,6 +723,12 @@ export interface BaseTableConstructorOptions {
     rowResizeMode?: 'all' | 'none' | 'header' | 'body';
     /** 是否禁用双击列边框自动调整列宽 **/
     disableDblclickAutoResizeColWidth?: boolean;
+    /**
+     * 拖拽调整行列尺寸时是否实时响应。
+     * true（默认）：拖拽过程中实时更新列宽/行高，与历史行为一致。
+     * false：拖拽过程中仅移动指示线，鼠标释放时才应用最终尺寸变化，可缓解大数据量场景下的拖拽卡顿。
+     */
+    realtime?: boolean;
   };
   dragOrder?: {
     /** 控制拖拽表头移动位置顺序开关 */

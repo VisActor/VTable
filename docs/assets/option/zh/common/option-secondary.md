@@ -719,6 +719,13 @@ animationAppear?: boolean | {
 canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
 ```
 
+##${prefix} realtime(boolean) = true
+
+拖拽调整行列尺寸时是否实时响应。
+
+- `true`（默认）：拖拽过程中实时更新列宽/行高，与历史行为一致。
+- `false`：拖拽过程中仅移动指示线，鼠标释放后才应用最终尺寸变化。适用于大数据量场景，可显著缓解拖拽时的卡顿。
+
 #${prefix} dragOrder(Object)
 
 拖拽移动位置的配置。

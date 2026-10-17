@@ -981,6 +981,10 @@ export const menus = [
       },
       {
         path: 'interactive',
+        name: 'resize-realtime'
+      },
+      {
+        path: 'interactive',
         name: 'resize-setRecords'
       },
       {
