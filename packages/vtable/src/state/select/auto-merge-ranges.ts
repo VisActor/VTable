@@ -3,6 +3,13 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 
 type SelectRange = CellRange & { skipBodyMerge?: boolean };
 
+const headerSelectRanges = new WeakSet<CellRange>();
+
+/** 保留表头投影选区的来源，不向公开选区对象增加字段。 */
+export function markHeaderSelectRange(range: CellRange): void {
+  headerSelectRanges.add(range);
+}
+
 type IndexedRange = {
   index: number;
   range: SelectRange;
@@ -22,7 +29,9 @@ export function autoMergeCellRanges(ranges: SelectRange[], table: BaseTableAPI):
     range,
     normalizedRange: normalizeRange(range)
   }));
-  const eligibleRanges = indexedRanges.filter(range => isMainBodyRange(range.normalizedRange, table));
+  const eligibleRanges = indexedRanges.filter(
+    range => !headerSelectRanges.has(range.range) && isMainBodyRange(range.normalizedRange, table)
+  );
 
   if (eligibleRanges.length < 2) {
     return ranges;

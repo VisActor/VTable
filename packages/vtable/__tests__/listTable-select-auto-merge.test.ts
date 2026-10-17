@@ -198,6 +198,48 @@ describe('listTable select auto merge ranges', () => {
     expect(selectedEvents[selectedEvents.length - 1]).toEqual([expectedRange]);
   });
 
+  test('keeps header body projections separate when later body cells are selected', () => {
+    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
+
+    table.selectCell(2, 0, false, false, false);
+    table.selectCell(3, 0, false, true, false);
+    const projections = [2, 3].map(col =>
+      addSkipBodyMerge({ start: { col, row: table.columnHeaderLevelCount }, end: { col, row: table.rowCount - 1 } })
+    );
+    expect(table.getSelectedCellRanges()).toEqual(projections);
+
+    table.selectCell(4, 2, false, true, false, true);
+    expect(table.getSelectedCellRanges()).toEqual([
+      ...projections,
+      addSkipBodyMerge({ start: { col: 4, row: 2 }, end: { col: 4, row: 2 } })
+    ]);
+  });
+
+  test('still merges explicit body API ranges with headerSelectMode body', () => {
+    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' });
+    table.selectCells([
+      { start: { col: 2, row: 2 }, end: { col: 2, row: 3 } },
+      { start: { col: 3, row: 2 }, end: { col: 3, row: 3 } }
+    ]);
+    expect(table.getSelectedCellRanges()).toEqual([
+      addSkipBodyMerge({ start: { col: 2, row: 2 }, end: { col: 3, row: 3 } })
+    ]);
+  });
+
+  test('preserves the last selected_cell coordinates when Ctrl selection merges leftwards', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const events = [];
+    table.on('selected_cell', event => {
+      events.push({ col: event.col, row: event.row, ranges: cloneRanges(event.ranges) });
+    });
+
+    table.selectCell(3, 2, false, false, false, true);
+    table.selectCell(2, 2, false, true, false, true);
+    const ranges = [addSkipBodyMerge({ start: { col: 2, row: 2 }, end: { col: 3, row: 2 } })];
+    expect(table.getSelectedCellRanges()).toEqual(ranges);
+    expect(events[events.length - 1]).toEqual({ col: 2, row: 2, ranges });
+  });
+
   test('uses the same merge logic for drag multi-select', () => {
     const table = createTable({ autoMergeRanges: true });
     const start = getMainBodyCell(table, 1, 1);

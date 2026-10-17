@@ -831,6 +831,8 @@ export class StateManager {
       } else {
         selectEnd(this.table.scenegraph);
       }
+      // 归并只改变范围集合，selected_cell 仍报告原选择结束位置。
+      const { col: lastCol, row: lastRow } = this.select.ranges[this.select.ranges.length - 1].end;
       // 即使最后一项是重复区域，也要在去重后完成整批选区的合并。
       if (mergeRanges) {
         const mergedRanges = autoMergeCellRanges(this.select.ranges, this.table);
@@ -841,8 +843,6 @@ export class StateManager {
       }
 
       // 触发SELECTED_CELL
-      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
       fireListener &&
         this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
           ranges: this.select.ranges,

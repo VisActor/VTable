@@ -6,6 +6,7 @@ import type { SelectAllOnCtrlAOption } from '../../ts-types';
 import { InteractionState } from '../../ts-types';
 import type { StateManager } from '../state';
 import { isCellDisableSelect } from './is-cell-select-highlight';
+import { markHeaderSelectRange } from './auto-merge-ranges';
 /**
  * @description: 更新select位置
  * @param {StateManager} state
@@ -340,6 +341,9 @@ export function updateSelectPosition(
       cellPos.row = row;
       // scenegraph.setCellNormalStyle(col, row);
       const currentRange = state.select.ranges?.[state.select.ranges.length - 1];
+      if (currentRange && state.select.headerSelectMode !== 'cell' && table.isHeader(col, row)) {
+        markHeaderSelectRange(currentRange);
+      }
       if (
         currentRange &&
         currentRange.start.row <= table.rowCount - 1 &&
