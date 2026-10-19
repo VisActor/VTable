@@ -38,11 +38,12 @@ export default {
     });
   },
   async verify(page) {
-    // 全选覆盖表体首末行，且任一范围都不含第零行表头。
+    // 全选覆盖表体首末行列，防止只选中部分列也通过校验。
     await page.evaluate(() => {
       const table = window.__visualTable;
       const ranges = table.getSelectedCellRanges();
-      if (ranges.length !== 1 || ranges[0].start.row !== 1 || ranges[0].end.row !== table.rowCount - 1)
+      if (ranges.length !== 1 || ranges[0].start.row !== 1 || ranges[0].end.row !== table.rowCount - 1 ||
+        ranges[0].start.col !== 0 || ranges[0].end.col !== table.colCount - 1)
         throw new Error(`Ctrl/Command+A 未选中完整表体：${JSON.stringify(ranges)}`);
     });
   }
