@@ -54,6 +54,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { autoMergeCellRanges } from './select/auto-merge-ranges';
 import { expendCellRange } from '../tools/merge-range';
 
 export class StateManager {
@@ -788,7 +789,8 @@ export class StateManager {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
+  /** 结束当前选区；批量设置时可延迟到最后一个区域再执行多选区合并。 */
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true, mergeRanges: boolean = true) {
     if (this.select.selecting) {
       this.select.selecting = false;
       if (this.select.ranges.length === 0) {
@@ -829,10 +831,19 @@ export class StateManager {
       } else {
         selectEnd(this.table.scenegraph);
       }
+      // 归并只改变范围集合，selected_cell 仍报告原选择结束位置。
+      const { col: lastCol, row: lastRow } = this.select.ranges[this.select.ranges.length - 1].end;
+      // 即使最后一项是重复区域，也要在去重后完成整批选区的合并。
+      if (mergeRanges) {
+        const previousRanges = this.select.ranges;
+        const mergedRanges = autoMergeCellRanges(previousRanges, this.table);
+        if (mergedRanges !== previousRanges) {
+          this.select.ranges = mergedRanges;
+          this.table.scenegraph.updateMergedBodySelectRangeComponents(previousRanges);
+        }
+      }
 
       // 触发SELECTED_CELL
-      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
       fireListener &&
         this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
           ranges: this.select.ranges,

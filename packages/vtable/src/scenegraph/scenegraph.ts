@@ -49,6 +49,7 @@ import {
   deleteAllSelectBorder,
   deleteAllSelectingBorder,
   deleteLastSelectedRangeComponents,
+  deleteSelectedBodyRangeComponent,
   removeFillHandleFromSelectComponents
 } from './select/delete-select-border';
 import { updateRow } from './layout/update-row';
@@ -989,6 +990,29 @@ export class Scenegraph {
       updateCellSelectBorder(this, cellRange);
       moveSelectingRangeComponentsToSelectedRangeComponents(this);
     });
+  }
+
+  /** 普通 body 选区归并只替换参与归并的图元，保留其他选框及最后选择标识。 */
+  updateMergedBodySelectRangeComponents(previousRanges: CellRange[]) {
+    const ranges = this.table.stateManager.select.ranges;
+    const current = new Set(ranges);
+    const previous = new Set(previousRanges);
+    const lastSelectId = this.lastSelectId;
+    const lastUnchanged = ranges[ranges.length - 1] === previousRanges[previousRanges.length - 1];
+    for (const range of previousRanges) {
+      if (!current.has(range)) {
+        deleteSelectedBodyRangeComponent(this, range);
+      }
+    }
+    for (const range of ranges) {
+      if (!previous.has(range)) {
+        this.updateCellSelectBorder(range);
+        this.moveSelectingRangeComponentsToSelectedRangeComponents();
+      }
+    }
+    if (lastUnchanged) {
+      this.lastSelectId = lastSelectId;
+    }
   }
   /**
    * @description: 列宽调整结果更新列宽

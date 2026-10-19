@@ -1,6 +1,21 @@
 import type { IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
-import type { CellSubLocation } from '../../ts-types';
+import type { CellRange, CellSubLocation } from '../../ts-types';
+import { getCellSelectBorderKey } from './create-select-border';
+
+/** 归并仅涉及普通 body 单段选框，按完整边界直接删除，不遍历或重建无关图元。 */
+export function deleteSelectedBodyRangeComponent(scene: Scenegraph, range: CellRange): void {
+  const key = getCellSelectBorderKey(
+    Math.min(range.start.col, range.end.col),
+    Math.min(range.start.row, range.end.row),
+    Math.max(range.start.col, range.end.col),
+    Math.max(range.start.row, range.end.row)
+  );
+  const component = scene.selectedRangeComponents.get(key);
+  component?.rect.delete();
+  component?.fillhandle?.delete();
+  scene.selectedRangeComponents.delete(key);
+}
 
 /** 按住shift 则继续上次选中范围 需要将现有的删除掉 */
 export function deleteLastSelectedRangeComponents(scene: Scenegraph) {
