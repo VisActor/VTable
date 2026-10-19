@@ -3,6 +3,17 @@ import type { CellSubLocation } from '../../ts-types';
 import type { Scenegraph } from '../scenegraph';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 
+/** 统一选框段落键；普通 body 范围使用完整边界作为选择标识。 */
+export function getCellSelectBorderKey(
+  startCol: number,
+  startRow: number,
+  endCol: number,
+  endRow: number,
+  selectId = `${startCol}${startRow}${endCol}${endRow}`
+): string {
+  return `${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`;
+}
+
 /**
  * 选框（select border）的创建入口。
  *
@@ -115,7 +126,7 @@ export function createCellSelectBorder(
   scene.lastSelectId = selectId;
   // key 以“标准化后的 start/end + selectId”组成：同一选择范围在不同区域拆分后 key 不同，
   // 但 selectId 相同，可用于 shift 续选等场景的删除/替换。
-  scene.selectingRangeComponents.set(`${startCol}-${startRow}-${endCol}-${endRow}-${selectId}`, {
+  scene.selectingRangeComponents.set(getCellSelectBorderKey(startCol, startRow, endCol, endRow, selectId), {
     rect,
     fillhandle,
     role: selectRangeType

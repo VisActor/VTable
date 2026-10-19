@@ -835,10 +835,11 @@ export class StateManager {
       const { col: lastCol, row: lastRow } = this.select.ranges[this.select.ranges.length - 1].end;
       // 即使最后一项是重复区域，也要在去重后完成整批选区的合并。
       if (mergeRanges) {
-        const mergedRanges = autoMergeCellRanges(this.select.ranges, this.table);
-        if (mergedRanges !== this.select.ranges) {
+        const previousRanges = this.select.ranges;
+        const mergedRanges = autoMergeCellRanges(previousRanges, this.table);
+        if (mergedRanges !== previousRanges) {
           this.select.ranges = mergedRanges;
-          this.table.scenegraph.recreateAllSelectRangeComponents();
+          this.table.scenegraph.updateMergedBodySelectRangeComponents(previousRanges);
         }
       }
 

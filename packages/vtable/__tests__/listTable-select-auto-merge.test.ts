@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { ListTable } from '../src';
 import { createDiv, removeDom } from './dom';
+import { autoMergeCellRanges } from '../src/state/select/auto-merge-ranges';
+import { getCellSelectBorderKey } from '../src/scenegraph/select/create-select-border';
 
 global.__VERSION__ = 'none';
 
@@ -219,17 +221,25 @@ describe('listTable select auto merge ranges', () => {
     const table = createTable({ autoMergeRanges: true, headerSelectMode: 'body' }, { rowSeriesNumber: {} });
     table.selectCell(0, 2, false, false, false);
     table.selectCell(0, 3, false, true, false);
-    expect(table.getSelectedCellRanges()).toEqual([2, 3].map(row =>
-      addSkipBodyMerge({ start: { col: table.leftRowSeriesNumberCount, row }, end: { col: table.colCount - 1, row } })
-    ));
+    expect(table.getSelectedCellRanges()).toEqual(
+      [2, 3].map(row =>
+        addSkipBodyMerge({ start: { col: table.leftRowSeriesNumberCount, row }, end: { col: table.colCount - 1, row } })
+      )
+    );
   });
 
   test('keeps corner body projections separate when ordinary headers use cell mode', () => {
-    const table = createTable({ autoMergeRanges: true, headerSelectMode: 'cell', cornerHeaderSelectMode: 'body' }, { rowSeriesNumber: {} });
+    const table = createTable(
+      { autoMergeRanges: true, headerSelectMode: 'cell', cornerHeaderSelectMode: 'body' },
+      { rowSeriesNumber: {} }
+    );
     table.selectCell(0, 0, false, false, false);
     table.selectCell(2, 2, false, true, false, true);
     expect(table.getSelectedCellRanges()).toEqual([
-      addSkipBodyMerge({ start: { col: table.leftRowSeriesNumberCount, row: table.columnHeaderLevelCount }, end: { col: table.colCount - 1, row: table.rowCount - 1 } }),
+      addSkipBodyMerge({
+        start: { col: table.leftRowSeriesNumberCount, row: table.columnHeaderLevelCount },
+        end: { col: table.colCount - 1, row: table.rowCount - 1 }
+      }),
       addSkipBodyMerge({ start: { col: 2, row: 2 }, end: { col: 2, row: 2 } })
     ]);
   });
@@ -242,7 +252,11 @@ describe('listTable select auto merge ranges', () => {
     table.selectCell(3, 0, true, false, false);
     expect(table.getSelectedCellRanges()).toEqual([
       addSkipBodyMerge(first),
-      { start: { col: 3, row: table.columnHeaderLevelCount }, end: { col: 4, row: table.rowCount - 1 }, skipBodyMerge: true }
+      {
+        start: { col: 3, row: table.columnHeaderLevelCount },
+        end: { col: 4, row: table.rowCount - 1 },
+        skipBodyMerge: true
+      }
     ]);
   });
 
@@ -251,16 +265,21 @@ describe('listTable select auto merge ranges', () => {
       { autoMergeRanges: true, headerSelectMode: 'body' },
       target === 'column' ? {} : { rowSeriesNumber: {} }
     );
-    const first = target === 'column'
-      ? { start: { col: 2, row: table.columnHeaderLevelCount }, end: { col: 2, row: table.rowCount - 1 } }
-      : target === 'series'
+    const first =
+      target === 'column'
+        ? { start: { col: 2, row: table.columnHeaderLevelCount }, end: { col: 2, row: table.rowCount - 1 } }
+        : target === 'series'
         ? { start: { col: table.leftRowSeriesNumberCount, row: 2 }, end: { col: table.colCount - 1, row: 2 } }
         : { start: { col: 2, row: 2 }, end: { col: 2, row: 2 } };
     const start = target === 'series' ? { col: 2, row: 3 } : { col: 3, row: 2 };
     const end = target === 'column' ? { col: 3, row: 0 } : { col: 0, row: target === 'series' ? 3 : 0 };
-    const projection = target === 'column'
-      ? { start: { col: 3, row: table.columnHeaderLevelCount }, end: { col: 3, row: table.rowCount - 1 } }
-      : { start: { col: table.leftRowSeriesNumberCount, row: target === 'series' ? 3 : table.columnHeaderLevelCount }, end: { col: table.colCount - 1, row: target === 'series' ? 3 : table.rowCount - 1 } };
+    const projection =
+      target === 'column'
+        ? { start: { col: 3, row: table.columnHeaderLevelCount }, end: { col: 3, row: table.rowCount - 1 } }
+        : {
+            start: { col: table.leftRowSeriesNumberCount, row: target === 'series' ? 3 : table.columnHeaderLevelCount },
+            end: { col: table.colCount - 1, row: target === 'series' ? 3 : table.rowCount - 1 }
+          };
     table.selectCells([first]);
     dragSelect(table, start, end, true);
     expect(table.getSelectedCellRanges()).toEqual([addSkipBodyMerge(first), addSkipBodyMerge(projection)]);
@@ -304,6 +323,106 @@ describe('listTable select auto merge ranges', () => {
         end: { col: start.col + 3, row: start.row }
       })
     ]);
+  });
+
+  test('keeps the latest selection anchor for Shift continuation after merging', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const start = getMainBodyCell(table, 3, 1);
+    const anchor = { col: start.col + 1, row: start.row };
+    table.selectCell(start.col, start.row, false, false, false, true);
+    table.selectCell(anchor.col, anchor.row, false, true, false, true);
+
+    table.selectCell(start.col - 1, start.row, true, false, false, true);
+    expect(table.getSelectedCellRanges()).toEqual([
+      addSkipBodyMerge({ start: anchor, end: { col: start.col - 1, row: start.row } })
+    ]);
+    table.selectCell(anchor.col + 1, anchor.row, true, false, false, true);
+    expect(table.getSelectedCellRanges()).toEqual([
+      addSkipBodyMerge({ start: anchor, end: { col: anchor.col + 1, row: anchor.row } })
+    ]);
+  });
+
+  test('retains unrelated selection graphics when a local component merges', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const start = getMainBodyCell(table, 1, 1);
+    const far = getMainBodyCell(table, 4, 4);
+    table.selectCells([
+      { start: far, end: far },
+      { start, end: start }
+    ]);
+    const retained = [...table.scenegraph.selectedRangeComponents.values()][0];
+    const deleted = jest.spyOn(retained.rect, 'delete');
+
+    table.selectCell(start.col + 1, start.row, false, true, false, true);
+    expect([...table.scenegraph.selectedRangeComponents.values()]).toContain(retained);
+    expect(deleted).not.toHaveBeenCalled();
+    expect(table.scenegraph.selectedRangeComponents.size).toBe(2);
+  });
+
+  test('keeps the latest unmerged range active when earlier components merge', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const start = getMainBodyCell(table, 3, 1);
+    const far = getMainBodyCell(table, 0, 4);
+    table.selectCells([
+      { start, end: start },
+      { start: { col: start.col + 1, row: start.row }, end: { col: start.col + 1, row: start.row } },
+      { start: far, end: far }
+    ]);
+    const merged = [...table.scenegraph.selectedRangeComponents.entries()].find(([key]) =>
+      key.startsWith(`${start.col}-${start.row}-${start.col + 1}-${start.row}-`)
+    )[1];
+    table.selectCell(far.col + 1, far.row, true, false, false, true);
+    expect([...table.scenegraph.selectedRangeComponents.values()]).toContain(merged);
+    expect(table.scenegraph.selectedRangeComponents.size).toBe(2);
+  });
+
+  test('a local merge among 10000 sparse ranges replaces only two graphics', () => {
+    const table = createTable({ autoMergeRanges: true });
+    const previous = Array.from({ length: 10000 }, (_, index) => ({
+      start: { col: 1, row: index * 3 + 1 },
+      end: { col: 1, row: index * 3 + 1 }
+    }));
+    previous.push({ start: { col: 2, row: 1 }, end: { col: 2, row: 1 } });
+    const geometryTable = {
+      options: { select: { autoMergeRanges: true } },
+      rowHeaderLevelCount: 0,
+      leftRowSeriesNumberCount: 0,
+      frozenColCount: 0,
+      columnHeaderLevelCount: 0,
+      frozenRowCount: 0,
+      rightFrozenColCount: 0,
+      bottomFrozenRowCount: 0,
+      colCount: 100001,
+      rowCount: 100001,
+      getCellLocation: () => 'body'
+    };
+    const ranges = autoMergeCellRanges(previous, geometryTable);
+    const deleted = jest.fn();
+    const components = new Map(
+      previous.map(range => [
+        getCellSelectBorderKey(range.start.col, range.start.row, range.end.col, range.end.row),
+        { rect: { delete: deleted }, role: 'body' }
+      ])
+    );
+    const retainedKey = getCellSelectBorderKey(1, 4, 1, 4);
+    const retained = components.get(retainedKey);
+    // 只验证图元增删数量和复用身份，不将此夹具当作浏览器性能测量。
+    const scene = {
+      table: { stateManager: { select: { ranges } } },
+      selectedRangeComponents: components,
+      updateCellSelectBorder: jest.fn(range =>
+        components.set(getCellSelectBorderKey(range.start.col, range.start.row, range.end.col, range.end.row), {
+          rect: { delete: jest.fn() },
+          role: 'body'
+        })
+      ),
+      moveSelectingRangeComponentsToSelectedRangeComponents: jest.fn()
+    };
+    table.scenegraph.updateMergedBodySelectRangeComponents.call(scene, previous);
+    expect(deleted).toHaveBeenCalledTimes(2);
+    expect(scene.updateCellSelectBorder).toHaveBeenCalledTimes(1);
+    expect(components.size).toBe(10000);
+    expect(components.get(retainedKey)).toBe(retained);
   });
 
   test('does not merge ranges across frozen body partitions', () => {

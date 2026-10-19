@@ -4,10 +4,21 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 type SelectRange = CellRange & { skipBodyMerge?: boolean };
 
 const headerSelectRanges = new WeakSet<CellRange>();
+const mergedRangeAnchors = new WeakMap<CellRange, CellRange['start']>();
 
 /** 保留表头和序号投影选区的来源，不向公开选区对象增加字段。 */
 export function markHeaderSelectRange(range: CellRange): void {
   headerSelectRanges.add(range);
+  mergedRangeAnchors.delete(range);
+}
+
+/** Shift 首次续选时恢复归并前的活动锚点，后续仍沿用标准 start/end 状态。 */
+export function restoreMergedRangeAnchor(range: CellRange): void {
+  const anchor = mergedRangeAnchors.get(range);
+  if (anchor) {
+    range.start = { ...anchor };
+    mergedRangeAnchors.delete(range);
+  }
 }
 
 type IndexedRange = {
@@ -24,6 +35,7 @@ type RangeNode = { bounds: CellRange; empty: boolean } & (
 
 /**
  * 将普通 body 主区域内、连通且恰好铺满外接矩形的多选区合并成单个矩形选区。
+ * 未归并项保留对象身份，场景图据此复用其选框。
  */
 export function autoMergeCellRanges(ranges: SelectRange[], table: BaseTableAPI): SelectRange[] {
   if (!table.options.select?.autoMergeRanges || ranges.length < 2) {
@@ -74,11 +86,14 @@ export function autoMergeCellRanges(ranges: SelectRange[], table: BaseTableAPI):
     const componentIndexes = component.map(item => item.index).sort((a, b) => a - b);
     const targetIndex = componentIndexes[componentIndexes.length - 1];
 
-    mergedComponents.set(targetIndex, {
+    const mergedRange: SelectRange = {
       start: { ...boundingRange.start },
       end: { ...boundingRange.end },
       ...(component.every(item => item.range.skipBodyMerge) ? { skipBodyMerge: true } : {})
-    });
+    };
+    const lastRange = ranges[targetIndex];
+    mergedRangeAnchors.set(mergedRange, { ...(mergedRangeAnchors.get(lastRange) ?? lastRange.start) });
+    mergedComponents.set(targetIndex, mergedRange);
     componentIndexes
       .filter(index => index !== targetIndex)
       .forEach(index => {
