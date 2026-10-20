@@ -158,7 +158,7 @@ export async function acquireLock(output, owner) {
 }
 /** 编排一次完整对比；所有准备失败和清理失败尽可能进入统一报告。 */
 export async function runVisual(root, options) {
-  const runtime = createRuntime();
+  const runtime = createRuntime({ offline: options.offline === true });
   const detach = runtime.listenSignals();
   const output = path.join(root, '.vtable-visual');
   const runId = `${Date.now()}-${randomUUID().slice(0, 8)}`;

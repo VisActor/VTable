@@ -34,10 +34,32 @@ export async function workingTree(root) {
 }
 /** 每次从官方仓库解析本轮 develop 或指定提交，不使用 fork 的 origin。 */
 export async function resolveBaseline(root, sha, runtime, log) {
+  if (runtime.offline) {
+    // 自动化宿主已从官方仓库准备固定提交；隔离执行期间不再访问网络。
+    if (!/^[a-f0-9]{40}$/i.test(sha ?? '') || git(root, ['rev-parse', `${sha}^{commit}`]) !== sha.toLowerCase())
+      throw fault('BASELINE_FETCH_FAILED', '离线基线提交缺失或不符');
+    return sha.toLowerCase();
+  }
   await runtime.run('git', ['fetch', '--no-tags', official, sha || 'refs/heads/develop'], root, log, { code: 'BASELINE_FETCH_FAILED' });
   const resolved = git(root, ['rev-parse', 'FETCH_HEAD^{commit}']);
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
+}
+/** 同锁文件的离线基线复用只读依赖，构建产物仍在本次独立工作区生成。 */
+export async function offlineDependencies(root, worktree, sha) {
+  for (const file of ['common/config/rush/pnpm-lock.yaml', 'rush.json'])
+    if (git(root, ['show', `${sha}:${file}`]) !== (await fs.readFile(path.join(root, file), 'utf8')).trim())
+      throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
+  await fs.mkdir(path.join(worktree, 'common'), { recursive: true });
+  await fs.symlink(path.join(root, 'common/temp'), path.join(worktree, 'common/temp'), 'dir');
+  const packages = git(root, ['ls-files', '--', '**/package.json']).split('\n').filter(Boolean);
+  for (const file of ['package.json', ...packages]) {
+    const relative = path.join(path.dirname(file), 'node_modules');
+    if (await fs.stat(path.join(root, relative)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))) {
+      await fs.mkdir(path.dirname(path.join(worktree, relative)), { recursive: true });
+      await fs.symlink(path.join(root, relative), path.join(worktree, relative), 'dir');
+    }
+  }
 }
 /** 构建所选包及其工作区依赖，并仅复制本轮产物到隔离运行目录。 */
 export async function build(root, runDir, phase, names, runtime, log) {
@@ -131,7 +153,7 @@ export async function baselineBuild(root, runDir, sha, names, runtime, report, t
       execFileSync('git', ['worktree', 'remove', '--force', worktree], { cwd: root, stdio: 'pipe', timeout: 60000 });
   });
   await runtime.run('git', ['worktree', 'add', '--detach', worktree, sha], root, log, { code: 'BUILD_FAILED' });
-  await timed('baselineInstallMs', () => runtime.run(process.execPath, ['common/scripts/install-run-rush.js', 'install', '--ignore-hooks'], worktree, log, { code: 'BUILD_FAILED', env: { NODE_ENV: 'development' } }));
+  await timed('baselineInstallMs', () => runtime.offline ? offlineDependencies(root, worktree, sha) : runtime.run(process.execPath, ['common/scripts/install-run-rush.js', 'install', '--ignore-hooks'], worktree, log, { code: 'BUILD_FAILED', env: { NODE_ENV: 'development' } }));
   await timed('baselineCompileMs', () => build(worktree, runDir, 'baseline', names, runtime, log));
   await publishCache(cache, key, new Map(await Promise.all(names.map(async name => [name, await fs.readFile(path.join(runDir, `baseline-${name}.js`))]))));
 }

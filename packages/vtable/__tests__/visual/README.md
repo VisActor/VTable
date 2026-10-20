@@ -28,6 +28,8 @@ node packages/vtable/scripts/visual-test.mjs --baseline <完整的40位commit-sh
 
 按用例需要构建核心 `vtable`，以及 `editors`、`gantt`、`plugins`、`sheet` 的本地 UMD 包；透视图还加载当前依赖锁定的 `vchart` 浏览器包。目录仅影响用例与所需包的选择；不会自动推断源码影响范围。
 
+自动化隔离环境可使用 `--baseline <完整 SHA> --offline`。宿主须提前从官方仓库准备该提交、两侧相同锁文件对应的依赖及浏览器；执行期间不 fetch 或安装依赖。两侧仍分别构建、执行原断言和截图比较，锁文件或 Rush 配置不同时明确报错，需要分别准备依赖后再运行。该模式不等于 `--self-compare`。
+
 结果写入 Git 忽略的 `.vtable-visual/runs/<run-id>/`：`index.html` 可离线查看基线、当前和差异三图，`agent-summary.md` 便于快速定位失败，`summary.json` 保留结构化证据。退出码 `0` 表示所选用例均通过，`1` 表示视觉差异，`2` 表示执行、构建、资源或清理错误。报告可以整体复制，单独复制 HTML 会丢失相对图片。
 
 正常结束、失败或 Ctrl+C 后，工具会回收本轮测试子进程、浏览器、HTTP 服务和临时基线 worktree。SIGKILL/断电后，先确认进程已结束，再检查 `git worktree list` 和 `.vtable-visual/running.lock`；不要删除其他任务的 worktree。
