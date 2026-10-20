@@ -57,8 +57,9 @@ test('离线基线使用固定提交和同锁依赖', async () => {
     assert.equal(await fs.readFile(path.join(worktree, 'packages/vtable-gantt/node_modules/@visactor/vtable/version.txt'), 'utf8'), 'baseline');
     // 空产物缓存只验证命中顺序，不启动构建或浏览器。
     const runDir = path.join(root, '.vtable-visual/test-run'); await fs.mkdir(runDir, { recursive: true });
-    const cachedReport = { baseline: {} }, cacheRuntime = { offline: true, defer() {}, async run(command, args) {
+    const cachedReport = { baseline: {} }, cacheRuntime = { offline: true, defer() {}, async run(command, args, _cwd, _log, options) {
       if (command === 'git' && args[0] === 'worktree') await fs.mkdir(args[3], { recursive: true });
+      if (command === process.execPath) assert.equal(options.env.NODE_OPTIONS, '--max-old-space-size=2048');
       return 0;
     } };
     await baselineBuild(root, runDir, sha, [], cacheRuntime, cachedReport, (_name, action) => action());

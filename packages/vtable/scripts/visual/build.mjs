@@ -69,7 +69,8 @@ export async function offlineDependencies(root, worktree, sha) {
 export async function build(root, runDir, phase, names, runtime, log) {
   const rushx = path.join(root, 'common/scripts/install-run-rushx.js');
   // Gantt 的 bundler.config 从 bundler 工具包解析 Rollup 插件。
-  const env = { ...buildEnv, NODE_PATH: path.join(root, 'tools/bundler/node_modules') };
+  // 离线宿主使用 3 GiB 硬预算，提前回收堆内对象并给运行库及工作区留出空间。
+  const env = { ...buildEnv, ...(runtime.offline ? { NODE_OPTIONS: '--max-old-space-size=2048' } : {}), NODE_PATH: path.join(root, 'tools/bundler/node_modules') };
   await runtime.run(process.execPath, [rushx, 'build'], path.join(root, 'tools/bundler'), log, { code: 'BUILD_FAILED', env });
   const bundle = path.join(root, 'tools/bundler/bin/index.js');
   const need = new Set(names);
