@@ -310,6 +310,16 @@ export async function runVisual(root, options) {
         report.issues.push({ phase: 'cleanup', category: 'execution', code: 'CLEANUP_FAILED', message: String(error) });
       }
     }
+    // 截图及清理期间也可能发生编辑，旧构建不能代表更新后的源码。
+    if (report.local) {
+      try {
+        report.localAfter = await workingTree(root);
+        if (report.local.head !== report.localAfter.head || report.local.digest !== report.localAfter.digest)
+          report.issues.push({ phase: 'source', category: 'execution', code: 'WORKSPACE_CHANGED', message: '检查前后源码或 HEAD 发生变化，请重跑' });
+      } catch (error) {
+        report.issues.push({ phase: 'source', category: 'execution', code: 'SOURCE_SNAPSHOT_FAILED', message: error.message });
+      }
+    }
     detach();
     report.finalized = true;
     report.timings.totalMs = Math.round(performance.now() - started);
