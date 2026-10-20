@@ -25,7 +25,8 @@ export default {
     });
     await page.mouse.move(edge.x, edge.y);
     await page.mouse.down();
-    await page.mouse.move(edge.x + 120, edge.y, { steps: 10 });
+    // 留出不同字体测量宽度的余量，保证双击前确实明显宽于内容。
+    await page.mouse.move(edge.x + 240, edge.y, { steps: 10 });
     await page.mouse.up();
     const resized = await page.evaluate(() => {
       const b = window.__visualTable.getCellRect(2, 0).bounds;
@@ -40,7 +41,7 @@ export default {
     await page.evaluate(() => {
       const b = window.__visualTable.getCellRect(2, 0).bounds;
       const width = b.x2 - b.x1;
-      if (window.__draggedColumnWidth < 240 || width >= window.__draggedColumnWidth - 20 || width < 150)
+      if (window.__draggedColumnWidth < 360 || width >= window.__draggedColumnWidth - 20 || width < 150)
         throw new Error(`双击自动列宽未生效：${window.__draggedColumnWidth} -> ${width}`);
     });
   }

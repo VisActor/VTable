@@ -8,6 +8,29 @@ import { resolveBaseline, offlineDependencies, baselineBuild } from './visual/bu
 import fs from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import autoColumnWidth from '../__tests__/visual/cases/interaction/double-click-auto-column-width.mjs';
+
+/** 复现 Linux 字体测量为 263px 时仍保留收缩断言，双击无响应必须失败。 */
+test('双击列宽用例在较宽字体下有效且拒绝无响应', async () => {
+  const previousWindow = globalThis.window, previousDocument = globalThis.document;
+  let width, pointer = 0, dragging = false, responds = true;
+  globalThis.window = { __visualTable: { getCellRect: () => ({ bounds: { x1: 250, x2: 250 + width, y1: 0, y2: 40 } }) } };
+  globalThis.document = { getElementById: () => ({ getBoundingClientRect: () => ({ x: 0, y: 0 }) }) };
+  const page = { evaluate: fn => fn(), mouse: {
+    async move(x) { if (dragging) width += x - pointer; pointer = x; },
+    async down() { dragging = true; }, async up() { dragging = false; },
+    async dblclick() { if (responds) width = 263; }
+  } };
+  try {
+    width = 150; await autoColumnWidth.exercise(page); await autoColumnWidth.verify(page);
+    assert.equal(window.__draggedColumnWidth, 390); assert.equal(width, 263);
+    width = 150; responds = false; await autoColumnWidth.exercise(page);
+    await assert.rejects(() => autoColumnWidth.verify(page), /双击自动列宽未生效/);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow;
+    if (previousDocument === undefined) delete globalThis.document; else globalThis.document = previousDocument;
+  }
+});
 
 /** 用最小契约检查拦住无效范围、重复 ID 和缺失来源模块。 */
 test('视觉用例清单与范围选择', async () => {
