@@ -43,10 +43,6 @@ export default class VisualReporter {
           : 'error',
       stage,
       category,
-      checks: test.annotations.find(item => item.type === 'checks')
-        ? JSON.parse(test.annotations.find(item => item.type === 'checks').description)
-        : null,
-      baselineMissing: result.attachments.some(item => item.name === 'missing-baseline'),
       code:
         result.status === 'passed'
           ? null
