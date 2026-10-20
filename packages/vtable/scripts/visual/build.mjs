@@ -47,9 +47,9 @@ export async function resolveBaseline(root, sha, runtime, log) {
 }
 /** 缓存命中也必须先确认两侧依赖配置一致。 */
 async function assertOfflineConfiguration(root, sha) {
-  for (const file of ['common/config/rush/pnpm-lock.yaml', 'rush.json'])
-    if (git(root, ['show', `${sha}:${file}`]) !== (await fs.readFile(path.join(root, file), 'utf8')).trim())
-      throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
+  if (git(root, ['diff', sha, '--', 'common/config/rush', 'rush.json']) ||
+    git(root, ['ls-files', '--others', '--exclude-standard', '--', 'common/config/rush']))
+    throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
 }
 /** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */
 export async function offlineDependencies(root, worktree, sha) {
@@ -141,6 +141,7 @@ export async function baselineBuild(root, runDir, sha, names, runtime, report, t
   const log = path.join(runDir, 'build.log');
   const key = digest(JSON.stringify({
     sha, names, lock: git(root, ['show', `${sha}:common/config/rush/pnpm-lock.yaml`]),
+    dependencyConfig: git(root, ['rev-parse', `${sha}:common/config/rush`]),
     node: process.version, platform: process.platform, arch: process.arch,
     recipe: digest(await fs.readFile(fileURLToPath(import.meta.url))), buildEnv,
     tools: git(root, ['show', `${sha}:rush.json`])

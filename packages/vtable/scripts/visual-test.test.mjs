@@ -34,6 +34,7 @@ test('离线基线使用固定提交和同锁依赖', async () => {
     await fs.mkdir(path.join(root, 'common/temp'), { recursive: true });
     await fs.writeFile(path.join(root, 'common/config/rush/pnpm-lock.yaml'), 'lockfileVersion: 5.4\n');
     await fs.writeFile(path.join(root, 'rush.json'), '{}\n');
+    await fs.writeFile(path.join(root, 'common/config/rush/pnpm-config.json'), '{"useWorkspaces":true}\n');
     await fs.writeFile(path.join(root, 'package.json'), '{}\n');
     await fs.writeFile(path.join(root, '.gitignore'), 'node_modules/\n.vtable-visual/\n');
     for (const name of ['vtable', 'vtable-gantt']) {
@@ -63,6 +64,9 @@ test('离线基线使用固定提交和同锁依赖', async () => {
     await baselineBuild(root, runDir, sha, [], cacheRuntime, cachedReport, (_name, action) => action());
     await baselineBuild(root, runDir, sha, [], cacheRuntime, cachedReport, (_name, action) => action());
     assert.equal(cachedReport.baseline.cacheHit, true);
+    await fs.writeFile(path.join(root, 'common/config/rush/pnpm-config.json'), '{"useWorkspaces":false}\n');
+    await assert.rejects(() => baselineBuild(root, runDir, sha, [], cacheRuntime, cachedReport, (_name, action) => action()), /依赖配置不同/);
+    await fs.writeFile(path.join(root, 'common/config/rush/pnpm-config.json'), '{"useWorkspaces":true}\n');
     await fs.writeFile(path.join(root, 'common/config/rush/pnpm-lock.yaml'), 'changed\n');
     await assert.rejects(() => offlineDependencies(root, worktree, sha), /依赖配置不同/);
     await assert.rejects(() => baselineBuild(root, runDir, sha, [], cacheRuntime, cachedReport, (_name, action) => action()), /依赖配置不同/);
