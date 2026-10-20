@@ -36,7 +36,7 @@ export async function cleanupAll(actions) {
 }
 
 /** 管理单次运行的进程组；只有入口显式调用 listenSignals 才注册处理器。 */
-export function createRuntime() {
+export function createRuntime({ offline = false } = {}) {
   const children = new Set();
   const cleanups = [];
   let interrupted = false;
@@ -60,6 +60,7 @@ export function createRuntime() {
     killTimer.unref();
   }
   return {
+    offline,
     get interrupted() {
       return interrupted;
     },
