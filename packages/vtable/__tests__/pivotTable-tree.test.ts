@@ -510,6 +510,66 @@ describe('pivotTableTree init test', () => {
   });
 });
 
+describe('pivot tree rapid hierarchy updates', () => {
+  test('builds visible descendants after consecutive toggles', () => {
+    const containerDom: HTMLElement = createDiv();
+    containerDom.style.position = 'relative';
+    containerDom.style.width = '800px';
+    containerDom.style.height = '400px';
+
+    const records = [];
+    const provinces = {
+      浙江省: ['杭州市', '宁波市', '绍兴市', '舟山市'],
+      四川省: ['成都市', '南充市', '绵阳市', '乐山市'],
+      天津市: ['天津市']
+    };
+    Object.keys(provinces).forEach(province => {
+      provinces[province].forEach((city, index) => {
+        records.push({
+          province,
+          city,
+          category: '家具',
+          sub_category: '桌子',
+          sales: 800 + index,
+          number: 7000 + index
+        });
+      });
+    });
+
+    const table = new PivotTable({
+      container: containerDom,
+      records,
+      rows: [
+        { dimensionKey: 'province', title: 'province', sort: true },
+        { dimensionKey: 'city', title: 'city', sort: true }
+      ],
+      columns: ['category', 'sub_category'],
+      indicators: ['sales', 'number'],
+      indicatorsAsCol: false,
+      enableDataAnalysis: true,
+      rowHierarchyType: 'tree',
+      widthMode: 'autoWidth'
+    });
+
+    try {
+      table.toggleHierarchyState(0, 4);
+      table.toggleHierarchyState(0, 3);
+      table.toggleHierarchyState(0, 4);
+      table.toggleHierarchyState(0, 2);
+      table.toggleHierarchyState(0, 3);
+
+      expect(table.getCellValue(0, 2)).toBe('浙江省');
+      expect(table.getCellValue(0, 3)).toBe('杭州市');
+      expect(table.getHierarchyState(0, 3)).toBe('expand');
+      expect(table.getCellValue(0, 4)).toBe('sales');
+      expect(table.scenegraph.getCell(0, 4).getChildByName('text').attribute.text).toBe('sales');
+      expect(table.scenegraph.getCell(1, 4).getChildByName('text').attribute.text).toBe('800');
+    } finally {
+      table.release();
+    }
+  });
+});
+
 describe('pivotTable grid-tree hierarchy scroll', () => {
   test('keeps bottom scroll position after collapsing a visible bottom row tree node', () => {
     const containerDom: HTMLElement = createDiv();
