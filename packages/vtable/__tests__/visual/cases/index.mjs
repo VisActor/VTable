@@ -123,6 +123,7 @@ export const cases = [
   { id: 'tree-checkbox-set-state', purpose: '树节点复选状态设置且不级联', file: './tree/checkbox-set-state.mjs', bundles: ['vtable'] },
   { id: 'pivot-indicator-sort-subtotal', purpose: '指标路径排序与行维度小计', file: './pivot/indicator-sort-subtotal.mjs', bundles: ['vtable'] },
   { id: 'pivot-aggregation-rules', purpose: 'SUM COUNT AVG 三类聚合指标', file: './pivot/aggregation-rules.mjs', bundles: ['vtable'] },
+  { id: 'pivot-lazy-filter-records', purpose: '聚合透视表连续懒加载后的过滤与清除', file: './pivot/lazy-filter-records.mjs', bundles: ['vtable'] },
   { id: 'header-grid-tree', purpose: '普通列表 grid-tree 分组表头', file: './header/grid-tree.mjs', bundles: ['vtable'] },
   { id: 'header-grid-tree-transpose', purpose: '转置 grid-tree 分组表头', file: './header/grid-tree-transpose.mjs', bundles: ['vtable'] },
   { id: 'menu-dropdown-highlight', purpose: '列下拉菜单状态图标与高亮', file: './menu/dropdown-highlight.mjs', bundles: ['vtable'] },

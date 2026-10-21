@@ -2937,7 +2937,9 @@ export class Dataset {
       this.processRecord(record);
     }
     if (Array.isArray(this.records)) {
-      this.records.push(records);
+      for (let i = 0, len = records.length; i < len; i++) {
+        this.records.push(records[i]);
+      }
     }
   }
 
