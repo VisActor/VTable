@@ -36,7 +36,7 @@ export async function cleanupAll(actions) {
 }
 
 /** 管理单次运行的进程组；只有入口显式调用 listenSignals 才注册处理器。 */
-export function createRuntime() {
+export function createRuntime({ offline = false } = {}) {
   const children = new Set();
   const cleanups = [];
   let interrupted = false;
@@ -60,6 +60,7 @@ export function createRuntime() {
     killTimer.unref();
   }
   return {
+    offline,
     get interrupted() {
       return interrupted;
     },
@@ -161,26 +162,13 @@ export async function serve(runDir) {
 
 /** 按相对路径递归冻结代码资源，不跟随符号链接到工作区外。 */
 export async function fileManifest(directory, relative = '') {
-  if (!relative && !(await fs.lstat(directory)).isDirectory()) throw fault('CASE_MANIFEST_INVALID', '冻结输入必须是普通目录');
   const entries = [];
   for (const name of (await fs.readdir(path.join(directory, relative))).sort()) {
     const file = path.posix.join(relative, name);
     const stat = await fs.lstat(path.join(directory, file));
     if (stat.isSymbolicLink()) throw fault('CASE_MANIFEST_INVALID', `冻结输入不能包含符号链接：${file}`);
     if (stat.isDirectory()) entries.push(...(await fileManifest(directory, file)));
-    else if (stat.isFile()) {
-      const bytes = await fs.readFile(path.join(directory, file));
-      entries.push({ path: file, digest: digest(bytes), size: bytes.length });
-    } else throw fault('CASE_MANIFEST_INVALID', `冻结输入必须是普通文件：${file}`);
+    else if (stat.isFile()) entries.push({ path: file, digest: digest(await fs.readFile(path.join(directory, file))) });
   }
-  return relative ? entries : entries.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
-}
-
-/** 冻结完整套件并核对复制内容，供本地对比和平台导出共用。 */
-export async function freezeSuite(source, destination) {
-  const before = await fileManifest(source);
-  await fs.cp(source, destination, { recursive: true, force: false, errorOnExist: true });
-  const files = await fileManifest(destination);
-  if (JSON.stringify(before) !== JSON.stringify(files)) throw fault('WORKSPACE_CHANGED', '冻结期间套件发生变化');
-  return files;
+  return entries;
 }

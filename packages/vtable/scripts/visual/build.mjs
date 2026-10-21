@@ -18,37 +18,6 @@ const buildEnv = { NODE_ENV: 'production', BUNDLE_ANALYZE: '', NODE_OPTIONS: '--
 export function git(root, args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trim();
 }
-/** 输出只写入新目录；解析已有父目录，防止别名路径覆盖输入或污染源码。 */
-export async function outputDirectory(root, destination, inputs = []) {
-  destination = path.resolve(root, destination);
-  let parent = destination;
-  while (
-    !(await fs.lstat(parent).catch(error => {
-      if (error.code === 'ENOENT') return null;
-      throw error;
-    }))
-  )
-    parent = path.dirname(parent);
-  destination = path.join(await fs.realpath(parent), path.relative(parent, destination));
-  root = await fs.realpath(root);
-  if (destination === root || destination.startsWith(root + path.sep)) {
-    try {
-      git(root, ['check-ignore', '--no-index', destination]);
-    } catch {
-      throw fault('INVALID_ARGUMENT', '输出目录须位于工作区外或 Git 忽略目录');
-    }
-  }
-  for (const input of inputs) {
-    const source = await fs.realpath(input);
-    if (
-      destination === source ||
-      destination.startsWith(source + path.sep) ||
-      source.startsWith(destination + path.sep)
-    )
-      throw fault('INVALID_ARGUMENT', '输出目录不能覆盖或包含冻结输入');
-  }
-  return destination;
-}
 /** 记录提交、已跟踪差异和未跟踪文件，构建期变更会使运行失败。 */
 export async function workingTree(root) {
   const status = git(root, ['status', '--short']);
@@ -61,21 +30,47 @@ export async function workingTree(root) {
     const stat = await fs.lstat(full);
     untracked.push([file, digest(stat.isSymbolicLink() ? await fs.readlink(full) : await fs.readFile(full))]);
   }
-  return { head: git(root, ['rev-parse', 'HEAD']),
-    parents: git(root, ['show', '--no-patch', '--format=%P', 'HEAD']).split(' ').filter(Boolean), dirty: Boolean(status), status, digest: digest(Buffer.concat([patch, Buffer.from(JSON.stringify(untracked))])) };
+  return { head: git(root, ['rev-parse', 'HEAD']), dirty: Boolean(status), status, digest: digest(Buffer.concat([patch, Buffer.from(JSON.stringify(untracked))])) };
 }
 /** 每次从官方仓库解析本轮 develop 或指定提交，不使用 fork 的 origin。 */
 export async function resolveBaseline(root, sha, runtime, log) {
+  if (runtime.offline) {
+    // 自动化宿主已从官方仓库准备固定提交；隔离执行期间不再访问网络。
+    if (!/^[a-f0-9]{40}$/i.test(sha ?? '') || git(root, ['rev-parse', `${sha}^{commit}`]) !== sha.toLowerCase())
+      throw fault('BASELINE_FETCH_FAILED', '离线基线提交缺失或不符');
+    return sha.toLowerCase();
+  }
   await runtime.run('git', ['fetch', '--no-tags', official, sha || 'refs/heads/develop'], root, log, { code: 'BASELINE_FETCH_FAILED' });
   const resolved = git(root, ['rev-parse', 'FETCH_HEAD^{commit}']);
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
 }
+/** 缓存命中也必须先确认两侧依赖配置一致。 */
+async function assertOfflineConfiguration(root, sha) {
+  if (git(root, ['diff', sha, '--', 'common/config/rush', 'rush.json']) ||
+    git(root, ['ls-files', '--others', '--exclude-standard', '--', 'common/config/rush']))
+    throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
+}
+/** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */
+export async function offlineDependencies(root, worktree, sha) {
+  await assertOfflineConfiguration(root, sha);
+  await fs.mkdir(path.join(worktree, 'common'), { recursive: true });
+  await fs.symlink(path.join(root, 'common/temp'), path.join(worktree, 'common/temp'), 'dir');
+  const packages = git(root, ['ls-files', '--', 'packages/**/package.json', 'tools/**/package.json', 'share/**/package.json']).split('\n').filter(Boolean);
+  for (const file of ['package.json', ...packages]) {
+    const relative = path.join(path.dirname(file), 'node_modules');
+    if (await fs.stat(path.join(root, relative)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))) {
+      await fs.mkdir(path.dirname(path.join(worktree, relative)), { recursive: true });
+      await fs.cp(await fs.realpath(path.join(root, relative)), path.join(worktree, relative), { recursive: true, verbatimSymlinks: true });
+    }
+  }
+}
 /** 构建所选包及其工作区依赖，并仅复制本轮产物到隔离运行目录。 */
 export async function build(root, runDir, phase, names, runtime, log) {
   const rushx = path.join(root, 'common/scripts/install-run-rushx.js');
   // Gantt 的 bundler.config 从 bundler 工具包解析 Rollup 插件。
-  const env = { ...buildEnv, NODE_PATH: path.join(root, 'tools/bundler/node_modules') };
+  // 离线宿主使用 3 GiB 硬预算，提前回收堆内对象并给运行库及工作区留出空间。
+  const env = { ...buildEnv, ...(runtime.offline ? { NODE_OPTIONS: '--max-old-space-size=2048' } : {}), NODE_PATH: path.join(root, 'tools/bundler/node_modules') };
   await runtime.run(process.execPath, [rushx, 'build'], path.join(root, 'tools/bundler'), log, { code: 'BUILD_FAILED', env });
   const bundle = path.join(root, 'tools/bundler/bin/index.js');
   const need = new Set(names);
@@ -143,9 +138,11 @@ async function publishCache(cache, key, files) {
 }
 /** 按 SHA、锁文件、环境、包集合和构建配方缓存最近一次官方产物。 */
 export async function baselineBuild(root, runDir, sha, names, runtime, report, timed) {
+  if (runtime.offline) await assertOfflineConfiguration(root, sha);
   const log = path.join(runDir, 'build.log');
   const key = digest(JSON.stringify({
     sha, names, lock: git(root, ['show', `${sha}:common/config/rush/pnpm-lock.yaml`]),
+    dependencyConfig: git(root, ['rev-parse', `${sha}:common/config/rush`]),
     node: process.version, platform: process.platform, arch: process.arch,
     recipe: digest(await fs.readFile(fileURLToPath(import.meta.url))), buildEnv,
     tools: git(root, ['show', `${sha}:rush.json`])
@@ -163,7 +160,7 @@ export async function baselineBuild(root, runDir, sha, names, runtime, report, t
       execFileSync('git', ['worktree', 'remove', '--force', worktree], { cwd: root, stdio: 'pipe', timeout: 60000 });
   });
   await runtime.run('git', ['worktree', 'add', '--detach', worktree, sha], root, log, { code: 'BUILD_FAILED' });
-  await timed('baselineInstallMs', () => runtime.run(process.execPath, ['common/scripts/install-run-rush.js', 'install', '--ignore-hooks'], worktree, log, { code: 'BUILD_FAILED', env: { NODE_ENV: 'development' } }));
+  await timed('baselineInstallMs', () => runtime.offline ? offlineDependencies(root, worktree, sha) : runtime.run(process.execPath, ['common/scripts/install-run-rush.js', 'install', '--ignore-hooks'], worktree, log, { code: 'BUILD_FAILED', env: { NODE_ENV: 'development' } }));
   await timed('baselineCompileMs', () => build(worktree, runDir, 'baseline', names, runtime, log));
   await publishCache(cache, key, new Map(await Promise.all(names.map(async name => [name, await fs.readFile(path.join(runDir, `baseline-${name}.js`))]))));
 }
