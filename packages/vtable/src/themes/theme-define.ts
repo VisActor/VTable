@@ -660,7 +660,13 @@ export class TableTheme implements ITableThemeDefine {
       );
       this._frozenColumnLine = {
         get shadow():
-          | { width: number; startColor: string; endColor: string; visible: 'always' | 'scrolling' | 'overflow' }
+          | {
+              width: number;
+              startColor: string;
+              endColor: string;
+              visible: 'always' | 'scrolling' | 'overflow';
+              skipMergedCells: boolean;
+            }
           | undefined {
           if (frozenColumnLine.shadow) {
             return {
@@ -675,6 +681,9 @@ export class TableTheme implements ITableThemeDefine {
               },
               get visible(): 'always' | 'scrolling' | 'overflow' {
                 return frozenColumnLine.shadow?.visible ?? 'always';
+              },
+              get skipMergedCells(): boolean {
+                return frozenColumnLine.shadow?.skipMergedCells ?? false;
               }
             };
           }
