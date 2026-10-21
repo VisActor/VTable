@@ -10,11 +10,11 @@ function isInteger(value: number) {
 class Animateaaa extends ACustomAnimate<any> {
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (this.from.x !== this.to.x) {
-      const x = end ? this.to.x : this.from.x + Math.floor((this.to.x - this.from.x) * ratio);
+      const x = end ? this.to.x : this.from.x + Math.round((this.to.x - this.from.x) * ratio);
       this.params.table.scrollLeft = x;
     }
     if (this.from.y !== this.to.y) {
-      const y = end ? this.to.y : this.from.y + Math.floor((this.to.y - this.from.y) * ratio);
+      const y = end ? this.to.y : this.from.y + Math.round((this.to.y - this.from.y) * ratio);
       this.params.table.scrollTop = y;
     }
   }

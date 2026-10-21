@@ -176,6 +176,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   internalProps: IBaseTableProtected;
   showFrozenIcon = true;
   _scrollToRowCorrectTimer: ReturnType<typeof setTimeout> | null = null;
+  _scrollToColCorrectTimer: ReturnType<typeof setTimeout> | null = null;
   padding: { top: number; left: number; right: number; bottom: number };
   globalDropDownMenu?: MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[]);
   //画布绘制单元格的区域 不包括整体边框frame，所以比canvas的width和height要小一点（canvas的width包括了frame）
@@ -2671,6 +2672,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
   }
 
+  private clearColCorrectTimer() {
+    if (this._scrollToColCorrectTimer !== null) {
+      clearTimeout(this._scrollToColCorrectTimer);
+      this._scrollToColCorrectTimer = null;
+    }
+  }
+
   /**
    * Dispose the table instance.
    * @returns {void}
@@ -2726,6 +2734,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       delete element.__vtable_id__;
     }
     this.clearCorrectTimer();
+    this.clearColCorrectTimer();
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
 
@@ -5286,6 +5295,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   private _scheduleScrollToRowCorrect(row: number, delay: number = 0) {
     this._scrollToRowCorrectTimer = setTimeout(() => {
       this.clearCorrectTimer();
+      if (this.isReleased) {
+        return;
+      }
       const targetScrollTop = this.getTargetScrollTop(row);
       if (targetScrollTop !== this.scrollTop) {
         this.scrollTop = targetScrollTop;
@@ -5312,16 +5324,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.animationManager.scrollTo({ row: targetRow }, animationOption);
     if (targetRowInt === targetRow) {
       this._scrollToRowCorrectTimer = setTimeout(() => {
-        this.scrollToRow(targetRowInt, false);
+        this._scrollToRowCorrectTimer = null;
+        if (!this.isReleased) {
+          this.scrollToRow(targetRowInt, false);
+        }
       }, duration);
     }
   }
   scrollToCol(col: number, animationOption?: ITableAnimationOption | boolean) {
+    this.clearColCorrectTimer();
     if (!animationOption) {
       this.scrollToCell({ col });
       return;
     }
+    const duration = !isBoolean(animationOption) ? animationOption?.duration ?? 3000 : 3000;
     this.animationManager.scrollTo({ col }, animationOption);
+    if (Math.floor(col) === col) {
+      this._scrollToColCorrectTimer = setTimeout(() => {
+        this._scrollToColCorrectTimer = null;
+        if (!this.isReleased) {
+          this.scrollToCell({ col });
+        }
+      }, duration);
+    }
   }
   /**
    * 滚动到具体某个单元格位置
