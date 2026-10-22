@@ -24,6 +24,12 @@ describe('debounce', () => {
       expect(callback).not.toHaveBeenCalled();
       expect(timers[0].delay).toBe(50);
 
+      // 提前触发时仍等待最后 1ms，避免过早调用用户回调。
+      now = 1149;
+      timers.shift()!.callback();
+      expect(callback).not.toHaveBeenCalled();
+      expect(timers[0].delay).toBe(1);
+
       now = 1150;
       timers.shift()!.callback();
       expect(callback).toHaveBeenCalledTimes(1);
