@@ -30,7 +30,8 @@ export default {
   },
   headerStyle: {
     color: '#1B1F23',
-    bgColor: '#EEF1F5',
+    // 联调专用：制造真实截图差异，不作为产品主题方案合入。
+    bgColor: '#DDE7FF',
     // 优先使用 Arial 字体，等宽能够保证数字场景长度一致，英文加粗场景 Arial 没有 500 字重，所以使用 600
     fontSize: 14,
     fontFamily: 'Arial,sans-serif',
