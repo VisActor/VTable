@@ -9,6 +9,8 @@ on:
 
 jobs:
   build:
+    # 只跳过本仓灰度准备分支；正式上线后统一删除旧 BugServer 工作流。
+    if: github.event_name != 'pull_request' || github.head_ref != 'codex/workflow-gray-readiness-20261028' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
 
     strategy:
