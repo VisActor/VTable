@@ -8,9 +8,31 @@ on:
     branches: ['main', 'develop', 'dev/*']
 
 jobs:
+  gray-scope:
+    # Actions 字符串比较忽略大小写；由 Bash 精确核对分支，不检出或执行 PR 代码。
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      skip: ${{ steps.scope.outputs.skip }}
+    steps:
+      - id: scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          shopt -u nocasematch
+          if [[ "$EVENT_NAME" == 'pull_request' && "$HEAD_REPOSITORY" == "$REPOSITORY" && "$HEAD_REF" == 'codex/workflow-gray-readiness-20261028' ]]; then
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'skip=false' >> "$GITHUB_OUTPUT"
+          fi
+
   build:
-    # 只跳过本仓灰度准备分支；正式上线后统一删除旧 BugServer 工作流。
-    if: github.event_name != 'pull_request' || github.head_ref != 'codex/workflow-gray-readiness-20261028' || github.event.pull_request.head.repo.full_name != github.repository
+    needs: gray-scope
+    if: needs.gray-scope.outputs.skip != 'true'
     runs-on: ubuntu-latest
 
     strategy:

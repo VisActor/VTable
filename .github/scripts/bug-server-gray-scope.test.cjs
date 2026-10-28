@@ -1,23 +1,34 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
-const { runInNewContext } = require('node:vm');
+const { spawnSync } = require('node:child_process');
 
-// 直接核对真实 workflow 表达式，专用分支不能让 fork 同名分支扩大跳过范围。
-test('旧 BugServer CI 仅对本仓灰度准备 PR 暂停', () => {
+// 执行 workflow 的真实 Bash 校验，不用 JavaScript 模拟 Actions 的字符串语义。
+test('旧 BugServer CI 只跳过本仓指定分支，大小写变体和 fork 不扩大范围', () => {
   const source = fs.readFileSync(path.join(__dirname, '../workflows/bug-server.yml'), 'utf8');
-  const clause = /    if: (?:>-\n([\s\S]*?)(?=    runs-on:)|([^\n]+))/.exec(source);
-  assert(clause, '缺少明确的 CI 触发条件');
-  const expression = (clause[1] || clause[2]).trim();
-  const check = (event, branch, repository) => runInNewContext(expression, { github: {
-    event_name: event, head_ref: branch, repository: 'VisActor/VTable',
-    event: { pull_request: { head: { repo: { full_name: repository } } } }
-  } }, { timeout: 1000 });
-  assert.equal(check('pull_request', 'codex/workflow-gray-readiness-20261028', 'VisActor/VTable'), false);
-  assert.equal(check('pull_request', 'fix/real-change', 'VisActor/VTable'), true);
-  assert.equal(check('pull_request', 'codex/workflow-gray-readiness-20261028', 'contributor/VTable'), true);
-  assert.equal(check('pull_request', 'fix/real-change', 'contributor/VTable'), true);
-  assert.equal(check('push', '', 'VisActor/VTable'), true);
-  assert.equal(check('workflow_dispatch', '', 'VisActor/VTable'), true);
+  const gate = /  gray-scope:\n([\s\S]*?)\n  build:/.exec(source)?.[1];
+  assert(gate, '缺少独立分支核验 job');
+  assert.match(gate, /permissions: \{\}/);
+  assert.doesNotMatch(gate, /uses:|checkout/);
+  assert.match(source, /  build:\n    needs: gray-scope\n    if: (?:>-\n      )?needs.gray-scope.outputs.skip != 'true'/);
+  const run = /        run: \|\n([\s\S]*)/.exec(gate)?.[1];
+  assert(run, '缺少真实核验脚本');
+  const script = run.replace(/^          /gm, '');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'bug-server-gray-'));
+  try {
+    const check = (event, branch, repository) => {
+      const output = path.join(directory, 'output'); fs.writeFileSync(output, '');
+      const result = spawnSync('/bin/bash', ['--noprofile','--norc','-e','-c',script], {encoding:'utf8',env:{PATH:'/usr/bin:/bin',GITHUB_OUTPUT:output,EVENT_NAME:event,HEAD_REF:branch,HEAD_REPOSITORY:repository,REPOSITORY:'VisActor/VTable'}});
+      assert.equal(result.status, 0, result.stderr);
+      return fs.readFileSync(output, 'utf8');
+    };
+    assert.equal(check('pull_request','codex/workflow-gray-readiness-20261028','VisActor/VTable'),'skip=true\n');
+    for (const branch of ['Codex/workflow-gray-readiness-20261028','codex/Workflow-gray-readiness-20261028','fix/real-change'])
+      assert.equal(check('pull_request',branch,'VisActor/VTable'),'skip=false\n');
+    assert.equal(check('pull_request','codex/workflow-gray-readiness-20261028','contributor/VTable'),'skip=false\n');
+    assert.equal(check('push','','VisActor/VTable'),'skip=false\n');
+    assert.equal(check('workflow_dispatch','','VisActor/VTable'),'skip=false\n');
+  } finally { fs.rmSync(directory,{recursive:true,force:true}); }
 });
