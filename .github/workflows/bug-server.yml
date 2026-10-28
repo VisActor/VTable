@@ -24,7 +24,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           shopt -u nocasematch
-          if [[ "$EVENT_NAME" == 'pull_request' && "$HEAD_REPOSITORY" == "$REPOSITORY" && "$HEAD_REF" == 'codex/workflow-gray-readiness-20261028' ]]; then
+          if [[ "$EVENT_NAME" == 'pull_request' && "$HEAD_REPOSITORY" == "$REPOSITORY" && ( "$HEAD_REF" == 'codex/workflow-gray-readiness-20261028' || "$HEAD_REF" == 'codex/workflow-cn-acceptance-20261028' ) ]]; then
             echo 'skip=true' >> "$GITHUB_OUTPUT"
           else
             echo 'skip=false' >> "$GITHUB_OUTPUT"
