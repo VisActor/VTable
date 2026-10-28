@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     # 专用联调分支只运行 CR、单测和本地视觉，不触发旧 Photo 服务。
-    if: github.event_name != 'pull_request' || github.head_ref != 'codex/manual-photo-dryrun-20261028'
+    if: github.event_name != 'pull_request' || github.head_ref != 'codex/manual-photo-dryrun-20261028' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
 
     strategy:
