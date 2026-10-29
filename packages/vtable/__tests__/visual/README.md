@@ -42,16 +42,19 @@ node packages/vtable/scripts/visual-test.mjs --baseline <完整的40位commit-sh
 node --test packages/vtable/scripts/visual-test.test.mjs
 ```
 
-## 三项建议工作流灰度准备
+## PR 工作流
 
-自动工作流先只提供 CR、单测和全量 Playwright 建议；BugServer 结果由管理员人工核查，当前提交的管理员 Approve 表示已确认，合入仍由管理员手动执行。Photo 自动执行并展示原始结果，自动差异评估、强制门禁和标准图更新暂停；Playwright 截图通过不替代 BugServer 人工确认。
+完整的适用范围、反馈处理、Photo 人工核查、当前提交批准与合入步骤，统一见[贡献指南：PR 检查与合入流程](../../../../CONTRIBUTING.zh-CN.md#pr-检查与合入流程)。是否启用以贡献指南中的维护者说明为准；不能把本地视觉通过当作 Photo 通过或仓库已开放。
 
-灰度使用完整 SHA 的 `--baseline <40 位 SHA> --offline`，宿主提前准备匹配当前工程清单的只读依赖和浏览器；缺少提交、依赖或预装工具时停止，不回退联网安装，也不把自比较作为正式通过证据。每次保留真实 head/base、全量范围、执行错误及差异解释，更新提交后重新核对版本。
+旧 Photo CI 的原验收分支精确例外仍保留；新 PR 交接规则见 [Bug Server CI](../../../../.github/workflows/bug-server.yml)。启用变量未配置时保持原行为，不能将本次代码合入理解为旧 CI 已全仓停用。保留现有徽章和仍有效的 fork、存量、push、手动及回调入口；未执行旧 CI 的整体退役。
 
-当前仅本仓 `codex/workflow-cn-acceptance-20261028` 分支的 PR 暂停旧 `Bug Server CI`；其他分支、fork 和手动入口保持原触发行为，不能将 Bot 的 manual 模式理解为全仓旧 CI 已停用。旧 BugServer 工作流预计在新工作流正式上线并验收后统一删除；删除前须另行核对自动/手动/回调入口、分支保护及下游引用。本次 CN 真实工作流会自动触发 Photo 并展示原始结果，暂停其自动差异分析、强制门禁和标准图更新；管理员核查后人工批准与合入。
-
-触发范围回归可在仓库根目录执行：
+触发范围回归已接入单测 CI，也可在仓库根目录执行：
 
 ```sh
 node --test .github/scripts/bug-server-gray-scope.test.cjs
 ```
+
+
+### 受控环境的离线执行
+
+使用完整 SHA 的 `--baseline <40 位 SHA> --offline` 时，宿主须提前准备匹配当前工程清单的只读依赖和浏览器；缺少提交、依赖或预装工具时停止，不回退联网安装，不以自比较代替正式比较。保留真实 head/base、全量范围、执行错误及差异说明；更新提交后重新核对版本。

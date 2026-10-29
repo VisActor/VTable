@@ -27,6 +27,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
+      - name: Test Photo CI handoff
+        run: node --test .github/scripts/bug-server-gray-scope.test.cjs
+
       # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
