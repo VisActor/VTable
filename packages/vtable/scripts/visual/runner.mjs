@@ -130,7 +130,7 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
     throw fault('RESULT_SET_MISMATCH', `${phase} 缺少有效阶段结果`, error);
   }
   validateResults(result, ids);
-  if (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
+  if (!result.finalized || (result.status === 'error' && !(phase === 'baseline' && !result.errors?.length && result.tests.every(test => test.status === 'passed' || (test.status === 'error' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(test.code))))) || (code !== 0 && !(code === 1 && (result.status === 'diff' || phase === 'baseline'))))
     throw fault('EXECUTION_FAILED', `${phase} 阶段执行失败，请查看 ${phase}-result.json 和 ${phase}.log`);
   return result;
 }

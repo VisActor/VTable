@@ -142,10 +142,11 @@ export async function saveReport(runDir, summary) {
         code: 'MISSING_ARTIFACT',
         message: '缺少差异图'
       });
+    const baselineAssertion = baseline?.status === 'error' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(baseline.code) && current?.status === 'passed' && images.current && errors.every(error => error.phase === 'baseline' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(error.code));
     const executionError =
       errors.some(error => error.category !== 'visual_difference') ||
       [baseline, current].some(result => result?.status === 'error');
-    const status = executionError
+    const status = baselineAssertion ? 'new_baseline' : executionError
       ? 'error'
       : baseline?.status !== 'passed' || !current || current.status === 'not_run'
       ? 'not_run'
@@ -180,13 +181,13 @@ export async function saveReport(runDir, summary) {
     });
   }
   const counts = Object.fromEntries(
-    ['passed', 'diff', 'error', 'not_run'].map(status => [status, cases.filter(item => item.status === status).length])
+    ['passed', 'diff', 'new_baseline', 'error', 'not_run'].map(status => [status, cases.filter(item => item.status === status).length])
   );
   const complete =
     cases.length > 0 &&
-    cases.every(item => ['passed', 'diff'].includes(item.status)) &&
+    cases.every(item => ['passed', 'diff', 'new_baseline'].includes(item.status)) &&
     !issues.some(issue => ['RESULT_SET_MISMATCH', 'RUN_INCOMPLETE'].includes(issue.code));
-  const status = summary.status === 'error' || issues.length || !complete ? 'error' : counts.diff ? 'diff' : 'passed';
+  const status = summary.status === 'error' || issues.length || !complete ? 'error' : (counts.diff || counts.new_baseline) ? 'diff' : 'passed';
   const logs = {};
   for (const name of [
     'build.log',
@@ -290,14 +291,14 @@ function agentSummary(report) {
       );
     lines.push('');
   }
-  if (report.complete && !report.counts.diff) lines.push('所选用例全部通过，详情见 summary.json。', '');
+  if (report.complete && !report.counts.diff && !report.counts.new_baseline) lines.push('所选用例全部通过，详情见 summary.json。', '');
   lines.push('## 日志与详细报告', '', ...Object.values(report.logs).map(file => `- [${file}](${file})`), '');
   return lines.join('\n');
 }
 
 /** 生成无需服务和网络的三图报告；原图链接保留完整分辨率。 */
 function renderHtml(report) {
-  const labels = { passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成' };
+  const labels = { new_baseline: '旧版断言失败，修复待确认', passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成' };
   const link = (file, label) => `<a href="${escape(file)}">${escape(label)}</a>`;
   const baseline = report.baseline?.repository === 'working-tree' ? '工作区自比较' : '官方基线';
   const cards = report.cases
@@ -390,9 +391,9 @@ function renderHtml(report) {
     )
     .join('')}
   <div class="filters"><label>状态 <select id="status"><option value="issues" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? 'selected' : ''
+    (report.counts.new_baseline ?? 0) + report.counts.diff + report.counts.error + report.counts.not_run ? 'selected' : ''
   }>问题用例</option><option value="all" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? '' : 'selected'
+    (report.counts.new_baseline ?? 0) + report.counts.diff + report.counts.error + report.counts.not_run ? '' : 'selected'
   }>全部</option>${Object.entries(labels)
     .map(([value, label]) => `<option value="${value}">${label}</option>`)
     .join('')}</select></label><label>用例 <select id="case"><option value="all">全部用例</option>${report.cases
