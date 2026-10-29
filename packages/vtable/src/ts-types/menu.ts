@@ -23,10 +23,13 @@ type Icon = {
 export type MenuListItem =
   | string
   | {
+      /** 菜单纯文本，不解析 HTML 标签或实体。 */
       text?: string;
       type?: 'title' | 'item' | 'split';
       menuKey?: string;
+      /** HTML 菜单支持 HTTP(S) 图片地址或经过安全清洗的静态 SVG。 */
       icon?: Icon;
+      /** 选中图标使用与 icon 相同的安全清洗规则。 */
       selectedIcon?: Icon;
       stateIcon?: Icon;
       children?: MenuListItem[];
@@ -58,6 +61,7 @@ export type MenuInstanceType = 'dropdown-menu' | 'context-menu' | 'container';
 /** 显示下拉菜单设置项 或者显示指定dom内容 */
 export type DropDownMenuOptions = {
   // menuList?: MenuListItem[];
+  /** 菜单数组按纯文本渲染；自定义 HTMLElement 的内容安全由调用方负责。 */
   content: HTMLElement | MenuListItem[];
   position?: { x: number; y: number };
   referencePosition?: {

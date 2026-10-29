@@ -66,6 +66,7 @@
     "@visactor/vdataset": "~1.0.17",
     "@visactor/vutils-extension": "~2.0.12",
     "cssfontparser": "^1.2.1",
+    "dompurify": "3.4.17",
     "gifuct-js": "2.1.2",
     "lodash": "4.17.21"
   },

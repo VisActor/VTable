@@ -20,13 +20,29 @@ export default {
     table.setDropDownMenuHighlight([{ row: 0, col: 1, menuKey: 'ROW_DESC' }]);
     return table;
   },
+  async exercise(page) {
+    // 打开列菜单，确保截图同时覆盖实际插入 DOM 的普通和选中 SVG。
+    const point = await page.evaluate(() => {
+      const bounds = window.__visualTable.getCellRect(1, 0).bounds;
+      const host = document.getElementById('table').getBoundingClientRect();
+      return { x: host.x + bounds.x2 - 12, y: host.y + (bounds.y1 + bounds.y2) / 2 };
+    });
+    await page.mouse.move(point.x, point.y);
+    // 等待悬停图标完成绘制后再点击，避免依赖自动化操作速度。
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await page.mouse.click(point.x, point.y);
+  },
   async verify(page) {
-    // 菜单高亮状态和表体记录必须同时保留，状态图标交由截图比较。
+    // 菜单高亮状态、选中图标和表体记录必须同时保留。
     await page.evaluate(() => {
       const table = window.__visualTable;
       const state = table.stateManager.menu.dropDownMenuHighlight;
       if (state?.[0]?.menuKey !== 'ROW_DESC' || state[0].col !== 1 || table.getCellValue(1, 1) !== 'A')
         throw new Error('下拉菜单高亮状态未建立');
+      const menu = document.querySelector('.vtable__menu-element--shown');
+      if (menu?.querySelector('.vtable__menu-element--select path')?.getAttribute('fill') !== '#378fff' ||
+          menu?.querySelector('.vtable__menu-element--normal path')?.getAttribute('fill') !== '#666')
+        throw new Error('普通或选中菜单图标丢失');
     });
   }
 };

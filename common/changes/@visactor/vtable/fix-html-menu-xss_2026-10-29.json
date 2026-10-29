@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "comment": "fix: render menu labels as plain text and sanitize menu SVG icons. HTML labels and entities now display literally; unsafe SVG content and non-HTTP(S) image URLs are omitted.",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
