@@ -22,6 +22,7 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
           HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
           BASE_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
           HEAD_REPOSITORY_ID: ${{ github.event.pull_request.head.repo.id }}
           BASE_REPOSITORY_ID: ${{ github.event.pull_request.base.repo.id }}
           CREATED_AT: ${{ github.event.pull_request.created_at }}
@@ -32,7 +33,7 @@ jobs:
           if [[ "$EVENT_NAME" == 'pull_request' && "$HEAD_REPOSITORY" == "$REPOSITORY" && "$HEAD_REF" == 'codex/workflow-cn-acceptance-20261028' ]]; then
             echo 'skip=true' >> "$GITHUB_OUTPUT"
           else
-            # 新内部 Draft 同样暂停旧 Photo，转 ready 后只由新工作流执行一次。
+            # 仅交接目标 develop；其他分支保留旧 Photo，新 Draft 等待 ready。
             skip=$(python3 - <<'PY'
           import os, re
           from datetime import datetime
@@ -40,7 +41,7 @@ jobs:
           skip = False
           if (e['EVENT_NAME'] == 'pull_request' and e['REPOSITORY'] == 'VisActor/VTable'
               and e['HEAD_REPOSITORY'] == e['BASE_REPOSITORY'] == e['REPOSITORY']
-              and e['INTERNAL_SINCE']):
+              and e['BASE_REF'] == 'develop' and e['INTERNAL_SINCE']):
               # 已配置交接却缺失可信元数据时停止旧构建，避免两套 Photo 同时执行。
               since = e['INTERNAL_SINCE']
               if not re.fullmatch(r'[1-9][0-9]{0,15}', since) or int(since) > 8640000000000000:
