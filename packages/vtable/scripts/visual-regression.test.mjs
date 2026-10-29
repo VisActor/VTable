@@ -17,6 +17,8 @@ test('修复报告保留旧版失败并严格区分执行错误', async () => {
     let result = JSON.parse(await fs.readFile(path.join(dir, 'summary.json')));
     assert.equal(result.cases[0].status, 'new_baseline');
     assert.equal(result.status, 'diff');
+    assert.match(await fs.readFile(path.join(dir, 'index.html'), 'utf8'), /待确认项不代表比较通过/);
+    assert.match(await fs.readFile(path.join(dir, 'agent-summary.md'), 'utf8'), /完整执行：true/);
     assert.equal(result.cases[0].errors[0].message, '漏洞复现');
     for (const code of ['TIMEOUT', 'RESOURCE_FAILED', 'MISSING_ARTIFACT']) {
       await saveReport(dir, { ...summary, baselineResult: { ...summary.baselineResult, tests: [{ ...baseline, code }] } });

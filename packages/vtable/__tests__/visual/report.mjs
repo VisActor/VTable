@@ -244,7 +244,7 @@ function agentSummary(report) {
   const lines = [
     '# VTable 视觉回归结果',
     '',
-    `状态：${report.status}；完整比较：${report.complete}；${JSON.stringify(report.counts)}`,
+    `状态：${report.status}；完整执行：${report.complete}；${JSON.stringify(report.counts)}`,
     `测试范围：${selectionDescription(report)}`,
     ...(report.rerun ? [`本次范围复现：\`${report.rerun}\``] : []),
     '',
@@ -360,7 +360,7 @@ function renderHtml(report) {
   <style>
   *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#18283e;font:14px/1.6 system-ui,sans-serif}header{background:#14243a;color:white;padding:24px 32px}header p{color:#cbd5e1;margin:4px 0}h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:0}h3{font-size:14px}main{max-width:1600px;margin:auto;padding:24px}a{color:#175bcc}header a{color:#a8c9ff}nav{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}.stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}.stat,article,.run-error,.metadata{background:white;border:1px solid #dce2ec;border-radius:8px;padding:18px}.stat{flex:1;min-width:130px}.stat strong{font-size:25px;display:block}.filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0}select,button{font:inherit;padding:6px 10px;border:1px solid #bcc8d9;background:white;border-radius:5px;color:#18283e}button{cursor:pointer}article{margin:18px 0}.case-title{display:flex;gap:14px;align-items:center}.badge{padding:2px 10px;border-radius:20px}.passed{color:#176642;background:#e7f5eb}.diff{color:#8a5000;background:#fff2ce}.error{color:#b12733;background:#ffebee}.not_run{color:#536077;background:#edf0f5}.images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}figure{margin:0;border:1px solid #dce2ec;border-radius:4px;overflow:hidden;background:#fff}figcaption{padding:10px;background:#f7f9fc;border-bottom:1px solid #dce2ec;font-weight:600}img{width:100%;display:block}.empty{aspect-ratio:5/4;display:grid;place-items:center;color:#68758a;text-align:center;padding:20px}.source{color:#68758a;overflow-wrap:anywhere}.command{display:flex;gap:12px;align-items:center;background:#f4f6fa;padding:10px}.command code{flex:1;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6fa;padding:12px}details{margin-top:12px}summary{cursor:pointer}.run-error{border-left:4px solid #bd3340;margin:12px 0}[hidden]{display:none!important}@media(max-width:760px){header{padding:20px}main{padding:12px}.images{overflow-x:auto;grid-template-columns:repeat(3,300px)}.command{align-items:flex-start;flex-direction:column}}
   </style></head><body><header><h1>VTable 视觉回归 · ${labels[report.status]}</h1><p>${escape(report.startedAt)} · ${
-    report.complete ? '所选用例完成比较' : '比较未完整完成'
+    report.complete ? '所选用例执行完整；待确认项不代表比较通过' : '执行未完整完成'
   } · ${escape(report.environment.platform)} / ${escape(report.environment.arch)} · Chromium ${escape(
     report.environment.browser ?? '未启动'
   )}</p><p>基线 ${escape(report.baseline?.sha ?? '未解析')} · 本地 ${escape(report.local?.head ?? '未解析')}${
