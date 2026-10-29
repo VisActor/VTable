@@ -159,7 +159,7 @@ Automated code review and the PR workflow provide evidence and merge recommendat
 
 ### Scope
 
-The new workflow handles non-Draft PRs created after activation initialization and satisfying the configured creation-time cutoff, with both head and base branches in this repository. An internal PR means a PR between branches of the same repository, regardless of the author's employment or organization membership.
+The new workflow handles non-Draft PRs created after activation initialization and satisfying the configured creation-time cutoff, with both head and base branches in this repository and `develop` as the base branch. PRs targeting `main`, `dev/*`, or other branches are excluded from this workflow and retain the existing Photo CI trigger rules. An internal PR means a PR between branches of the same repository, regardless of the author's employment or organization membership.
 
 A new Draft PR satisfying the creation-time conditions becomes eligible after it is marked Ready for review. Existing PRs are not backfilled by pushing commits, reopening them, or marking them ready. Fork PRs are not included in this workflow yet. Separately selected gray-validation PRs follow the scope announced by maintainers.
 

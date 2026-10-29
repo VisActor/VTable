@@ -13,7 +13,7 @@ assert.match(source, /  build:\n    needs: gray-scope\n    if: (?:>-\n      )?ne
 const script = /        run: \|\n([\s\S]*)/.exec(gate)[1].replace(/^          /gm, '');
 const repository = 'VisActor/VTable';
 const original = { EVENT_NAME:'pull_request', HEAD_REF:'fix/normal', HEAD_REPOSITORY:repository, BASE_REPOSITORY:repository,
-  REPOSITORY:repository, HEAD_REPOSITORY_ID:'123', BASE_REPOSITORY_ID:'123', CREATED_AT:'2026-10-29T08:00:01Z', INTERNAL_SINCE:'' };
+  BASE_REF:'develop', REPOSITORY:repository, HEAD_REPOSITORY_ID:'123', BASE_REPOSITORY_ID:'123', CREATED_AT:'2026-10-29T08:00:01Z', INTERNAL_SINCE:'' };
 const cutoff = String(Date.parse('2026-10-29T08:00:00Z'));
 
 // 直接执行 workflow 的真实 Bash/Python，临时输出在每次调用后回收。
@@ -29,6 +29,7 @@ function runGate(env) {
 test('仅新内部 PR 交接；起点未配置、历史、fork、push 和人工入口保持旧流程', () => {
   for (const [env,skip] of [
     [{},false], [{INTERNAL_SINCE:cutoff},true],
+    ...['main','dev/test','Develop',''].map(BASE_REF => [{INTERNAL_SINCE:cutoff,BASE_REF},false]),
     [{INTERNAL_SINCE:cutoff,CREATED_AT:'2026-10-29T08:00:00Z'},false],
     [{INTERNAL_SINCE:cutoff,CREATED_AT:'2026-10-29T07:59:59Z'},false],
     [{INTERNAL_SINCE:cutoff,DRAFT:'true'},true],
