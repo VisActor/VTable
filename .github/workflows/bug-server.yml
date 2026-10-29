@@ -9,7 +9,7 @@ on:
 
 jobs:
   gray-scope:
-    # Actions 字符串比较忽略大小写；由 Bash 精确核对分支，不检出或执行 PR 代码。
+    # 无权限、不检出仓库；仅以 GitHub 事件元数据和受控起点交接旧 Photo。
     runs-on: ubuntu-latest
     permissions: {}
     outputs:
@@ -21,13 +21,40 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           HEAD_REF: ${{ github.head_ref }}
           HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}
+          HEAD_REPOSITORY_ID: ${{ github.event.pull_request.head.repo.id }}
+          BASE_REPOSITORY_ID: ${{ github.event.pull_request.base.repo.id }}
+          CREATED_AT: ${{ github.event.pull_request.created_at }}
           REPOSITORY: ${{ github.repository }}
+          INTERNAL_SINCE: ${{ vars.VISACTOR_WORKFLOW_INTERNAL_SINCE }}
         run: |
           shopt -u nocasematch
           if [[ "$EVENT_NAME" == 'pull_request' && "$HEAD_REPOSITORY" == "$REPOSITORY" && "$HEAD_REF" == 'codex/workflow-cn-acceptance-20261028' ]]; then
             echo 'skip=true' >> "$GITHUB_OUTPUT"
           else
-            echo 'skip=false' >> "$GITHUB_OUTPUT"
+            # 新内部 Draft 同样暂停旧 Photo，转 ready 后只由新工作流执行一次。
+            skip=$(python3 - <<'PY'
+          import os, re
+          from datetime import datetime
+          e = os.environ
+          skip = False
+          if (e['EVENT_NAME'] == 'pull_request' and e['REPOSITORY'] == 'VisActor/VTable'
+              and e['HEAD_REPOSITORY'] == e['BASE_REPOSITORY'] == e['REPOSITORY']
+              and e['INTERNAL_SINCE']):
+              # 已配置交接却缺失可信元数据时停止旧构建，避免两套 Photo 同时执行。
+              since = e['INTERNAL_SINCE']
+              if not re.fullmatch(r'[1-9][0-9]{0,15}', since) or int(since) > 8640000000000000:
+                  raise SystemExit('Invalid VISACTOR_WORKFLOW_INTERNAL_SINCE')
+              if not re.fullmatch(r'[1-9][0-9]*', e['BASE_REPOSITORY_ID']) or e['HEAD_REPOSITORY_ID'] != e['BASE_REPOSITORY_ID']:
+                  raise SystemExit('Invalid internal repository identity')
+              created = e['CREATED_AT']
+              if not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z', created):
+                  raise SystemExit('Invalid PR creation time')
+              skip = int(datetime.fromisoformat(created.replace('Z', '+00:00')).timestamp() * 1000) > int(since)
+          print('true' if skip else 'false')
+          PY
+            )
+            echo "skip=$skip" >> "$GITHUB_OUTPUT"
           fi
 
   build:
