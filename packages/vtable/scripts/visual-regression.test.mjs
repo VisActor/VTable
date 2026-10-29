@@ -54,3 +54,35 @@ test('仅完整旧版业务断言失败允许继续，当前失败和基础设�
     await assert.rejects(() => executePhase(root, root, 'baseline', '', ['one'], runtime), /集合/);
   } finally { await fs.rm(root, { recursive: true, force: true }); }
 });
+
+// 独立基线依赖必须逐文件匹配基线提交，不能用当前版的锁文件代替。
+test('不同锁文件分别准备，错配和目录越界拒绝', async () => {
+  const { execFileSync } = await import('node:child_process');
+  const { offlineDependencies } = await import('./visual/build.mjs');
+  const root = await fs.mkdtemp(path.join(tmpdir(), 'visual-deps-'));
+  const previous = process.env.VISUAL_BASELINE_DEPENDENCIES;
+  const source = path.join(root, 'source'), base = path.join(root, 'base'), deps = path.join(root, 'deps');
+  const git = args => execFileSync('git', ['-c', 'core.hooksPath=/dev/null', ...args], { cwd: source, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_NAME: 'fixture', GIT_AUTHOR_EMAIL: 'fixture@example.invalid', GIT_COMMITTER_NAME: 'fixture', GIT_COMMITTER_EMAIL: 'fixture@example.invalid' } }).trim();
+  try {
+    await fs.mkdir(path.join(source, 'common/config/rush'), { recursive: true });
+    await fs.writeFile(path.join(source, 'rush.json'), '{}\n');
+    await fs.writeFile(path.join(source, 'common/config/rush/pnpm-lock.yaml'), 'base\n');
+    git(['init', '-q']); git(['add', '.']); git(['commit', '-qm', 'base']);
+    const sha = git(['rev-parse', 'HEAD']);
+    await fs.cp(source, deps, { recursive: true, filter: file => !file.includes('/.git') });
+    await fs.mkdir(path.join(deps, 'common/temp'));
+    await fs.writeFile(path.join(source, 'common/config/rush/pnpm-lock.yaml'), 'head\n');
+    git(['add', '.']); git(['commit', '-qm', 'head']); git(['worktree', 'add', '--detach', base, sha]);
+    process.env.VISUAL_BASELINE_DEPENDENCIES = deps;
+    await offlineDependencies(source, base, sha);
+    assert.equal(await fs.readlink(path.join(base, 'common/temp')), path.join(deps, 'common/temp'));
+    await fs.writeFile(path.join(deps, 'rush.json'), '{"changed":true}');
+    await assert.rejects(() => offlineDependencies(source, base, sha), /配置不同/);
+    await fs.unlink(path.join(deps, 'rush.json'));
+    await fs.symlink(path.join(source, 'rush.json'), path.join(deps, 'rush.json'));
+    await assert.rejects(() => offlineDependencies(source, base, sha), /配置不同/);
+  } finally {
+    if (previous === undefined) delete process.env.VISUAL_BASELINE_DEPENDENCIES; else process.env.VISUAL_BASELINE_DEPENDENCIES = previous;
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
