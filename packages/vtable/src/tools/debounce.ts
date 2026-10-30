@@ -88,13 +88,14 @@ export function debounce(func: Function, wait?: number, options?: any) {
     return result;
   }
 
+  // 计算尾调用前的剩余等待时间，避免连续调用时反复创建零延迟定时器。
   function remainingWait(time: number) {
     // 计算 time 与最近一次调用 debounced 函数的时间差
     const timeSinceLastCall = time - lastCallTime;
     // 计算 time 与最近一次调用 func 函数的时间差
     const timeSinceLastInvoke = time - lastInvokeTime;
     // 用 wait 减去已经等待的时间
-    const timeWaiting = wait && -timeSinceLastCall;
+    const timeWaiting = (wait as number) - timeSinceLastCall;
 
     return maxing ? Math.min(timeWaiting as number, maxWait - timeSinceLastInvoke) : timeWaiting;
   }
