@@ -570,6 +570,7 @@ export class MenuElement {
     }
     return false;
   }
+  /** 将子菜单定位到父项旁；两侧均不足时限制在容器内，保证菜单项可点击。 */
   _bindSecondElement(table: BaseTableAPI, col: number, row: number, x: number, y: number): boolean {
     const secondElement = this._secondElement;
     const rootElement = this._rootElement;
@@ -596,7 +597,7 @@ export class MenuElement {
       const maxWidth = containerWidth * 0.8;
       secondElement.style.maxWidth = `${maxWidth}px`;
       //计算弹出框的宽度
-      const secondElementWidth = secondElement.clientWidth;
+      const secondElementWidth = secondElement.offsetWidth;
       const secondElementHeight = secondElement.clientHeight;
 
       const secondElementTop = y - 4 - containerTop;
@@ -614,11 +615,13 @@ export class MenuElement {
       let leftStyle = secondElementLeft;
 
       // 判断如果超出右范围则靠左边显示
-      if (leftStyle + secondElementWidth > containerWidth) {
+      if (leftStyle + secondElementWidth + 4 > containerWidth) {
         leftStyle = leftStyle - secondElementWidth - rootWidth;
       } else {
         leftStyle += 4; //位置调整 需要和主菜单之间有4px的间隔
       }
+      // 翻到左侧也可能越界；宽菜单允许重叠，但不能移出可交互区域。
+      leftStyle = Math.max(0, Math.min(leftStyle, containerWidth - secondElementWidth));
       secondElement.style.left = `${leftStyle}px`;
 
       return true;

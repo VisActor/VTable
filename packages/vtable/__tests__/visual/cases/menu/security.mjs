@@ -89,8 +89,8 @@ export default {
         if (labels[0].textContent !== children[0] || labels[1].textContent !== children[1].text ||
             [...labels].some(label => label.childElementCount)) throw assertionError('子菜单文本被解析');
       });
-      // 禁用项无法可靠执行坐标点击，直接派发事件验证其点击保护；下一项仍执行真实点击。
-      await child.locator('.vtable__menu-element__item-disabled').dispatchEvent('click');
+      // 禁用项和正常项都执行真实点击，覆盖子菜单边界与禁用保护。
+      await child.locator('.vtable__menu-element__item-disabled').click();
       await child.locator('.vtable__menu-element__item').nth(1).click();
     }
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
