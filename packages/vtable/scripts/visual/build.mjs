@@ -45,22 +45,55 @@ export async function resolveBaseline(root, sha, runtime, log) {
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
 }
-/** 核对依赖配置并返回规范目录；缓存命中也不跳过校验。 */
-async function assertOfflineConfiguration(root, sha) {
-  const directory = await fs.realpath(process.env.VISUAL_BASELINE_DEPENDENCIES ?? root);
-  if (process.env.VISUAL_BASELINE_DEPENDENCIES) {
-    const files = git(root, ['ls-tree', '-r', '--name-only', sha]).split('\n').filter(file => file === 'rush.json' || file === 'package.json' || file.endsWith('/package.json') || file.startsWith('common/config/rush/'));
-    for (const file of files) {
-      const resolved = await fs.realpath(path.join(directory, file));
-      if (!resolved.startsWith(directory + path.sep) || !(await fs.readFile(resolved)).equals(execFileSync('git', ['show', `${sha}:${file}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }))) throw fault('DEPENDENCIES_CHANGED', '基线独立依赖配置不同');
-    }
-    return directory;
+/** 离线依赖绑定已提交配置；拒绝暂存、未暂存及新增配置，保留普通源码修改。 */
+export function assertOfflineDependencyConfiguration(root) {
+  const options = { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 };
+  const changed = [
+    ...execFileSync(
+      'git',
+      ['diff', '--no-ext-diff', '--no-textconv', '--name-only', '--no-renames', '-z', 'HEAD', '--'],
+      options
+    ).split('\0'),
+    ...execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], options).split('\0')
+  ].find(
+    file =>
+      file === 'rush.json' ||
+      file === 'package.json' ||
+      file.endsWith('/package.json') ||
+      file.startsWith('common/config/rush/')
+  );
+  if (changed)
+    throw fault(
+      'DEPENDENCIES_CHANGED',
+      `离线运行的依赖配置存在未提交修改：${JSON.stringify(changed)}；请先提交并准备匹配依赖`
+    );
+}
+
+/** 每侧逐文件核对冻结提交的工程清单，拒绝目录链接读取快照之外的内容。 */
+export async function assertOfflineConfiguration(root, sha, snapshot = process.env.VISUAL_BASELINE_DEPENDENCIES ?? root) {
+  const directory = await fs.realpath(snapshot);
+  const files = new Set([
+    'rush.json',
+    'common/config/rush/pnpm-lock.yaml',
+    ...git(root, ['ls-tree', '-r', '--name-only', sha])
+      .split('\n')
+      .filter(
+        file => file === 'package.json' || file.endsWith('/package.json') || file.startsWith('common/config/rush/')
+      )
+  ]);
+  for (const file of files) {
+    const resolved = await fs.realpath(path.join(directory, file));
+    if (
+      !resolved.startsWith(directory + path.sep) ||
+      !(await fs.readFile(resolved)).equals(
+        execFileSync('git', ['show', `${sha}:${file}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 })
+      )
+    )
+      throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同，需要按各侧提交分别准备后再运行');
   }
-  if (git(root, ['diff', sha, '--', 'common/config/rush', 'rush.json']) ||
-    git(root, ['ls-files', '--others', '--exclude-standard', '--', 'common/config/rush']))
-    throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
   return directory;
 }
+
 /** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */
 export async function offlineDependencies(root, worktree, sha) {
   // 校验、链接和复制共用同一绝对 realpath，相对快照路径不随链接所在目录重新解释。
