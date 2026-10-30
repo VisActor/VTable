@@ -3,6 +3,7 @@
 import records from '../data/marketsales.json';
 import { ListTable } from '../../src';
 import { createDiv } from '../dom';
+import type { MenuListItem } from '../../src/ts-types';
 global.__VERSION__ = 'none';
 describe('listTable-menu init test', () => {
   const containerDom: HTMLElement = createDiv();
@@ -147,5 +148,80 @@ describe('listTable-menu init test', () => {
 
     expect(listTable.stateManager.menu.isShow).toBe(true);
     listTable.release();
+  });
+});
+
+describe('HTML 菜单文本安全', () => {
+  let table: ListTable;
+  let container: HTMLElement;
+  beforeEach(() => {
+    // 使用公开 API 覆盖真正的菜单渲染和点击回调。
+    container = createDiv();
+    container.style.width = '600px';
+    container.style.height = '400px';
+    table = new ListTable(container, {
+      columns: [{ field: 'value', title: 'Value', width: 200 }],
+      records: [{ value: 'A' }],
+      menu: { renderMode: 'html' }
+    });
+  });
+  afterEach(() => {
+    // 每个用例释放表格及容器，避免菜单和事件残留。
+    table.release();
+    container.remove();
+  });
+
+  test.each([
+    '<img src="/missing-menu-image" onerror="window.__menuXss=1">',
+    '"><svg onload="window.__menuXss=1">',
+    '<b>Label</b> &amp; &nbsp; " \' 中文'
+  ])('字符串、对象、标题和子菜单均显示原文：%s', text => {
+    // 文本区域不能产生元素，且点击回调必须保留原始 text/menuKey。
+    const items: MenuListItem[] = [
+      text,
+      { text, menuKey: 'object' },
+      { type: 'title', text },
+      { text: 'Children', children: [text, { text, menuKey: 'child' }] }
+    ];
+    table.showDropDownMenu(0, 1, { content: items, position: { x: 10, y: 50 } });
+    const root = container.querySelector('.vtable__menu-element--shown');
+    for (const label of Array.from(root.querySelectorAll('.vtable__menu-element__item-text')).slice(0, 3)) {
+      expect(label.textContent).toBe(text);
+      expect(label.children.length).toBe(0);
+    }
+    root.children[3].dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+    const children = container.querySelectorAll('.vtable__menu-element--shown')[1];
+    for (const label of Array.from(children.querySelectorAll('.vtable__menu-element__item-text'))) {
+      expect(label.textContent).toBe(text);
+      expect(label.children.length).toBe(0);
+    }
+    const clicked = jest.fn();
+    table.on('dropdown_menu_click', clicked);
+    children.children[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(clicked).toHaveBeenCalledWith(expect.objectContaining({ text, menuKey: 'child' }));
+  });
+
+  test('清空图标或缺失文本不报错，选中图标经过清洗', () => {
+    // 覆盖 sanitizer 返回空值及高亮图标分支，尺寸设置不能访问不存在的 SVG。
+    table.setDropDownMenuHighlight([{ col: 0, row: 1, menuKey: 'selected' }]);
+    table.showDropDownMenu(0, 1, {
+      position: { x: 10, y: 50 },
+      content: [
+        { icon: { svg: '<script>window.__menuXss=1</script>', width: 16, height: 16 } },
+        {
+          text: 'Selected',
+          menuKey: 'selected',
+          icon: { svg: '<svg/>', width: 12, height: 12 },
+          selectedIcon: {
+            svg: '<svg xmlns="http://www.w3.org/2000/svg" onload="window.__menuXss=1"><path fill="red"/></svg>'
+          }
+        }
+      ]
+    });
+    const root = container.querySelector('.vtable__menu-element--shown');
+    expect(root.children[0].textContent).toBe('');
+    expect(root.querySelector('script,[onload]')).toBeNull();
+    expect(root.querySelector('path').getAttribute('fill')).toBe('red');
+    expect(root.querySelector('svg').getAttribute('width')).toBe('12');
   });
 });

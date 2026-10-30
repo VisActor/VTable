@@ -204,6 +204,8 @@ export const cases = [
   { id: 'pivot-chart-area-axis-sort', purpose: '启用坐标轴排序配置的双系列透视面积图', file: './pivot-chart/area-axis-sort.mjs', bundles: ['vchart'] },
   { id: 'pivot-chart-rose-indicator-title', purpose: '透视玫瑰图与可见指标标题', file: './pivot-chart/rose-indicator-title.mjs', bundles: ['vchart'] },
   { id: 'plugin-excel-delete-range', purpose: 'Excel 键盘插件通过 Delete 清空可编辑选区', file: './plugins/excel-delete-range.mjs', bundles: ['plugins', 'editors'] },
+  { id: 'menu-security', purpose: 'HTML 菜单文本与 SVG 注入防护及真实交互', file: './menu/security.mjs', bundles: ['vtable'] },
+  { id: 'menu-submenu-bounds', purpose: '宽子菜单边界与真实点击', file: './menu/submenu-bounds.mjs', bundles: ['vtable'] },
 ];
 
 /** 从当前清单目录加载用例，冻结副本不会回到工作区取代码。 */

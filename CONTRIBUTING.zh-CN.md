@@ -165,6 +165,8 @@ git push origin docs/add-funnel-demo
 
 ### 提交前
 
+**新增 BugServer 用例仅限对应项目管理员。** 外部开发者请提供复现材料，由管理员创建并回填真实 caseId；不要自行执行平台写入命令。完整步骤见[新增 BugServer case 流程](./packages/vtable/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)。
+
 完成与改动相关的单元测试，并按本仓库[视觉测试说明](./packages/vtable/__tests__/visual/README.md)执行必要验证。现有提交前全量视觉测试要求继续适用。
 
 在 PR 中说明测试命令、结果、预期视觉变化和未完成项。无法运行的测试应写明原因；自比较只能验证稳定性，不能代替与官方基线的比较。

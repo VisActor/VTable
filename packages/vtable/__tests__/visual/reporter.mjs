@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { stripVTControlCharacters } from 'node:util';
+import { isBusinessAssertion } from './assertions.mjs';
 
 /** 每个完成用例即保存证据，不依赖进程正常结束才落盘。 */
 export default class VisualReporter {
@@ -15,10 +16,17 @@ export default class VisualReporter {
     // diff 标记仅由截图适配层在确认原生比较证据完整后添加。
     const difference = result.attachments.some(item => item.name === 'visual-difference');
     const stage = test.annotations.find(item => item.type === 'stage')?.description ?? 'setup';
-    const category =
+    const businessAssertion =
+      result.status === 'failed' && result.errors.length > 0 && result.errors.every(isBusinessAssertion);
+    const failureCategory =
       result.status === 'timedOut'
         ? 'timeout'
         : test.annotations.find(item => item.type === 'failure-category')?.description || stage;
+    // 阶段只描述动作位置；普通异常和浏览器生命周期错误不能冒充业务断言。
+    const category =
+      result.status === 'failed' && ['interaction', 'verify'].includes(failureCategory) && !businessAssertion
+        ? 'execution'
+        : failureCategory;
     const codes = {
       resource: 'RESOURCE_FAILED',
       render: 'RENDER_FAILED',
@@ -33,6 +41,7 @@ export default class VisualReporter {
     this.browser = test.annotations.find(item => item.type === 'browser')?.description ?? this.browser;
     this.tests.push({
       id: test.title,
+      businessAssertion,
       status:
         result.status === 'passed'
           ? 'passed'
@@ -64,7 +73,7 @@ export default class VisualReporter {
     this.persist(false);
   }
   persist(finalized, endedStatus) {
-    // 原子替换阶段结果；未终结的阶段始终不宣称完整成功。
+    // 原子替换阶段结果并保留 Playwright 原始终态，逐用例通过不能覆盖阶段超时。
     const status =
       !finalized ||
       this.errors.length ||
@@ -79,7 +88,11 @@ export default class VisualReporter {
     const temporary = `${file}.tmp`;
     fs.writeFileSync(
       temporary,
-      JSON.stringify({ finalized, status, browser: this.browser, tests: this.tests, errors: this.errors }, null, 2)
+      JSON.stringify(
+        { finalized, endedStatus, status, browser: this.browser, tests: this.tests, errors: this.errors },
+        null,
+        2
+      )
     );
     fs.renameSync(temporary, file);
   }

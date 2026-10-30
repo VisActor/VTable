@@ -167,6 +167,8 @@ Automated CR and GitHub Actions have independent execution scopes. The absence o
 
 ### Before submitting
 
+**Only administrators of the corresponding BugServer project may create BugServer cases.** External contributors should provide reproduction material for an administrator to create the case and return its real caseId. CLI login or GitHub write access does not grant this permission. See the [complete case workflow (Chinese)](./packages/vtable/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md).
+
 Run the relevant unit tests and follow the [local visual testing guide](./packages/vtable/__tests__/visual/README.md). The existing requirement to run the full visual suite before a PR still applies.
 
 Describe test commands, results, expected visual changes, and unfinished checks in the PR. Explain why a test could not run. Self-comparison checks stability and does not replace comparison against the official baseline.

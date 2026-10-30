@@ -130,8 +130,29 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
     throw fault('RESULT_SET_MISMATCH', `${phase} 缺少有效阶段结果`, error);
   }
   validateResults(result, ids);
-  if (!result.finalized || result.status === 'error' || (code !== 0 && !(code === 1 && result.status === 'diff')))
-    throw fault('EXECUTION_FAILED', `${phase} 阶段执行失败，请查看 ${phase}-result.json 和 ${phase}.log`);
+  // 只有正常结束的旧版业务失败可继续；阶段超时/中断不能被已完成用例掩盖。
+  const baselineAssertionFailure =
+    phase === 'baseline' &&
+    result.status === 'error' &&
+    result.tests.some(test => test.status === 'error') &&
+    result.tests.every(
+      test =>
+        test.status === 'passed' ||
+        (test.status === 'error' &&
+          test.businessAssertion === true &&
+          ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(test.code))
+    );
+  // 同时核对 reporter 原始终态和进程退出码，拒绝缺失终态及相互矛盾的成功结果。
+  const normalExit =
+    (result.endedStatus === 'passed' && result.status === 'passed' && code === 0) ||
+    (result.endedStatus === 'failed' && code === 1 && (result.status === 'diff' || baselineAssertionFailure));
+  if (result.finalized !== true || result.errors?.length || !normalExit)
+    throw fault(
+      'EXECUTION_FAILED',
+      `${phase} 阶段执行失败（结束状态 ${
+        result.endedStatus ?? 'missing'
+      }，退出码 ${code}），请查看 ${phase}-result.json 和 ${phase}.log`
+    );
   return result;
 }
 /** 持有锁的运行才能释放锁，避免误删另一次运行。 */

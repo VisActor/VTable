@@ -92,8 +92,15 @@ export async function saveReport(runDir, summary) {
       actual.some(id => !expected.includes(id))
     )
       issues.push({ phase, category: 'execution', code: 'RESULT_SET_MISMATCH', message: '阶段结果与选择集不一致' });
-    if (result.finalized === false)
-      issues.push({ phase, category: 'execution', code: 'RUN_INCOMPLETE', message: '阶段异常结束，保留已完成用例' });
+    // 独立汇总也校验原始阶段终态；不把超时、中断或旧格式缺失终态解释为完整通过。
+    if (result.finalized !== true || !['passed', 'failed'].includes(result.endedStatus))
+      issues.push({
+        phase,
+        category: 'execution',
+        code: 'RUN_INCOMPLETE',
+        message: `阶段未正常结束（${result.endedStatus ?? 'missing'}），保留已完成用例`
+      });
+
   }
   // 预检失败时尚未解析基线，复现仍应保留用户请求的 SHA 或自比较模式。
   const baselineSha = summary.baseline?.sha ?? summary.request?.baseline;
@@ -142,10 +149,26 @@ export async function saveReport(runDir, summary) {
         code: 'MISSING_ARTIFACT',
         message: '缺少差异图'
       });
+    const baselineAssertion =
+      phases.baseline?.finalized === true &&
+      phases.baseline.endedStatus === 'failed' &&
+      !phases.baseline.errors?.length &&
+      phases.current?.finalized === true &&
+      phases.current.endedStatus === 'passed' &&
+      !phases.current.errors?.length &&
+      baseline?.status === 'error' &&
+      baseline.businessAssertion === true &&
+      ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(baseline.code) &&
+      current?.status === 'passed' &&
+      images.current &&
+      errors.every(
+        error =>
+          error.phase === 'baseline' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(error.code)
+      );
     const executionError =
       errors.some(error => error.category !== 'visual_difference') ||
       [baseline, current].some(result => result?.status === 'error');
-    const status = executionError
+    const status = baselineAssertion ? 'new_baseline' : executionError
       ? 'error'
       : baseline?.status !== 'passed' || !current || current.status === 'not_run'
       ? 'not_run'
@@ -180,13 +203,13 @@ export async function saveReport(runDir, summary) {
     });
   }
   const counts = Object.fromEntries(
-    ['passed', 'diff', 'error', 'not_run'].map(status => [status, cases.filter(item => item.status === status).length])
+    ['passed', 'diff', 'new_baseline', 'error', 'not_run'].map(status => [status, cases.filter(item => item.status === status).length])
   );
   const complete =
     cases.length > 0 &&
-    cases.every(item => ['passed', 'diff'].includes(item.status)) &&
+    cases.every(item => ['passed', 'diff', 'new_baseline'].includes(item.status)) &&
     !issues.some(issue => ['RESULT_SET_MISMATCH', 'RUN_INCOMPLETE'].includes(issue.code));
-  const status = summary.status === 'error' || issues.length || !complete ? 'error' : counts.diff ? 'diff' : 'passed';
+  const status = summary.status === 'error' || issues.length || !complete ? 'error' : (counts.diff || counts.new_baseline) ? 'diff' : 'passed';
   const logs = {};
   for (const name of [
     'build.log',
@@ -243,7 +266,7 @@ function agentSummary(report) {
   const lines = [
     '# VTable 视觉回归结果',
     '',
-    `状态：${report.status}；完整比较：${report.complete}；${JSON.stringify(report.counts)}`,
+    `状态：${report.status}；完整执行：${report.complete}；${JSON.stringify(report.counts)}`,
     `测试范围：${selectionDescription(report)}`,
     ...(report.rerun ? [`本次范围复现：\`${report.rerun}\``] : []),
     '',
@@ -290,14 +313,14 @@ function agentSummary(report) {
       );
     lines.push('');
   }
-  if (report.complete && !report.counts.diff) lines.push('所选用例全部通过，详情见 summary.json。', '');
+  if (report.complete && !report.counts.diff && !report.counts.new_baseline) lines.push('所选用例全部通过，详情见 summary.json。', '');
   lines.push('## 日志与详细报告', '', ...Object.values(report.logs).map(file => `- [${file}](${file})`), '');
   return lines.join('\n');
 }
 
 /** 生成无需服务和网络的三图报告；原图链接保留完整分辨率。 */
 function renderHtml(report) {
-  const labels = { passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成' };
+  const labels = { new_baseline: '旧版断言失败，修复待确认', passed: '通过', diff: '视觉差异', error: '执行错误', not_run: '未完成' };
   const link = (file, label) => `<a href="${escape(file)}">${escape(label)}</a>`;
   const baseline = report.baseline?.repository === 'working-tree' ? '工作区自比较' : '官方基线';
   const cards = report.cases
@@ -359,7 +382,7 @@ function renderHtml(report) {
   <style>
   *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#18283e;font:14px/1.6 system-ui,sans-serif}header{background:#14243a;color:white;padding:24px 32px}header p{color:#cbd5e1;margin:4px 0}h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:0}h3{font-size:14px}main{max-width:1600px;margin:auto;padding:24px}a{color:#175bcc}header a{color:#a8c9ff}nav{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}.stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}.stat,article,.run-error,.metadata{background:white;border:1px solid #dce2ec;border-radius:8px;padding:18px}.stat{flex:1;min-width:130px}.stat strong{font-size:25px;display:block}.filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0}select,button{font:inherit;padding:6px 10px;border:1px solid #bcc8d9;background:white;border-radius:5px;color:#18283e}button{cursor:pointer}article{margin:18px 0}.case-title{display:flex;gap:14px;align-items:center}.badge{padding:2px 10px;border-radius:20px}.passed{color:#176642;background:#e7f5eb}.diff{color:#8a5000;background:#fff2ce}.error{color:#b12733;background:#ffebee}.not_run{color:#536077;background:#edf0f5}.images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}figure{margin:0;border:1px solid #dce2ec;border-radius:4px;overflow:hidden;background:#fff}figcaption{padding:10px;background:#f7f9fc;border-bottom:1px solid #dce2ec;font-weight:600}img{width:100%;display:block}.empty{aspect-ratio:5/4;display:grid;place-items:center;color:#68758a;text-align:center;padding:20px}.source{color:#68758a;overflow-wrap:anywhere}.command{display:flex;gap:12px;align-items:center;background:#f4f6fa;padding:10px}.command code{flex:1;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6fa;padding:12px}details{margin-top:12px}summary{cursor:pointer}.run-error{border-left:4px solid #bd3340;margin:12px 0}[hidden]{display:none!important}@media(max-width:760px){header{padding:20px}main{padding:12px}.images{overflow-x:auto;grid-template-columns:repeat(3,300px)}.command{align-items:flex-start;flex-direction:column}}
   </style></head><body><header><h1>VTable 视觉回归 · ${labels[report.status]}</h1><p>${escape(report.startedAt)} · ${
-    report.complete ? '所选用例完成比较' : '比较未完整完成'
+    report.complete ? '所选用例执行完整；待确认项不代表比较通过' : '执行未完整完成'
   } · ${escape(report.environment.platform)} / ${escape(report.environment.arch)} · Chromium ${escape(
     report.environment.browser ?? '未启动'
   )}</p><p>基线 ${escape(report.baseline?.sha ?? '未解析')} · 本地 ${escape(report.local?.head ?? '未解析')}${
@@ -390,9 +413,9 @@ function renderHtml(report) {
     )
     .join('')}
   <div class="filters"><label>状态 <select id="status"><option value="issues" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? 'selected' : ''
+    (report.counts.new_baseline ?? 0) + report.counts.diff + report.counts.error + report.counts.not_run ? 'selected' : ''
   }>问题用例</option><option value="all" ${
-    report.counts.diff + report.counts.error + report.counts.not_run ? '' : 'selected'
+    (report.counts.new_baseline ?? 0) + report.counts.diff + report.counts.error + report.counts.not_run ? '' : 'selected'
   }>全部</option>${Object.entries(labels)
     .map(([value, label]) => `<option value="${value}">${label}</option>`)
     .join('')}</select></label><label>用例 <select id="case"><option value="all">全部用例</option>${report.cases
