@@ -98,7 +98,7 @@ for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
           // 只有完整基线结果中的业务断言失败允许保留当前截图、等待修复调查。
           const baseline = JSON.parse(await fs.readFile(`${process.env.VISUAL_RUN_DIR}/baseline-result.json`, 'utf8'));
           const previous = baseline.tests.find(test => test.id === item.id);
-          if (baseline.finalized && !baseline.errors.length && previous?.status === 'error' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(previous.code)) return;
+          if (baseline.finalized && baseline.endedStatus === 'failed' && !baseline.errors.length && previous?.status === 'error' && previous.businessAssertion === true && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(previous.code)) return;
           failure.description = 'missing_artifact';
           throw error;
         }

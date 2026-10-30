@@ -138,7 +138,9 @@ export async function executePhase(root, runDir, phase, url, ids, runtime) {
     result.tests.every(
       test =>
         test.status === 'passed' ||
-        (test.status === 'error' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(test.code))
+        (test.status === 'error' &&
+          test.businessAssertion === true &&
+          ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(test.code))
     );
   // 同时核对 reporter 原始终态和进程退出码，拒绝缺失终态及相互矛盾的成功结果。
   const normalExit =

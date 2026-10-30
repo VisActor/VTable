@@ -10,7 +10,7 @@ test('修复报告保留旧版失败并严格区分执行错误', async () => {
   const dir = await fs.mkdtemp(path.join(tmpdir(), 'visual-regression-'));
   try {
     await fs.writeFile(path.join(dir, 'current.png'), 'fixture');
-    const baseline = { id: 'one', status: 'error', code: 'INTERACTION_ASSERTION_FAILED', category: 'interaction', errors: ['漏洞复现'], attachments: [] };
+    const baseline = { id: 'one', status: 'error', businessAssertion: true, code: 'INTERACTION_ASSERTION_FAILED', category: 'interaction', errors: ['漏洞复现'], attachments: [] };
     const current = { id: 'one', status: 'passed', errors: [], attachments: [{ name: 'rendered', path: 'current.png' }] };
     const summary = { status: 'passed', environment: {}, cases: [{ id: 'one' }], baselineResult: { finalized: true, endedStatus: 'failed', errors: [], tests: [baseline] }, currentResult: { finalized: true, endedStatus: 'passed', errors: [], tests: [current] } };
     await saveReport(dir, summary);
@@ -19,6 +19,10 @@ test('修复报告保留旧版失败并严格区分执行错误', async () => {
     assert.equal(result.status, 'diff');
     assert.match(await fs.readFile(path.join(dir, 'index.html'), 'utf8'), /待确认项不代表比较通过/);
     assert.match(await fs.readFile(path.join(dir, 'agent-summary.md'), 'utf8'), /完整执行：true/);
+    assert.equal(result.cases[0].errors[0].message, '漏洞复现');
+    await saveReport(dir, { ...summary, baselineResult: { ...summary.baselineResult, tests: [{ ...baseline, businessAssertion: false }] } });
+    result = JSON.parse(await fs.readFile(path.join(dir, 'summary.json')));
+    assert.equal(result.status, 'error');
     assert.equal(result.cases[0].errors[0].message, '漏洞复现');
     for (const code of ['TIMEOUT', 'RESOURCE_FAILED', 'MISSING_ARTIFACT']) {
       await saveReport(dir, { ...summary, baselineResult: { ...summary.baselineResult, tests: [{ ...baseline, code }] } });
@@ -40,9 +44,12 @@ test('仅完整旧版业务断言失败允许继续，当前失败和基础设�
     await fs.mkdir(cli, { recursive: true });
     await fs.writeFile(path.join(cli, 'package.json'), JSON.stringify({ exports: { './cli': './cli.js' } }));
     await fs.writeFile(path.join(cli, 'cli.js'), '');
-    let result = { finalized: true, endedStatus: 'failed', status: 'error', errors: [], tests: [{ id: 'one', status: 'error', code: 'INTERACTION_ASSERTION_FAILED' }] };
+    let result = { finalized: true, endedStatus: 'failed', status: 'error', errors: [], tests: [{ id: 'one', status: 'error', businessAssertion: true, code: 'INTERACTION_ASSERTION_FAILED' }] };
     const runtime = { async run(_command, _args, _cwd, _log, options) { await fs.writeFile(path.join(root, `${options.env.VISUAL_PHASE}-result.json`), JSON.stringify(result)); return 1; } };
     assert.equal((await executePhase(root, root, 'baseline', '', ['one'], runtime)).status, 'error');
+    delete result.tests[0].businessAssertion;
+    await assert.rejects(() => executePhase(root, root, 'baseline', '', ['one'], runtime));
+    result.tests[0].businessAssertion = true;
     await assert.rejects(() => executePhase(root, root, 'current', '', ['one'], runtime));
     for (const code of ['TIMEOUT', 'RESOURCE_FAILED', 'MISSING_ARTIFACT']) {
       result.tests[0].code = code;
@@ -112,6 +119,25 @@ test('阶段超时、中断及退出码异常不能被已完成用例或旧版�
     { name: '正常通过', phase: 'baseline', endedStatus: 'passed', kind: 'passed', exitCode: 0 },
     { name: '正常旧版业务失败', phase: 'baseline', endedStatus: 'failed', kind: 'assertion', exitCode: 1 },
     { name: '正常截图差异', phase: 'current', endedStatus: 'failed', kind: 'diff', exitCode: 1 },
+    {
+      name: '浏览器传回显式业务断言',
+      phase: 'baseline',
+      stage: 'interaction',
+      endedStatus: 'failed',
+      kind: 'browser-assertion',
+      exitCode: 1
+    },
+    ...['interaction', 'verify'].flatMap(stage =>
+      ['closed', 'context', 'protocol', 'unmarked', 'mixed'].map(kind => ({
+        name: `${stage} ${kind} 不是可放行业务失败`,
+        phase: 'baseline',
+        stage,
+        endedStatus: 'failed',
+        kind,
+        exitCode: 1,
+        rejected: true
+      }))
+    ),
     ...['baseline', 'current'].flatMap(phase => [
       ...['timedout', 'interrupted'].flatMap(endedStatus =>
         ['passed', 'assertion'].map(kind => ({
@@ -166,17 +192,28 @@ test('阶段超时、中断及退出码异常不能被已完成用例或旧版�
               const kind = selected && id === 'one' ? scenario.kind : 'passed';
               const image = path.join(dir, `${env.VISUAL_PHASE}-${id}.png`);
               await fs.writeFile(image, 'image fixture');
-              const attachments = kind === 'assertion' ? [] : [{ name: 'rendered', path: image }];
+              const attachments = ['passed', 'diff'].includes(kind) ? [{ name: 'rendered', path: image }] : [];
               if (kind === 'diff')
                 attachments.push({ name: 'visual-difference' }, { name: 'rendered-diff.png', path: image });
+              const failures = {
+                assertion: [{ name: 'VisualAssertionError', message: '旧版业务断言失败证据' }],
+                'browser-assertion': [{ message: 'Error: page.evaluate: VisualAssertionError: 旧版业务断言失败证据' }],
+                closed: [{ message: 'Error: page.evaluate: Target page, context or browser has been closed' }],
+                context: [{ message: 'Error: page.evaluate: Execution context was destroyed' }],
+                protocol: [{ message: 'Error: Protocol error (Runtime.callFunctionOn): Target closed' }],
+                unmarked: [{ message: 'Error: page.evaluate: TypeError: Cannot read properties of undefined' }],
+                mixed: [
+                  { name: 'VisualAssertionError', message: '旧版业务断言失败证据' },
+                  { message: 'Target page, context or browser has been closed' }
+                ]
+              };
               reporter.onTestEnd(
-                { title: id, annotations: [{ type: 'stage', description: 'verify' }] },
+                { title: id, annotations: [{ type: 'stage', description: scenario.stage ?? 'verify' }] },
                 {
                   status: kind === 'passed' ? 'passed' : 'failed',
                   duration: 1,
                   attachments,
-                  errors:
-                    kind === 'passed' ? [] : [{ message: kind === 'assertion' ? '旧版业务断言失败证据' : '视觉差异' }]
+                  errors: kind === 'passed' ? [] : failures[kind] ?? [{ message: '视觉差异' }]
                 }
               );
             }
@@ -209,9 +246,9 @@ test('阶段超时、中断及退出码异常不能被已完成用例或旧版�
         };
         const report = await saveReport(dir, summary);
         assert.equal(report.status, rejected ? 'error' : scenario.kind === 'passed' ? 'passed' : 'diff');
-        if (!rejected && scenario.kind === 'assertion') {
+        if (!rejected && ['assertion', 'browser-assertion'].includes(scenario.kind)) {
           assert.equal(report.cases[0].status, 'new_baseline');
-          assert.equal(report.cases[0].errors[0].message, '旧版业务断言失败证据');
+          assert.match(report.cases[0].errors[0].message, /旧版业务断言失败证据/);
           assert.equal(report.complete, true);
         }
         if (!['passed', 'failed'].includes(scenario.endedStatus)) {

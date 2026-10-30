@@ -157,6 +157,7 @@ export async function saveReport(runDir, summary) {
       phases.current.endedStatus === 'passed' &&
       !phases.current.errors?.length &&
       baseline?.status === 'error' &&
+      baseline.businessAssertion === true &&
       ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(baseline.code) &&
       current?.status === 'passed' &&
       images.current &&
