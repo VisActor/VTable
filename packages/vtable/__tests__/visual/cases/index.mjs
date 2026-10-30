@@ -3,6 +3,7 @@ export const cases = [
   { id: 'list-basic', purpose: '列表表头、固定数据与单元格绘制', file: './table/list-basic.mjs', bundles: ['vtable'] },
   { id: 'list-select-cell', purpose: '点击单元格后选择范围确实改变', file: './table/list-select-cell.mjs', bundles: ['vtable'] },
   { id: 'pivot-analysis-two-level', purpose: '两级维度与双指标透视数据分析', file: './pivot/analysis-two-level.mjs', bundles: ['vtable'] },
+  { id: 'pivot-extension-rows-address', purpose: '空数据扩展树路径反查完整地址与主题切换', file: './pivot/extension-rows-address.mjs', bundles: ['vtable'] },
   { id: 'gantt-taskbar-relative-rect', purpose: '项目子任务与空任务的相对矩形', file: './gantt/taskbar-relative-rect.mjs', bundles: ['gantt'] },
   { id: 'sheet-add-columns', purpose: 'Sheet 公式与列插入', file: './sheet/add-columns.mjs', bundles: ['sheet'] },
   { id: 'wrapped-text', purpose: '格式化文本自动换行与显式换行', file: './cells/wrapped-text.mjs', bundles: ['vtable'] },

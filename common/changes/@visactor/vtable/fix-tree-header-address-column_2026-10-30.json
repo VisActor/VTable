@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "comment": "fix: return the physical tree row-header column when resolving a matched header path, including extension rows and left series-number offsets, while preserving body addresses.",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
