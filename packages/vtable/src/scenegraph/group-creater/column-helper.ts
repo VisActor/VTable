@@ -65,9 +65,9 @@ export function createComplexColumn(
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
   } else if (columnGroup.colHeight) {
     y = columnGroup.colHeight;
-  } else if (rowStart >= table.columnHeaderLevelCount && rowStart < table.rowCount - table.bottomFrozenRowCount) {
-    // 这个if判断为了解决#4357 当传入的rowStart例如50但是columnGroup中并没有其他cell的情况下，上面逻辑有问题y赋值的0 导致新建单元格错位
-    y = table.getRowsHeight(table.columnHeaderLevelCount, rowStart - 1);
+  } else if (rowStart >= table.frozenRowCount && rowStart < table.rowCount - table.bottomFrozenRowCount) {
+    // 空列从中间行创建时（#4357），表体坐标须相对冻结区底部，与虚拟滚动重排保持一致。
+    y = table.scenegraph.getCellGroupY(rowStart);
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {

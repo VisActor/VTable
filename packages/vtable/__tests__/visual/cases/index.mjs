@@ -61,7 +61,7 @@ export const cases = [
   { id: 'api-update-columns', purpose: '悬停时更新列', file: './api/update-columns.mjs', bundles: ['vtable'] },
   { id: 'disable-hover-columns', purpose: '列级禁用表体和表头悬停', file: './interaction/disable-hover-columns.mjs', bundles: ['vtable'] },
   { id: 'select-highlight-in-range', purpose: '跨表头与表体拖选范围高亮', file: './interaction/select-highlight-in-range.mjs', bundles: ['vtable'] },
-  { id: 'select-header-scroll-top', purpose: '滚动后固定表头仍可选择', file: './interaction/select-header-scroll-top.mjs', bundles: ['vtable'] },
+  { id: 'select-header-scroll-top', purpose: '冻结行虚拟滚动后绘制、坐标与命中一致，表头选择不回跳', file: './interaction/select-header-scroll-top.mjs', bundles: ['vtable'] },
   { id: 'api-update-columns-on-mouseleave', purpose: '鼠标离开单元格回调中更新列', file: './api/update-columns-on-mouseleave.mjs', bundles: ['vtable'] },
   { id: 'api-update-columns-after-selection', purpose: '点击选中时更新列并保持选区', file: './api/update-columns-after-selection.mjs', bundles: ['vtable'] },
   { id: 'layout-auto-fill-width-resize-container', purpose: '自动填宽下拖列边界和调整容器', file: './layout/auto-fill-width-resize-container.mjs', bundles: ['vtable'] },
