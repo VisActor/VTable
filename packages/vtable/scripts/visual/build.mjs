@@ -45,34 +45,34 @@ export async function resolveBaseline(root, sha, runtime, log) {
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
 }
-/** 缓存命中也必须先确认两侧依赖配置一致。 */
+/** 核对依赖配置并返回规范目录；缓存命中也不跳过校验。 */
 async function assertOfflineConfiguration(root, sha) {
+  const directory = await fs.realpath(process.env.VISUAL_BASELINE_DEPENDENCIES ?? root);
   if (process.env.VISUAL_BASELINE_DEPENDENCIES) {
-    const directory = await fs.realpath(process.env.VISUAL_BASELINE_DEPENDENCIES);
     const files = git(root, ['ls-tree', '-r', '--name-only', sha]).split('\n').filter(file => file === 'rush.json' || file === 'package.json' || file.endsWith('/package.json') || file.startsWith('common/config/rush/'));
     for (const file of files) {
       const resolved = await fs.realpath(path.join(directory, file));
       if (!resolved.startsWith(directory + path.sep) || !(await fs.readFile(resolved)).equals(execFileSync('git', ['show', `${sha}:${file}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }))) throw fault('DEPENDENCIES_CHANGED', '基线独立依赖配置不同');
     }
-    return;
+    return directory;
   }
   if (git(root, ['diff', sha, '--', 'common/config/rush', 'rush.json']) ||
     git(root, ['ls-files', '--others', '--exclude-standard', '--', 'common/config/rush']))
     throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
+  return directory;
 }
 /** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */
 export async function offlineDependencies(root, worktree, sha) {
-  await assertOfflineConfiguration(root, sha);
-  // 双侧依赖由可信宿主按提交逐文件校验；每侧只链接自己的第三方依赖。
-  root = process.env.VISUAL_BASELINE_DEPENDENCIES ?? root;
+  // 校验、链接和复制共用同一绝对 realpath，相对快照路径不随链接所在目录重新解释。
+  const directory = await assertOfflineConfiguration(root, sha);
   await fs.mkdir(path.join(worktree, 'common'), { recursive: true });
-  await fs.symlink(path.join(root, 'common/temp'), path.join(worktree, 'common/temp'), 'dir');
-  const packages = git(process.env.VISUAL_BASELINE_DEPENDENCIES ? worktree : root, ['ls-files', '--', 'packages/**/package.json', 'tools/**/package.json', 'share/**/package.json']).split('\n').filter(Boolean);
+  await fs.symlink(path.join(directory, 'common/temp'), path.join(worktree, 'common/temp'), 'dir');
+  const packages = git(process.env.VISUAL_BASELINE_DEPENDENCIES ? worktree : directory, ['ls-files', '--', 'packages/**/package.json', 'tools/**/package.json', 'share/**/package.json']).split('\n').filter(Boolean);
   for (const file of ['package.json', ...packages]) {
     const relative = path.join(path.dirname(file), 'node_modules');
-    if (await fs.stat(path.join(root, relative)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))) {
+    if (await fs.stat(path.join(directory, relative)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))) {
       await fs.mkdir(path.dirname(path.join(worktree, relative)), { recursive: true });
-      await fs.cp(await fs.realpath(path.join(root, relative)), path.join(worktree, relative), { recursive: true, verbatimSymlinks: true });
+      await fs.cp(await fs.realpath(path.join(directory, relative)), path.join(worktree, relative), { recursive: true, verbatimSymlinks: true });
     }
   }
 }

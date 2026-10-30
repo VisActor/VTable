@@ -64,7 +64,7 @@ export default class VisualReporter {
     this.persist(false);
   }
   persist(finalized, endedStatus) {
-    // 原子替换阶段结果；未终结的阶段始终不宣称完整成功。
+    // 原子替换阶段结果并保留 Playwright 原始终态，逐用例通过不能覆盖阶段超时。
     const status =
       !finalized ||
       this.errors.length ||
@@ -79,7 +79,11 @@ export default class VisualReporter {
     const temporary = `${file}.tmp`;
     fs.writeFileSync(
       temporary,
-      JSON.stringify({ finalized, status, browser: this.browser, tests: this.tests, errors: this.errors }, null, 2)
+      JSON.stringify(
+        { finalized, endedStatus, status, browser: this.browser, tests: this.tests, errors: this.errors },
+        null,
+        2
+      )
     );
     fs.renameSync(temporary, file);
   }

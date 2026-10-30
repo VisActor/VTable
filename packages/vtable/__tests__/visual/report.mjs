@@ -92,8 +92,15 @@ export async function saveReport(runDir, summary) {
       actual.some(id => !expected.includes(id))
     )
       issues.push({ phase, category: 'execution', code: 'RESULT_SET_MISMATCH', message: '阶段结果与选择集不一致' });
-    if (result.finalized === false)
-      issues.push({ phase, category: 'execution', code: 'RUN_INCOMPLETE', message: '阶段异常结束，保留已完成用例' });
+    // 独立汇总也校验原始阶段终态；不把超时、中断或旧格式缺失终态解释为完整通过。
+    if (result.finalized !== true || !['passed', 'failed'].includes(result.endedStatus))
+      issues.push({
+        phase,
+        category: 'execution',
+        code: 'RUN_INCOMPLETE',
+        message: `阶段未正常结束（${result.endedStatus ?? 'missing'}），保留已完成用例`
+      });
+
   }
   // 预检失败时尚未解析基线，复现仍应保留用户请求的 SHA 或自比较模式。
   const baselineSha = summary.baseline?.sha ?? summary.request?.baseline;
@@ -142,7 +149,21 @@ export async function saveReport(runDir, summary) {
         code: 'MISSING_ARTIFACT',
         message: '缺少差异图'
       });
-    const baselineAssertion = baseline?.status === 'error' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(baseline.code) && current?.status === 'passed' && images.current && errors.every(error => error.phase === 'baseline' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(error.code));
+    const baselineAssertion =
+      phases.baseline?.finalized === true &&
+      phases.baseline.endedStatus === 'failed' &&
+      !phases.baseline.errors?.length &&
+      phases.current?.finalized === true &&
+      phases.current.endedStatus === 'passed' &&
+      !phases.current.errors?.length &&
+      baseline?.status === 'error' &&
+      ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(baseline.code) &&
+      current?.status === 'passed' &&
+      images.current &&
+      errors.every(
+        error =>
+          error.phase === 'baseline' && ['INTERACTION_ASSERTION_FAILED', 'CASE_ASSERTION_FAILED'].includes(error.code)
+      );
     const executionError =
       errors.some(error => error.category !== 'visual_difference') ||
       [baseline, current].some(result => result?.status === 'error');
