@@ -33,6 +33,8 @@
 2. close #xxxx or fix #xxxx for instance.
 -->
 
+**只有对应项目管理员有新增 BugServer 用例权限。** 外部开发者提供复现材料，由管理员创建并回填；仅填写真实且可公开的 caseId，未创建时说明“待项目管理员补充”。[完整流程](../../packages/vtable/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)。
+
 ### 💡 问题的背景&解决方案
 
 <!--

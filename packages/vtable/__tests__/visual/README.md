@@ -2,6 +2,8 @@
 
 本工具在本机将当前工作区与官方 `VisActor/VTable` 的 `develop` 构建逐例截图比较。用例由 BugServer Photo case 人工筛选、去业务化改写而来，另含少量独立的基础用例；运行不依赖 BugServer。两侧共用冻结的用例副本，只替换 VTable 构建产物。截图差异需要人工检查；自比较通过只说明运行稳定。
 
+**新增平台用例仅限项目管理员。** 外部贡献者提供复现材料，由管理员创建并回填真实 ID；完整步骤见[新增 BugServer case 流程](./BUGSERVER_CASE_WORKFLOW.md)。
+
 ## 准备
 
 在仓库根目录使用 Node.js 22，安装 Rush 依赖和锁文件对应的 Chromium：
