@@ -427,4 +427,144 @@ describe('listTable data events test', () => {
     table.updateFilterRules(table.dataSource.dataConfig.filterRules as any);
     expect((table.records as any[]).map(r => r.name)).toEqual(['小明2', '小明3']);
   });
+
+  test('deleteRecords on a sorted table should remove the source record shown in that row', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 降序排列后 body 第一行是 id 为 5 的记录（数据源下标 4）
+    table.deleteRecords([0]);
+
+    // 删除的是显示在第一行的记录（id 5），而不是数据源数组的第 0 条
+    expect(records.map(record => record.id)).toEqual([1, 2, 3, 4]);
+    expect((table.records as any[]).map((record: any) => record.id)).toEqual([1, 2, 3, 4]);
+  });
+
+  test('deleteRecords should remove every source record when several sorted view rows are deleted at once', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 降序视图 [5,4,3,2,1]，删除视图行 [0,1] 即删除 id 5 与 id 4
+    table.deleteRecords([0, 1]);
+
+    expect(records.map(record => record.id)).toEqual([1, 2, 3]);
+  });
+
+  test('updateRecords on a sorted table should update the source record shown in that row', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    table.updateRecords([{ id: 5, name: 'Employee 5 updated' }], [0]);
+
+    // 更新的同样是显示在第一行的记录（id 5，数据源下标 4）
+    expect(records.map(record => record.id)).toEqual([1, 2, 3, 4, 5]);
+    expect(records[4].name).toBe('Employee 5 updated');
+  });
+
+  test('deleteRecords/updateRecords on a paginated sorted table should honour the page offset', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      sortState: { field: 'id', order: 'desc' },
+      pagination: { totalCount: 5, perPageCount: 2, currentPage: 1 },
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 降序结果为 [id5,id4,id3,id2,id1]，第二页显示 id 3 与 id 2（数据源下标 2 与 1）
+    table.deleteRecords([0]);
+    expect(records.map(record => record.id)).toEqual([1, 2, 4, 5]);
+
+    // 删除后降序结果为 [id5,id4,id2,id1]，第二页第一行仍是 id 2（数据源下标 1）
+    table.updateRecords([{ id: 2, name: 'Employee 2 updated' }], [0]);
+    expect(records.map(record => record.id)).toEqual([1, 2, 4, 5]);
+    expect(records[1].name).toBe('Employee 2 updated');
+  });
+
+  test('deleteRecords should use one source slot per deleted view row when a record object is reused', () => {
+    table.release();
+    const reused = { id: 1, name: 'Employee 1' };
+    const other = { id: 2, name: 'Employee 2' };
+    // 同一个对象被源数组引用多次（例如多张表共用同一条记录）
+    const records = [reused, other, reused, other];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    // 删除显示行 [1,2,3]：每一行各占一个原始槽位，保留的是第 0 行引用的那条记录
+    table.deleteRecords([1, 2, 3]);
+
+    expect(records.length).toBe(1);
+    expect(records[0]).toBe(reused);
+  });
 });
