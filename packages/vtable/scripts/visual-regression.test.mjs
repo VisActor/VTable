@@ -270,3 +270,220 @@ test('阶段超时、中断及退出码异常不能被已完成用例或旧版�
       }
     });
 });
+
+// 自动准备的两个快照分别匹配自己的冻结提交，不能把旧依赖误当成候选。
+test('候选与基线可用不同版本，但显式候选快照必须匹配候选提交', async () => {
+  const { assertOfflineConfiguration } = await import('./visual/build.mjs');
+  const { execFileSync } = await import('node:child_process');
+  const directory = await fs.mkdtemp(path.join(tmpdir(), 'table-head-dependencies-'));
+  const root = path.join(directory, 'source'),
+    head = path.join(directory, 'head'),
+    base = path.join(directory, 'base');
+  const git = args =>
+    execFileSync('git', ['-c', 'core.hooksPath=/dev/null', ...args], {
+      cwd: root,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: 'test',
+        GIT_AUTHOR_EMAIL: 'test@example.invalid',
+        GIT_COMMITTER_NAME: 'test',
+        GIT_COMMITTER_EMAIL: 'test@example.invalid'
+      }
+    }).trim();
+  try {
+    await fs.mkdir(path.join(root, 'common/config/rush'), { recursive: true });
+    await fs.mkdir(path.join(root, 'packages/vtable'), { recursive: true });
+    await fs.writeFile(path.join(root, 'rush.json'), '{}');
+    git(['init', '--quiet']);
+    const commit = async version => {
+      await fs.writeFile(path.join(root, 'common/config/rush/pnpm-lock.yaml'), version);
+      await fs.writeFile(
+        path.join(root, 'packages/vtable/package.json'),
+        JSON.stringify({ dependencies: { renderer: version } })
+      );
+      git(['add', '.']);
+      git(['commit', '--quiet', '-m', version]);
+      return git(['rev-parse', 'HEAD']);
+    };
+    const baseSha = await commit('1.1.12');
+    await fs.cp(root, base, { recursive: true });
+    const headSha = await commit('1.1.13');
+    await fs.cp(root, head, { recursive: true });
+    assert.equal(await assertOfflineConfiguration(root, baseSha, base), await fs.realpath(base));
+    assert.equal(await assertOfflineConfiguration(root, headSha, head), await fs.realpath(head));
+    await assert.rejects(assertOfflineConfiguration(root, headSha, base), { code: 'DEPENDENCIES_CHANGED' });
+    await fs.cp(new URL('../__tests__/visual/', import.meta.url), path.join(root, 'packages/vtable/__tests__/visual'), {
+      recursive: true
+    });
+    const suite = path.join(root, 'packages/vtable/__tests__/visual/cases');
+    await fs.mkdir(suite, { recursive: true });
+    await fs.writeFile(
+      path.join(suite, 'index.mjs'),
+      "export const cases=[{id:'one',purpose:'候选依赖校验',file:'./one.mjs',bundles:['vtable']}];export async function loadCase(){return(await import('./one.mjs')).default;}"
+    );
+    await fs.writeFile(path.join(suite, 'one.mjs'), 'export default {mount(){},async verify(){}};');
+    const previous = process.env.VISUAL_HEAD_DEPENDENCIES;
+    try {
+      process.env.VISUAL_HEAD_DEPENDENCIES = base;
+      const { runVisual } = await import('./visual/runner.mjs');
+      assert.equal(await runVisual(root, { offline: true, baseline: baseSha }), 2);
+      const runs = path.join(root, '.vtable-visual/runs'),
+        run = path.join(runs, (await fs.readdir(runs))[0]);
+      const result = JSON.parse(await fs.readFile(path.join(run, 'summary.json')));
+      assert.ok(result.issues.some(issue => issue.code === 'DEPENDENCIES_CHANGED'));
+      assert.ok(result.cases.every(item => item.status === 'not_run'));
+    } finally {
+      if (previous === undefined) delete process.env.VISUAL_HEAD_DEPENDENCIES;
+      else process.env.VISUAL_HEAD_DEPENDENCIES = previous;
+    }
+    await fs.unlink(path.join(head, 'rush.json'));
+    await fs.symlink(path.join(root, 'rush.json'), path.join(head, 'rush.json'));
+    await assert.rejects(assertOfflineConfiguration(root, headSha, head), { code: 'DEPENDENCIES_CHANGED' });
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+});
+
+// 真实 Git 工作区覆盖离线入口，依赖配置必须已提交；普通源码修改仍可到达预检。
+test('离线入口拒绝工作区依赖配置变化，保留源码修改及在线模式', async t => {
+  const { execFileSync } = await import('node:child_process');
+  const { runVisual } = await import('./visual/runner.mjs');
+  const directory = await fs.mkdtemp(path.join(tmpdir(), 'table-dirty-dependencies-'));
+  const seed = path.join(directory, 'seed');
+  const previous = process.env.VISUAL_HEAD_DEPENDENCIES;
+  const git = (root, args) =>
+    execFileSync('git', ['-c', 'core.hooksPath=/dev/null', ...args], {
+      cwd: root,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: 'fixture',
+        GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
+        GIT_COMMITTER_NAME: 'fixture',
+        GIT_COMMITTER_EMAIL: 'fixture@example.invalid'
+      }
+    }).trim();
+  try {
+    await fs.mkdir(path.join(seed, 'common/config/rush'), { recursive: true });
+    const suite = path.join(seed, 'packages/vtable/__tests__/visual');
+    await fs.mkdir(path.join(suite, 'cases'), { recursive: true });
+    for (const file of [
+      'settings.mjs',
+      'playwright.config.mjs',
+      'visual.spec.mjs',
+      'reporter.mjs',
+      'assertions.mjs',
+      'page.html'
+    ])
+      await fs.copyFile(new URL(`../__tests__/visual/${file}`, import.meta.url), path.join(suite, file));
+    await fs.writeFile(
+      path.join(suite, 'cases/index.mjs'),
+      "export const cases=[{id:'one',purpose:'工作区依赖校验',file:'./one.mjs',bundles:['vtable']}];export async function loadCase(){return(await import('./one.mjs')).default;}"
+    );
+    await fs.writeFile(path.join(suite, 'cases/one.mjs'), 'export default {mount(){},async verify(){}};');
+    for (const [file, value] of Object.entries({
+      '.gitignore': '/.vtable-visual/\n**/node_modules/\n',
+      'rush.json': '{}',
+      'common/config/rush/pnpm-lock.yaml': 'version: 1.0',
+      'common/config/rush/command-line.json': '{}',
+      'packages/vtable/package.json': '{"dependencies":{"renderer":"1.0"}}',
+      'source.ts': 'original source'
+    }))
+      await fs.writeFile(path.join(seed, file), value);
+    git(seed, ['init', '--quiet']);
+    git(seed, ['add', '.']);
+    git(seed, ['commit', '--quiet', '-m', 'frozen inputs']);
+    const sha = git(seed, ['rev-parse', 'HEAD']);
+    const mutations = [
+      ...[
+        'rush.json',
+        'packages/vtable/package.json',
+        'common/config/rush/pnpm-lock.yaml',
+        'common/config/rush/command-line.json'
+      ].flatMap(file =>
+        [false, true].map(staged => ({ name: `${file} ${staged ? '暂存' : '未暂存'}`, file, action: 'modify', staged }))
+      ),
+      ...['package.json', 'packages/new project/package.json', 'common/config/rush/new\nconfig.json'].flatMap(file =>
+        [false, true].map(staged => ({
+          name: `${JSON.stringify(file)} ${staged ? '暂存新增' : '未跟踪新增'}`,
+          file,
+          action: 'add',
+          staged
+        }))
+      ),
+      ...[false, true].map(staged => ({
+        name: `删除清单 ${staged ? '暂存' : '未暂存'}`,
+        file: 'packages/vtable/package.json',
+        action: 'delete',
+        staged
+      })),
+      { name: '清单改名到非配置路径', file: 'packages/vtable/package.json', action: 'rename', staged: true }
+    ];
+    let index = 0;
+    for (const explicitSnapshot of [false, true]) {
+      if (explicitSnapshot) process.env.VISUAL_HEAD_DEPENDENCIES = seed;
+      else delete process.env.VISUAL_HEAD_DEPENDENCIES;
+      for (const scenario of [
+        ...mutations,
+        { name: '普通源码修改', file: 'source.ts', action: 'modify', allowed: true },
+        { name: '在线模式保留依赖修改', file: 'rush.json', action: 'modify', allowed: true, online: true }
+      ]) {
+        await t.test(`${explicitSnapshot ? '显式候选快照' : '未指定候选快照'}：${scenario.name}`, async () => {
+          const root = path.join(directory, `work-${index++}`);
+          git(directory, ['clone', '--quiet', '--no-hardlinks', seed, root]);
+          const file = path.join(root, scenario.file);
+          if (scenario.action === 'delete') await fs.unlink(file);
+          else if (scenario.action === 'rename') git(root, ['mv', scenario.file, 'renamed-source.txt']);
+          else {
+            await fs.mkdir(path.dirname(file), { recursive: true });
+            await fs.writeFile(file, 'changed');
+          }
+          if (scenario.staged) git(root, ['add', '-A']);
+          assert.notEqual(git(root, ['status', '--porcelain']), '');
+          const exit = await runVisual(root, scenario.online ? {} : { offline: true, baseline: sha });
+          assert.equal(exit, 2);
+          const runs = path.join(root, '.vtable-visual/runs');
+          const report = JSON.parse(await fs.readFile(path.join(runs, (await fs.readdir(runs))[0], 'summary.json')));
+          assert.ok(
+            report.issues.some(issue => issue.code === (scenario.allowed ? 'PREFLIGHT_FAILED' : 'DEPENDENCIES_CHANGED'))
+          );
+          assert.ok(report.cases.every(item => item.status === 'not_run'));
+          assert.equal(report.complete, false);
+          assert.equal(report.status, 'error');
+        });
+      }
+    }
+    await t.test('预检期间的源码变化不能被重新记录的开始快照掩盖', async () => {
+      const root = path.join(directory, 'preflight-change');
+      git(directory, ['clone', '--quiet', '--no-hardlinks', seed, root]);
+      for (const name of ['typescript', '@internal/bundler', '@visactor/vutils', '@playwright/test']) {
+        const folder = path.join(root, 'node_modules', name);
+        await fs.mkdir(folder, { recursive: true });
+        await fs.writeFile(
+          path.join(folder, 'package.json'),
+          JSON.stringify({ main: 'index.cjs', version: 'fixture', exports: { '.': './index.cjs', './cli': './index.cjs', './package.json': './package.json' } })
+        );
+        await fs.writeFile(
+          path.join(folder, 'index.cjs'),
+          name === '@playwright/test'
+            ? "exports.chromium={async launch(){require('node:fs').writeFileSync(require('node:path').resolve(__dirname,'../../../source.ts'),'preflight change');throw new Error('fixture preflight failure')}};"
+            : 'module.exports={};'
+        );
+      }
+      process.env.VISUAL_HEAD_DEPENDENCIES = seed;
+      const exit = await runVisual(root, { offline: true, baseline: sha });
+      assert.equal(exit, 2);
+      const runs = path.join(root, '.vtable-visual/runs');
+      const report = JSON.parse(await fs.readFile(path.join(runs, (await fs.readdir(runs))[0], 'summary.json')));
+      assert.ok(report.issues.some(issue => issue.code === 'WORKSPACE_CHANGED'));
+      assert.equal(report.local.dirty, false);
+      assert.equal(report.localAfter.dirty, true);
+      assert.notEqual(report.local.digest, report.localAfter.digest);
+    });
+  } finally {
+    if (previous === undefined) delete process.env.VISUAL_HEAD_DEPENDENCIES;
+    else process.env.VISUAL_HEAD_DEPENDENCIES = previous;
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+});
