@@ -3661,6 +3661,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         });
         if (findedCellIdPath) {
           row = this._rowHeaderCellIds.indexOf(findedCellIdPath) + this.columnHeaderLevelCount;
+          // 布局 ID 每项对应一列表头；路径终点所在列须计入序号列，不能用维度深度推算。
+          defaultCol = findedCellIdPath.length - 1 + this.leftRowSeriesNumberColumnCount;
         }
       } else {
         rowDimensionFinded = this.matchDimensionPath(rowHeaderPaths, this.rowTree, needLowestLevel_rowPaths, true) as

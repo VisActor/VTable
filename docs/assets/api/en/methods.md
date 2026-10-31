@@ -1149,6 +1149,8 @@ Get the row and column numbers of a data item in the body based on the data and 
 
 Interface for pivot tables, get the specific cell address based on the header dimension path to be matched
 
+For a fully matched tree row-header path, the returned column is the actual column containing the path endpoint, including any left series-number column offset. With tree `extensionRows`, different row-header cells in the same row can return the same complete row path from `getCellHeaderPaths`. Reverse lookup locates the deepest matched node and does not guarantee recovery of the original queried column. When both row and column paths identify a body cell, the matched body column takes precedence. Existing column lookup behavior for paths containing only dimension keys is unchanged.
+
 ```
   /**
    * Calculate cell position through header dimension value path
