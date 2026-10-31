@@ -45,6 +45,15 @@ export async function resolveBaseline(root, sha, runtime, log) {
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
 }
+/** 仅将源码工程清单和 Rush 配置纳入依赖契约。 */
+function isDependencyConfiguration(file) {
+  return (
+    file === 'rush.json' ||
+    file === 'package.json' ||
+    file.endsWith('/package.json') ||
+    file.startsWith('common/config/rush/')
+  );
+}
 /** 核对工作区与指定提交的依赖配置；默认拒绝未提交变化，保留普通源码修改。 */
 export function assertOfflineDependencyConfiguration(root, reference = 'HEAD') {
   const options = { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 };
@@ -55,13 +64,7 @@ export function assertOfflineDependencyConfiguration(root, reference = 'HEAD') {
       options
     ).split('\0'),
     ...execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], options).split('\0')
-  ].find(
-    file =>
-      file === 'rush.json' ||
-      file === 'package.json' ||
-      file.endsWith('/package.json') ||
-      file.startsWith('common/config/rush/')
-  );
+  ].find(isDependencyConfiguration);
   if (changed)
     throw fault(
       'DEPENDENCIES_CHANGED',
@@ -69,20 +72,79 @@ export function assertOfflineDependencyConfiguration(root, reference = 'HEAD') {
     );
 }
 
-/** 每侧逐文件核对冻结提交的工程清单，拒绝目录链接读取快照之外的内容。 */
-export async function assertOfflineConfiguration(root, sha, snapshot = process.env.VISUAL_BASELINE_DEPENDENCIES ?? root) {
+/** 逐侧核对完整源码配置集合、内容和边界，不依赖快照自身的 Git 元数据。 */
+export async function assertOfflineConfiguration(
+  root,
+  sha,
+  snapshot = process.env.VISUAL_BASELINE_DEPENDENCIES ?? root
+) {
   const directory = await fs.realpath(snapshot);
   // 复用实际工作区时还须比较双侧文件集合；别名和缓存命中不能绕过新增配置检查。
   if (directory === (await fs.realpath(root))) assertOfflineDependencyConfiguration(root, sha);
   const files = new Set([
     'rush.json',
     'common/config/rush/pnpm-lock.yaml',
-    ...git(root, ['ls-tree', '-r', '--name-only', sha])
-      .split('\n')
-      .filter(
-        file => file === 'package.json' || file.endsWith('/package.json') || file.startsWith('common/config/rush/')
-      )
+    ...git(root, ['ls-tree', '-r', '--name-only', '-z', sha]).split('\0').filter(isDependencyConfiguration)
   ]);
+  const parents = new Set(),
+    projects = new Set();
+  for (const file of files) {
+    if (file === 'package.json' || file.endsWith('/package.json')) projects.add(path.dirname(file));
+    for (let parent = path.dirname(file); parent !== '.'; parent = path.dirname(parent)) parents.add(parent);
+  }
+  const generated = new Set([
+    'build',
+    'build-es5',
+    'dist',
+    'es',
+    'cjs',
+    'lib',
+    'output',
+    'coverage',
+    '.next',
+    '.cache',
+    '.rollup.cache',
+    '.nyc_output',
+    'rush-logs'
+  ]);
+  const actual = new Set();
+  // 只使用固定产物排除规则；Rush 目录和冻结提交已有配置不受排除影响，不读取快照的 Git/ignore 策略。
+  async function visit(relative, ancestors) {
+    const full = path.join(directory, relative),
+      real = await fs.realpath(full);
+    if (real !== directory && !real.startsWith(directory + path.sep))
+      throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：目录越界');
+    if (ancestors.has(real)) throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：目录循环引用');
+    const next = new Set(ancestors).add(real);
+    for (const entry of await fs.readdir(full, { withFileTypes: true })) {
+      const name = path.join(relative, entry.name),
+        rush = name.startsWith('common/config/rush/');
+      if (
+        !rush &&
+        !parents.has(name) &&
+        (['.git', 'node_modules', '.rush', '.vtable-visual', '.vchart-visual'].includes(entry.name) ||
+          name === 'common/temp' ||
+          (generated.has(entry.name) && (!relative || projects.has(relative))))
+      )
+        continue;
+      let kind = entry;
+      if (entry.isSymbolicLink()) {
+        const target = await fs.realpath(path.join(directory, name));
+        if (!target.startsWith(directory + path.sep) && target !== directory)
+          throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：链接越界');
+        kind = await fs.stat(target);
+      }
+      if (kind.isDirectory()) await visit(name, next);
+      else if (isDependencyConfiguration(name)) {
+        if (!kind.isFile() || !files.has(name))
+          throw fault('DEPENDENCIES_CHANGED', `离线快照包含额外或无效配置：${JSON.stringify(name)}`);
+        actual.add(name);
+      }
+    }
+  }
+  await visit('', new Set());
+  const missing = [...files].find(file => !actual.has(file));
+  if (missing) throw fault('DEPENDENCIES_CHANGED', `离线快照缺少配置：${JSON.stringify(missing)}`);
   for (const file of files) {
     const resolved = await fs.realpath(path.join(directory, file));
     if (
@@ -95,7 +157,6 @@ export async function assertOfflineConfiguration(root, sha, snapshot = process.e
   }
   return directory;
 }
-
 /** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */
 export async function offlineDependencies(root, worktree, sha) {
   // 校验、链接和复制共用同一绝对 realpath，相对快照路径不随链接所在目录重新解释。

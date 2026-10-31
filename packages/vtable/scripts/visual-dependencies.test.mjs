@@ -47,6 +47,8 @@ async function configurationFixture(run) {
     git(['commit', '--quiet', '-m', 'baseline']);
     const sha = git(['rev-parse', 'HEAD']);
     await fs.cp(root, snapshot, { recursive: true });
+    await fs.rm(path.join(snapshot, '.git'), { recursive: true });
+    await fs.mkdir(path.join(snapshot, 'common/temp'), { recursive: true });
     await fs.mkdir(path.join(root, 'common/temp'), { recursive: true });
     const commit = () => {
       git(['add', '.']);
@@ -156,6 +158,162 @@ test('缓存命中和依赖链接入口仍拒绝已提交的新增配置', async
       commit();
       await assert.rejects(build(), { code: 'DEPENDENCIES_CHANGED' });
       const destination = path.join(directory, 'untouched');
+      await assert.rejects(offlineDependencies(root, destination, sha), { code: 'DEPENDENCIES_CHANGED' });
+      await assert.rejects(fs.stat(destination), { code: 'ENOENT' });
+    } finally {
+      for (const cleanup of cleanups.reverse()) await cleanup();
+    }
+  }));
+
+// 独立快照不带 Git 元数据，也不能夹带冻结提交之外的源码配置。
+test('独立快照拒绝额外配置并保留目录边界', async t => {
+  for (const file of [
+    'common/config/rush/pnpm-config.json',
+    'common/config/rush/.npmrc',
+    'common/config/rush/space\nname.json',
+    'common/config/rush/dist/extra.json',
+    'common/config/rush/node_modules/extra.json',
+    'package.json',
+    'packages/new project\nname/package.json',
+    'tools/extra/package.json',
+    'packages/vtable/src/build/package.json'
+  ])
+    await t.test(JSON.stringify(file), () =>
+      configurationFixture(async ({ root, snapshot, sha }) => {
+        await fs.mkdir(path.dirname(path.join(snapshot, file)), { recursive: true });
+        await fs.writeFile(path.join(snapshot, file), '{}');
+        await fs.writeFile(path.join(snapshot, '.gitignore'), '**/*\n');
+        await assert.rejects(assertOfflineConfiguration(root, sha, snapshot), { code: 'DEPENDENCIES_CHANGED' });
+      })
+    );
+  for (const mode of ['outside-directory', 'internal-package-alias', 'directory-cycle', 'internal-rush-alias'])
+    await t.test(mode, () =>
+      configurationFixture(async ({ directory, root, snapshot, sha }) => {
+        const alias = path.join(snapshot, 'packages/alias');
+        if (mode === 'outside-directory') {
+          const outside = path.join(directory, 'outside');
+          await fs.mkdir(outside);
+          await fs.writeFile(path.join(outside, 'package.json'), '{}');
+          await fs.symlink(outside, alias, 'dir');
+        } else if (mode === 'internal-package-alias') await fs.symlink('vtable', alias, 'dir');
+        else if (mode === 'directory-cycle') await fs.symlink('..', alias, 'dir');
+        else {
+          await fs.rename(path.join(snapshot, 'common/config/rush'), path.join(snapshot, 'config-store'));
+          await fs.symlink('../../config-store', path.join(snapshot, 'common/config/rush'), 'dir');
+          await fs.writeFile(path.join(snapshot, 'config-store/extra.json'), '{}');
+        }
+        await assert.rejects(assertOfflineConfiguration(root, sha, snapshot), { code: 'DEPENDENCIES_CHANGED' });
+      })
+    );
+  await t.test('缺失配置', () =>
+    configurationFixture(async ({ root, snapshot, sha }) => {
+      await fs.unlink(path.join(snapshot, 'common/config/rush/shared.json'));
+      await assert.rejects(assertOfflineConfiguration(root, sha, snapshot), { code: 'DEPENDENCIES_CHANGED' });
+    })
+  );
+});
+
+// 安装产物不属于源码配置，可信提交实际跟踪的同名目录仍必须检查。
+test('无 Git 快照允许安装产物，仍核对已跟踪的构建同名目录', async () =>
+  configurationFixture(async ({ directory, root, snapshot, sha, git, commit }) => {
+    await assert.rejects(fs.stat(path.join(snapshot, '.git')), { code: 'ENOENT' });
+    for (const file of [
+      'node_modules/a/package.json',
+      'packages/vtable/node_modules/b/package.json',
+      'common/temp/install-run/tool/package.json',
+      'common/autoinstallers/lint/node_modules/c/package.json',
+      '.git/cache/package.json',
+      '.vtable-visual/run/package.json',
+      'packages/vtable/.rush/temp/package.json',
+      ...['build', 'dist', 'es', 'cjs', 'lib', 'output', 'coverage'].map(name => `packages/vtable/${name}/package.json`)
+    ]) {
+      await fs.mkdir(path.dirname(path.join(snapshot, file)), { recursive: true });
+      await fs.writeFile(path.join(snapshot, file), '{}');
+    }
+    const outside = path.join(directory, 'installed');
+    await fs.mkdir(outside);
+    await fs.symlink(outside, path.join(snapshot, 'packages/vtable/node_modules/linked'), 'dir');
+    assert.equal(await assertOfflineConfiguration(root, sha, snapshot), await fs.realpath(snapshot));
+    await fs.mkdir(path.join(root, 'packages/vtable/dist/template'), { recursive: true });
+    await fs.writeFile(path.join(root, 'packages/vtable/dist/template/package.json'), '{}');
+    await fs.writeFile(path.join(root, 'common/config/rush/frozen\n配置.json'), '{}');
+    await fs.writeFile(path.join(root, 'package.json'), '{}');
+    commit();
+    const next = path.join(directory, 'tracked-output');
+    await fs.cp(root, next, { recursive: true });
+    await fs.rm(path.join(next, '.git'), { recursive: true });
+    const nextSha = git(['rev-parse', 'HEAD']);
+    assert.equal(await assertOfflineConfiguration(root, nextSha, next), await fs.realpath(next));
+    await fs.mkdir(path.join(next, 'packages/vtable/dist/extra'));
+    await fs.writeFile(path.join(next, 'packages/vtable/dist/extra/package.json'), '{}');
+    await assert.rejects(assertOfflineConfiguration(root, nextSha, next), { code: 'DEPENDENCIES_CHANGED' });
+  }));
+
+// 实际候选入口须在预检前拒绝额外配置，而非依赖后续缺工具产生错误。
+test('候选入口在浏览器预检前拒绝快照额外配置', async () =>
+  configurationFixture(async ({ root, snapshot, sha }) => {
+    const previous = process.env.VISUAL_HEAD_DEPENDENCIES;
+    try {
+      const suite = path.join(root, 'packages/vtable/__tests__/visual');
+      await fs.mkdir(path.join(suite, 'cases'), { recursive: true });
+      for (const file of [
+        'settings.mjs',
+        'playwright.config.mjs',
+        'visual.spec.mjs',
+        'reporter.mjs',
+        'assertions.mjs',
+        'page.html'
+      ])
+        await fs.copyFile(new URL(`../__tests__/visual/${file}`, import.meta.url), path.join(suite, file));
+      await fs.writeFile(
+        path.join(suite, 'cases/index.mjs'),
+        "export const cases=[{id:'one',purpose:'快照配置集合',file:'./one.mjs',bundles:['vtable']}];export async function loadCase(){return(await import('./one.mjs')).default;}"
+      );
+      await fs.writeFile(path.join(suite, 'cases/one.mjs'), 'export default {mount(){},async verify(){}};');
+      await fs.writeFile(path.join(snapshot, 'common/config/rush/extra.json'), '{}');
+      process.env.VISUAL_HEAD_DEPENDENCIES = snapshot;
+      const { runVisual } = await import('./visual/runner.mjs');
+      assert.equal(await runVisual(root, { offline: true, baseline: sha }), 2);
+      const runs = path.join(root, '.vtable-visual/runs');
+      const result = JSON.parse(await fs.readFile(path.join(runs, (await fs.readdir(runs))[0], 'summary.json')));
+      assert(result.issues.some(issue => issue.code === 'DEPENDENCIES_CHANGED'));
+      assert(result.cases.every(item => item.status === 'not_run'));
+      assert.equal(result.complete, false);
+    } finally {
+      if (previous === undefined) delete process.env.VISUAL_HEAD_DEPENDENCIES;
+      else process.env.VISUAL_HEAD_DEPENDENCIES = previous;
+    }
+  }));
+
+// 额外配置也须阻断独立快照的缓存命中与链接创建。
+test('独立快照缓存命中不能绕过配置集合校验', async () =>
+  configurationFixture(async ({ directory, root, snapshot, sha }) => {
+    process.env.VISUAL_BASELINE_DEPENDENCIES = snapshot;
+    const run = path.join(root, '.vtable-visual/independent-cache');
+    await fs.mkdir(run, { recursive: true });
+    const cleanups = [],
+      runtime = {
+        offline: true,
+        defer(action) {
+          cleanups.push(action);
+        },
+        async run(command, args) {
+          if (command === 'git')
+            execFileSync('git', ['-c', 'core.hooksPath=/dev/null', ...args], { cwd: root, stdio: 'pipe' });
+          else assert.equal(command, process.execPath);
+          return 0;
+        }
+      };
+    const timed = (_name, action) => action(),
+      report = { baseline: {} };
+    const build = () => baselineBuild(root, run, sha, [], runtime, report, timed);
+    try {
+      await build();
+      await build();
+      assert.equal(report.baseline.cacheHit, true);
+      await fs.writeFile(path.join(snapshot, 'common/config/rush/extra.json'), '{}');
+      await assert.rejects(build(), { code: 'DEPENDENCIES_CHANGED' });
+      const destination = path.join(directory, 'independent-untouched');
       await assert.rejects(offlineDependencies(root, destination, sha), { code: 'DEPENDENCIES_CHANGED' });
       await assert.rejects(fs.stat(destination), { code: 'ENOENT' });
     } finally {
