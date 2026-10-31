@@ -45,20 +45,116 @@ export async function resolveBaseline(root, sha, runtime, log) {
   if (sha && resolved !== sha.toLowerCase()) throw fault('BASELINE_FETCH_FAILED', '基线 SHA 与请求不一致');
   return resolved;
 }
-/** 核对依赖配置并返回规范目录；缓存命中也不跳过校验。 */
-async function assertOfflineConfiguration(root, sha) {
-  const directory = await fs.realpath(process.env.VISUAL_BASELINE_DEPENDENCIES ?? root);
-  if (process.env.VISUAL_BASELINE_DEPENDENCIES) {
-    const files = git(root, ['ls-tree', '-r', '--name-only', sha]).split('\n').filter(file => file === 'rush.json' || file === 'package.json' || file.endsWith('/package.json') || file.startsWith('common/config/rush/'));
-    for (const file of files) {
-      const resolved = await fs.realpath(path.join(directory, file));
-      if (!resolved.startsWith(directory + path.sep) || !(await fs.readFile(resolved)).equals(execFileSync('git', ['show', `${sha}:${file}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }))) throw fault('DEPENDENCIES_CHANGED', '基线独立依赖配置不同');
-    }
-    return directory;
+/** 仅将源码工程清单和 Rush 配置纳入依赖契约。 */
+function isDependencyConfiguration(file) {
+  return (
+    file === 'rush.json' ||
+    file === 'package.json' ||
+    file.endsWith('/package.json') ||
+    file.startsWith('common/config/rush/')
+  );
+}
+/** 核对工作区与指定提交的依赖配置；默认拒绝未提交变化，保留普通源码修改。 */
+export function assertOfflineDependencyConfiguration(root, reference = 'HEAD') {
+  const options = { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 };
+  const changed = [
+    ...execFileSync(
+      'git',
+      ['diff', '--no-ext-diff', '--no-textconv', '--name-only', '--no-renames', '-z', reference, '--'],
+      options
+    ).split('\0'),
+    ...execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], options).split('\0')
+  ].find(isDependencyConfiguration);
+  if (changed)
+    throw fault(
+      'DEPENDENCIES_CHANGED',
+      `离线依赖配置不同：${JSON.stringify(changed)}；配置修改须先提交，并分别准备候选与基线依赖`
+    );
+}
+
+/** 逐侧核对完整源码配置集合、内容和边界，不依赖快照自身的 Git 元数据。 */
+export async function assertOfflineConfiguration(
+  root,
+  sha,
+  snapshot = process.env.VISUAL_BASELINE_DEPENDENCIES ?? root
+) {
+  const directory = await fs.realpath(snapshot);
+  // 复用实际工作区时还须比较双侧文件集合；别名和缓存命中不能绕过新增配置检查。
+  if (directory === (await fs.realpath(root))) assertOfflineDependencyConfiguration(root, sha);
+  const files = new Set([
+    'rush.json',
+    'common/config/rush/pnpm-lock.yaml',
+    ...git(root, ['ls-tree', '-r', '--name-only', '-z', sha]).split('\0').filter(isDependencyConfiguration)
+  ]);
+  const parents = new Set(),
+    projects = new Set();
+  for (const file of files) {
+    if (file === 'package.json' || file.endsWith('/package.json')) projects.add(path.dirname(file));
+    for (let parent = path.dirname(file); parent !== '.'; parent = path.dirname(parent)) parents.add(parent);
   }
-  if (git(root, ['diff', sha, '--', 'common/config/rush', 'rush.json']) ||
-    git(root, ['ls-files', '--others', '--exclude-standard', '--', 'common/config/rush']))
-    throw fault('DEPENDENCIES_CHANGED', '两侧依赖配置不同，需要分别准备后再运行');
+  const generated = new Set([
+    'build',
+    'build-es5',
+    'dist',
+    'es',
+    'cjs',
+    'lib',
+    'output',
+    'coverage',
+    '.next',
+    '.cache',
+    '.rollup.cache',
+    '.nyc_output',
+    'rush-logs'
+  ]);
+  const actual = new Set();
+  // 只使用固定产物排除规则；Rush 目录和冻结提交已有配置不受排除影响，不读取快照的 Git/ignore 策略。
+  async function visit(relative, ancestors) {
+    const full = path.join(directory, relative),
+      real = await fs.realpath(full);
+    if (real !== directory && !real.startsWith(directory + path.sep))
+      throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：目录越界');
+    if (ancestors.has(real)) throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：目录循环引用');
+    const next = new Set(ancestors).add(real);
+    for (const entry of await fs.readdir(full, { withFileTypes: true })) {
+      const name = path.join(relative, entry.name),
+        rush = name.startsWith('common/config/rush/');
+      if (
+        !rush &&
+        !parents.has(name) &&
+        (['.git', 'node_modules', '.rush', '.vtable-visual', '.vchart-visual'].includes(entry.name) ||
+          name === 'common/temp' ||
+          (generated.has(entry.name) && (!relative || projects.has(relative))))
+      )
+        continue;
+      let kind = entry;
+      if (entry.isSymbolicLink()) {
+        const target = await fs.realpath(path.join(directory, name));
+        if (!target.startsWith(directory + path.sep) && target !== directory)
+          throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同：链接越界');
+        kind = await fs.stat(target);
+      }
+      if (kind.isDirectory()) await visit(name, next);
+      else if (isDependencyConfiguration(name)) {
+        if (!kind.isFile() || !files.has(name))
+          throw fault('DEPENDENCIES_CHANGED', `离线快照包含额外或无效配置：${JSON.stringify(name)}`);
+        actual.add(name);
+      }
+    }
+  }
+  await visit('', new Set());
+  const missing = [...files].find(file => !actual.has(file));
+  if (missing) throw fault('DEPENDENCIES_CHANGED', `离线快照缺少配置：${JSON.stringify(missing)}`);
+  for (const file of files) {
+    const resolved = await fs.realpath(path.join(directory, file));
+    if (
+      !resolved.startsWith(directory + path.sep) ||
+      !(await fs.readFile(resolved)).equals(
+        execFileSync('git', ['show', `${sha}:${file}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 })
+      )
+    )
+      throw fault('DEPENDENCIES_CHANGED', '离线依赖配置不同，需要按各侧提交分别准备后再运行');
+  }
   return directory;
 }
 /** 共用第三方存储，复制项目链接以保持每侧工作区包解析到各自源码。 */

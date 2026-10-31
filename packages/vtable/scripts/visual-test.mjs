@@ -55,7 +55,7 @@ async function main() {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
   if (options.help) {
     console.log(
-      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> [--offline] | --self-compare] [--dir <目录> | --case <id>]\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--offline 使用宿主已准备的提交与同锁依赖，不访问网络。\n--list 列举用例；--check 本机环境检查；--help 帮助\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
+      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> [--offline] | --self-compare] [--dir <目录> | --case <id>]\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--offline 使用宿主按各侧提交准备的依赖，不访问网络。\n--list 列举用例；--check 本机环境检查；--help 帮助\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
     );
     return;
   }
