@@ -8,12 +8,52 @@ import type { StateManager } from '../state';
 export function updateResizeRow(xInTable: number, yInTable: number, state: StateManager) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
-  let detaY = state.rowResize.isBottomFrozen ? state.rowResize.y - yInTable : yInTable - state.rowResize.y;
+  const detaY = state.rowResize.isBottomFrozen ? state.rowResize.y - yInTable : yInTable - state.rowResize.y;
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaY) < 1) {
     return;
   }
 
+  // 非实时响应模式：仅累积偏移量并移动指示线，实际行高在拖拽结束时统一应用
+  if (state.table.internalProps.resizeRealtime === false) {
+    state.rowResize.pendingDeltaY = (state.rowResize.pendingDeltaY ?? 0) + detaY;
+    state.rowResize.y = yInTable;
+    // 预览指示线/标签复用提交时相同的有效位移计算（dry run），
+    // 避免越过 limitMinHeight 或 adaptive 相邻行约束时预览显示未约束的尺寸、与最终行高不一致。
+    const previewDeltaY = applyRowResizeDelta(state.rowResize.pendingDeltaY, xInTable, yInTable, state, true);
+    state.table.scenegraph.component.updateResizeRow(
+      state.rowResize.row,
+      xInTable,
+      state.rowResize.isBottomFrozen,
+      previewDeltaY
+    );
+    state.table.scenegraph.updateNextFrame();
+    return;
+  }
+
+  applyRowResizeDelta(detaY, xInTable, yInTable, state);
+}
+
+/** 非实时响应模式下，在拖拽结束时提交累计的高度变化 */
+export function commitPendingRowResize(state: StateManager) {
+  const pending = state.rowResize.pendingDeltaY ?? 0;
+  state.rowResize.pendingDeltaY = 0;
+  if (Math.abs(pending) < 1) {
+    return;
+  }
+  const isBottomFrozen = state.rowResize.isBottomFrozen;
+  const currentY = state.rowResize.y;
+  const targetY = isBottomFrozen ? currentY - pending : currentY + pending;
+  applyRowResizeDelta(pending, currentY, targetY, state);
+}
+
+function applyRowResizeDelta(
+  detaY: number,
+  xInTable: number,
+  yInTable: number,
+  state: StateManager,
+  dryRun = false
+): number {
   const heightCache = state.table.getRowHeight(state.rowResize.row);
   let height = heightCache;
   height += detaY;
@@ -26,13 +66,19 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
   }
   if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
     const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
-    let bottomRowHeight = bottomRowHeightCache;
-    bottomRowHeight -= detaY;
-    if (bottomRowHeight - detaY < state.table.internalProps.limitMinHeight) {
-      detaY = bottomRowHeight - state.table.internalProps.limitMinHeight;
+    // 下方相邻行承接相反方向的位移，目标高度为 bottomRowHeightCache - detaY。
+    const bottomRowHeight = bottomRowHeightCache - detaY;
+    // limitMinHeight 用目标高度判断，不再二次扣减 detaY，避免与指示线终点、实时模式不一致。
+    if (bottomRowHeight < state.table.internalProps.limitMinHeight) {
+      detaY = bottomRowHeightCache - state.table.internalProps.limitMinHeight;
     }
   }
   detaY = Math.ceil(detaY);
+
+  // dry run：仅返回约束后的有效位移，供非实时模式预览指示线/标签使用，不产生任何副作用。
+  if (dryRun) {
+    return detaY;
+  }
 
   if (
     state.rowResize.row < state.table.columnHeaderLevelCount ||
@@ -67,6 +113,7 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
   //#endregion
   // stage rerender
   state.table.scenegraph.updateNextFrame();
+  return detaY;
 }
 
 function updateResizeColForRow(detaY: number, state: StateManager) {

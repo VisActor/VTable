@@ -721,6 +721,13 @@ Whether to adjust the column width, support configuring functions, the function 
 canResizeColumn?: (col: number, row: number, table: BaseTableAPI) => boolean;
 ```
 
+##${prefix} realtime(boolean) = true
+
+Whether to respond in real time when dragging to resize columns/rows.
+
+- `true` (default): Column widths / row heights update in real time during dragging, keeping the historical behavior.
+- `false`: Only the indicator line moves while dragging; the final size is applied when the mouse is released. Recommended for large datasets to significantly reduce lag while dragging.
+
 #${prefix} dragOrder(Object)
 
 #${prefix} dragOrder(Object)
