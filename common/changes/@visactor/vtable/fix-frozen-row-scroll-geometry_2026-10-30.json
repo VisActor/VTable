@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "comment": "fix: align body cell creation with the frozen row origin to keep virtual scrolling, cell coordinates and hit testing consistent.",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -2861,13 +2861,14 @@ export class Scenegraph {
     return 0;
   }
 
+  /** 获取单元格在所属冻结区或表体容器内的纵坐标。 */
   getCellGroupY(row: number) {
     if (row < this.table.frozenRowCount) {
       // column header
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
+      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
