@@ -17,7 +17,8 @@ export function stageIdentity(request) {
       request.identity?.repository !== (product === 'vtable' ? 'VisActor/VTable' : 'VisActor/VChart') ||
       !sha.test(request.identity.headSha) || !sha.test(request.identity.baseSha) ||
       !/^[a-f0-9]{64}$/.test(request.suiteDigest ?? '') || !/^[a-f0-9]{64}$/.test(request.environmentDigest ?? '') ||
-      !['baseline', 'current'].includes(request.side) && request.stage !== 'compare') throw fault('STAGE_IDENTITY_INVALID', '阶段输入身份不符');
+      (!['baseline', 'current'].includes(request.side) && request.stage !== 'compare') || request.stage === 'compare' && request.side !== null ||
+      !['baseline', 'current'].every(side => /^[a-f0-9]{64}$/.test(request.dependencyDigests?.[side] ?? ''))) throw fault('STAGE_IDENTITY_INVALID', '阶段输入身份不符');
   return { identity: request.identity, suiteDigest: request.suiteDigest, environmentDigest: request.environmentDigest, dependencyDigests: request.dependencyDigests };
 }
 
@@ -57,8 +58,9 @@ async function freezeSuite(request, output) {
 /** 无网络执行一个阶段；SDK源码、套件和输出目录分别由调用方隔离。 */
 export async function runStage(request) {
   const binding = stageIdentity(request), output = path.resolve(request.output), started = performance.now();
-  const runtime = createRuntime({ offline: true }), detach = runtime.listenSignals();
   await fs.mkdir(output, { recursive: true });
+  if ((await fs.readdir(output)).length) throw fault('STAGE_OUTPUT_NOT_EMPTY', '阶段输出目录必须为空');
+  const runtime = createRuntime({ offline: true }), detach = runtime.listenSignals();
   let result, issues = [], code = 0, local, cases;
   try {
     local = await workingTree(request.sourceRoot);
