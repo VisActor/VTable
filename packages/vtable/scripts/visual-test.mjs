@@ -13,6 +13,8 @@ export function parseOptions(args) {
       args,
       tokens: true,
       options: {
+        phase: { type: 'string' },
+        request: { type: 'string' },
         baseline: { type: 'string' },
         offline: { type: 'boolean' },
         case: { type: 'string' },
@@ -25,6 +27,10 @@ export function parseOptions(args) {
     }));
   } catch (error) {
     throw fault('INVALID_ARGUMENT', error.message, error);
+  }
+  if (values.phase !== undefined || values.request !== undefined) {
+    if (!['build', 'capture', 'compare'].includes(values.phase) || !values.request || Object.keys(values).some(key => !['phase', 'request'].includes(key))) throw fault('INVALID_ARGUMENT', '--phase与--request必须配套独立使用');
+    return values;
   }
   if (values.help) return values;
   if (tokens.filter(token => token.kind === 'option' && token.name === 'dir').length > 1)
@@ -52,6 +58,13 @@ export function parseOptions(args) {
 /** 入口只管理参数、预检模式和运行生命周期。 */
 async function main() {
   const options = parseOptions(process.argv.slice(2));
+  if (options.phase) {
+    const request = JSON.parse(await fs.readFile(options.request, 'utf8'));
+    if (request.stage !== options.phase) throw fault('INVALID_ARGUMENT', '请求阶段不符');
+    const { runStage } = await import('./visual/stage.mjs');
+    process.exitCode = (await runStage(request)).code;
+    return;
+  }
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
   if (options.help) {
     console.log(
