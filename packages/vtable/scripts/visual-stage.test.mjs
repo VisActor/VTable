@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { stageIdentity, captureError } from './visual/stage.mjs';
@@ -18,4 +20,10 @@ test('只有基线显式业务断言失败可继续，普通异常及当前失�
  assert.equal(captureError(business, 'current'), true);
  assert.equal(captureError({ ...business, tests: [{ status: 'error', code: 'RENDER_FAILED' }] }, 'baseline'), true);
  assert.equal(captureError({ ...business, finalized: false }, 'baseline'), true);
+});
+
+test('静态全量清单绑定实际元数据及完整ID集合，宿主无需执行模块', async () => {
+ const source = new URL('../__tests__/visual/cases/index.mjs', import.meta.url), file = new URL('../__tests__/visual/cases/manifest.json', import.meta.url);
+ const manifest = JSON.parse(await fs.readFile(file, 'utf8')), { cases } = await import(source);
+ assert.equal(manifest.indexDigest, createHash('sha256').update(await fs.readFile(source)).digest('hex')); assert.deepEqual(manifest.ids, cases.map(item => item.id));
 });

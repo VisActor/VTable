@@ -51,6 +51,9 @@ async function freezeSuite(request, output) {
   for (const name of ['capture.spec.mjs', 'compare.spec.mjs'])
     await fs.copyFile(path.join(infrastructure, suitePath, name), path.join(output, 'suite', name));
   const cases = await loadCases(path.join(output, 'suite'));
+  const declaration = JSON.parse(await fs.readFile(path.join(infrastructure, suitePath, 'cases/manifest.json'), 'utf8'));
+  if (declaration.schemaVersion !== 1 || declaration.indexDigest !== digest(await fs.readFile(path.join(source, 'cases/index.mjs'))) || JSON.stringify(declaration.ids) !== JSON.stringify(cases.map(item => item.id)))
+    throw fault('CASE_MANIFEST_INVALID', '静态全量用例清单与冻结输入不一致');
   await fs.symlink(path.join(request.sourceRoot, `packages/${product}/node_modules`), path.join(output, 'node_modules'), 'dir');
   return cases;
 }

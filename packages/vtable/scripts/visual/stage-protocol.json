@@ -1,1 +1,1 @@
-{"schemaVersion":1,"stages":["build","capture","compare"]}
+{"schemaVersion":1,"stages":["build","capture","compare"],"caseManifest":"cases/manifest.json"}
