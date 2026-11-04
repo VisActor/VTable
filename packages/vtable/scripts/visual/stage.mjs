@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
+import { isDeepStrictEqual } from 'node:util';
 import { createRuntime, fileManifest, digest, atomicJson, serve, fault } from './runtime.mjs';
 import { build, workingTree, official } from './build.mjs';
 import { loadCases, executePhase, validateResults } from './runner.mjs';
@@ -26,10 +26,15 @@ export function stageIdentity(request) {
 export async function readStage(directory, request, stage, side) {
   const manifest = JSON.parse(await fs.readFile(path.join(directory, 'stage.json'), 'utf8'));
   if (manifest.schemaVersion !== 1 || manifest.stage !== stage || manifest.side !== side ||
-      manifest.admissionEvidence !== false || JSON.stringify(manifest.binding) !== JSON.stringify(stageIdentity(request)))
+      manifest.admissionEvidence !== false || !isDeepStrictEqual(manifest.binding, stageIdentity(request)))
     throw fault('STAGE_IDENTITY_INVALID', '阶段产物不属于本次冻结输入');
   const files = (await fileManifest(directory)).filter(file => file.path !== 'stage.json');
   if (JSON.stringify(files) !== JSON.stringify(manifest.files)) throw fault('STAGE_ARTIFACT_INVALID', '阶段文件缺失、增加或摘要变化');
+  if (![0, 2].includes(manifest.code) || !Array.isArray(manifest.issues))
+    throw fault('STAGE_ARTIFACT_INVALID', '阶段执行码或问题记录无效');
+  // 失败构建不可使用；采集失败继续交给compare保留逐例证据和最终错误。
+  if (stage === 'build' && (manifest.code !== 0 || manifest.issues.length))
+    throw fault('EXECUTION_FAILED', '构建阶段未成功结束');
   return manifest;
 }
 
@@ -104,7 +109,7 @@ export async function runStage(request) {
         manifests[side] = await readStage(request.inputs[side], request, 'capture', side);
         phaseResults[side] = JSON.parse(await fs.readFile(path.join(request.inputs[side], `${side}-result.json`), 'utf8'));
         validateResults(phaseResults[side], ids);
-        if (captureError(phaseResults[side], side)) issues.push({ phase: side, category: 'execution', code: 'EXECUTION_FAILED', message: `${side}截图阶段存在原始执行错误` });
+        if (manifests[side].code !== 0 || manifests[side].issues.length || captureError(phaseResults[side], side)) issues.push({ phase: side, category: 'execution', code: 'EXECUTION_FAILED', message: `${side}截图阶段存在原始执行错误` });
         await fs.cp(request.inputs[side], path.join(output, side), { recursive: true, filter: file => !file.endsWith('/node_modules') });
         phaseResults[side].tests = phaseResults[side].tests.map(item => ({ ...item, attachments: (item.attachments ?? []).map(file => ({ ...file, path: `${side}/${file.path}` })) }));
       }
@@ -118,12 +123,15 @@ export async function runStage(request) {
       if (eligible.length) {
         const config = await fs.readFile(path.join(output, 'suite/playwright.config.mjs'), 'utf8');
         await fs.writeFile(path.join(output, 'suite/playwright.config.mjs'), config.replace("testMatch: 'visual.spec.mjs'", "testMatch: 'compare.spec.mjs'"));
-        const require = createRequire(path.join(request.sourceRoot, `packages/${product}/package.json`));
-        await runtime.run(process.execPath, [require.resolve('@playwright/test/cli'), 'test', '--config', path.join(output, 'suite/playwright.config.mjs')], request.sourceRoot, path.join(output, 'compare.log'), {
-          allowFailure: true, env: { VISUAL_RUN_DIR: output, VISUAL_PHASE: 'current', VISUAL_CASE_IDS: JSON.stringify(eligible) }
-        });
-        const compared = JSON.parse(await fs.readFile(path.join(output, 'current-result.json'), 'utf8')); validateResults(compared, eligible);
-        if (!compared.finalized || !['passed', 'failed'].includes(compared.endedStatus) || compared.errors.length) issues.push({ phase: 'compare', code: 'EXECUTION_FAILED', message: '像素比较未正常结束' });
+        let compared;
+        try {
+          // 复用原执行器核对退出码、reporter终态和业务分类，不以逐例通过掩盖进程失败。
+          compared = await executePhase(request.sourceRoot, output, 'current', '', eligible, runtime);
+        } catch (error) {
+          issues.push({ phase: 'compare', category: 'execution', code: error.code ?? 'EXECUTION_FAILED', message: error.message });
+          compared = JSON.parse(await fs.readFile(path.join(output, 'current-result.json'), 'utf8'));
+          validateResults(compared, eligible);
+        }
         for (const item of compared.tests) {
           const previous = phaseResults.current.tests.find(test => test.id === item.id);
           Object.assign(previous, item, { attachments: [...previous.attachments, ...item.attachments], durationMs: previous.durationMs + item.durationMs });
