@@ -127,6 +127,8 @@ export async function runStage(request) {
         try {
           // 复用原执行器核对退出码、reporter终态和业务分类，不以逐例通过掩盖进程失败。
           compared = await executePhase(request.sourceRoot, output, 'current', '', eligible, runtime);
+          const status = compared.tests.some(item => item.status === 'error') ? 'error' : compared.tests.some(item => item.status === 'diff') ? 'diff' : 'passed';
+          if (compared.status !== status) throw fault('EXECUTION_FAILED', '像素比较汇总与逐例状态不一致');
         } catch (error) {
           issues.push({ phase: 'compare', category: 'execution', code: error.code ?? 'EXECUTION_FAILED', message: error.message });
           compared = JSON.parse(await fs.readFile(path.join(output, 'current-result.json'), 'utf8'));

@@ -80,6 +80,8 @@ test('比较汇总保留上游失败并核对进程终态，只有真实差异�
    { name: 'compare-failed-passed-tests', exit: 1, endedStatus: 'failed', expected: 'error' },
    { name: 'compare-exit-two', exit: 2, expected: 'error' },
    { name: 'compare-zero-failed', endedStatus: 'failed', expected: 'error' },
+   { name: 'compare-claimed-diff', exit: 1, endedStatus: 'failed', reportedStatus: 'diff', expected: 'error' },
+   { name: 'compare-hidden-diff', status: 'diff', reportedStatus: 'passed', expected: 'error' },
    { name: 'compare-diff', exit: 1, endedStatus: 'failed', status: 'diff', expected: 'diff' },
    { name: 'baseline-business', businessSide: 'baseline', expected: 'diff', caseStatus: 'new_baseline' },
    { name: 'current-business', businessSide: 'current', side: 'current', stageCode: 2, expected: 'error' },
@@ -95,7 +97,7 @@ test('比较汇总保留上游失败并核对进程终态，只有真实差异�
     const files = (await fileManifest(directory)).filter(file => file.path !== 'stage.json');
     await atomicJson(path.join(directory, 'stage.json'), { schemaVersion: 1, stage: 'capture', side, admissionEvidence: false, binding: stageIdentity(input), code: scenario.side === side ? scenario.stageCode ?? 0 : 0, issues: scenario.side === side ? scenario.issues ?? [] : [], files });
    }
-   const compared = { ...passed, endedStatus: scenario.endedStatus ?? 'passed', status: scenario.status ?? 'passed', tests: [{ ...passed.tests[0], status: scenario.status ?? 'passed', attachments: scenario.status === 'diff' ? [{ name: 'one-diff.png', path: 'diff.png' }] : [] }] };
+   const compared = { ...passed, endedStatus: scenario.endedStatus ?? 'passed', status: scenario.reportedStatus ?? scenario.status ?? 'passed', tests: [{ ...passed.tests[0], status: scenario.status ?? 'passed', attachments: scenario.status === 'diff' ? [{ name: 'one-diff.png', path: 'diff.png' }] : [] }] };
    await fs.writeFile(path.join(cli, 'cli.cjs'), `const fs = require('node:fs'), path = require('node:path'); fs.writeFileSync(path.join(process.env.VISUAL_RUN_DIR, 'current-result.json'), ${JSON.stringify(JSON.stringify(compared))}); fs.writeFileSync(path.join(process.env.VISUAL_RUN_DIR, 'diff.png'), 'fixture'); process.exitCode = ${scenario.exit ?? 0};`);
    const output = path.join(dir, scenario.name);
    const manifest = await runStage({ ...input, output });
