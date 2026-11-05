@@ -13,6 +13,8 @@ export function parseOptions(args) {
       args,
       tokens: true,
       options: {
+        phase: { type: 'string' },
+        request: { type: 'string' },
         baseline: { type: 'string' },
         offline: { type: 'boolean' },
         case: { type: 'string' },
@@ -25,6 +27,10 @@ export function parseOptions(args) {
     }));
   } catch (error) {
     throw fault('INVALID_ARGUMENT', error.message, error);
+  }
+  if (values.phase !== undefined || values.request !== undefined) {
+    if (!['build', 'capture', 'compare'].includes(values.phase) || !values.request || Object.keys(values).some(key => !['phase', 'request'].includes(key))) throw fault('INVALID_ARGUMENT', '--phase与--request必须配套独立使用');
+    return values;
   }
   if (values.help) return values;
   if (tokens.filter(token => token.kind === 'option' && token.name === 'dir').length > 1)
@@ -52,10 +58,17 @@ export function parseOptions(args) {
 /** 入口只管理参数、预检模式和运行生命周期。 */
 async function main() {
   const options = parseOptions(process.argv.slice(2));
+  if (options.phase) {
+    const request = JSON.parse(await fs.readFile(options.request, 'utf8'));
+    if (request.stage !== options.phase) throw fault('INVALID_ARGUMENT', '请求阶段不符');
+    const { runStage } = await import('./visual/stage.mjs');
+    process.exitCode = (await runStage(request)).code;
+    return;
+  }
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
   if (options.help) {
     console.log(
-      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> [--offline] | --self-compare] [--dir <目录> | --case <id>]\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--offline 使用宿主按各侧提交准备的依赖，不访问网络。\n--list 列举用例；--check 本机环境检查；--help 帮助\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
+      'node packages/vtable/scripts/visual-test.mjs [--baseline <40位SHA> [--offline] | --self-compare] [--dir <目录> | --case <id>]\n阶段接口：--phase build|capture|compare --request <请求文件>，格式见scripts/visual-stage.md。\n默认运行全部本地用例；--dir 递归运行 cases 内的一个目录（例如 table/cells）。\n--offline 使用宿主按各侧提交准备的依赖，不访问网络。\n--list 列举用例；--check 本机环境检查；--help 帮助\n默认：官方 VisActor/VTable develop。退出码：0 通过，1 视觉差异，2 执行错误。'
     );
     return;
   }
