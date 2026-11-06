@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(vtable-plugins): restart carousel scrolling at the row and column boundaries with fractional dimensions",
+      "type": "patch",
+      "packageName": "@visactor/vtable-plugins"
+    }
+  ],
+  "packageName": "@visactor/vtable-plugins",
+  "email": "mikewushuwen@outlook.com"
+}
