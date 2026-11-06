@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: support skipping cross-boundary merged cells in frozen column shadows",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
