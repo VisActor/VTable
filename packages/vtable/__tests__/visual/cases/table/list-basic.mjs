@@ -15,6 +15,9 @@ export default {
     // 同时检查数据语义和可见单元格位置，图片比较负责像素布局。
     await page.evaluate(() => {
       const table = window.__visualTable;
+      if (table.colCount !== 2 || table.rowCount !== 3) throw new Error('列表行列数量不正确');
+      if (table.getCellValue(0, 0) !== 'Name' || table.getCellValue(1, 0) !== 'Value')
+        throw new Error('列表表头不正确');
       if (table.getCellValue(0, 1) !== 'Alpha' || table.getCellValue(1, 2) !== 20)
         throw new Error('列表数据不正确');
       const rect = table.getCellRect(0, 1)?.bounds;
