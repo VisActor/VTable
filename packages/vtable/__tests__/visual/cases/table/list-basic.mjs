@@ -1,4 +1,5 @@
 /**
+ * BugServer case IDs: 7a7161a9fe2c41c789d8260d
  * 验证目的：列表表头和固定数据能正确创建、绘制与读取。
  * 来源：VTable 公共 ListTable API 独立样例。
  * 覆盖边界：不测试排序、编辑或虚拟滚动。
