@@ -194,21 +194,23 @@ Photo differences, missing baselines, execution errors, and incomplete results r
 | Changes or investigation needed | Read the findings, fix the issue, or provide evidence. |
 | Blocked | Read the next action; contact maintainers for permissions, service issues, or task recovery. |
 | Awaiting approval | Maintainers verify the three checks for the current version and manually inspect Photo. |
-| Awaiting merge | A valid approval was recognized; maintainers perform final checks and merge. |
+| Awaiting merge | The three checks are complete; inspect Photo and the saved selection, then merge manually. Approve is optional. |
 | Completed | Workflow finalization is complete; original Photo differences and errors remain. |
 | Superseded / closed without merge | Read the newer version, or treat the PR as unmerged. Neither status implies baseline updates. |
 
 ### After changing code
 
-New commits or comparison-baseline changes cause the workflow to recheck the version and run the necessary checks. Older results remain historical evidence and cannot prove that a newer version passed. New commits need a valid approval for that commit.
+New commits or comparison-baseline changes cause the workflow to recheck the version and run the necessary checks. Older results remain historical evidence and cannot prove that a newer version passed. Verify the results and saved selection for each new commit.
 
 ### Approval and merge
 
-The workflow recognizes a valid GitHub Approve for the current commit from a maintainer with repository Maintain or Admin permission. This approval also represents the maintainer's manual verification of BugServer Photo results.
+GitHub Approve is an audit record in this workflow. Maintainers may merge manually after checking CR, unit tests, Playwright and Photo for the current commit. GitHub branch protection and repository review requirements still apply. The Bot does not change those rules, approve, or merge.
 
-The Bot does not automatically Approve or Merge. GitHub repository rules still govern merge availability; this workflow does not add required Checks or change branch protection.
+For PRs explicitly enabled for Photo selection, BugServer shows the current images and short explanations. New candidates are selected by default. Inspect each item, deselect any baseline that should stay unchanged, and save successfully before merging. The server's saved revision is authoritative; an unsaved draft has no effect. Default selection does not overwrite a saved manual choice.
 
-Automatic Photo difference assessment and baseline updates are paused. Skipping baseline updates after a normal merge is expected; Approve does not automatically adopt differing images. Merging early does not turn incomplete or failed checks into passes.
+After merge, only the selected baselines in that revision are updated. Unselected items stay unchanged. Writes still verify the frozen commit, three checks, merged content, save time and original baseline. Stale versions, post-merge selections and conflicts are not silently accepted. Ask maintainers to resume the original task after a timeout or partial success; do not dispatch another batch or change request IDs.
+
+Photo remains report-only. An unavailable selection list, including more than 20 differences, incomplete explanations or execution errors, adds no merge gate and does not update baselines. PRs without this capability retain their existing mode. Baseline updates do not rewrite the original Photo report, and completed does not mean Photo passed.
 
 ### Handling problems
 
