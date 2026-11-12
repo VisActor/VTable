@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(vtable): map sorted view index to the source record in deleteRecords/updateRecords",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "20151622+william-xue@users.noreply.github.com"
+}
