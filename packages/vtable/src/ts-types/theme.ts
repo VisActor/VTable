@@ -136,6 +136,8 @@ export interface ITableThemeDefine {
        * 'overflow' shows each frozen boundary only while body content is scrolled beneath it.
        */
       visible?: 'always' | 'scrolling' | 'overflow';
+      /** Skip merged cells crossing the frozen-column boundary. Defaults to false. */
+      skipMergedCells?: boolean;
     };
     /** TODO  暂未生效 */
     border?: {
