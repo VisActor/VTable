@@ -538,8 +538,9 @@ jobs:
       RELEASE_VERSION: ${{ inputs.version || '0.0.0-alpha.543' }}
       RELEASE_BRANCH: ${{ inputs.releaseBranch || 'refs/heads/bot-release/0.0.0-alpha.543' }}
       SOURCE_DIR: ${{ github.workspace }}/source
-      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
+      - name: Set attempt artifact directory
+        run: echo "ARTIFACT_DIR=$RUNNER_TEMP/release-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           path: trusted
@@ -598,9 +599,10 @@ jobs:
       RELEASE_VERSION: ${{ inputs.version }}
       RELEASE_BRANCH: ${{ inputs.releaseBranch }}
       SOURCE_DIR: ${{ github.workspace }}/trusted
-      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
       ENABLE_MANAGED_PUBLISH: ${{ vars.VISACTOR_MANAGED_RELEASE_ENABLED }}
     steps:
+      - name: Set attempt artifact directory
+        run: echo "ARTIFACT_DIR=$RUNNER_TEMP/release-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           path: trusted
