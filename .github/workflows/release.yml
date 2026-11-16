@@ -1,6 +1,24 @@
 name: Release CI
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('release:{0}:{1}', inputs.releaseId, inputs.sourceSha) || github.event.head_commit.message }}
 
 on:
+  workflow_dispatch:
+    inputs:
+      releaseId:
+        required: true
+        type: string
+      sourceSha:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      releaseBranch:
+        required: true
+        type: string
+      prepareOnly:
+        type: boolean
+        default: true
   push:
     branches:
       - 'release/[0-9]+\.[0-9]+\.[0-9]+'
@@ -12,6 +30,7 @@ on:
 
 jobs:
   release:
+    if: github.event_name == 'push'
     runs-on: macos-latest
     permissions:
       id-token: write # OIDC for npm publish (single entry)
@@ -503,3 +522,108 @@ jobs:
             git commit -m "build: prerelease version ${{ steps.package_version_prerelease.outputs.current_version }} [skip ci]" -n
             git push --no-verify origin ${{ github.ref_name }}
           fi
+
+  managed-prepare:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      RELEASE_ID: ${{ inputs.releaseId }}
+      SOURCE_SHA: ${{ inputs.sourceSha }}
+      WORKFLOW_SHA: ${{ github.sha }}
+      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_BRANCH: ${{ inputs.releaseBranch }}
+      SOURCE_DIR: ${{ github.workspace }}/source
+      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.releaseBranch }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify the frozen version branch
+        working-directory: source
+        run: |
+          test "$RELEASE_BRANCH" = "refs/heads/bot-release/$RELEASE_VERSION"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+      - run: npm install -g pnpm@10.7.0
+      - run: brew install pkg-config cairo pango libpng jpeg giflib librsvg
+      - name: Install locked dependencies
+        working-directory: source
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+      - name: Build and freeze all release tarballs
+        run: node trusted/.github/scripts/release-managed.cjs prepare
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.ARTIFACT_DIR }}/manifest.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tarballs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.ARTIFACT_DIR }}/*.tgz
+            ${{ env.ARTIFACT_DIR }}/prepared.bundle
+          if-no-files-found: error
+
+  managed-publish:
+    if: github.event_name == 'workflow_dispatch' && !inputs.prepareOnly && vars.VISACTOR_MANAGED_RELEASE_ENABLED == 'true'
+    needs: managed-prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    concurrency:
+      group: vtable-managed-release
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      checks: read
+      actions: read
+      id-token: write
+    env:
+      RELEASE_ID: ${{ inputs.releaseId }}
+      SOURCE_SHA: ${{ inputs.sourceSha }}
+      WORKFLOW_SHA: ${{ github.sha }}
+      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_BRANCH: ${{ inputs.releaseBranch }}
+      SOURCE_DIR: ${{ github.workspace }}/trusted
+      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
+      ENABLE_MANAGED_PUBLISH: ${{ vars.VISACTOR_MANAGED_RELEASE_ENABLED }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: trusted
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@11.18.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-manifest-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.ARTIFACT_DIR }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-tarballs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.ARTIFACT_DIR }}
+      - name: Import the prepared Git object
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          node trusted/.github/scripts/release-managed.cjs register
+      - name: Verify the original permit and package bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PERMIT_APP_ID: ${{ vars.VISACTOR_RELEASE_APP_ID }}
+        run: node trusted/.github/scripts/release-managed.cjs publish
