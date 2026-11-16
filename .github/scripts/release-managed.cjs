@@ -93,6 +93,7 @@ async function main({ phase = process.argv[2], env = process.env, execute = exec
     return manifestDigest;
   }
   if (!['register', 'publish'].includes(phase)) throw new Error('未知发布阶段');
+  if (!context.version.includes('-alpha.')) throw new Error('受管发包当前只开放 Alpha');
   const manifest = json(join(out, 'manifest.json'));
   if (Object.entries(context).some(([key, value]) => manifest[key] !== value)) throw new Error('原包清单与 CI 尝试不符');
   const manifestDigest = verifyPak(manifest, out, execute);
@@ -127,19 +128,39 @@ async function main({ phase = process.argv[2], env = process.env, execute = exec
     await wait(15000);
   }
   if (!permit) throw new Error('等待原许可超时');
-  for (const pkg of manifest.packages) {
-    // npm 版本已存在时以字节摘要确认，未知、冲突或许可过期立即停止。
-    const response = await fetchAPI(registry + '/' + encodeURIComponent(pkg.name) + '/' + encodeURIComponent(pkg.version), { redirect: 'error', signal: AbortSignal.timeout(15000) });
+  // 回读公开 registry 的精确版本，冲突或无法确认时停止后续包。
+  const published = async pkg => {
+    const url = registry + '/' + encodeURIComponent(pkg.name) + '/' + encodeURIComponent(pkg.version);
+    const response = await fetchAPI(url, { redirect: 'error', signal: AbortSignal.timeout(15000), headers: { 'cache-control': 'no-cache' } });
     if (response.ok) {
       const entry = await response.json();
       if (entry.name !== pkg.name || entry.version !== pkg.version || entry.dist?.integrity !== pkg.integrity) throw new Error('npm 版本字节冲突：' + pkg.name);
-      continue;
+      return true;
     }
     await response.body?.cancel();
-    if (response.status !== 404 || Date.now() >= permit.expiresAt || !response) throw new Error('npm 读回失败或许可过期');
-    if (digest(readFileSync(join(out, pkg.file))) !== pkg.sha256) throw new Error('原包字节变化');
-    run('npm', ['publish', join(out, pkg.file), '--ignore-scripts', '--access', 'public', '--registry=' + registry, '--tag', context.version.includes('-alpha.') ? 'alpha' : 'latest'], { stdio: 'inherit' });
-  }
+    if (response.status !== 404) throw new Error('npm 读回失败：' + pkg.name);
+    return false;
+  };
+  // npm 未返回时先等待精确版本可见，只有连续未找到才用相同包补一次。
+  const publishMissing = async pkg => {
+    if (await published(pkg)) return;
+    const path = join(out, pkg.file);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (Date.now() >= permit.expiresAt) throw new Error('原发包许可已过期');
+      if (digest(readFileSync(path)) !== pkg.sha256) throw new Error('原包字节变化');
+      let publishFailed = false;
+      try {
+        run('npm', ['publish', path, '--ignore-scripts', '--access', 'public', '--registry=' + registry, '--tag', 'alpha', '--fetch-retries=0', '--fetch-timeout=30000'], { stdio: 'inherit', timeout: 60000 });
+      } catch { publishFailed = true; }
+      for (const delay of [0, 2000, 6000]) {
+        if (delay) await wait(delay);
+        if (await published(pkg)) return;
+      }
+      if (!publishFailed) break;
+    }
+    throw new Error('npm 发布结果未确认：' + pkg.name);
+  };
+  for (const pkg of manifest.packages) await publishMissing(pkg);
   return manifestDigest;
 }
 

@@ -536,15 +536,16 @@ jobs:
       RELEASE_VERSION: ${{ inputs.version }}
       RELEASE_BRANCH: ${{ inputs.releaseBranch }}
       SOURCE_DIR: ${{ github.workspace }}/source
-      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
+      - name: Set attempt artifact directory
+        run: echo "ARTIFACT_DIR=$RUNNER_TEMP/release-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           path: trusted
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.releaseBranch }}
+          ref: ${{ inputs.prepareOnly && inputs.sourceSha || inputs.releaseBranch }}
           path: source
           fetch-depth: 0
           persist-credentials: false
@@ -562,6 +563,9 @@ jobs:
         working-directory: source
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - name: Build and freeze all release tarballs
+        env:
+          # vtable-sheet exceeds the default Node heap on the ARM runner.
+          NODE_OPTIONS: --max-old-space-size=4096
         run: node trusted/.github/scripts/release-managed.cjs prepare
       - uses: actions/upload-artifact@v4
         with:
@@ -577,7 +581,7 @@ jobs:
           if-no-files-found: error
 
   managed-publish:
-    if: github.event_name == 'workflow_dispatch' && !inputs.prepareOnly && vars.VISACTOR_MANAGED_RELEASE_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop' && !inputs.prepareOnly && contains(inputs.version, '-alpha.') && vars.VISACTOR_MANAGED_RELEASE_ENABLED == 'true'
     needs: managed-prepare
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -596,17 +600,19 @@ jobs:
       RELEASE_VERSION: ${{ inputs.version }}
       RELEASE_BRANCH: ${{ inputs.releaseBranch }}
       SOURCE_DIR: ${{ github.workspace }}/trusted
-      ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
       ENABLE_MANAGED_PUBLISH: ${{ vars.VISACTOR_MANAGED_RELEASE_ENABLED }}
     steps:
+      - name: Set attempt artifact directory
+        run: echo "ARTIFACT_DIR=$RUNNER_TEMP/release-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           path: trusted
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '22.22.2'
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
       - run: npm install -g npm@11.18.0
       - uses: actions/download-artifact@v4
         with:

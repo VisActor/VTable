@@ -44,28 +44,34 @@ test('只使用原包，npm 响应丢失后跳过已确认的版本', async t =>
   const env = { SOURCE_DIR: source, ARTIFACT_DIR: out, RELEASE_ID: releaseId, SOURCE_SHA: sourceSha, WORKFLOW_SHA: workflowSha,
     GITHUB_REPOSITORY: repository, GITHUB_RUN_ID: String(runId), GITHUB_RUN_ATTEMPT: String(runAttempt), RELEASE_VERSION: version,
     RELEASE_BRANCH: 'refs/heads/bot-release/' + version, ENABLE_MANAGED_PUBLISH: 'true', PERMIT_APP_ID: '42', GH_TOKEN: 'fixture' };
-  const registry = new Map(), posted = [];
+  const registry = new Map(), posted = [], requests = [];
   const record = p => registry.set(p.name, { name: p.name, version: p.version, dist: { integrity: p.integrity } });
   record(packages[0]);
-  let lost = true, attempt = runAttempt;
+  let lost = true, rejected = true, attempt = runAttempt;
+  let hiddenReads = 0;
   const options = { phase: 'publish', env,
+    wait: async () => {},
     execute(command, args, options) {
       if (command === 'tar') return execFileSync(command, args, options);
       assert.equal(command, 'npm');
-      assert.deepEqual(args.slice(2), ['--ignore-scripts','--access','public','--registry=https://registry.npmjs.org','--tag','alpha']);
+      assert.deepEqual(args.slice(2), ['--ignore-scripts','--access','public','--registry=https://registry.npmjs.org','--tag','alpha','--fetch-retries=0','--fetch-timeout=30000']);
       const pkg = packages.find(p => p.file === basename(args[1]));
       assert.equal(sha(readFileSync(args[1])), pkg.sha256);
       assert.equal(registry.has(pkg.name), false);
+      requests.push(pkg.name);
+      if (pkg === packages[2] && rejected) { rejected = false; throw new Error('npm 尚未受理'); }
       posted.push(pkg.name);
       record(pkg);
-      if (lost) { lost = false; throw new Error('失去 npm 受理响应'); }
+      if (lost) { lost = false; hiddenReads = 1; throw new Error('失去 npm 受理响应'); }
       return '';
     },
     async fetchAPI(address, options) {
       const url = new URL(address);
       if (url.origin === 'https://registry.npmjs.org') {
-        assert.equal(options.headers, undefined);
-        const pkg = registry.get(decodeURIComponent(url.pathname.split('/')[1]));
+        assert.deepEqual(options.headers, { 'cache-control': 'no-cache' });
+        const name = decodeURIComponent(url.pathname.split('/')[1]);
+        if (name === packages[1].name && hiddenReads > 0) { hiddenReads--; return new Response(null, { status: 404 }); }
+        const pkg = registry.get(name);
         return pkg ? Response.json(pkg) : new Response(null, { status: 404 });
       }
       assert.equal(url.origin, 'https://api.github.com');
@@ -73,10 +79,12 @@ test('只使用原包，npm 响应丢失后跳过已确认的版本', async t =>
     }
   };
   await assert.rejects(main({ ...options, env: { ...env, ENABLE_MANAGED_PUBLISH: 'false' } }), /未启用/);
-  await assert.rejects(main(options), /失去 npm 受理响应/);
-  assert.equal(posted.length, 1);
+  await assert.rejects(main({ ...options, env: { ...env, RELEASE_VERSION: '1.2.3', RELEASE_BRANCH: 'refs/heads/bot-release/1.2.3' } }), /只开放 Alpha/);
   assert.equal(await main(options), manifestDigest);
   assert.deepEqual(posted, packages.slice(1).map(p => p.name));
+  assert.deepEqual(requests, [packages[1].name, packages[2].name, ...packages.slice(2).map(p => p.name)]);
+  assert.equal(await main(options), manifestDigest);
+  assert.equal(requests.length, packages.length);
   assert.equal(registry.size, expected.length);
   const first = packages[0];
   registry.set(first.name, { ...registry.get(first.name), dist: { integrity: 'wrong' } });
