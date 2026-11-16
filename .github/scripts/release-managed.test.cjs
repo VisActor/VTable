@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
-const { appendFileSync, cpSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
+const { cpSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
 const { tmpdir } = require('node:os');
 const { basename, join } = require('node:path');
 const { main, verifyPak } = require('./release-managed.cjs');
@@ -83,7 +83,11 @@ test('只使用原包，npm 响应丢失后跳过已确认的版本', async t =>
   await assert.rejects(main(options), /字节冲突/);
   attempt++;
   await assert.rejects(main(options), /原 CI 尝试已变化/);
-  appendFileSync(join(out, first.file), 'tamper');
+  const archive = join(out, first.file);
+  const tampered = readFileSync(archive);
+  // 修改 gzip 时间戳，让归档仍可读，直接验证字节摘要拒绝。
+  tampered[4] ^= 1;
+  writeFileSync(archive, tampered);
   assert.throws(() => verifyPak(manifest, out), /包证据不符/);
   if (original) t.diagnostic(JSON.stringify({ manifestDigest, verifiedPackages: expected.length, simulatedAccepted: posted.length,
     simulatedDuplicates: posted.length - new Set(posted).size, realNpmWrites: 0 }));
