@@ -1,5 +1,5 @@
 name: Release CI
-run-name: ${{ github.event_name == 'workflow_dispatch' && format('release:{0}:{1}', inputs.releaseId, inputs.sourceSha) || github.event.head_commit.message }}
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('release:{0}:{1}', inputs.releaseId, inputs.sourceSha) || (github.ref == 'refs/heads/codex/vtable-release-prepare-alpha-543' && 'release:7744ea28-ae15-4433-8e51-51eca9a31217:3132eede6b231c08b9025d4845d7a11270885246') || github.event.head_commit.message }}
 
 on:
   workflow_dispatch:
@@ -21,6 +21,7 @@ on:
         default: true
   push:
     branches:
+      - 'codex/vtable-release-prepare-alpha-543'
       - 'release/[0-9]+\.[0-9]+\.[0-9]+'
       - 'hotfix/[0-9]+\.[0-9]+\.[0-9]+'
       - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+'
@@ -30,7 +31,7 @@ on:
 
 jobs:
   release:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref != 'refs/heads/codex/vtable-release-prepare-alpha-543'
     runs-on: macos-latest
     permissions:
       id-token: write # OIDC for npm publish (single entry)
@@ -524,17 +525,18 @@ jobs:
           fi
 
   managed-prepare:
-    if: github.event_name == 'workflow_dispatch'
+    # 默认分支尚未接入手动派发时，仅此测试引用可运行只读准备。
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/codex/vtable-release-prepare-alpha-543')
     runs-on: macos-latest
     timeout-minutes: 60
     permissions:
       contents: read
     env:
-      RELEASE_ID: ${{ inputs.releaseId }}
-      SOURCE_SHA: ${{ inputs.sourceSha }}
+      RELEASE_ID: ${{ inputs.releaseId || '7744ea28-ae15-4433-8e51-51eca9a31217' }}
+      SOURCE_SHA: ${{ inputs.sourceSha || '3132eede6b231c08b9025d4845d7a11270885246' }}
       WORKFLOW_SHA: ${{ github.sha }}
-      RELEASE_VERSION: ${{ inputs.version }}
-      RELEASE_BRANCH: ${{ inputs.releaseBranch }}
+      RELEASE_VERSION: ${{ inputs.version || '0.0.0-alpha.543' }}
+      RELEASE_BRANCH: ${{ inputs.releaseBranch || 'refs/heads/bot-release/0.0.0-alpha.543' }}
       SOURCE_DIR: ${{ github.workspace }}/source
       ARTIFACT_DIR: ${{ runner.temp }}/release-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -544,7 +546,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.releaseBranch }}
+          ref: ${{ inputs.releaseBranch || '3132eede6b231c08b9025d4845d7a11270885246' }}
           path: source
           fetch-depth: 0
           persist-credentials: false
