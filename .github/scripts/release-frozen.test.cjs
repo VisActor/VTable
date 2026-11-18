@@ -89,33 +89,44 @@ test('原包冲突在补写其他包前阻断，收尾只推一次并回读已�
   mirror.stored.set(manifest.packages.at(-1).name,'incorrect');
   await assert.rejects(publishPackages(manifest,out,mirror.publish,mirror.fetchAPI),/原字节冲突/);
   assert.deepEqual(mirror.calls,[]);
-  let head=manifest.sourceSha;
+  let head=manifest.sourceSha,prHead;
   let pr=false,pushes=0,creations=0;
   const platform=(command,args)=>{
-    if(args[0]==='ls-remote')return head+'\t'+manifest.ref;
+    if(args[0]==='ls-remote')return head?head+'\t'+manifest.ref:'';
     if(args.includes('push')){
       assert(args.includes('--force-with-lease='+manifest.ref+':'+manifest.sourceSha));
       head=manifest.releaseSha;pushes++;return '';
     }
     assert.equal(command,'gh');
-    if(args[1]==='list')return JSON.stringify(pr?[{headRefOid:head,state:'MERGED',author:{login:'app/github-actions'}}]:[]);
-    pr=true;creations++;return '';
+    if(args[1]==='list')return JSON.stringify(pr?[{headRefOid:prHead,state:'MERGED',author:{login:'app/github-actions'}}]:[]);
+    pr=true;prHead=head;creations++;return '';
   };
   finalize(manifest,platform);
   finalize(manifest,platform);
+  head=null;
+  finalize(manifest,platform);
+  pr=false;
+  assert.throws(()=>finalize(manifest,platform),/没有已合入的原产品 PR/);
   assert.equal(pushes,1);
   assert.equal(creations,1);
 });
 
-test('恢复要求已配置审核人及原 run 的环境审核回执',async()=>{
+test('恢复仅用 Actions 读权限核验原 run，拒绝无审批、自审和重建的同名环境',async()=>{
   const {verifyRecovery}=require('./release-frozen.cjs');
-  const env={GITHUB_RUN_ATTEMPT:'2',GITHUB_RUN_ID:'77',GH_TOKEN:'fixture'};
-  const settings={id:100,name:'vtable-release-recovery',protection_rules:[{type:'required_reviewers',reviewers:[{type:'Team'}]}]};
-  let approved=false;
-  const api=async url=>Response.json(url.endsWith('/environments/vtable-release-recovery')?settings:
-    approved?[{state:'approved',environments:[{id:100,name:settings.name}]}]:[]);
+  const env={GITHUB_RUN_ATTEMPT:'2',GITHUB_RUN_ID:'77',GITHUB_TRIGGERING_ACTOR:'maintainer',GH_TOKEN:'fixture'};
+  const environment={id:27713480379,name:'vtable-release-recovery'};
+  let reviews=[];
+  const api=async url=>{
+    assert.equal(url,'https://api.github.com/repos/VisActor/VTable/actions/runs/77/approvals');
+    return Response.json(reviews);
+  };
   await assert.rejects(verifyRecovery(env,api),/审核回执/);
-  approved=true;
+  reviews=[{state:'approved',user:{login:'MAINTAINER'},environments:[environment]}];
+  await assert.rejects(verifyRecovery(env,api),/审核回执/);
+  reviews[0].user.login='reviewer';
+  reviews[0].environments=[{...environment,id:1}];
+  await assert.rejects(verifyRecovery(env,api),/审核回执/);
+  reviews[0].environments=[environment];
   await verifyRecovery(env,api);
   await verifyRecovery({...env,GITHUB_RUN_ATTEMPT:'1'},()=>assert.fail('首次运行无需回读恢复审核'));
 });

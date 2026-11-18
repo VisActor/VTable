@@ -124,41 +124,42 @@ async function publishPackages(manifest, out, run, fetchAPI=fetch, wait=ms=>new 
   }
 }
 
-// 重跑只快进原分支并回读唯一产品 PR，已合入的原 PR 同样可恢复收尾。
+// 重跑只快进原分支；正式版源分支已删除时，仅已合入的原 PR 能证明收尾。
 function finalize(manifest, run) {
   const {ref,releaseSha,sourceSha,version,tag}=manifest;
-  const rows=run('git',['ls-remote','--refs','origin',ref]).trim().split(/\s+/);
-  if(rows.length!==2||rows[1]!==ref||![sourceSha,releaseSha].includes(rows[0]))throw new Error('原发版分支不符');
-  if(rows[0]===sourceSha)run('git',['-c','core.hooksPath=/dev/null','push','--force-with-lease='+ref+':'+sourceSha,'origin',releaseSha+':'+ref],{stdio:'inherit'});
-  if(tag==='alpha')return;
+  const remote=run('git',['ls-remote','--refs','origin',ref]).trim();
+  const rows=remote.split(/\s+/);
+  if(remote&&(rows.length!==2||rows[1]!==ref||![sourceSha,releaseSha].includes(rows[0])))throw new Error('原发版分支不符');
   const head=ref.slice('refs/heads/'.length);
-  const prs=JSON.parse(run('gh',['pr','list','--repo',repository,'--base','main','--head',head,'--state','all',
+  const prs=tag==='alpha'?[]:JSON.parse(run('gh',['pr','list','--repo',repository,'--base','main','--head',head,'--state','all',
     '--limit','2','--json','headRefOid,state,author']));
-  if(prs.length>1||prs.length===1&&(prs[0].headRefOid!==releaseSha||!['OPEN','MERGED'].includes(prs[0].state)||
+  if(!Array.isArray(prs)||prs.length>1||prs.length===1&&(prs[0].headRefOid!==releaseSha||!['OPEN','MERGED'].includes(prs[0].state)||
     !['github-actions[bot]','github-actions','app/github-actions'].includes(prs[0].author?.login)))throw new Error('原产品 PR 不符');
-  if(!prs.length)run('gh',['pr','create','--repo',repository,'--base','main','--head',head,
+  if(!remote){
+    if(prs[0]?.state==='MERGED')return;
+    throw new Error('原发版分支不存在且没有已合入的原产品 PR');
+  }
+  if(rows[0]===sourceSha)run('git',['-c','core.hooksPath=/dev/null','push','--force-with-lease='+ref+':'+sourceSha,'origin',releaseSha+':'+ref],{stdio:'inherit'});
+  if(tag==='latest'&&!prs.length)run('gh',['pr','create','--repo',repository,'--base','main','--head',head,
     '--title','[Auto release] release '+version,'--body','Release '+version+' from '+releaseSha],{stdio:'inherit'});
 }
 
-// 重跑写入前再次确认恢复环境已配置审核，避免平台自动创建无保护环境。
+// CI 作业在受保护环境通过后才开始；Actions 只读令牌仅用于检查原运行的审批回执。
 async function verifyRecovery(env,fetchAPI) {
   const attempt=Number(env.GITHUB_RUN_ATTEMPT);
   if(!Number.isSafeInteger(attempt)||attempt<1)throw new Error('发布 attempt 无效');
   if(attempt===1)return;
-  if(!env.GH_TOKEN)throw new Error('缺少恢复环境只读身份');
-  const base='https://api.github.com/repos/'+repository;
-  const read=async path=>{
-    const response=await fetchAPI(base+path,{redirect:'error',signal:AbortSignal.timeout(15000),headers:{
+  const runId=Number(env.GITHUB_RUN_ID),actor=env.GITHUB_TRIGGERING_ACTOR;
+  if(!env.GH_TOKEN||!Number.isSafeInteger(runId)||runId<1||!actor)throw new Error('缺少原恢复运行身份');
+  const response=await fetchAPI('https://api.github.com/repos/'+repository+'/actions/runs/'+runId+'/approvals',{
+    redirect:'error',signal:AbortSignal.timeout(15000),headers:{
       authorization:'Bearer '+env.GH_TOKEN,accept:'application/vnd.github+json'}});
-    if(!response.ok)throw new Error('恢复环境无法核验');
-    return response.json();
-  };
-  const settings=await read('/environments/vtable-release-recovery');
-  const reviews=await read('/actions/runs/'+Number(env.GITHUB_RUN_ID)+'/approvals');
-  if(settings.name!=='vtable-release-recovery'||settings.can_admins_bypass===true||
-     !settings.protection_rules?.some(rule=>rule.type==='required_reviewers'&&rule.reviewers?.length)||
-     !Array.isArray(reviews)||!reviews.some(review=>review.state==='approved'&&
-       review.environments?.some(environment=>environment.id===settings.id&&environment.name===settings.name)))
+  if(!response.ok)throw new Error('原恢复审批回执无法核验');
+  const reviews=await response.json();
+  // 绑定已配置的环境 ID，避免删除后重建同名无保护环境时复用旧审批。
+  if(!Array.isArray(reviews)||!reviews.some(review=>review.state==='approved'&&
+     typeof review.user?.login==='string'&&review.user.login.toLowerCase()!==actor.toLowerCase()&&
+     review.environments?.some(environment=>environment.id===27713480379&&environment.name==='vtable-release-recovery')))
     throw new Error('恢复运行缺少受保护环境的审核回执');
 }
 
