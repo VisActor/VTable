@@ -3,28 +3,27 @@ name: Release CI
 on:
   push:
     branches:
-      - 'release/[0-9]+\.[0-9]+\.[0-9]+'
-      - 'hotfix/[0-9]+\.[0-9]+\.[0-9]+'
-      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+'
-      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+'
-      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+'
-      - 'pre-release/[0-9]+\.[0-9]+\.[0-9]+-hotfix\.[0-9]+'
+      - 'release/[0-9]+.[0-9]+.[0-9]+'
+      - 'hotfix/[0-9]+.[0-9]+.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-hotfix.[0-9]+'
+
+concurrency:
+  group: vtable-release-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   release:
+    # 原始 tarball 只构建一次。恢复须选择重新运行失败的作业。
+    if: github.run_attempt == 1 || !(startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.')))
     runs-on: macos-latest
     permissions:
       id-token: write # OIDC for npm publish (single entry)
       contents: write # push commits / tags
       pull-requests: write # create PR from release/* to main
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    concurrency:
-      group: vtable-release-${{ github.ref_name }}
-      cancel-in-progress: false
 
     steps:
       - name: Checkout
@@ -40,7 +39,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ (startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))) && '22.22.2' || '20.x' }}
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
@@ -325,6 +324,16 @@ jobs:
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/install-run-rush.js version --bump
 
+      # Alpha 在构建前更新为目标版本，其他预发布沿用原流程。
+      - name: Parse Alpha version
+        if: startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.')
+        env:
+          RELEASE_REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_REF#pre-release/}"
+          node common/scripts/apply-release-version.js "${version#*-}" "${version%%-*}"
+
       - name: Build packages
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
@@ -359,65 +368,35 @@ jobs:
           echo "Build packages: ${package_names[*]}"
           node common/scripts/install-run-rush.js build "${build_args[@]}"
 
-      - name: Check npm version (release)
-        if: startsWith(github.ref_name, 'release/')
-        id: npm_version_release
-        env:
-          PACKAGE_VERSION: ${{ steps.semver_release.outputs.main }}
-        run: |
-          set -euo pipefail
-          if npm view "@visactor/vtable@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
-            echo "Version $PACKAGE_VERSION already exists on npm, skip publish."
-            echo "skip_publish=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Version $PACKAGE_VERSION does not exist on npm, continue publish."
-            echo "skip_publish=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Publish to npm (release)
-        if: startsWith(github.ref_name, 'release/') && steps.npm_version_release.outputs.skip_publish != 'true'
-        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
-
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get npm version (release)
-        if: startsWith(github.ref_name, 'release/')
-        id: package_version_release
-        uses: xile611/read-package-version-action@main
-        with:
-          path: packages/vtable
-
-      - name: Commit & Push changes (release)
-        if: startsWith(github.ref_name, 'release/')
-        run: |
-          set -euo pipefail
-          if git diff --quiet; then
-            echo 'No changes to commit for release branch.'
-          else
-            rm -rf .changelog
-            find docs/assets/changelog -name '*.bak' -delete
-            git add .
-            git commit -m "build: release version ${{ steps.package_version_release.outputs.current_version }} [skip ci]" -n
-            git push --no-verify origin ${{ github.ref_name }}
-          fi
-
-      - name: Create Pull Request to main (release)
-        if: startsWith(github.ref_name, 'release/')
+      - name: Freeze first release artifacts
+        if: startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))
         env:
-          GH_TOKEN: ${{ github.token }}
+          RELEASE_ARTIFACT_DIR: ${{ runner.temp }}/vtable-release
         run: |
           set -euo pipefail
-          BRANCH="${GITHUB_REF_NAME}"
-          echo "Source branch: $BRANCH"
-          # Check if PR already exists
-          if gh pr list --base main --head "$BRANCH" --state open --json number --limit 1 | grep -q '"number"'; then
-            echo "PR from $BRANCH to main already exists, skip creating.";
-            exit 0;
-          fi
-          TITLE="[Auto release] release ${{ steps.package_version_release.outputs.current_version }}"
-          BODY="This PR merges release branch $BRANCH into main."
-          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
+          rm -rf .changelog
+          find docs/assets/changelog -name '*.bak' -delete
+          node .github/scripts/release-frozen.cjs prepare
+
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))
+        with:
+          name: vtable-release-manifest-${{ github.run_id }}-1
+          path: ${{ runner.temp }}/vtable-release/manifest.json
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))
+        with:
+          name: vtable-release-prepared-${{ github.run_id }}-1
+          path: |
+            ${{ runner.temp }}/vtable-release/*.tgz
+            ${{ runner.temp }}/vtable-release/prepared.bundle
+            ${{ runner.temp }}/vtable-release/manifest.json
+          if-no-files-found: error
 
       # ===== Hotfix flow =====
       - name: Parse semver (hotfix)
@@ -469,7 +448,7 @@ jobs:
 
       # ===== Pre-release flow =====
       - name: Parse semver (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/')
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         id: semver_prerelease
         uses: xile611/read-package-version-action@main
         with:
@@ -477,23 +456,24 @@ jobs:
           semver_string: ${{ github.ref_name }}
           semver_pattern: '^pre-release/(.*)$'
 
+
       - name: Apply prereleaseName (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/')
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         run: node common/scripts/apply-release-version.js ${{ steps.semver_prerelease.outputs.pre_release_name }} ${{ steps.semver_prerelease.outputs.main }}
 
       - name: Publish to npm (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/')
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}
 
       - name: Get npm version (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/')
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         id: package_version_prerelease
         uses: xile611/read-package-version-action@main
         with:
           path: packages/vtable
 
       - name: Commit & Push changes (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/')
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         run: |
           set -euo pipefail
           if git diff --quiet; then
@@ -503,3 +483,64 @@ jobs:
             git commit -m "build: prerelease version ${{ steps.package_version_prerelease.outputs.current_version }} [skip ci]" -n
             git push --no-verify origin ${{ github.ref_name }}
           fi
+
+
+  publish-frozen:
+    if: startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    # 重跑作业须由恢复环境的审核者批准，原始 push 仍沿用现有 GitHub App。
+    environment: ${{ github.run_attempt == 1 && 'vtable-release-push' || 'vtable-release-recovery' }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Set frozen artifact directory
+        run: echo "RELEASE_ARTIFACT_DIR=$RUNNER_TEMP/vtable-release" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@11.18.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: vtable-release-prepared-${{ github.run_id }}-1
+          path: ${{ env.RELEASE_ARTIFACT_DIR }}
+      - name: Publish missing frozen tarballs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/release-frozen.cjs publish
+
+  finalize-frozen:
+    if: startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))
+    needs: publish-frozen
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ github.run_attempt == 1 && 'vtable-release-push' || 'vtable-release-recovery' }}
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Set frozen artifact directory
+        run: echo "RELEASE_ARTIFACT_DIR=$RUNNER_TEMP/vtable-release" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+      - uses: actions/download-artifact@v4
+        with:
+          name: vtable-release-prepared-${{ github.run_id }}-1
+          path: ${{ env.RELEASE_ARTIFACT_DIR }}
+      - name: Advance original branch and reconcile product PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/release-frozen.cjs finalize
