@@ -1,0 +1,46 @@
+[
+  {
+    "name": "@visactor/openinula-vtable",
+    "folder": "packages/openinula-vtable"
+  },
+  {
+    "name": "@visactor/react-vtable",
+    "folder": "packages/react-vtable"
+  },
+  {
+    "name": "@visactor/vtable",
+    "folder": "packages/vtable"
+  },
+  {
+    "name": "@visactor/vtable-calendar",
+    "folder": "packages/vtable-calendar"
+  },
+  {
+    "name": "@visactor/vtable-editors",
+    "folder": "packages/vtable-editors"
+  },
+  {
+    "name": "@visactor/vtable-export",
+    "folder": "packages/vtable-export"
+  },
+  {
+    "name": "@visactor/vtable-gantt",
+    "folder": "packages/vtable-gantt"
+  },
+  {
+    "name": "@visactor/vtable-plugins",
+    "folder": "packages/vtable-plugins"
+  },
+  {
+    "name": "@visactor/vtable-search",
+    "folder": "packages/vtable-search"
+  },
+  {
+    "name": "@visactor/vtable-sheet",
+    "folder": "packages/vtable-sheet"
+  },
+  {
+    "name": "@visactor/vue-vtable",
+    "folder": "packages/vue-vtable"
+  }
+]
