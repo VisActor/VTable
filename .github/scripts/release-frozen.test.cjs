@@ -171,6 +171,41 @@ test('共享等待窗口耗尽只报告未核对的包，已受理的包均只�
   assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
 });
 
+test('npm 明确拒绝时原地报出包名和错误码，不等待、不继续提交',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[]);
+  for(const code of ['E403','E401','ENEEDAUTH','EOTP','E429']){
+    let attempts=0;
+    const publish=(_command,args,options)=>{
+      attempts++;
+      assert.ok(args.includes('--json'));
+      assert.equal(options.stdio[1],'pipe');
+      throw Object.assign(new Error('npm 已退出'),{status:1,
+        stdout:JSON.stringify({error:{code,summary:'registry denied',detail:'fixture-only detail'}})});
+    };
+    await assert.rejects(publishPackages(manifest,out,publish,mirror.fetchAPI,
+      ()=>assert.fail('明确拒绝不应等待')),{message:'npm 拒绝发布 '+manifest.packages[0].name+' ('+code+')'});
+    assert.equal(attempts,1);
+  }
+});
+
+test('npm 返回同版本已存在时仍核对原包，确认摘要后继续',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[],false);
+  const [first]=manifest.packages;
+  let elapsed=0;
+  const publish=(...args)=>{
+    mirror.publish(...args);
+    if(mirror.calls.length===1)throw Object.assign(new Error('npm 已退出'),{status:1,
+      stdout:JSON.stringify({error:{code:'E403',summary:'You cannot publish over the previously published versions: '+manifest.version}})});
+    assert.equal(elapsed,15_000);
+  };
+  const fetchAPI=async url=>url.endsWith(encodeURIComponent(first.name)+'/'+manifest.version)&&elapsed<15_000
+    ?new Response(null,{status:404}):mirror.fetchAPI(url);
+  await publishPackages(manifest,out,publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+  assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
+});
+
 test('提交响应不明且一直不可见，只回读原包并阻断后续写入',async t=>{
   const {out,manifest}=fixture(t,'1.26.9-alpha.3');
   const mirror=registry(manifest,[]);

@@ -76,6 +76,18 @@ function verify(context, out, run) {
   return manifest;
 }
 
+// 只信任 npm 以退出码报告的 JSON 错误。同版本冲突仍需核对原产物。
+function publishRejection(error) {
+  if(!Number.isInteger(error?.status)||error.status===0||error.signal)return;
+  let diagnostic;
+  try{diagnostic=JSON.parse(error.stdout)?.error;}
+  catch{return;}
+  const {code,summary,detail}=diagnostic??{};
+  const message=[summary,detail].filter(value=>typeof value==='string').join(' ');
+  if(/cannot publish over|previously published version|version already exists|cannot modify pre-existing version/i.test(message))return;
+  if(['E400','E401','E403','E404','E405','E410','E413','E415','E422','E429','ENEEDAUTH','EOTP'].includes(code))return code;
+}
+
 // 逐包提交已确认缺失的原包，受理后按同一截止时间回读全批版本、摘要和标签。
 async function publishPackages(manifest, out, run, fetchAPI=fetch,
   wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)), now=()=>performance.now()) {
@@ -163,8 +175,10 @@ async function publishPackages(manifest, out, run, fetchAPI=fetch,
     const timeout=remaining([pkg],60_000);
     try {
       run('npm',['publish',path,'--ignore-scripts','--access','public','--registry='+registry,'--tag',tag,
-        '--fetch-retries=0','--fetch-timeout=30000'],{stdio:'inherit',timeout});
-    }catch {
+        '--fetch-retries=0','--fetch-timeout=30000','--json'],{stdio:['ignore','pipe','inherit'],timeout});
+    }catch(error) {
+      const rejection=publishRejection(error);
+      if(rejection)throw new Error('npm 拒绝发布 '+pkg.name+' ('+rejection+')');
       // 响应丢失时只回读原版本，收到证据前不继续写其他包。
       console.log('npm 提交未确认，回读原版本 '+pkg.name);
       await observe([pkg]);
