@@ -36,6 +36,8 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
+          # 单测只使用模块产物，发布流程仍构建 UMD。
+          VTABLE_UNIT_TEST_BUILD: 'true'
         run: node common/scripts/install-run-rush.js build -t @visactor/vtable-search
       - name: Test
         run: node common/scripts/install-run-rush.js test -t @visactor/vtable-search

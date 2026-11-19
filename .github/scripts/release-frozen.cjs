@@ -76,29 +76,44 @@ function verify(context, out, run) {
   return manifest;
 }
 
-// 只提交已确认缺失的原包，提交后允许 npm 的版本与标签分开可见。
+// 只信任 npm 以退出码报告的 JSON 错误。同版本冲突仍需核对原产物。
+function publishRejection(error) {
+  if(!Number.isInteger(error?.status)||error.status===0||error.signal)return;
+  let diagnostic;
+  try{diagnostic=JSON.parse(error.stdout)?.error;}
+  catch{return;}
+  const {code,summary,detail}=diagnostic??{};
+  const message=[summary,detail].filter(value=>typeof value==='string').join(' ');
+  if(/cannot publish over|previously published version|version already exists|cannot modify pre-existing version/i.test(message))return;
+  if(['E400','E401','E403','E404','E405','E410','E413','E415','E422','E429','ENEEDAUTH','EOTP'].includes(code))return code;
+}
+
+// 逐包提交已确认缺失的原包，受理后按同一截止时间回读全批版本、摘要和标签。
 async function publishPackages(manifest, out, run, fetchAPI=fetch,
   wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)), now=()=>performance.now()) {
   const {version,tag,packages}=manifest;
   // 35 分钟作业还需下载和校验产物，发布阶段只使用其中 28 分钟。
   const deadline=now()+28*60_000;
-  const pending=({name})=>new Error('npm 发布结果待核对 '+name);
-  const remaining=(pkg,until,limit)=>{
-    const ms=Math.min(limit,Math.ceil(until-now()));
-    if(ms<=0)throw pending(pkg);
+  const seen=new Set();
+  const remaining=(targets,limit)=>{
+    const ms=Math.min(limit,Math.ceil(deadline-now()));
+    if(ms<=0)throw new Error('npm 发布结果待核对 '+targets.map(pkg=>pkg.name).join('、'));
     return ms;
   };
-  const read=async (path,timeout)=>{
-    const response=await fetchAPI(registry+'/'+path,{redirect:'error',signal:AbortSignal.timeout(timeout),headers:{
-      accept:'application/vnd.npm.install-v1+json','cache-control':'no-cache'}})
-      .catch(error=>{throw Object.assign(new Error('npm 回读网络错误',{cause:error}),{retryable:true});});
+  const networkError=cause=>Object.assign(new Error('npm 回读网络错误',{cause}),{retryable:true});
+  const read=async (path,signal)=>{
+    const response=await fetchAPI(registry+'/'+path,{redirect:'error',signal,headers:{
+      accept:'application/vnd.npm.install-v1+json','cache-control':'no-cache'}}).catch(error=>{throw networkError(error);});
     if(response.status===404){await response.body?.cancel();return null;}
     if(!response.ok){
       await response.body?.cancel();
       throw Object.assign(new Error('npm 回读失败 HTTP '+response.status),
         {retryable:response.status===429||response.status>=500});
     }
-    return response.json();
+    return response.json().catch(error=>{
+      if(error instanceof SyntaxError&&!signal.aborted)throw new Error('npm 回读 JSON 格式无效 '+path,{cause:error});
+      throw networkError(error);
+    });
   };
   const parts=value=>value.match(/\d+/g).map(BigInt);
   const newer=(left,right)=>{
@@ -106,54 +121,72 @@ async function publishPackages(manifest, out, run, fetchAPI=fetch,
     const i=b.findIndex((value,index)=>value!==a[index]);
     return i!==-1&&a[i]>b[i];
   };
-  const verifyPackage=async (pkg,until)=>{
+  const verifyPackage=async (pkg,signal)=>{
     const path=encodeURIComponent(pkg.name);
-    const meta=await read(path,remaining(pkg,until,15_000));
+    const meta=await read(path,signal);
     if(meta?.name!==pkg.name||!meta.versions||typeof meta.versions!=='object'||Array.isArray(meta.versions)||
       !stable.test(meta['dist-tags']?.latest))
       throw new Error('npm 标签或包名不符 '+pkg.name);
-    const exact=await read(path+'/'+version,remaining(pkg,until,15_000));
+    const latest=meta['dist-tags'].latest,current=meta['dist-tags'][tag];
     const listed=Object.hasOwn(meta.versions,version);
     const listedIntegrity=listed?meta.versions[version]?.dist?.integrity:undefined;
-    if(exact&&(exact.name!==pkg.name||exact.version!==version||exact.dist?.integrity!==pkg.integrity)||
-      listedIntegrity!==undefined&&listedIntegrity!==pkg.integrity)
+    if(listed||current===version)seen.add(pkg.name);
+    if(listedIntegrity!==undefined&&listedIntegrity!==pkg.integrity)
       throw new Error('已发布包与原字节冲突 '+pkg.name);
-    const latest=meta['dist-tags'].latest,current=meta['dist-tags'][tag];
+    const exact=await read(path+'/'+version,signal);
+    if(exact)seen.add(pkg.name);
+    if(exact&&(exact.name!==pkg.name||exact.version!==version||exact.dist?.integrity!==pkg.integrity))
+      throw new Error('已发布包与原字节冲突 '+pkg.name);
     if(exact&&listed&&current===version)return 'published';
     if(current!==version&&(!newer(version,latest)||
       tag==='alpha'&&current!==undefined&&(!alpha.test(current)||!newer(version,current))))
       throw new Error('npm 目标标签不能后退 '+pkg.name);
     return exact||listed||current===version?'pending':'missing';
   };
-  // 目录与精确版本短时不一致时继续回读，已见过的版本不能被后续 404 判为缺失。
-  const observe=async (pkg,requirePublished=false)=>{
-    const until=Math.min(deadline,now()+3*60_000);
-    for(;;){
-      try {
-        const state=await verifyPackage(pkg,until);
-        if(state==='published'||state==='missing'&&!requirePublished)return state;
-        requirePublished=true;
-      }catch(error){if(!error.retryable)throw error;}
-      await wait(remaining(pkg,until,5000));
+  // 未确认的包并行回读，整批通过前再核对一轮已通过的包，捕获等待期间的标签变化。
+  const observe=async (targets,allowMissing=false)=>{
+    let outstanding=targets;
+    const published=new Set();
+    while(outstanding.length){
+      const timeout=remaining(outstanding,15_000);
+      const states=await Promise.all(outstanding.map(async pkg=>{
+        try{return await verifyPackage(pkg,AbortSignal.timeout(timeout));}
+        catch(error){if(!error.retryable)throw error;return 'retry';}
+      }));
+      const pending=outstanding.filter((pkg,index)=>{
+        if(states[index]==='published'){published.add(pkg.name);return false;}
+        return states[index]!=='missing'||!allowMissing||seen.has(pkg.name);
+      });
+      if(!pending.length&&!allowMissing&&outstanding.length!==targets.length){
+        outstanding=targets;
+        continue;
+      }
+      outstanding=pending;
+      if(outstanding.length)await wait(remaining(outstanding,5000));
     }
+    return published;
   };
-  // 所有包先通过核对，避免后续冲突被发现时前面的包已经发出。
-  const seen=new Set();
-  for(const pkg of packages)if(await observe(pkg)==='published')seen.add(pkg.name);
+  // 首次写入前核对全批，之后逐包再核对。只有明确受理的提交可以推迟到批量回读。
+  await observe(packages,true);
   for(const pkg of packages){
-    if(await observe(pkg,seen.has(pkg.name))==='published')continue;
+    if((await observe([pkg],true)).has(pkg.name))continue;
     const path=join(out,pkg.file);
     if(integrityOf(readFileSync(path))!==pkg.integrity)throw new Error('原包字节变化 '+pkg.name);
-    const timeout=remaining(pkg,deadline,60_000);
-    let acknowledged=false;
+    const timeout=remaining([pkg],60_000);
     try {
       run('npm',['publish',path,'--ignore-scripts','--access','public','--registry='+registry,'--tag',tag,
-        '--fetch-retries=0','--fetch-timeout=30000'],{stdio:'inherit',timeout});
-      acknowledged=true;
-    }catch { /* 提交失败也可能已经受理，继续回读原版本。 */ }
-    console.log((acknowledged?'npm 已受理，等待版本与标签可见 ':'npm 提交未确认，回读原版本 ')+pkg.name);
-    await observe(pkg,true);
+        '--fetch-retries=0','--fetch-timeout=30000','--json'],{stdio:['ignore','pipe','inherit'],timeout});
+    }catch(error) {
+      const rejection=publishRejection(error);
+      if(rejection)throw new Error('npm 拒绝发布 '+pkg.name+' ('+rejection+')');
+      // 响应丢失时只回读原版本，收到证据前不继续写其他包。
+      console.log('npm 提交未确认，回读原版本 '+pkg.name);
+      await observe([pkg]);
+      continue;
+    }
+    console.log('npm 已受理，等待版本与标签可见 '+pkg.name);
   }
+  await observe(packages);
 }
 
 // 重跑只快进原分支；正式版源分支已删除时，仅已合入的原 PR 能证明收尾。

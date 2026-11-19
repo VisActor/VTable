@@ -103,10 +103,12 @@ test('包已在目录出现但精确版本暂不可见，只等待原包',async 
   const {out,manifest}=fixture(t,'1.26.9-alpha.1');
   const mirror=registry(manifest,manifest.packages);
   const first=manifest.packages[0].name;
+  const stale=registry(manifest,[]);
   let elapsed=0;
   const fetchAPI=async url=>{
-    if(url.endsWith(encodeURIComponent(first)+'/'+manifest.version)&&elapsed<35_000)
-      return new Response(null,{status:404});
+    if(url.endsWith(encodeURIComponent(first)+'/'+manifest.version)&&elapsed===0)
+      return new Response(null,{status:503});
+    if(url.includes(encodeURIComponent(first))&&elapsed<35_000)return elapsed===0?mirror.fetchAPI(url):stale.fetchAPI(url);
     return mirror.fetchAPI(url);
   };
   await publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
@@ -129,32 +131,113 @@ test('同一次运行已核实的包后来返回 404，也不重复提交',async
   assert.deepEqual(mirror.calls,[]);
 });
 
-test('受理后到达回读时限时保留待核对，只提交一次且不发后续包',async t=>{
-  const {out,manifest}=fixture(t,'1.26.9-alpha.1');
+test('模拟 alpha.3：第三个包超过 5 分钟才可见，仍完成全批 11 个包',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
   const mirror=registry(manifest,[],false);
-  const invisible=registry(manifest,[]);
+  const stale=registry(manifest,[]);
+  const delayed='@visactor/vtable', submittedAt=new Map();
   let elapsed=0;
-  await assert.rejects(publishPackages(manifest,out,mirror.publish,invisible.fetchAPI,
-    async ms=>{elapsed+=ms;},()=>elapsed),/发布结果待核对/);
-  assert.equal(elapsed,180_000);
-  assert.deepEqual(mirror.calls,[manifest.packages[0].name]);
+  const publish=(...args)=>{
+    mirror.publish(...args);
+    submittedAt.set(mirror.calls.at(-1),elapsed);
+  };
+  const fetchAPI=async url=>{
+    const [path,version]=new URL(url).pathname.slice(1).split('/');
+    const name=decodeURIComponent(path), age=elapsed-(submittedAt.get(name)??Infinity);
+    if(age<(name===delayed?310_000:90_000))return stale.fetchAPI(url);
+    const response=await mirror.fetchAPI(url);
+    if(name!==delayed||version||age>=330_000)return response;
+    const meta=await response.json();
+    meta['dist-tags']=(await (await stale.fetchAPI(url)).json())['dist-tags'];
+    return Response.json(meta);
+  };
+  await publishPackages(manifest,out,publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+  assert.equal(elapsed,330_000);
+  assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
+  assert.deepEqual(new Set(submittedAt.values()),new Set([0]));
 });
 
-test('全部待发包共用作业发布时限',async t=>{
-  const {out,manifest}=fixture(t,'1.26.9');
+test('共享等待窗口耗尽只报告未核对的包，已受理的包均只提交一次',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
   const mirror=registry(manifest,[],false);
   const invisible=registry(manifest,[]);
-  let elapsed=0,lastSubmit=0;
-  const clock=()=>elapsed;
-  const publish=(...args)=>{
-    lastSubmit=clock();
-    mirror.publish(...args);
-  };
-  const fetchAPI=(url)=>clock()-lastSubmit<165_000?invisible.fetchAPI(url):mirror.fetchAPI(url);
-  await assert.rejects(publishPackages(manifest,out,publish,fetchAPI,async ms=>{elapsed+=ms;},clock),
-    /发布结果待核对/);
+  const remaining=manifest.packages.slice(-2).map(pkg=>pkg.name);
+  let elapsed=0;
+  const fetchAPI=url=>remaining.includes(decodeURIComponent(new URL(url).pathname.split('/')[1]))
+    ?invisible.fetchAPI(url):mirror.fetchAPI(url);
+  await assert.rejects(publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed),
+    {message:'npm 发布结果待核对 '+remaining.join('、')});
   assert.equal(elapsed,28*60_000);
   assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
+});
+
+test('npm 明确拒绝时原地报出包名和错误码，不等待、不继续提交',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[]);
+  for(const code of ['E403','E401','ENEEDAUTH','EOTP','E429']){
+    let attempts=0;
+    const publish=(_command,args,options)=>{
+      attempts++;
+      assert.ok(args.includes('--json'));
+      assert.equal(options.stdio[1],'pipe');
+      throw Object.assign(new Error('npm 已退出'),{status:1,
+        stdout:JSON.stringify({error:{code,summary:'registry denied',detail:'fixture-only detail'}})});
+    };
+    await assert.rejects(publishPackages(manifest,out,publish,mirror.fetchAPI,
+      ()=>assert.fail('明确拒绝不应等待')),{message:'npm 拒绝发布 '+manifest.packages[0].name+' ('+code+')'});
+    assert.equal(attempts,1);
+  }
+});
+
+test('npm 返回同版本已存在时仍核对原包，确认摘要后继续',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[],false);
+  const [first]=manifest.packages;
+  let elapsed=0;
+  const publish=(...args)=>{
+    mirror.publish(...args);
+    if(mirror.calls.length===1)throw Object.assign(new Error('npm 已退出'),{status:1,
+      stdout:JSON.stringify({error:{code:'E403',summary:'You cannot publish over the previously published versions: '+manifest.version}})});
+    assert.equal(elapsed,15_000);
+  };
+  const fetchAPI=async url=>url.endsWith(encodeURIComponent(first.name)+'/'+manifest.version)&&elapsed<15_000
+    ?new Response(null,{status:404}):mirror.fetchAPI(url);
+  await publishPackages(manifest,out,publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+  assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
+});
+
+test('提交响应不明且一直不可见，只回读原包并阻断后续写入',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[]);
+  const invisible=registry(manifest,[]);
+  let elapsed=0;
+  const [first]=manifest.packages;
+  await assert.rejects(publishPackages(manifest,out,mirror.publish,invisible.fetchAPI,
+    async ms=>{elapsed+=ms;},()=>elapsed),{message:'npm 发布结果待核对 '+first.name});
+  assert.equal(elapsed,28*60_000);
+  assert.deepEqual(mirror.calls,[first.name]);
+});
+
+test('全批收尾前重新核对等待期间发生的标签变化',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.3');
+  const mirror=registry(manifest,[],false);
+  const stale=registry(manifest,[]);
+  const first=manifest.packages[0].name,last=manifest.packages.at(-1).name;
+  let elapsed=0;
+  const fetchAPI=async url=>{
+    const [path,exact]=new URL(url).pathname.slice(1).split('/');
+    const name=decodeURIComponent(path);
+    if(name===last&&elapsed<310_000)return stale.fetchAPI(url);
+    const response=await mirror.fetchAPI(url);
+    if(name!==first||exact||elapsed<310_000)return response;
+    const meta=await response.json();
+    meta['dist-tags'].alpha='1.26.9-alpha.4';
+    return Response.json(meta);
+  };
+  await assert.rejects(publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed),
+    {message:'npm 目标标签不能后退 '+first});
+  assert.equal(elapsed,310_000);
+  assert.equal(mirror.calls.length,11);
 });
 
 test('目标标签已前进时停止，保留原发布包',async t=>{

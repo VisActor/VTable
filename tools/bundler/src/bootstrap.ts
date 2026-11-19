@@ -96,11 +96,7 @@ async function bootstrap() {
       const taskName = `Build ${format}`;
       subBuildTasks.push(taskName);
       if (format === 'umd') {
-        if (config.minify) {
-          subBuildTasks.push(`${taskName}_min`);
-          _task(`${taskName}_min`, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, true));
-        }
-        _task(`${taskName}`, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, false));
+        _task(taskName, () => buildUmd(config, PROJECT_ROOT, rawPackageJson));
         return;
       }
 
@@ -110,7 +106,6 @@ async function bootstrap() {
             config,
             PROJECT_ROOT,
             rawPackageJson,
-            false,
             getTSCompilerOptions('esnext', userTsConfig.compilerOptions, config.noEmitOnError)
           )
         );
