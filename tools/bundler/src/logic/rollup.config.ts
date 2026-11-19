@@ -9,7 +9,6 @@ import commonjs from '@rollup/plugin-commonjs';
 // import typescript from '@rollup/plugin-typescript';
 // import typescript2 from 'rollup-plugin-typescript2';
 import replace from '@rollup/plugin-replace';
-import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
@@ -144,7 +143,6 @@ export function getRollupOptions(
         destDir: path.resolve(projectRoot, config.outputDir.umd!)
       }),
       Alias({ entries: config.alias }),
-      ...(config.minify ? [terser()] : []),
       ...((config.rollupOptions.plugins as Plugin[]) || [])
     ]
   };
