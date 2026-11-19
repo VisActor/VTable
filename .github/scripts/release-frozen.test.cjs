@@ -42,7 +42,8 @@ function fixture(t, version) {
   return {out,run,root,context,manifest:verify(context,out,run)};
 }
 
-function registry(manifest, preexisting) {
+// 模拟 registry，以冻结包为准线来记录每次实际提交。
+function registry(manifest, preexisting, loseReply=true) {
   const stored=new Map(preexisting.map(pkg=>[pkg.name,pkg.integrity]));
   const calls=[];
   const fetchAPI=async input=>{
@@ -63,7 +64,7 @@ function registry(manifest, preexisting) {
     assert.equal(digest,pkg.integrity);
     calls.push(pkg.name);
     stored.set(pkg.name,digest);
-    if(calls.length===1)throw new Error('registry accepted, reply lost');
+    if(loseReply&&calls.length===1)throw new Error('registry accepted, reply lost');
   };
   return {stored,calls,fetchAPI,publish};
 }
@@ -72,8 +73,23 @@ for(const version of ['1.26.9','1.26.9-alpha.1']){
   test('冻结 '+version+' 原 11 包，恢复仅补缺包并保留原提交',async t=>{
     const {out,run,context,manifest}=fixture(t,version);
     assert.deepEqual(verify(context,out,run),manifest);
-    const mirror=registry(manifest,manifest.packages.slice(0,7));
-    await publishPackages(manifest,out,mirror.publish,mirror.fetchAPI);
+    const mirror=registry(manifest,manifest.packages.slice(0,7),manifest.tag==='latest');
+    const old=registry(manifest,manifest.packages.slice(0,7));
+    const delayed=manifest.packages[7].name;
+    let elapsed=0;
+    const fetchAPI=async url=>{
+      const [pkg,exact]=new URL(url).pathname.slice(1).split('/');
+      if(decodeURIComponent(pkg)!==delayed||!mirror.calls.length)return mirror.fetchAPI(url);
+      if(elapsed===0)return new Response(null,{status:503});
+      if(elapsed<30_000)return old.fetchAPI(url);
+      const response=await mirror.fetchAPI(url);
+      if(exact||elapsed>=55_000)return response;
+      const meta=await response.json();
+      meta['dist-tags']=(await (await old.fetchAPI(url)).json())['dist-tags'];
+      return Response.json(meta);
+    };
+    await publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+    assert.equal(elapsed,55_000);
     assert.deepEqual(mirror.calls,manifest.packages.slice(7).map(pkg=>pkg.name));
     await publishPackages(manifest,out,mirror.publish,mirror.fetchAPI);
     assert.equal(mirror.calls.length,4);
@@ -82,6 +98,79 @@ for(const version of ['1.26.9','1.26.9-alpha.1']){
     assert.throws(()=>verify(context,out,run));
   });
 }
+
+test('包已在目录出现但精确版本暂不可见，只等待原包',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.1');
+  const mirror=registry(manifest,manifest.packages);
+  const first=manifest.packages[0].name;
+  let elapsed=0;
+  const fetchAPI=async url=>{
+    if(url.endsWith(encodeURIComponent(first)+'/'+manifest.version)&&elapsed<35_000)
+      return new Response(null,{status:404});
+    return mirror.fetchAPI(url);
+  };
+  await publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+  assert.equal(elapsed,35_000);
+  assert.deepEqual(mirror.calls,[]);
+});
+
+test('同一次运行已核实的包后来返回 404，也不重复提交',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9');
+  const mirror=registry(manifest,manifest.packages);
+  const stale=registry(manifest,[]);
+  const path=encodeURIComponent(manifest.packages[0].name);
+  let elapsed=0,reads=0;
+  const fetchAPI=async url=>{
+    if(new URL(url).pathname.split('/')[1]===path&&++reads>2&&elapsed<5000)return stale.fetchAPI(url);
+    return mirror.fetchAPI(url);
+  };
+  await publishPackages(manifest,out,mirror.publish,fetchAPI,async ms=>{elapsed+=ms;},()=>elapsed);
+  assert.equal(elapsed,5000);
+  assert.deepEqual(mirror.calls,[]);
+});
+
+test('受理后到达回读时限时保留待核对，只提交一次且不发后续包',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.1');
+  const mirror=registry(manifest,[],false);
+  const invisible=registry(manifest,[]);
+  let elapsed=0;
+  await assert.rejects(publishPackages(manifest,out,mirror.publish,invisible.fetchAPI,
+    async ms=>{elapsed+=ms;},()=>elapsed),/发布结果待核对/);
+  assert.equal(elapsed,180_000);
+  assert.deepEqual(mirror.calls,[manifest.packages[0].name]);
+});
+
+test('全部待发包共用作业发布时限',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9');
+  const mirror=registry(manifest,[],false);
+  const invisible=registry(manifest,[]);
+  let elapsed=0,lastSubmit=0;
+  const clock=()=>elapsed;
+  const publish=(...args)=>{
+    lastSubmit=clock();
+    mirror.publish(...args);
+  };
+  const fetchAPI=(url)=>clock()-lastSubmit<165_000?invisible.fetchAPI(url):mirror.fetchAPI(url);
+  await assert.rejects(publishPackages(manifest,out,publish,fetchAPI,async ms=>{elapsed+=ms;},clock),
+    /发布结果待核对/);
+  assert.equal(elapsed,28*60_000);
+  assert.deepEqual(mirror.calls,manifest.packages.map(pkg=>pkg.name));
+});
+
+test('目标标签已前进时停止，保留原发布包',async t=>{
+  const {out,manifest}=fixture(t,'1.26.9-alpha.1');
+  const mirror=registry(manifest,manifest.packages);
+  const conflict=manifest.packages.at(-1).name;
+  const fetchAPI=async url=>{
+    const response=await mirror.fetchAPI(url);
+    if(!url.endsWith('/'+encodeURIComponent(conflict)))return response;
+    const meta=await response.json();
+    meta['dist-tags'].alpha='1.26.9-alpha.2';
+    return Response.json(meta);
+  };
+  await assert.rejects(publishPackages(manifest,out,mirror.publish,fetchAPI),/目标标签不能后退/);
+  assert.deepEqual(mirror.calls,[]);
+});
 
 test('原包冲突在补写其他包前阻断，收尾只推一次并回读已合入 PR',async t=>{
   const {out,manifest}=fixture(t,'1.26.9');
