@@ -45,6 +45,8 @@ jobs:
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
       - name: Update npm
+        # Alpha 和正式版在独立作业发包，旧发布路径仍在本作业直接使用 npm。
+        if: ${{ !(startsWith(github.ref_name, 'release/') || (startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.'))) }}
         run: npm install -g npm@11.18.0
 
       - name: Install latest pnpm
@@ -505,9 +507,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.22.2'
+          node-version: '24.22.3' # 使用内置 npm 11.19.1 支持 Trusted Publishing
           registry-url: https://registry.npmjs.org
-      - run: npm install -g npm@11.18.0
       - uses: actions/download-artifact@v4
         with:
           name: vtable-release-prepared-${{ github.run_id }}-1
