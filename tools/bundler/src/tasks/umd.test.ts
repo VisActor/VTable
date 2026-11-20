@@ -35,3 +35,34 @@ it('exposes the compiled ESM exports through both UMD files', async () => {
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it('builds a browser test entry with the browser dependency and package version', async () => {
+  // Node 入口无法用于浏览器，测试会捕获 browser 解析和版本替换的回归。
+  const root = await mkdtemp(path.join(tmpdir(), 'bundler-browser-'));
+  try {
+    const dependency = path.join(root, 'node_modules', 'example-dep');
+    await mkdir(dependency, { recursive: true });
+    await mkdir(path.join(root, 'src'));
+    await writeFile(path.join(root, 'tsconfig.json'), '{}');
+    await writeFile(path.join(dependency, 'package.json'), '{"main":"node.js","browser":"web.js"}');
+    await writeFile(path.join(dependency, 'node.js'), "module.exports = require('fs');");
+    await writeFile(path.join(dependency, 'web.js'), "export const value = 'browser';");
+    await writeFile(
+      path.join(root, 'src/index.ts'),
+      "export { value } from 'example-dep'; export const version: string = __VERSION__;"
+    );
+    const config = {
+      ...getDefaultConfig(),
+      browserUmd: true,
+      minify: false,
+      name: 'Example',
+      envs: { __VERSION__: '"1.2.3"' }
+    };
+    await buildUmd(config, root, { name: 'example', version: '1.2.3' });
+    const globals = { Example: {} };
+    runInNewContext(await readFile(path.join(root, 'dist/example.js'), 'utf8'), globals);
+    expect(globals.Example).toEqual({ value: 'browser', version: '1.2.3' });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

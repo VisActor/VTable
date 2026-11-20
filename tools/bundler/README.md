@@ -92,6 +92,8 @@ interface Config {
   umdCompress?: boolean;
   // Calendar 和 Gantt 的完整构建从编译后的 JS 合并 UMD；单独指定 -f umd 时读取源码。
   umdFromEs?: boolean;
+  // 浏览器测试用 UMD 优先解析 browser 入口，目标 ES2018。
+  browserUmd?: boolean;
   // 出现编译错误时是否输出产物文件, 如果为true，则会停止构建且不输出任何东西
   noEmitOnError: boolean;
   // 传给给 @babel/preset-env 的 `targets` 字段 see: https://babeljs.io/docs/babel-preset-env#targets

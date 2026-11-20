@@ -14,9 +14,8 @@ function packageNameToPath(name: string) {
   return name.replace('@', '').replace('/', '_');
 }
 
-// esbuild 合并已编译的模块，再由 Rollup 保留 CommonJS、AMD 和浏览器全局三种 UMD 入口。
-async function bundleEsEntry(config: Config, projectRoot: string, pkg: RawPackageJson, entry: string) {
-  const input = path.resolve(projectRoot, config.outputDir.es!, entry.replace(/\.(tsx?|jsx)$/, '.js'));
+// esbuild 合并入口依赖，再由 Rollup 保留 CommonJS、AMD 和浏览器全局三种 UMD 入口。
+async function bundleEntry(config: Config, projectRoot: string, pkg: RawPackageJson, input: string) {
   const external = getExternal(pkg, config.external);
   const result = await build({
     absWorkingDir: projectRoot,
@@ -24,8 +23,10 @@ async function bundleEsEntry(config: Config, projectRoot: string, pkg: RawPackag
     bundle: true,
     format: 'esm',
     platform: 'browser',
-    mainFields: ['module', 'main'],
-    target: 'es2016',
+    // ExcelJS 的浏览器入口包含异步生成器；发布包仍使用原来的解析顺序和目标。
+    mainFields: config.browserUmd ? ['browser', 'module', 'main'] : ['module', 'main'],
+    target: config.browserUmd ? 'es2018' : 'es2016',
+    ...(config.browserUmd && { tsconfig: path.resolve(projectRoot, config.tsconfig), define: config.envs }),
     external,
     write: false
   });
@@ -54,11 +55,16 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
     globals: { react: 'React', ...config.globals }
   };
 
-  const source = path.resolve(projectRoot, config.sourceDir, entry);
+  const input = fromEs
+    ? path.resolve(projectRoot, config.outputDir.es!, entry.replace(/\.(tsx?|jsx)$/, '.js'))
+    : path.resolve(projectRoot, config.sourceDir, entry);
   DebugConfig('UMD entry', entry, { fromEs });
-  const bundle = fromEs
-    ? await bundleEsEntry(config, projectRoot, rawPackageJson, entry)
-    : await rollup(getRollupOptions(projectRoot, source, rawPackageJson, getBabelPlugins(rawPackageJson.name), config));
+  const bundle =
+    fromEs || config.browserUmd
+      ? await bundleEntry(config, projectRoot, rawPackageJson, input)
+      : await rollup(
+          getRollupOptions(projectRoot, input, rawPackageJson, getBabelPlugins(rawPackageJson.name), config)
+        );
   try {
     await bundle.write(output);
     if (config.minify) {
