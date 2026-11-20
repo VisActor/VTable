@@ -11,6 +11,7 @@ module.exports = {
   copy: ['css'],
   name: 'VTableGantt',
   umdOutputFilename: 'vtable-gantt',
+  umdCompress: false,
   rollupOptions: {
     treeshake: true
   },

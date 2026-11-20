@@ -91,6 +91,8 @@ export interface Config {
   clean: boolean;
   // 是否压缩 umd 产物文件
   minify: boolean;
+  // 是否执行 UMD 的 Terser 语法压缩阶段，变量名缩短和空白移除仍保留。
+  umdCompress?: boolean;
   // 出现编译错误时是否输出产物文件, 如果为true，则会停止构建且不输出任何东西
   noEmitOnError: boolean;
   // 传给给 @babel/preset-env 的 `targets` 字段 see: https://babeljs.io/docs/babel-preset-env#targets

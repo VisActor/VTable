@@ -38,7 +38,11 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
   try {
     await bundle.write(output);
     if (config.minify) {
-      await bundle.write({ ...output, file: path.join(dest, `${filename}.min.js`), plugins: [terser()] });
+      await bundle.write({
+        ...output,
+        file: path.join(dest, `${filename}.min.js`),
+        plugins: [terser(config.umdCompress === false ? { compress: false } : undefined)]
+      });
     }
   } finally {
     await bundle.close();
