@@ -18,6 +18,14 @@
       "allowWarningsInSuccessfulBuild": true
     },
     {
+      "name": "release-build",
+      "summary": "Build release packages in dependency order",
+      "commandKind": "bulk",
+      "shellCommand": "npm run --if-present build",
+      "enableParallelism": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
       "name": "eslint",
       "summary": "",
       "enableParallelism": true,

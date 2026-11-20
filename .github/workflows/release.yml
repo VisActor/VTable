@@ -368,7 +368,7 @@ jobs:
           done
 
           echo "Build packages: ${package_names[*]}"
-          node common/scripts/install-run-rush.js build "${build_args[@]}"
+          node common/scripts/install-run-rush.js release-build --parallelism 2 "${build_args[@]}"
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update

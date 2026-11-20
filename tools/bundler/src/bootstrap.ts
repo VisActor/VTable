@@ -55,6 +55,10 @@ async function bootstrap() {
   const taker = new Undertaker();
   const spinnies = new Spinnies();
   const taskList: Task[] = [];
+  // 同一命令生成 ESM 时，等入口及其静态资源写完再构建 UMD。
+  const umdFromEs = config.umdFromEs && config.formats.includes('es') && config.formats.includes('umd');
+  // 视觉构建已在本轮生成 ESM；清理或监听模式不能复用上一次写入的文件。
+  const reuseEs = (config.umdFromEs || config.browserUmd) && args.reuseEs && !config.clean && !config.watch;
   const sources = getSources(`${PROJECT_ROOT}/${config.sourceDir}`, true);
   const userTsConfig = readUserTsconfig(path.resolve(PROJECT_ROOT, config.tsconfig));
 
@@ -94,11 +98,14 @@ async function bootstrap() {
     };
     config.formats.forEach((format: _ModuleKind) => {
       const taskName = `Build ${format}`;
-      subBuildTasks.push(taskName);
       if (format === 'umd') {
-        _task(taskName, () => buildUmd(config, PROJECT_ROOT, rawPackageJson));
+        _task(taskName, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, umdFromEs || reuseEs));
+        if (!umdFromEs) {
+          subBuildTasks.push(taskName);
+        }
         return;
       }
+      subBuildTasks.push(taskName);
 
       if (format === 'vue') {
         _task(taskName, () =>
@@ -140,6 +147,9 @@ async function bootstrap() {
   ) {
     _task(Tasks.COPY_FILES, () => copyFiles(PROJECT_ROOT, config));
     taskList.push(Tasks.COPY_FILES);
+  }
+  if (umdFromEs) {
+    taskList.push('Build umd');
   }
   if (config.postTasks) {
     const tasksKey = Object.keys(config.postTasks);

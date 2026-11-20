@@ -203,7 +203,11 @@ export async function build(root, runDir, phase, names, runtime, log) {
     try { git(root, ['check-ignore', '--no-index', output]); }
     catch { throw fault('BUILD_FAILED', `构建目标未忽略：${output}`); }
     await fs.rm(path.join(root, output), { force: true });
-    await runtime.run(process.execPath, [bundle, '-f', 'umd', '--minify=false', '--ignorePostTasks'], path.join(root, folder), log, { code: 'BUILD_FAILED', env });
+    // VTable 和 Gantt 的 ESM 已就绪；Sheet 直接从源码生成测试 UMD，Photo 另行构建其 ESM。
+    const args = [bundle, '-f', 'umd', '--minify=false', '--ignorePostTasks'];
+    if (name === 'vtable' || name === 'sheet') args.push('--browserUmd');
+    if (name === 'vtable' || name === 'gantt') args.push('--reuseEs');
+    await runtime.run(process.execPath, args, path.join(root, folder), log, { code: 'BUILD_FAILED', env });
     if (!(await fs.stat(path.join(root, output))).size) throw fault('BUILD_FAILED', `没有生成有效产物：${output}`);
     await fs.copyFile(path.join(root, output), destination);
   }

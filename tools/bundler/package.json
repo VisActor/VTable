@@ -46,6 +46,7 @@
     "babel-plugin-import": "1.13.6",
     "clean-css": "5.3.2",
     "debug": "4.3.4",
+    "esbuild": "0.15.18",
     "fs-extra": "10.1.0",
     "globby": "11.1.0",
     "gulp": "4.0.2",

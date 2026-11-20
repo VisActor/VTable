@@ -19,6 +19,8 @@ describe('config', () => {
   });
 
   it('parser cli args', () => {
+    expect(parserCLIArgs('-f umd --reuseEs --minify=false').reuseEs).toBe(true);
+    expect(parserCLIArgs('-f umd').reuseEs).toBeUndefined();
     const args = parserCLIArgs(
       `--envs version="'x.y.z'" -f es --formats cjs --envs __DEV__=true --config xxx.js -c yyy.js --name foo --name qux --clean -s false`
     );

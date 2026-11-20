@@ -9,6 +9,8 @@ module.exports = {
   copy: ['css'],
   name: 'VTableCalendar',
   umdOutputFilename: 'vtable-calendar',
+  umdCompress: false,
+  umdFromEs: true,
   rollupOptions: {
     treeshake: true
   },

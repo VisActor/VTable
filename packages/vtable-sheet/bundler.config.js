@@ -7,6 +7,7 @@ module.exports = {
   noEmitOnError: false,
   name: 'VTableSheet',
   umdOutputFilename: 'vtable-sheet',
+  umdCompress: false,
   rollupOptions: {
     treeshake: true
   },
