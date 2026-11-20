@@ -12,6 +12,7 @@ module.exports = {
   name: 'VTableGantt',
   umdOutputFilename: 'vtable-gantt',
   umdCompress: false,
+  umdFromEs: true,
   rollupOptions: {
     treeshake: true
   },

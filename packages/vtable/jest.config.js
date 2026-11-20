@@ -16,7 +16,11 @@ module.exports = {
       },
       tsconfig: {
         resolveJsonModule: true,
-        esModuleInterop: true
+        esModuleInterop: true,
+        paths: {
+          ...require('./tsconfig.json').compilerOptions.paths,
+          '@visactor/vtable-editors': ['../vtable-editors/src/index.ts']
+        }
       }
     },
     __DEV__: true

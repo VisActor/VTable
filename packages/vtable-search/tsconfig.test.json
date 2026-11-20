@@ -7,6 +7,9 @@
     "baseUrl": "./",
     "rootDir": ".",
     "paths": {
+      "@visactor/vtable": ["../vtable/src/index.ts"],
+      "@visactor/vtable/es/*": ["../vtable/src/*"],
+      "@visactor/vtable-editors": ["../vtable-editors/src/index.ts"],
       "@src/*": ["../vtable/src/*"]
     }
   },

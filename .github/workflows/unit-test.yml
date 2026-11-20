@@ -33,12 +33,7 @@ jobs:
       # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
-      - name: Build
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-          # 单测只使用模块产物，发布流程仍构建 UMD。
-          VTABLE_UNIT_TEST_BUILD: 'true'
-        run: node common/scripts/install-run-rush.js build -t @visactor/vtable-search
+      # Jest 的工作区依赖映射到源码，Firefox 用 Vite 加载源码。
       - name: Test
         run: node common/scripts/install-run-rush.js test -t @visactor/vtable-search
       - name: Install Playwright Firefox

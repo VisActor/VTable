@@ -30,6 +30,7 @@ export interface CLIArgs extends Arguments {
   less: boolean;
   // dev: boolean;
   clean: boolean;
+  reuseEs: boolean;
   minify: boolean;
 }
 export function parserCLIArgs(argv: string | string[]): Partial<CLIArgs> {
@@ -47,7 +48,7 @@ export function parserCLIArgs(argv: string | string[]): Partial<CLIArgs> {
     },
     array: ['formats', 'envs', 'copy'],
     string: ['config'],
-    boolean: ['watch', 'less', 'clean', 'minify', 'sourcemap'],
+    boolean: ['watch', 'less', 'clean', 'minify', 'sourcemap', 'reuseEs'],
     coerce: getCoerce(stringKeys)
   });
 }
@@ -93,6 +94,8 @@ export interface Config {
   minify: boolean;
   // 是否执行 UMD 的 Terser 语法压缩阶段，变量名缩短和空白移除仍保留。
   umdCompress?: boolean;
+  // 同时构建 ESM 和 UMD 时，复用同一入口编译出的 ESM 文件。
+  umdFromEs?: boolean;
   // 出现编译错误时是否输出产物文件, 如果为true，则会停止构建且不输出任何东西
   noEmitOnError: boolean;
   // 传给给 @babel/preset-env 的 `targets` 字段 see: https://babeljs.io/docs/babel-preset-env#targets

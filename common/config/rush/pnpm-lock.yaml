@@ -1979,6 +1979,9 @@ importers:
       debug:
         specifier: 4.3.4
         version: 4.3.4(supports-color@9.4.0)
+      esbuild:
+        specifier: 0.15.18
+        version: 0.15.18
       fs-extra:
         specifier: 10.1.0
         version: 10.1.0

@@ -77,7 +77,7 @@ function transpileTsForRollup(): Plugin {
   };
 }
 
-function getExternal(
+export function getExternal(
   rawPackageJson: RawPackageJson,
   userExternal: string[] | ((rawPackageJson: RawPackageJson) => string[])
 ): string[] {
