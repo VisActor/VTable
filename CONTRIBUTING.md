@@ -151,6 +151,73 @@ Fill in the changes of this submission according to the template:
 
 After filling in the relevant information, click Create pull request to submit.
 
+## PR checks and merge process
+
+**Activation status snapshot (2026-10-29):** The supporting Bot and BugServer code is deployed. The legacy Photo CI handoff still awaits review and merge of this PR; new PR discovery and repository-scoped identities are not enabled. Maintainers will confirm the activation cutoff and the initial complete discovery snapshot when enabling the workflow. The scope below describes behavior after activation; merging this documentation does not activate it. Check maintainer updates in [this repository's handoff PR](https://github.com/VisActor/VTable/pull/5358) for the latest activation status and times.
+
+Automated code review and the PR workflow provide evidence and merge recommendations. Maintainers make the final approval and merge decisions manually.
+
+### Scope
+
+The new workflow handles non-Draft PRs created after activation initialization and satisfying the configured creation-time cutoff, with both head and base branches in this repository and `develop` as the base branch. PRs targeting `main`, `dev/*`, or other branches are excluded from this workflow and retain the existing Photo CI trigger rules. An internal PR means a PR between branches of the same repository, regardless of the author's employment or organization membership.
+
+A new Draft PR satisfying the creation-time conditions becomes eligible after it is marked Ready for review. Existing PRs are not backfilled by pushing commits, reopening them, or marking them ready. Fork PRs are not included in this workflow yet. Separately selected gray-validation PRs follow the scope announced by maintainers.
+
+Automated CR and GitHub Actions have independent execution scopes. The absence of a new-workflow summary does not waive testing or human review.
+
+### Before submitting
+
+**Only administrators of the corresponding BugServer project may create BugServer cases.** External contributors should provide reproduction material for an administrator to create the case and return its real caseId. CLI login or GitHub write access does not grant this permission. See the [complete case workflow (Chinese)](./packages/vtable/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md).
+
+Run the relevant unit tests and follow the [local visual testing guide](./packages/vtable/__tests__/visual/README.md). The existing requirement to run the full visual suite before a PR still applies.
+
+Describe test commands, results, expected visual changes, and unfinished checks in the PR. Explain why a test could not run. Self-comparison checks stability and does not replace comparison against the official baseline.
+
+### Results to inspect
+
+Read the Bot's Review, the GitHub unit-test run, and the workflow summary in the PR. Check the current commit and comparison baseline in the summary before applying its conclusions to your change.
+
+| Check | Purpose and required action |
+| --- | --- |
+| CR | Read findings and referenced source locations, then push fixes. Closing a discussion alone does not prove a verified fix. |
+| Unit tests | Use the CI run bound to the current version. Missing, skipped, running, or failed tests do not count as passed. |
+| Playwright | Runs the full visual comparison and investigates differences. Review actual images and source; execution errors do not count as passed. |
+| BugServer Photo | Runs automatically and preserves raw results for maintainers to inspect manually. It is currently report-only and does not block the aggregate recommendation from the three checks above. |
+
+Photo differences, missing baselines, execution errors, and incomplete results remain visible. Completion of the three automatic checks does not mean Photo passed.
+
+### Acting on workflow status
+
+| Status (overview) | What to do |
+| --- | --- |
+| Pending / running | Wait for the current stage; a missing result is not a pass. |
+| Changes or investigation needed | Read the findings, fix the issue, or provide evidence. |
+| Blocked | Read the next action; contact maintainers for permissions, service issues, or task recovery. |
+| Awaiting approval | Maintainers verify the three checks for the current version and manually inspect Photo. |
+| Awaiting merge | The three checks are complete; inspect Photo and the saved selection, then merge manually. Approve is optional. |
+| Completed | Workflow finalization is complete; original Photo differences and errors remain. |
+| Superseded / closed without merge | Read the newer version, or treat the PR as unmerged. Neither status implies baseline updates. |
+
+### After changing code
+
+New commits or comparison-baseline changes cause the workflow to recheck the version and run the necessary checks. Older results remain historical evidence and cannot prove that a newer version passed. Verify the results and saved selection for each new commit.
+
+### Approval and merge
+
+GitHub Approve is an audit record in this workflow. Maintainers may merge manually after checking CR, unit tests, Playwright and Photo for the current commit. GitHub branch protection and repository review requirements still apply. The Bot does not change those rules, approve, or merge.
+
+For PRs explicitly enabled for Photo selection, BugServer shows the current images and short explanations. New candidates are selected by default. Inspect each item, deselect any baseline that should stay unchanged, and save successfully before merging. The server's saved revision is authoritative; an unsaved draft has no effect. Default selection does not overwrite a saved manual choice.
+
+After merge, only the selected baselines in that revision are updated. Unselected items stay unchanged. Writes still verify the frozen commit, three checks, merged content, save time and original baseline. Stale versions, post-merge selections and conflicts are not silently accepted. Ask maintainers to resume the original task after a timeout or partial success; do not dispatch another batch or change request IDs.
+
+Photo remains report-only. An unavailable selection list, including more than 20 differences, incomplete explanations or execution errors, adds no merge gate and does not update baselines. PRs without this capability retain their existing mode. Baseline updates do not rewrite the original Photo report, and completed does not mean Photo passed.
+
+### Handling problems
+
+Provide the PR URL, current commit SHA, relevant Review or CI links, and a publicly shareable error description when contacting maintainers. If you cannot access BugServer, ask a maintainer to inspect the internal report.
+
+Do not repeatedly close/reopen PRs or create duplicate PRs to force reruns, and do not edit Bot-managed summaries or tracking markers. Do not paste credentials, internal report contents, or private runtime logs into public discussions.
+
 ## Mini Task Development Guide
 
 "**good first issue**" is a common label in open source communities, and its purpose is to help new contributors find suitable entry-level issues.

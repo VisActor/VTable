@@ -9,6 +9,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-tree'
+      },
+      {
+        path: 'list',
+        name: 'issue-5036-master-detail-search'
       }
     ]
   },

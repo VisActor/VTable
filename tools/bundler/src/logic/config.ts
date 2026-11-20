@@ -195,5 +195,10 @@ export function getFinalConfig(
     ...parsedCLIEnvs,
     __VERSION__: JSON.stringify(packageVersion)
   };
-  return { ...defaultConfig, ...userConfig, ...cliArgsToConfig(cliArgs), envs };
+  const config = { ...defaultConfig, ...userConfig, ...cliArgsToConfig(cliArgs), envs };
+  // 单测 CI 只跳过浏览器包，模块编译及类型声明沿用原配置。
+  if (process.env.VTABLE_UNIT_TEST_BUILD === 'true') {
+    config.formats = config.formats.filter(format => format !== 'umd');
+  }
+  return config;
 }

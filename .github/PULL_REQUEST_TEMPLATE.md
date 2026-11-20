@@ -35,6 +35,8 @@ Thank you!
 2. close #xxxx or fix #xxxx for instance.
 -->
 
+**BugServer case creation is restricted to project administrators.** External contributors: provide reproduction material and ask an administrator to create/link the case. Only report a real, publicly shareable caseId; otherwise state that administrator follow-up is pending. [Case workflow](../packages/vtable/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md).
+
 ### 💡 Background and solution
 
 <!--
@@ -56,8 +58,11 @@ Describe changes from the user side, and list all potential break changes or oth
 
 ### ☑️ Self-Check before Merge
 
+Follow [PR checks and merge process](../CONTRIBUTING.md#pr-checks-and-merge-process): describe executed tests and results, explain unrun checks, and document expected visual changes and their verification.
+
 ⚠️ Please check all items below before requesting a reviewing. ⚠️
 
+- [ ] Test results and the reasons for any unrun checks are documented.
 - [ ] Doc is updated/provided or not needed
 - [ ] Demo is updated/provided or not needed
 - [ ] TypeScript definition is updated/provided or not needed

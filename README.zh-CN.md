@@ -195,6 +195,8 @@ $ rush update
 
 # 🤝 参与贡献
 
+提交 PR 前，请阅读贡献指南中的[PR 检查与合入流程](./CONTRIBUTING.zh-CN.md#pr-检查与合入流程)，了解本地测试、自动 CR、单测与视觉检查、BugServer Photo 人工核查，以及维护者批准和合入的步骤。新工作流的启用状态及适用范围见该指南。
+
 如想参与贡献，请先阅读 [行为准则](./CODE_OF_CONDUCT.md) 和 [贡献指南](./CONTRIBUTING.zh-CN.md)。
 
 细流成河，终成大海！

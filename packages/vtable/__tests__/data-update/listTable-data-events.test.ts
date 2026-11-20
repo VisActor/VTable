@@ -204,6 +204,91 @@ describe('listTable data events test', () => {
     expect(filterCalls).toBe(5);
   });
 
+  test('addRecords under filter should preserve new records after clearing filter', () => {
+    table.release();
+    const records = [
+      { name: 'Alice', age: 25, group: 'A' },
+      { name: 'Bob', age: 30, group: 'B' },
+      { name: 'Charlie', age: 35, group: 'A' }
+    ];
+    const newRecords = [
+      { name: 'David', age: 40, group: 'A' },
+      { name: 'Eve', age: 45, group: 'B' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'name', title: 'Name' },
+        { field: 'age', title: 'Age' },
+        { field: 'group', title: 'Group' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    table.updateFilterRules([
+      {
+        filterKey: 'group',
+        filteredValues: ['A']
+      }
+    ]);
+    table.addRecords(newRecords);
+    table.updateFilterRules([]);
+
+    expect((table.records as typeof records).map(record => record.name)).toEqual([
+      'Alice',
+      'Bob',
+      'Charlie',
+      'David',
+      'Eve'
+    ]);
+    expect(records).toEqual(table.records);
+  });
+
+  test('updateRecords under filter should persist extra fields to source records', () => {
+    table.release();
+    const records = [
+      { id: 1, name: 'Employee 1' },
+      { id: 2, name: 'Employee 2' },
+      { id: 3, name: 'Employee 3' },
+      { id: 4, name: 'Employee 4' },
+      { id: 5, name: 'Employee 5' }
+    ];
+
+    table = new ListTable({
+      container: containerDom,
+      columns: [
+        { field: 'id', title: 'ID' },
+        { field: 'name', title: 'Name' }
+      ],
+      records,
+      syncRecordOperationsToSourceRecords: true
+    });
+
+    table.updateFilterRules([
+      {
+        filterKey: 'id',
+        filteredValues: [2, 3, 4]
+      }
+    ]);
+
+    const updatedRecord = {
+      ...table.records[0],
+      name: 'Employee 2 updated',
+      modifiedCells: { name: true }
+    };
+    table.updateRecords([updatedRecord], [0]);
+
+    expect(records[1]).toBe(updatedRecord);
+    expect(records[1].modifiedCells).toEqual({ name: true });
+
+    table.updateFilterRules([]);
+
+    expect(table.records[1]).toBe(updatedRecord);
+    expect(table.records[1].name).toBe('Employee 2 updated');
+  });
+
   test('addRecord under filter should keep relative position after clearing filter', () => {
     table.release();
     const records = [

@@ -54,6 +54,7 @@ import type { PivotTable } from '../PivotTable';
 import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
+import { autoMergeCellRanges } from './select/auto-merge-ranges';
 import { expendCellRange } from '../tools/merge-range';
 
 export class StateManager {
@@ -205,6 +206,7 @@ export class StateManager {
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
   _frozenObserver?: ResizeObserver;
+  _frozenObserverCheckTimer?: ReturnType<typeof setTimeout>;
 
   fastScrolling: boolean = false;
 
@@ -787,7 +789,8 @@ export class StateManager {
   isSelecting(): boolean {
     return this.select.selecting;
   }
-  endSelectCells(fireListener: boolean = true, fireClear: boolean = true) {
+  /** 结束当前选区；批量设置时可延迟到最后一个区域再执行多选区合并。 */
+  endSelectCells(fireListener: boolean = true, fireClear: boolean = true, mergeRanges: boolean = true) {
     if (this.select.selecting) {
       this.select.selecting = false;
       if (this.select.ranges.length === 0) {
@@ -828,10 +831,19 @@ export class StateManager {
       } else {
         selectEnd(this.table.scenegraph);
       }
+      // 归并只改变范围集合，selected_cell 仍报告原选择结束位置。
+      const { col: lastCol, row: lastRow } = this.select.ranges[this.select.ranges.length - 1].end;
+      // 即使最后一项是重复区域，也要在去重后完成整批选区的合并。
+      if (mergeRanges) {
+        const previousRanges = this.select.ranges;
+        const mergedRanges = autoMergeCellRanges(previousRanges, this.table);
+        if (mergedRanges !== previousRanges) {
+          this.select.ranges = mergedRanges;
+          this.table.scenegraph.updateMergedBodySelectRangeComponents(previousRanges);
+        }
+      }
 
       // 触发SELECTED_CELL
-      const lastCol = this.select.ranges[this.select.ranges.length - 1].end.col;
-      const lastRow = this.select.ranges[this.select.ranges.length - 1].end.row;
       fireListener &&
         this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CELL, {
           ranges: this.select.ranges,
@@ -983,6 +995,9 @@ export class StateManager {
 
         // 使用 ResizeObserver 监听容器尺寸变化
         this._frozenObserver = new ResizeObserver(entries => {
+          if (this.table.isReleased) {
+            return;
+          }
           for (const entry of entries) {
             // 检查容器宽度是否变为可见
             if (entry.contentRect.width > 0) {
@@ -991,8 +1006,11 @@ export class StateManager {
 
               this.table.resize();
 
-              setTimeout(() => {
-                this.checkFrozen();
+              this._frozenObserverCheckTimer = setTimeout(() => {
+                this._frozenObserverCheckTimer = undefined;
+                if (!this.table.isReleased) {
+                  this.checkFrozen();
+                }
               }, 0);
               return;
             }
@@ -1103,6 +1121,12 @@ export class StateManager {
       this._frozenObserver.disconnect();
       this._frozenObserver = null;
     }
+  }
+
+  release() {
+    this.clearFrozenObserver();
+    clearTimeout(this._frozenObserverCheckTimer);
+    this._frozenObserverCheckTimer = undefined;
   }
 
   setFrozenCol(col: number) {
@@ -1258,6 +1282,7 @@ export class StateManager {
     this.table.scenegraph.setX(-this.scroll.horizontalBarPos, xRatio === 1);
     this.scroll.horizontalBarPos -= this.table.scenegraph.proxy.deltaX;
     this.table.scenegraph.proxy.deltaX = 0;
+    this.table.scenegraph.component.updateFrozenColumnShadowVisibility();
     // console.log(this.table.scenegraph.bodyGroup.lastChild.attribute);
     // this.table.scenegraph.bodyGroup.lastChild.onBeforeAttributeUpdate = attr => {
     //   if (attr.x) {
@@ -1429,6 +1454,7 @@ export class StateManager {
 
     // 更新scrollbar位置
     this.table.scenegraph.component.updateHorizontalScrollBarPos(xRatio);
+    this.table.scenegraph.component.updateFrozenColumnShadowVisibility();
 
     const dx = this.scroll.horizontalBarPos - oldHorizontalBarPos;
     this.table.fireListeners(TABLE_EVENT_TYPE.SCROLL, {

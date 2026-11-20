@@ -10,6 +10,13 @@ describe('listTable-1W init test', () => {
   containerDom.style.width = '1000px';
   containerDom.style.height = '800px';
 
+  let randomState = 0x12345678;
+  /** 固定万行数据的文本分布，让 autoWidth 的精确断言可以复现。 */
+  function fixtureRandom() {
+    randomState = (Math.imul(1664525, randomState) + 1013904223) >>> 0;
+    return randomState / 0x100000000;
+  }
+
   function generateRandomHobbies() {
     const hobbies = [
       'Reading books',
@@ -26,11 +33,11 @@ describe('listTable-1W init test', () => {
       'Swimming'
     ];
 
-    const numHobbies = Math.floor(Math.random() * 3) + 1; // 生成 1-3 之间的随机整数
+    const numHobbies = Math.floor(fixtureRandom() * 3) + 1; // 生成 1-3 之间的随机整数
     const selectedHobbies = [];
 
     for (let i = 0; i < numHobbies; i++) {
-      const randomIndex = Math.floor(Math.random() * hobbies.length);
+      const randomIndex = Math.floor(fixtureRandom() * hobbies.length);
       const hobby = hobbies[randomIndex];
       selectedHobbies.push(hobby);
       hobbies.splice(randomIndex, 1); // 确保每个爱好只选一次
@@ -38,13 +45,14 @@ describe('listTable-1W init test', () => {
 
     return selectedHobbies.join(', ');
   }
+  /** 固定UTC日期，避免执行机时区改变测试文本。 */
   function generateRandomBirthday() {
     const start = new Date('1970-01-01');
     const end = new Date('2000-12-31');
-    const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    const year = randomDate.getFullYear();
-    const month = randomDate.getMonth() + 1;
-    const day = randomDate.getDate();
+    const randomDate = new Date(start.getTime() + fixtureRandom() * (end.getTime() - start.getTime()));
+    const year = randomDate.getUTCFullYear();
+    const month = randomDate.getUTCMonth() + 1;
+    const day = randomDate.getUTCDate();
     return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
   }
 
@@ -84,8 +92,8 @@ describe('listTable-1W init test', () => {
       '188',
       '189'
     ];
-    const prefix = areaCode[Math.floor(Math.random() * areaCode.length)];
-    const suffix = String(Math.random()).substr(2, 8);
+    const prefix = areaCode[Math.floor(fixtureRandom() * areaCode.length)];
+    const suffix = String(fixtureRandom()).substr(2, 8);
     return prefix + suffix;
   }
 

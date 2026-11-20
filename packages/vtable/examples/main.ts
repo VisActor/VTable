@@ -52,6 +52,17 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
         localStorage.setItem(LOCAL_STORAGE_KEY, name);
       }
 
+      const issue5036Controls = document.getElementById('issue5036Controls');
+      if (issue5036Controls) {
+        (window as any).search?.clear?.();
+        issue5036Controls.remove();
+        document.getElementById('input-test')!.style.display = '';
+        document.getElementById('textarea-test')!.style.display = '';
+        document.getElementById('vTable')!.style.height = '90%';
+        (window as any).search = undefined;
+        (window as any).masterDetailPlugin = undefined;
+      }
+
       if (window.tableInstance) {
         window.tableInstance.release();
         document.getElementById('vTable').innerHTML = null;
@@ -110,7 +121,8 @@ const createSidebar = (node: HTMLDivElement) => {
 
 const run = () => {
   const sidebarNode = document.querySelector<HTMLDivElement>('#sidebar')!;
-  const prevActivePath = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const prevActivePath =
+    new URLSearchParams(window.location.search).get('demo') || localStorage.getItem(LOCAL_STORAGE_KEY);
 
   createSidebar(sidebarNode);
   initSidebarEvent(sidebarNode);

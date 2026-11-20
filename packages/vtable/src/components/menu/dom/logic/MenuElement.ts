@@ -13,7 +13,7 @@ import { TABLE_EVENT_TYPE } from '../../../../core/TABLE_EVENT_TYPE';
 import { cellInRange } from '../../../../tools/helper';
 import { isValid } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../../../../layout/pivot-header-layout';
-import { regUrl } from '../../../../tools/global';
+import { createMenuIcon } from './menu-icon';
 import type { BaseTableAPI } from '../../../../ts-types/base-table';
 importStyle();
 
@@ -570,6 +570,7 @@ export class MenuElement {
     }
     return false;
   }
+  /** 将子菜单定位到父项旁；两侧均不足时限制在容器内，保证菜单项可点击。 */
   _bindSecondElement(table: BaseTableAPI, col: number, row: number, x: number, y: number): boolean {
     const secondElement = this._secondElement;
     const rootElement = this._rootElement;
@@ -596,7 +597,7 @@ export class MenuElement {
       const maxWidth = containerWidth * 0.8;
       secondElement.style.maxWidth = `${maxWidth}px`;
       //计算弹出框的宽度
-      const secondElementWidth = secondElement.clientWidth;
+      const secondElementWidth = secondElement.offsetWidth;
       const secondElementHeight = secondElement.clientHeight;
 
       const secondElementTop = y - 4 - containerTop;
@@ -614,11 +615,13 @@ export class MenuElement {
       let leftStyle = secondElementLeft;
 
       // 判断如果超出右范围则靠左边显示
-      if (leftStyle + secondElementWidth > containerWidth) {
+      if (leftStyle + secondElementWidth + 4 > containerWidth) {
         leftStyle = leftStyle - secondElementWidth - rootWidth;
       } else {
         leftStyle += 4; //位置调整 需要和主菜单之间有4px的间隔
       }
+      // 翻到左侧也可能越界；宽菜单允许重叠，但不能移出可交互区域。
+      leftStyle = Math.max(0, Math.min(leftStyle, containerWidth - secondElementWidth));
       secondElement.style.left = `${leftStyle}px`;
 
       return true;
@@ -654,6 +657,7 @@ export class MenuElement {
   }
 }
 
+/** 创建主菜单和子菜单项，文本不解析 HTML，图标仅插入经过安全处理的内容。 */
 function createItem(info: MenuListItem, isHighlight: boolean): HTMLDivElement {
   const itemContainer = createElement('div', [
     ITEM_CLASSNAME,
@@ -667,7 +671,7 @@ function createItem(info: MenuListItem, isHighlight: boolean): HTMLDivElement {
 
   if (typeof info === 'string') {
     const item = createElement('span', [CONTENT_CLASSNAME, NOEVENT_CLASSNAME, ITEMTEXT_CLASSNAME]);
-    item.innerHTML = info;
+    item.textContent = info;
     itemContainer.appendChild(item);
   } else if (typeof info === 'object') {
     const type = info.type ?? 'item';
@@ -676,31 +680,22 @@ function createItem(info: MenuListItem, isHighlight: boolean): HTMLDivElement {
       return itemContainer;
     }
     if (info?.icon?.svg) {
-      if (regUrl.test(info.icon.svg)) {
-        const image = new Image();
-        if (info.icon.width) {
-          image.style.width = info.icon.width.toString() + 'px';
-        } else {
-          image.style.width = '16px';
-        }
-        if (info.icon.height) {
-          image.style.height = info.icon.height.toString() + 'px';
-        } else {
-          image.style.height = '16px';
-        }
-        image.src = info.icon.svg;
-        itemContainer.appendChild(image);
-      } else {
-        const svg = createElement('span', [ICOM_CLASSNAME, NOEVENT_CLASSNAME]);
-        svg.innerHTML =
-          isHighlight && info.selectedIcon && info.selectedIcon.svg ? info.selectedIcon.svg : info.icon.svg;
-        info.icon.width && (svg.children[0] as SVGElement).setAttribute('width', info.icon.width.toString());
-        info.icon.height && (svg.children[0] as SVGElement).setAttribute('height', info.icon.height.toString());
-        itemContainer.appendChild(svg);
+      const source = isHighlight && info.selectedIcon?.svg ? info.selectedIcon.svg : info.icon.svg;
+      const icon = createMenuIcon(source);
+      if (icon?.localName === 'img') {
+        icon.style.width = `${info.icon.width || 16}px`;
+        icon.style.height = `${info.icon.height || 16}px`;
+        itemContainer.appendChild(icon);
+      } else if (icon) {
+        const wrapper = createElement('span', [ICOM_CLASSNAME, NOEVENT_CLASSNAME]);
+        info.icon.width && icon.setAttribute('width', info.icon.width.toString());
+        info.icon.height && icon.setAttribute('height', info.icon.height.toString());
+        wrapper.appendChild(icon);
+        itemContainer.appendChild(wrapper);
       }
     }
     const item = createElement('span', [CONTENT_CLASSNAME, NOEVENT_CLASSNAME, ITEMTEXT_CLASSNAME]);
-    item.innerHTML = info.text;
+    item.textContent = info.text ?? '';
     itemContainer.appendChild(item);
     if (type === 'title') {
       itemContainer?.classList.add(NOEVENT_CLASSNAME, TITLE_CLASSNAME);

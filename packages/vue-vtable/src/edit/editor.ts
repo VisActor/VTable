@@ -4,6 +4,10 @@ import { h, isVNode, customRef, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 import type { RectProps } from '@visactor/vtable/es/ts-types/common';
 
+function isPromiseLike<T>(value: T | Promise<T>): value is Promise<T> {
+  return Boolean(value && typeof (value as Promise<T>).then === 'function');
+}
+
 /** 渲染式编辑器参数 */
 export interface DynamicRenderEditorParams {
   /** 行索引 */
@@ -236,12 +240,12 @@ export class DynamicRenderEditor {
     }
   }
 
-  async validateValue(
+  validateValue(
     value?: any,
     oldValue?: any,
     editCell?: { col: number; row: number },
     table?: any
-  ): Promise<boolean> {
+  ): boolean | Promise<boolean> {
     const { col, row } = editCell || {};
     if (!isValid(col) || !isValid(row)) {
       return true;
@@ -249,22 +253,31 @@ export class DynamicRenderEditor {
     const define = table.getBodyColumnDefine(col, row) as ColumnDefine;
     const { editConfig } = define || {};
     if (typeof editConfig?.validateValue === 'function') {
-      const validate = await editConfig.validateValue({ col, row, value, oldValue, table });
-      if (validate === false) {
-        const rect = table.getVisibleCellRangeRelativeRect({ col, row });
-        table.showTooltip(col, row, {
-          content: editConfig.invalidPrompt || 'invalid',
-          referencePosition: { rect, placement: TYPES.Placement.top },
-          style: {
-            bgColor: 'red',
-            color: 'white',
-            arrowMark: true
-          },
-          disappearDelay: 1000
-        });
-        return false;
+      const handleValidationResult = (validate: boolean) => {
+        if (validate === false) {
+          const rect = table.getVisibleCellRangeRelativeRect({ col, row });
+          table.showTooltip(col, row, {
+            content: editConfig.invalidPrompt || 'invalid',
+            referencePosition: { rect, placement: TYPES.Placement.top },
+            style: {
+              bgColor: 'red',
+              color: 'white',
+              arrowMark: true
+            },
+            disappearDelay: 1000
+          });
+          return false;
+        }
+        return validate;
+      };
+      try {
+        const validate = editConfig.validateValue({ col, row, value, oldValue, table });
+        return isPromiseLike(validate)
+          ? Promise.resolve(validate).then(handleValidationResult)
+          : handleValidationResult(validate);
+      } catch (error) {
+        return Promise.reject(error);
       }
-      return validate;
     }
     return true;
   }

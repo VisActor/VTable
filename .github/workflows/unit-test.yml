@@ -15,8 +15,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # 与受控 CI 统一 Node 22，满足 Playwright 1.63 的运行要求。
+        node-version: ['22.22.2']
 
     steps:
       - uses: actions/checkout@v3
@@ -27,12 +27,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
+      - name: Test Photo CI handoff
+        run: node --test .github/scripts/bug-server-gray-scope.test.cjs
+
       # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - name: Build
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-        run: node common/scripts/install-run-rush.js build -t @visactor/vtable
+          NODE_OPTIONS: '--max_old_space_size=4096'
+          # 单测只使用模块产物，发布流程仍构建 UMD。
+          VTABLE_UNIT_TEST_BUILD: 'true'
+        run: node common/scripts/install-run-rush.js build -t @visactor/vtable-search
       - name: Test
-        run: node common/scripts/install-run-rush.js test -t @visactor/vtable
+        run: node common/scripts/install-run-rush.js test -t @visactor/vtable-search
+      - name: Install Playwright Firefox
+        working-directory: ./packages/vtable
+        run: npx playwright install firefox
+      - name: Test Firefox paste
+        working-directory: ./packages/vtable
+        run: node ../../common/scripts/install-run-rushx.js test:firefox

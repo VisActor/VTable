@@ -9,9 +9,8 @@ module.exports = {
   verbose: true,
   globals: {
     'ts-jest': {
-      diagnostics: {
-        exclude: ['**']
-      },
+      diagnostics: false,
+      isolatedModules: true,
       tsconfig: {
         resolveJsonModule: true,
         esModuleInterop: true

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(gantt): recalculate project task dates when setting records",
+      "type": "patch",
+      "packageName": "@visactor/vtable-gantt"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "892739385@qq.com"
+}

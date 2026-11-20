@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { parserCLIArgs, getFinalConfig, getDefaultConfig, loadConfigFile } from './config';
 import { loadPackageJson } from './package';
 import path from 'path';
@@ -6,6 +6,18 @@ import path from 'path';
 const userConfigFilePath = path.resolve(__dirname, '../../fixtures/config/bundler.config.js');
 
 describe('config', () => {
+  it('only skips UMD for the unit-test build', () => {
+    const defaults = getDefaultConfig();
+    try {
+      vi.stubEnv('VTABLE_UNIT_TEST_BUILD', 'true');
+      expect(getFinalConfig({}, {}, defaults, '1.0.0').formats).toEqual(['cjs', 'es']);
+      vi.stubEnv('VTABLE_UNIT_TEST_BUILD', '');
+      expect(getFinalConfig({}, {}, defaults, '1.0.0').formats).toEqual(['cjs', 'es', 'umd']);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('parser cli args', () => {
     const args = parserCLIArgs(
       `--envs version="'x.y.z'" -f es --formats cjs --envs __DEV__=true --config xxx.js -c yyy.js --name foo --name qux --clean -s false`

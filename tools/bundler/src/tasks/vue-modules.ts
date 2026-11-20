@@ -128,7 +128,6 @@ export async function buildVue(
   config: Config,
   projectRoot: string,
   rawPackageJson: RawPackageJson,
-  minify: boolean,
   tsCompilerOptions: Record<string, unknown>
 ) {
   const babelPlugins = getBabelPlugins(rawPackageJson.name);
@@ -139,7 +138,7 @@ export async function buildVue(
     entry,
     rawPackageJson,
     babelPlugins,
-    { ...config, minify },
+    config,
     { compilerOptions: tsCompilerOptions }
   );
 

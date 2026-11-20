@@ -503,8 +503,7 @@ export class TableComponent {
       });
     }
 
-    const rightFrozenScrollable =
-      this.table.options.scrollRightFrozenCols && this.table.getRightFrozenColsOffset() > 0;
+    const rightFrozenScrollable = this.table.options.scrollRightFrozenCols && this.table.getRightFrozenColsOffset() > 0;
     if (!ignoreFrozenCols && rightFrozenScrollable) {
       // 右冻结滚动条的滑块长度 = 右冻结视口宽 / 右冻结内容宽
       const rightFrozenRangeEnd = Math.max(0.05, rightFrozenColsWidth / rightFrozenColsContentWidth);
@@ -577,6 +576,10 @@ export class TableComponent {
     this.table.stateManager.setFrozenColsScrollLeft(oldFrozenHorizontalBarPos, false);
     this.table.stateManager.setRightFrozenColsScrollLeft(oldRightFrozenHorizontalBarPos, false);
     this.table.stateManager.setScrollTop(oldVerticalBarPos);
+    if (this.table.theme.frozenColumnLine?.shadow?.visible === 'overflow') {
+      this.setFrozenColumnShadow(this.table.frozenColCount - 1);
+      this.setRightFrozenColumnShadow(this.table.colCount - this.table.rightFrozenColCount);
+    }
   }
 
   /**
@@ -789,7 +792,7 @@ export class TableComponent {
       !isRightFrozen && col === this.table.frozenColCount - 1 && (this.table.getFrozenColsOffset?.() ?? 0) > 0
         ? this.table.getFrozenColsWidth()
         : getColX(col, this.table, isRightFrozen);
-    if (col < 0 || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
+    if (col < 0 || !this.isFrozenColumnShadowVisible(false)) {
       this.frozenShadowLine.setAttributes({
         visible: false,
         x: colX,
@@ -818,7 +821,7 @@ export class TableComponent {
     const colX = shouldFixViewport
       ? this.table.tableNoFrameWidth - this.table.getRightFrozenColsWidth()
       : getColX(col, this.table, true);
-    if (col >= this.table.colCount || this.table.theme.frozenColumnLine?.shadow?.visible !== 'always') {
+    if (col >= this.table.colCount || !this.isFrozenColumnShadowVisible(true)) {
       this.rightFrozenShadowLine.setAttributes({
         visible: false,
         x: colX - this.rightFrozenShadowLine.attribute.width,
@@ -832,6 +835,33 @@ export class TableComponent {
       });
     }
   }
+  private isFrozenColumnShadowVisible(right: boolean): boolean {
+    const visible = this.table.theme.frozenColumnLine?.shadow?.visible;
+    if (visible !== 'overflow') {
+      return visible === 'always';
+    }
+    const frozenCount = right ? this.table.rightFrozenColCount : this.table.frozenColCount;
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    const scrollRange = Math.max(0, Math.ceil(getBodyHorizontalScrollRange(this.table) - sizeTolerance));
+    return (
+      frozenCount > 0 && scrollRange > 0 && (right ? this.table.scrollLeft < scrollRange : this.table.scrollLeft > 0)
+    );
+  }
+
+  updateFrozenColumnShadowVisibility() {
+    if (this.table.theme.frozenColumnLine?.shadow?.visible !== 'overflow') {
+      return;
+    }
+    const leftVisible = this.isFrozenColumnShadowVisible(false);
+    const rightVisible = this.isFrozenColumnShadowVisible(true);
+    if (this.frozenShadowLine.attribute.visible !== leftVisible) {
+      this.frozenShadowLine.setAttribute('visible', leftVisible);
+    }
+    if (this.rightFrozenShadowLine.attribute.visible !== rightVisible) {
+      this.rightFrozenShadowLine.setAttribute('visible', rightVisible);
+    }
+  }
+
   hideFrozenColumnShadow() {
     const visible1 = this.table.theme.frozenColumnLine?.shadow?.visible;
     const visible = this.table.theme.frozenColumnLine?.shadow?.visible ?? visible1;

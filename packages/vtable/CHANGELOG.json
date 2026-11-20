@@ -2,6 +2,52 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.26.9",
+      "tag": "@visactor/vtable_v1.26.9",
+      "date": "Fri, 20 Nov 2026 04:04:56 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: support overflow-based frozen column shadow visibility"
+          },
+          {
+            "comment": "feat(vtable): support auto-merging rectangular body multi-ranges"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix(vtable): support indexed custom style overlays"
+          },
+          {
+            "comment": "fix: align body cell creation with the frozen row origin to keep virtual scrolling, cell coordinates and hit testing consistent."
+          },
+          {
+            "comment": "fix: render menu labels as plain text and sanitize menu SVG icons. HTML labels and entities now display literally; unsafe SVG content and non-HTTP(S) image URLs are omitted. Keep wide submenus inside the table bounds so they remain clickable when neither side has enough space."
+          },
+          {
+            "comment": "test(vtable): cover preserving addRecords results after clearing filters"
+          },
+          {
+            "comment": "fix(vtable): enlarge the fill handle pointer hit area"
+          },
+          {
+            "comment": "修复重复提交同一选区时新选框被误删、旧选框与填充柄残留的问题。"
+          },
+          {
+            "comment": "fix: return the physical tree row-header column when resolving a matched header path, including extension rows and left series-number offsets, while preserving body addresses."
+          },
+          {
+            "comment": "fix(vtable): release frozen-column observers when a table is destroyed"
+          }
+        ],
+        "none": [
+          {
+            "comment": "test(vtable): cover preserving updateRecords results after clearing filters"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.26.8",
       "tag": "@visactor/vtable_v1.26.8",
       "date": "Fri, 11 Sep 2026 09:49:37 GMT",

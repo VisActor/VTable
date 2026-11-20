@@ -205,6 +205,8 @@ $ rush update
 
 # 🤝 Contribution
 
+Before submitting a PR, read [PR checks and merge process](./CONTRIBUTING.md#pr-checks-and-merge-process) for local testing, automated CR, unit and visual checks, manual BugServer Photo verification, and maintainer approval and merge. See the guide for the activation status and scope of the new workflow.
+
 If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) and [ Guide](./CONTRIBUTING.md) first。
 
 Small streams converge to make great rivers and seas!
