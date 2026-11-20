@@ -1,6 +1,29 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 11 Sep 2026 09:49:37 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Nov 2026 04:04:56 GMT and should not be manually modified.
+
+## 1.26.9
+Fri, 20 Nov 2026 04:04:56 GMT
+
+### Minor changes
+
+- feat: support overflow-based frozen column shadow visibility
+- feat(vtable): support auto-merging rectangular body multi-ranges
+
+### Patches
+
+- fix(vtable): support indexed custom style overlays
+- fix: align body cell creation with the frozen row origin to keep virtual scrolling, cell coordinates and hit testing consistent.
+- fix: render menu labels as plain text and sanitize menu SVG icons. HTML labels and entities now display literally; unsafe SVG content and non-HTTP(S) image URLs are omitted. Keep wide submenus inside the table bounds so they remain clickable when neither side has enough space.
+- test(vtable): cover preserving addRecords results after clearing filters
+- fix(vtable): enlarge the fill handle pointer hit area
+- 修复重复提交同一选区时新选框被误删、旧选框与填充柄残留的问题。
+- fix: return the physical tree row-header column when resolving a matched header path, including extension rows and left series-number offsets, while preserving body addresses.
+- fix(vtable): release frozen-column observers when a table is destroyed
+
+### Updates
+
+- test(vtable): cover preserving updateRecords results after clearing filters
 
 ## 1.26.8
 Fri, 11 Sep 2026 09:49:37 GMT
