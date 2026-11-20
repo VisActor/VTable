@@ -1,3 +1,31 @@
+# v1.26.9
+
+2026-11-20
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 支持 overflow-based frozen column shadow visibility
+- **@visactor/vtable**: 支持 auto-merging rectangular body multi-ranges
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 支持 indexed custom style overlays
+- **@visactor/vtable**: align body cell creation with the frozen row origin keep virtual scrolling, cell coordinates and hit testing consistent.
+- **@visactor/vtable**: render menu labels as plain text and sanitize menu SVG icons. HTML labels and entities now display literally; unsafe SVG content and non-HTTP(S) image URLs are omitted. Keep wide submenus inside the table bounds so they remain clickable when neither side has enough space.
+- **@visactor/vtable**: enlarge the fill handle pointer hit area
+- **@visactor/vtable**: 修复重复提交同一选区时新选框被误删、旧选框与填充柄残留的问题。
+- **@visactor/vtable**: return the physical tree row-header column when resolving a matched header path, including extension rows and left series-number offsets, while preserving body addresses.
+- **@visactor/vtable**: release frozen-column observers when a table is destroyed
+
+**🔨 维护与杂项**
+
+- **@visactor/vtable**: cover preserving addRecords results after clearing filters
+- **@visactor/vtable**: cover preserving updateRecords results after clearing filters
+
+**Full Changelog**: https://github.com/VisActor/VTable/compare/v1.26.8...v1.26.9
+
+[更多详情请查看 v1.26.9](https://github.com/VisActor/VTable/releases/tag/v1.26.9)
+
 # v1.26.8
 
 2026-09-11
