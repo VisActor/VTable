@@ -27,7 +27,19 @@ async function bundleEntry(config: Config, projectRoot: string, pkg: RawPackageJ
     mainFields: config.browserUmd ? ['browser', 'module', 'main'] : ['module', 'main'],
     target: config.browserUmd ? 'es2018' : 'es2016',
     ...(config.browserUmd && { tsconfig: path.resolve(projectRoot, config.tsconfig), define: config.envs }),
-    external,
+    // esbuild 会把包名形式的 external 扩展到子路径，这里沿用 Rollup 的精确匹配。
+    plugins: external.length
+      ? [
+          {
+            name: 'exact-externals',
+            setup(builder) {
+              builder.onResolve({ filter: /./ }, ({ path: id }) =>
+                external.includes(id) ? { path: id, external: true } : null
+              );
+            }
+          }
+        ]
+      : [],
     write: false
   });
   return rollup({
