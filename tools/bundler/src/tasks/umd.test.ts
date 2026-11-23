@@ -66,3 +66,36 @@ it('builds a browser test entry with the browser dependency and package version'
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it('keeps the package root external but bundles its subpath', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'bundler-externals-'));
+  try {
+    const dependency = path.join(root, 'node_modules/@example/library');
+    await mkdir(dependency, { recursive: true });
+    await mkdir(path.join(root, 'src'));
+    await writeFile(path.join(root, 'tsconfig.json'), '{}');
+    await writeFile(path.join(dependency, 'feature.js'), "export const feature = '-bundled';");
+    await writeFile(
+      path.join(root, 'src/index.ts'),
+      [
+        "import { prefix } from '@example/library';",
+        "import { feature } from '@example/library/feature.js';",
+        'export const value = prefix + feature;'
+      ].join('\n')
+    );
+    const config = {
+      ...getDefaultConfig(),
+      browserUmd: true,
+      minify: false,
+      name: 'Example',
+      external: ['@example/library'],
+      globals: { '@example/library': 'ExampleLibrary' }
+    };
+    await buildUmd(config, root, { name: 'example', version: '1.0.0' });
+    const globals = { Example: {}, ExampleLibrary: { prefix: 'browser' } };
+    runInNewContext(await readFile(path.join(root, 'dist/example.js'), 'utf8'), globals);
+    expect(globals.Example).toEqual({ value: 'browser-bundled' });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
