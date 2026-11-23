@@ -52,6 +52,11 @@ async function bootstrap() {
   const config = getFinalConfig(args, userConfig, getDefaultConfig(), rawPackageJson.version);
   DebugConfig('Final config', config);
 
+  // --reuseEs 只消费另一条命令已写入的 ESM，不能与本轮 ESM 写入并行。
+  if (args.reuseEs && config.formats.includes('es') && config.formats.includes('umd')) {
+    throw new Error('--reuseEs requires a separate UMD build. Use the umdFromEs config to build ESM and UMD together.');
+  }
+
   const taker = new Undertaker();
   const spinnies = new Spinnies();
   const taskList: Task[] = [];

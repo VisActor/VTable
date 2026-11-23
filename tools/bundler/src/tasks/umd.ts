@@ -22,7 +22,7 @@ async function bundleEntry(config: Config, projectRoot: string, pkg: RawPackageJ
     entryPoints: [input],
     bundle: true,
     format: 'esm',
-    platform: 'browser',
+    platform: config.browserUmd ? 'browser' : 'neutral',
     // ExcelJS 的浏览器入口包含异步生成器；发布包仍使用原来的解析顺序和目标。
     mainFields: config.browserUmd ? ['browser', 'module', 'main'] : ['module', 'main'],
     target: config.browserUmd ? 'es2018' : 'es2016',
@@ -67,12 +67,15 @@ export async function buildUmd(config: Config, projectRoot: string, rawPackageJs
     globals: { react: 'React', ...config.globals }
   };
 
-  const input = fromEs
+  // React 的 reconciler 通过 CommonJS 延迟加载 React，须由 Rollup 处理这个外部引用。
+  const useSourceRollup = rawPackageJson.name === '@visactor/react-vtable';
+  const useCompiledEntry = fromEs && !useSourceRollup;
+  const input = useCompiledEntry
     ? path.resolve(projectRoot, config.outputDir.es!, entry.replace(/\.(tsx?|jsx)$/, '.js'))
     : path.resolve(projectRoot, config.sourceDir, entry);
-  DebugConfig('UMD entry', entry, { fromEs });
+  DebugConfig('UMD entry', entry, { fromEs: useCompiledEntry });
   const bundle =
-    fromEs || config.browserUmd
+    !useSourceRollup && (useCompiledEntry || config.browserUmd)
       ? await bundleEntry(config, projectRoot, rawPackageJson, input)
       : await rollup(
           getRollupOptions(projectRoot, input, rawPackageJson, getBabelPlugins(rawPackageJson.name), config)

@@ -17,9 +17,16 @@ it('exposes the compiled ESM exports through both UMD files', async () => {
   // 仅提供编译后的入口，避免回退到源码时测试仍然通过。
   const root = await mkdtemp(path.join(tmpdir(), 'bundler-umd-'));
   try {
+    const dependency = path.join(root, 'node_modules/example-dep');
+    await mkdir(dependency, { recursive: true });
     await mkdir(path.join(root, 'es'));
-    await writeFile(path.join(root, 'es/value.js'), 'export const value = 42;');
-    await writeFile(path.join(root, 'es/browser.js'), "export { value } from './value';");
+    await writeFile(
+      path.join(dependency, 'package.json'),
+      JSON.stringify({ exports: { browser: './browser.js', default: './default.js' } })
+    );
+    await writeFile(path.join(dependency, 'browser.js'), 'export const value = "browser-only";');
+    await writeFile(path.join(dependency, 'default.js'), 'export const value = 42;');
+    await writeFile(path.join(root, 'es/browser.js'), "export { value } from 'example-dep';");
     const config = { ...getDefaultConfig(), input: 'browser.ts', name: 'Example', umdOutputFilename: 'example' };
     await buildUmd(config, root, { name: 'example', version: '1.0.0' }, true);
     for (const file of ['example.js', 'example.min.js']) {
