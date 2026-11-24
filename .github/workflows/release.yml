@@ -326,7 +326,7 @@ jobs:
         if: startsWith(github.ref_name, 'release/')
         run: node common/scripts/install-run-rush.js version --bump
 
-      # Alpha 在构建前更新为目标版本，其他预发布沿用原流程。
+      # 各分支在构建前完成版本准备，确保编译时注入的版本与发包版本一致。
       - name: Parse Alpha version
         if: startsWith(github.ref_name, 'pre-release/') && contains(github.ref_name, '-alpha.')
         env:
@@ -335,6 +335,43 @@ jobs:
           set -euo pipefail
           version="${RELEASE_REF#pre-release/}"
           node common/scripts/apply-release-version.js "${version#*-}" "${version%%-*}"
+
+      - name: Parse semver (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        id: semver_hotfix
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^hotfix/(.*)$'
+
+      - name: update nextBump (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        uses: xile611/set-next-bump-of-rush@main
+        with:
+          release_version: ${{ steps.semver_hotfix.outputs.full }}
+          write_next_bump: true
+
+      - name: Generate rush version (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js version --bump
+
+      - name: Update version (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_hotfix.outputs.main }}
+
+      - name: Parse semver (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
+        id: semver_prerelease
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^pre-release/(.*)$'
+
+      - name: Apply prereleaseName (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
+        run: node common/scripts/apply-release-version.js ${{ steps.semver_prerelease.outputs.pre_release_name }} ${{ steps.semver_prerelease.outputs.main }}
 
       - name: Build packages
         env:
@@ -368,7 +405,7 @@ jobs:
           done
 
           echo "Build packages: ${package_names[*]}"
-          node common/scripts/install-run-rush.js build "${build_args[@]}"
+          node common/scripts/install-run-rush.js release-build --parallelism 2 "${build_args[@]}"
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
@@ -401,30 +438,6 @@ jobs:
           if-no-files-found: error
 
       # ===== Hotfix flow =====
-      - name: Parse semver (hotfix)
-        if: startsWith(github.ref_name, 'hotfix/')
-        id: semver_hotfix
-        uses: xile611/read-package-version-action@main
-        with:
-          path: packages/vtable
-          semver_string: ${{ github.ref_name }}
-          semver_pattern: '^hotfix/(.*)$'
-
-      - name: update nextBump (hotfix)
-        if: startsWith(github.ref_name, 'hotfix/')
-        uses: xile611/set-next-bump-of-rush@main
-        with:
-          release_version: ${{ steps.semver_hotfix.outputs.full }}
-          write_next_bump: true
-
-      - name: Generate rush version (hotfix)
-        if: startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js version --bump
-
-      - name: Update version (hotfix)
-        if: startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/apply-release-version.js 'none' ${{ steps.semver_hotfix.outputs.main }}
-
       - name: Publish to npm (hotfix)
         if: startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js publish --publish --include-all --tag hotfix
@@ -449,20 +462,6 @@ jobs:
           fi
 
       # ===== Pre-release flow =====
-      - name: Parse semver (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
-        id: semver_prerelease
-        uses: xile611/read-package-version-action@main
-        with:
-          path: packages/vtable
-          semver_string: ${{ github.ref_name }}
-          semver_pattern: '^pre-release/(.*)$'
-
-
-      - name: Apply prereleaseName (pre-release)
-        if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
-        run: node common/scripts/apply-release-version.js ${{ steps.semver_prerelease.outputs.pre_release_name }} ${{ steps.semver_prerelease.outputs.main }}
-
       - name: Publish to npm (pre-release)
         if: startsWith(github.ref_name, 'pre-release/') && !contains(github.ref_name, '-alpha.')
         run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}

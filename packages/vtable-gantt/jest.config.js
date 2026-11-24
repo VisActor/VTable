@@ -18,8 +18,9 @@ module.exports = {
         resolveJsonModule: true,
         esModuleInterop: true,
         paths: {
-          '@visactor/vtable/es/vrender-app': ['../vtable/src/vrender-app.ts'],
-          '@visactor/vtable/es/vrender': ['../vtable/src/vrender.ts'],
+          '@visactor/vtable': ['../vtable/src/index.ts'],
+          '@visactor/vtable/es/*': ['../vtable/src/*'],
+          '@visactor/vtable-editors': ['../vtable-editors/src/index.ts'],
           '@src/vrender': ['../vtable/src/vrender.ts'],
           '@src/*': ['../vtable/src/*']
         }
