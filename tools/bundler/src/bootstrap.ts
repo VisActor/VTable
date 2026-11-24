@@ -52,9 +52,10 @@ async function bootstrap() {
   const config = getFinalConfig(args, userConfig, getDefaultConfig(), rawPackageJson.version);
   DebugConfig('Final config', config);
 
-  // --reuseEs 只消费另一条命令已写入的 ESM，不能与本轮 ESM 写入并行。
-  if (args.reuseEs && config.formats.includes('es') && config.formats.includes('umd')) {
-    throw new Error('--reuseEs requires a separate UMD build. Use the umdFromEs config to build ESM and UMD together.');
+  // es 和 vue 都会写入 ESM，--reuseEs 只能在它们完成后的独立命令中消费产物。
+  const writesEs = config.formats.includes('es') || config.formats.includes('vue');
+  if (args.reuseEs && writesEs && config.formats.includes('umd')) {
+    throw new Error('--reuseEs requires a separate UMD build after ESM generation.');
   }
 
   const taker = new Undertaker();
