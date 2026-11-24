@@ -5,7 +5,7 @@ const { execFileSync } = require('node:child_process');
 const { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
 const { basename, join } = require('node:path');
 const { tmpdir } = require('node:os');
-const { releaseContext, prepare, verify, publishPackages, finalize } = require('./release-frozen.cjs');
+const { releaseContext, applyReleaseNotes, prepare, verify, publishPackages, finalize } = require('./release-frozen.cjs');
 const expected = require('./release-packages.json');
 
 const repo='VisActor/VTable';
@@ -25,6 +25,11 @@ function fixture(t, version) {
   const config={projects:expected.map(pkg=>({packageName:pkg.name,projectFolder:pkg.folder,shouldPublish:true}))};
   writeFileSync(join(root,'rush.json'),JSON.stringify(config));
   writeFileSync(join(root,'version'),'original\n');
+  for(const lang of ['en','zh']){
+    const directory=join(root,'docs/assets/changelog',lang);
+    mkdirSync(directory,{recursive:true});
+    writeFileSync(join(directory,'release.md'),'# v1.26.8\n\n- '+(lang==='en'?'Old text':'旧版本正文')+'\n');
+  }
   run('git',['add','.']);
   run('git',['commit','-m','original']);
   const sourceSha=run('git',['rev-parse','HEAD']).trim();
@@ -32,6 +37,33 @@ function fixture(t, version) {
   const type=version.includes('-alpha.')?'pre-release':'release';
   const ref='refs/heads/'+type+'/'+version;
   const context=releaseContext({GITHUB_REPOSITORY:repo,GITHUB_EVENT_NAME:'push',GITHUB_REF:ref,GITHUB_SHA:sourceSha,GITHUB_RUN_ID:'77',RELEASE_ARTIFACT_DIR:out});
+  if(context.tag==='latest'){
+    const sections={en:'# v'+version+'\n\n- Preserve SVG labels',zh:'# v'+version+'\n\n- 保留 SVG 标签'};
+    const sha256=Object.fromEntries(Object.entries(sections).map(([lang,body])=>[lang,createHash('sha256').update(body).digest('hex')]));
+    const notes={schema:1,repository:repo,version,sourceSha,sections,sha256,jobDigest:'d'.repeat(64)};
+    const addNotes=body=>{
+      const blob=run('git',['hash-object','-w','--stdin'],{input:JSON.stringify(body)}).trim();
+      const tree=run('git',['mktree'],{input:'100644 blob '+blob+'\trelease-notes.json\n'}).trim();
+      return run('git',['commit-tree',tree,'-p',sourceSha,'-m','Frozen notes']).trim();
+    };
+    const noteRef='refs/heads/bot-release-notes/'+version+'-'+sourceSha;
+    const notesRun=(command,args,options)=>{
+      if(command==='gh')return JSON.stringify(['creation','update','deletion'].map(type=>({type})));
+      return run(command,args,options);
+    };
+    run('git',['remote','add','origin',root]);
+    assert.throws(()=>applyReleaseNotes(context,out,notesRun,root,'untrusted'),/发布 App/);
+    assert.throws(()=>applyReleaseNotes(context,out,notesRun,root,'release-alpha-app[bot]'),/find remote ref/);
+    run('git',['update-ref',noteRef,addNotes({...notes,sections:{...sections,zh:'# v'+version+'\n\n- 已被改动'}})]);
+    assert.throws(()=>applyReleaseNotes(context,out,notesRun,root,'release-alpha-app[bot]'),/摘要无效/);
+    run('git',['update-ref',noteRef,addNotes(notes)]);
+    applyReleaseNotes(context,out,notesRun,root,'release-alpha-app[bot]');
+    applyReleaseNotes(context,out,notesRun,root,'release-alpha-app[bot]');
+    for(const lang of ['en','zh']){
+      const generated=readFileSync(join(root,'docs/assets/changelog',lang,'release.md'),'utf8');
+      assert.equal(generated.split('\n\n# v1.26.8')[0],sections[lang]);
+    }
+  }
   prepare(context,out,(command,args,options)=>{
     if(command!=='pnpm')return run(command,args,options);
     const pkg=expected.find(package=>join(root,package.folder)===options.cwd);
