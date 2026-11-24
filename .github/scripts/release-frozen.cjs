@@ -11,6 +11,61 @@ const stable = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 const alpha = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-alpha\.(0|[1-9]\d*)$/;
 const readJSON = file => JSON.parse(readFileSync(file, 'utf8'));
 const integrityOf = bytes => 'sha512-' + createHash('sha512').update(bytes).digest('base64');
+const sha256 = content => createHash('sha256').update(content).digest('hex');
+const digestPattern = /^[a-f0-9]{64}$/;
+const noteLanguages = ['en','zh'];
+const notePath = lang => 'docs/assets/changelog/'+lang+'/release.md';
+
+// 站点和 CI 按同一规范核对置顶版本小节，历史正文不纳入本次摘要。
+function releaseSection(markdown,version) {
+  const content=markdown.replaceAll('\r\n','\n').trimStart();
+  const end=content.slice(1).search(/^# v\d+\.\d+\.\d+/m);
+  const section=(end<0?content:content.slice(0,end+1)).trimEnd();
+  if(!section.startsWith('# v'+version+'\n')||!/^[-*] /m.test(section)||/\bTODO\b/i.test(section))
+    throw new Error('发布日志缺少目标版本或有效正文');
+  return section;
+}
+
+// 仅读受保护引用的单个 JSON 文件，不检出或执行该引用中的内容。
+function applyReleaseNotes(context,out,run,root,actor) {
+  const {sourceSha,version,tag}=context;
+  if(tag!=='latest'||actor!=='release-alpha-app[bot]'||run('git',['rev-parse','HEAD']).trim()!==sourceSha)
+    throw new Error('发布日志来源或发布 App 不符');
+  const branch='bot-release-notes/'+version+'-'+sourceSha;
+  const rules=JSON.parse(run('gh',['api','repos/'+repository+'/rules/branches/'+encodeURIComponent(branch)]));
+  if(!Array.isArray(rules)||!['creation','update','deletion'].every(type=>rules.some(rule=>rule.type===type)))
+    throw new Error('双语日志引用缺少保护规则');
+  run('git',['fetch','--no-tags','--depth=1','origin','refs/heads/'+branch]);
+  const notesCommit=run('git',['rev-parse','FETCH_HEAD']).trim();
+  const parents=run('git',['cat-file','-p',notesCommit]).split('\n\n',1)[0].split('\n').filter(line=>line.startsWith('parent '));
+  const tree=run('git',['ls-tree',notesCommit]).trim();
+  if(parents.length!==1||parents[0]!=='parent '+sourceSha||!/^100644 blob [a-f0-9]{40}\trelease-notes\.json$/.test(tree))
+    throw new Error('双语日志引用与冻结源提交不符');
+  const notes=JSON.parse(run('git',['show',notesCommit+':release-notes.json'],{maxBuffer:256*1024}));
+  const {jobDigest,sha256:digests,sections}=notes;
+  if(notes.schema!==1||notes.repository!==repository||notes.sourceSha!==sourceSha||notes.version!==version||
+    !digestPattern.test(jobDigest??'')||!noteLanguages.every(lang=>typeof sections?.[lang]==='string'&&
+      Buffer.byteLength(sections[lang])<=65536&&releaseSection(sections[lang],version)===sections[lang]&&
+      sha256(sections[lang])===digests?.[lang]))throw new Error('冻结双语日志或摘要无效');
+  for(const lang of noteLanguages){
+    const file=join(root,notePath(lang));
+    let history=readFileSync(file,'utf8');
+    if(history.replaceAll('\r\n','\n').startsWith('# v'+version+'\n')){
+      const next=history.slice(1).search(/^# v\d+\.\d+\.\d+/m);
+      history=next<0?'':history.slice(next+1);
+    }
+    writeFileSync(file,sections[lang]+'\n'+(history?'\n'+history:''));
+  }
+  mkdirSync(out,{recursive:true,mode:0o700});
+  writeFileSync(join(out,'release-notes-proof.json'),JSON.stringify({jobDigest,sha256:digests}),{mode:0o600});
+}
+
+// 从工作区或 bundle 的冻结提交回读两份小节，再允许写 npm 或收尾。
+function verifyNotes(changelog,version,read) {
+  if(!digestPattern.test(changelog?.jobDigest??'')||!noteLanguages.every(lang=>
+    digestPattern.test(changelog.sha256?.[lang]??'')&&sha256(releaseSection(read(notePath(lang)),version))===changelog.sha256[lang]))
+    throw new Error('发版提交与冻结双语日志不符');
+}
 
 // 只接受运行所在的正式版或 Alpha 分支，从 GitHub 上下文取原 SHA 和 run。
 function releaseContext(env) {
@@ -43,6 +98,8 @@ function packageEvidence(out, pkg, version, run) {
 function prepare(context, out, run, root) {
   const {sourceSha,version,tag}=context;
   if (run('git',['rev-parse','HEAD']).trim()!==sourceSha)throw new Error('准备提交的父提交不符');
+  const changelog=tag==='latest'&&readJSON(join(out,'release-notes-proof.json'));
+  if(changelog)verifyNotes(changelog,version,path=>readFileSync(join(root,path),'utf8'));
   const projects=readJSON(join(root,'rush.json')).projects.filter(pkg=>pkg.shouldPublish)
     .map(pkg=>({name:pkg.packageName,folder:pkg.projectFolder})).sort((a,b)=>a.name.localeCompare(b.name));
   if (JSON.stringify(projects)!==JSON.stringify(expected))throw new Error('Rush 发布包全集不符');
@@ -56,7 +113,7 @@ function prepare(context, out, run, root) {
     return packageEvidence(out,pkg,version,run);
   });
   run('git',['bundle','create',join(out,'prepared.bundle'),'HEAD','^'+sourceSha]);
-  writeFileSync(join(out,'manifest.json'),JSON.stringify({...context,releaseSha,packages})+'\n',{mode:0o600});
+  writeFileSync(join(out,'manifest.json'),JSON.stringify({...context,releaseSha,packages,...(changelog&&{changelog})})+'\n',{mode:0o600});
 }
 
 // 重跑只读取首次准备产物，完整比对所有包和发版提交。
@@ -73,6 +130,8 @@ function verify(context, out, run) {
   if(run('git',['rev-parse','FETCH_HEAD']).trim()!==manifest.releaseSha||
     run('git',['rev-list','--parents','-n','1',manifest.releaseSha]).trim()!==manifest.releaseSha+' '+context.sourceSha)
     throw new Error('原发版提交来源不符');
+  if(context.tag==='latest')verifyNotes(manifest.changelog,context.version,
+    path=>run('git',['show',manifest.releaseSha+':'+path]));
   return manifest;
 }
 
@@ -232,6 +291,10 @@ async function verifyRecovery(env,fetchAPI) {
 async function main({phase=process.argv[2],env=process.env,root=process.cwd(),execute=execFileSync,fetchAPI=fetch}={}){
   const context=releaseContext(env),out=env.RELEASE_ARTIFACT_DIR;
   const run=(command,args,options={})=>execute(command,args,{cwd:root,encoding:'utf8',stdio:'pipe',...options});
+  if(phase==='notes'){
+    if(env.GITHUB_RUN_ATTEMPT!=='1')throw new Error('恢复 attempt 不重新生成日志');
+    return applyReleaseNotes(context,out,run,root,env.GITHUB_ACTOR);
+  }
   if(phase==='prepare'){
     if(env.GITHUB_RUN_ATTEMPT!=='1')throw new Error('首次准备产物不能重建');
     return prepare(context,out,run,root);
@@ -243,5 +306,5 @@ async function main({phase=process.argv[2],env=process.env,root=process.cwd(),ex
   return finalize(manifest,run);
 }
 
-module.exports={releaseContext,prepare,verify,publishPackages,finalize,verifyRecovery};
+module.exports={releaseContext,applyReleaseNotes,prepare,verify,publishPackages,finalize,verifyRecovery};
 if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1;});
