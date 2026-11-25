@@ -1,3 +1,31 @@
+# v1.26.9
+
+2026-11-20
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: `frozenColumnLine.shadow.visible` 支持 `overflow` 模式，仅在冻结列边界外有被遮挡的表体内容时显示阴影。
+- **@visactor/vtable**: 支持通过 `select.autoMergeRanges` 自动合并表体主区域内能拼成完整矩形的多个选区。
+
+**🐛 问题修复**
+
+- **@visactor/vtable**: 支持按索引查找并叠加自定义样式。
+- **@visactor/vtable**: 将表体单元格的创建位置与冻结行的坐标原点对齐，使虚拟滚动、单元格坐标和命中检测保持一致。
+- **@visactor/vtable**: 将菜单标签渲染为纯文本，原样显示 HTML 标签和实体。过滤 SVG 图标中的不安全内容，并忽略非 HTTP(S) 的图片 URL。左右两侧空间都不足时，将较宽的子菜单保持在表格边界内，确保菜单项仍可点击。
+- **@visactor/vtable**: 扩大填充柄的指针命中区域。
+- **@visactor/vtable**: 修复重复提交同一选区时新选框被误删、旧选框与填充柄残留的问题。
+- **@visactor/vtable**: `getCellAddressByHeaderPaths` 匹配到树形行表头路径时返回实际的列索引，正确处理扩展行（`extensionRows`）和左侧行序号列的偏移，并保留表体单元格地址。
+- **@visactor/vtable**: 销毁表格时释放冻结列的观察器。
+
+**🔨 维护与杂项**
+
+- **@visactor/vtable**: 新增测试，验证清除筛选后仍保留 `addRecords` 新增的记录。
+- **@visactor/vtable**: 新增测试，验证清除筛选后仍保留 `updateRecords` 对记录的修改。
+
+**完整更新日志**: https://github.com/VisActor/VTable/compare/v1.26.8...v1.26.9
+
+[更多详情请查看 v1.26.9](https://github.com/VisActor/VTable/releases/tag/v1.26.9)
+
 # v1.26.8
 
 2026-09-11
