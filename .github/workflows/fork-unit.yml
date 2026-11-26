@@ -111,11 +111,14 @@ jobs:
           SH
           chmod +x "$RUNNER_TEMP/fork-test"
       - name: Install dependencies
+        id: install
         run: |
           "$RUNNER_TEMP/fork-test" bridge 'mkdir -p "$HOME"; node common/scripts/install-run-rush.js install --bypass-policy; cd packages/vtable; ./node_modules/.bin/playwright install firefox'
       - name: Test
         run: |
           "$RUNNER_TEMP/fork-test" none 'JEST_ELECTRON_NO_SANDBOX=1 xvfb-run -a node common/scripts/install-run-rush.js test -t @visactor/vtable-search'
       - name: Test Firefox paste
+        # 两项套件独立；安装成功后分别记录结果，任一失败仍使整个 job 失败。
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
           "$RUNNER_TEMP/fork-test" none 'cd packages/vtable && node ../../common/scripts/install-run-rushx.js test:firefox'
