@@ -60,7 +60,7 @@ jobs:
               and e['HEAD_REPOSITORY'] != e['REPOSITORY'] and e.get('FORK_SINCE')
               and e['HEAD_REPOSITORY_ID'] != e['BASE_REPOSITORY_ID']
               and re.fullmatch(r'[1-9][0-9]*', e['HEAD_REPOSITORY_ID'])
-              and (not e.get('FORK_SOURCE_ID') or e['HEAD_REPOSITORY_ID'] == e['FORK_SOURCE_ID'])):
+              and (e.get('FORK_SOURCE_ID') == 'all' or e['HEAD_REPOSITORY_ID'] == e.get('FORK_SOURCE_ID'))):
               since = e['FORK_SINCE']
               if not re.fullmatch(r'[1-9][0-9]{0,15}', since) or int(since) > 8640000000000000:
                   raise SystemExit('Invalid VISACTOR_WORKFLOW_FORK_SINCE')

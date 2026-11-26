@@ -63,6 +63,8 @@ test('外部灰度仅交接指定源仓、目标和起点以后的 PR', () => {
   const fork = { HEAD_REPOSITORY: 'contributor/VTable', BASE_REPOSITORY_ID: '649609017',
     HEAD_REPOSITORY_ID: '42', FORK_SOURCE_ID: '42', FORK_SINCE: cutoff };
   for (const [change, expected] of [[{},true], [{FORK_SINCE:''},false], [{FORK_SOURCE_ID:'99'},false],
+    [{FORK_SOURCE_ID:''},false], [{FORK_SOURCE_ID:'',HEAD_REPOSITORY_ID:'43'},false],
+    [{FORK_SOURCE_ID:'*'},false], [{FORK_SOURCE_ID:'all'},true],
     [{BASE_REF:'main'},false], [{BASE_REPOSITORY_ID:'123'},false], [{CREATED_AT:'2026-10-29T08:00:00Z'},false]]) {
     const result = runGate({...fork, ...change});
     assert.equal(result.status, 0, result.stderr);
