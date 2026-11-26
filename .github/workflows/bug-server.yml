@@ -28,8 +28,11 @@ jobs:
           BASE_REPOSITORY_ID: ${{ github.event.pull_request.base.repo.id }}
           CREATED_AT: ${{ github.event.pull_request.created_at }}
           REPOSITORY: ${{ github.repository }}
-          FORK_SINCE: ${{ vars.VISACTOR_WORKFLOW_FORK_SINCE }}
-          FORK_SOURCE_ID: ${{ vars.VISACTOR_WORKFLOW_FORK_SOURCE_ID }}
+          # Fork PRs cannot read upstream Actions variables. These public rollout settings
+          # route legacy Photo only. The controller and Photo service both check admission.
+          # To disable fork handoff, set both values to ''. Scope changes go through develop.
+          FORK_SINCE: '1795684793000'
+          FORK_SOURCE_ID: '895418694'
           INTERNAL_SINCE: ${{ vars.VISACTOR_WORKFLOW_INTERNAL_SINCE }}
         run: |
           shopt -u nocasematch
