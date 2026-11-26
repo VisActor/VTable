@@ -72,6 +72,21 @@ test('外部灰度仅交接指定源仓、目标和起点以后的 PR', () => {
   }
 });
 
+test('外部 PR 在上游 Actions 变量不可见时仍使用工作流声明的公开范围', () => {
+  // 读取实际 YAML 绑定，避免仅给测试进程注入线上拿不到的变量。
+  const sourceId = /^          FORK_SOURCE_ID: '(|all|[1-9][0-9]*)'$/m.exec(gate)?.[1];
+  const since = /^          FORK_SINCE: '(|[1-9][0-9]{0,15})'$/m.exec(gate)?.[1];
+  assert.notEqual(sourceId, undefined);
+  assert.notEqual(since, undefined);
+  assert.equal(Boolean(sourceId), Boolean(since));
+  const fork = { HEAD_REPOSITORY:'contributor/VTable', BASE_REPOSITORY_ID:'649609017',
+    HEAD_REPOSITORY_ID:sourceId === 'all' || !sourceId ? '42' : sourceId,
+    FORK_SINCE:since, FORK_SOURCE_ID:sourceId, CREATED_AT:new Date(Number(since) + 1000).toISOString().replace(/\.\d{3}Z$/, 'Z') };
+  const result = runGate(fork);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.output, `skip=${Boolean(sourceId)}\n`);
+});
+
 test('受信派发先核对 PR 源仓、打开状态、工作流 SHA 和候选 SHA', () => {
   const yaml = fs.readFileSync(path.join(__dirname, '../workflows/fork-unit.yml'), 'utf8');
   const verify = /      - name: Verify frozen pull request[\s\S]*?        run: \|\n([\s\S]*?)\n      - name: Checkout/.exec(yaml)[1].replace(/^          /gm, '');
