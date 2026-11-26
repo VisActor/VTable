@@ -99,8 +99,13 @@ jobs:
           marker=$(cat /proc/sys/kernel/random/uuid)
           echo "::stop-commands::$marker"
           trap 'echo "::$marker::"' EXIT
+          network=(--network "$1")
+          # 托管 runner 的默认 DNS 可能位于被隔离的私网。仅下载阶段使用公共解析器。
+          if [[ "$1" == bridge ]]; then
+            network+=(--dns 1.1.1.1 --dns 8.8.8.8)
+          fi
           # Xvfb 不向 PID 1 发就绪信号。用 init 启动 xvfb-run 并回收子进程。
-          docker run --rm --init --network "$1" --cap-drop ALL --security-opt no-new-privileges \
+          docker run --rm --init "${network[@]}" --cap-drop ALL --security-opt no-new-privileges \
             --memory 6g --pids-limit 768 --shm-size 512m -v fork-source:/work \
             -e HOME=/work/.ci-home -e CI=true fork-tests bash -ec "$2"
           SH
