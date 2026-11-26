@@ -58,3 +58,29 @@ test('已配置内部交接却元数据或起点非法时停止旧构建，避�
     {CREATED_AT:'2026-10-29T08:00:01+00:00'},
   ]) { const result=runGate({INTERNAL_SINCE:cutoff,...env}); assert.notEqual(result.status,0); assert.equal(result.output,''); }
 });
+
+test('外部灰度仅交接指定源仓、目标和起点以后的 PR', () => {
+  const fork = { HEAD_REPOSITORY: 'contributor/VTable', BASE_REPOSITORY_ID: '649609017',
+    HEAD_REPOSITORY_ID: '42', FORK_SOURCE_ID: '42', FORK_SINCE: cutoff };
+  for (const [change, expected] of [[{},true], [{FORK_SINCE:''},false], [{FORK_SOURCE_ID:'99'},false],
+    [{BASE_REF:'main'},false], [{BASE_REPOSITORY_ID:'123'},false], [{CREATED_AT:'2026-10-29T08:00:00Z'},false]]) {
+    const result = runGate({...fork, ...change});
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.output, `skip=${expected}\n`);
+  }
+});
+
+test('受信派发先核对 PR 源仓、打开状态、工作流 SHA 和候选 SHA', () => {
+  const yaml = fs.readFileSync(path.join(__dirname, '../workflows/fork-unit.yml'), 'utf8');
+  const verify = /      - name: Verify frozen pull request[\s\S]*?        run: \|\n([\s\S]*?)\n      - name: Checkout/.exec(yaml)[1].replace(/^          /gm, '');
+  const head = 'a'.repeat(40), base = 'b'.repeat(40);
+  const row = { state: 'open', draft: false, base: { repo: { id: 649609017 }, ref: 'develop', sha: base },
+    head: { repo: { fork: true, id: 42 }, sha: head } };
+  const env = { PATH: process.env.PATH, REQUEST: '42ac59f4-d228-4d63-a793-385e1002414e', PR:'27',
+    SOURCE:'42', HEAD_SHA:head, BASE_SHA:base, GITHUB_SHA:base };
+  for (const [input, overrides, ok] of [[row,{},true], [row,{SOURCE:'43'},false], [row,{GITHUB_SHA:head},false],
+    [{...row,draft:true},{},false], [{...row,state:'closed'},{},false], [row,{HEAD_SHA:base},false]]) {
+    const result = spawnSync('bash', ['-e', '-c', 'gh() { cat; }\n' + verify], { env:{...env,...overrides}, input:JSON.stringify(input) });
+    assert.equal(result.status === 0, ok, String(result.stderr));
+  }
+});
