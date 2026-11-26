@@ -1,0 +1,107 @@
+name: Fork unit tests
+run-name: fork-unit/${{ inputs.request }}/${{ inputs.pr }}/${{ inputs.head }}/${{ inputs.base }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      request:
+        description: Controller request UUID
+        type: string
+        required: true
+      pr:
+        description: Upstream PR number
+        type: string
+        required: true
+      source:
+        description: Fork repository ID
+        type: string
+        required: true
+      head:
+        description: Frozen PR head SHA
+        type: string
+        required: true
+      base:
+        description: Frozen develop SHA
+        type: string
+        required: true
+
+concurrency:
+  group: vtable-fork-unit-${{ inputs.pr }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  unit:
+    if: github.repository_id == '649609017' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Verify frozen pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUEST: ${{ inputs.request }}
+          PR: ${{ inputs.pr }}
+          SOURCE: ${{ inputs.source }}
+          HEAD_SHA: ${{ inputs.head }}
+          BASE_SHA: ${{ inputs.base }}
+        run: |
+          [[ "$REQUEST" =~ ^[0-9a-f-]{36}$ && "$PR" =~ ^[1-9][0-9]*$ && "$SOURCE" =~ ^[1-9][0-9]*$ ]]
+          [[ "$HEAD_SHA" =~ ^[a-f0-9]{40}$ && "$BASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$GITHUB_SHA" = "$BASE_SHA"
+          set -o pipefail
+          gh api "repos/VisActor/VTable/pulls/$PR" | jq -e \
+            --arg source "$SOURCE" --arg head "$HEAD_SHA" --arg base "$BASE_SHA" \
+            '.state == "open" and .draft == false and .base.repo.id == 649609017 and
+             .head.repo.fork == true and .head.repo.id != .base.repo.id and
+             (.head.repo.id | tostring) == $source and .base.ref == "develop" and
+             .head.sha == $head and .base.sha == $base' >/dev/null
+      - name: Checkout frozen source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.head }}
+          persist-credentials: false
+      - name: Prepare isolated test environment
+        env:
+          HEAD_SHA: ${{ inputs.head }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          # 只把冻结源码导入本次 runner 的专用卷。容器无法读取宿主 checkout、runner 环境或 Docker socket。
+          docker volume create fork-source
+          set -o pipefail
+          git archive "$HEAD_SHA" | docker run --rm -i -v fork-source:/work node:22.22.2-bookworm \
+            sh -ec 'tar -x -C /work && chown -R node:node /work'
+          docker build -t fork-tests - <<'DOCKER'
+          FROM node:22.22.2-bookworm
+          RUN npx -y playwright@1.63.0 install-deps firefox chromium && apt-get update && apt-get install -y --no-install-recommends xvfb xauth libgtk2.0-0
+          USER node
+          WORKDIR /work
+          DOCKER
+          # 下载阶段使用公开网络；拒绝到宿主、私网及平台元数据的连接。
+          sudo iptables -I INPUT -i docker0 -j DROP
+          for cidr in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16; do
+            sudo iptables -I DOCKER-USER -i docker0 -d "$cidr" -j DROP
+          done
+          cat > "$RUNNER_TEMP/fork-test" <<'SH'
+          #!/bin/bash
+          set -eu
+          # 输出只作日志；不向 Actions 解释候选程序发出的工作流命令。
+          marker=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$marker"
+          trap 'echo "::$marker::"' EXIT
+          docker run --rm --network "$1" --cap-drop ALL --security-opt no-new-privileges \
+            --memory 6g --pids-limit 768 --shm-size 512m -v fork-source:/work \
+            -e HOME=/work/.ci-home -e CI=true fork-tests bash -ec "$2"
+          SH
+          chmod +x "$RUNNER_TEMP/fork-test"
+      - name: Install dependencies
+        run: |
+          "$RUNNER_TEMP/fork-test" bridge 'mkdir -p "$HOME"; node common/scripts/install-run-rush.js install --bypass-policy; cd packages/vtable; ./node_modules/.bin/playwright install firefox'
+      - name: Test
+        run: |
+          "$RUNNER_TEMP/fork-test" none 'JEST_ELECTRON_NO_SANDBOX=1 xvfb-run -a node common/scripts/install-run-rush.js test -t @visactor/vtable-search'
+      - name: Test Firefox paste
+        run: |
+          "$RUNNER_TEMP/fork-test" none 'cd packages/vtable && node ../../common/scripts/install-run-rushx.js test:firefox'
