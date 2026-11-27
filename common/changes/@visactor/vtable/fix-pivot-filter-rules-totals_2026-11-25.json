@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix(vtable): pivot totals no longer add up again after updateFilterRules without resetting the tree",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "250061131+mennafathy2@users.noreply.github.com"
+}

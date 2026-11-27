@@ -1219,14 +1219,9 @@ export class Dataset {
     if (isResetTree) {
       return this.setRecords(this.records);
     }
-    for (const treeRowKey in this.tree) {
-      for (const treeColKey in this.tree[treeRowKey]) {
-        for (let i = 0; i < this.tree[treeRowKey][treeColKey].length; i++) {
-          this.tree[treeRowKey][treeColKey][i]?.reset();
-        }
-      }
-    }
-
+    // 重新构建tree，避免totalStatistics把上次生成的小计、总计单元格再次累加到总计中
+    this.tree = {};
+    this.totalRecordsTree = {};
     this.collectedValues = {};
     this.processRecords();
     this.processCollectedValuesWithSumBy();
