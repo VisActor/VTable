@@ -1,7 +1,10 @@
 name: Fork unit tests
-run-name: fork-unit/${{ inputs.request }}/${{ inputs.pr }}/${{ inputs.head }}/${{ inputs.base }}
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('fork-unit/{0}/{1}/{2}/{3}', inputs.request, inputs.pr, inputs.head, inputs.base) || format('Fork runner CI for PR {0}', github.event.pull_request.number) }}
 
 on:
+  pull_request:
+    branches: [develop]
+    paths: ['.github/workflows/fork-unit.yml']
   workflow_dispatch:
     inputs:
       request:
@@ -26,7 +29,7 @@ on:
         required: true
 
 concurrency:
-  group: vtable-fork-unit-${{ inputs.pr }}
+  group: vtable-fork-unit-${{ inputs.pr || format('runner-ci-{0}', github.event.pull_request.number) }}
   cancel-in-progress: true
 
 permissions:
@@ -35,11 +38,16 @@ permissions:
 
 jobs:
   unit:
-    if: github.repository_id == '649609017' && github.ref == 'refs/heads/develop'
+    # 同仓修改此工作流时自测真实容器；外部 PR 继续由上游 develop 单独派发。
+    if: >-
+      github.repository_id == '649609017' &&
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop') ||
+       (github.event_name == 'pull_request' && github.event.pull_request.head.repo.id == github.event.pull_request.base.repo.id))
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - name: Verify frozen pull request
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
           REQUEST: ${{ inputs.request }}
@@ -61,11 +69,11 @@ jobs:
       - name: Checkout frozen source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ inputs.head }}
+          ref: ${{ inputs.head || github.event.pull_request.head.sha }}
           persist-credentials: false
       - name: Prepare isolated test environment
         env:
-          HEAD_SHA: ${{ inputs.head }}
+          HEAD_SHA: ${{ inputs.head || github.event.pull_request.head.sha }}
         run: |
           test "$(git rev-parse HEAD)" = "$HEAD_SHA"
           # 只把冻结源码导入本次 runner 的专用卷。容器无法读取宿主 checkout、runner 环境或 Docker socket。
@@ -91,17 +99,26 @@ jobs:
           marker=$(cat /proc/sys/kernel/random/uuid)
           echo "::stop-commands::$marker"
           trap 'echo "::$marker::"' EXIT
-          docker run --rm --network "$1" --cap-drop ALL --security-opt no-new-privileges \
+          network=(--network "$1")
+          # 托管 runner 的默认 DNS 可能位于被隔离的私网。仅下载阶段使用公共解析器。
+          if [[ "$1" == bridge ]]; then
+            network+=(--dns 1.1.1.1 --dns 8.8.8.8)
+          fi
+          # Xvfb 不向 PID 1 发就绪信号。用 init 启动 xvfb-run 并回收子进程。
+          docker run --rm --init "${network[@]}" --cap-drop ALL --security-opt no-new-privileges \
             --memory 6g --pids-limit 768 --shm-size 512m -v fork-source:/work \
             -e HOME=/work/.ci-home -e CI=true fork-tests bash -ec "$2"
           SH
           chmod +x "$RUNNER_TEMP/fork-test"
       - name: Install dependencies
+        id: install
         run: |
           "$RUNNER_TEMP/fork-test" bridge 'mkdir -p "$HOME"; node common/scripts/install-run-rush.js install --bypass-policy; cd packages/vtable; ./node_modules/.bin/playwright install firefox'
       - name: Test
         run: |
           "$RUNNER_TEMP/fork-test" none 'JEST_ELECTRON_NO_SANDBOX=1 xvfb-run -a node common/scripts/install-run-rush.js test -t @visactor/vtable-search'
       - name: Test Firefox paste
+        # 两项套件独立；安装成功后分别记录结果，任一失败仍使整个 job 失败。
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
           "$RUNNER_TEMP/fork-test" none 'cd packages/vtable && node ../../common/scripts/install-run-rushx.js test:firefox'
