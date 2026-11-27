@@ -98,6 +98,7 @@ test('受信派发先核对 PR 源仓、打开状态、工作流 SHA 和候选 S
   for (const [input, overrides, ok] of [[row,{},true], [row,{SOURCE:'43'},false], [row,{GITHUB_SHA:head},false],
     [{...row,draft:true},{},false], [{...row,state:'closed'},{},false], [row,{HEAD_SHA:base},false],
     [{...row,head:{...row.head,repo:{fork:false,id:42}}},{},false],
+    [{...row,base:{...row.base,sha:head}},{},false],
     [{...row,base:{...row.base,ref:'main'}},{},false]]) {
     const result = spawnSync('bash', ['-e', '-c', 'gh() { cat; }\n' + verify], { env:{...env,...overrides}, input:JSON.stringify(input) });
     assert.equal(result.status === 0, ok, String(result.stderr));
