@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(vtable): preserve fractional animated scroll targets and cancel column correction when the table is released",
+      "type": "patch",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "mikewushuwen@outlook.com"
+}
