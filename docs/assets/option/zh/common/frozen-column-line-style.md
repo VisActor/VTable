@@ -23,3 +23,15 @@
 - always: 总是显示
 - scrolling: 滚动时显示
 - overflow: 仅在冻结边界外有被遮挡的表格主体内容时显示。左侧阴影在滚离起点后显示，右侧阴影在右边仍有内容时显示；停止滚动后保持，滚到对应边缘立即隐藏。没有冻结列或主体没有水平溢出时不显示。
+
+###${prefix} skipMergedCells(boolean)
+
+是否跳过跨越冻结列边界的合并单元格，默认 `false`。
+
+开启后，每个跨冻结边界的合并单元格所在区间不绘制阴影，区间结束后恢复绘制。支持多段截断、左右冻结列，以及顶部、滚动区和底部冻结区的合并单元格。完全位于边界同一侧的合并单元格保持原有阴影。阴影宽度、颜色和显示时机不变。
+
+```js
+theme: VTable.themes.DEFAULT.extends({
+  frozenColumnLine: { shadow: { skipMergedCells: true } }
+})
+```

@@ -1,6 +1,6 @@
 import { theme } from './../../themes';
 import type { ILine, IRect, IGroup, FederatedPointerEvent, Text, IText } from '@src/vrender';
-import { createRect, createLine, createText, createGroup, createSymbol } from '@src/vrender';
+import { createRect, createLine, createText, createGroup, createSymbol, CustomPath2D } from '@src/vrender';
 import { ScrollBar } from '@src/vrender';
 import type { Group } from '../graphic/group';
 import { MenuHandler } from './menu';
@@ -9,6 +9,7 @@ import { CellMover } from './cell-mover';
 import { getBodyHorizontalScrollRange, getColX, getRowY } from './util';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import { isValid } from '@visactor/vutils';
+import { getFrozenShadowSegments } from './frozen-shadow';
 
 /**
  * @description: 表格内容外组件
@@ -228,6 +229,8 @@ export class TableComponent {
         ]
       }
     });
+
+    this.updateFrozenShadowPaths();
 
     // TO BE DONE 冻结列border(theme.frozenColumnLine?.border)
 
@@ -782,11 +785,35 @@ export class TableComponent {
     this.cellMover.update(backX, lineX, backY, lineY);
   }
 
-  /**
-   * @description: 显示冻结列shadow
-   * @param {number} col
-   * @return {*}
-   */
+  /** Use the original rectangle renderer unless merged-cell clipping is enabled. */
+  private updateFrozenShadowPaths() {
+    const skipMergedCells = this.table.theme.frozenColumnLine?.shadow?.skipMergedCells;
+    // Resolve at draw time so scrolling, resizing and merge updates stay in sync.
+    this.frozenShadowLine.pathProxy = skipMergedCells
+      ? () => this.createFrozenShadowPath(this.frozenShadowLine, this.table.frozenColCount - 1)
+      : undefined;
+    this.rightFrozenShadowLine.pathProxy = skipMergedCells
+      ? () =>
+          this.createFrozenShadowPath(
+            this.rightFrozenShadowLine,
+            this.table.colCount - this.table.rightFrozenColCount - 1
+          )
+      : undefined;
+  }
+
+  /** Draw the vertical intervals that do not intersect a cross-boundary merged cell. */
+  private createFrozenShadowPath(shadow: IRect, boundaryCol: number): CustomPath2D {
+    const path = new CustomPath2D();
+    const width = shadow.attribute.width ?? 0;
+    const height = shadow.attribute.height ?? 0;
+    const segments = getFrozenShadowSegments(this.table, boundaryCol, height);
+    for (const segment of segments) {
+      path.rect(0, segment.start, width, segment.end - segment.start);
+    }
+    return path;
+  }
+
+  /** 显示冻结列阴影。 */
   setFrozenColumnShadow(col: number, isRightFrozen?: boolean) {
     const colX =
       !isRightFrozen && col === this.table.frozenColCount - 1 && (this.table.getFrozenColsOffset?.() ?? 0) > 0
@@ -1135,6 +1162,7 @@ export class TableComponent {
       }
     });
 
+    this.updateFrozenShadowPaths();
     this.cellMover.updateStyle();
     // this.menu.updateStyle();
     // this.drillIcon.updateStyle();
