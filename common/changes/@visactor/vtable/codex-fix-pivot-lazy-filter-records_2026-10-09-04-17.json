@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix(vtable): preserve lazily loaded pivot records when updating filters",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "111864431+dvd233@users.noreply.github.com"
+}
