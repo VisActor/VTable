@@ -68,6 +68,10 @@ export const menus = [
       },
       {
         path: 'debug',
+        name: 'issue-5308-scroll-performance'
+      },
+      {
+        path: 'debug',
         name: 'issue-5277-frozen-row-border'
       },
       {

@@ -32,10 +32,9 @@ export function createSwitchCellGroup(
   cellValue?: any
 ) {
   const value = arguments.length >= 19 ? cellValue : table.getCellValue(col, row);
+  const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
   // cell
   if (!cellGroup) {
-    const strokeArrayWidth = getCellBorderStrokeWidth(col, row, cellTheme, table);
-
     if (isAsync) {
       cellGroup = table.scenegraph.highPerformanceGetCell(col, row, true);
       if (cellGroup && cellGroup.role === 'cell') {
@@ -81,6 +80,23 @@ export function createSwitchCellGroup(
       cellGroup.row = row;
       cellGroup = columnGroup?.addCellGroup(cellGroup) ?? cellGroup;
     }
+  } else {
+    cellGroup.setAttributes({
+      x: xOrigin,
+      y: yOrigin,
+      width,
+      height,
+      lineWidth: cellTheme?.group?.lineWidth ?? undefined,
+      fill: cellTheme?.group?.fill ?? undefined,
+      stroke: cellTheme?.group?.stroke ?? undefined,
+      strokeArrayWidth,
+      strokeArrayColor: (cellTheme?.group as any)?.strokeArrayColor ?? undefined,
+      cursor: (cellTheme?.group as any)?.cursor ?? undefined,
+      lineDash: cellTheme?.group?.lineDash ?? undefined,
+      lineCap: 'butt',
+      clip: true,
+      cornerRadius: cellTheme.group.cornerRadius
+    } as any);
   }
 
   let icons;
@@ -132,6 +148,7 @@ export function createSwitchCellGroup(
     });
   }
 
+  const oldSwitchComponent = cellGroup.getChildByName('switch') as Switch;
   const switchComponent = createSwitch(
     col,
     row,
@@ -142,13 +159,16 @@ export function createSwitchCellGroup(
     cellTheme,
     define,
     table,
-    value
+    value,
+    oldSwitchComponent
   );
-  if (switchComponent) {
+  if (switchComponent && switchComponent !== oldSwitchComponent) {
     cellGroup.appendChild(switchComponent);
   }
 
-  switchComponent.render();
+  if (!oldSwitchComponent) {
+    switchComponent.render();
+  }
 
   width -= padding[1] + padding[3] + iconWidth;
   height -= padding[0] + padding[2];
@@ -184,7 +204,8 @@ function createSwitch(
   cellTheme: IThemeSpec,
   define: SwitchColumnDefine,
   table: BaseTableAPI,
-  cellValue: any
+  cellValue: any,
+  switchComponent?: Switch
 ) {
   const style = table._getCellStyle(col, row) as SwitchStyle;
 
@@ -304,7 +325,11 @@ function createSwitch(
   disableCheckedFill && (switchAttributes.box.disableCheckedFill = disableCheckedFill);
   circleFill && (switchAttributes.circle.fill = circleFill);
 
-  const switchComponent = new Switch(switchAttributes);
+  if (switchComponent) {
+    switchComponent.initAttributes(switchAttributes);
+  } else {
+    switchComponent = new Switch(switchAttributes);
+  }
   switchComponent.name = 'switch';
   return switchComponent;
 }
