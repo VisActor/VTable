@@ -1309,7 +1309,18 @@ export function bindGesture(eventManager: EventManager) {
   });
 }
 export function endResizeCol(table: BaseTableAPI) {
+  // 非实时模式下，拖拽过程中 container-dom 发出的 RESIZE_COLUMN 携带的是旧列宽，
+  // 真正的列宽在 endResizeCol() -> commitPendingColumnResize() 时才提交。
+  const isNonRealtime = table.internalProps.resizeRealtime === false;
   table.stateManager.endResizeCol();
+  // 提交后补发一次 RESIZE_COLUMN，让依赖过程事件做布局同步的调用方（如甘特图任务列表宽度同步、
+  // list-tree-stick 插件）拿到最终列宽，避免最终尺寸正确却未同步。实时模式在拖拽过程中已持续发出，无需补发。
+  if (isNonRealtime && (table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN)) {
+    table.fireListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN, {
+      col: table.stateManager.columnResize.col,
+      colWidth: table.getColWidth(table.stateManager.columnResize.col)
+    });
+  }
   // textStick 依赖了这个事件 所以一定要触发RESIZE_COLUMN_END
   // if ((table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_COLUMN_END)) {
   // RESIZE_COLUMN_END事件触发，返回所有列宽
@@ -1326,7 +1337,16 @@ export function endResizeCol(table: BaseTableAPI) {
 }
 
 export function endResizeRow(table: BaseTableAPI) {
+  // 非实时模式下，拖拽过程中发出的 RESIZE_ROW 携带的是旧行高，真正的行高在提交时才确定。
+  const isNonRealtime = table.internalProps.resizeRealtime === false;
   table.stateManager.endResizeRow();
+  // 提交后补发一次 RESIZE_ROW，让依赖过程事件的调用方拿到最终行高。实时模式无需补发。
+  if (isNonRealtime && (table as any).hasListeners(TABLE_EVENT_TYPE.RESIZE_ROW)) {
+    table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW, {
+      row: table.stateManager.rowResize.row,
+      rowHeight: table.getRowHeight(table.stateManager.rowResize.row)
+    });
+  }
 
   table.fireListeners(TABLE_EVENT_TYPE.RESIZE_ROW_END, {
     row: table.stateManager.rowResize.row,

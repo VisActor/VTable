@@ -8,33 +8,71 @@ import type { StateManager } from '../state';
 export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManager) {
   xInTable = Math.ceil(xInTable);
   yInTable = Math.ceil(yInTable);
-  let detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
+  const detaX = state.columnResize.isRightFrozen ? state.columnResize.x - xInTable : xInTable - state.columnResize.x;
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaX) < 1) {
     return;
   }
 
+  // 非实时响应模式：仅累积偏移量并移动指示线，实际列宽在拖拽结束时统一应用
+  if (state.table.internalProps.resizeRealtime === false) {
+    state.columnResize.pendingDeltaX = (state.columnResize.pendingDeltaX ?? 0) + detaX;
+    state.columnResize.x = xInTable;
+    // 预览指示线/标签复用提交时相同的有效位移计算（dry run），
+    // 避免越过 min/max 或 adaptive 相邻列约束时预览显示未约束的尺寸、与最终列宽不一致。
+    const previewDeltaX = applyColumnResizeDelta(state.columnResize.pendingDeltaX, xInTable, yInTable, state, true);
+    state.table.scenegraph.component.updateResizeCol(
+      state.columnResize.col,
+      yInTable,
+      state.columnResize.isRightFrozen,
+      previewDeltaX
+    );
+    state.table.scenegraph.updateNextFrame();
+    return;
+  }
+
+  applyColumnResizeDelta(detaX, xInTable, yInTable, state);
+}
+
+/** 非实时响应模式下，在拖拽结束时提交累计的宽度变化 */
+export function commitPendingColumnResize(state: StateManager) {
+  const pending = state.columnResize.pendingDeltaX ?? 0;
+  state.columnResize.pendingDeltaX = 0;
+  if (Math.abs(pending) < 1) {
+    return;
+  }
+  // 用当前列坐标+累计偏移量作为最终位置，复用实时模式的处理逻辑
+  const isRightFrozen = state.columnResize.isRightFrozen;
+  const currentX = state.columnResize.x;
+  const targetX = isRightFrozen ? currentX - pending : currentX + pending;
+  applyColumnResizeDelta(pending, targetX, currentX, state);
+}
+
+function applyColumnResizeDelta(
+  detaX: number,
+  xInTable: number,
+  yInTable: number,
+  state: StateManager,
+  dryRun = false
+): number {
   // 检查minWidth/maxWidth
-  // getColWidth会进行Math.round，所以先从colWidthsMap获取：
-  // 如果是数值，直接使用；如果不是，则通过getColWidth获取像素值
-  // let widthCache = (state.table as any).colWidthsMap.get(state.columnResize.col);
-  // if (typeof widthCache === 'number') {
-  //   widthCache = widthCache;
-  // } else {
   const widthCache = state.table.getColWidth(state.columnResize.col);
-  // }
   let width = widthCache;
   width += detaX;
   const minWidth = state.table.getMinColWidth(state.columnResize.col);
   const maxWidth = state.table.getMaxColWidth(state.columnResize.col);
-  if (width < minWidth || width > maxWidth) {
-    if (widthCache === minWidth || widthCache === maxWidth) {
-      return;
-    } else if (widthCache - minWidth > maxWidth - widthCache) {
-      detaX = maxWidth - widthCache;
-    } else {
-      detaX = minWidth - widthCache;
+  // 按目标宽度的越界方向 clamp：目标值过小时贴 minWidth，过大时贴 maxWidth。
+  // 非实时模式会把整段 pendingDeltaX 一次传入，若按“当前宽度离哪个边界更近”选择边界会产生反向 resize。
+  if (width < minWidth) {
+    if (widthCache === minWidth) {
+      return 0;
     }
+    detaX = minWidth - widthCache;
+  } else if (width > maxWidth) {
+    if (widthCache === maxWidth) {
+      return 0;
+    }
+    detaX = maxWidth - widthCache;
   }
 
   // limitMinWidth限制
@@ -47,22 +85,31 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     const rightColWidthCache = state.table.getColWidth(state.columnResize.col + 1);
     const rightColMinWidth = state.table.getMinColWidth(state.columnResize.col + 1);
     const rightColMaxWidth = state.table.getMaxColWidth(state.columnResize.col + 1);
-    let rightColWidth = rightColWidthCache;
-    rightColWidth -= detaX;
-    if (rightColWidth < rightColMinWidth || rightColWidth > rightColMaxWidth) {
-      if (rightColWidthCache === rightColMinWidth || rightColWidthCache === rightColMaxWidth) {
-        return;
-      } else if (rightColWidthCache - rightColMinWidth > rightColMaxWidth - rightColWidthCache) {
-        detaX = rightColMaxWidth - rightColWidthCache;
-      } else {
-        detaX = rightColMinWidth - rightColWidthCache;
+    // 右侧相邻列承接相反方向的位移，目标宽度为 rightColWidthCache - detaX。
+    const rightColWidth = rightColWidthCache - detaX;
+    // 按目标宽度的越界方向 clamp：右列过窄时贴 min，过宽时贴 max。
+    if (rightColWidth < rightColMinWidth) {
+      if (rightColWidthCache === rightColMinWidth) {
+        return 0;
       }
+      detaX = rightColWidthCache - rightColMinWidth;
+    } else if (rightColWidth > rightColMaxWidth) {
+      if (rightColWidthCache === rightColMaxWidth) {
+        return 0;
+      }
+      detaX = rightColWidthCache - rightColMaxWidth;
     }
-    if (rightColWidth - detaX < state.table.internalProps.limitMinWidth) {
-      detaX = rightColWidth - state.table.internalProps.limitMinWidth;
+    // limitMinWidth 用目标宽度判断，不再二次扣减 detaX，避免与指示线终点、实时模式不一致。
+    if (rightColWidthCache - detaX < state.table.internalProps.limitMinWidth) {
+      detaX = rightColWidthCache - state.table.internalProps.limitMinWidth;
     }
   }
   detaX = Math.ceil(detaX);
+
+  // dry run：仅返回约束后的有效位移，供非实时模式预览指示线/标签使用，不产生任何副作用。
+  if (dryRun) {
+    return detaX;
+  }
 
   if (
     state.columnResize.col < state.table.rowHeaderLevelCount ||
@@ -80,17 +127,6 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     updateResizeColForColumn(detaX, state);
   }
 
-  // if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
-  //   // in adaptive mode, the right column width can not be negative
-  //   const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
-  //   if (rightColWidth - detaX < 0) {
-  //     detaX = rightColWidth;
-  //   }
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
-  // } else {
-  //   state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-  // }
   state.columnResize.x = xInTable;
 
   // update resize column component
@@ -131,6 +167,7 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
 
   // stage rerender
   state.table.scenegraph.updateNextFrame();
+  return detaX;
 }
 
 function updateResizeColForColumn(detaX: number, state: StateManager) {
